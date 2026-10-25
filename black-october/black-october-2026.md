@@ -8,6 +8,28 @@ The concern is justified: several flaws sit below application code, in runtimes,
 
 This report covers the major disclosures most relevant to developers and operators of personal infrastructure, plus related incidents that require credential rotation rather than a patch. It is not an exhaustive catalog of October CVEs. Some vulnerabilities were fixed earlier but received public technical disclosures or exploitation reports this month.
 
+## Table of contents
+
+- [The short version](#the-short-version)
+  - [How to use the impact checks](#how-to-use-the-impact-checks)
+- [1. PHP2Shell](#1-php2shell-unauthenticated-execution-below-your-application)
+  - [The October 23 follow-up](#the-october-23-follow-up-matters)
+- [2. HTTP2Shell / Node2Shell — Brotli](#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability)
+  - [Other high-severity Node.js fixes](#other-high-severity-nodejs-fixes-in-the-same-release)
+- [3. GitLab and Ruby](#3-gitlab-and-ruby-regex-compilation-becomes-code-execution)
+  - [GitLab identity vulnerabilities](#related-gitlab-identity-vulnerabilities)
+  - [Ruby applications](#ruby-applications-need-their-own-update)
+- [4. Pillow](#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution)
+- [5. Plex2Shell](#5-plex2shell-a-home-server-compromise-chain-is-being-exploited)
+- [6. Nextcloud’s built-in Collabora CODE server](#6-nextclouds-built-in-collabora-code-server-unauthenticated-command-injection)
+- [7. Linux KSMBD](#7-linux-ksmbd-serious-kernel-level-reports-but-not-every-linux-server)
+- [8. WPSplinter](#8-wpsplinter-nearby-attackers-can-compromise-vulnerable-routers)
+- [9. Header Accordions — HTTP/3](#9-header-accordions-http3-compression-becomes-resource-exhaustion)
+- [10. BeyondTrust Remote Support](#10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability)
+- [Related incidents: eMudhra, LiteLLM, and Railway](#related-incidents-these-need-more-than-vulnerability-patching)
+  - [Am I impacted by the related incidents?](#am-i-impacted-by-the-related-incidents)
+- [What should I patch? A stack-based decision guide](#what-should-i-patch-a-stack-based-decision-guide)
+
 ## The short version
 
 - **Prioritize exposed PHP, GitLab, Plex, and Nextcloud installations using the built-in Collabora CODE server.**
