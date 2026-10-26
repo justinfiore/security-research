@@ -312,7 +312,7 @@ Sources: [Supermicro advisory](https://www.supermicro.com/en/support/security_BM
 | Status snapshot | 2026-10-24; time/TZ unknown | Ongoing and evolving; about two-thirds of implicated accounts gone from GitHub. |
 | Public announcement | 2026-10-25 13:55:33 UTC−04:00 (17:55:33 UTC) | Wiz Research blog, with IOCs. |
 | Patch | Not applicable | No software fix; contain tokens and secrets. |
-| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| **Last updated** | **2026-10-26 17:27 EDT (UTC−04:00)** | Added privileged-workflow audit guidance from Wiz's October 26 research. |
 
 An automated tool uses stolen GitHub tokens to push a branch named `ci-sync-` plus six characters to every repository each token can write to. The branch has one unsigned commit, `ci: sync config`, adding `.github/workflows/sync-check.yml`. The push runs the workflow, which prints the environment and every secret base32-encoded, defeating log masking. The tool downloads the log through the API and deletes the run seconds later, using the user agent `gheist`. Wiz recovered more than 13,500 planted branches from more than 850 compromised accounts.
 
@@ -322,7 +322,7 @@ An automated tool uses stolen GitHub tokens to push a branch named `ci-sync-` pl
 
 **Am I impacted?** Look for `ci-sync-` branches whose only change is `sync-check.yml`, using the [read-only API queries or branch check script](details/github-gheist.md#planted-branches-read-only-api-queries). In audit logs, look for runs on `ci-sync-*` branches deleted within a minute of completing and for the `gheist` user agent. Cloud logs showing OIDC role assumptions from a `ci-sync-` branch also prove a run. Branches and runs may already be deleted, so no match is not proof.
 
-**Patch:** Nothing to install. Do not approve held `sync-check` runs. Rotate every secret an affected repository could read, revoke the tokens that pushed the commits, check their owners' devices for infostealers, and treat any self-hosted runner that ran the job as compromised. Then scope OIDC trust to protected branches or environments, require reviewers on production environments and prefer GitHub Apps or short-lived fine-grained tokens.
+**Patch:** Nothing to install. Do not approve held `sync-check` runs. Rotate every secret an affected repository could read, revoke the tokens that pushed the commits, check their owners' devices for infostealers, and treat any self-hosted runner that ran the job as compromised. Then scope OIDC trust to protected branches or environments, require reviewers on production environments and prefer GitHub Apps or short-lived fine-grained tokens. Separately [audit privileged Actions workflows](details/github-gheist.md#remediation) for unsafe untrusted-event checkouts, artifact execution, script interpolation and persistent runner state; those are distinct from Gheist but can expose the same secrets.
 
 Sources: [Wiz Research](https://www.wiz.io/blog/gheist-attempted-scaled-abuse-of-stolen-github-tokens-stumbles), [GitHub changelog: workflow approval hold](https://github.blog/changelog/2026-07-28-github-actions-holds-potentially-malicious-workflows-for-approval/), [GitHub audit log events](https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/audit-log-events-for-your-organization), [The Hacker News](https://thehackernews.com/2026/10/gheist-uses-stolen-github-tokens-to.html).
 

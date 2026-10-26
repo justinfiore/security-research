@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-26 17:27 EDT (UTC−04:00) — GitHub Actions privileged-workflow audit guidance
+
+**Partial review:** The existing-item primary-source sweep and configured discovery sources were reviewed; some secondary source pages were unavailable or rate-limited, so the successful-run checkpoint was not advanced.
+
+- **GitHub Actions Gheist:** [Audit privileged workflows](black-october/details/github-gheist.md#remediation) for untrusted-event checkouts, artifact execution, direct event-data shell interpolation and persistent self-hosted runner state. These are separate paths from the stolen-token Gheist campaign, but can expose the same repository secrets. Restrict privileged workflows to authorized actors, use a reviewed head SHA, keep untrusted event data out of shell source, and do not execute artifacts from lower-trust runs.
+
 ## 2026-10-26 16:01 EDT (UTC−04:00) — PHP Windows Brotli rebuild identifiers
 
 **Partial review:** The overlapping research window, CISA KEV feed (catalog 2026.10.23), all five configured X timelines, and selected primary/vendor sources were checked. A full per-item primary-source refresh and complete NSA/Wiz coverage were not completed in this run; no checkpoint was advanced.

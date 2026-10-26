@@ -150,6 +150,7 @@ There is no patch. Contain the stolen tokens and the exposed secrets.
 3. **Revoke the tokens that pushed the commits** (the commit author identifies the account, not which token), and check their owners' devices for infostealers before issuing new credentials. Organization owners can review and revoke fine-grained token access to the organization; each user must revoke classic tokens on their own account. [Wiz][wiz] [Revoking tokens][patrevoke]
 4. **Preserve evidence, then delete planted branches:** record branch names, commit SHAs and audit log entries (the [script](#branch-check-script) output is a useful record) before deleting.
 5. **Harden**, following Wiz's recommendations: require reviewers on environments that hold production secrets; scope OIDC trust policies to protected branches or environments so a new branch cannot assume a role; prefer GitHub Apps or short-lived fine-grained tokens over personal access tokens (organizations can restrict classic PAT access and require approval for fine-grained tokens); and run self-hosted runners as ephemeral hosts without Docker-socket or unrestricted cloud-metadata access. [Wiz][wiz] [PAT policy][patpolicy] [GitHub OIDC][oidc] Each of these **changes state** and can break existing automation; test on one repository first.
+6. **Audit privileged Actions workflows separately.** Wiz's October 26 guidance is not an update to the Gheist campaign, but it identifies paths that can turn untrusted pull-request or comment input into a second secret-exposure route: `pull_request_target`, `workflow_run`, `issue_comment`, and `repository_dispatch`; old SHA-pinned `actions/checkout`; custom Git/`gh` checkouts; artifact downloads that are executed by a privileged run; direct `${{ github.event.* }}` interpolation in shell; and persistent self-hosted runners. For workflows that must process untrusted contributions, require a current repository permission check for the actor, pin the reviewed head SHA, validate event input as data (pass it through quoted environment variables rather than shell interpolation), and never execute artifacts from a less-trusted run with secrets. `actions/checkout` versions at least 2.8.0, 3.7.0, 4.4.0, 5.1.0, 6.1.0 or 7.0.0 include GitHub's fork-checkout protection, but it does not cover custom checkout logic, other trigger types, artifacts, or runner state. Test workflow changes in a non-production repository. [Wiz Actions guidance][wiz-actions]
 
 ## Verification
 
@@ -168,11 +169,13 @@ There is no patch. Contain the stolen tokens and the exposed secrets.
 ## Sources
 
 - [Wiz Research, "Gheist: Attempted Scaled Abuse of Stolen GitHub Tokens Stumbles"][wiz] — published 2026-10-25 13:55:33 UTC−04:00 (page metadata); mechanics, variants, scale, timeline, overlaps, hunting and response guidance, IOCs.
+- [Wiz, "The Pwn Request Reckoning"] [wiz-actions] — published 2026-10-26; general GitHub Actions hardening that is distinct from Gheist but relevant to preventing separate privileged-workflow secret exposure.
 - [GitHub changelog, 2026-07-28][hold] — approval hold for potentially malicious workflow runs; public repositories on github.com only, not GitHub Enterprise Server.
 - GitHub documentation: [reviewing the organization audit log][auditlog], [audit log events][auditevents], [OIDC][oidc], [personal access token policy][patpolicy] and [reviewing and revoking tokens][patrevoke].
 - [The Hacker News][thn] — secondary coverage repeating Wiz's findings.
 
 [wiz]: https://www.wiz.io/blog/gheist-attempted-scaled-abuse-of-stolen-github-tokens-stumbles
+[wiz-actions]: https://www.wiz.io/blog/github-actions-security-pwn-request-reckoning
 [hold]: https://github.blog/changelog/2026-07-28-github-actions-holds-potentially-malicious-workflows-for-approval/
 [auditlog]: https://docs.github.com/en/enterprise-cloud@latest/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/reviewing-the-audit-log-for-your-organization
 [auditevents]: https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/audit-log-events-for-your-organization
