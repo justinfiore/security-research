@@ -6,6 +6,8 @@
 
 **[CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497)** is one cross-stack Brotli decoder bug with two nicknames. Node rates it High; the Google/CNA CVSS 4.0 rating is **9.2 Critical**. Malformed compressed data can corrupt process memory, causing disclosure, crashes or RCE. It is not an HTTP/2-specific defect and does not require a public inbound HTTP endpoint.
 
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers the Brotli CVE and the three Node.js CVEs in this guide; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

@@ -8,6 +8,8 @@
 
 **SaaS vs on-premises:** Arista says that hosted VCO, **including Dedicated**, "were impacted and have already been patched". Hosted customers do not need to upgrade, but should still review tenant activity. **On-prem operators must upgrade.** VeloCloud Edge and Gateway are listed as **not affected**. [Arista advisory][adv]
 
+**CISA KEV:** Listed — added 2026-10-23, federal due date 2026-10-26. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

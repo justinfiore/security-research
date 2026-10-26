@@ -8,6 +8,8 @@
 
 The principal SSH chains claim root-level execution or privileged socket/file operations from **already-authorized Tailscale SSH access with applicable forwarding enabled**. A compromised permitted device can therefore threaten reachable targets and credentials in the demonstrated configurations. This is not unauthenticated internet-wide RCE, and ordinary OpenSSH carried over the Tailscale network is a different implementation. [Research][research] [Vendor response][vendor]
 
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. No in-the-wild campaign was established in the reviewed sources. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

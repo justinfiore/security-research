@@ -8,6 +8,8 @@
 
 The two scores measure different things. Atlassian's 4.0 vector sets the subsequent-system impact to High (SC:H/SI:H/SA:H). NVD's 3.1 vector scores only confidentiality of the vulnerable system (C:H, I:N, A:N). Both are shown here because the item qualifies for this guide under either score.
 
+**CISA KEV:** Listed — added 2026-10-15, federal due date 2026-10-18. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

@@ -6,6 +6,8 @@
 
 **[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) / [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619): Critical, CVSS 4.0 9.2.** Memory corruption during request initialization/cleanup can lead to unauthenticated RCE. This guide also covers the distinct, conditional upload-progress issue **[CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560)**, whose full advisory/score was not yet available in the sources reviewed.
 
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Exploitation evidence exists outside KEV: pre-disclosure attempts and researcher-confirmed honeypot RCE (see [Exploitation status](#exploitation-status)). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

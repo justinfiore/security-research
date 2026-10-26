@@ -6,6 +6,8 @@
 
 The principal GitLab issues **[CVE-2026-97229](https://www.cve.org/CVERecord?id=CVE-2026-97229)** and **[CVE-2026-110264](https://www.cve.org/CVERecord?id=CVE-2026-110264)** are **Critical, CVSS 3.1 10.0**: attacker-controlled regex compilation can lead to unauthenticated server-side code execution under the vendor's described conditions. The same maintenance window should cover **[CVE-2026-15723](https://www.cve.org/CVERecord?id=CVE-2026-15723)** (account takeover, High 8.2) and **[CVE-2026-112212](https://www.cve.org/CVERecord?id=CVE-2026-112212)** (OAuth/OIDC cache poisoning, High 7.5). Ruby's underlying fixes also cover related GitLab-assigned CVEs; this is not a reason to count the same engine flaw twice.
 
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers all four GitLab CVEs in this guide; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

@@ -6,6 +6,8 @@
 
 **[CVE-2026-110447](https://www.cve.org/CVERecord?id=CVE-2026-110447):** `richdocumentscode` before **26.4.303** permits unauthenticated OS command injection through `proxy.php` **while the bundled CODE server is stopped**. Commands run as the web-server user. Disabling the app is insufficient; update it or remove it. [Vendor advisory][advisory]
 
+**CISA KEV:** Listed — added 2026-10-23, federal due date 2026-10-26. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

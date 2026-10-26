@@ -6,6 +6,8 @@
 
 Railway reports unauthorized access to internal systems and decryption of a subset of customers' stored environment variables. **This is a platform-side secret exposure, not a local dependency vulnerability.** Follow its precautionary recommendation to revoke and replace sensitive variables stored before October 21, including database/API secrets and private registry credentials; investigate the services those credentials authorize.
 
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. This is a platform-side incident; the vendor confirmed the exposure. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

@@ -6,6 +6,8 @@
 
 Pillow **13.0.0** fixes multiple independent native-memory, argument-injection and resource-exhaustion problems. An image-processing service can be exposed through uploaded files, fetched images, queued thumbnails or document conversions. The five highlighted issues below have different prerequisites; do not treat one format filter as a complete fix. Severity disagreements in the [main table](../black-october-2026.md#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution) remain attributed rather than flattened into a single score.
 
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers all five CVEs in this guide; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

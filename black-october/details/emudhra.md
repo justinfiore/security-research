@@ -10,6 +10,8 @@ Eight P-384 intermediate CA keys were trivially recoverable: **six TLS and two c
 
 **October 26 update:** do not reuse an early "fixed Java" table. Oracle's October 24 **[CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820)** alert lists the earlier emergency builds as affected and requires a further root-removal update. CPython has now also released **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**, blocking the compromised keys in `ssl` (**[CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557)**). See the [runtime inventory](#runtime-and-application-trust-store-inventory) and [verification limits](#verification).
 
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). The CA compromise itself has no CVE; the related Go [CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943), Java [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820) and Python [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557) fixes are not listed. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

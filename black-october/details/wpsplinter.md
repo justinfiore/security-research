@@ -6,6 +6,8 @@
 
 **Scope:** Broadcom’s legacy WPS Monitor EAP-fragment reassembly on eCos and Linux. An attacker within radio range can reach the parser without the Wi-Fi key or completing WPS enrollment. Memory disclosure and code execution were demonstrated; privileges depend on firmware. No CVE was assigned by Broadcom. [Research][research] [Device guidance][devices]
 
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. No exploitation reported in the reviewed sources. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

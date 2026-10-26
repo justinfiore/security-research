@@ -6,6 +6,8 @@
 
 **[CVE-2026-88779](https://www.cve.org/CVERecord?id=CVE-2026-88779) — NetScaler (CNA) CVSS 4.0: 8.7 High; NVD CVSS 3.1: 7.5 High; Citrix bulletin severity: High; in CISA KEV.** A memory-buffer bounds error (CWE-119) lets an unauthenticated network attacker crash NetScaler ADC or NetScaler Gateway authentication processing. This causes a **denial of service**, and Citrix rates no confidentiality or integrity impact. It applies only when the appliance is configured as a **SAML Service Provider** (`add authentication samlAction`) or a **SAML Identity Provider** (`add authentication samlIdPProfile`). The flaw is not RCE on its own. However, CISA and Rapid7 describe attackers using it to **force a crash/reboot** that executes code previously injected through **[CVE-2026-88771](https://www.cve.org/CVERecord?id=CVE-2026-88771)**, so treat it as part of a compromise chain on unpatched appliances.
 
+**CISA KEV:** Listed — added 2026-10-04, federal due date 2026-10-07. The companion code-injection flaw [CVE-2026-88771](https://www.cve.org/CVERecord?id=CVE-2026-88771) was listed earlier (added 2026-09-27, due 2026-09-30). [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

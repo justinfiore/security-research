@@ -8,6 +8,8 @@
 
 Attackers **chain the two flaws**. CVE-2026-105133 bypasses authentication through the `random` argument to `checkSysPwd` (`com/ahsay/obs/api/ApiStructsAction.java`). CVE-2026-105134 then injects OS commands through the `random` argument at `/rps/api/json/UpdateReceivers.do` (Replication Receiver). Huntress observed unauthenticated remote code execution as **NT AUTHORITY\SYSTEM** on Windows hosts: JSP webshells, malicious replication receivers, and XMRig miners disguised as Microsoft Edge. **Worst case:** an attacker fully controls the backup server that holds or brokers many customers' backups. AhsayCBS is used mainly by MSPs.
 
+**CISA KEV:** Listed — both CVEs added 2026-10-14, federal due date 2026-10-17. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

@@ -8,6 +8,8 @@
 
 **Read the attack vector carefully.** The published vectors are **local, low-privilege** (AV:L/PR:L). The reviewed sources do not explain how attackers in the wild reached the statistics feature, or whether web traffic passing through the WAF can influence it. Do not assume that the server must be reachable over the internet for it to be at risk, and do not assume it must not be. Treat every affected install as exposed.
 
+**CISA KEV:** Listed — added 2026-10-20, federal due date 2026-10-23. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

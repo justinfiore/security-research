@@ -82,6 +82,25 @@ Detailed guides include:
 6. `## Compromise response`: what to investigate and recover beyond patching.
 7. `## Sources`: primary references for the claims.
 
+### CISA KEV status on every item
+
+Every main-guide item and detailed guide states its KEV status explicitly, whether or not the item is listed. Readers use it to prioritize, so a missing status reads as an omission. The main guide's [What CISA KEV means](black-october-2026.md#what-cisa-kev-means) section is the single explanation; keep it accurate and link to it from detailed-guide status lines rather than repeating it.
+
+- **Placement:** In the main guide, put a `**CISA KEV:**` line directly after the bold severity paragraph. In each detailed guide, put the same status immediately before `## Table of contents`, followed by `[What KEV means](../black-october-2026.md#what-cisa-kev-means)`. KEV-listed items also get a timeline row in both places for the addition date. Link each CVE in the status line to its CVE.org record.
+- **Use exactly one of these forms:**
+  - Listed: `Listed — added YYYY-MM-DD, federal due date YYYY-MM-DD.` When CVEs in one item differ, give per-CVE dates. Name related CVEs that are not listed.
+  - Not listed: `Not listed (catalog <catalogVersion>, checked YYYY-MM-DD).`, then any exploitation evidence from outside KEV in one sentence, then `Absence from KEV is not evidence that exploitation has not occurred.`
+  - No CVE (incidents, unassigned research findings): `Not applicable — no CVE is assigned, and KEV lists only CVEs.`, plus the exploitation or compromise status the sources establish.
+- **Source of truth:** Use the live [KEV JSON feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json): `dateAdded`, `dueDate`, `requiredAction`, `knownRansomwareCampaignUse` and any forensic-triage notes. Record the feed's `catalogVersion` in not-listed statements. Do not infer KEV status from news, NVD summaries or vendor pages, and do not copy it from another item.
+- **Recheck every run:** Re-query KEV for every CVE in every tracked item, not only for new items. When an item becomes listed, replace the not-listed line, add the timeline row, update the remediation urgency and short-version text, and record it in `CHANGELOG.md` as a security update. A new catalog version alone, with unchanged status, is not a content change: leave existing lines and **Last updated** dates untouched.
+- **Interpretation rules:**
+  - KEV listing means CISA has reliable evidence of in-the-wild exploitation.
+  - `dateAdded` is the listing date, not when exploitation began.
+  - The due date binds U.S. federal civilian agencies only; present it as an urgency signal for everyone else.
+  - Never write "not exploited" or "safe" because an item is absent from KEV. Report vendor-, researcher- or honeypot-confirmed exploitation separately, with its source, and keep it distinct from KEV listing.
+  - An item's severity heading may say "in CISA KEV" only when the feed confirms it.
+- **Discovery:** KEV additions within the search window are mandatory new-item candidates (see [Research each run](#research-each-run)). A KEV-listed CVE is not exempt from the High/Critical admission rule. Record a listed CVE that fails that rule as a reviewed exclusion in the run thread, with its score and issuer, rather than dropping it without a trace.
+
 ### Detection tools and official guidance
 
 For every new or refreshed item, actively look for opportunities to **produce or improve safe scripts that help detect applicability or compromise indicators**, and link official detection/remediation guidance. Reuse existing companion scripts when they already cover the check; create a separate issue-specific script when it adds useful capability. Do not manufacture a scanner where product-side notices, audit records or manual verification are the only reliable evidence.

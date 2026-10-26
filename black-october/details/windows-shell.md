@@ -6,6 +6,8 @@
 
 **[CVE-2026-96951](https://www.cve.org/CVERecord?id=CVE-2026-96951) — Microsoft CVSS 3.1: 8.8 High (`AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H`, temporal 8.2 with `E:F/RL:O/RC:C`); Microsoft severity: Important; impact: Security Feature Bypass; CWE-77.** Microsoft says a command-injection flaw in Windows Shell lets an attacker evade **Mark of the Web (MOTW)** defenses. Exploitation needs the user to open a crafted file or follow a link, for example from email or instant messaging (**UI:R**). Microsoft marks it **Exploited: Yes** and **Publicly disclosed: No**. CISA added it to KEV on 2026-10-13. NVD shows only Microsoft's score; no separate NVD score was found. **Worst case:** a crafted download or attachment opens without the usual MOTW, SmartScreen or Office Protected View warnings, so a malicious payload can run as the signed-in user. This CVE is a bypass that enables a follow-on payload. Microsoft does not describe it as wormable or as user-free remote code execution. Microsoft also lists **Outlook.com** (cloud service) as affected and fixed in service build **20260925.100**.
 
+**CISA KEV:** Listed — added 2026-10-13, federal due date 2026-10-16. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

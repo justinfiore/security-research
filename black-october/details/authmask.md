@@ -6,6 +6,8 @@
 
 **[CVE-2026-80097](https://www.cve.org/CVERecord?id=CVE-2026-80097) — Microsoft CVSS 3.1: 8.6 High; vendor severity: Important.** A malicious app on the same Android device can exploit improper caller authentication in the Authenticator broker to obtain tokens for the signed-in work account. The researcher demonstrated delegated access to mail, files and calendars, plus scopes for changing authentication methods/passkeys. This is **local privilege escalation and account-token disclosure**, not unauthenticated internet RCE or a general break of MFA.
 
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). No exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

@@ -6,6 +6,8 @@
 
 All seven `litellm==1.107.0` PyPI wheels and affected public container images carried a credential stealer and remote-code loader. **Do not run ordinary Python, `pip`, or the LiteLLM CLI in a suspected environment.** Startup hooks can execute without importing LiteLLM. Quarantine, investigate from a clean host, rebuild, and recover credentials; an in-place version downgrade is not sufficient.
 
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. This is a malicious-release incident; the vendor confirmed the compromise. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

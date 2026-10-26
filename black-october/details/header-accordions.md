@@ -6,6 +6,8 @@
 
 **Scope:** implementation-specific QPACK/HTTP/3 resource exhaustion, not established RCE. Include HTTP/3 **clients as well as servers** for quic-go, and analyst workstations decoding HTTP/3 captures in Wireshark. The named research groups findings with different disclosure and patch dates. [Research][research] [quic-go advisory][go]
 
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers the listed CVEs; component issues without CVEs cannot be listed. No exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

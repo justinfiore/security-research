@@ -6,6 +6,8 @@
 
 **[CVE-2026-0322](https://www.cve.org/CVERecord?id=CVE-2026-0322) — Palo Alto Networks CVSS 4.0: 8.6 High (CVSS-BT, `AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/…/E:A`), or 8.5 High when management access is limited to a jump box (`AV:A`); vendor urgency: HIGHEST. NVD CVSS 3.1: 7.2 High (`AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H`). CWE-94.** This is a code-injection flaw in the PAN-OS **management interface**. An **authenticated** attacker with network access to that interface can run arbitrary code **as root**. It applies to PA-Series and VM-Series firewalls and to **Panorama** (virtual and M-Series). **Cloud NGFW and Prisma Access are not affected.** Palo Alto Networks reports "very limited exploitation." **Worst case:** someone holding high-privilege management credentials (PR:H), or a session to that effect, takes root on the firewall or Panorama. From there they could reach traffic, VPN and authentication secrets, and change policy. On Panorama, that could extend to managed firewalls. Unauthenticated exploitation is **not** claimed.
 
+**CISA KEV:** Listed — added 2026-10-14, federal due date 2026-10-17. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

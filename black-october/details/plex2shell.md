@@ -8,6 +8,8 @@
 
 **Per-CVE ratings from the CNA (CISA, `cisa-cg`):** CVE-2026-96652 Medium, CVSS 3.1 4.3 / CVSS 4.0 5.3; CVE-2026-96654 Medium, 6.5 / 6.9; CVE-2026-96655 Medium, 4.3 / 5.3; CVE-2026-96656 High, 7.2 / 8.6. [CVE records][cve96652] The chain's severity comes from combining them. Plex's [October 19 notice][vendor] labels CVE-2026-96654 as loopback access to internal agent functions and CVE-2026-96655 as admin-token disclosure. The CVE records and [KEV][kev] describe CVE-2026-96654 as encoded-URI plugin-function abuse and CVE-2026-96655 as an authenticated SSRF. Use the CVE IDs together; the patch target is the same.
 
+**CISA KEV:** Listed — all four CVEs added 2026-10-20; federal due date 2026-10-23 for -96654 and -96656, 2026-11-03 for -96652 and -96655. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

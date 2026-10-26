@@ -6,6 +6,8 @@
 
 **[CVE-2026-104286](https://www.cve.org/CVERecord?id=CVE-2026-104286) — Fortinet CVSS 3.1: 9.8 Critical (vendor temporal score 8.8); Fortinet severity: Critical; in CISA KEV.** A path traversal (CWE-22) combined with improper NULL-byte neutralization (CWE-158) lets an **unauthenticated** attacker write arbitrary files on the FortiMail appliance through crafted HTTP/HTTPS requests. Fortinet classifies the impact as "Execute unauthorized code or commands", and its workaround points at the **IBE (Identity-Based Encryption)** web feature reached through the webmail interface. Fortinet says the flaw was exploited before fixes shipped. NVD shows Fortinet's score as secondary and has not published its own CVSS score.
 
+**CISA KEV:** Listed — added 2026-10-01, federal due date 2026-10-04. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

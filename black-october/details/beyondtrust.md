@@ -6,6 +6,8 @@
 
 **[CVE-2026-102764](https://www.cve.org/CVERecord?id=CVE-2026-102764):** improper origin validation in Remote Support internal messaging permits unauthenticated file operations. **Remote Support ≤26.2.3** is affected; **BT26-05-RS** covers versions **24.3.1–26.2.3**. Observed root compromise and lateral movement are attack-chain outcomes, not merely the initial file-operation primitive. [Advisory][advisory] [Mandiant][mandiant]
 
+**CISA KEV:** Listed — added 2026-10-16, federal due date 2026-10-19. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

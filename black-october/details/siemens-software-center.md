@@ -8,6 +8,8 @@
 
 **What this means for defenders:** the threat is mainly **attackers bringing their own vulnerable signed binary** to a PC, not attacks on SSC installs you already have. Updating your SSC protects your installations, but it **does not stop** an attacker from dropping an old signed copy on any Windows PC, including PCs that never had SSC. Siemens says to detect on folder and behaviour, because "the file itself is genuine". [Siemens blog][blog]
 
+**CISA KEV:** Listed — added 2026-10-20, federal due date 2026-11-03. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

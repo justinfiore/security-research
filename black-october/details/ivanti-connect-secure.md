@@ -11,6 +11,8 @@
 
 In the wild, attackers chained it with a separate **root privilege escalation**, the `dsinvoked`/DSCache flaw. MITRE later assigned that flaw **[CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357)** (MITRE CNA CVSS 3.1: 7.0 High). It is **not fixed** by the CVE-2026-104935 updates, and its fix status was not established in the reviewed sources.
 
+**CISA KEV:** Listed — added 2026-10-13, federal due date 2026-10-16. The chained root escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) is not listed (catalog 2026.10.23). [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

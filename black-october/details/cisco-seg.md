@@ -6,6 +6,8 @@
 
 **[CVE-2026-76519](https://www.cve.org/CVERecord?id=CVE-2026-76519) — Cisco CVSS 3.1: 9.8 Critical (`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`); Cisco SIR: Critical; CWE-23 (relative path traversal). Bug ID CSCwu56223.** The flaw is in how the **Advanced Malware Protection (AMP) File Reputation** feature handles email attachments. An **unauthenticated, remote** attacker who **sends an email with a crafted attachment** through an affected gateway can write arbitrary files and **execute commands as root** on the underlying OS. No login, and no click by a recipient, is required. Cisco has confirmed active exploitation. NVD shows only Cisco's score; no separate NVD score was found. **Worst case:** root on the mail gateway, which gives access to mail flow and quarantines, credentials, and cluster SSH keys that can be used to compromise other cluster members.
 
+**CISA KEV:** Listed — added 2026-10-14, federal due date 2026-10-17. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)

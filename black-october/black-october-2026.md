@@ -14,6 +14,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
+  - [What CISA KEV means](#what-cisa-kev-means)
 - [VeloCloud Orchestrator — authenticated SQL injection](#velocloud-orchestrator-authenticated-sql-injection-to-superuser-operator-cve-2026-114625)
 - [Siemens Software Center — exploited DLL side-loading](#siemens-software-center-dll-side-loading-exploited-in-clickfix-campaign-cve-2026-110936)
 - [PAN-OS — authenticated management interface RCE (CVE-2026-0322)](#pan-os-authenticated-management-interface-rce-cve-2026-0322)
@@ -82,11 +83,17 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 
 **Reading the date tables:** `Time/TZ unknown` means the source date is known but its time and timezone have not been established; it does not mean midnight. UTC timestamps retain the precision recorded in the detailed timeline. **Last updated** is the guide's revision timestamp in America/New_York, not a new vulnerability event or a fresh research pass.
 
+### What CISA KEV means
+
+The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
 ## VeloCloud Orchestrator: authenticated SQL injection to superuser operator (CVE-2026-114625)
 
 [Back to TOC](#table-of-contents)
 
 **[CVE-2026-114625](https://www.cve.org/CVERecord?id=CVE-2026-114625): Arista CVSS 3.1 9.9 Critical; Arista CVSS 4.0 9.4 Critical; in CISA KEV**
+
+**CISA KEV:** Listed — added 2026-10-23, federal due date 2026-10-26.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -122,6 +129,8 @@ Sources: [Arista Security Advisory 0199](https://www.arista.com/en/support/advis
 
 **[CVE-2026-110936](https://www.cve.org/CVERecord?id=CVE-2026-110936): Siemens CVSS 4.0 8.4 High, but Siemens CVSS 3.1 6.7 Medium (both local, high privilege); in CISA KEV**
 
+**CISA KEV:** Listed — added 2026-10-20, federal due date 2026-11-03.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Private report | Unknown | Credited to Jose Oregon (Huntress Labs); no date given. |
@@ -156,6 +165,8 @@ Sources: [Siemens SSA-580366](https://cert-portal.siemens.com/productcert/html/s
 
 **[CVE-2026-0322](https://www.cve.org/CVERecord?id=CVE-2026-0322) — Palo Alto Networks CVSS 4.0: 8.6 High (8.5 if management is limited to a jump box); NVD CVSS 3.1: 7.2 High; CISA KEV**
 
+**CISA KEV:** Listed — added 2026-10-14, federal due date 2026-10-17.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Private discovery | Unknown | Found internally by Palo Alto Networks. |
@@ -183,6 +194,8 @@ Sources: [Palo Alto Networks advisory](https://security.paloaltonetworks.com/CVE
 [Back to TOC](#table-of-contents)
 
 **[CVE-2026-76519](https://www.cve.org/CVERecord?id=CVE-2026-76519) — Cisco CVSS 3.1: 9.8 Critical; Cisco SIR: Critical; CISA KEV**
+
+**CISA KEV:** Listed — added 2026-10-14, federal due date 2026-10-17.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -212,6 +225,8 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 [Back to TOC](#table-of-contents)
 
 **[CVE-2026-106931](https://www.cve.org/CVERecord?id=CVE-2026-106931): JPCERT/CC (CNA) and vendor CVSS 4.0 8.5 High and CVSS 3.0 7.8 High; vendor label 緊急 (urgent) and JVN label "Critical"; in CISA KEV**
+
+**CISA KEV:** Listed — added 2026-10-20, federal due date 2026-10-23.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -246,6 +261,8 @@ Sources: [EG Secure Solutions advisory (Japanese)](https://www.eg-secure.co.jp/s
 
 **[CVE-2026-96951](https://www.cve.org/CVERecord?id=CVE-2026-96951) — Microsoft CVSS 3.1: 8.8 High; vendor severity: Important; Microsoft: Exploited: Yes; CISA KEV**
 
+**CISA KEV:** Listed — added 2026-10-13, federal due date 2026-10-16.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Private discovery/report | Unknown | MSRC credits external researchers but gives no report dates. |
@@ -273,6 +290,8 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 [Back to TOC](#table-of-contents)
 
 **[CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935) — Ivanti (CNA) CVSS 3.1: 8.6 High (the advisory labels the vector CVSS 3.0); no NVD score of its own; CISA KEV (forensic triage required)**
+
+**CISA KEV:** Listed — added 2026-10-13, federal due date 2026-10-16. The chained root escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) is not listed (catalog 2026.10.23).
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -304,6 +323,8 @@ Sources: [Ivanti advisory](https://hub.ivanti.com/s/article/Security-Advisory-Iv
 [Back to TOC](#table-of-contents)
 
 **[CVE-2026-21589](https://www.cve.org/CVERecord?id=CVE-2026-21589): Atlassian CVSS 4.0 9.3 Critical; NVD CVSS 3.1 7.5 High; in CISA KEV**
+
+**CISA KEV:** Listed — added 2026-10-15, federal due date 2026-10-18.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -344,6 +365,8 @@ Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026
 
 **[CVE-2026-105133](https://www.cve.org/CVERecord?id=CVE-2026-105133) — VulDB CVSS 3.1: 7.3 High; VulDB CVSS 4.0: 6.9 Medium per the CNA record, 5.5 Medium as displayed by NVD with `E:P`. [CVE-2026-105134](https://www.cve.org/CVERecord?id=CVE-2026-105134) — VulDB CVSS 3.1: 10.0 Critical; CVSS 4.0: 10.0 (CNA) / 9.3 (NVD display). Both in CISA KEV.**
 
+**CISA KEV:** Listed — both CVEs added 2026-10-14, federal due date 2026-10-17.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | CVE records published | 2026-10-04 05:15–05:30 UTC | VulDB CNA; dated its own advisory 2026-10-03. Public exploit stated. |
@@ -372,6 +395,8 @@ Sources: [Ahsay status and IOCs](https://www.ahsay.com/en/company/announcements/
 [Back to TOC](#table-of-contents)
 
 **[CVE-2026-88779](https://www.cve.org/CVERecord?id=CVE-2026-88779) — NetScaler (CNA) CVSS 4.0: 8.7 High; NVD CVSS 3.1: 7.5 High; Citrix severity: High; CISA KEV**
+
+**CISA KEV:** Listed — added 2026-10-04, federal due date 2026-10-07. The companion code-injection flaw [CVE-2026-88771](https://www.cve.org/CVERecord?id=CVE-2026-88771) was listed earlier (added 2026-09-27, due 2026-09-30).
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -403,6 +428,8 @@ Sources: [Citrix CTX697174](https://support.citrix.com/support-home/kbsearch/art
 
 **[CVE-2026-104286](https://www.cve.org/CVERecord?id=CVE-2026-104286) — Fortinet CVSS 3.1: 9.8 Critical; Fortinet severity: Critical; CISA KEV (forensic triage required)**
 
+**CISA KEV:** Listed — added 2026-10-01, federal due date 2026-10-04.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Private discovery/report | Unknown | Found internally by Fortinet's Product Security team; no date given. |
@@ -432,6 +459,8 @@ Sources: [Fortinet FG-IR-26-175](https://fortiguard.fortinet.com/psirt/FG-IR-26-
 [Back to TOC](#table-of-contents)
 
 **[CVE-2026-102489](https://www.cve.org/CVERecord?id=CVE-2026-102489) — DIVD CVSS 4.0: 8.7 High (9.4 Critical when chained); NVD CVSS 3.1: 9.8 Critical. [CVE-2026-102490](https://www.cve.org/CVERecord?id=CVE-2026-102490) — DIVD CVSS 4.0: 8.5 High (9.4 Critical when chained); Zammad GHSA CVSS 4.0: 8.5 High; NVD CVSS 3.1: 7.8 High. Both in CISA KEV.**
+
+**CISA KEV:** Listed — both CVEs added 2026-10-02, federal due date 2026-10-05.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -465,6 +494,8 @@ Sources: [DIVD case](https://csirt.divd.nl/DIVD-2026-00015), [CNA record CVE-202
 
 **Several researcher-rated High findings; no Tailworm-specific CVE or vendor CVSS rating established**
 
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. No in-the-wild campaign was established in the reviewed sources.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Initial discovery/private reporting | Unknown | Exact dates and coordinated-reporting history not established. |
@@ -492,6 +523,8 @@ Sources: [researcher report](https://tailworm.com/), [Tailscale engineering resp
 [Back to TOC](#table-of-contents)
 
 **[CVE-2026-80097](https://www.cve.org/CVERecord?id=CVE-2026-80097) — Microsoft CVSS 3.1: 8.6 High; vendor severity: Important**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). No exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -523,6 +556,8 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 [Back to TOC](#table-of-contents)
 
 **[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619) — Critical, CVSS 4.0: 9.2 each**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Exploitation evidence exists outside KEV: pre-disclosure attempts and researcher-confirmed honeypot RCE (see below). Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -582,6 +617,8 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 [Back to TOC](#table-of-contents)
 
 **[CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497) — Node.js: High; Google’s CVSS 4.0 rating: 9.2 Critical**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers the Brotli CVE and the three Node.js CVEs below; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -677,6 +714,8 @@ Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/an
 
 **[CVE-2026-97229](https://www.cve.org/CVERecord?id=CVE-2026-97229) and [CVE-2026-110264](https://www.cve.org/CVERecord?id=CVE-2026-110264) — Critical, CVSS 3.1: 10.0 each**
 
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers all four GitLab CVEs below; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Private discovery/reports | Unknown | Exact dates not established. |
@@ -742,6 +781,8 @@ Sources: [October 12 GitLab advisory](https://docs.gitlab.com/releases/patches/p
 
 **Multiple vulnerabilities; ratings range from Moderate to Critical**
 
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers all five CVEs below; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Private discovery/reports | Unknown | Exact dates not established. |
@@ -788,6 +829,8 @@ Sources: [Pillow release notes](https://pillow.readthedocs.io/en/stable/releasen
 
 **[CVE-2026-96652](https://www.cve.org/CVERecord?id=CVE-2026-96652), -96654, -96655, and -96656**\
 **Researcher’s combined-chain rating: Critical, CVSS 3.1: 9.8**
+
+**CISA KEV:** Listed — all four CVEs added 2026-10-20; federal due date 2026-10-23 for -96654 and -96656, 2026-11-03 for -96652 and -96655.
 
 **Individual CNA (CISA) CVSS 3.1 ratings:** -96652 4.3, -96654 6.5, -96655 4.3 (Medium); -96656 7.2 (High).
 
@@ -836,6 +879,8 @@ Sources: [researcher disclosure](https://zmain.info/blog/plex2shell), [exploitat
 
 **[CVE-2026-110447](https://www.cve.org/CVERecord?id=CVE-2026-110447) — Critical, CVSS 4.0: 9.2**
 
+**CISA KEV:** Listed — added 2026-10-23, federal due date 2026-10-26.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Discovery | 2026-09; day/time/TZ unknown | Month established; initial private-report date unknown. |
@@ -876,6 +921,8 @@ Sources: [vendor advisory](https://github.com/CollaboraOnline/online/security/ad
 [Back to TOC](#table-of-contents)
 
 **ZDI-CAN-33774 and ZDI-CAN-33549 — ZDI rating: Critical, 9.0 each**
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. No exploitation reported in the reviewed sources.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -920,6 +967,8 @@ Sources: [disclosure overview](https://thehackernews.com/2026/10/two-cvss-90-lin
 
 **Broadcom legacy WPS implementation — no CVE or standardized score published**
 
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. No exploitation reported in the reviewed sources.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Initial discovery | Unknown | Exact day not published. |
@@ -957,6 +1006,8 @@ Source: [researcher’s WPSplinter advisory and device guidance](https://qkaiser
 [Back to TOC](#table-of-contents)
 
 **Multiple implementations; includes [CVE-2025-64702](https://www.cve.org/CVERecord?id=CVE-2025-64702), [CVE-2026-12523](https://www.cve.org/CVERecord?id=CVE-2026-12523), and [CVE-2025-13945](https://www.cve.org/CVERecord?id=CVE-2025-13945)**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers the listed CVEs; component issues without CVEs cannot be listed. No exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1002,6 +1053,8 @@ Source: [FoxIO research and implementation matrix](https://foxio.io/blog/header-
 
 **[CVE-2026-102764](https://www.cve.org/CVERecord?id=CVE-2026-102764) — Critical: vendor CVSS 4.0 9.3; NVD CVSS 3.1 9.8**
 
+**CISA KEV:** Listed — added 2026-10-16, federal due date 2026-10-19.
+
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Attacker discovery | Unknown | Not established. |
@@ -1040,6 +1093,8 @@ Sources: [vendor advisory](https://www.beyondtrust.com/trust-center/security-adv
 [Back to TOC](#table-of-contents)
 
 **Certificate-authority compromise — TLS impersonation and fraudulent code-signing trust.** This incident has no single incident-wide CVSS score; client-specific fixes have their own advisories, including Go **[CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943)**.
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). The CA compromise itself has no CVE; the related Go [CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943), Java [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820) and Python [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557) fixes are not listed. Absence from KEV is not evidence that exploitation has not occurred.
 
 Eight intermediate CA private keys were trivially recoverable because of defective key generation. Attackers could issue fraudulent certificates accepted by clients that still trust the affected chains. **Worst case:** intercepted or modified TLS traffic and malicious code accepted under fraudulent signatures, depending on verifier policy and attacker positioning. This is not a general break of TLS cryptography.
 
@@ -1084,6 +1139,8 @@ Sources: [Mozilla incident record](https://bugzilla.mozilla.org/show_bug.cgi?id=
 
 **Supply-chain compromise — credential theft and arbitrary code execution.** This is a malicious release incident, not a software bug with one incident-wide CVSS score.
 
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. This is a malicious-release incident; the vendor confirmed the compromise.
+
 **Affected technology:** all seven **LiteLLM 1.107.0 PyPI wheels** and affected public container images, including floating tags during the incident. The payload included a credential stealer and remote-code loader. **Worst case:** execution as the workload account, stolen cloud/AI/database/CI secrets, and downstream compromise permitted by those credentials and mounts.
 
 The corrected postmortem identifies an **exposed, unrevoked master key**, followed by theft of overprivileged GitHub tokens, as the entry point. Earlier root-cause speculation should not supersede that finding.
@@ -1120,6 +1177,8 @@ Sources: [canonical attack-chain postmortem](https://docs.litellm.ai/blog/securi
 [Back to TOC](#table-of-contents)
 
 **Platform-side secret exposure — credential abuse and downstream data/system compromise.** No single incident-wide CVSS score or local package patch describes this incident.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. This is a platform-side incident; the vendor confirmed the exposure.
 
 **Affected technology:** Railway-hosted environment variables and integrations, plus the cloud, database, source-control, registry and API services authorized by those secrets. Attackers accessed internal systems and decrypted a subset of stored variables. **Worst case:** data disclosure, destructive changes or code execution in downstream systems, bounded by credential permissions—not only the Railway workload.
 

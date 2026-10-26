@@ -11,6 +11,8 @@
 
 Chained, the two CVEs give remote unauthenticated root on the host. DIVD reports that its own network was breached this way.
 
+**CISA KEV:** Listed — both CVEs added 2026-10-02, federal due date 2026-10-05. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
 ## Table of contents
 
 - [Timeline](#timeline)
