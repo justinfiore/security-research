@@ -4,6 +4,18 @@
 
 Each entry records a documentation/research run, not a claim that readers' systems were patched. Item-level **Last updated** dates change only when the corresponding content changes. A complete review with no substantive changes records **No Changes this run.** Incomplete reviews report their coverage gaps instead.
 
+## 2026-10-26 08:47 EDT (UTC−04:00) — Partial: two user-supplied leads
+
+**Scope:** Targeted research into the two supplied X posts and their primary sources on 2026-10-26, including earlier advisory history. This is not a full review of all existing items or a complete new-item sweep; no Complete discovery cutoff is advanced.
+
+- Added [Tailworm to the main guide](black-october/black-october-2026.md#tailworm-tailscale-ssh-and-related-findings-under-review) and a [detailed per-finding guide](black-october/details/tailworm.md#interpret-the-eleven-findings-separately). Preserved researcher-rated severity, prior SSH authorization/forwarding prerequisites, vendor qualifications and non-SSH findings. Tracked the [merged source fixes separately from stable-release availability](black-october/details/tailworm.md#timeline), and included the vendor's [forwarding mitigation](black-october/details/tailworm.md#disable-unnecessary-forwarding-using-the-vendors-mitigation). No blanket “disable Tailscale” recommendation.
+- Added [AuthMask / CVE-2026-80097](black-october/black-october-2026.md#authmask-microsoft-authenticator-for-android-token-theft) and [Android detection/remediation guidance](black-october/details/authmask.md#detection). Confirmed Microsoft's **8.6 High** score and corrected fixed build **6.2606.4246**. Distinguished September disclosure from October research, attributed the July release claim, and documented the [Microsoft/researcher interaction disagreement](black-october/details/authmask.md#preserve-the-interaction-disagreement).
+- Extended the [stack decision guide](black-october/black-october-2026.md#what-should-i-patch-a-stack-based-decision-guide) for Android Authenticator and Tailscale/headscale. Both new entries include date tables, Back to TOC, detail subsection links and backlinks; existing item dates are unchanged.
+- Added the five requested [X accounts to daily source coverage](black-october/MAINTENANCE.md#x-accounts-to-review-each-run): @The_Cyber_News, @IntCyberDigest, @NSACyber, @CISAgov and @TheHackersNews. The existing 04:00 Eastern schedule reads this policy each run; no extra schedule or account-following action was created.
+- Recorded [Tailworm's owner-requested tracking exception](black-october/MAINTENANCE.md#admission-and-ordering) without lowering the default vendor/CNA High/Critical admission standard.
+
+**Limits:** No Android device or live Tailscale deployment was tested, no exploit probes were run, and no customer secrets or settings were accessed. Tailscale's complete affected/fixed matrix and an Authenticator exact July rollout date remain unestablished. Reddit JSON timestamp access returned 403 during research, so no precise vendor-post time is asserted. Full source-list discovery and the other items were not refreshed in this targeted run.
+
 ## 2026-10-26 08:36 EDT (UTC−04:00) — Setup: readability and navigation
 
 **Scope:** Editorial update using the already sourced timelines; no new research window or completed discovery sweep. The research cutoff is unchanged.
