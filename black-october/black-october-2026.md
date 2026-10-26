@@ -64,11 +64,21 @@ An exit status of zero means the requested inventory commands completed, **not t
 
 Each item links to a detailed operational guide. **Last updated** changes only when that item's content changes, not whenever a scheduled review runs. Unknown private-discovery or patch dates are marked explicitly; announcement, release, revocation and deployment are different events. Dates below are in 2026 unless stated otherwise; detailed timelines preserve source timezones.
 
+**Reading the date tables:** `Time/TZ unknown` means the source date is known but its time and timezone have not been established; it does not mean midnight. UTC timestamps retain the precision recorded in the detailed timeline. **Last updated** is the guide's revision timestamp in America/New_York, not a new vulnerability event or a fresh research pass.
+
 ## 1. PHP2Shell: unauthenticated execution below your application
 
-**CVE-2026-109618 and CVE-2026-109619 — Critical, CVSS 4.0: 9.2 each**  
-**Dates:** Private discovery not established; advance notice **2026-10-20**; public advisories and emergency patches **2026-10-21**. Upload-progress mitigation announced **2026-10-23**; its full patch was not yet established in the reviewed notice.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+**CVE-2026-109618 and CVE-2026-109619 — Critical, CVSS 4.0: 9.2 each**
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Not established in the public notices. |
+| Advance notice | 2026-10-20; time/TZ unknown | Upcoming emergency release. |
+| Public advisories and patches | 2026-10-21; time/TZ unknown | Both emergency PHP fixes released. |
+| Upload-progress mitigation | 2026-10-23; time/TZ unknown | Separate follow-up issue; full patch not established in the reviewed notice. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/php2shell.md#detection) · [Remediation](details/php2shell.md#remediation) · [Verification](details/php2shell.md#verification) · [Timeline](details/php2shell.md#timeline)
 
@@ -111,9 +121,19 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 
 ## 2. HTTP2Shell / Node2Shell: a cross-stack Brotli decoder vulnerability
 
-**CVE-2026-111497 — Node.js: High; Google’s CVSS 4.0 rating: 9.2 Critical**  
-**Dates:** Private discovery not established; Node announcement/patches and Google Brotli fixes **2026-10-21**; Bun and Python packages **2026-10-22**. Downstream proxy fixes have separate release dates in the timeline.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+**CVE-2026-111497 — Node.js: High; Google’s CVSS 4.0 rating: 9.2 Critical**
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Not established in the public advisory. |
+| Node announcement and patches | 2026-10-21; time/TZ unknown | Node security releases; Google Brotli library fixes also released this day. |
+| Bun patch | 2026-10-22; time/TZ unknown | Bun 1.4.4. |
+| Python Brotli patch | 2026-10-22 13:57 UTC | First PyPI upload of Brotli 1.2.1. |
+| Python brotlicffi patch | 2026-10-22 16:19 UTC | First PyPI upload of brotlicffi 1.2.1.0. |
+| Proxy fixes | Varies by component | Separate Envoy/Istio release dates in the detailed timeline; do not infer from Node's date. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/brotli.md#detection) · [Remediation](details/brotli.md#remediation) · [Verification](details/brotli.md#verification) · [Timeline](details/brotli.md#timeline)
 
@@ -180,9 +200,18 @@ Sources: [Node.js security release](https://nodejs.org/en/blog/vulnerability/oct
 
 ## 3. GitLab and Ruby: regex compilation becomes code execution
 
-**CVE-2026-97229 and CVE-2026-110264 — Critical, CVSS 3.1: 10.0 each**  
-**Dates:** Private discovery dates not established; GitLab announcements/patches **2026-10-12** and **2026-10-21**; complete upstream Ruby fixes **2026-10-23**, following an incomplete 4.0.8 release on **2026-10-22**.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+**CVE-2026-97229 and CVE-2026-110264 — Critical, CVSS 3.1: 10.0 each**
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/reports | Unknown | Exact dates not established. |
+| First GitLab announcement/patches | 2026-10-12; time/TZ unknown | CVE-2026-97229. |
+| Second GitLab announcement/patches | 2026-10-21; time/TZ unknown | CVE-2026-110264 and the identity flaws. |
+| Partial upstream Ruby fix | 2026-10-22; time/TZ unknown | Ruby 4.0.8 is insufficient for the complete set. |
+| Complete upstream Ruby fixes | 2026-10-23; time/TZ unknown | Ruby 4.0.9 / 3.4.12 / 3.3.13. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/gitlab-ruby.md#detection) · [Remediation](details/gitlab-ruby.md#remediation) · [Verification](details/gitlab-ruby.md#verification) · [Timeline](details/gitlab-ruby.md#timeline)
 
@@ -234,9 +263,17 @@ Sources: [October 12 GitLab advisory](https://docs.gitlab.com/releases/patches/p
 
 ## 4. Pillow: untrusted images reach native memory corruption and command execution
 
-**Multiple vulnerabilities; ratings range from Moderate to Critical**  
-**Dates:** Private discovery dates not established; release notes and fixed Pillow 13.0.0 **2026-10-16**; individual advisories **2026-10-17 UTC**, with several revised **2026-10-19 UTC**.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+**Multiple vulnerabilities; ratings range from Moderate to Critical**
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/reports | Unknown | Exact dates not established. |
+| Fixed release and release notes | 2026-10-16; time/TZ unknown | Pillow 13.0.0. |
+| Individual advisories published | 2026-10-17 UTC; time unknown | Five highlighted advisories, published after the release. |
+| Advisory revisions | 2026-10-19 UTC; time unknown | Several advisory records revised; not another package release. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection and affected ranges](details/pillow.md#detection) · [Remediation](details/pillow.md#remediation) · [Verification](details/pillow.md#verification) · [Timeline](details/pillow.md#timeline)
 
@@ -270,10 +307,19 @@ Sources: [Pillow release notes](https://pillow.readthedocs.io/en/stable/releasen
 
 ## 5. Plex2Shell: a home-server compromise chain is being exploited
 
+[Back to TOC](#table-of-contents)
+
 **CVE-2026-96652, -96654, -96655, and -96656**  
-**Researcher’s combined-chain rating: Critical, CVSS 3.1: 9.8**  
-**Dates:** Initial discovery unknown; private report **2026-07-27**; fixed PMS beta **2026-08-03**, general release **2026-08-04**; chain disclosed **2026-10-16**.  
-**Last updated:** 2026-10-26 (America/New_York)
+**Researcher’s combined-chain rating: Critical, CVSS 3.1: 9.8**
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Initial discovery | Unknown | Researcher does not date discovery. |
+| Private report | 2026-07-27; time/TZ unknown | All four vulnerabilities. |
+| Fixed beta released | 2026-08-03; time/TZ unknown | PMS 1.43.3.10861; Plex Pass beta. |
+| Fixed general release | 2026-08-04; time/TZ unknown | Available to everyone; NAS packaging can lag. |
+| Public chain disclosure | 2026-10-16; time/TZ unknown | Researcher's technical publication. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/plex2shell.md#detection) · [Remediation](details/plex2shell.md#remediation) · [Verification](details/plex2shell.md#verification) · [Timeline](details/plex2shell.md#timeline)
 
@@ -300,9 +346,17 @@ Sources: [researcher disclosure](https://zmain.info/blog/plex2shell), [exploitat
 
 ## 6. Nextcloud’s built-in Collabora CODE server: unauthenticated command injection
 
-**CVE-2026-110447 — Critical, CVSS 4.0: 9.2**  
-**Dates:** Discovery **2026-09** (exact day/private report unknown); fixed app **2026-09-11** per reporting; community warning **2026-10-03**; formal advisory **2026-10-14**.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+**CVE-2026-110447 — Critical, CVSS 4.0: 9.2**
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Discovery | 2026-09; day/time/TZ unknown | Month established; initial private-report date unknown. |
+| Fixed app released | 2026-09-11; time/TZ unknown | richdocumentscode 26.4.303; exact date attributed to reporting. |
+| Community warning | 2026-10-03; time/TZ unknown | Predates the formal advisory. |
+| Formal advisory | 2026-10-14; time/TZ unknown | Public vendor/CVE disclosure. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/nextcloud-code.md#detection) · [Remediation](details/nextcloud-code.md#remediation) · [Verification](details/nextcloud-code.md#verification) · [Timeline](details/nextcloud-code.md#timeline)
 
@@ -330,9 +384,19 @@ Sources: [vendor advisory](https://github.com/CollaboraOnline/online/security/ad
 
 ## 7. Linux KSMBD: serious kernel-level reports, but not “every Linux server”
 
-**ZDI-CAN-33774 and ZDI-CAN-33549 — ZDI rating: Critical, 9.0 each**  
-**Dates:** Private discovery/report dates not established; both public reports **2026-10-21**. Dispatch fix queued **2026-10-21**; SMB Direct patch posted/reviewed **2026-10-23**. Released kernel/NAS fix matrix not established.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+**ZDI-CAN-33774 and ZDI-CAN-33549 — ZDI rating: Critical, 9.0 each**
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/reports | Unknown | Exact dates not established. |
+| Public reports | 2026-10-21; time/TZ unknown | Both KSMBD findings. |
+| Dispatch fix queued | 2026-10-21; time/TZ unknown | Maintainer branch; not a released distribution patch. |
+| SMB Direct patch posted | 2026-10-23 10:36 UTC | Concrete patch sent to the mailing list. |
+| SMB Direct patch reviewed | 2026-10-23 11:02 UTC | Positive review; not proof of delivery to your kernel. |
+| Released kernel/NAS fixes | Not established | No universal vendor fix matrix in the reviewed sources. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/ksmbd.md#detection) · [Remediation](details/ksmbd.md#remediation) · [Verification](details/ksmbd.md#verification) · [Timeline](details/ksmbd.md#timeline)
 
@@ -359,9 +423,19 @@ Sources: [disclosure overview](https://thehackernews.com/2026/10/two-cvss-90-lin
 
 ## 8. WPSplinter: nearby attackers can compromise vulnerable routers
 
-**Broadcom legacy WPS implementation — no CVE or standardized score published**  
-**Dates:** Initial discovery unknown; private reports **2026-07-18 / 2026-07-27**; public disclosure **2026-10-16**; ISP mitigation update **2026-10-20**. No universal fixed-firmware release matrix established.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+**Broadcom legacy WPS implementation — no CVE or standardized score published**
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Initial discovery | Unknown | Exact day not published. |
+| First private report | 2026-07-18; time/TZ unknown | First Broadcom platform report. |
+| Second private report | 2026-07-27; time/TZ unknown | Second platform report. |
+| Public disclosure | 2026-10-16; time/TZ unknown | Technical research and conference presentation. |
+| ISP mitigation update | 2026-10-20; time/TZ unknown | Provider-specific findings, not universal firmware clearance. |
+| Fixed firmware releases | Not established | Obtain exact OEM/ISP build confirmation. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/wpsplinter.md#detection) · [Remediation](details/wpsplinter.md#remediation) · [Verification](details/wpsplinter.md#verification) · [Timeline](details/wpsplinter.md#timeline)
 
@@ -385,9 +459,21 @@ Source: [researcher’s WPSplinter advisory and device guidance](https://qkaiser
 
 ## 9. Header Accordions: HTTP/3 compression becomes resource exhaustion
 
-**Multiple implementations; includes CVE-2025-64702, CVE-2026-12523, and CVE-2025-13945**  
-**Dates:** Project reports span **2025-11-09–2026-07-13**; exact initial discovery dates unknown. Combined research **2026-10-20**. Fixes: quic-go **2025-11-21**, Wireshark listed by **2025-12-03**, quiche **2026-07-14**, lsquic **2026-07-15**; other releases unverified in the reviewed matrix.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+**Multiple implementations; includes CVE-2025-64702, CVE-2026-12523, and CVE-2025-13945**
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Initial discovery | Unknown | Project-report dates are not necessarily discovery dates. |
+| Project reports | 2025-11-09–2026-07-13; time/TZ unknown | Multiple implementations; see per-project timeline. |
+| quic-go fix | 2025-11-21; time/TZ unknown | 0.57.0. |
+| Wireshark fixes listed | By 2025-12-03; time/TZ unknown | 4.6.2 / 4.4.12 in the advisory. |
+| quiche fix | 2026-07-14; time/TZ unknown | 0.29.3. |
+| lsquic fix | 2026-07-15; time/TZ unknown | 4.9.0. |
+| Combined public research | 2026-10-20; time/TZ unknown | Later than several component fixes. |
+| Other fixed releases | Not established | Reviewed matrix does not verify later releases for the remaining stacks. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/header-accordions.md#detection) · [Remediation](details/header-accordions.md#remediation) · [Verification](details/header-accordions.md#verification) · [Per-component timeline](details/header-accordions.md#timeline)
 
@@ -413,9 +499,20 @@ Source: [FoxIO research and implementation matrix](https://foxio.io/blog/header-
 
 ## 10. BeyondTrust Remote Support: an already-exploited appliance vulnerability
 
-**CVE-2026-102764 — Critical, CVSS 4.0: 9.3**  
-**Dates:** Confirmed exploitation **2026-08-29**; private alert/detection **2026-09-27–28**; patches **2026-10-08**, RS SaaS complete by **2026-10-09**; public disclosure **2026-10-15**. Attacker's discovery date unknown.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+**CVE-2026-102764 — Critical, CVSS 4.0: 9.3**
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Attacker discovery | Unknown | Not established. |
+| Confirmed exploitation | 2026-08-29; time/TZ unknown | Earliest vendor-confirmed activity, not proof of the first-ever attack. |
+| Private alert | 2026-09-27; time/TZ unknown | Mandiant's initial note. |
+| Vendor detection/reproduction | 2026-09-28; time/TZ unknown | Vendor identified incident and entry vector. |
+| Patches released | 2026-10-08; time/TZ unknown | Self-hosted RS and precautionary PRA updates. |
+| RS SaaS patching complete | By 2026-10-09; time/TZ unknown | Formal advisory's completion statement. |
+| Public disclosure | 2026-10-15; time/TZ unknown | Coordinated advisory and research. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/beyondtrust.md#detection) · [Remediation](details/beyondtrust.md#remediation) · [Verification](details/beyondtrust.md#verification) · [Timeline](details/beyondtrust.md#timeline)
 
@@ -437,6 +534,8 @@ Sources: [vendor advisory](https://www.beyondtrust.com/trust-center/security-adv
 
 ## Related incidents: these need more than vulnerability patching
 
+[Back to TOC](#table-of-contents)
+
 | Incident | What happened / worst case | Required response |
 |---|---|---|
 | **eMudhra / emSign CA compromise** | Eight intermediate CA private keys were trivially recoverable because of defective key generation. Attackers could issue fraudulent certificates, enabling **TLS impersonation/interception** or fraudulent code-signing trust where the chains remain accepted. This is not a general break of TLS cryptography. | Update OS, browser, runtime, and application trust data. **Go 1.27.3 / 1.26.10**, tracked as **CVE-2026-111943**, add blocking: rebuild and redeploy Go binaries. Replace certificates chaining through affected issuers. Your own use of another CA does not protect your clients from trusting forged certificates. |
@@ -449,8 +548,20 @@ The LiteLLM postmortem attributes the entry point to an **exposed master key tha
 
 #### eMudhra / emSign
 
-**Dates:** Private discovery/report **2026-10-17**; public incident **2026-10-18**. OneCRL distribution **2026-10-17**, original intermediate revocations **2026-10-18**, cross-certificate revocation and Go patches **2026-10-19**; Firefox/ESR **2026-10-20**, Android follow-up **2026-10-21**. These are not one universal patch date.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery | 2026-10-17 16:27 UTC | Researcher recovered affected CA keys. |
+| Private report | 2026-10-17 18:05 UTC | Notification to eMudhra and root programs. |
+| OneCRL distribution complete | 2026-10-17 22:59 UTC | Firefox standard configurations; not every relying client. |
+| Original intermediates revoked | 2026-10-18 09:24:32–09:38:46 UTC | CA revocation, not universal client enforcement. |
+| Public incident record | 2026-10-18 12:06 UTC | Bugzilla incident opened. |
+| Cross-certificate revocation | 2026-10-19 14:55 UTC | Sectigo reported completion. |
+| Go patches released | 2026-10-19; time/TZ unknown | Go 1.27.3 / 1.26.10; rebuild deployed binaries. |
+| Firefox/ESR releases | 2026-10-20; time/TZ unknown | Separate from earlier OneCRL delivery. |
+| Android follow-up | 2026-10-21 08:29 UTC | Firefox Android 158.0.2. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/emudhra.md#detection) · [Remediation](details/emudhra.md#remediation) · [Verification](details/emudhra.md#verification) · [Timeline and corrections](details/emudhra.md#timeline)
 
@@ -460,8 +571,22 @@ The affected keys comprise **six TLS and two code-signing intermediates**, plus 
 
 #### LiteLLM
 
-**Dates:** Master key exposed **2026-05-27**; attacker token extraction **2026-10-10**; malicious release, public discovery and registry containment **2026-10-21**. Corrected postmortem **2026-10-23**, clarifications **2026-10-24**. No cleanup patch: 1.106.2 is a clean rollback target, not host recovery.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Master key exposed | 2026-05-27 18:53:14 UTC | Committed publicly and not revoked. |
+| Attacker token extraction | 2026-10-10 21:27:10 UTC | Organization owner's GitHub OAuth token returned. |
+| Malicious wheels published | 2026-10-21 11:39:51–11:40:13 UTC | Seven PyPI wheels. |
+| Malicious images published | 2026-10-21 11:46:56 UTC | Public container releases. |
+| Public discovery | 2026-10-21 12:06:41 UTC | Researcher issue opened. |
+| PyPI quarantine | By 2026-10-21 13:23 UTC | Removal does not neutralize cached artifacts. |
+| GHCR tags unavailable | By 2026-10-21 13:51 UTC | Different registry containment window. |
+| Docker Hub containment | 2026-10-21 14:20 UTC | Affected tags removed or repointed. |
+| Corrected postmortem | 2026-10-23 21:00 UTC | Supersedes earlier entry-point theories. |
+| Vendor clarifications | 2026-10-24 UTC; time unknown | Clean-artifact and entry-point clarification. |
+| Cleanup patch | Not applicable | 1.106.2 is a clean rollback target, not host recovery. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/litellm.md#detection) · [Remediation](details/litellm.md#remediation) · [Verification](details/litellm.md#verification) · [Registry timeline](details/litellm.md#timeline)
 
@@ -471,8 +596,17 @@ PyPI, GHCR and Docker Hub have different removal windows, and **cached artifacts
 
 #### Railway
 
-**Dates:** First reported internal detection **2026-10-20**; public security disclosure **2026-10-21**; confirmed attacker eviction and preliminary report **2026-10-22**; recovery guides **2026-10-23**. No local software patch substitutes for issuer-side secret revocation.  
-**Last updated:** 2026-10-26 (America/New_York)
+[Back to TOC](#table-of-contents)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| First reported internal detection | 2026-10-20 13:58 UTC | Not proof of the attacker's first access. |
+| Public security disclosure | 2026-10-21 20:19–22:10 UTC | Publication within this window; exact time unspecified. |
+| Confirmed attacker eviction | 2026-10-22 03:32 UTC | Vendor containment claim, not customer credential recovery. |
+| Preliminary report | 2026-10-22 UTC; time unknown | Scope and forensic findings remain preliminary. |
+| Recovery guides | 2026-10-23 UTC; time unknown | Deployment/login follow-up. |
+| Local software patch | Not applicable | Issuer-side revocation and replacement of exposed credentials required. |
+| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
 
 **Detailed guide:** [Detection](details/railway.md#detection) · [Remediation](details/railway.md#remediation) · [Verification](details/railway.md#verification) · [Timeline and limits](details/railway.md#timeline)
 

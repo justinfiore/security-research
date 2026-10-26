@@ -41,6 +41,8 @@ Use fresh web search and live page reads. If a source blocks access, try its off
 
 ## Document and date conventions
 
+In the main guide, put `[Back to TOC](#table-of-contents)` immediately below each vulnerability or incident heading, including the related-incidents group heading. Keep this navigation when adding new items.
+
 Each main entry deep-links to its detail guide's **Detection**, **Remediation**, **Verification** and **Timeline** sections. Detailed guides live in `details/`, link back to the specific main entry, and include:
 
 1. Severity, affected components, attack conditions and worst-case result.
@@ -55,7 +57,9 @@ Keep scripts in separate files and link to them. Commands must identify the work
 
 **Dates:** Use ISO dates (`YYYY-MM-DD`) and preserve the source's date/timezone for historical events. Label partial dates such as “2026-08 (exact day not established)” and genuinely unknown dates explicitly. CVE publication, private discovery, public disclosure, patch release, downstream packaging, exploitation start and KEV addition are different events. A mitigation or revocation is not a universal software patch.
 
-Each item has `**Last updated:** YYYY-MM-DD (America/New_York)` in both the main guide and its detail guide. Change both dates when either item representation materially changes, including a corrected date, version, detection instruction or interpretation. Do **not** advance item dates merely because research ran. Main-guide “As of” tracks the latest content revision, not a claim that every source was accessible that day. Unchanged data keeps its date.
+Main-guide dates use a three-column table: **Event | Date and time (timezone) | Notes**, with one row per distinct milestone. Retain verified timestamps and UTC offsets/timezone labels; write `time/TZ unknown` or `time unknown` when the reviewed sources establish only a date. Never invent midnight or assign a timezone to an unzoned source date. Keep qualifications such as “by,” date ranges and partial dates visible.
+
+Each main item includes a **Last updated** table row with its actual revision timestamp in America/New_York, including EDT/EST and the UTC offset. Its detail guide retains `**Last updated:** YYYY-MM-DD (America/New_York)`. Keep their calendar dates aligned when either item representation materially changes, including a corrected date, version, detection instruction or interpretation. Presentation-only edits may update the main timestamp without implying a new source review; note that distinction. Do **not** advance item dates merely because research ran. Main-guide “As of” tracks the latest content revision, not a claim that every source was accessible that day. Unchanged data keeps its date.
 
 ## Changelog on every run
 

@@ -4,6 +4,14 @@
 
 Each entry records a documentation/research run, not a claim that readers' systems were patched. Item-level **Last updated** dates change only when the corresponding content changes. A complete review with no substantive changes records **No Changes this run.** Incomplete reviews report their coverage gaps instead.
 
+## 2026-10-26 08:36 EDT (UTC−04:00) — Setup: readability and navigation
+
+**Scope:** Editorial update using the already sourced timelines; no new research window or completed discovery sweep. The research cutoff is unchanged.
+
+- Replaced all 13 main-guide date paragraphs with **Event / Date and time (timezone) / Notes** tables; see [PHP](black-october/black-october-2026.md#1-php2shell-unauthenticated-execution-below-your-application) for date-only entries and [LiteLLM](black-october/black-october-2026.md#litellm) for verified timestamps and containment windows. Missing times/timezones remain explicitly unknown.
+- Added **Back to TOC** immediately below all vulnerability and incident headings, including the [related-incidents group](black-october/black-october-2026.md#related-incidents-these-need-more-than-vulnerability-patching); existing headings and [TOC destinations](black-october/black-october-2026.md#table-of-contents) are preserved.
+- Updated [maintenance conventions](black-october/MAINTENANCE.md#document-and-date-conventions) so future runs preserve the tables, timezone precision and return navigation. Revision timestamps describe this editorial change, not fresh vulnerability findings; detailed guides and scripts are unchanged.
+
 ## 2026-10-26 08:22 EDT (UTC−04:00) — Setup
 
 **Scope:** Expanded and refreshed the existing ten vulnerability groups and three related incidents using their cited advisory, release, research and incident sources. Historical event windows vary by item and are recorded in each timeline; sources were reviewed on 2026-10-26. This was setup and a targeted refresh, **not a complete new-vulnerability discovery sweep**. No Complete research cutoff is established; the first daily discovery run starts from 2026-10-01.
