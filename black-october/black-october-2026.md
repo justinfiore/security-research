@@ -2,7 +2,7 @@
 
 **As of October 26, 2026**
 
-[Changelog and review history](../Changelog.md) · [Daily maintenance process](MAINTENANCE.md)
+[Changelog and review history](../Changelog.md) · [Hourly maintenance process](MAINTENANCE.md)
 
 “Black October” is an informal label for the unusually dense run of vulnerability disclosures and security incidents this month—particularly the October 19–23 cluster. It is **not one coordinated attack, one vulnerability family, or an official advisory list**.
 
@@ -16,20 +16,20 @@ This report covers the major disclosures most relevant to developers and operato
   - [How to use the impact checks](#how-to-use-the-impact-checks)
 - [Tailworm — Tailscale SSH and related findings under review](#tailworm-tailscale-ssh-and-related-findings-under-review)
 - [AuthMask — Microsoft Authenticator for Android](#authmask-microsoft-authenticator-for-android-token-theft)
-- [1. PHP2Shell](#1-php2shell-unauthenticated-execution-below-your-application)
+- [PHP2Shell](#1-php2shell-unauthenticated-execution-below-your-application)
   - [The October 23 follow-up](#the-october-23-follow-up-matters)
-- [2. HTTP2Shell / Node2Shell — Brotli](#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability)
+- [HTTP2Shell / Node2Shell — Brotli](#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability)
   - [Other high-severity Node.js fixes](#other-high-severity-nodejs-fixes-in-the-same-release)
-- [3. GitLab and Ruby](#3-gitlab-and-ruby-regex-compilation-becomes-code-execution)
+- [GitLab and Ruby](#3-gitlab-and-ruby-regex-compilation-becomes-code-execution)
   - [GitLab identity vulnerabilities](#related-gitlab-identity-vulnerabilities)
   - [Ruby applications](#ruby-applications-need-their-own-update)
-- [4. Pillow](#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution)
-- [5. Plex2Shell](#5-plex2shell-a-home-server-compromise-chain-is-being-exploited)
-- [6. Nextcloud’s built-in Collabora CODE server](#6-nextclouds-built-in-collabora-code-server-unauthenticated-command-injection)
-- [7. Linux KSMBD](#7-linux-ksmbd-serious-kernel-level-reports-but-not-every-linux-server)
-- [8. WPSplinter](#8-wpsplinter-nearby-attackers-can-compromise-vulnerable-routers)
-- [9. Header Accordions — HTTP/3](#9-header-accordions-http3-compression-becomes-resource-exhaustion)
-- [10. BeyondTrust Remote Support](#10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability)
+- [Pillow](#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution)
+- [Plex2Shell](#5-plex2shell-a-home-server-compromise-chain-is-being-exploited)
+- [Nextcloud’s built-in Collabora CODE server](#6-nextclouds-built-in-collabora-code-server-unauthenticated-command-injection)
+- [Linux KSMBD](#7-linux-ksmbd-serious-kernel-level-reports-but-not-every-linux-server)
+- [WPSplinter](#8-wpsplinter-nearby-attackers-can-compromise-vulnerable-routers)
+- [Header Accordions — HTTP/3](#9-header-accordions-http3-compression-becomes-resource-exhaustion)
+- [BeyondTrust Remote Support](#10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability)
 - [Related incidents: eMudhra, LiteLLM, and Railway](#related-incidents-these-need-more-than-vulnerability-patching)
   - [Am I impacted by the related incidents?](#am-i-impacted-by-the-related-incidents)
     - [eMudhra / emSign](#emudhra--emsign)
@@ -127,7 +127,9 @@ An untrusted app on the same Android device can impersonate an installed Microso
 
 Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-80097), [Microsoft CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-80097), [Enclave research](https://enclave.ai/blog/authmask-we-made-microsoft-authenticator-hand-over-tokens), [user-provided X lead](https://x.com/The_Cyber_News/status/2114630691896127947).
 
-## 1. PHP2Shell: unauthenticated execution below your application
+<a name="1-php2shell-unauthenticated-execution-below-your-application"></a>
+
+## PHP2Shell: unauthenticated execution below your application
 
 [Back to TOC](#table-of-contents)
 
@@ -180,7 +182,9 @@ sh stack-inventory.sh php
 
 Sources: [PHP advisories, including the October 23 update](https://www.php.net/archive/2026.php), [CISA alert](https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching).
 
-## 2. HTTP2Shell / Node2Shell: a cross-stack Brotli decoder vulnerability
+<a name="2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability"></a>
+
+## HTTP2Shell / Node2Shell: a cross-stack Brotli decoder vulnerability
 
 [Back to TOC](#table-of-contents)
 
@@ -259,7 +263,9 @@ For the **three additional Node.js vulnerabilities**, review whether user-contro
 
 Sources: [Node.js security release](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases), [Python advisory](https://github.com/advisories/GHSA-9v8h-qqgm-4m35), [HTTP2Shell naming and cross-stack scope](https://www.aikido.dev/blog/python-packages-vulnerable-node2shell-brotli-cve-2026-111497), [cross-ecosystem impact and patch matrix](https://thehackernews.com/2026/10/brotli-decoder-flaw-behind-nodejs-rce.html).
 
-## 3. GitLab and Ruby: regex compilation becomes code execution
+<a name="3-gitlab-and-ruby-regex-compilation-becomes-code-execution"></a>
+
+## GitLab and Ruby: regex compilation becomes code execution
 
 [Back to TOC](#table-of-contents)
 
@@ -322,7 +328,9 @@ GitLab now links threat-detection rules from both release notices. Use the [deta
 
 Sources: [October 12 GitLab advisory](https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-4-2-released/), [October 21 GitLab advisory](https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-5-1-released/), [Ruby advisory](https://www.ruby-lang.org/en/news/2026/10/23/regexp-fixes-for-gitlab-cves/).
 
-## 4. Pillow: untrusted images reach native memory corruption and command execution
+<a name="4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution"></a>
+
+## Pillow: untrusted images reach native memory corruption and command execution
 
 [Back to TOC](#table-of-contents)
 
@@ -366,7 +374,9 @@ The metadata script also lists `olefile`. On Linux/macOS, `command -v gs` checks
 
 Sources: [Pillow release notes](https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html), [multi-frame advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-v9pv-5gc8-w2m6), [FlashPix advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-5x8w-8jj5-q52h), [additional vulnerability details](https://thehackernews.com/2026/10/critical-flaw-in-pythons-popular-pillow.html).
 
-## 5. Plex2Shell: a home-server compromise chain is being exploited
+<a name="5-plex2shell-a-home-server-compromise-chain-is-being-exploited"></a>
+
+## Plex2Shell: a home-server compromise chain is being exploited
 
 [Back to TOC](#table-of-contents)
 
@@ -405,7 +415,9 @@ Inspect Plex's Remote Access settings, router port forwards/UPnP mappings, rever
 
 Sources: [researcher disclosure](https://zmain.info/blog/plex2shell), [exploitation reporting and fixed version](https://thehackernews.com/2026/10/hackers-exploit-plex2shell-flaws-to.html).
 
-## 6. Nextcloud’s built-in Collabora CODE server: unauthenticated command injection
+<a name="6-nextclouds-built-in-collabora-code-server-unauthenticated-command-injection"></a>
+
+## Nextcloud’s built-in Collabora CODE server: unauthenticated command injection
 
 [Back to TOC](#table-of-contents)
 
@@ -443,7 +455,9 @@ Find `richdocumentscode` and its version in both the enabled and disabled lists.
 
 Sources: [vendor advisory](https://github.com/CollaboraOnline/online/security/advisories/GHSA-g3vx-3m76-fghh), [exploitation reporting](https://www.bleepingcomputer.com/news/security/hackers-exploit-collabora-rce-flaw-to-backdoor-nextcloud-servers/).
 
-## 7. Linux KSMBD: serious kernel-level reports, but not “every Linux server”
+<a name="7-linux-ksmbd-serious-kernel-level-reports-but-not-every-linux-server"></a>
+
+## Linux KSMBD: serious kernel-level reports, but not “every Linux server”
 
 [Back to TOC](#table-of-contents)
 
@@ -482,7 +496,9 @@ A port 445 listener alone does not identify KSMBD; Samba can use it too. Check k
 
 Sources: [disclosure overview](https://thehackernews.com/2026/10/two-cvss-90-linux-ksmbd-rce-flaws.html), [October 23 maintainer discussion](https://lists.samba.org/archive/samba-technical/2026-October/141179.html).
 
-## 8. WPSplinter: nearby attackers can compromise vulnerable routers
+<a name="8-wpsplinter-nearby-attackers-can-compromise-vulnerable-routers"></a>
+
+## WPSplinter: nearby attackers can compromise vulnerable routers
 
 [Back to TOC](#table-of-contents)
 
@@ -518,7 +534,9 @@ A listed vulnerable model/build is actionable; an unlisted model is **unknown**,
 
 Source: [researcher’s WPSplinter advisory and device guidance](https://qkaiser.github.io/broadcom-wps/).
 
-## 9. Header Accordions: HTTP/3 compression becomes resource exhaustion
+<a name="9-header-accordions-http3-compression-becomes-resource-exhaustion"></a>
+
+## Header Accordions: HTTP/3 compression becomes resource exhaustion
 
 [Back to TOC](#table-of-contents)
 
@@ -558,7 +576,9 @@ Look for `github.com/quic-go/quic-go`, its version, and any replacement module. 
 
 Source: [FoxIO research and implementation matrix](https://foxio.io/blog/header-accordions-qpack-amplification-attacks-against-http-3-servers).
 
-## 10. BeyondTrust Remote Support: an already-exploited appliance vulnerability
+<a name="10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability"></a>
+
+## BeyondTrust Remote Support: an already-exploited appliance vulnerability
 
 [Back to TOC](#table-of-contents)
 

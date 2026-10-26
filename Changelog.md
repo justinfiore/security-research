@@ -4,6 +4,13 @@
 
 Each entry records a run that changed documentation or scripts, not a claim that readers' systems were patched. Item-level **Last updated** dates change only when the corresponding content changes. Runs without content changes leave this file untouched and do not commit or push; their outcomes and coverage gaps stay in their run threads. Historical entries retain the conventions in effect when written.
 
+## 2026-10-26 09:00 EDT (UTC−04:00) — Setup: self-contained job and consistent navigation
+
+**Scope:** Moved the saved maintenance job into the repository and applied the owner's navigation preference. No vulnerability research was performed; item findings and Last updated values are unchanged.
+
+- Consolidated the full job into [MAINTENANCE.md](black-october/MAINTENANCE.md#set-up-the-checkout), including checkout recovery, the [newest-entry/48-hour search window](black-october/MAINTENANCE.md#research-each-run), source review, no-change handling, validation, commit/push verification, and [reporting and conditional archiving](black-october/MAINTENANCE.md#report-and-archive). Each fresh run can execute it without conversation history and must not create other threads. The scheduling thread will replace the saved prompt with a reference to this file after publication.
+- Made the [main TOC](black-october/black-october-2026.md#table-of-contents) consistently bulleted without numeric labels and removed numbers from item headings. Explicit legacy anchors preserve shared links and detailed-guide backlinks. Updated [ordering conventions](black-october/MAINTENANCE.md#admission-and-ordering) to retain this style for new items; numbered procedural steps are unchanged.
+
 ## 2026-10-26 08:58 EDT (UTC−04:00) — Setup: hourly maintenance policy
 
 **Scope:** Maintenance-policy alignment with the owner's replacement schedule and completion rules; no vulnerability research or discovery cutoff advanced.
