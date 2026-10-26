@@ -30,11 +30,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [WPSplinter](#8-wpsplinter-nearby-attackers-can-compromise-vulnerable-routers)
 - [Header Accordions — HTTP/3](#9-header-accordions-http3-compression-becomes-resource-exhaustion)
 - [BeyondTrust Remote Support](#10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability)
-- [Related incidents: eMudhra, LiteLLM, and Railway](#related-incidents-these-need-more-than-vulnerability-patching)
-  - [Am I impacted by the related incidents?](#am-i-impacted-by-the-related-incidents)
-    - [eMudhra / emSign](#emudhra--emsign)
-    - [LiteLLM](#litellm)
-    - [Railway](#railway)
+- [eMudhra / emSign — certificate-authority compromise](#emudhra--emsign)
+- [LiteLLM — malicious release and credential theft](#litellm)
+- [Railway — exposed environment secrets](#railway)
 - [What should I patch? A stack-based decision guide](#what-should-i-patch-a-stack-based-decision-guide)
 
 ## The short version
@@ -63,6 +61,7 @@ Interpret results in three steps: **is the component present; does its exact bui
 | [stack-inventory.sh](stack-inventory.sh) | PHP settings, Node/Bun/Ruby versions, GitLab information, Nextcloud app list, or Go binary build metadata | POSIX shell and the selected product's tool |
 | [python-package-inventory.py](python-package-inventory.py) | Brotli, brotlicffi, Pillow, olefile, and LiteLLM package metadata without importing them | Trusted Python 3.8+; no third-party dependencies |
 | [linux-service-inventory.sh](linux-service-inventory.sh) | KSMBD presence, SMB/Plex listeners, and visible RDMA devices | Linux; `ss` for listener inspection |
+| [check_brotli.py](check_brotli.py) | Response-header compression inventory; **not a vulnerability verdict**. [Usage and limits](details/brotli.md#response-header-inventory-script) | Python 3.9+; standard library; authorized HTTP(S) GET requests |
 
 An exit status of zero means the requested inventory commands completed, **not that the system is patched**. Nonzero status means the check failed or its input/tool is unavailable. The Linux script may finish with explicitly marked `UNKNOWN` partial results; read its output. Shell checks inspect tools on the current user's PATH, so run inside the correct deployment or set PATH to the intended runtime. Do not run them against a suspected compromised installation; use clean-host snapshot inspection instead.
 
@@ -198,7 +197,10 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | Python Brotli patch | 2026-10-22 13:57 UTC | First PyPI upload of Brotli 1.2.1. |
 | Python brotlicffi patch | 2026-10-22 16:19 UTC | First PyPI upload of brotlicffi 1.2.1.0. |
 | Proxy fixes | Varies by component | Separate Envoy/Istio release dates in the detailed timeline; do not infer from Node's date. |
-| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
+| Java / Ruby binding updates | 2026-10-24; time/TZ unknown | Brotli4j advisory identifies 1.24.0; Ruby maintainer confirms gem 0.9.1 fix. |
+| PHP extension patch | 2026-10-24 23:49 UTC | php-ext-brotli 0.21.1 bundles fixed Brotli 1.2.1. |
+| .NET patches | 2026-10-25; time/TZ unknown | Microsoft released fixed runtime/SDK builds; see matrix below. |
+| **Last updated** | **2026-10-26 09:23 EDT (UTC−04:00)** | Cross-language fixes, decoder containment and response-header inventory guidance. |
 
 **Detailed guide:** [Detection](details/brotli.md#detection) · [Remediation](details/brotli.md#remediation) · [Verification](details/brotli.md#verification) · [Timeline](details/brotli.md#timeline)
 
@@ -208,7 +210,7 @@ Malformed Brotli input can overflow an internal buffer in Google’s native deco
 
 **Worst case:** **RCE, process-memory disclosure, or denial of service.** Researchers demonstrated RCE on a specific official Node.js Linux ARM64 build; that does not establish universal exploit reliability across every consumer.
 
-**Affected technology:** Node.js, Bun, Python `Brotli` and `brotlicffi`, and other applications embedding the vulnerable C library. Envoy and Istio are relevant when configured to decompress Brotli.
+**Affected technology:** Node.js, Bun, Python `Brotli` and `brotlicffi`, modern .NET, native Java/Scala/PHP/Ruby bindings, and other applications embedding the vulnerable C library. Envoy and Istio are relevant when configured to decompress Brotli. Language presence alone is not exposure: identify the actual decoder and input path. Pure-Go/Java/Rust implementations do not automatically inherit the C exploit.
 
 The important exposure distinction:
 
@@ -227,6 +229,12 @@ The important exposure distinction:
 | Google Brotli C library | **1.0.10 / 1.1.1 / 1.2.1**, depending on branch |
 | Envoy | **1.36.12 / 1.37.8 / 1.38.6 / 1.39.3 / 1.40.0** |
 | Istio | **1.29.9 / 1.30.6 / 1.31.2** |
+| .NET runtime | **8.0.33 / 9.0.22 / 10.0.14**; preview **11.0.0-rc.3.26522.148** |
+| Java / Scala `Brotli4j` and `native-*` artifacts | **1.24.0**; update the BOM/wrapper and native artifacts together |
+| PHP `php-ext-brotli` | **0.21.1**; assess libcurl's decoder separately |
+| Ruby `brotli` gem | **0.9.1+**; **0.9.0 is not fixed** |
+
+Microsoft separately rates .NET's impact **8.1 High (CVSS 3.1)** and excludes .NET Framework from its advisory. Default ASP.NET Core/HttpClient configurations do not enable automatic Brotli decompression. Upgrade shared runtimes and restart; **rebuild/redeploy self-contained and NativeAOT apps**, which retain their own decoders. See the [language-by-language inventory and remediation](details/brotli.md#inventory-by-language-and-deployment), including Go/Rust and vendor-backport caveats.
 
 **Envoy 1.36 and Istio 1.29 are unsupported branches**; a fix for this CVE does not restore general security support. Prefer a supported branch. See the [cross-stack guidance](https://patchtheplanet.org/brotli) for embedded clients and temporary decoding controls.
 
@@ -259,9 +267,13 @@ python3 -I -S python-package-inventory.py /path/to/venv/lib/python3.12/site-pack
 
 Compare `Brotli` and `brotlicffi` with their fixed releases above. Missing metadata does not rule out vendored libraries, zip imports, system packages, or another virtual environment. Metadata is inventory evidence, not proof of binary integrity.
 
+For optional response-compression inventory, run `python3 check_brotli.py https://example.com/` with your authorized URL. It sends two GET header probes without reading/decompressing bodies. **`BR_ADVERTISED` is not evidence of a vulnerable server, and `NOT_OBSERVED` is not clearance.** See [script usage, JSONL results and operating limits](details/brotli.md#response-header-inventory-script). Establish exposure through deployed versions and decoding paths, then [contain before the first decoder](details/brotli.md#contain-before-the-first-decoder).
+
 For the **three additional Node.js vulnerabilities**, review whether user-controlled URLs/hostnames reach DNS resolution, hostname allowlists, or TLS clients. The NUL-truncation issue concerns DNS/allowlist handling; the two IP-format issues concern TLS identity validation. Even if Brotli is unused, these are independent reasons to install the Node security release.
 
 Sources: [Node.js security release](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases), [Python advisory](https://github.com/advisories/GHSA-9v8h-qqgm-4m35), [HTTP2Shell naming and cross-stack scope](https://www.aikido.dev/blog/python-packages-vulnerable-node2shell-brotli-cve-2026-111497), [cross-ecosystem impact and patch matrix](https://thehackernews.com/2026/10/brotli-decoder-flaw-behind-nodejs-rce.html).
+
+Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/announcements/issues/494), [Brotli4j advisory](https://github.com/hyperxpro/Brotli4j/security/advisories/GHSA-x524-jrqf-vwq6), [PHP extension release](https://github.com/kjdev/php-ext-brotli/releases/tag/0.21.1), [Ruby maintainer confirmation](https://github.com/miyucy/brotli/issues/64).
 
 <a name="3-gitlab-and-ruby-regex-compilation-becomes-code-execution"></a>
 
@@ -613,23 +625,18 @@ Review exposure and appliance/security logs back through the reported exploitati
 
 Sources: [vendor advisory](https://www.beyondtrust.com/trust-center/security-advisories/bt26-05), [observed attack reporting](https://www.bleepingcomputer.com/news/security/beyondtrust-patches-zero-day-exploited-in-attacks-since-august/).
 
-## Related incidents: these need more than vulnerability patching
+<a name="related-incidents-these-need-more-than-vulnerability-patching"></a>
+<a name="am-i-impacted-by-the-related-incidents"></a>
+
+## eMudhra / emSign
 
 [Back to TOC](#table-of-contents)
 
-| Incident | What happened / worst case | Required response |
-|---|---|---|
-| **eMudhra / emSign CA compromise** | Eight intermediate CA private keys were trivially recoverable because of defective key generation. Attackers could issue fraudulent certificates, enabling **TLS impersonation/interception** or fraudulent code-signing trust where the chains remain accepted. This is not a general break of TLS cryptography. | Update OS, browser, runtime, and application trust data. **Go 1.27.3 / 1.26.10**, tracked as **CVE-2026-111943**, add blocking: rebuild and redeploy Go binaries. Replace certificates chaining through affected issuers. Your own use of another CA does not protect your clients from trusting forged certificates. |
-| **LiteLLM 1.107.0 supply-chain compromise** | Malicious PyPI wheels and container images contained a **credential stealer and remote-code loader**. Floating tags such as `latest` and `main-stable` also pointed to malicious images during the incident. | Isolate affected environments, preserve evidence, rebuild from verified clean artifacts, and revoke/rotate reachable secrets from a clean system. **Do not start by running `pip` in the infected environment:** Python startup hooks can rerun the malware. The incident guidance identified **1.106.2** as a clean rollback target. |
-| **Railway secret exposure** | Attackers accessed internal systems and decrypted some customers’ stored environment variables. Worst case: **API-key, database, cloud, or registry compromise**, depending on stored credentials. | Follow Railway’s recommendation to revoke and replace sensitive variables stored before October 21, redeploy with replacements, and review provider/registry audit logs. A local application patch does not address this exposure. |
+**Certificate-authority compromise — TLS impersonation and fraudulent code-signing trust.** This incident has no single incident-wide CVSS score; client-specific fixes have their own advisories, including Go **CVE-2026-111943**.
 
-The LiteLLM postmortem attributes the entry point to an **exposed master key that was not revoked**, followed by theft of overprivileged GitHub tokens. Earlier speculation about other causes should not supersede that finding.
+Eight intermediate CA private keys were trivially recoverable because of defective key generation. Attackers could issue fraudulent certificates accepted by clients that still trust the affected chains. **Worst case:** intercepted or modified TLS traffic and malicious code accepted under fraudulent signatures, depending on verifier policy and attacker positioning. This is not a general break of TLS cryptography.
 
-### Am I impacted by the related incidents?
-
-#### eMudhra / emSign
-
-[Back to TOC](#table-of-contents)
+**Affected technology:** OS/browser trust stores, Java and Python application bundles, containers, Go binaries, appliances and custom verifiers—not just sites using emSign certificates. Your own use of another certificate authority does not stop your clients from trusting a forged remote certificate.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -642,7 +649,10 @@ The LiteLLM postmortem attributes the entry point to an **exposed master key tha
 | Go patches released | 2026-10-19; time/TZ unknown | Go 1.27.3 / 1.26.10; rebuild deployed binaries. |
 | Firefox/ESR releases | 2026-10-20; time/TZ unknown | Separate from earlier OneCRL delivery. |
 | Android follow-up | 2026-10-21 08:29 UTC | Firefox Android 158.0.2. |
-| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
+| Java follow-up alert | 2026-10-24; time/TZ unknown | CVE-2026-114820, Oracle CVSS 3.1 9.1 Critical; earlier emergency builds require further action. |
+| CPython key-blocking releases | 2026-10-26; time/TZ unknown | CVE-2026-115557; runtime protection in `ssl`, separate from CA-bundle updates. |
+| Chrome root removal | **Expected** 2026-10-27 morning PDT (UTC−07:00) | Google forecast for Chrome Root Store users; not completed rollout as of this update. |
+| **Last updated** | **2026-10-26 09:26 EDT (UTC−04:00)** | Java follow-up, CPython fixes, alternate trust paths and detection guidance. |
 
 **Detailed guide:** [Detection](details/emudhra.md#detection) · [Remediation](details/emudhra.md#remediation) · [Verification](details/emudhra.md#verification) · [Timeline and corrections](details/emudhra.md#timeline)
 
@@ -650,9 +660,26 @@ Inventory client trust stores as well as your server certificates: operating-sys
 
 The affected keys comprise **six TLS and two code-signing intermediates**, plus cross-signs. Include certificates affected by resulting root distrust, not just compromised issuers. Firefox Android needs **158.0.2 or later** for the follow-up. **CA revocation is not proof that a client enforces the block**; test the effective verifier. The vendor's October 26 statement still promises a full root-cause review.
 
-#### LiteLLM
+**Remediation:** Update each independently managed trust store and replace certificates chaining through distrusted issuers. Rebuild/redeploy Go binaries with **1.27.3 / 1.26.10 or later supported fixes**; updating only the installed compiler leaves old binaries untouched. Review historical certificate and connection evidence when impersonation is suspected; trust updates cannot undo disclosed credentials or data.
+
+**Do not stop at the first emergency update:**
+
+- **Java / Scala:** require vendor release notes covering **JDK-8395690 / CVE-2026-114820**. The October 24 Oracle alert lists earlier emergency builds as affected. Follow the current [Java update/root-removal guidance](details/emudhra.md#java-and-scala), including the **Debian/Ubuntu Java keystore rebuild**. The [official offline checker](details/emudhra.md#java-use-the-official-offline-checker-with-its-actual-limits) locates named roots; it does not prove application-wide protection.
+- **Python:** **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18** add key blocking in `ssl`; the last three are source-only upstream releases. Independently update **certifi 2026.10.19**, **pip 26.2.2**, and other bundled tools. See [effective-store inventory and packaging limits](details/emudhra.md#python); native extensions can bypass Python's verifier.
+- **Alternate chains:** removing `emSign ECC Root CA - G3` alone does not block Sectigo cross-signs under **AAA Certificate Services**. Check direct anchors and the vendor's current policy, not only root names. [Trust-path guidance](details/emudhra.md#trust-paths-and-what-each-mitigation-changes) distinguishes intermediate blocks, root removal and revocation.
+- **Certificate owners:** prepare replacement chains before Google's **expected October 27 morning PDT** root removal. Legitimate certificates under the removed root may fail too. [Central controls and CT](details/emudhra.md#central-controls-ct-and-egress-limits) have coverage limits: a WAF, hostname allowlist or absence of CT evidence does not prove outbound TLS safety.
+
+Sources: [Mozilla incident record](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449), [Go security announcement](https://groups.google.com/g/golang-announce/c/66pojueaQek), [vendor statement](https://emudhra.com/en/post/certificate-security-incident). See the detailed guide for per-runtime checks and vendor trust-distribution guidance.
+
+## LiteLLM
 
 [Back to TOC](#table-of-contents)
+
+**Supply-chain compromise — credential theft and arbitrary code execution.** This is a malicious release incident, not a software bug with one incident-wide CVSS score.
+
+**Affected technology:** all seven **LiteLLM 1.107.0 PyPI wheels** and affected public container images, including floating tags during the incident. The payload included a credential stealer and remote-code loader. **Worst case:** execution as the workload account, stolen cloud/AI/database/CI secrets, and downstream compromise permitted by those credentials and mounts.
+
+The corrected postmortem identifies an **exposed, unrevoked master key**, followed by theft of overprivileged GitHub tokens, as the entry point. Earlier root-cause speculation should not supersede that finding.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -667,7 +694,7 @@ The affected keys comprise **six TLS and two code-signing intermediates**, plus 
 | Corrected postmortem | 2026-10-23 21:00 UTC | Supersedes earlier entry-point theories. |
 | Vendor clarifications | 2026-10-24 UTC; time unknown | Clean-artifact and entry-point clarification. |
 | Cleanup patch | Not applicable | 1.106.2 is a clean rollback target, not host recovery. |
-| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
+| **Last updated** | **2026-10-26 09:23 EDT (UTC−04:00)** | Standalone impact and recovery summary; existing detailed response retained. |
 
 **Detailed guide:** [Detection](details/litellm.md#detection) · [Remediation](details/litellm.md#remediation) · [Verification](details/litellm.md#verification) · [Registry timeline](details/litellm.md#timeline)
 
@@ -675,9 +702,17 @@ Inspect **historical** dependency manifests, CI install logs, registry digests, 
 
 PyPI, GHCR and Docker Hub have different removal windows, and **cached artifacts remain dangerous after removal**. The vendor excludes its private enterprise release, not every public image used by an enterprise. The attacker used a signed official pipeline: signing alone did not establish trustworthy source or content.
 
-#### Railway
+**Remediation:** Isolate affected environments and preserve evidence, then rebuild from verified clean artifacts and revoke reachable secrets at their issuers from a clean system. **Do not start with ordinary Python or `pip` in the suspected environment:** startup hooks can rerun malware. **1.106.2** was identified as a clean rollback target, **not a malware cleanup patch**; recovery must also cover detached loaders, poisoned caches, host/shared-mount access and already issued sessions.
+
+Sources: [canonical attack-chain postmortem](https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain), [vendor incident response](https://docs.litellm.ai/blog/security-incident-oct-21-2026), [researcher evidence and vendor follow-up](https://github.com/BerriAI/litellm/issues/47826).
+
+## Railway
 
 [Back to TOC](#table-of-contents)
+
+**Platform-side secret exposure — credential abuse and downstream data/system compromise.** No single incident-wide CVSS score or local package patch describes this incident.
+
+**Affected technology:** Railway-hosted environment variables and integrations, plus the cloud, database, source-control, registry and API services authorized by those secrets. Attackers accessed internal systems and decrypted a subset of stored variables. **Worst case:** data disclosure, destructive changes or code execution in downstream systems, bounded by credential permissions—not only the Railway workload.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -687,7 +722,7 @@ PyPI, GHCR and Docker Hub have different removal windows, and **cached artifacts
 | Preliminary report | 2026-10-22 UTC; time unknown | Scope and forensic findings remain preliminary. |
 | Recovery guides | 2026-10-23 UTC; time unknown | Deployment/login follow-up. |
 | Local software patch | Not applicable | Issuer-side revocation and replacement of exposed credentials required. |
-| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
+| **Last updated** | **2026-10-26 09:23 EDT (UTC−04:00)** | Standalone impact and issuer-side credential recovery summary. |
 
 **Detailed guide:** [Detection](details/railway.md#detection) · [Remediation](details/railway.md#remediation) · [Verification](details/railway.md#verification) · [Timeline and limits](details/railway.md#timeline)
 
@@ -695,7 +730,9 @@ From a clean browser/session, review your projects, shared variables, environmen
 
 The vendor's **preliminary** estimate is at most **1.85% of workspaces (approximately 100,000)**; precautionary provider revocations do not prove individual exposure. Include private registry credentials and existing authenticated sessions in recovery. Commits pushed during the deployment pause **were not queued**: explicitly deploy the intended reviewed revision. Source-code-access findings remain unresolved.
 
-Sources: [Mozilla’s eMudhra incident record](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449), [Go security announcement](https://groups.google.com/g/golang-announce/c/66pojueaQek), [LiteLLM postmortem](https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain), [LiteLLM remediation guidance](https://github.com/BerriAI/litellm/issues/47826), [Railway preliminary report](https://blog.railway.com/p/preliminary-report-october-security-incident).
+**Remediation:** Follow the precautionary recommendation to revoke and replace sensitive variables stored before October 21. Rotate at the **issuing provider**, update every consumer and redeploy, then verify old credentials and sessions no longer work. Editing `DATABASE_URL` or a dashboard variable alone does not change the actual database password. Preserve logs and investigate misuse; rotation cannot recover already exfiltrated data.
+
+Sources: [initial disclosure](https://blog.railway.com/p/security-disclosure-wednesday-october-21st), [preliminary report](https://blog.railway.com/p/preliminary-report-october-security-incident), [deployment recovery guidance](https://blog.railway.com/p/security-disclosure-recommendation-recover-failing-deploys).
 
 ---
 
@@ -730,6 +767,8 @@ flowchart TD
 | **PHP / WordPress / Laravel / Drupal / Joomla** | PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport; disable session upload progress pending the follow-up fix. |
 | **Node.js / Bun** | Node **22.23.4 / 24.22.1 / 26.12.1**; Bun **1.4.4**. Rebuild containers and restart workers. |
 | **Python** | `Brotli` **1.2.1**, `brotlicffi` **1.2.1.0**, Pillow **13.0.0** where installed. Pillow may require a Python upgrade. |
+| **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps. [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |
+| **Java / Scala / PHP / Ruby native Brotli** | Brotli4j **1.24.0** including native artifacts; PHP extension **0.21.1**; Ruby gem **0.9.1+**. Patch separate libcurl/native copies too. |
 | **GitLab** | Latest supported patch release covering October 21; **19.3.6 / 19.4.3 / 19.5.1** also cover the identity flaws above. |
 | **Other Ruby applications** | Ruby **3.3.13 / 3.4.12 / 4.0.9**, especially where users supply regex patterns. |
 | **Plex** | Media Server **1.43.3.10861 or later**; investigate previously exposed vulnerable servers. |
@@ -737,7 +776,9 @@ flowchart TD
 | **KSMBD / Broadcom Wi-Fi** | Obtain an exact vendor fix status; restrict or disable the affected service, or replace unsupported hardware. |
 | **HTTP/3** | Upgrade the product to a build containing the fixed QPACK library, or disable affected HTTP/3 support. |
 | **BeyondTrust Remote Support** | Apply **BT26-05-RS** and investigate vulnerable appliances exposed during the exploitation window. |
-| **All stacks making TLS connections** | Refresh trust data; rebuild Go software with **1.27.3 / 1.26.10 or later supported releases**. |
+| **All stacks making TLS connections** | [Refresh each effective trust store](details/emudhra.md#runtime-and-application-trust-store-inventory), including embedded copies and alternate chains; rebuild Go with **1.27.3 / 1.26.10+**. Java needs the **CVE-2026-114820** follow-up; CPython `ssl` fixes are **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**. |
+| **LiteLLM malicious artifacts** | [Isolate, rebuild and revoke reachable credentials](details/litellm.md#remediation); do not run ordinary Python startup hooks on suspected hosts. A downgrade alone is not recovery. |
+| **Railway secrets stored before October 21** | [Rotate at each issuer, update consumers and verify revocation](details/railway.md#remediation); include registry credentials and existing sessions. |
 
 **Before calling remediation finished:**
 

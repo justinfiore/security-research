@@ -4,6 +4,17 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-26 09:23 EDT (UTC−04:00) — Brotli cross-language patches and trust recovery
+
+**Partial review:** Targeted Brotli and eMudhra guidance update, not a complete refresh of all tracked issues or search for new disclosures.
+
+- **Brotli / HTTP2Shell:** Microsoft now identifies fixed .NET runtimes **8.0.33 / 9.0.22 / 10.0.14**, plus a fixed .NET 11 preview. Update deployed runtimes and [rebuild self-contained/NativeAOT apps](black-october/details/brotli.md#inventory-by-language-and-deployment); automatic request/client decompression is not enabled by default.
+- **Brotli bindings:** Added **Brotli4j 1.24.0** (including native artifacts), **PHP extension 0.21.1** and **Ruby gem 0.9.1+**, with [per-language inventory and native-library caveats](black-october/details/brotli.md#inventory-by-language-and-deployment). Bun compiled executables also require [rebuilding with fixed 1.4.4](black-october/details/brotli.md#remediation).
+- **Brotli detection and containment:** Added a [safe response-header inventory script and interpretation guide](black-october/details/brotli.md#response-header-inventory-script); its results do **not** establish vulnerability or patch status. Expanded [pre-decoder controls](black-october/details/brotli.md#contain-before-the-first-decoder) for duplicate/stacked encodings, bypass paths, outbound clients and file workers.
+- **eMudhra / Java:** Earlier emergency JDK builds are not the final response. Require [CVE-2026-114820 / JDK-8395690 update evidence](black-october/details/emudhra.md#java-and-scala); Debian/Ubuntu also require a Java keystore rebuild. Use the [official offline checker with its root-presence limits](black-october/details/emudhra.md#java-use-the-official-offline-checker-with-its-actual-limits), not a generic failed handshake as proof of protection.
+- **eMudhra / Python:** Today's **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18** releases add `ssl` key blocking (**CVE-2026-115557**). Check [binary/source availability and independently bundled pip/certifi/tool updates](black-october/details/emudhra.md#python).
+- **eMudhra / trust coverage:** Expanded [runtime and hidden-bundle inventory](black-october/details/emudhra.md#runtime-and-application-trust-store-inventory), including precise Rust dependency ranges. [Alternate AAA cross-signs survive emSign-only root removal](black-october/details/emudhra.md#trust-paths-and-what-each-mitigation-changes). Prepare legitimate replacement chains before [Chrome's expected October 27 morning PDT root removal](black-october/details/emudhra.md#timeline); this remains a forecast, not a completed rollout.
+
 ## 2026-10-26 08:47 EDT (UTC−04:00) — Tailworm and AuthMask
 
 **Partial review:** These two disclosures were reviewed; other tracked issues were not refreshed in this update.

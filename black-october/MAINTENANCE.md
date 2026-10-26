@@ -66,7 +66,7 @@ Review each account's posts within the run's overlapping research window, using 
 
 ## Document and date conventions
 
-In the main guide, put `[Back to TOC](#table-of-contents)` immediately below each vulnerability or incident heading, including the related-incidents group heading. Keep this navigation when adding new items.
+In the main guide, put `[Back to TOC](#table-of-contents)` immediately below each vulnerability or incident heading. Keep incidents such as eMudhra, LiteLLM and Railway as individual first-class items with their own detail pages, not a grouped appendix. Keep this navigation when adding new items.
 
 Each main entry deep-links to its detail guide's **Detection**, **Remediation**, **Verification** and **Timeline** sections. Detailed guides live in `details/`, link back to the specific main entry, and include:
 
@@ -78,7 +78,15 @@ Each main entry deep-links to its detail guide's **Detection**, **Remediation**,
 6. `## Compromise response`: what to investigate and recover beyond patching.
 7. `## Sources`: primary references for the claims.
 
-Keep scripts in separate files and link to them. Commands must identify the working directory, required privileges, placeholders and whether they change state. Don't imply that an untested command was exercised on a real product.
+### Detection tools and official guidance
+
+For every new or refreshed item, actively look for opportunities to **produce or improve safe scripts that help detect applicability or compromise indicators**, and link official detection/remediation guidance. Reuse existing companion scripts when they already cover the check; create a separate issue-specific script when it adds useful capability. Do not manufacture a scanner where product-side notices, audit records or manual verification are the only reliable evidence.
+
+- Prefer read-only local inventory, metadata/configuration inspection and offline log/snapshot analysis. Network checks must be opt-in, limited to operator-supplied authorized targets, and explain every request, redirect and scope limit. Do not execute exploits, import suspect packages, contact attacker infrastructure or automate destructive remediation.
+- Distinguish component presence, vulnerable build, input reachability, observed indicator and confirmed compromise. Inaccessible data, missing tools and absent indicators mean **unknown**, not safe. A response-compression check such as `check_brotli.py` must never claim it proves a vulnerable decoder or patch status.
+- Keep scripts in separate tracked files, with usage examples/deep links in the item guide and an entry in the main companion-file table. Document supported interpreter/platform, dependencies, working directory, privileges, placeholders, inputs, outputs, exit codes, limitations and whether any operation changes state. Avoid secrets in arguments/output; do not use suspect interpreters or startup hooks for incident inspection.
+- Link vendor detection queries, advisories, supported remediation instructions and official tools directly to the relevant subsections. Explain prerequisites and evidence limits. Prefer an authoritative tool over an incomplete local replacement when it addresses the task; do not copy arbitrary downloaded code or run it without review.
+- Validate changes with syntax checks and safe disposable fixtures through the script's public interface. Exercise positive, negative and unknown/error cases and any security-relevant boundaries. No customer scan data, tokens or private investigation artifacts may be committed. Don't imply that a check was exercised on a real deployment when only fixtures were available.
 
 **Dates:** Use ISO dates (`YYYY-MM-DD`) and preserve the source's date/timezone for historical events. Label partial dates such as “2026-08 (exact day not established)” and genuinely unknown dates explicitly. CVE publication, private discovery, public disclosure, patch release, downstream packaging, exploitation start and KEV addition are different events. A mitigation or revocation is not a universal software patch.
 
