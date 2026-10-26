@@ -691,23 +691,15 @@ flowchart TD
     C --> D
 
     D --> E{"What do you operate?<br/>Follow every matching branch"}
-    E -->|PHP websites| F["Patch PHP;<br/>apply upload-progress mitigation"]
-    E -->|Node, Bun or Python services| G["Patch runtime and Brotli;<br/>patch Pillow if installed"]
-    E -->|GitLab or Ruby apps| H["Patch GitLab and separately deployed Ruby"]
-    E -->|Plex or Nextcloud| I["Patch Plex / built-in CODE;<br/>also check underlying PHP"]
-    E -->|NAS, SMB or Wi-Fi gear| J["Check KSMBD and WPSplinter;<br/>patch, disable or replace"]
-    E -->|HTTP/3 or support appliances| K["Check QPACK stack and BeyondTrust"]
-    E -->|Android Authenticator| N["Update Authenticator;<br/>review work-account token exposure"]
-    E -->|Tailscale SSH or headscale| O["Restrict authorized access;<br/>disable unneeded forwarding and track fixes"]
+    E -->|Web apps and runtimes| F["Patch PHP, Node/Bun,<br/>Brotli, Pillow, GitLab and Ruby;<br/>apply PHP upload mitigation"]
+    E -->|Servers and appliances| I["Check Plex, Nextcloud CODE,<br/>KSMBD, HTTP/3 and BeyondTrust;<br/>patch or contain affected features"]
+    E -->|Wi-Fi and Tailscale| J["Verify WPS firmware;<br/>restrict SSH and unneeded forwarding;<br/>track vendor fixes"]
+    E -->|Android Authenticator| N["Update Authenticator;<br/>review work-account<br/>token exposure"]
 
     F --> L["Update trust stores;<br/>rebuild Go binaries"]
-    G --> L
-    H --> L
     I --> L
     J --> L
-    K --> L
     N --> L
-    O --> L
     L --> M["Restart/redeploy and verify<br/>the versions actually running"]
 ```
 

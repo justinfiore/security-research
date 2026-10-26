@@ -4,6 +4,12 @@
 
 Each entry records a documentation/research run, not a claim that readers' systems were patched. Item-level **Last updated** dates change only when the corresponding content changes. A complete review with no substantive changes records **No Changes this run.** Incomplete reviews report their coverage gaps instead.
 
+## 2026-10-26 08:52 EDT (UTC−04:00) — Setup: diagram readability
+
+**Scope:** Presentation-only follow-up to the targeted additions; no research cutoff advanced.
+
+- Grouped the [Mermaid stack decision branches](black-october/black-october-2026.md#what-should-i-patch-a-stack-based-decision-guide) into four categories after browser inspection showed that eight parallel branches made text too small. The per-stack action table retains individual patch targets, including Authenticator and Tailscale/headscale. No item findings or timestamps changed.
+
 ## 2026-10-26 08:47 EDT (UTC−04:00) — Partial: two user-supplied leads
 
 **Scope:** Targeted research into the two supplied X posts and their primary sources on 2026-10-26, including earlier advisory history. This is not a full review of all existing items or a complete new-item sweep; no Complete discovery cutoff is advanced.
