@@ -4,6 +4,19 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-26 11:45 EDT (UTC−04:00) — Electrum theft, Fortinet hardening release and six more High/Critical items
+
+**Partial review:** These come from the logged-in X timeline review (all five accounts, back to 2026-10-12; @IntCyberDigest before 2026-10-17 was covered by web search and its newsletter). Not covered: per-product review of Oracle's October CPU, and the leads listed in the run thread. CISA KEV is unchanged at catalog 2026.10.23.
+
+- **Exploited outside KEV:** [Electrum Bitcoin wallet](black-october/black-october-2026.md#electrum-bitcoin-wallet-malicious-server-swaps-broadcast-transactions-so-a-fee-bump-pays-the-attacker). Rogue servers swap broadcast transactions so a fee bump pays the attacker, with one confirmed theft. Upgrade to 4.8.3, and [check outputs before any fee bump](black-october/details/electrum.md#remediation).
+- **Fortinet:** the [October 2026 hardening release](black-october/details/fortinet-october.md#remediation) carries critical and high fixes for FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator, with advisories withheld until 2026-11-10. The guide also covers two High SQL injection advisories. On FortiManager/FortiAnalyzer 7.2, move to 7.4.12+: the hardening release and FG-IR-26-178 disagree on whether 7.2 is fixed.
+- **Signal calling:** a call peer can keep your microphone live after hang-up (MITRE 9.3). Update to [Android 8.27.0, iOS 8.30.0 or Desktop 8.29.0](black-october/details/signal.md#remediation) or later.
+- **OVHcloud CLI:** release binaries v0.11.0–v0.15.0 were swapped for a secret stealer on 2026-10-19 (vendor High). [Check hashes and rotate secrets](black-october/details/ovhcloud-cli.md#detection), then install v0.16.0.
+- **Microsoft .NET Framework:** CVE-2026-108398 (8.8, publicly disclosed) bypasses App Control through an untrusted assembly search path. [Install the October .NET update](black-october/details/dotnet-framework.md#remediation); MSRC and the CVE record list different builds for Windows 11 26H2.
+- **SAP NetWeaver Visual Composer:** CVE-2026-89110 (9.9) gives low-privileged users backend operations on connected systems. [Apply Note 3797111 or enable Secure Mode](black-october/details/sap-netweaver-visual-composer.md#remediation).
+- **Docker Hub GhostPat:** CVE-2026-105445 (9.4) was fixed service-side. If Docker emailed you, [revoke unknown tokens and verify images](black-october/details/docker-hub-ghostpat.md#remediation).
+- **Progress MarkLogic Server:** 31 CVEs, five Critical, with low-privilege paths to administrator. [Upgrade to 11.3.7 or 12.1.0](black-october/details/marklogic.md#remediation).
+
 ## 2026-10-26 11:30 EDT (UTC−04:00) — Seven new High/Critical items; PHP2Shell reaches PAN-OS; PwnEscape fixes ship
 
 **Partial review:** Every tracked item and the X timelines were rechecked. Not covered: the Wiz vulnerability database, NSA guidance listings, Microsoft's October Patch Tuesday and Oracle's October CPU beyond tracked items, and @IntCyberDigest before October 17. Several leads remain unassessed, including the Fortinet hardening releases with no advisories until November 10.

@@ -15,6 +15,14 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Electrum Bitcoin wallet: malicious server turns fee bumps into theft](#electrum-bitcoin-wallet-malicious-server-swaps-broadcast-transactions-so-a-fee-bump-pays-the-attacker)
+- [Fortinet FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator: October 2026 hardening release and SQL injection fixes](#fortinet-fortios-fortimanager-fortianalyzer-fortimail-and-fortiauthenticator-october-2026-hardening-release-and-sql-injection-fixes)
+- [Signal calling (RingRTC): hang-up may not end a flooded call](#signal-calling-ringrtc-hang-up-may-not-end-a-flooded-call)
+- [OVHcloud CLI: hijacked release binaries steal secrets](#ovhcloud-cli-hijacked-github-release-binaries-steal-secrets)
+- [Microsoft .NET Framework: App Control bypass via assembly search path](#microsoft-net-framework-app-control-bypass-through-an-untrusted-assembly-search-path)
+- [SAP NetWeaver Visual Composer: low-privileged access to backend operations](#sap-netweaver-visual-composer-low-privileged-access-to-backend-operations-on-connected-systems)
+- [Docker Hub: GhostPat - access-token reassignment](#docker-hub-ghostpat---access-token-reassignment-on-account-conversion)
+- [Progress MarkLogic Server: 31 flaws including paths to administrator](#progress-marklogic-server-31-flaws-including-low-privilege-paths-to-administrator)
 - [HPE Aruba Networking AOS: unauthenticated RCE and authentication bypass](#hpe-aruba-networking-aos-unauthenticated-rce-and-authentication-bypass-in-wireless-infrastructure)
 - [Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix)
 - [Rank Math PRO for WordPress: malicious 3.0.123 builds](#rank-math-pro-for-wordpress-malicious-30123-builds-from-the-official-update-channel)
@@ -106,6 +114,261 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Electrum Bitcoin wallet: malicious server swaps broadcast transactions so a fee bump pays the attacker
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/electrum.md):** [Detection](details/electrum.md#detection) · [Remediation](details/electrum.md#remediation) · [Verification](details/electrum.md#verification) · [Timeline](details/electrum.md#timeline)
+
+**CVEs:** None assigned. Tracked as GitHub advisory [GHSA-6jp4-8v48-cc5v](https://github.com/spesmilo/electrum/security/advisories/GHSA-6jp4-8v48-cc5v).
+
+**High (Electrum maintainers; no CVSS score); exploited in the wild**
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. The maintainers say malicious servers are exploiting it in the wild, and one reporter lost funds.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private reports | 2026-10-11 and 2026-10-18; time/TZ unknown | The second reporter lost money after an RBF fee bump. |
+| Fix tagged (4.8.3) | 2026-10-23 17:19 UTC | Fix merged 13:33 UTC (`90fe308`). |
+| Binaries released | 2026-10-24; time/TZ unknown | Per the advisory. |
+| Advisory published (public announcement) | 2026-10-24 12:52 UTC | GitHub security advisory. |
+| **Last updated** | **2026-10-26 11:45 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+Electrum trusts its server for unconfirmed transactions. A malicious server can swallow the payment you broadcast and show a conflicting, invalidly signed transaction instead. The fake pays an attacker address whose last four characters match your recipient's.
+
+**Worst case:** You fee-bump (RBF) the stuck-looking transaction, and Electrum signs a valid version that sends your funds to the attacker.
+
+**Exploitation:** Confirmed by the maintainers: "some servers are performing this attack in the wild", with one reported loss.
+
+**Am I impacted?** You are if you run Electrum **below 4.8.3** on desktop or Android and connect to public servers. Wallets connected only to a server you trust, such as your own, are not affected. Even after the fix, Electrum validates only your own inputs on pending transactions.
+
+**Patch:** Upgrade to **4.8.3** and verify the download's signatures. Before signing **any** transaction, including fee bumps, check the full address and amount.
+
+Sources: [GHSA-6jp4-8v48-cc5v](https://github.com/spesmilo/electrum/security/advisories/GHSA-6jp4-8v48-cc5v), [fix commit](https://github.com/spesmilo/electrum/commit/90fe30822561e515a9d2d6e5a352cc07780999eb), [4.8.3 release notes](https://github.com/spesmilo/electrum/blob/4.8.3/RELEASE-NOTES).
+
+## Fortinet FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator: October 2026 hardening release and SQL injection fixes
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/fortinet-october.md):** [Detection](details/fortinet-october.md#detection) · [Remediation](details/fortinet-october.md#remediation) · [Verification](details/fortinet-october.md#verification) · [Timeline](details/fortinet-october.md#timeline)
+
+**CVEs:** [CVE-2025-46773](https://www.cve.org/CVERecord?id=CVE-2025-46773), [CVE-2026-23705](https://www.cve.org/CVERecord?id=CVE-2026-23705), [CVE-2026-23706](https://www.cve.org/CVERecord?id=CVE-2026-23706), [CVE-2026-23707](https://www.cve.org/CVERecord?id=CVE-2026-23707), [CVE-2025-57739](https://www.cve.org/CVERecord?id=CVE-2025-57739). The hardening-release fixes have no CVEs yet.
+
+**Hardening release: Fortinet says it contains critical and high-severity fixes (no per-issue scores); ASD's ACSC alert status Critical. FG-IR-26-178 (FortiAnalyzer/FortiManager SQLi): Fortinet High, CVSSv3 7.9; per-CVE Fortinet CNA CVSS 3.1 7.9 High (CVE-2025-46773), 6.5, 5.9 and 6.5 Medium (CVE-2026-23705/23706/23707), with Fortinet base scores of 8.8, 7.2, 6.5 and 7.2 shown by NVD. FG-IR-26-184 (FortiMail webmail SQLi, CVE-2025-57739): Fortinet High, CVSS 3.1 7.7 (base 8.8 shown by NVD).**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). The hardening-release fixes have no CVE yet, so KEV cannot list them. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Found internally; the hardening fixes came from Fortinet's AI-assisted testing. |
+| FG-IR-26-178 and FG-IR-26-184 | 2026-10-13; time/TZ unknown | CVE records published 17:37 UTC. "Known Exploited: No". |
+| Hardening release announced; FortiMail and FortiAuthenticator builds | 2026-10-21; time/TZ unknown | Fortinet CISO blog marks them available "Today". |
+| FortiOS, FortiManager and FortiAnalyzer builds | 2026-10-22; time/TZ unknown | FortiOS 7.6.8 release notes dated 2026-10-22. |
+| ACSC alert (Critical) and Cyber Centre AV26-1081 | 2026-10-23 | ACSC not aware of exploitation in Australia. |
+| Hardening advisories and CVEs | Planned 2026-11-10 | Fortinet Patch Tuesday. |
+| **Last updated** | **2026-10-26 11:45 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+Fortinet shipped a coordinated **security hardening release** for FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator but is withholding advisories until 2026-11-10, warning that attackers can diff the patches within days. Separately, its 2026-10-13 advisories fixed SQL injection flaws that let a **low-privileged FortiAnalyzer or FortiManager user** run commands and read or write files (FG-IR-26-178), and let an **authenticated FortiMail webmail user** run code or commands (FG-IR-26-184). FortiSandbox ([details/fortisandbox.md](details/fortisandbox.md)), FortiSIEM ([details/fortisiem.md](details/fortisiem.md)) and the exploited FortiMail file write ([details/fortimail.md](details/fortimail.md)) are tracked separately.
+
+**Worst case:** Compromise of firewalls, central management or logging systems holding device credentials, or the mail gateway. The hardening flaws' impact is undisclosed.
+
+**Exploitation:** None reported for these fixes. The unrelated FortiOS path traversal [CVE-2025-61624](https://www.cve.org/CVERecord?id=CVE-2025-61624) (Fortinet 5.4/6.0, NVD 6.5 Medium) was added to KEV on 2026-10-16 after Unit 42 tied it to PEERSTITCH intrusions; it is below this guide's High threshold but should be patched too.
+
+**Am I impacted?** Run `get system status` (read-only) on each unit. Affected by the hardening release: FortiOS below 8.0.2/7.6.8/7.4.13/7.2.14; FortiManager and FortiAnalyzer below 8.0.2/7.6.8/7.4.12/7.2.13; FortiMail below 8.0.2/7.6.7/7.4.9 and all 7.2; FortiAuthenticator below 8.0.4/6.6.11. FG-IR-26-178 affects FortiAnalyzer/FortiManager 7.6.0–7.6.4, 7.4 (FAZ to 7.4.7, FMG to 7.4.6) and all 7.2; 8.0 is not affected. FG-IR-26-184 affects FortiMail 7.6.0–7.6.3, 7.4.0–7.4.5 and 7.2.0–7.2.8.
+
+**Patch:** Install the hardening builds above; they also cover FG-IR-26-178 and FG-IR-26-184 on 7.4 and later. FortiManager and FortiAnalyzer 7.2 have no FG-IR-26-178 fix, so move to 7.4.12+ or 7.6.8+; move FortiMail 7.2 to 7.4.9+. Until then, restrict HTTPS/SSH admin access to trusted IPs, keep FortiManager off the internet, enforce MFA and review low-privileged admin accounts.
+
+Sources: [Fortinet hardening release blog](https://www.fortinet.com/blog/ciso-collective/fortinet-releases-security-hardening-release-for-multiple-products), [FG-IR-26-178](https://fortiguard.fortinet.com/psirt/FG-IR-26-178), [FG-IR-26-184](https://fortiguard.fortinet.com/psirt/FG-IR-26-184), [FortiOS 7.6.8 release notes](https://docs.fortinet.com/document/fortigate/7.6.8/fortios-release-notes/4/change-log), [ASD's ACSC alert](https://www.cyber.gov.au/alert/critical-vulnerabilities-in-fortinet-products), [Cyber Centre AV26-1081](https://www.cyber.gc.ca/en/alerts-advisories/fortinet-security-advisory-av26-1081), [CVE-2025-46773 CNA record](https://cveawg.mitre.org/api/cve/CVE-2025-46773), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Signal calling (RingRTC): hang-up may not end a flooded call
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/signal.md):** [Detection](details/signal.md#detection) · [Remediation](details/signal.md#remediation) · [Verification](details/signal.md#verification) · [Timeline](details/signal.md#timeline)
+
+**CVEs:** [CVE-2026-113380](https://www.cve.org/CVERecord?id=CVE-2026-113380)
+
+**MITRE (CNA) CVSS 4.0 9.3 Critical; no NVD or Signal score**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Not established. |
+| Fix committed; RingRTC 2.72.0 tagged | 2026-09-04 20:15 / 22:55 UTC | Public commit, not labeled as a security fix. |
+| Fixed clients | Android 8.27.0 tag 2026-09-10 00:17 UTC; iOS 8.30.0.1882 tag 2026-09-22 18:57 UTC; Desktop 8.29.0 release 2026-10-01 21:20 UTC | Store rollout dates not established. |
+| CVE published (public announcement) | 2026-10-20 04:25 UTC | MITRE as CNA. |
+| **Last updated** | **2026-10-26 11:45 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+RingRTC is the calling library inside every Signal app. Before 2.72.0, the other party on a call could flood the call's event queue so that the victim's hang-up never tears the call down.
+
+**Worst case:** After the victim hangs up, their microphone audio, and possibly camera video, keeps flowing to the attacker. Encryption and message storage are not affected.
+
+**Exploitation:** No reports found. CISA's SSVC enrichment on the CVE record marks exploitation "none".
+
+**Am I impacted?** You are if any device runs Signal Android below **8.27.0**, iOS below **8.30.0**, or Desktop below **8.29.0**, or an app that embeds RingRTC below 2.72.0. These are the first builds bundling the fix, confirmed from each client's dependency manifest.
+
+**Patch:** Update Signal on every device and restart it. Until then, avoid calls with untrusted contacts. After hanging up, check that the OS microphone and camera indicators have turned off.
+
+Sources: [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-113380), [RingRTC fix commit](https://github.com/signalapp/ringrtc/commit/4b1b6fa53c9f30c87c8ea78e44675d4a13e1e4d3), [Signal Desktop v8.29.0](https://github.com/signalapp/Signal-Desktop/releases/tag/v8.29.0), [researcher notes](https://github.com/Imahian/Notes/tree/main/docs/CVEs/CVE-2026-113380).
+
+## OVHcloud CLI: hijacked GitHub release binaries steal secrets
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ovhcloud-cli.md):** [Detection](details/ovhcloud-cli.md#detection) · [Remediation](details/ovhcloud-cli.md#remediation) · [Verification](details/ovhcloud-cli.md#verification) · [Timeline](details/ovhcloud-cli.md#timeline)
+
+**CVEs:** None assigned. Tracked as GitHub advisory GHSA-862f-55f5-vmvw.
+
+**Malicious-release incident: severity High, set by OVHcloud on GHSA-862f-55f5-vmvw. No CVSS vector or CVE.**
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. OVHcloud confirmed that malicious binaries were served for about 1 h 33 min and downloaded about 250 times.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Developer machine infected | 2025-10-20; time/TZ unknown | Extension `color-picker-universal 2.8.91`, linked by OVHcloud to GlassWorm. |
+| Release binaries replaced | 2026-10-19 14:47–15:30 UTC+2 (12:47–13:30 UTC) | v0.15.0 first, then v0.11.0–v0.14.0. |
+| Customer report (issue #300) | 2026-10-19 13:50 UTC | Public GitHub issue. |
+| Malicious binaries removed | 2026-10-19 16:21 UTC+2 (14:21 UTC) | Window closes. |
+| Public announcement | 2026-10-19 18:52 UTC+2 (16:52 UTC) | OVHcloud post on X, as stated in its advisory. |
+| Clean v0.16.0 | 2026-10-19 19:16 UTC+2 (17:16 UTC) | Signed tag; immutable GitHub release. |
+| GHSA published | 2026-10-20 12:49 UTC | Severity High. |
+| **Last updated** | **2026-10-26 11:45 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+An attacker used a compromised OVHcloud developer's GitHub account to replace the `ovhcloud-cli` release binaries for v0.11.0–v0.15.0 with the real CLI recompiled with a secret stealer. Affected platforms were macOS, Linux arm64 and x86_64, and Windows x86_64. Only copies downloaded during the window are affected. Source code and the build pipeline were not.
+
+**Worst case:** each run steals cloud credentials (AWS, Google Cloud, Azure, DigitalOcean), SSH keys, kubeconfig, Docker, npm and Terraform credentials, `.netrc`, Git configuration, and AI-assistant and editor histories. It sends them out via `45.32.148[.]174` and Solana RPC endpoints.
+
+**Exploitation:** confirmed malicious distribution, with about 250 downloads. OVHcloud does not say how many copies were run.
+
+**Am I impacted?** Did any machine or CI runner download the CLI on 2026-10-19 between 12:47 and 14:21 UTC? **Do not run the binary to check.** Compare its MD5 with the hashes in the advisory's appendix, and look for `envchecker-*` folders in the temp directory. Each run of the malware leaves one.
+
+**Patch:** If affected, rotate or deactivate every secret on that machine at its issuer, delete the binary, and install **v0.16.0** or later. Everyone else should still move to v0.16.0 or later, and pin CLI downloads by checksum.
+
+Sources: [OVHcloud advisory GHSA-862f-55f5-vmvw](https://github.com/ovh/ovhcloud-cli/security/advisories/GHSA-862f-55f5-vmvw), [issue #300](https://github.com/ovh/ovhcloud-cli/issues/300), [v0.16.0 release](https://github.com/ovh/ovhcloud-cli/releases/tag/v0.16.0).
+
+## Microsoft .NET Framework: App Control bypass through an untrusted assembly search path
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/dotnet-framework.md):** [Detection](details/dotnet-framework.md#detection) · [Remediation](details/dotnet-framework.md#remediation) · [Verification](details/dotnet-framework.md#verification) · [Timeline](details/dotnet-framework.md#timeline)
+
+**CVEs:** [CVE-2026-108398](https://www.cve.org/CVERecord?id=CVE-2026-108398)
+
+**Microsoft CVSS 3.1 8.8 High; Microsoft severity Important; publicly disclosed before the patch**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private report | Unknown | Credited to James Forshaw (Google Project Zero). |
+| Public disclosure before patch | Unknown | Microsoft: "Publicly disclosed: Yes"; no date given. |
+| Patch Tuesday updates and MSRC entry (public announcement) | 2026-10-13; time/TZ unknown | CVE record published 18:59 UTC. |
+| **Last updated** | **2026-10-26 11:45 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+This is an untrusted-search-path flaw in the Windows **.NET Framework** (3.5 and 4.6.2–4.8.1), not modern .NET. A local, low-privileged attacker can register a crafted assembly for loading by a protected process, which bypasses **Windows Defender Application Control (App Control for Business)**.
+
+**Worst case:** Unapproved code runs inside a protected process on a device whose security model depends on application control.
+
+**Exploitation:** Microsoft says "Exploited: No" and "Exploitation Less Likely". No public exploit code was found.
+
+**Am I impacted?** You are if any supported Windows client or server lacks the October 13 .NET Framework update. The fixed builds are 4.8.9363.0 (4.8.1), 4.8.4811.0 (4.8) and 4.7.4150.0 (4.6.2–4.7.2); MSRC lists 4.8.10008.0 for Windows 11 26H2. Devices that enforce WDAC/App Control matter most.
+
+**Patch:** Install the October 2026 .NET Framework update for your OS (KB list in the guide) through Windows Update, WSUS or Intune, then confirm compliance.
+
+Sources: [MSRC CVE-2026-108398](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-108398), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-108398).
+
+## SAP NetWeaver Visual Composer: low-privileged access to backend operations on connected systems
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/sap-netweaver-visual-composer.md):** [Detection](details/sap-netweaver-visual-composer.md#detection) · [Remediation](details/sap-netweaver-visual-composer.md#remediation) · [Verification](details/sap-netweaver-visual-composer.md#verification) · [Timeline](details/sap-netweaver-visual-composer.md#timeline)
+
+**CVEs:** [CVE-2026-89110](https://www.cve.org/CVERecord?id=CVE-2026-89110)
+
+**SAP (CNA) CVSS 3.1 9.9 Critical; SAP Patch Day priority HotNews (SAP Note 3797111). NVD has added no score of its own.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Found by Onapsis Research Labs; no report date published. |
+| CVE record published | 2026-10-13 00:24 UTC | SAP CNA. |
+| SAP Security Patch Day and Note 3797111 | 2026-10-13; time/TZ unknown | Fix for VC70RUNTIME 7.50; Secure Mode documented as workaround. |
+| CISA ADP SSVC | 2026-10-14 | Exploitation: none. |
+| **Last updated** | **2026-10-26 11:45 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+SAP NetWeaver Visual Composer (VC70RUNTIME 7.50) does not check authorization sufficiently in some portal functionality. A **low-privileged authenticated user** can invoke internal operations, such as RFC, BAPI or data-service calls, on a **preconfigured remote system** through Visual Composer's backend connections. Onapsis says the allowlist that should prevent this ("Secure Mode") existed but was off by default; the patch turns it on.
+
+**Worst case:** Depending on the destination's backend user and rights, SAP says the remote system could be fully compromised. The portal is the entry point; the connected backends carry the risk.
+
+**Exploitation:** None reported. CISA's SSVC assessment says "none". A different Visual Composer flaw, [CVE-2025-31324](https://www.cve.org/CVERecord?id=CVE-2025-31324), was widely exploited in 2025, so Visual Composer is a known target.
+
+**Am I impacted?** Check whether any SAP NetWeaver AS Java / Enterprise Portal system deploys Visual Composer, and whether its VC70RUNTIME 7.50 support-package patch level is below the Note 3797111 patch table (secondary reading: SP30–SP36 at PL1, SP32 at PL2, SP37/SP38 PL0) with Secure Mode off. List who has portal accounts and which backend destinations and users Visual Composer models use.
+
+**Patch:** Apply SAP Note 3797111 and read FAQ note 3797831. Until then, enable Secure Mode and restart `com.sap.visualcomposer` in NetWeaver Administrator. Test business models first, because calls missing from a model's allowlist will be blocked. Also reduce the backend rights of Visual Composer destination users.
+
+The same Patch Day's SAP Cloud SDK for Python flaw, [CVE-2026-89111](https://www.cve.org/CVERecord?id=CVE-2026-89111), is tracked separately in [details/sap-cloud-sdk-python.md](details/sap-cloud-sdk-python.md).
+
+Sources: [SAP Security Patch Day – October 2026](https://support.sap.com/en/my-support/knowledge-base/security-notes-news/october-2026.html), [SAP Note 3797111](https://me.sap.com/notes/3797111) (login required), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-89110), [Onapsis analysis](https://onapsis.com/blog/sap-security-patch-day-october-2026), [RedRays note analysis](https://redrays.io/blog/sap-note-3797111-visual-composer-access-control-cve-2026-89110/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Docker Hub: GhostPat - access-token reassignment on account conversion
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/docker-hub-ghostpat.md):** [Detection](details/docker-hub-ghostpat.md#detection) · [Remediation](details/docker-hub-ghostpat.md#remediation) · [Verification](details/docker-hub-ghostpat.md#verification) · [Timeline](details/docker-hub-ghostpat.md#timeline) · Vulnerability Info Site: [ghostpat.com](https://ghostpat.com/)
+
+**CVEs:** [CVE-2026-105445](https://www.cve.org/CVERecord?id=CVE-2026-105445)
+
+**CVE-2026-105445: Docker (CNA) CVSS 4.0 9.4 Critical; no NVD score. Fixed service-side; nothing to install.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Docker reports no evidence of exploitation after reviewing about 304,000 pushes made with transferred tokens. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Flaw introduced | 2024-08-26 20:33 UTC | Start of the exposure window. |
+| Private report to Docker | 2026-09-30 11:40 U.S. Eastern | From researchers at mptrdev.com. |
+| Service-side fix | 2026-09-30 ~15:10 U.S. Eastern (~19:10 UTC) | Conversion no longer transfers tokens. |
+| Affected users emailed | 2026-10-02 17:30 U.S. Eastern | Subject "Docker Hub Vulnerability Identified & Resolved". |
+| Transferred tokens deactivated | 2026-10-08 15:45 U.S. Eastern | Except where the holder opted out. |
+| Public announcement | 2026-10-12 16:00 UTC | Docker advisory. |
+| CVE published | 2026-10-13 17:35 UTC | Docker CNA. |
+| **Last updated** | **2026-10-26 11:45 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+When a Docker Hub user converted their personal account into an organization, they named an existing account as its owner. Their personal access tokens (PATs) then moved to that owner without rotation, consent or notice. An attacker could create a token on a throwaway account, convert it, and name any user as owner. The token then authenticated to the registry as that user. This was a flaw in Docker Hub itself: there is no Docker Engine or Desktop update to install.
+
+**Worst case:** pulling, pushing or deleting images, within the token's scopes, in the target's repositories and organizations, including private ones. That means malicious images could be published under a trusted name. The flaw gave no access to the Hub web interface or to account settings.
+
+**Exploitation:** Docker found none in its review. It warns that a transferred token that was never used leaves no trace in registry logs.
+
+**Am I impacted?** Docker says only users it emailed on 2026-10-02 were exposed. Check every account that owns or administers organizations for that email. Then review **Account settings → Personal access tokens** and the account switcher for organizations you do not recognize. An attacker chooses the token name, so a familiar name proves nothing.
+
+**Patch:** None needed; Docker fixed it on 2026-09-30. If you were emailed, revoke any listed or unrecognized PATs, including any you opted to keep. Use organization access tokens for organization automation. Check that published image digests match your CI build records.
+
+Sources: [Docker advisory](https://www.docker.com/blog/docker-hub-security-advisory-cve-2026-105445/), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-105445), [GhostPat researcher site](https://ghostpat.com/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Progress MarkLogic Server: 31 flaws including low-privilege paths to administrator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/marklogic.md):** [Detection](details/marklogic.md#detection) · [Remediation](details/marklogic.md#remediation) · [Verification](details/marklogic.md#verification) · [Timeline](details/marklogic.md#timeline)
+
+**CVEs:** [CVE-2026-85947](https://www.cve.org/CVERecord?id=CVE-2026-85947), [CVE-2026-85948](https://www.cve.org/CVERecord?id=CVE-2026-85948), [CVE-2026-85955](https://www.cve.org/CVERecord?id=CVE-2026-85955), [CVE-2026-85956](https://www.cve.org/CVERecord?id=CVE-2026-85956), [CVE-2026-9191](https://www.cve.org/CVERecord?id=CVE-2026-9191) (Critical). The other 26 CVEs (24 High, 2 Medium) are listed in the [Progress bulletin](https://community.progress.com/s/article/Marklogic-Critical-Security-Alert-Bulletin-October-2026).
+
+**Progress (CNA) CVSS 3.1: 9.9 Critical for CVE-2026-85947, -85948 and -85955; 9.6 Critical for CVE-2026-85956 and -9191. No NVD scores.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Several reported via Bugcrowd; dates not established. |
+| Fixed releases 11.3.7 and 12.1.0 | 2026-09-10; time/TZ unknown | Per Progress release notes. |
+| Progress bulletin (public announcement) | 2026-10-12; time/TZ unknown | 31 CVEs; records published 15:32–16:56 UTC. |
+| **Last updated** | **2026-10-26 11:45 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+MarkLogic Server is Progress's enterprise NoSQL/XML database. Most Critical flaws let an account holding *some* delegated privilege become a full administrator:
+
+- forest management → a persistent admin account;
+- `manage-user` → XQuery injection in a deprecated Management API path;
+- query access → `xdmp:eval-in` without the eval privilege;
+- delegated DBA → out-of-scope backup or restore.
+
+CVE-2026-9191 breaks isolation between user code run through REST/XDBC eval and HTTP session state.
+
+**Worst case:** Code execution and persistent administrator control of the cluster and all its data.
+
+**Exploitation:** Progress reports none, and CISA's SSVC enrichment says "none". Progress warns that not every flaw leaves reliable log evidence.
+
+**Am I impacted?** You are if you run self-managed MarkLogic **11.0–11.3.6** or **12.0–12.0.3**. Retired **10.x and earlier** are unassessed and get no fixes. **Progress Data Cloud** is already patched.
+
+**Patch:** Upgrade to **11.3.7** (LTS) or **12.1.0**. Read the incompatibility notes first, because legacy APIs, privileges and eval isolation change. Also upgrade mlcp. Until then, cut back delegated management and eval privileges and restrict ports 8000–8002.
+
+Sources: [Progress bulletin](https://community.progress.com/s/article/Marklogic-Critical-Security-Alert-Bulletin-October-2026), [MarkLogic 11 release notes](https://docs.progress.com/bundle/marklogic-server-whats-new-11/page/topics/release-notes.html), [MarkLogic 12 release notes](https://docs.progress.com/bundle/marklogic-server-whats-new-12/page/topics/release-notes.html), [CVE-2026-85947 record](https://cveawg.mitre.org/api/cve/CVE-2026-85947), [The Hacker News](https://thehackernews.com/2026/10/two-critical-marklogic-flaws-could-give.html).
 
 ## HPE Aruba Networking AOS: unauthenticated RCE and authentication bypass in wireless infrastructure
 
@@ -1923,6 +2186,14 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Electrum Bitcoin wallet (desktop and Android)** | Upgrade to 4.8.3 (verify signatures), check output address and amount before signing any fee bump, and prefer a server you run. [Guide](details/electrum.md#remediation). |
+| **Fortinet FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator** | Upgrade FortiOS to 8.0.2/7.6.8/7.4.13/7.2.14, FortiManager and FortiAnalyzer to 8.0.2/7.6.8/7.4.12 (move 7.2 to 7.4.12+ because FG-IR-26-178 has no 7.2 fix), FortiMail to 8.0.2/7.6.7/7.4.9 (7.2 to 7.4+) and FortiAuthenticator to 8.0.4/6.6.11; until then restrict admin interfaces to trusted IPs. [Guide](details/fortinet-october.md#remediation). |
+| **Signal (Android, iOS, Desktop) and RingRTC embedders** | Update to Android 8.27.0+, iOS 8.30.0+ or Desktop 8.29.0+ (RingRTC 2.72.0+) and restart the app; until then avoid calls with untrusted contacts. [Guide](details/signal.md#remediation). |
+| **OVHcloud CLI (ovhcloud) installed 2026-10-19** | Do not run it. Check the binary's MD5 against the advisory and look for envchecker-* temp folders. If affected, rotate every secret on that machine, delete the binary and install v0.16.0+. [Guide](details/ovhcloud-cli.md#remediation). |
+| **Windows with .NET Framework 3.5/4.x, especially WDAC/App Control-managed devices** | Install the October 2026 .NET Framework update for your OS (e.g. KB5127690 for Windows 11 24H2/25H2 and Server 2025) and confirm it is installed. [Guide](details/dotnet-framework.md#remediation). |
+| **SAP NetWeaver Visual Composer (VC70RUNTIME 7.50)** | Apply SAP Note 3797111 for your support package, or enable Visual Composer Secure Mode and restart com.sap.visualcomposer as the interim workaround, then review the backend destinations Visual Composer can reach. [Guide](details/sap-netweaver-visual-composer.md#remediation). |
+| **Docker Hub accounts and organizations** | No software to install (fixed service-side). If Docker emailed you on 2026-10-02, revoke unrecognized PATs, prefer organization access tokens, and check published image digests against CI records. [Guide](details/docker-hub-ghostpat.md#remediation). |
+| **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |
 | **HPE Aruba Networking AOS-8 / AOS-10 (controllers, conductors, gateways, APs)** | Upgrade to AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, 8.13.3.1+ or 8.10.0.24+ (other branches: move to a fixed supported branch); until then confine SSH/WebUI/API to a management VLAN and UDP 8211 (PAPI) to your own APs and controllers. [Guide](details/aruba-aos.md#remediation). |
 | **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a vendor kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix (AlmaLinux testing 4.18.0-553.177.2.el8_10 / 5.14.0-687.59.2.el9_8 / 6.12.0-211.68.2.el10_2, CloudLinux beta, or KernelCare EL10 live patch); no mainline, stable, RHEL, Debian or Ubuntu fix yet. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
 | **WordPress sites with Rank Math PRO** | If 3.0.123 was downloaded or updated 2026-10-15 20:02 – 2026-10-16 07:12 UTC and activated, treat the site as compromised: restore a pre-incident backup or follow the vendor's ordered cleanup, rotate every credential the site could reach, then install 3.0.124. Otherwise update to 3.0.124. Updating alone removes no persistence. [Guide](details/rankmath-pro.md#remediation). |
