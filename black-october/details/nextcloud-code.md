@@ -18,8 +18,15 @@
 | Public community warning | 2026-10-03 | Earlier warning reported by BleepingComputer; not the formal CVE advisory. [Reporting][reporting] |
 | Public advisory / CVE disclosure | 2026-10-14 | Vendor GitHub advisory publication. [Advisory][advisory] |
 | Vendor scope clarification | 2026-10-15 | Optional built-in app only, with deployment exclusions. [Vendor post][vendor] |
+| CISA KEV addition | 2026-10-23 (date only; time/TZ not published) | Catalog version 2026.10.23; due date **2026-10-26**. KEV addition is not the exploitation start date. [KEV JSON][kev] [CVE record][cve] |
 
 The exact September fix dates above are attributed to reporting, not inferred from the advisory’s October publication. No separate backport branch is documented in the advisory.
+
+### CISA KEV status
+
+CISA added CVE-2026-110447 to the Known Exploited Vulnerabilities catalog with `dateAdded` **2026-10-23** and `dueDate` **2026-10-26**, as “Collabora Online – Built-in CODE Server OS Command Injection Vulnerability” (CWE-78). Its `requiredAction` is to apply mitigations per vendor instructions under CISA’s BOD 26-04 and its “Forensics Triage Requirements,” follow applicable BOD 26-04 cloud-service guidance, or discontinue use of the product if mitigations are unavailable. The entry marks `forensicTriage` **Yes** and `knownRansomwareCampaignUse` **Unknown**. The CVE record’s CISA ADP enrichment now records SSVC exploitation **active**. [KEV JSON][kev] [CVE record][cve]
+
+The due date applies to organizations bound by CISA’s directive; for others it is a prioritization signal. KEV listing confirms known exploitation; it does not add a new fixed version—the vendor remedy remains **26.4.303 or later, or removal**—and it does not date when attacks began.
 
 ## Detection
 
@@ -90,7 +97,10 @@ These are recommended operator checks, not claims that every request or changed 
 - [Collabora October 15 clarification][vendor] — standalone/AIO exclusions and discovery-month context.
 - [October 15 exploitation reporting][reporting] — September dates, administrator observations and unconfirmed ransomware claim.
 - [Nextcloud app-store release matrix][store] — current compatible versions, freshly read on the update date.
+- [CISA KEV JSON feed][kev] (catalog 2026.10.23) and [CVE record][cve] — KEV dates, required action and CISA ADP exploitation status.
 
+[kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+[cve]: https://cveawg.mitre.org/api/cve/CVE-2026-110447
 [advisory]: https://github.com/CollaboraOnline/online/security/advisories/GHSA-g3vx-3m76-fghh
 [vendor]: https://www.collaboraonline.com/blog/stay-safe-upgrade-everything-regularly/
 [reporting]: https://www.bleepingcomputer.com/news/security/hackers-exploit-collabora-rce-flaw-to-backdoor-nextcloud-servers/

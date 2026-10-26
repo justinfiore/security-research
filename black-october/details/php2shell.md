@@ -15,6 +15,14 @@
 | Public advisories and emergency fixes | 2026-10-21: PHP 8.2.35, 8.3.36, 8.4.27 and 8.5.12; [109618](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w) and [109619](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp) |
 | Upload-progress follow-up | 2026-10-23: [PHP](https://www.php.net/archive/2026.php) recommends disabling the feature for the remaining conditional RCE vector; full fix planned for the regular release cycle, not established as available in the notice reviewed |
 | Detection guidance | 2026-10-23: [CISA alert](https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching) adds Sigma/partner guidance; its no-observed-successful-exploitation statement is explicitly date-bounded |
+| Earliest reported exploitation attempt | 2026-10-17 (time/TZ unknown): [Amazon Threat Intelligence](https://aws.amazon.com/blogs/security/amazon-threat-intelligence-identifies-php2shell-exploitation-prior-to-public-disclosure-in-madpot) saw an attempt against its MadPot honeypots four days before disclosure; further attempts from about 2026-10-21 02:00 UTC. Amazon said it was unclear whether these attempts would have succeeded |
+| Confirmed RCE against honeypots | 2026-10-24, first shell 15:35 UTC: [Adel Karimi's honeypot report](https://github.com/0x4D31/honeypot-data/blob/main/reports/php2shell/2026-10-24-confirmed-rce.md) records 35 Apache-parent shells on three PHP 8.4.26 Apache `mod_php` honeypots; consistent with CVE-2026-109618. Reported by [BleepingComputer](https://www.bleepingcomputer.com/news/security/php2shell-security-flaws-now-sucessfully-exploited-in-the-wild/) on 2026-10-26 |
+| CISA KEV | Not listed for CVE-2026-109618, CVE-2026-109619 or CVE-2026-115560 in [KEV catalog 2026.10.23](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), checked 2026-10-26 |
+| CVE-2026-115560 fix/advisory | No fixed release, advisory or severity score published as of 2026-10-26; its [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-115560) was not yet published. PHP says the full advisory will come with the next regular release |
+
+### Exploitation status
+
+Exploitation **attempts** began before disclosure, and successful RCE against public honeypots was documented on 2026-10-24. The honeypot evidence covers an intentionally favorable single-worker `mod_php` setup and PHP 8.4.26, not measured reliability against other configurations. CISA's statement that it had not observed successful exploitation is dated to its alert and predates this evidence. Amazon recommends starting investigations from at least 2026-10-17, not from the disclosure date. For an exposed system that ran a vulnerable build, assess it for compromise as well as patching it.
 
 ## Detection
 
@@ -42,6 +50,13 @@ Inspect the **web** SAPI's INI files, per-site configuration and FPM pool overri
 ### Look for suspicious execution
 
 Use [CISA's Sigma repository](https://github.com/cisagov/SIGMA_Rules) and the partner resources in its alert. Collect process creation/parent-child telemetry around PHP/Apache workers launching shells or download tools, correlate it with web requests, worker crashes, fatal errors and file changes. Baseline legitimate application subprocesses before declaring an alert malicious.
+
+Published indicators of the observed attacks:
+
+- **Request shape** ([Amazon](https://aws.amazon.com/blogs/security/amazon-threat-intelligence-identifies-php2shell-exploitation-prior-to-public-disclosure-in-madpot), [Karimi](https://github.com/0x4D31/honeypot-data/blob/main/reports/php2shell/2026-10-24-confirmed-rce.md)): multipart POSTs containing a `PHP_SESSION_UPLOAD_PROGRESS` field. The confirmed chains sent large multipart POSTs (often chunked) to `/` or `/index.php` with no `User-Agent`. Their four stages were: memory pressure, a request returning an unusually large `PHPSESSID` cookie (about 800 KiB), more memory pressure, and a final request of about 451 KB.
+- **PHP/Apache logs**: `Allowed memory size ... exhausted ... in Unknown on line 0` during request startup, `Session ID is too long or contains illegal characters`, and Apache workers exiting on `Segmentation fault`.
+- **Process telemetry**: `/bin/sh` started directly by an Apache/PHP worker, followed by `id`, `curl`, `wget` or `php -r` callbacks. This is the decisive signal in the honeypot report; an OOM error, a large cookie or a crash alone did not prove RCE.
+- **Source addresses**: Amazon published six anonymization-network IPs, and Karimi's report names two more source addresses. These are shared infrastructure; investigate matches rather than treating them as attribution or a complete blocklist.
 
 These are investigation signals, not a complete exploit detector. A worker crash can be accidental; no crash or no shell process does not prove no RCE. Protect logs and crash dumps as potentially sensitive, and analyze copies on a clean system if compromise is suspected.
 
@@ -72,3 +87,7 @@ Restrict access and preserve a snapshot/logs. Determine the PHP account's access
 - [CVE-2026-109618 advisory](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w)
 - [CVE-2026-109619 advisory](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp)
 - [CISA alert, October 23 revision](https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching)
+- [Amazon Threat Intelligence: pre-disclosure exploitation attempts and IOCs](https://aws.amazon.com/blogs/security/amazon-threat-intelligence-identifies-php2shell-exploitation-prior-to-public-disclosure-in-madpot)
+- [Adel Karimi: confirmed honeypot RCE evidence, 2026-10-24](https://github.com/0x4D31/honeypot-data/blob/main/reports/php2shell/2026-10-24-confirmed-rce.md)
+- [BleepingComputer report of successful exploitation (secondary)](https://www.bleepingcomputer.com/news/security/php2shell-security-flaws-now-sucessfully-exploited-in-the-wild/)
+- [CISA KEV catalog feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json)

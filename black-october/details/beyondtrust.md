@@ -17,8 +17,15 @@
 | SaaS rollout / completion statement | 2026-10-08 / by 2026-10-09 | Blog dates RS/PRA rollout October 8; formal advisory says all RS SaaS patched as of October 9. Preserve this distinction. [Response][response] [Advisory][advisory] |
 | Public advisory, CVE and Mandiant analysis | 2026-10-15 | Coordinated disclosure; **not** the patch-release date. [Response][response] [Mandiant][mandiant] |
 | Vendor response update | 2026-10-16, 12:00 p.m. EDT | Vendor then knew of two impacted customers and no adversary activity since August; this is a dated observation, not fleet-wide clearance. [Response][response] |
+| CISA KEV addition | 2026-10-16 (date only; time/TZ not published) | Due date **2026-10-19**. KEV addition is not the exploitation start date (vendor-confirmed exploitation dates to 2026-08-29). [KEV JSON][kev] [CVE record][cve] |
 
 The attacker’s initial vulnerability discovery date is unknown. PRA’s patch is precautionary; do not relabel it as confirmed vulnerable solely because it shares code.
+
+### CISA KEV status and severity attribution
+
+CISA lists CVE-2026-102764 in the Known Exploited Vulnerabilities catalog as “BeyondTrust Remote Support Authentication Bypass by Spoofing Vulnerability” (CWE-290), with `dateAdded` **2026-10-16** and `dueDate` **2026-10-19**. Its `requiredAction` is to apply mitigations per vendor instructions under CISA’s BOD 26-04 and its “Forensics Triage Requirements,” follow applicable BOD 26-04 cloud-service guidance, or discontinue use of the product if mitigations are unavailable. The entry marks `forensicTriage` **Yes** and `knownRansomwareCampaignUse` **Unknown**. The KEV entry covers **Remote Support** only; it does not change PRA’s precautionary status. [KEV JSON][kev] [CVE record][cve]
+
+Severity differs by issuer: BeyondTrust (CNA) rates it **Critical, CVSS 4.0 9.3**; NVD’s 2026-10-16 analysis adds **Critical, CVSS 3.1 9.8** (`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`). [Advisory][advisory] [NVD][nvd]
 
 ## Detection
 
@@ -83,7 +90,11 @@ Mandiant recommends treating internet-reachable, vulnerable appliances from the 
 - [Vendor response, updated October 16][response] — exact incident/patch dates, PRA qualification and support escalation.
 - [Mandiant investigation and remediation][mandiant] — observed artifacts, phased response, rebuild and rotation guidance.
 - [Customer portal notice][portal] — public upgrade notice read successfully; the full KB0024066 article requires customer login and was **not accessible** in this review.
+- [CISA KEV JSON feed][kev], [CVE record][cve] and [NVD record][nvd] — KEV dates/required action, CISA ADP exploitation status and NVD’s CVSS 3.1 score.
 
+[kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+[cve]: https://cveawg.mitre.org/api/cve/CVE-2026-102764
+[nvd]: https://nvd.nist.gov/vuln/detail/CVE-2026-102764
 [advisory]: https://www.beyondtrust.com/trust-center/security-advisories/bt26-05
 [response]: https://www.beyondtrust.com/blog/entry/bt26-05
 [mandiant]: https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-beyondtrust

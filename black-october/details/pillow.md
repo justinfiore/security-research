@@ -35,7 +35,7 @@ The [metadata inventory](../python-package-inventory.py) lists Pillow and `olefi
 | **CVE-2026-112398** — Critical, FPX/JPEG overflow | Through 12.3.0 | FlashPix decoding with optional `olefile`; MIME/extension filtering does not prevent format recognition from content |
 | **CVE-2026-112900** — maintainer Moderate, CVE 9.2, EPS filename injection | 2.6.0–12.3.0 | Ghostscript subprocess rendering with attacker-influenced filenames, not just EPS content |
 | **CVE-2026-112393** — maintainer High, CVE 9.2, TIFF encoder overflow | Through 12.3.0 | Saving compressed TIFF to file-like objects such as `BytesIO`; output encoding can be exposed even when upload decoding is constrained |
-| **CVE-2026-112403** — maintainer Critical, CVE 9.2, lossless JPEG overflow | Through 12.3.0 | `draft()`/thumbnail paths on crafted lossless JPEGs; demonstrated crash does not by itself establish RCE |
+| **CVE-2026-112403** — maintainer High, CVE 9.2 Critical, lossless JPEG overflow | Through 12.3.0 | `draft()`/thumbnail paths on crafted lossless JPEGs; demonstrated crash does not by itself establish RCE |
 
 Review calls to `Image.open`, frame iteration/`seek`, `thumbnail`, `draft` and TIFF `save`, including wrappers in document pipelines. Trace the source of filenames and output tags. Check Ghostscript via `command -v gs` as the worker user on Linux/macOS and inspect any configured absolute executable paths. An absent dependency only narrows its specific path.
 

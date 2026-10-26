@@ -17,9 +17,12 @@
 | ZDI-CAN-33774 fix queued | 2026-10-21 | `ksmbd-for-next` maintainer branch, per Sysdig; not proof of distribution delivery. [Sysdig][sysdig] |
 | ZDI-CAN-33549 small patch posted | 2026-10-23, 10:36 UTC | Namjae Jeon attached the buffer-length-underflow patch after discussion of the 7.5 development branch. [Patch message][patch] |
 | ZDI-CAN-33549 patch review | 2026-10-23, 11:02 UTC | Stefan Metzmacher: “looks good.” This supersedes “only discussing a fix,” not the need for a released vendor package. [Review][review] |
-| Fixed mainline/stable/distribution releases | Not established as of this review | Sources do not provide a universal released-kernel or NAS-firmware matrix covering both issues. |
+| ZDI-CAN-33774 fix merged into mainline | 2026-10-26 01:47:41 UTC (2026-10-25 21:47 EDT) | Linus Torvalds merged `ksmbd-for-7.4-rc1` (merge `4e1b4fdf6113`), which contains `68f410faedaf`. This is the 7.4 merge window, **not a tagged release**: the commit is not in v7.3 (2026-10-18) and 7.4-rc1 was not tagged when reviewed. The commit carries no `Cc: stable` tag and credits a different reporter; the ZDI-CAN-33774 mapping comes from Sysdig. [Merge][merge] [Commit][fix33774] [Sysdig][sysdig] |
+| ZDI-CAN-33549 fix committed to `ksmbd-for-next` | 2026-10-26 19:15:10 +0900 (10:15:10 UTC) | `7193241a49c9`, “smb: smbdirect: fix buffer length underflow in RDMA transfers” (authored by Stefan Metzmacher 2026-10-23), with `Reported-by: … # ZDI-CAN-33549` and `Cc: stable@vger.kernel.org`. Maintainer branch only; not in mainline when reviewed. [Commit][fix33549] |
+| Fixed mainline/stable/distribution releases | None established as of 2026-10-26 ~09:10 EDT | Newest kernel.org releases at review time—mainline 7.3 (2026-10-18), stable 7.2.12 and longterm 6.18.58 / 6.12.114 / 6.6.160 (2026-10-21), longterm 6.1.190 / 5.15.223 / 5.10.272 (2026-10-15)—predate both fixes reaching mainline. No distribution or NAS advisory naming either report was found. [kernel.org releases][releases] |
+| CVE assignment | None as of this review | Neither report has a CVE; the kernel CNA assigns CVEs after a fix reaches a stable tree. [Kernel CVE process][kernelcve] [Updated reporting][news] |
 
-The October 26 news update points to existing maintainer work; the October 23 mailing-list follow-up additionally confirms a concrete SMB Direct patch was posted and reviewed. Neither fact certifies your running kernel. [Updated reporting][news]
+The October 26 news update points to existing maintainer work; the October 23 mailing-list follow-up confirmed a concrete SMB Direct patch was posted and reviewed, and that patch has since been committed to the maintainer branch. The ZDI-CAN-33774 fix is now in mainline Git but not in any tagged kernel. None of these facts certifies your running kernel. [Updated reporting][news]
 
 ## Detection
 
@@ -66,7 +69,7 @@ The reports tested **7.3-rc3**; that is a tested version, not a complete affecte
 ### Obtain a release that covers both reports
 
 - Ask the distribution/NAS supplier to map the **exact running build** to ZDI-CAN-33774 and ZDI-CAN-33549, including backport identifiers and relevant kernel configuration.
-- For 33774, supply commit `68f410faedaf` as a tracking reference; for 33549, supply the October 23 patch/review links. Require delivery confirmation rather than applying arbitrary development branches in production.
+- For 33774, supply mainline commit `68f410faedaf` as a tracking reference; for 33549, supply `ksmbd-for-next` commit `7193241a49c9` (marked for stable backport) and the October 23 patch/review links. Require delivery confirmation rather than applying arbitrary development branches in production.
 - Install the supported kernel/firmware and reboot into it, following storage-cluster/failover procedures. A `ksmbd-tools` update alone does not establish that kernel code changed.
 - A live patch is acceptable only with explicit vendor coverage for the relevant functions and a verified applied state; do not assume other Linux patches cover these reports.
 
@@ -90,6 +93,7 @@ The reports tested **7.3-rc3**; that is a tested version, not a complete affecte
 - [ZDI dispatch report][dispatch]; [SMB Direct discussion][discussion]; [October 23 patch][patch] and [review][review] — primary report and maintainer evidence.
 - [Sysdig October 24 analysis][sysdig] — tested impact, commit status, telemetry limits and scoped mitigations.
 - [The Hacker News, updated October 26][news] — newer context; no universal distribution fix version.
+- [`ksmbd-for-7.4-rc1` mainline merge][merge], [ZDI-CAN-33774 fix commit][fix33774], [ZDI-CAN-33549 fix commit][fix33549], [kernel.org release list][releases] and [kernel CVE process][kernelcve] — fix landing, release and CVE status as of 2026-10-26.
 
 [dispatch]: https://lore.kernel.org/lkml/BYAPR01MB383076AC412E19C48CFBEAE980662@BYAPR01MB3830.prod.exchangelabs.com/
 [discussion]: https://lists.samba.org/archive/samba-technical/2026-October/141179.html
@@ -97,3 +101,8 @@ The reports tested **7.3-rc3**; that is a tested version, not a complete affecte
 [review]: https://lists.samba.org/archive/samba-technical/2026-October/141181.html
 [sysdig]: https://www.sysdig.com/blog/detecting-and-mitigating-zdi-can-33367-and-five-other-linux-flaws
 [news]: https://thehackernews.com/2026/10/two-cvss-90-linux-ksmbd-rce-flaws.html
+[merge]: https://github.com/torvalds/linux/commit/4e1b4fdf6113b4eb9564bdf3b76ee3c3132da7d4
+[fix33774]: https://github.com/torvalds/linux/commit/68f410faedaf6ee74d81e574733c50ebcc1bd8ed
+[fix33549]: https://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/smb.git/commit/?h=ksmbd-for-next&id=7193241a49c958782ba4b8df06da3734d1e317d2
+[releases]: https://www.kernel.org/releases.json
+[kernelcve]: https://docs.kernel.org/process/cve.html

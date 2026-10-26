@@ -13,13 +13,13 @@
 | quic-go / CVE-2025-64702 | 2025-11-09 | Advisory 2025-12-11 | **0.57.0**, released 2025-11-21. [Research][research] [Advisory][go] |
 | Wireshark / CVE-2025-13945 | 2025-11-14 | Advisory 2025-12-03 | **4.6.2 / 4.4.12** listed by December 3 advisory; research explicitly dates 4.6.2 release December 3. [Research][research] [Advisory][wireshark] |
 | Cloudflare quiche / CVE-2026-12523 | 2025-11-15 | Advisory 2026-07-14 | **0.29.3**, released 2026-07-14. [Research][research] [Advisory][quiche] |
-| hyperium h3 | 2025-12-04 | In combined research 2026-10-20; earliest separate public date not established | No verified fixed release in reviewed matrix; December 5, 2025 issue closure was not a shipped fix. [Research][research] |
-| Bun | 2026-05-24 | In combined research 2026-10-20; earliest separate public date not established | Bun **1.4.3** tested vulnerable; no verified HTTP/3 fixed version in reviewed matrix. [Research][research] |
-| aioquic / mitmproxy | 2026-07-13 | In combined research 2026-10-20; earliest separate public date not established | No verified fixed version in reviewed matrix. [Research][research] |
+| hyperium h3 | 2025-12-04 | In combined research 2026-10-20; earliest separate public date not established | No fixed release as of 2026-10-26; latest `h3` release is 0.0.8 (2025-05-06). December 5, 2025 issue closure was not a shipped fix; new issue #379 and fix PRs #377/#378 (opened 2026-10-22) remain open. [Research][research] [h3 issue][h3issue] |
+| Bun (no CVE) | 2026-05-24 | Combined research 2026-10-20; Bun advisory **GHSA-cf8x-9m69-3gg3** 2026-10-24 00:13 UTC | **1.4.4**, GitHub release 2026-10-22 10:11 UTC. Advisory rates it **High** (no CVSS score or CVE published); affected `>= 1.3.14, < 1.4.4`. [Bun advisory][bun] [Release][bunrel] |
+| aioquic / mitmproxy | 2026-07-13 | In combined research 2026-10-20; earliest separate public date not established | No verified fixed version as of 2026-10-26: no aioquic commit after 1.7.0 (2026-10-16), and mitmproxy 12.3.0 / 12.3.1 (2026-10-22 / 2026-10-25) changelogs list no HTTP/3 header-limit fix. [Research][research] [mitmproxy changelog][mitmlog] |
 | lsquic | 2026-07-13 | Separate public advisory date unknown | **4.9.0**, released 2026-07-15; no CVE in research. [Research][research] |
 | Combined “Header Accordions” research | Discovery date unknown | **2026-10-20** | Article’s visible byline/timeline date; fetched metadata saying October 26 is not a new initial-disclosure date. [Research][research] |
 
-Report dates are the researcher’s vendor/project reporting dates; the article does not establish that every report was private. Exact initial discovery/private-report dates beyond those events remain unknown. The fresh read retains a matrix explicitly labeled **“as of October 20”**: it does not prove no project shipped a fix afterward.
+Report dates are the researcher’s vendor/project reporting dates; the article does not establish that every report was private. Exact initial discovery/private-report dates beyond those events remain unknown. The fresh read retains a matrix explicitly labeled **“as of October 20”**: it does not prove no project shipped a fix afterward. Bun has since shipped one (1.4.4); the reviewed project sources showed no later fixed release for h3 or aioquic/mitmproxy as of 2026-10-26.
 
 ## Detection
 
@@ -44,7 +44,8 @@ sh stack-inventory.sh go /path/to/deployed-server
 | quic-go | **≤0.56.0**, HTTP/3 server **or client**; compressed-size limit alone is insufficient. [Advisory][go] | 0.57.0+ or verified product backport. |
 | Cloudflare quiche | Earliest affected 0.1.0; 0.29.3 is first fixed; both frame preallocation and incorrect decoded-size accounting. [Advisory][quiche] | 0.29.3+; not Google’s similarly named QUICHE. |
 | lsquic | Research demonstrates missing cumulative/header-set limits in pre-fix implementation. [Research][research] | Product containing 4.9.0+ or verified backport; check custom callbacks too. |
-| Bun / aioquic / mitmproxy / h3 | Research lists Bun 1.4.3, aioquic 1.7.0, mitmproxy 12.2.3 and h3 0.0.8 test fingerprints, not exhaustive affected ranges. [Research][research] | Confirm later product fix explicitly or use mitigation below. |
+| Bun | Vendor: **`>= 1.3.14, < 1.4.4`**; `Bun.serve` with `http3: true` (off by default) **and** the opt-in HTTP/3 `fetch` client. `bun build --compile` executables embed the runtime. [Bun advisory][bun] | 1.4.4+; rebuild compiled executables with it. |
+| aioquic / mitmproxy / h3 | Research lists aioquic 1.7.0, mitmproxy 12.2.3 and h3 0.0.8 test fingerprints, not exhaustive affected ranges. [Research][research] | Confirm later product fix explicitly or use mitigation below. |
 | Wireshark | **4.6.0–4.6.1 / 4.4.0–4.4.11**; HTTP/3 dissection when decrypting with a keylog or capture-embedded secrets. [Advisory][wireshark] | 4.6.2 / 4.4.12 or later supported release, including TShark. |
 
 The research found Google QUICHE, IIS and ngtcp2/nghttp3 unaffected in its tests; do not turn that into a universal guarantee for custom applications. In particular, nghttp3’s field-section setting is signaling-only and application enforcement still matters. [Research][research]
@@ -63,14 +64,14 @@ The research found Google QUICHE, IIS and ngtcp2/nghttp3 unaffected in its tests
 - Disable affected HTTP/3 server support at the actual terminator; retain supported HTTP/2 or HTTP/1.1. Remove stale HTTP/3 advertisements **and** stop accepting HTTP/3—removing `Alt-Svc` alone does not block known clients.
 - Where appropriate, deny the terminator’s QUIC UDP endpoint at ingress while preserving intended TCP HTTPS. Check alternate ports/addresses; coordinate other UDP users before broad filtering.
 - For quic-go clients, disable HTTP/3 in the affected transport until patched; an inbound WAF cannot protect outbound response decoding. [quic-go][go]
-- Follow researcher guidance: **do not expose Bun HTTP/3**, run mitmproxy with **`--set http3=false`**, and configure a suitably small **`max_field_section_size`** for h3. Validate the effective setting and normal workload rather than assuming every advertised limit is enforced. [Research][research]
+- Follow researcher guidance: until upgraded to Bun 1.4.4, **do not expose Bun HTTP/3** (and avoid Bun’s HTTP/3 `fetch` client against untrusted servers, per Bun’s advisory); run mitmproxy with **`--set http3=false`**, and configure a suitably small **`max_field_section_size`** for h3. Validate the effective setting and normal workload rather than assuming every advertised limit is enforced. [Research][research]
 - Bound memory, concurrency and restart behavior as impact controls, not cures. A single connection can be sufficient in demonstrated cases; rate limiting alone is not dependable. [Research][research]
 
 ### Deploy the fixed implementation
 
 1. Upgrade/rebuild the product against the relevant fixed library and redeploy all terminating replicas and outbound clients; updating an installed compiler or lockfile alone is insufficient.
 2. Confirm any vendor backport covers incremental decoded-size accounting and the component’s other finding, such as quiche frame preallocation. Do not copy one generic header-size setting across stacks.
-3. Do not assume **Bun’s Brotli security update** fixes these HTTP/3 paths or that upgrading stock lsquic repairs Bun’s custom header callbacks without explicit confirmation. [Research][research]
+3. For Bun, use **1.4.4 or later**: Bun’s HTTP/3 advisory names 1.4.4 as the fix, which enforces a decoded header-set limit (default 16 KB, `--max-http-header-size`; oversize requests get `431`) and caps HTTP/3 `fetch` response headers at 256 KB. The same release also carries Bun’s separate Brotli fix, but verify against the HTTP/3 advisory rather than inferring coverage from the Brotli advisory, and do not assume upgrading stock lsquic repairs Bun’s custom header callbacks. [Bun advisory][bun] [Research][research]
 4. Update analyst Wireshark/TShark installations before opening suspect captures, including workstation packages and analysis containers. Keep capture secrets access-controlled.
 
 ## Verification
@@ -92,7 +93,13 @@ The research found Google QUICHE, IIS and ngtcp2/nghttp3 unaffected in its tests
 
 - [FoxIO research][research] — per-project timeline, mitigation matrix and tested implementation limits.
 - [quic-go advisory][go], [Cloudflare quiche advisory][quiche], [Wireshark advisory][wireshark] — exact ranges, public advisory dates and important client/capture scope.
+- [Bun advisory GHSA-cf8x-9m69-3gg3][bun] and [Bun 1.4.4 release][bunrel] — Bun affected range, fixed version, client scope and compiled-executable caution.
+- [hyperium h3 issue #379][h3issue] and [mitmproxy changelog][mitmlog] — post-October 20 fix status for the remaining stacks.
 
+[bun]: https://github.com/oven-sh/bun/security/advisories/GHSA-cf8x-9m69-3gg3
+[bunrel]: https://github.com/oven-sh/bun/releases/tag/bun-v1.4.4
+[h3issue]: https://github.com/hyperium/h3/issues/379
+[mitmlog]: https://github.com/mitmproxy/mitmproxy/blob/main/CHANGELOG.md
 [research]: https://foxio.io/blog/header-accordions-qpack-amplification-attacks-against-http-3-servers
 [go]: https://github.com/quic-go/quic-go/security/advisories/GHSA-g754-hx8w-x2g6
 [quiche]: https://github.com/cloudflare/quiche/security/advisories/GHSA-4fgf-9xrr-88gf
