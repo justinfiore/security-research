@@ -6,7 +6,7 @@ This file defines the complete job for one maintenance run. Execute it in the cu
 
 ## Schedule and scope
 
-- Run **every 4 hours on the hour (12, 4 and 8 AM and PM), America/New_York** (Eastern time, including DST), starting a fresh **Medium** thread for each run in the Amp project **pressganey/security-research**. Scheduling lives in Amp, not GitHub Actions. Fresh orbs use the project-default size; the originally requested **a1.small** size has not been verified for this replacement schedule.
+- Run **every 4 hours on the hour (12, 4 and 8 AM and PM), America/New_York** (Eastern time, including DST), starting a fresh thread in **GPT-5.6 Terra** mode (`gpt56t`, set on the schedule) for each run in the Amp project **pressganey/security-research**. Scheduling lives in Amp, not GitHub Actions. Fresh orbs use the project-default size; the originally requested **a1.small** size has not been verified for this replacement schedule.
 - The schedule is `34066e1b-ab2f-5966-af37-9824e3bd68a1`, hosted on [the schedule thread](https://ampcode.com/threads/T-01a17848-85d5-7201-9e74-81562adffff5). It replaces the removed daily schedule. Archive run threads only under the clean-completion conditions below.
 - The schedule prompt first checks the schedule thread's unarchived runs with one `find_thread` call. If another run's agent is working and its thread was updated in the last 20 minutes, the new run archives itself without doing anything else. Idle, errored, question-blocked or stalled runs do not block a new run.
 - Maintain the existing vulnerability groups and related incidents. Add newly verified High/Critical vulnerability items found during each run; continue after October under this collection until the owner changes the scope.
