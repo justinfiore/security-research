@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main curl summary](../black-october-2026.md#curl-and-libcurl-use-after-free-when-a-server-resets-an-upload-cve-2026-92392) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main curl summary](../black-october-2026.md#curl-and-libcurl-use-after-free-when-a-server-resets-an-upload) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-92392](https://www.cve.org/CVERecord?id=CVE-2026-92392): the curl project rates it severity High. The curl CNA record has no CVSS score. CISA's ADP entry adds CVSS 3.1 8.1 High (`CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`). NVD has added no score of its own. Not listed in CISA KEV (catalog 2026.10.23, checked 2026-10-26). The researcher's report, now public, includes a working remote code execution proof of concept (PoC). No in-the-wild exploitation has been reported.** [curl advisory][adv] [CNA/ADP][cve] [KEV][kev]
 

@@ -1,8 +1,8 @@
-# Bricksforge: exploited unauthenticated file upload to RCE
+# Bricksforge for WordPress: exploited unauthenticated file upload to RCE
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main Bricksforge summary](../black-october-2026.md#bricksforge-exploited-unauthenticated-file-upload-to-rce-cve-2026-85097) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main Bricksforge summary](../black-october-2026.md#bricksforge-for-wordpress-exploited-unauthenticated-file-upload-to-rce) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-85097](https://www.cve.org/CVERecord?id=CVE-2026-85097): Wordfence (CNA) CVSS 3.1 9.8 Critical (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H). Patchstack rates it CVSS 10.0, and The Hacker News reports that 10.0 figure. NVD has added no score of its own (status "Deferred"). Not listed in CISA KEV, but Patchstack reports exploitation attempts since 2026-10-07 21:47:17 UTC.** Bricksforge, a WordPress plugin that extends the Bricks Builder visual site builder, lets **unauthenticated** visitors upload and execute PHP code in versions **up to and including 3.1.8.9**. The Pro Forms upload path validates the MIME type of a temporary upload but later trusts the client-supplied `url` field in the `temporaryFileUploads` parameter. An attacker obtains a nonce from the unauthenticated `bricksforge_regenerate_nonce` AJAX action, uploads a GIF/PHP polyglot, then submits a form whose `url` ends in `.php`. [Wordfence][wf] [CNA][cve] [Patchstack][ps]
 

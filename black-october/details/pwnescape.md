@@ -1,8 +1,8 @@
-# Linux kernel PwnEscape: guest-to-host escape via IPv4 checksum metadata
+# Linux kernel: PwnEscape - guest-to-host escape via IPv4 checksum metadata
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main PwnEscape summary](../black-october-2026.md#linux-kernel-pwnescape-guest-to-host-escape-via-ipv4-checksum-metadata-cve-2026-99999) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main PwnEscape summary](../black-october-2026.md#linux-kernel-pwnescape---guest-to-host-escape-via-ipv4-checksum-metadata) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-99999](https://www.cve.org/CVERecord?id=CVE-2026-99999) ("PwnEscape"): kernel.org CNA CVSS 3.1 9.3 Critical (CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H). Red Hat CVSS 3.1 8.8, severity Important (PR:L). Amazon Linux CVSS 3.1 8.8, Important. Ubuntu priority Medium. NVD has added no score of its own.** [CNA][cve] [Red Hat][rh] [Amazon Linux][alas] [Ubuntu][ubuntu] [NVD][nvd]
 

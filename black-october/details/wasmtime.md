@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main Wasmtime summary](../black-october-2026.md#wasmtime-cranelift-sandbox-escapes-from-untrusted-wasm-cve-2026-115889-and-cve-2026-115893) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main Wasmtime summary](../black-october-2026.md#wasmtime-cranelift-sandbox-escapes-from-untrusted-wasm) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **Two Critical Cranelift miscompilation bugs in the [Wasmtime](https://docs.wasmtime.dev/) WebAssembly runtime. Both: GitHub CNA (Bytecode Alliance advisory) CVSS 3.1 9.9 Critical (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H). NVD has not added its own score (status "Deferred"). Neither is listed in CISA KEV.**
 

@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main Langflow summary](../black-october-2026.md#langflow-authenticated-rce-via-mcp-stdio-server-configuration-cve-2026-105740-and-cve-2026-105697) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main Langflow summary](../black-october-2026.md#langflow-authenticated-rce-via-mcp-stdio-server-configuration) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **Two related Langflow advisories cover the same root problem. Both are rated GitHub CNA CVSS 3.1 9.9 Critical (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H). NVD has not scored either one (status: Awaiting Analysis).** [CNA 105740][cve40] [CNA 105697][cve97] [NVD 105740][nvd40] [NVD 105697][nvd97]
 

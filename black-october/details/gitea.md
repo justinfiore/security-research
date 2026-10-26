@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main Gitea summary](../black-october-2026.md#gitea-built-in-ssh-server-authentication-bypass-cve-2026-103059) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main Gitea summary](../black-october-2026.md#gitea-built-in-ssh-server-authentication-bypass) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-103059](https://www.cve.org/CVERecord?id=CVE-2026-103059): no score in the Gitea CNA record. CISA ADP CVSS 3.1 9.1 Critical (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N). NVD shows only the CISA ADP score and has added none of its own.** Gitea's GitHub advisory shows the same 9.1 Critical vector, but its own text says "This is why severity is high rather than critical", so the vendor's view is inconsistent. [CNA][cve] [NVD][nvd] [GHSA][ghsa]
 

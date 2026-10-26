@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main Drupal summary](../black-october-2026.md#drupal-core-field-ui-remote-code-execution-cve-2026-108097) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main Drupal summary](../black-october-2026.md#drupal-core-field-ui-remote-code-execution) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): the Drupal Security Team (the vendor) rates it Critical, 19/25 (`AC:Basic/A:None/CI:All/II:All/E:Theoretical/TD:Default`). Drupal names the CVE ID in its advisory, but as of 2026-10-26 the CVE Services API returns no record for it and NVD has no entry, so there is no CNA or NVD CVSS score. Not listed in CISA KEV (catalog 2026.10.23, checked 2026-10-26).** A related contributed-module advisory published the same day, **SA-CONTRIB-2026-218 (Entity List, [CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099))**, is also rated Critical 19/25 and has the same exploit-path pattern. [SA-CORE-2026-014][sa-core] [SA-CONTRIB-2026-218][sa-el] [KEV][kev]
 

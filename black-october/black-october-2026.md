@@ -15,16 +15,16 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
-- [Wasmtime — Cranelift sandbox escapes (CVE-2026-115889, CVE-2026-115893)](#wasmtime-cranelift-sandbox-escapes-from-untrusted-wasm-cve-2026-115889-and-cve-2026-115893)
-- [Laravel — TokenGuard API authentication bypass](#laravel-tokenguard-api-authentication-bypass-on-mysql-and-mariadb-cve-2026-114509)
-- [Next.js — unauthenticated RCE in use cache and Image Optimization](#nextjs-unauthenticated-rce-in-use-cache-and-image-optimization-ghsa-673q-mjm6-r5xr-and-cve-2026-96889)
-- [Drupal core — Field UI remote code execution (CVE-2026-108097)](#drupal-core-field-ui-remote-code-execution-cve-2026-108097)
-- [NGINX — configuration-dependent memory corruption and TLS session forgery](#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery-cve-2026-15176-cve-2026-93479-cve-2026-97205-and-cve-2026-97629)
-- [curl and libcurl — HTTP/2 upload use-after-free (CVE-2026-92392)](#curl-and-libcurl-use-after-free-when-a-server-resets-an-upload-cve-2026-92392)
-- [Linux kernel PwnEscape — guest-to-host escape (CVE-2026-99999, plus Vghost)](#linux-kernel-pwnescape-guest-to-host-escape-via-ipv4-checksum-metadata-cve-2026-99999)
-- [Bricksforge — exploited unauthenticated file upload to RCE](#bricksforge-exploited-unauthenticated-file-upload-to-rce-cve-2026-85097)
-- [Gitea — built-in SSH server authentication bypass (CVE-2026-103059)](#gitea-built-in-ssh-server-authentication-bypass-cve-2026-103059)
-- [Langflow — MCP stdio RCE with honeypot exploitation attempts (CVE-2026-105740, CVE-2026-105697)](#langflow-authenticated-rce-via-mcp-stdio-server-configuration-cve-2026-105740-and-cve-2026-105697)
+- [Wasmtime: Cranelift sandbox escapes](#wasmtime-cranelift-sandbox-escapes-from-untrusted-wasm)
+- [Laravel: TokenGuard API authentication bypass](#laravel-tokenguard-api-authentication-bypass-on-mysql-and-mariadb)
+- [Next.js: unauthenticated RCE in use cache and Image Optimization](#nextjs-unauthenticated-rce-in-use-cache-and-image-optimization)
+- [Drupal core: Field UI remote code execution](#drupal-core-field-ui-remote-code-execution)
+- [NGINX: memory corruption and TLS session forgery](#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery)
+- [curl and libcurl: HTTP/2 upload use-after-free](#curl-and-libcurl-use-after-free-when-a-server-resets-an-upload)
+- [Linux kernel: PwnEscape - guest-to-host escape](#linux-kernel-pwnescape---guest-to-host-escape-via-ipv4-checksum-metadata)
+- [Bricksforge for WordPress: exploited file upload to RCE](#bricksforge-for-wordpress-exploited-unauthenticated-file-upload-to-rce)
+- [Gitea: built-in SSH server authentication bypass](#gitea-built-in-ssh-server-authentication-bypass)
+- [Langflow: MCP stdio RCE with honeypot exploitation attempts](#langflow-authenticated-rce-via-mcp-stdio-server-configuration)
 - [VeloCloud Orchestrator: authenticated SQL injection](#velocloud-orchestrator-authenticated-sql-injection-to-superuser-operator)
 - [Siemens Software Center: exploited DLL side-loading](#siemens-software-center-dll-side-loading-exploited-in-clickfix-campaign)
 - [PAN-OS: authenticated management interface RCE](#pan-os-authenticated-management-interface-rce)
@@ -98,9 +98,13 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
-## Wasmtime: Cranelift sandbox escapes from untrusted Wasm (CVE-2026-115889 and CVE-2026-115893)
+<a name="wasmtime-cranelift-sandbox-escapes-from-untrusted-wasm-cve-2026-115889-and-cve-2026-115893"></a>
 
-[Back to TOC](#table-of-contents)
+## Wasmtime: Cranelift sandbox escapes from untrusted Wasm
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wasmtime.md):** [Detection](details/wasmtime.md#detection) · [Remediation](details/wasmtime.md#remediation) · [Verification](details/wasmtime.md#verification) · [Timeline](details/wasmtime.md#timeline)
+
+**CVEs:** [CVE-2026-115889](https://www.cve.org/CVERecord?id=CVE-2026-115889), [CVE-2026-115893](https://www.cve.org/CVERecord?id=CVE-2026-115893)
 
 **[CVE-2026-115889](https://www.cve.org/CVERecord?id=CVE-2026-115889) and [CVE-2026-115893](https://www.cve.org/CVERecord?id=CVE-2026-115893) — GitHub CNA (Bytecode Alliance) CVSS 3.1: 9.9 Critical each; NVD has not scored them**
 
@@ -116,8 +120,6 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 | CVE records published | 2026-10-23 21:23:27 / 21:29:33 UTC | GitHub CNA. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
 
-**[Detailed guide](details/wasmtime.md):** [Detection](details/wasmtime.md#detection) · [Remediation](details/wasmtime.md#remediation) · [Verification](details/wasmtime.md#verification) · [Timeline](details/wasmtime.md#timeline)
-
 Both bugs are in Cranelift, Wasmtime's default compiler. **CVE-2026-115889** (any architecture): SSA value indices silently overflow when compiling a huge or crafted function, causing miscompilation and type confusion. **CVE-2026-115893** (aarch64/ARM64 only): a `br_table` with more than ~256,000 targets gets an out-of-range branch that jumps to an attacker-chosen offset.
 
 **Worst case:** a malicious Wasm module escapes the sandbox and runs code in the host process with its privileges and secrets.
@@ -130,10 +132,13 @@ Both bugs are in Cranelift, Wasmtime's default compiler. **CVE-2026-115889** (an
 
 Sources: [GHSA-897f-g5gm-fmxm](https://github.com/bytecodealliance/wasmtime/security/advisories/GHSA-897f-g5gm-fmxm), [GHSA-mghf-wjfp-p5xm](https://github.com/bytecodealliance/wasmtime/security/advisories/GHSA-mghf-wjfp-p5xm), [CNA record CVE-2026-115889](https://cveawg.mitre.org/api/cve/CVE-2026-115889), [CNA record CVE-2026-115893](https://cveawg.mitre.org/api/cve/CVE-2026-115893), [Wasmtime 36.0.19 release](https://github.com/bytecodealliance/wasmtime/releases/tag/v36.0.19), [The Hacker News](https://thehackernews.com/2026/10/two-critical-wasmtime-flaws-could-let.html).
 
+<a name="laravel-tokenguard-api-authentication-bypass-on-mysql-and-mariadb-cve-2026-114509"></a>
 
-## Laravel: TokenGuard API authentication bypass on MySQL and MariaDB (CVE-2026-114509)
+## Laravel: TokenGuard API authentication bypass on MySQL and MariaDB
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/laravel.md):** [Detection](details/laravel.md#detection) · [Remediation](details/laravel.md#remediation) · [Verification](details/laravel.md#verification) · [Timeline](details/laravel.md#timeline)
+
+**CVEs:** [CVE-2026-114509](https://www.cve.org/CVERecord?id=CVE-2026-114509)
 
 **[CVE-2026-114509](https://www.cve.org/CVERecord?id=CVE-2026-114509) — GitHub CNA CVSS 4.0: 9.2 Critical; NVD has not scored it**
 
@@ -148,8 +153,6 @@ Sources: [GHSA-897f-g5gm-fmxm](https://github.com/bytecodealliance/wasmtime/secu
 | CVE record published | 2026-10-21 21:49:29 UTC | GitHub CNA. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
 
-**[Detailed guide](details/laravel.md):** [Detection](details/laravel.md#detection) · [Remediation](details/laravel.md#remediation) · [Verification](details/laravel.md#verification) · [Timeline](details/laravel.md#timeline)
-
 Laravel's built-in `TokenGuard`, used by any guard with `'driver' => 'token'` (default `api_token` request key and column), accepts a non-string credential. On a MySQL or MariaDB user store, a crafted value makes the lookup match an existing user, so an **unauthenticated** attacker is logged in as that user on token-guarded routes.
 
 **Worst case:** API account takeover of the matched user, which researchers say is the first user whose stored token does not start with a digit. Impact depends on that account's privileges.
@@ -162,10 +165,13 @@ Laravel's built-in `TokenGuard`, used by any guard with `'driver' => 'token'` (d
 
 Sources: [Laravel advisory](https://github.com/laravel/framework/security/advisories/GHSA-f9x3-7vq9-cph6), [GitHub CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-114509), [Hakai Security analysis](https://yokai.hakaisecurity.io/en-ghsa-f9x3-7vq9-cph6-authentication-bypass-in-laravel-tokenguard), [v12.68.0](https://github.com/laravel/framework/releases/tag/v12.68.0), [v13.29.0](https://github.com/laravel/framework/releases/tag/v13.29.0), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
+<a name="nextjs-unauthenticated-rce-in-use-cache-and-image-optimization-ghsa-673q-mjm6-r5xr-and-cve-2026-96889"></a>
 
-## Next.js: unauthenticated RCE in use cache and Image Optimization (GHSA-673q-mjm6-r5xr and CVE-2026-96889)
+## Next.js: unauthenticated RCE in use cache and Image Optimization
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/nextjs.md):** [Detection](details/nextjs.md#detection) · [Remediation](details/nextjs.md#remediation) · [Verification](details/nextjs.md#verification) · [Timeline](details/nextjs.md#timeline)
+
+**CVEs:** [CVE-2026-96889](https://www.cve.org/CVERecord?id=CVE-2026-96889), [CVE-2026-94482](https://www.cve.org/CVERecord?id=CVE-2026-94482). The `use cache` RCE (GHSA-673q-mjm6-r5xr) has no CVE assigned.
 
 **GHSA-673q-mjm6-r5xr and GHSA-2464-fhr4-w9xw ([CVE-2026-96889](https://www.cve.org/CVERecord?id=CVE-2026-96889)): Vercel Critical, CVSS 4.0 9.5 each. Red Hat, the CNA for the librsvg CVE, scores CVE-2026-96889 CVSS 3.1 7.8 High. The same release fixes a High DoS, [CVE-2026-94482](https://www.cve.org/CVERecord?id=CVE-2026-94482) (CVSS 4.0 8.2).**
 
@@ -178,8 +184,6 @@ Sources: [Laravel advisory](https://github.com/laravel/framework/security/adviso
 | Advance notice | 2026-10-08; time/TZ unknown | "Two Critical and one High" announced, with no details. |
 | Advisories and fixed releases | 2026-10-14 17:46–17:47 UTC | `next` 15.5.28 and 16.4.1 on npm by 17:44 UTC. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
-
-**[Detailed guide](details/nextjs.md):** [Detection](details/nextjs.md#detection) · [Remediation](details/nextjs.md#remediation) · [Verification](details/nextjs.md#verification) · [Timeline](details/nextjs.md#timeline)
 
 There are two separate RCE paths:
 
@@ -204,10 +208,13 @@ Check the deployed `node_modules`, not just the lockfile.
 
 Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/advisories/GHSA-673q-mjm6-r5xr), [GHSA-2464-fhr4-w9xw](https://github.com/vercel/next.js/security/advisories/GHSA-2464-fhr4-w9xw), [Next.js blog](https://nextjs.org/blog/nextjs-security-update-october-14-2026), [CVE-2026-96889 record](https://cveawg.mitre.org/api/cve/CVE-2026-96889), [sharp GHSA-wq5f-xc86-pv6w](https://github.com/advisories/GHSA-wq5f-xc86-pv6w), [React GHSA-xqc2-xf4c-x3h3](https://github.com/facebook/react/security/advisories/GHSA-xqc2-xf4c-x3h3).
 
+<a name="drupal-core-field-ui-remote-code-execution-cve-2026-108097"></a>
 
-## Drupal core: Field UI remote code execution (CVE-2026-108097)
+## Drupal core: Field UI remote code execution
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/drupal.md):** [Detection](details/drupal.md#detection) · [Remediation](details/drupal.md#remediation) · [Verification](details/drupal.md#verification) · [Timeline](details/drupal.md#timeline)
+
+**CVEs:** [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097), [CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099). Both records were not yet published when checked; the links are generated from Drupal-assigned IDs.
 
 **SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): Drupal Security Team Critical 19/25. No CVE record has been published yet and NVD has no entry, so there is no CNA or NVD score. A related advisory, SA-CONTRIB-2026-218 for Entity List ([CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099)), is also Critical 19/25.**
 
@@ -221,8 +228,6 @@ Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/adviso
 | SA-CONTRIB-2026-218 (Entity List 3.0.10) | 2026-10-14 (RSS 17:26 UTC) | Release published 15:59 UTC. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
 
-**[Detailed guide](details/drupal.md):** [Detection](details/drupal.md#detection) · [Remediation](details/drupal.md#remediation) · [Verification](details/drupal.md#verification) · [Timeline](details/drupal.md#timeline)
-
 The flaw is in core's Field UI module. Drupal says core alone cannot be exploited, but "multiple serious exploit paths exist with contributed modules", and at least one of them needs no login. Custom code may also expose it. The contributed modules are not named. Entity List has its own separate RCE with the same pattern.
 
 **Worst case:** Unauthenticated code execution, with all site data readable and modifiable.
@@ -235,10 +240,13 @@ The flaw is in core's Field UI module. Drupal says core alone cannot be exploite
 
 Sources: [SA-CORE-2026-014](https://www.drupal.org/sa-core-2026-014), [SA-CONTRIB-2026-218](https://www.drupal.org/sa-contrib-2026-218), [PSA-2026-10-12](https://www.drupal.org/psa-2026-10-12), [Drupal release history](https://updates.drupal.org/release-history/drupal/current).
 
+<a name="nginx-configuration-dependent-memory-corruption-and-tls-session-forgery-cve-2026-15176-cve-2026-93479-cve-2026-97205-and-cve-2026-97629"></a>
 
-## NGINX: configuration-dependent memory corruption and TLS session forgery (CVE-2026-15176, CVE-2026-93479, CVE-2026-97205 and CVE-2026-97629)
+## NGINX: configuration-dependent memory corruption and TLS session forgery
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/nginx.md):** [Detection](details/nginx.md#detection) · [Remediation](details/nginx.md#remediation) · [Verification](details/nginx.md#verification) · [Timeline](details/nginx.md#timeline)
+
+**CVEs:** [CVE-2026-15176](https://www.cve.org/CVERecord?id=CVE-2026-15176), [CVE-2026-93479](https://www.cve.org/CVERecord?id=CVE-2026-93479), [CVE-2026-97205](https://www.cve.org/CVERecord?id=CVE-2026-97205), [CVE-2026-97629](https://www.cve.org/CVERecord?id=CVE-2026-97629)
 
 **[CVE-2026-15176](https://www.cve.org/CVERecord?id=CVE-2026-15176), [CVE-2026-93479](https://www.cve.org/CVERecord?id=CVE-2026-93479), [CVE-2026-97205](https://www.cve.org/CVERecord?id=CVE-2026-97205): F5 (CNA) CVSS 4.0 9.2 Critical, CVSS 3.1 8.1 High. [CVE-2026-97629](https://www.cve.org/CVERecord?id=CVE-2026-97629): F5 CVSS 4.0 8.3 High, CVSS 3.1 6.5 Medium. nginx.org rates all four "medium".**
 
@@ -251,8 +259,6 @@ Sources: [SA-CORE-2026-014](https://www.drupal.org/sa-core-2026-014), [SA-CONTRI
 | nginx 1.30.6 and 1.31.7, NGINX Plus fixes, F5 K articles | 2026-10-14; time/TZ unknown | Plus 37.0.5.1 and 37.1.0.1. |
 | Debian DSA-6575-1 | 2026-10-21 15:28 UTC | trixie 1.26.3-3+deb13u10. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
-
-**[Detailed guide](details/nginx.md):** [Detection](details/nginx.md#detection) · [Remediation](details/nginx.md#remediation) · [Verification](details/nginx.md#verification) · [Timeline](details/nginx.md#timeline)
 
 Each flaw needs a specific configuration:
 
@@ -278,10 +284,13 @@ Then check the running configuration with `nginx -T`, piped to `grep` because th
 
 Sources: [nginx.org advisories](https://nginx.org/en/security_advisories.html), [F5 K000162416](https://my.f5.com/manage/s/article/K000162416), [K000162607](https://my.f5.com/manage/s/article/K000162607), [K000162608](https://my.f5.com/manage/s/article/K000162608), [K000162606](https://my.f5.com/manage/s/article/K000162606), [Debian DSA-6575-1](https://lists.debian.org/debian-security-announce/2026/msg00490.html).
 
+<a name="curl-and-libcurl-use-after-free-when-a-server-resets-an-upload-cve-2026-92392"></a>
 
-## curl and libcurl: use-after-free when a server resets an upload (CVE-2026-92392)
+## curl and libcurl: use-after-free when a server resets an upload
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/curl.md):** [Detection](details/curl.md#detection) · [Remediation](details/curl.md#remediation) · [Verification](details/curl.md#verification) · [Timeline](details/curl.md#timeline)
+
+**CVEs:** [CVE-2026-92392](https://www.cve.org/CVERecord?id=CVE-2026-92392)
 
 **[CVE-2026-92392](https://www.cve.org/CVERecord?id=CVE-2026-92392): curl project severity High. CISA ADP CVSS 3.1 8.1 High. The curl CNA record has no CVSS score.**
 
@@ -295,8 +304,6 @@ Sources: [nginx.org advisories](https://nginx.org/en/security_advisories.html), 
 | Rock-solid curl 8.20.2, 8.16.2 and 8.14.3 | 2026-10-14; time/TZ unknown | Commercial support customers only. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
 
-**[Detailed guide](details/curl.md):** [Detection](details/curl.md#detection) · [Remediation](details/curl.md#remediation) · [Verification](details/curl.md#verification) · [Timeline](details/curl.md#timeline)
-
 During an HTTP/2 upload, a server reply that resets the stream (`RST_STREAM` with `HTTP_1_1_REQUIRED` or `REFUSED_STREAM`) leaves curl using freed memory. Both the curl tool and libcurl are affected. The attacker must be, or be able to impersonate, the server that receives the upload.
 
 **Worst case:** Code execution in the uploading process, for example a CI job, backup agent or application. curl says this "has been proven", but only when a malicious server knows the exact build, architecture and heap layout, and with a payload of about 23 bytes.
@@ -309,10 +316,13 @@ During an HTTP/2 upload, a server reply that resets the stream (`RST_STREAM` wit
 
 Sources: [curl advisory](https://curl.se/docs/CVE-2026-92392.html), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-92392), [HackerOne #4030333](https://hackerone.com/reports/4030333), [Debian DSA-6558-1](https://lists.debian.org/debian-security-announce/2026/msg00472.html), [Rock-solid curl](https://rock-solid.curl.dev/download.html).
 
+<a name="linux-kernel-pwnescape-guest-to-host-escape-via-ipv4-checksum-metadata-cve-2026-99999"></a>
 
-## Linux kernel PwnEscape: guest-to-host escape via IPv4 checksum metadata (CVE-2026-99999)
+## Linux kernel: PwnEscape - guest-to-host escape via IPv4 checksum metadata
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/pwnescape.md):** [Detection](details/pwnescape.md#detection) · [Remediation](details/pwnescape.md#remediation) · [Verification](details/pwnescape.md#verification) · [Timeline](details/pwnescape.md#timeline) · Vulnerability Info Site: [pwn.ai](https://pwn.ai/blog/pwnescape)
+
+**CVEs:** [CVE-2026-99999](https://www.cve.org/CVERecord?id=CVE-2026-99999), [CVE-2026-74580](https://www.cve.org/CVERecord?id=CVE-2026-74580). CVE-2026-74580 is the related Vghost vhost flaw.
 
 **[CVE-2026-99999](https://www.cve.org/CVERecord?id=CVE-2026-99999) — kernel.org CNA CVSS 3.1: 9.3 Critical; Red Hat and Amazon Linux CVSS 3.1: 8.8 Important (PR:L); Ubuntu priority: Medium. Companion [CVE-2026-74580](https://www.cve.org/CVERecord?id=CVE-2026-74580) "Vghost" — kernel.org CNA CVSS 3.1: 8.8 High.**
 
@@ -327,8 +337,6 @@ Sources: [curl advisory](https://curl.se/docs/CVE-2026-92392.html), [CVE record]
 | CVE published | 2026-10-15 12:19 UTC | kernel.org CNA. |
 | Vghost CVE published / write-up | 2026-08-21 16:31 UTC / 2026-10-12, time/TZ unknown | Fixed in 5.10.265, 5.15.216, 6.1.183, 6.6.152, 6.12.104, 6.18.45, 7.1.9 and 7.2. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
-
-**[Detailed guide](details/pwnescape.md):** [Detection](details/pwnescape.md#detection) · [Remediation](details/pwnescape.md#remediation) · [Verification](details/pwnescape.md#verification) · [Timeline](details/pwnescape.md#timeline)
 
 The flaw is in the host kernel's **IPv4 networking stack**, not in KVM. A guest sends crafted virtio-net checksum metadata, and the VMM writes it to a host TAP device. The host then corrupts an already-validated IPv4 header and reads beyond the packet data when it fragments the packet. Red Hat says local attackers can trigger it too.
 
@@ -347,10 +355,13 @@ The flaw is in the host kernel's **IPv4 networking stack**, not in KVM. A guest 
 
 Sources: [kernel.org CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-99999), [pwn.ai write-up](https://pwn.ai/blog/pwnescape), [Vercel findings](https://vercel.com/blog/findings-from-the-1-million-dollar-vercel-sandbox-challenge), [Red Hat](https://access.redhat.com/security/cve/cve-2026-99999), [AlmaLinux](https://almalinux.org/blog/2026-10-16-pwnescape-cve-2026-99999), [Vghost CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-74580), [Tencent Vghost write-up](https://matrix.tencent.com/en/2026/10/12/vghost-cve-2026-74580), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
+<a name="bricksforge-exploited-unauthenticated-file-upload-to-rce-cve-2026-85097"></a>
 
-## Bricksforge: exploited unauthenticated file upload to RCE (CVE-2026-85097)
+## Bricksforge for WordPress: exploited unauthenticated file upload to RCE
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/bricksforge.md):** [Detection](details/bricksforge.md#detection) · [Remediation](details/bricksforge.md#remediation) · [Verification](details/bricksforge.md#verification) · [Timeline](details/bricksforge.md#timeline)
+
+**CVEs:** [CVE-2026-85097](https://www.cve.org/CVERecord?id=CVE-2026-85097)
 
 **[CVE-2026-85097](https://www.cve.org/CVERecord?id=CVE-2026-85097) — Wordfence (CNA) CVSS 3.1: 9.8 Critical; Patchstack CVSS: 10.0 (figure repeated by The Hacker News); NVD has not scored it**
 
@@ -366,8 +377,6 @@ Sources: [kernel.org CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-99999
 | Further upload fix (4.0.1) and hardening (4.0.2) | 2026-10-08 and 2026-10-13; time/TZ unknown | Vendor changelog; no CVE named for the 4.0.1 issue. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
 
-**[Detailed guide](details/bricksforge.md):** [Detection](details/bricksforge.md#detection) · [Remediation](details/bricksforge.md#remediation) · [Verification](details/bricksforge.md#verification) · [Timeline](details/bricksforge.md#timeline)
-
 Bricksforge, a WordPress plugin that extends the Bricks Builder site builder, validates a Pro Forms upload's MIME type but later trusts the client-supplied `url` in `temporaryFileUploads`. An unauthenticated attacker fetches a nonce, uploads a GIF/PHP polyglot, and has it written to a `.php` path.
 
 **Worst case:** unauthenticated remote code execution as the web server user, leading to web shells, site takeover and data theft.
@@ -380,10 +389,13 @@ Bricksforge, a WordPress plugin that extends the Bricks Builder site builder, va
 
 Sources: [Wordfence record](https://www.wordfence.com/threat-intel/vulnerabilities/wordpress-plugins/bricksforge/bricksforge-3189-unauthenticated-arbitrary-file-upload-via-temporaryfileuploads-parameter), [Wordfence CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-85097), [Patchstack exploitation report](https://patchstack.com/articles/critical-unauthenticated-arbitrary-file-upload-vulnerability-exploited-in-bricksforge-plugin/), [Bricksforge changelog](https://bricksforge.io/version-changelog/), [The Hacker News](https://thehackernews.com/2026/10/attackers-exploit-cvss-100-bricksforge.html).
 
+<a name="gitea-built-in-ssh-server-authentication-bypass-cve-2026-103059"></a>
 
-## Gitea: built-in SSH server authentication bypass (CVE-2026-103059)
+## Gitea: built-in SSH server authentication bypass
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/gitea.md):** [Detection](details/gitea.md#detection) · [Remediation](details/gitea.md#remediation) · [Verification](details/gitea.md#verification) · [Timeline](details/gitea.md#timeline)
+
+**CVEs:** [CVE-2026-103059](https://www.cve.org/CVERecord?id=CVE-2026-103059)
 
 **[CVE-2026-103059](https://www.cve.org/CVERecord?id=CVE-2026-103059) — CISA ADP CVSS 3.1: 9.1 Critical; Gitea advisory: 9.1 Critical (its text says "high rather than critical"); no score in the Gitea CNA record; NVD has added no score of its own**
 
@@ -397,8 +409,6 @@ Sources: [Wordfence record](https://www.wordfence.com/threat-intel/vulnerabiliti
 | Public announcement (GHSA-8pwg-hcgm-54cp) | 2026-10-06 19:16 UTC | First publication of vulnerability details. |
 | CVE published | 2026-10-06 19:22 UTC | Gitea CNA. CISA ADP score added 2026-10-07. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
-
-**[Detailed guide](details/gitea.md):** [Detection](details/gitea.md#detection) · [Remediation](details/gitea.md#remediation) · [Verification](details/gitea.md#verification) · [Timeline](details/gitea.md#timeline)
 
 Gitea's **built-in Go SSH server** looked up the presented key with SQL `LIKE`, which ignores letter case on SQLite. An attacker downloads a victim's public RSA key from `/{username}.keys` and flips letter case until the altered key is usable. They can then forge a private key that Gitea accepts as the victim's.
 
@@ -417,10 +427,13 @@ Check `gitea --version`, `START_SSH_SERVER` and `DB_TYPE` in `app.ini`, and the 
 
 Sources: [Gitea advisory GHSA-8pwg-hcgm-54cp](https://github.com/go-gitea/gitea/security/advisories/GHSA-8pwg-hcgm-54cp), [Gitea CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-103059), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-103059), [Gitea 28.0.0 release](https://blog.gitea.com/release-of-28.0.0/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
+<a name="langflow-authenticated-rce-via-mcp-stdio-server-configuration-cve-2026-105740-and-cve-2026-105697"></a>
 
-## Langflow: authenticated RCE via MCP stdio server configuration (CVE-2026-105740 and CVE-2026-105697)
+## Langflow: authenticated RCE via MCP stdio server configuration
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/langflow.md):** [Detection](details/langflow.md#detection) · [Remediation](details/langflow.md#remediation) · [Verification](details/langflow.md#verification) · [Timeline](details/langflow.md#timeline)
+
+**CVEs:** [CVE-2026-105740](https://www.cve.org/CVERecord?id=CVE-2026-105740), [CVE-2026-105697](https://www.cve.org/CVERecord?id=CVE-2026-105697)
 
 **[CVE-2026-105740](https://www.cve.org/CVERecord?id=CVE-2026-105740) and [CVE-2026-105697](https://www.cve.org/CVERecord?id=CVE-2026-105697) — GitHub CNA CVSS 3.1: 9.9 Critical each; NVD: not yet scored**
 
@@ -436,8 +449,6 @@ Sources: [Gitea advisory GHSA-8pwg-hcgm-54cp](https://github.com/go-gitea/gitea/
 | GHSA-w794-rj3p-xv45 | 2026-09-28 17:26 UTC | CVE-2026-105697 advisory. |
 | CVEs published | 2026-10-05 20:16 UTC (105697); 20:46 UTC (105740) | GitHub CNA. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
-
-**[Detailed guide](details/langflow.md):** [Detection](details/langflow.md#detection) · [Remediation](details/langflow.md#remediation) · [Verification](details/langflow.md#verification) · [Timeline](details/langflow.md#timeline)
 
 Any Langflow user, including a non-admin, can save an MCP server with the **stdio** transport. Langflow runs its command through `bash -c` without validation. The stored command runs again whenever anyone lists the MCP servers.
 

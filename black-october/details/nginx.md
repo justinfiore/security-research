@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main NGINX summary](../black-october-2026.md#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery-cve-2026-15176-cve-2026-93479-cve-2026-97205-and-cve-2026-97629) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main NGINX summary](../black-october-2026.md#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **NGINX Open Source 1.30.6 (stable) and 1.31.7 (mainline), released 2026-10-14, fix four flaws that qualify as High or Critical under F5's scores: three heap memory-corruption bugs in worker processes and one TLS session-forgery bug. For the three memory-corruption bugs, F5 (the CNA) gives CVSS 4.0 9.2 Critical and CVSS 3.1 8.1 High. For the session forgery, F5 gives CVSS 4.0 8.3 High and CVSS 3.1 6.5 Medium. nginx.org rates all four "medium". NVD has added no score of its own. None is listed in CISA KEV (catalog 2026.10.23, checked 2026-10-26).** Each flaw needs a **specific configuration**, so check the configuration as well as the version. [nginx.org advisories][ngx-adv] [nginx.org news][ngx-news]
 

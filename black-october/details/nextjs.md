@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main Next.js summary](../black-october-2026.md#nextjs-unauthenticated-rce-in-use-cache-and-image-optimization-ghsa-673q-mjm6-r5xr-and-cve-2026-96889) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main Next.js summary](../black-october-2026.md#nextjs-unauthenticated-rce-in-use-cache-and-image-optimization) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **Two Critical unauthenticated remote code execution (RCE) advisories, both fixed in Next.js 16.4.1 (and the second also in 15.5.28), published 2026-10-14. Vercel rates each Critical, CVSS 4.0 9.5, in its GitHub repository advisories. The Image Optimization issue maps to the librsvg flaw [CVE-2026-96889](https://www.cve.org/CVERecord?id=CVE-2026-96889), which Red Hat (the CVE's CNA) scores lower: CVSS 3.1 7.8 High, with a local attack vector. NVD has added no score of its own. Not listed in CISA KEV (catalog 2026.10.23, checked 2026-10-26).** [GHSA-673q][ghsa-cache] [GHSA-2464][ghsa-img] [Next.js blog][blog] [CNA][cve-img] [KEV][kev]
 

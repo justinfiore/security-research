@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main Laravel summary](../black-october-2026.md#laravel-tokenguard-api-authentication-bypass-on-mysql-and-mariadb-cve-2026-114509) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main Laravel summary](../black-october-2026.md#laravel-tokenguard-api-authentication-bypass-on-mysql-and-mariadb) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-114509](https://www.cve.org/CVERecord?id=CVE-2026-114509) (GHSA-f9x3-7vq9-cph6): GitHub CNA CVSS 4.0 9.2 Critical (CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N). NVD has not added its own score (status "Awaiting Analysis"). Not listed in CISA KEV.** Laravel's built-in `Illuminate\Auth\TokenGuard` (the guard created by the `token` auth driver) does not reject a non-string API credential. When the user table is on **MySQL or MariaDB**, a crafted value can make the token lookup match an unintended existing user. An **unauthenticated** attacker can then act as that user on every route protected by the guard. Affected: `laravel/framework` **before 12.68.0**, and **13.0.0 before 13.29.0**. [Laravel advisory][ghsa] [CNA][cve]
 
