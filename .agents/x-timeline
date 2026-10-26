@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# List an X account's posts back to a cutoff, using the logged-in research
+# session from the project env vars X_COM_AUTH_TOKEN and X_COM_CT0.
+#
+# Usage: .agents/x-timeline <handle> <since, e.g. 2026-10-24T00:00:00Z>
+# Output: one tab-separated line per post: UTC time (from the status ID; for
+# reposts and pinned posts this is the original post's time), kind
+# (post/repost/pinned), post URL, text.
+# Read-only: it scrolls the public timeline and never posts or follows.
+# Exit 2 means the timeline could not be read (missing or expired session);
+# record that as incomplete X coverage instead of retrying a password login.
+set -euo pipefail
+
+[ "$#" -eq 2 ] || { echo 'Usage: .agents/x-timeline <handle> <since-ISO-time>' >&2; exit 2; }
+handle=${1#@}
+since=$2
+if [ -z "${X_COM_AUTH_TOKEN:-}" ] || [ -z "${X_COM_CT0:-}" ]; then
+  echo 'UNKNOWN: X_COM_AUTH_TOKEN/X_COM_CT0 are not set; X timeline not read.' >&2
+  exit 2
+fi
+# X returns 403 to headless Chromium, so run headed on a virtual display.
+if [ -z "${DISPLAY:-}" ]; then
+  exec xvfb-run -a -s '-screen 0 1280x900x24' "$0" "$@"
+fi
+
+session="x-timeline-$$"
+ab() { agent-browser --session "$session" --headed "$@"; }
+trap 'ab close >/dev/null 2>&1 || true' EXIT
+
+ab open https://x.com/robots.txt >/dev/null
+ab cookies set auth_token "$X_COM_AUTH_TOKEN" --domain .x.com --path / --httpOnly --secure >/dev/null
+ab cookies set ct0 "$X_COM_CT0" --domain .x.com --path / --secure >/dev/null
+ab open "https://x.com/$handle" >/dev/null
+ab wait 6000 >/dev/null
+if [ "$(ab eval '!!document.querySelector("[data-testid=SideNav_AccountSwitcher_Button]")')" != true ]; then
+  echo 'UNKNOWN: X session is not logged in (cookies expired?); X timeline not read.' >&2
+  exit 2
+fi
+
+# Collect posts while scrolling until one older than the cutoff appears,
+# or scrolling stops loading new posts. Post time comes from the status ID.
+ab eval 'window.__posts = new Map(); 1' >/dev/null
+collect='(() => {
+  const epoch = id => Number((BigInt(id) >> 22n) + 1288834974657n);
+  for (const a of document.querySelectorAll("article")) {
+    const link = a.querySelector("a[href*=\"/status/\"]:has(time)");
+    const m = link && link.href.match(/\/status\/(\d+)/);
+    if (!m || window.__posts.has(m[1])) continue;
+    const text = (a.querySelector("[data-testid=tweetText]") || {}).innerText || "";
+    const context = (a.querySelector("[data-testid=socialContext]") || {}).innerText || "";
+    const own = link.pathname.toLowerCase().startsWith("/" + "'"$handle"'".toLowerCase() + "/");
+    const kind = /Pinned/.test(context) ? "pinned" : own ? "post" : "repost";
+    window.__posts.set(m[1], {t: epoch(m[1]), kind, url: link.href.split("?")[0], text: text.replace(/\s+/g, " ")});
+  }
+  // Pinned posts and reposts are out of timeline order; only own posts mark the cutoff.
+  const cutoff = Date.parse("'"$since"'");
+  const reached = [...window.__posts.values()].some(p => p.kind === "post" && p.t < cutoff);
+  window.scrollBy(0, 3000);
+  return window.__posts.size + " " + (reached ? "reached" : "more");
+})()'
+previous=-1
+for _ in $(seq 1 60); do
+  read -r count state < <(ab eval "$collect" | tr -d '"')
+  [ "$state" = reached ] && break
+  [ "$count" = "$previous" ] && break
+  previous=$count
+  ab wait 1500 >/dev/null
+done
+if [ "$state" != reached ]; then
+  echo "NOTE: @$handle stopped loading posts before $since; check older posts with a web search." >&2
+fi
+
+ab eval '[...window.__posts.values()].filter(p => p.kind !== "post" || p.t >= Date.parse("'"$since"'")).sort((a, b) => b.t - a.t).map(p => new Date(p.t).toISOString() + "\t" + p.kind + "\t" + p.url + "\t" + p.text).join("\n")' \
+  | python3 -c 'import json, sys; out = json.loads(sys.stdin.read()); print(out) if out else None'

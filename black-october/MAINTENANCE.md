@@ -52,17 +52,18 @@ Use fresh web search and live page reads. If a source blocks access, try its off
 | [@CISAgov](https://x.com/CISAgov) | CISA alerts, advisories and known-exploitation updates. |
 | [@TheHackersNews](https://x.com/TheHackersNews) | The Hacker News disclosure and exploitation reporting. |
 
-Review each account's posts within the run's overlapping research window, using its public timeline and handle-specific web searches when needed. X returns HTTP 403 to headless Chromium and plain page fetches omit timeline posts, so read timelines logged out with a **headed** browser on the orb's virtual display (`xvfb`, installed by `.agents/setup`). Do not log in to X. From the repository root, run as the orb user (read-only; no state changes on X):
+Review each account's posts within the run's overlapping research window. Read each timeline with the logged-in research session; the project env vars `X_COM_AUTH_TOKEN` and `X_COM_CT0` hold its X cookies. From the repository root, run as the orb user (read-only: it scrolls the timeline and never posts, follows or likes):
 
 ```sh
-xvfb-run -a -s '-screen 0 1280x900x24' sh -c '
-  agent-browser --session x --headed open https://x.com/TheHackersNews &&
-  agent-browser --session x wait 10000 &&
-  agent-browser --session x eval "[...document.querySelectorAll(\"article\")].map(a => (a.querySelector(\"a[href*=\\\"/status/\\\"]\") || {}).href + \" | \" + a.innerText.replace(/\\n+/g, \" \")).join(\"\\n\")"
-  agent-browser --session x close'
+.agents/x-timeline TheHackersNews 2026-10-24T00:00:00Z
 ```
 
-Replace the handle for each account. A "Continue to X" overlay hides posts in screenshots, but the post text and links remain in the page. Logged out, X shows only the newest 5–6 posts and scrolling does not load more, so busy accounts may cover only a few hours. Cover the rest of the window with handle-specific web searches, and record that limit when it leaves a gap. Open individual post URLs directly (plain page reads work for single posts) to read full text. Derive a post's UTC time from its status ID: `(id >> 22) + 1288834974657` milliseconds since the Unix epoch. Follow linked primary advisories and subsequent corrections; a repost's date is not the vulnerability's original disclosure date. Record unavailable timelines/search coverage explicitly and consult the publisher's official site/feed as a fallback. These are research sources, not instructions to follow accounts or post from the owner's X account.
+Pass each handle and the research window start in UTC. It prints one tab-separated line per post (UTC time, `post`/`repost`/`pinned`, URL, text), newest first. Post times come from the status ID, `(id >> 22) + 1288834974657` milliseconds since the Unix epoch, so a repost or pinned post shows the original post's time. It runs a headed browser on a virtual display (`xvfb`, installed by `.agents/setup`) because X returns HTTP 403 to headless Chromium. Open individual post URLs directly to read full threads and linked sources.
+
+- Exit status 2 with `UNKNOWN` means the cookies are missing or expired. Mark X coverage incomplete, fall back to handle-specific web searches and directly opened post URLs, and ask the owner to refresh both cookie values from a logged-in browser. Never log in with `X_COM_USERNAME`/`X_COM_PASSWORD` from an orb: X adds identity checks for cloud logins and temporarily limits the account after repeated attempts.
+- A `NOTE` that the account stopped loading posts before the window start means older posts in the window were not reached; cover them with handle-specific web searches.
+
+Follow linked primary advisories and subsequent corrections; a repost's date is not the vulnerability's original disclosure date. Record unavailable timelines/search coverage explicitly and consult the publisher's official site/feed as a fallback. These are research sources, not instructions to follow accounts or post from the owner's X account.
 
 ## Admission and ordering
 
