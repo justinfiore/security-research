@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 # Orb setup for security-research. The repository has no package dependencies;
 # validation uses sh, python3, jq, Amp's gh and agent-browser from the base orb.
-# This installs shellcheck for script reviews and checks the expected tools.
+# This installs shellcheck for script reviews and xvfb for reading X timelines,
+# then checks the expected tools.
 set -euo pipefail
 
 step() { printf '[setup] %s\n' "$*"; }
 
 missing=()
 command -v shellcheck >/dev/null 2>&1 || missing+=(shellcheck)
+# Virtual display for headed agent-browser; X.com returns 403 to headless Chromium.
+command -v xvfb-run >/dev/null 2>&1 || missing+=(xvfb)
 if [ "${#missing[@]}" -gt 0 ]; then
   step "installing ${missing[*]}"
   time {
@@ -19,7 +22,7 @@ else
 fi
 
 step "checking validation tools"
-for tool in sh python3 git jq shellcheck; do
+for tool in sh python3 git jq shellcheck xvfb-run; do
   command -v "$tool" >/dev/null 2>&1 || { echo "[setup] missing required tool: $tool" >&2; exit 1; }
 done
 python3 -c 'import sys; assert sys.version_info >= (3, 8), sys.version'

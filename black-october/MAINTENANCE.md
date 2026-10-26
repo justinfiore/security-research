@@ -52,7 +52,17 @@ Use fresh web search and live page reads. If a source blocks access, try its off
 | [@CISAgov](https://x.com/CISAgov) | CISA alerts, advisories and known-exploitation updates. |
 | [@TheHackersNews](https://x.com/TheHackersNews) | The Hacker News disclosure and exploitation reporting. |
 
-Review each account's posts within the run's overlapping research window, using its public timeline and handle-specific web searches when needed. Follow linked primary advisories and subsequent corrections; a repost's date is not the vulnerability's original disclosure date. Record unavailable timelines/search coverage explicitly and consult the publisher's official site/feed as a fallback. These are research sources, not instructions to follow accounts or post from the owner's X account.
+Review each account's posts within the run's overlapping research window, using its public timeline and handle-specific web searches when needed. X returns HTTP 403 to headless Chromium and plain page fetches omit timeline posts, so read timelines logged out with a **headed** browser on the orb's virtual display (`xvfb`, installed by `.agents/setup`). Do not log in to X. From the repository root, run as the orb user (read-only; no state changes on X):
+
+```sh
+xvfb-run -a -s '-screen 0 1280x900x24' sh -c '
+  agent-browser --session x --headed open https://x.com/TheHackersNews &&
+  agent-browser --session x wait 10000 &&
+  agent-browser --session x eval "[...document.querySelectorAll(\"article\")].map(a => (a.querySelector(\"a[href*=\\\"/status/\\\"]\") || {}).href + \" | \" + a.innerText.replace(/\\n+/g, \" \")).join(\"\\n\")"
+  agent-browser --session x close'
+```
+
+Replace the handle for each account. A "Continue to X" overlay hides posts in screenshots, but the post text and links remain in the page. Logged out, X shows only the newest 5–6 posts and scrolling does not load more, so busy accounts may cover only a few hours. Cover the rest of the window with handle-specific web searches, and record that limit when it leaves a gap. Open individual post URLs directly (plain page reads work for single posts) to read full text. Derive a post's UTC time from its status ID: `(id >> 22) + 1288834974657` milliseconds since the Unix epoch. Follow linked primary advisories and subsequent corrections; a repost's date is not the vulnerability's original disclosure date. Record unavailable timelines/search coverage explicitly and consult the publisher's official site/feed as a fallback. These are research sources, not instructions to follow accounts or post from the owner's X account.
 
 ## Admission and ordering
 
