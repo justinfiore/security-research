@@ -45,7 +45,8 @@
 | Root confirmed on major distributions | 2026-10-22 18:44 UTC | CloudLinux's kernel team, with the public PoC. [CloudLinux][cl] |
 | TuxCare ELS kernel for AlmaLinux 9.2 ESU lists the fix | 2026-10-23 10:36:48 UTC (OSV publication time) | OSV import of TuxCare advisory CLSA-2026-1792751700: `kernel-5.14.0-284.1101.el9_2.tuxcare.11.els17`. Seen only through OSV; not confirmed on a TuxCare advisory page. [OSV][osv] |
 | KernelCare live patch released for EL10 | 2026-10-23 14:59 UTC | Production feed for AlmaLinux, CloudLinux, RHEL, Oracle Linux and Rocky Linux 10, built from the upstream fix candidate and verified against the public PoC. EL9 in review, EL8 in progress, Debian/Ubuntu not started. [CloudLinux][cl] [TuxCare][tux] |
-| AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | `kernel-4.18.0-553.177.2.el8_10`, `kernel-5.14.0-687.59.2.el9_8`, `kernel-6.12.0-211.68.2.el10_2` in `almalinux-testing`, backported ahead of RHEL. Not yet in production repositories. [AlmaLinux][alma] |
+| AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | `kernel-4.18.0-553.177.2.el8_10`, `kernel-5.14.0-687.59.2.el9_8`, `kernel-6.12.0-211.68.2.el10_2` in `almalinux-testing`, backported ahead of RHEL. Not yet in production repositories at the time. [AlmaLinux][alma] |
+| AlmaLinux 8 production kernel | 2026-10-25 14:54 (repository listing; TZ not shown) | `kernel-4.18.0-553.178.1.el8_10` in BaseOS; its RPM changelog includes "net: skbuff: propagate shared-frag marker in skb_zerocopy()". `553.179.1` followed on 2026-10-26. AlmaLinux 9 and 10 production kernels do not carry the fix yet. [AlmaLinux repository][almarepo] |
 | Fix committed to the netdev `net` tree | 2026-10-23 19:41:58 UTC (15:41:58 EDT) | Commit `79dc34beb1fd` by Jakub Kicinski, with `Reviewed-by: Eric Dumazet` and `Cc: stable@kernel.org`. A maintainer tree, not a released kernel. [Fix commit][commit] |
 | Red Hat bulletin | 2026-10-24 18:31 (TZ not stated) | RHSB-2026-014: "Potentially Affected", Important; says upstream patches are not yet available and no CVEs are assigned. No RHEL fix. [Red Hat][rh] |
 | CloudLinux 7 hybrid and 8 beta kernels | 2026-10-26 09:11 UTC | `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`, beta and rolling out. [CloudLinux][cl] |
@@ -113,7 +114,7 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 
 | Distribution / product | Fixed build or status (as of 2026-10-26) | Channel | Source |
 |---|---|---|---|
-| AlmaLinux 8 | `kernel-4.18.0-553.177.2.el8_10` or later | `almalinux-testing` only | [AlmaLinux][alma] |
+| AlmaLinux 8 | `kernel-4.18.0-553.178.1.el8_10` or later in production (testing `553.177.2` also carries the fix) | Production BaseOS since 2026-10-25; established from the repository and RPM changelog, no AlmaLinux announcement found | [AlmaLinux repository][almarepo] [AlmaLinux][alma] |
 | AlmaLinux 9 | `kernel-5.14.0-687.59.2.el9_8` or later | `almalinux-testing` only | [AlmaLinux][alma] |
 | AlmaLinux 10 | `kernel-6.12.0-211.68.2.el10_2` or later | `almalinux-testing` only | [AlmaLinux][alma] |
 | AlmaLinux Kitten 10 | Next regular kernel update; no separate build | — | [AlmaLinux][alma] |
@@ -205,3 +206,4 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 [thn]: https://thehackernews.com/2026/10/two-cvss-90-linux-ksmbd-rce-flaws.html
 [releases]: https://www.kernel.org/releases.json
 [kernelcve]: https://docs.kernel.org/process/cve.html
+[almarepo]: https://repo.almalinux.org/almalinux/8/BaseOS/x86_64/os/Packages/

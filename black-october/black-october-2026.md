@@ -2,7 +2,7 @@
 
 **As of October 26, 2026**
 
-[Security updates](../CHANGELOG.md) · [Hourly maintenance process](MAINTENANCE.md)
+[Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
 “Black October” is an informal label for the unusually dense run of vulnerability disclosures and security incidents this month—particularly the October 19–23 cluster. It is **not one coordinated attack, one vulnerability family, or an official advisory list**.
 
@@ -15,6 +15,15 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Google MCP Toolbox for Databases: Cloud Storage file exfiltration and overwrite](#google-mcp-toolbox-for-databases-cloud-storage-tools-exfiltrate-host-files-and-overwrite-local-files)
+- [Vertiv Avocent ACS8000 / ACS800: unauthenticated root command injection](#vertiv-avocent-acs8000-and-acs800-console-servers-unauthenticated-root-command-injection-via-the-wsserver-terminal-websocket)
+- [Bandit (Elixir/Phoenix): unauthenticated denial of service](#bandit-elixir-and-phoenix-web-server-unauthenticated-denial-of-service-over-http2-http11-and-websocket)
+- [WolfVision Cynap: unauthenticated command injection and shared SSH root key](#wolfvision-cynap-collaboration-systems-unauthenticated-wolfprot-command-injection-and-shared-vsolution-matrix-ssh-root-key)
+- [Supermicro BMC firmware: IPMI/RMCP+ flaws to BMC administrator access](#supermicro-bmc-firmware-ipmi-and-rmcp-session-flaws-can-lead-to-bmc-administrator-access)
+- [GitHub Actions: Gheist - stolen tokens plant secret-dumping workflows](#github-actions-gheist---stolen-tokens-plant-secret-dumping-workflows)
+- [Apache Camel: camel-saxon XQuery XXE](#apache-camel-camel-saxon-xquery-xml-external-entity-processing)
+- [Oracle October 2026 Critical Patch Update](#oracle-fusion-middleware-e-business-suite-database-and-mysql-october-2026-critical-patch-update)
+- [ImageMagick: bzip2 image stack buffer overflow](#imagemagick-stack-buffer-overflow-when-reading-bzip2-compressed-images)
 - [Electrum Bitcoin wallet: malicious server turns fee bumps into theft](#electrum-bitcoin-wallet-malicious-server-swaps-broadcast-transactions-so-a-fee-bump-pays-the-attacker)
 - [Fortinet FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator: October 2026 hardening release and SQL injection fixes](#fortinet-fortios-fortimanager-fortianalyzer-fortimail-and-fortiauthenticator-october-2026-hardening-release-and-sql-injection-fixes)
 - [Signal calling (RingRTC): hang-up may not end a flooded call](#signal-calling-ringrtc-hang-up-may-not-end-a-flooded-call)
@@ -75,7 +84,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
-- **New this update (none in CISA KEV yet):** patch [HPE Aruba AOS](#hpe-aruba-networking-aos-unauthenticated-rce-and-authentication-bypass-in-wireless-infrastructure) wireless infrastructure (eight CVSS 10.0 flaws), [FortiSIEM](#fortisiem-unauthenticated-grpc-path-traversal-to-remote-code-execution) (public exploit; Canada's Cyber Centre reports exploitation) and [FortiSandbox](#fortisandbox-unauthenticated-gui-authentication-bypass), [Magento / Adobe Commerce](#adobe-commerce--magento-open-source-blockstrap---unauthenticated-template-injection-rce) (CVSS 10.0 BlockStrap) and the [SAP Cloud SDK for Python](#sap-cloud-sdk-for-python-oauth2-ssrf-leaking-multi-tenant-client-credentials). [Rank Math PRO](#rank-math-pro-for-wordpress-malicious-30123-builds-from-the-official-update-channel) sites that pulled the malicious 3.0.123 build need cleanup and credential rotation, and Linux hosts running untrusted local code face a [public skb_zerocopy root exploit](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) with few vendor fixes yet.
+- **New this update (none in CISA KEV yet):** update [Supermicro BMC firmware](#supermicro-bmc-firmware-ipmi-and-rmcp-session-flaws-can-lead-to-bmc-administrator-access) and keep UDP 623 off untrusted networks; confine [Vertiv Avocent ACS8000/ACS800](#vertiv-avocent-acs8000-and-acs800-console-servers-unauthenticated-root-command-injection-via-the-wsserver-terminal-websocket) console-server web access (no confirmed fix) and update [WolfVision Cynap](#wolfvision-cynap-collaboration-systems-unauthenticated-wolfprot-command-injection-and-shared-vsolution-matrix-ssh-root-key) devices; apply [Oracle's October CPU](#oracle-fusion-middleware-e-business-suite-database-and-mysql-october-2026-critical-patch-update) to WebLogic, SOA Suite, E-Business Suite and other exposed Oracle middleware; upgrade [Google MCP Toolbox for Databases](#google-mcp-toolbox-for-databases-cloud-storage-tools-exfiltrate-host-files-and-overwrite-local-files) to 1.10.0+ and set its bucket and path allowlists, [Bandit](#bandit-elixir-and-phoenix-web-server-unauthenticated-denial-of-service-over-http2-http11-and-websocket) to 1.14.0, [Apache Camel `camel-saxon`](#apache-camel-camel-saxon-xquery-xml-external-entity-processing) and [ImageMagick](#imagemagick-stack-buffer-overflow-when-reading-bzip2-compressed-images). GitHub organizations should hunt for [Gheist](#github-actions-gheist---stolen-tokens-plant-secret-dumping-workflows) `ci-sync-` branches that dump Actions secrets.
+- **Added earlier on October 26 (none in CISA KEV yet):** patch [HPE Aruba AOS](#hpe-aruba-networking-aos-unauthenticated-rce-and-authentication-bypass-in-wireless-infrastructure) wireless infrastructure (eight CVSS 10.0 flaws), [FortiSIEM](#fortisiem-unauthenticated-grpc-path-traversal-to-remote-code-execution) (public exploit; Canada's Cyber Centre reports exploitation) and [FortiSandbox](#fortisandbox-unauthenticated-gui-authentication-bypass), [Magento / Adobe Commerce](#adobe-commerce--magento-open-source-blockstrap---unauthenticated-template-injection-rce) (CVSS 10.0 BlockStrap) and the [SAP Cloud SDK for Python](#sap-cloud-sdk-for-python-oauth2-ssrf-leaking-multi-tenant-client-credentials). [Rank Math PRO](#rank-math-pro-for-wordpress-malicious-30123-builds-from-the-official-update-channel) sites that pulled the malicious 3.0.123 build need cleanup and credential rotation, and Linux hosts running untrusted local code face a [public skb_zerocopy root exploit](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) with few vendor fixes yet.
 - **Patch widely deployed developer and self-hosted stacks too, even without KEV listings:** Next.js, NGINX, curl/libcurl, Drupal, Laravel, Gitea, Langflow, Wasmtime, the Bricksforge WordPress plugin, and Linux VM/sandbox hosts (PwnEscape). Bricksforge and Langflow already face exploitation attempts.
 - **Patch KEV-listed edge and enterprise software first.** CISA added FortiMail, Zammad, NetScaler, Ivanti Connect Secure, Windows Shell, PAN-OS, AhsayCBS, Cisco Secure Email Gateway, Atlassian Data Center, SiteGuard, Siemens Software Center and VeloCloud flaws to its Known Exploited Vulnerabilities catalog in October; several require forensic triage, not just patching.
 - **Review Tailscale SSH authorization and forwarding.** Tailworm's principal SSH chains require existing authorized access; disable unnecessary forwarding and track official fixes, rather than treating every VPN node as remotely exploitable.
@@ -104,6 +114,7 @@ Interpret results in three steps: **is the component present; does its exact bui
 | [linux-service-inventory.sh](linux-service-inventory.sh) | KSMBD presence, SMB/Plex listeners, and visible RDMA devices | Linux; `ss` for listener inspection |
 | [check_brotli.py](check_brotli.py) | Response-header compression inventory; **not a vulnerability verdict**. [Usage and limits](details/brotli.md#response-header-inventory-script) | Python 3.9+; standard library; authorized HTTP(S) GET requests |
 | [rankmath-ioc-check.sh](rankmath-ioc-check.sh) | Offline Rank Math PRO 3.0.123 incident indicators in a WordPress copy (fake core file, installed PRO version, vendor-named strings, `.cache`/`.htaccess` patterns) and in operator-supplied SQL/crontab exports (option names, `wpsupport_`/`@wp-mail.net` admins, `#ms6v46`). Exit 0 is **not** proof of a clean site. [Usage and limits](details/rankmath-pro.md#offline-indicator-script) | POSIX shell, `find`, `grep`, `sed`; read access only; does not run PHP, WordPress or WP-CLI |
+| [gheist-branch-check.sh](gheist-branch-check.sh) | Read-only GitHub API check for Gheist `ci-sync-` branches across an organization's or user's repositories (or named repositories): pattern match, head-commit match, Wiz workflow blob SHAs and remaining runs. Exit 0 is **not** proof of no compromise; it uses your token for GET requests only. [Usage and limits](details/github-gheist.md#branch-check-script) | POSIX shell and an authenticated GitHub CLI (`gh`); token with read access to contents, metadata and Actions |
 
 An exit status of zero means the requested inventory commands completed, **not that the system is patched**. Nonzero status means the check failed or its input/tool is unavailable. The Linux script may finish with explicitly marked `UNKNOWN` partial results; read its output. Shell checks inspect tools on the current user's PATH, so run inside the correct deployment or set PATH to the intended runtime. Do not run them against a suspected compromised installation; use clean-host snapshot inspection instead.
 
@@ -114,6 +125,317 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Google MCP Toolbox for Databases: Cloud Storage tools exfiltrate host files and overwrite local files
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/google-mcp-toolbox.md):** [Detection](details/google-mcp-toolbox.md#detection) · [Remediation](details/google-mcp-toolbox.md#remediation) · [Verification](details/google-mcp-toolbox.md#verification) · [Timeline](details/google-mcp-toolbox.md#timeline)
+
+**CVEs:** [CVE-2026-93328](https://www.cve.org/CVERecord?id=CVE-2026-93328), [CVE-2026-102242](https://www.cve.org/CVERecord?id=CVE-2026-102242)
+
+**CVE-2026-93328 — Google Cloud (CNA) CVSS 4.0: 9.3 Critical; NVD has not scored it. Related bypass CVE-2026-102242 — Google (CNA) CVSS 4.0: 8.6 High. The 1.5.0 fix is opt-in.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26), for either CVE. No exploitation or public exploit was reported in the reviewed sources through 2026-10-26. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| 1.2.0 released | 2026-05-07 19:18:34 UTC | First version with the Cloud Storage tools. |
+| Private report | Unknown | Credited to He Wei (gikaku). |
+| Fix merged (PR #3454) | 2026-06-18 01:38:50 UTC | Adds `allowedBuckets` and `allowedLocalRoots`; "Defaults to allow all." |
+| 1.5.0 released | 2026-06-18 23:34:23 UTC | Fix available; no security notice in the release notes. |
+| 1.10.0 released | 2026-08-27 23:37:54 UTC | Fixes the CVE-2026-102242 symlink bypass of `allowedLocalRoots`. |
+| CVE-2026-102242 published | 2026-09-29 17:47:16 UTC | Affects 1.2.0–1.9.0. |
+| Public announcement | 2026-10-26 14:24:09 UTC | CVE-2026-93328 published by the Google Cloud CNA; GHSA-2gc9-c85v-5vwr (unreviewed) followed at 15:34:48 UTC. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+MCP Toolbox for Databases (`googleapis/mcp-toolbox`, formerly `genai-toolbox`) is Google's open-source MCP server for databases. In **1.2.0 through 1.4.0**, its Cloud Storage source let callers name any bucket and any absolute local path. `cloud-storage-upload-object` sends any file the server can read to any bucket, and `cloud-storage-download-object` writes over any file it can write. The CNA describes the attacker as unauthenticated and remote. Toolbox listens on `127.0.0.1:5000` by default, so exposure depends on how it is deployed and which agents can call it.
+
+**Worst case:** service-account keys, database passwords and other host secrets copied to an attacker's bucket, then configuration, scripts or SSH keys overwritten for persistence. Running Toolbox as root makes every file reachable.
+
+**Exploitation:** none reported. The fix shipped publicly in June, four months before the CVE.
+
+**Am I impacted?** Check `toolbox --version` (or the image tag each client launches) and search configurations for `type: cloud-storage`, the upload and download tools, or `--prebuilt cloud-storage`. **Any version is unrestricted if `allowedBuckets` and `allowedLocalRoots` are not set**, including the prebuilt configuration. Versions 1.5.0–1.9.x that rely on `allowedLocalRoots` are still bypassable through symlinks.
+
+**Patch:** Upgrade to **1.10.0 or later** (latest 1.15.0); the CNA names 1.5.0, but that predates the symlink fix. Then **set `allowedBuckets` and `allowedLocalRoots` on every Cloud Storage source**, or remove the upload and download tools. Run Toolbox as an unprivileged user with minimal Cloud Storage IAM, keep it on localhost or stdio unless remote access is needed, and restart every instance.
+
+Sources: [CVE-2026-93328 record](https://cveawg.mitre.org/api/cve/CVE-2026-93328), [GHSA-2gc9-c85v-5vwr](https://github.com/advisories/GHSA-2gc9-c85v-5vwr), [PR #3454](https://github.com/googleapis/mcp-toolbox/pull/3454), [1.5.0 release](https://github.com/googleapis/mcp-toolbox/releases/tag/v1.5.0), [Cloud Storage source docs](https://github.com/googleapis/mcp-toolbox/blob/main/docs/en/integrations/cloud-storage/source.md), [CVE-2026-102242 record](https://cveawg.mitre.org/api/cve/CVE-2026-102242), [PR #3810](https://github.com/googleapis/mcp-toolbox/pull/3810), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-93328), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Vertiv Avocent ACS8000 and ACS800 console servers: unauthenticated root command injection via the wsserver terminal WebSocket
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/vertiv-avocent-acs.md):** [Detection](details/vertiv-avocent-acs.md#detection) · [Remediation](details/vertiv-avocent-acs.md#remediation) · [Verification](details/vertiv-avocent-acs.md#verification) · [Timeline](details/vertiv-avocent-acs.md#timeline)
+
+**CVEs:** [CVE-2026-65184](https://www.cve.org/CVERecord?id=CVE-2026-65184)
+
+**runZero (CNA) CVSS 3.1 9.8 Critical (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H); no Vertiv advisory or score found; NVD has not scored it. Fixed version unconfirmed.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). No exploitation or public exploit code was reported in reviewed sources; runZero has not yet validated the flaw on a live device. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery | 2026-07-18; time/TZ unknown | HD Moore (runZero), through firmware analysis and a virtualized 2.32.4 target. |
+| Vendor notified | 2026-08-27; time/TZ unknown | Vertiv acknowledged on 2026-09-02. |
+| Firmware 2.32.6 released | 2026-09-15; time/TZ unknown | Lists "Security enhancements to the serial viewer subsystem"; not tied to this CVE by Vertiv or runZero. |
+| Public announcement (runZero advisory and Lights Out blog) | 2026-10-26 14:00 UTC | CVE record `datePublic`. |
+| CVE record published | 2026-10-26 14:07 UTC | runZero CNA; ACS8000 through 2.32.4. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+The `wsserver` terminal-bridge daemon on Avocent ACS8000/ACS800 serial console servers runs as root and builds shell commands from client-supplied WebSocket fields without escaping them. Apache proxies it to the network at `/termviewer` with no authentication, and its public-key session path checks no appliance session. The CVE record lists ACS8000 through **2.32.4**; runZero's blog adds the **ACS800**, which runs the same firmware image.
+
+**Worst case:** anyone who can reach the web interface runs commands as root, taking over the console server and every serial console and managed device behind it, typically the out-of-band path into network and server infrastructure.
+
+**Exploitation:** None reported. runZero found the flaw by firmware analysis and emulation and says it is not yet confirmed on real hardware. No public exploit code was found.
+
+**Am I impacted?** Check each ACS8000/ACS800's firmware under **Expert → System → Information**. Treat **2.32.5 and earlier** as affected (2.32.5 predates the vendor report) and **2.32.6** as unknown. Risk is highest where the web UI is reachable from outside a dedicated management network.
+
+**Patch:** **Patch availability is unconfirmed.** No source names a fixed version. Restrict the web UI's HTTP/HTTPS ports to a management network now (firewall and the appliance's IP filter tables), or disable web access in the Security Profile if you do not need it. Moving to the latest firmware, 2.32.6, is reasonable, but do not relax those restrictions until Vertiv confirms a fix. Ask Vertiv support for the fixed version.
+
+Sources: [runZero advisory](https://www.runzero.com/advisories/avocent-acs8000-wsserver-cmdinj-cve-2026-65184/), [runZero Lights Out blog](https://www.runzero.com/blog/lights-out-exposed/), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-65184), [Vertiv 2.32.6 release notes](https://downloads2.vertivco.com/SerialACS/ACS8000/v2.32.6%20September%202026/ACS%208xxx%20Release%20Notes%20v2.32.6.pdf), [Vertiv ACS8000 downloads](https://www.vertiv.com/en-us/support/software-download/it-management/avocent-acs-8000-advanced-control-systems-software-downloads), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Bandit (Elixir and Phoenix web server): unauthenticated denial of service over HTTP/2, HTTP/1.1 and WebSocket
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/elixir-bandit.md):** [Detection](details/elixir-bandit.md#detection) · [Remediation](details/elixir-bandit.md#remediation) · [Verification](details/elixir-bandit.md#verification) · [Timeline](details/elixir-bandit.md#timeline)
+
+**CVEs:** [CVE-2026-108525](https://www.cve.org/CVERecord?id=CVE-2026-108525), [CVE-2026-108529](https://www.cve.org/CVERecord?id=CVE-2026-108529), [CVE-2026-109584](https://www.cve.org/CVERecord?id=CVE-2026-109584), [CVE-2026-110499](https://www.cve.org/CVERecord?id=CVE-2026-110499), [CVE-2026-111101](https://www.cve.org/CVERecord?id=CVE-2026-111101), [CVE-2026-111103](https://www.cve.org/CVERecord?id=CVE-2026-111103), [CVE-2026-113436](https://www.cve.org/CVERecord?id=CVE-2026-113436), [CVE-2026-114213](https://www.cve.org/CVERecord?id=CVE-2026-114213), [CVE-2026-115269](https://www.cve.org/CVERecord?id=CVE-2026-115269) (High); [CVE-2026-114216](https://www.cve.org/CVERecord?id=CVE-2026-114216), [CVE-2026-110314](https://www.cve.org/CVERecord?id=CVE-2026-110314) (Medium, same release). A tenth High advisory, [GHSA-fmr8-qrvr-4ww5](https://github.com/mtrudel/bandit/security/advisories/GHSA-fmr8-qrvr-4ww5), has no CVE.
+
+**EEF (CNA) CVSS 4.0: 8.7 High for eight CVEs and 8.2 High for CVE-2026-111103; GHSA-fmr8-qrvr-4ww5 8.7 High (GitHub advisory); CVE-2026-114216 and CVE-2026-110314 6.3 Medium. NVD has not scored them.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). CISA's SSVC enrichment marks exploitation "none"; several advisories include proof-of-concept code. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/reports | Unknown | Mostly reported by PJUllrich; also neilberkman and manus-pi. |
+| Bandit 1.14.0 on Hex | 2026-10-26 13:12 UTC | Fixes all twelve advisories. |
+| CVE records published | 2026-10-26 13:29–13:35 UTC | EEF CNA. |
+| GitHub advisories (public announcement) | 2026-10-26 13:35 UTC | Twelve advisories. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+[Bandit](https://github.com/mtrudel/bandit) is the HTTP server that new Phoenix applications use by default (since Phoenix 1.7.11). Its maintainers fixed a batch of resource-exhaustion flaws a remote client can trigger before authentication with little traffic:
+
+- **HTTP/2:** unenforced inbound flow control; quadratic work on SETTINGS and WINDOW_UPDATE frames; a 49 KB HPACK block expanding to a 183 MB cookie; an uncapped HPACK encoder table; stream-error rollback bypassing stream limits; body-read timeouts that never fire; and unlimited concurrent streams by default.
+- **HTTP/1.1:** chunked bodies of 1-byte chunks holding about 48× their size, even when the route never reads them.
+- **HTTP/1.1 and HTTP/2:** quadratic parsing of very long `content-length` and port values.
+- **WebSocket:** 1-byte continuation frames holding about 150× the fragmented-message limit.
+
+**Worst case:** One client exhausts the BEAM node's memory or CPU and takes down every application on it, including LiveView and Channels. The Medium CVEs add request smuggling behind certain proxies (CVE-2026-114216) and WebSocket handlers running after the server closed the session (CVE-2026-110314).
+
+**Exploitation:** None reported. Public proofs of concept are in the advisories.
+
+**Am I impacted?** You are if any deployed release includes Bandit **below 1.14.0**: check `mix.lock`, or `lib/bandit-<version>` in the release (read-only). Phoenix apps on the Cowboy adapter are not affected. Ranges start between 0.1.0 and 1.12.4 depending on the flaw. HTTP/2 is on by default, and the HTTP/1.1, header-parsing and WebSocket flaws also reach Bandit through most proxies.
+
+**Patch:** Upgrade to **Bandit 1.14.0** (`{:bandit, "~> 1.14"}`, `mix deps.update bandit`), then rebuild and redeploy every node. There are no backports. Test the new HTTP/2 defaults: 500 concurrent streams and a 256 KiB header-list limit. Until then, set `http_2_options: [enabled: false]` in the endpoint's `http:`/`https:` options and lower `websocket_options: [max_fragmented_message_size: ...]`. The chunked-body and number-parsing flaws have no configuration workaround on HTTP/1.1.
+
+Sources: [Bandit security advisories](https://github.com/mtrudel/bandit/security/advisories), [Bandit 1.14.0 changelog](https://github.com/mtrudel/bandit/blob/1.14.0/CHANGELOG.md), [CVE-2026-108525 record](https://cveawg.mitre.org/api/cve/CVE-2026-108525), [Hex release](https://hex.pm/packages/bandit/1.14.0), [Phoenix 1.7.11 changelog](https://github.com/phoenixframework/phoenix/blob/v1.7.11/CHANGELOG.md), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## WolfVision Cynap collaboration systems: unauthenticated WolfProt command injection and shared vSolution Matrix SSH root key
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wolfvision-cynap.md):** [Detection](details/wolfvision-cynap.md#detection) · [Remediation](details/wolfvision-cynap.md#remediation) · [Verification](details/wolfvision-cynap.md#verification) · [Timeline](details/wolfvision-cynap.md#timeline)
+
+**CVEs:** [CVE-2026-59106](https://www.cve.org/CVERecord?id=CVE-2026-59106), [CVE-2026-59107](https://www.cve.org/CVERecord?id=CVE-2026-59107)
+
+**CVE-2026-59106: WolfVision / ENISA (CNA) CVSS 4.0 9.3 Critical, CVSS 3.1 9.8 Critical. CVE-2026-59107: CVSS 4.0 9.2 Critical (AT:P), CVSS 3.1 9.8 Critical. NVD has not scored either. Discontinued models get no fix.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). WolfVision says it is not aware of active exploitation of either flaw, and CISA's ADP assessment for CVE-2026-59106 says exploitation "none". Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private report | Unknown | Reported by the National Test Institute for Cybersecurity (NTC); CVEs reserved 2026-07-02. |
+| v2.00c (Pure Next Gen, Bridge) | Build 2026-07-22; announced 2026-08-03; time/TZ unknown | Fixes CVE-2026-59106 on these models. |
+| v1.72e (Videobar) | Build 2026-10-02; release date not published | Fixes CVE-2026-59106. |
+| v1.78a (Pro, Core Pro, Receiver, Pure, Pure Mini, Pure Pro) | Build 2026-10-19; posted 2026-10-21 08:16 GMT | Fixes both CVEs where applicable. |
+| WolfVision advisory pages | Page date "21 September 2026"; time/TZ unknown | Conflicts with the v1.78a build date, so not treated as the disclosure date. |
+| CVE records published (earliest verified public announcement) | 2026-10-26 13:15 UTC (CVE-2026-59106); 13:33 UTC (CVE-2026-59107) | ENISA CNA. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**CVE-2026-59106** is an OS command injection in WolfProt, WolfVision's device-control protocol. An unauthenticated attacker who can reach TCP **50915, 50917, 80 or 443** runs commands with the WolfProt service's privileges. These services cannot be disabled. It affects nearly every Cynap model. **CVE-2026-59107** is a static SSH key shared across devices for vSolution Matrix file sharing. Anyone with the matching private key gets **root over SSH**, but only on a Cynap Pro, Core Pro, Cynap or Cynap Core configured as a **Matrix master station with file sharing enabled**.
+
+**Worst case:** command execution or a root shell on a meeting-room or classroom device that displays, records and streams presentation content, and a foothold on the network it shares with presenters' laptops.
+
+**Exploitation:** None reported. No public exploit code was found.
+
+**Am I impacted?** Check each device's firmware. CVE-2026-59106 affects Cynap Pure (Next Gen) and Bridge below **v2.00c**; Pro, Core Pro, Receiver, Pure, Pure Mini and Pure Pro below **v1.78a**; Videobar below **v1.72e**; and **every version** of the discontinued Cynap, Cynap Core and Cynap Pure SDM. CVE-2026-59107 affects Matrix master stations with file sharing on Pro/Core Pro below **v1.78a** and all Cynap/Cynap Core.
+
+**Patch:** Update to **v2.00c** (prefer v2.00d, which also fixes related Medium advisories), **v1.78a** or **v1.72e**. Update every station in a Matrix group together. There is **no fix** for Cynap, Cynap Core or Cynap Pure SDM: decommission them, or keep them on an isolated segment. Until patched, restrict TCP 50915/50917/80/443 (and 50930 on Matrix masters) to trusted hosts, and disable Matrix file sharing if you do not use it.
+
+Sources: [WolfVision CVE-2026-59106](https://wolfvision.com/de/security/cve-2026-59106-2), [WolfVision CVE-2026-59107](https://wolfvision.com/de/security/cve-2026-59107-1), [CVE-2026-59106 record](https://cveawg.mitre.org/api/cve/CVE-2026-59106), [CVE-2026-59107 record](https://cveawg.mitre.org/api/cve/CVE-2026-59107), [Cynap firmware history](https://firmware.wolfvision.com/cbr_history.txt), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Supermicro BMC firmware: IPMI and RMCP+ session flaws can lead to BMC administrator access
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/supermicro-bmc.md):** [Detection](details/supermicro-bmc.md#detection) · [Remediation](details/supermicro-bmc.md#remediation) · [Verification](details/supermicro-bmc.md#verification) · [Timeline](details/supermicro-bmc.md#timeline)
+
+**CVEs:** [CVE-2026-18450](https://www.cve.org/CVERecord?id=CVE-2026-18450), [CVE-2026-65220](https://www.cve.org/CVERecord?id=CVE-2026-65220), [CVE-2026-18449](https://www.cve.org/CVERecord?id=CVE-2026-18449), [CVE-2026-65219](https://www.cve.org/CVERecord?id=CVE-2026-65219), [CVE-2026-65211](https://www.cve.org/CVERecord?id=CVE-2026-65211), [CVE-2026-65213](https://www.cve.org/CVERecord?id=CVE-2026-65213), [CVE-2026-65210](https://www.cve.org/CVERecord?id=CVE-2026-65210), [CVE-2026-18451](https://www.cve.org/CVERecord?id=CVE-2026-18451) (all eight records still RESERVED, not published, as of 2026-10-26)
+
+**CVE-2026-18450 — Supermicro CVSS 3.1: 9.8 Critical (AC:L); runZero CVSS 3.1: 8.1 High (AC:H, a live session ID is needed). CVE-2026-65220 8.8, CVE-2026-18449 7.5, CVE-2026-65219 7.4 and CVE-2026-65211 7.2 are High (Supermicro and runZero agree); CVE-2026-65213 6.6, CVE-2026-65210 4.9 and CVE-2026-18451 3.1 are lower. NVD has not scored them.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Supermicro says it is "not aware of any malicious use of these vulnerabilities in the wild", and runZero reports no exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| runZero discovery | 2026-07-18 – 2026-08-22 (time/TZ unknown) | Dates vary by CVE. Unknown for CVE-2026-18449. |
+| Supermicro notified | 2026-07-24 – 2026-08-27 (time/TZ unknown) | Per runZero advisory timelines |
+| **Public announcement**: runZero "Lights Out" update and advisories | 2026-10-26 09:00 EDT (13:00 UTC) | Covers eight Supermicro CVEs. The Dell and Avocent issues in the same update are outside this entry. |
+| Supermicro advisory v1.0 | 2026-10-26 (time/TZ unknown) | Fixed BMC firmware listed per board for 402 SKUs. Two SKUs are "TBD"; X9/X10 are not listed. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+runZero found that Supermicro BMC firmware fails in several places in IPMI-over-LAN (RMCP+, UDP 623) session setup:
+
+- **CVE-2026-18450:** BMCs before X14 run unsigned, unencrypted commands injected into any live session.
+- **CVE-2026-65220:** any low-privilege IPMI account can raise its session to Administrator.
+- **CVE-2026-18449:** the optional SMCRAKP mode, off by default, uses a hard-coded key, so no password is needed.
+- **CVE-2026-65219:** an out-of-order handshake gives a passwordless restricted session with the host's serial console.
+
+From Administrator, OEM commands read BMC files and stored credentials (CVE-2026-65210), write BMC physical memory even under System Lockdown (CVE-2026-65211, X13), or run root commands (CVE-2026-65213, X14).
+
+**Worst case:** an attacker who can reach UDP 623 chains these into Administrator access and then persistent control of the BMC. That control covers power, boot, console, virtual media and stored credentials for the host, and it survives an OS reinstall.
+
+**Exploitation:** none reported by Supermicro or runZero. runZero's advisories publish detailed packet-level reproduction steps, so treat UDP 623 exposure as urgent.
+
+**Am I impacted?** Check each Supermicro board model (`dmidecode -t baseboard`) and its full BMC firmware version (web UI or Redfish), and compare them with [Supermicro's per-board table](https://www.supermicro.com/en/support/security_BMC_IPMI_Oct_2026_1), summarized by family in the [detail guide](details/supermicro-bmc.md#fixed-firmware-by-board-family). Risk is highest where UDP 623 is reachable from user or production networks or the internet, including through the shared host NIC on the default "Failover" LAN setting. It is also higher where SMCRAKP is enabled or low-privilege IPMI accounts exist.
+
+**Patch:** Update the BMC firmware to the version in Supermicro's table for your exact board. Fixes vary per SKU, for example X11 01.74.26/03.75.35/03.78.08 and H11 01.52.26. Turn System Lockdown off for the update. **X12DGU and X13SEW-TF-OS1 are "TBD", and X9/X10 have no listed fix.** Whatever your patch status, put BMCs on an isolated management network, and disable the IPMI LAN port (UDP 623) where it is unused; that also disables Serial-over-LAN and LAN-based IPMI tools. Also disable SMCRAKP and remove unneeded IPMI accounts.
+
+Sources: [Supermicro advisory](https://www.supermicro.com/en/support/security_BMC_IPMI_Oct_2026_1), [runZero "Lights Out" blog](https://www.runzero.com/blog/lights-out-exposed/), [runZero advisory CVE-2026-18450](https://www.runzero.com/advisories/smc-ipmi-auth-bypass-cve-2026-18450/) (other CVEs linked from the [detail guide](details/supermicro-bmc.md#sources)), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## GitHub Actions: Gheist - stolen tokens plant secret-dumping workflows
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/github-gheist.md):** [Detection](details/github-gheist.md#detection) · [Remediation](details/github-gheist.md#remediation) · [Verification](details/github-gheist.md#verification) · [Timeline](details/github-gheist.md#timeline)
+
+**CVEs:** None assigned. This is a campaign that abuses stolen GitHub tokens, not a GitHub vulnerability.
+
+**No CVE or vendor rating; included as a related supply-chain incident.**
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Wiz reports active abuse since 2026-09-15, with successful secret dumping in private repositories and GitHub Enterprise environments and follow-on cloud activity.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| GitHub approval hold for suspicious runs | 2026-07-28; time/TZ unknown | Public github.com repositories only; not private repositories or GitHub Enterprise Server. |
+| Wiz starts tracking | 2026-09-15; time/TZ unknown | Private discovery date; campaign start not established. |
+| Self-hosted runner job added | 2026-10-19; time/TZ unknown | `sync-host` job searches runner hosts for credentials. |
+| Status snapshot | 2026-10-24; time/TZ unknown | Ongoing and evolving; about two-thirds of implicated accounts gone from GitHub. |
+| Public announcement | 2026-10-25 13:55:33 UTC−04:00 (17:55:33 UTC) | Wiz Research blog, with IOCs. |
+| Patch | Not applicable | No software fix; contain tokens and secrets. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+An automated tool uses stolen GitHub tokens to push a branch named `ci-sync-` plus six characters to every repository each token can write to. The branch has one unsigned commit, `ci: sync config`, adding `.github/workflows/sync-check.yml`. The push runs the workflow, which prints the environment and every secret base32-encoded, defeating log masking. The tool downloads the log through the API and deletes the run seconds later, using the user agent `gheist`. Wiz recovered more than 13,500 planted branches from more than 850 compromised accounts.
+
+**Worst case:** every repository, organization and environment secret available to the repository leaks, and OIDC-trusting cloud roles can be assumed from the attacker branch. On self-hosted runners, a later job also sweeps the host, its containers and cloud metadata for credentials. Wiz saw cloud credentials used to enumerate AWS Secrets Manager hours later.
+
+**Exploitation:** ongoing. GitHub's hold stopped every public-repository run Wiz checked, but runs completed in private repositories and on GitHub Enterprise Server, where the hold does not apply.
+
+**Am I impacted?** Look for `ci-sync-` branches whose only change is `sync-check.yml`, using the [read-only API queries or branch check script](details/github-gheist.md#planted-branches-read-only-api-queries). In audit logs, look for runs on `ci-sync-*` branches deleted within a minute of completing and for the `gheist` user agent. Cloud logs showing OIDC role assumptions from a `ci-sync-` branch also prove a run. Branches and runs may already be deleted, so no match is not proof.
+
+**Patch:** Nothing to install. Do not approve held `sync-check` runs. Rotate every secret an affected repository could read, revoke the tokens that pushed the commits, check their owners' devices for infostealers, and treat any self-hosted runner that ran the job as compromised. Then scope OIDC trust to protected branches or environments, require reviewers on production environments and prefer GitHub Apps or short-lived fine-grained tokens.
+
+Sources: [Wiz Research](https://www.wiz.io/blog/gheist-attempted-scaled-abuse-of-stolen-github-tokens-stumbles), [GitHub changelog: workflow approval hold](https://github.blog/changelog/2026-07-28-github-actions-holds-potentially-malicious-workflows-for-approval/), [GitHub audit log events](https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/audit-log-events-for-your-organization), [The Hacker News](https://thehackernews.com/2026/10/gheist-uses-stolen-github-tokens-to.html).
+
+## Apache Camel: camel-saxon XQuery XML external entity processing
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-camel-saxon.md):** [Detection](details/apache-camel-saxon.md#detection) · [Remediation](details/apache-camel-saxon.md#remediation) · [Verification](details/apache-camel-saxon.md#verification) · [Timeline](details/apache-camel-saxon.md#timeline)
+
+**CVEs:** [CVE-2026-90885](https://www.cve.org/CVERecord?id=CVE-2026-90885)
+
+**Apache (CNA) CVSS 3.1 7.5 High (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N); Apache Camel advisory severity High; NVD has not scored it**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). CISA's SSVC enrichment on the CVE record marks exploitation "none". Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Credited to Leon Zlobecki; JIRA CAMEL-24691 opened 2026-09-11 17:21 UTC. |
+| Fixed releases | 4.18.5: 2026-10-06; 4.23.0: 2026-10-11; 4.22.2: 2026-10-17 (Maven Central file timestamps, GMT) | 4.22.1 is still affected. |
+| Apache advisory (public announcement) | 2026-10-22; time/TZ unknown | oss-security post 2026-10-23 07:42 UTC. |
+| CVE record published | 2026-10-26 14:47 UTC | Apache CNA. NVD status "Received". |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+The `camel-saxon` component's `XQueryBuilder`, behind the `xquery` language and `xquery:` endpoint, used a default Saxon configuration that accepts a DOCTYPE and resolves external entities. Camel hardens `String`, `byte[]` and `InputStream` bodies itself, so the flaw is reached only when the body is **already a stream-based `javax.xml.transform.Source`**, for example after `convertBodyTo(Source.class)` or when an upstream component sets such a body. No non-default option is needed.
+
+**Worst case:** An external sender whose XML reaches that XQuery step reads files the Camel process can read, such as configuration secrets and keys, and makes the process send requests to hosts of its choosing (SSRF).
+
+**Exploitation:** None reported. No public exploit was found.
+
+**Am I impacted?** You are if a deployed artifact resolves `org.apache.camel:camel-saxon` **4.0.0–4.18.4** or **4.19.0–4.22.1** and a route runs XQuery over an untrusted body that is already a `Source`. Check with `mvn dependency:tree -Dincludes=org.apache.camel:camel-saxon` (read-only) or the JAR in the deployed image. Apache says the code path also exists in the end-of-life 2.x and 3.x lines, which the CVE record does not list.
+
+**Patch:** Upgrade to **4.23.0**, **4.22.2** or **4.18.5**, rebuild and redeploy. Lines 4.19–4.21, 4.15–4.17 and 4.14 and earlier are end of life and get no fix. Afterwards, any already-built `Source` body with a DOCTYPE is rejected. A custom Saxon `Configuration` is not hardened by the fix. Until you upgrade, avoid XQuery over untrusted `Source` bodies, or set a `configuration` that refuses DOCTYPE declarations and disables external entities and external DTD loading. The related camel-xpath fix (CVE-2026-85250, in 4.22.1) does not cover this flaw.
+
+Sources: [Apache Camel advisory](https://camel.apache.org/security/CVE-2026-90885.html), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-90885), [CAMEL-24691](https://issues.apache.org/jira/browse/CAMEL-24691), [oss-security announcement](https://www.openwall.com/lists/oss-security/2026/10/23/6), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Oracle Fusion Middleware, E-Business Suite, Database and MySQL: October 2026 Critical Patch Update
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/oracle-cpu-october.md):** [Detection](details/oracle-cpu-october.md#detection) · [Remediation](details/oracle-cpu-october.md#remediation) · [Verification](details/oracle-cpu-october.md#verification) · [Timeline](details/oracle-cpu-october.md#timeline)
+
+**CVEs:** [CVE-2026-87337](https://www.cve.org/CVERecord?id=CVE-2026-87337), [CVE-2026-91231](https://www.cve.org/CVERecord?id=CVE-2026-91231), [CVE-2026-91216](https://www.cve.org/CVERecord?id=CVE-2026-91216), [CVE-2026-91221](https://www.cve.org/CVERecord?id=CVE-2026-91221), [CVE-2026-101809](https://www.cve.org/CVERecord?id=CVE-2026-101809), [CVE-2026-91299](https://www.cve.org/CVERecord?id=CVE-2026-91299), [CVE-2026-91323](https://www.cve.org/CVERecord?id=CVE-2026-91323), [CVE-2026-83399](https://www.cve.org/CVERecord?id=CVE-2026-83399), [CVE-2026-101767](https://www.cve.org/CVERecord?id=CVE-2026-101767), [CVE-2026-75803](https://www.cve.org/CVERecord?id=CVE-2026-75803), [CVE-2025-15467](https://www.cve.org/CVERecord?id=CVE-2025-15467), [CVE-2026-9547](https://www.cve.org/CVERecord?id=CVE-2026-9547), [CVE-2026-33466](https://www.cve.org/CVERecord?id=CVE-2026-33466). These are the top unauthenticated flaws only. The CPU covers 1,209 CVEs.
+
+**Oracle CVSS 3.1, all remotely exploitable without authentication: 10.0 Critical for Access Manager, three SOA Suite flaws, the EBS Workflow Notification Mailer and the JD Edwards Orchestrator; 9.8 Critical for WebLogic (HTTP and T3/IIOP), the EBS Application Object Library SQL injection, and third-party components in Database (OpenSSL), MySQL (OpenSSL, curl) and PeopleTools (Logstash). Upstream scores for the third-party CVEs are lower: OpenSSL Low and CISA ADP 9.1 (CVE-2026-75803); OpenSSL High, CISA ADP 8.8 and Red Hat ADP 9.8 (CVE-2025-15467); curl Low and CISA ADP 7.4 (CVE-2026-9547); Elastic 8.1 and NVD 9.8 (CVE-2026-33466).**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Waratek reported no known exploitation of any newly fixed CVE on 2026-10-21, Rescana said the same for CVE-2026-101767, and CISA ADP records "Exploitation: none" for five of the Oracle CVEs. Absence from KEV is not evidence that exploitation has not occurred. The older PeopleSoft flaw [CVE-2026-35273](https://www.cve.org/CVERecord?id=CVE-2026-35273), which this CPU does not fix, is Listed — added 2026-06-12, federal due date 2026-06-15.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown for most; CVE-2026-101767 reported 2026-07-24 (time/TZ unknown) | Horizon3.ai reported the EBS flaw to Oracle. |
+| ShinyHunters renews PeopleSoft CVE-2026-35273 attacks | Reported 2026-09-25 | Mandiant/GTIG: a WAF bypass using `/%50SEMHUB/`. The flaw was fixed by a June Security Alert. |
+| CPU released (public announcement) | 2026-10-20; time not stated | Oracle Rev 1: 1,295 patches. MySQL 8.4.13 and 9.7.4 are dated the same day. |
+| CVE records published | 2026-10-20 21:22–21:25 UTC | Oracle CNA. |
+| Horizon3.ai EBS write-up | 2026-10-20 (per Rescana) | Indicators: unauthenticated POSTs to `/OA_HTML/AppsTCFServer`. |
+| Waratek, Rescana: no exploitation reported | 2026-10-21 | CISA ADP "Exploitation: none" recorded 2026-10-21 to 2026-10-24 for five CVEs. |
+| Next security release | 2026-11-17 | Oracle now ships monthly CSPUs. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+Oracle's quarterly CPU fixes 1,295 issues, and 112 of its risk-matrix rows score 9.0 or higher. This entry covers only the most severe **unauthenticated** network flaws in widely deployed products. For everything else, use Oracle's [risk matrices](https://www.oracle.com/security-alerts/cpuoct2026.html). Oracle discloses no root causes. Horizon3.ai describes [CVE-2026-101767](https://horizon3.ai/attack-research/vulnerabilities/cve-2026-101767/) as SQL injection in the EBS Thin Client Framework servlet that runs SQL as `APPS` and then OS commands. The servlet is allowed by the default EBS URL firewall.
+
+**Worst case:** Unauthenticated takeover of WebLogic, SOA Suite, EBS or JD Edwards, or full access to Access Manager data. Access Manager is the single sign-on layer for other applications.
+
+**Exploitation:** No exploitation of the new CVEs has been reported. The active Oracle threat is still PeopleSoft CVE-2026-35273. ShinyHunters is deploying web shells and the SIDEEYE backdoor on servers that were mitigated with WAF rules but never patched.
+
+**Am I impacted?** Use `opatch lspatches` and version queries (read-only, listed in the guide) to check each product:
+
+- **Access Manager:** 12.2.1.4.0, 14.1.2.1.0.
+- **SOA Suite:** 12.2.1.4.0, 14.1.2.0.0.
+- **WebLogic:** 12.2.1.4.0, 14.1.1.0.0, 14.1.2.0.0, 15.1.1.0.0.
+- **EBS:** 12.2.3–12.2.15.
+- **JD Edwards Orchestrator:** 9.2.0.0–9.2.26.5.
+- **Database:** 19.3–19.32 and 23.4.0–23.26.3, including client-only installations.
+- **MySQL Server:** 8.4.0–8.4.12, 9.7.0–9.7.3, 26.7.0–26.7.1. MySQL Enterprise Backup is also affected.
+- **PeopleTools:** 8.61–8.63.
+
+Oracle says unsupported releases are likely affected too.
+
+**Patch:** Apply the October 2026 CPU patches from Oracle's patch availability documents: CPU360 for Fusion Middleware, KA923 for EBS (plus its Database and Middleware layers), CPU417 for JD Edwards, CPU359 for Database, CPU378 for MySQL and CPU418 for PeopleSoft. Start with internet-facing Access Manager, SOA Suite, WebLogic and EBS. Until then:
+
+- Use WebLogic connection filters to deny T3/IIOP from untrusted networks. T3 and IIOP share the HTTP port.
+- Remove `/OA_HTML/AppsTCFServer` from the EBS URL firewall allowlist.
+- Keep SOA, Orchestrator and admin consoles off the internet.
+
+PeopleSoft: also confirm that the June CVE-2026-35273 patch is installed, because a WAF rule alone does not protect you.
+
+Sources: [Oracle CPU October 2026](https://www.oracle.com/security-alerts/cpuoct2026.html), [text risk matrices](https://www.oracle.com/security-alerts/cpuoct2026verbose.html), [CVE-2026-101767 CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-101767), [Horizon3.ai](https://horizon3.ai/attack-research/vulnerabilities/cve-2026-101767/), [Waratek](https://waratek.com/news/oracle-releases-the-october-2026-critical-patch-update/), [Rescana](https://www.rescana.com/post/oracle-e-business-suite-cve-2026-101767-prepare-now), [Oracle alert CVE-2026-35273](https://www.oracle.com/security-alerts/alert-cve-2026-35273.html), [Mandiant/GTIG](https://cloud.google.com/blog/topics/threat-intelligence/shinyhunters-renewed-mass-exploitation-campaign-targeting-oracle-peoplesoft), [OpenSSL advisory 2026-08-25](https://openssl-library.org/news/secadv/20260825.txt), [curl CVE-2026-9547](https://curl.se/docs/CVE-2026-9547.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## ImageMagick: stack buffer overflow when reading bzip2-compressed images
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/imagemagick.md):** [Detection](details/imagemagick.md#detection) · [Remediation](details/imagemagick.md#remediation) · [Verification](details/imagemagick.md#verification) · [Timeline](details/imagemagick.md#timeline)
+
+**CVEs:** [CVE-2026-116149](https://www.cve.org/CVERecord?id=CVE-2026-116149)
+
+**ImageMagick maintainers (GHSA) and VulnCheck (CNA) CVSS 3.1 8.1 High (AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:H); VulnCheck CVSS 4.0 7.2 High; Red Hat Important, CVSS 3.1 7.8 (local, user interaction; draft); NVD has not scored it**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Credited to DavidKorczynski. |
+| Fix committed | 2026-09-29 16:29 UTC | ImageMagick 7 `cf40ce9`; ImageMagick 6 `9b4d4e0` at 16:28 UTC. |
+| Fixed releases 7.1.2-33 and 6.9.13-58 | 2026-10-10 13:49 UTC | GitHub releases. |
+| GHSA-pwpf-8799-94cj (public announcement) | 2026-10-10 14:00 UTC | Severity High. |
+| CVE record published | 2026-10-25 13:19 UTC | VulnCheck as CNA. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+ImageMagick transparently decompresses any input file that starts with the bzip2 signature `BZh` when built with the bzlib delegate. A crafted bzip2-compressed image overwrites stack memory during that decoding. Any service that runs ImageMagick on untrusted files is exposed: uploads, thumbnails, fetched images and document conversion, including through PHP Imagick, Python Wand, Ruby RMagick/MiniMagick and bundled copies such as Magick.NET.
+
+**Worst case:** Crashes or stack memory corruption in the image-processing process. No reviewed source demonstrates code execution, but treat memory corruption in an internet-facing pipeline as more than a crash.
+
+**Exploitation:** None reported, and no public proof of concept was found.
+
+**Am I impacted?** You are if any host, container or bundled copy runs ImageMagick 7 **before 7.1.2-33** or ImageMagick 6 **before 6.9.13-58** on untrusted input. `magick -version` (or `convert -version`) is read-only and shows the version and whether `bzlib` is among the built-in delegates. Distribution packages differ: when checked, Debian had fixed only unstable (bookworm, trixie and forky vulnerable), Red Hat listed RHEL 6 and 7 as affected, and Ubuntu had no record.
+
+**Patch:** Upgrade to **7.1.2-33+** or **6.9.13-58+**, or a fixed distribution package once available. Rebuild images that bundle ImageMagick and restart PHP-FPM, app servers and workers. Until then, reject untrusted files that start with `BZh` before ImageMagick reads them and sandbox image workers. This is this guide's suggestion, not vendor guidance.
+
+Sources: [GHSA-pwpf-8799-94cj](https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-pwpf-8799-94cj), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-116149), [fix commit](https://github.com/ImageMagick/ImageMagick/commit/cf40ce974c3f780b7f6913bcff7bec27087c9104), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-116149), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-116149), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Electrum Bitcoin wallet: malicious server swaps broadcast transactions so a fee bump pays the attacker
 
@@ -418,11 +740,12 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | Public announcement | 2026-10-21 21:46 UTC | ZDI report with PoC source posted to LKML and netdev. |
 | Fix posted to netdev | 2026-10-22 10:42 UTC | v2 patch, copied to stable. |
 | KernelCare live patch (EL10) | 2026-10-23 14:59 UTC | AlmaLinux, CloudLinux, RHEL, Oracle Linux, Rocky Linux 10; EL9/EL8 pending. |
-| AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | AlmaLinux 8, 9, 10 in `almalinux-testing` only. |
+| AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | AlmaLinux 8, 9, 10 in `almalinux-testing`. |
+| AlmaLinux 8 production kernel | 2026-10-25 14:54 (repository listing; TZ not shown) | `kernel-4.18.0-553.178.1.el8_10`; AlmaLinux 9/10 production not yet fixed. |
 | Fix in netdev `net` tree | 2026-10-23 19:41 UTC | Commit 79dc34beb1fd, marked for stable; not in mainline. |
 | CloudLinux 7h/8 beta kernels | 2026-10-26 09:11 UTC | Beta, rolling out. |
 | Mainline/stable releases, RHEL fix | None established (as of 2026-10-26) | Newest kernel.org releases predate the fix; Red Hat has no fix. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | AlmaLinux 8 production kernel. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -443,7 +766,7 @@ for m in esp4 esp6 nlmon act_pedit; do modprobe -n -v "$m"; done
 
 A non-zero `user.max_user_namespaces` means ordinary users can take the exploit's first step. Ubuntu's `kernel.apparmor_restrict_unprivileged_userns` does not stop the public PoC. An empty `lsmod` result does not mean the modules are unavailable: they load on demand. A process that already holds network-admin rights, such as root in a privileged container, does not need user namespaces. Vulnerability scanners keyed on CVE IDs will not flag this issue. See [exposure checks](details/skb-zerocopy-lpe.md#read-only-exposure-checks) and [indicators and evidence limits](details/skb-zerocopy-lpe.md#indicators-and-evidence-limits).
 
-**Patch:** No mainline, stable or RHEL kernel contains the fix yet. Known vendor builds: AlmaLinux testing `kernel-4.18.0-553.177.2.el8_10`, `kernel-5.14.0-687.59.2.el9_8` and `kernel-6.12.0-211.68.2.el10_2`; CloudLinux beta `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`; KernelCare live patch for EL10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
+**Patch:** No mainline, stable or RHEL kernel contains the fix yet. Known vendor builds: AlmaLinux 8 production `kernel-4.18.0-553.178.1.el8_10` (testing `553.177.2`); AlmaLinux testing `kernel-5.14.0-687.59.2.el9_8` and `kernel-6.12.0-211.68.2.el10_2`; CloudLinux beta `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`; KernelCare live patch for EL10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
 
 Sources: [ZDI report](https://lore.kernel.org/lkml/BYAPR01MB3830CECF5D0871064C59BA0280662@BYAPR01MB3830.prod.exchangelabs.com/), [fix commit](https://github.com/kernelorg-mirror/linux_kernel_git_netdev_net/commit/79dc34beb1fdb3da79753e51e15c68591a2561fe), [AlmaLinux](https://almalinux.org/blog/2026-10-23-zdi-can-33367/), [CloudLinux](https://blog.cloudlinux.com/zdi-can-33367), [TuxCare](https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/), [Sysdig](https://www.sysdig.com/blog/detecting-and-mitigating-zdi-can-33367-and-five-other-linux-flaws), [Red Hat RHSB-2026-014](https://access.redhat.com/security/vulnerabilities/RHSB-2026-014).
 
@@ -1271,7 +1594,7 @@ Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026
 
 **CVEs:** [CVE-2026-105133](https://www.cve.org/CVERecord?id=CVE-2026-105133), [CVE-2026-105134](https://www.cve.org/CVERecord?id=CVE-2026-105134)
 
-**[CVE-2026-105133](https://www.cve.org/CVERecord?id=CVE-2026-105133) — VulDB CVSS 3.1: 7.3 High; VulDB CVSS 4.0: 6.9 Medium per the CNA record (now `E:A`), 5.5 Medium as still displayed by NVD with the older `E:P`. [CVE-2026-105134](https://www.cve.org/CVERecord?id=CVE-2026-105134) — VulDB CVSS 3.1: 10.0 Critical; CVSS 4.0: 10.0 (CNA) / 9.3 (NVD display). Both in CISA KEV.**
+**[CVE-2026-105133](https://www.cve.org/CVERecord?id=CVE-2026-105133) — VulDB CVSS 3.1: 7.3 High; VulDB CVSS 4.0: 6.9 Medium (`E:A`; NVD now displays the same). [CVE-2026-105134](https://www.cve.org/CVERecord?id=CVE-2026-105134) — VulDB CVSS 3.1: 10.0 Critical; CVSS 4.0: 10.0 Critical (CNA and NVD display). Both in CISA KEV.**
 
 **CISA KEV:** Listed — both CVEs added 2026-10-14, federal due date 2026-10-17.
 
@@ -1283,7 +1606,7 @@ Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026
 | v7–v9 hotfix 9.15.2.70 | 2026-10-12; time/TZ unknown | v7/v8 first upgrade to 9.15.0.0. |
 | CISA KEV addition | 2026-10-14; time/TZ unknown | Federal due date 2026-10-17. |
 | CVE records corrected | 2026-10-26 14:31 UTC | Affected range now "up to 9.15.2.69/10.3.4.44"; fixed 9.15.2.70 / 10.3.4.45. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | CVE record range correction. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | NVD now displays VulDB's updated CVSS 4.0 scores. |
 
 AhsayCBS is a backup server used mainly by MSPs. Attackers chain the two flaws: an authentication bypass in `checkSysPwd`, then OS command injection via `/rps/api/json/UpdateReceivers.do`. Together they give unauthenticated remote code execution (SYSTEM on the Windows hosts Huntress investigated).
 
@@ -1420,9 +1743,10 @@ Sources: [DIVD case](https://csirt.divd.nl/DIVD-2026-00015), [CNA record CVE-202
 | Serve correction merged | 2026-10-25 00:39:53 UTC | PR 21931 addresses cross-mount capability leakage. |
 | Public circulation/vendor response | 2026-10-25; time/TZ unknown | Exact first-publication time unknown; original X headline needs qualification. |
 | SSH forwarding correction merged | 2026-10-26 03:08:59 UTC | PR 21942; source merge is not a stable release. |
-| More SSH hardening merged; headscale fix proposed | 2026-10-25 18:31 UTC to 2026-10-26 14:49 UTC | Tailscale PRs 21930, 21945, 21943 merged (21944 open); headscale PR #3586 open. Source changes, not releases. |
+| More SSH hardening merged; headscale fix proposed | 2026-10-25 18:31 UTC to 2026-10-26 14:49 UTC | Tailscale PRs 21930, 21945, 21943 merged; headscale PR #3586 open. Source changes, not releases. |
+| Connection-level SSH policy enforcement merged | 2026-10-26 15:48 UTC | PR 21944 closes connections, including forwarding, when SSH policy grants are revoked or narrowed. Not yet in a release (latest v1.104.2). |
 | Fixed stable release | Not established at 2026-10-26 ~15:30 UTC | Latest Tailscale stable found was 1.104.2; do not mark it or headscale 0.29.6 fixed for this report. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Additional merged and proposed source fixes. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Connection-level SSH policy fix merged (PR 21944). |
 
 Erica Windisch reports **11 findings across SSH, Serve/Funnel, an experimental connector and headscale/DERP**. This is not 11 confirmed unauthenticated Tailscale SSH vulnerabilities. The principal SSH escalation chains require **an already-authorized source, permitted target access and applicable forwarding**. Ordinary OpenSSH carried over Tailscale is distinct. This developing report is included at the owner's request, with its severity attribution visible.
 
@@ -1561,7 +1885,8 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | Amazon Linux 2023 fix | 2026-10-24; time/TZ unknown | ALAS2023-2026-3334, `1.1.0-1.amzn2023.0.2` backport. |
 | ClickHouse backports merged | 2026-10-25 14:10 to 2026-10-26 09:02 UTC | All four branches (26.10, 26.9, 26.8, 26.3); no release containing them yet. |
 | Downstream fix-status check | 2026-10-26 | libjxl and ClickHouse source fixes merged; published fixed artifacts unconfirmed. Arrow dependency-update PR approved but still open. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Red Hat rating, Linux distribution packages and ClickHouse backport status. |
+| MSRC advisory | 2026-10-25 14:00 UTC | Critical (CVSS 3.1 8.1); fixed .NET SDKs, Visual Studio and PowerShell builds. |
+| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | MSRC rating and Visual Studio/PowerShell fixes, Alpine packages, DuckDB bundled copy. |
 
 **HTTP2Shell, Node2Shell and Brotli2Shell are names for the same vulnerability, not separate CVEs.** The flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the names, it is **not specific to HTTP/2 or even HTTP**; exposure depends on decoding attacker-controlled Brotli data, including embedded file metadata and analytical buffers.
 
@@ -1600,7 +1925,7 @@ The important exposure distinction:
 
 **Detection tools:** Use the [JFrog contextual scanner and Trail of Bits Brotli Checker guidance](details/brotli.md#official-researcher-detection-tools) for supported source/binary inspection. Matches identify candidate usage or code copies, not confirmed exploitation; empty results do not prove safety. Neither tool was run for this report.
 
-Microsoft separately rates .NET's impact **8.1 High (CVSS 3.1)** and excludes .NET Framework from its advisory. Default ASP.NET Core/HttpClient configurations do not enable automatic Brotli decompression. Upgrade shared runtimes and restart; **rebuild/redeploy self-contained and NativeAOT apps**, which retain their own decoders. See the [language-by-language inventory and remediation](details/brotli.md#inventory-by-language-and-deployment), including Go/Rust and vendor-backport caveats.
+Microsoft's [MSRC entry](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497) rates it **Critical (CVSS 3.1 8.1)** and also lists fixed **Visual Studio** (2019 16.11.61, 2022 17.14.43, 2026 18.11.2) and **PowerShell** (7.4.22, 7.5.13, 7.6.9) builds; .NET Framework is excluded. DuckDB also bundles its own Brotli copy, with its [fix PR](https://github.com/duckdb/duckdb/pull/27791) still open. Default ASP.NET Core/HttpClient configurations do not enable automatic Brotli decompression. Upgrade shared runtimes and restart; **rebuild/redeploy self-contained and NativeAOT apps**, which retain their own decoders. See the [language-by-language inventory and remediation](details/brotli.md#inventory-by-language-and-deployment), including Go/Rust and vendor-backport caveats.
 
 **Envoy 1.36 and Istio 1.29 are unsupported branches**; a fix for this CVE does not restore general security support. Prefer a supported branch. See the [cross-stack guidance](https://patchtheplanet.org/brotli) for embedded clients and temporary decoding controls.
 
@@ -2186,6 +2511,15 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Google MCP Toolbox for Databases with the Cloud Storage source** | Upgrade to 1.10.0+ (latest 1.15.0) and set `allowedBuckets` and `allowedLocalRoots` on every `cloud-storage` source (upgrading alone keeps allow-all defaults; the prebuilt config sets neither), or remove the upload/download tools; run as an unprivileged user on localhost or stdio and restart. [Guide](details/google-mcp-toolbox.md#remediation). |
+| **Vertiv Avocent ACS8000 / ACS800 console servers** | Restrict the web UI (HTTP/HTTPS) to a management network now, or disable web access in the Security Profile; no fixed version is confirmed, so treat 2.32.5 and earlier as affected and 2.32.6 as unknown until Vertiv confirms a fix, and review appliance accounts and configuration. [Guide](details/vertiv-avocent-acs.md#remediation). |
+| **Elixir/Phoenix apps served by Bandit (Phoenix 1.7.11+ default adapter)** | Upgrade `bandit` to 1.14.0+ (no backports), rebuild and redeploy every node, and test the new HTTP/2 stream and header-size defaults; until then disable HTTP/2 (`http_2_options: [enabled: false]`) and lower `max_fragmented_message_size`. [Guide](details/elixir-bandit.md#remediation). |
+| **WolfVision Cynap collaboration devices** | Update to v2.00c/v2.00d (Pure Next Gen, Bridge), v1.78a (Pro, Core Pro, Receiver, Pure, Pure Mini, Pure Pro) or v1.72e (Videobar), updating all Matrix stations together; restrict TCP 50915/50917/80/443 and 50930 to trusted hosts; decommission or isolate the unfixed Cynap, Cynap Core and Cynap Pure SDM. [Guide](details/wolfvision-cynap.md#remediation). |
+| **Supermicro servers, blades, switches and CMMs (BMC firmware X11–X14, H11–H14 and others)** | Update BMC firmware to the version in Supermicro's per-board table (System Lockdown off for the update); X12DGU and X13SEW-TF-OS1 are TBD and X9/X10 have no listed fix. Keep BMCs on an isolated management network, block UDP 623 elsewhere (IPv4 and IPv6), disable the IPMI LAN port where unused, disable SMCRAKP and remove unneeded IPMI accounts. [Guide](details/supermicro-bmc.md#remediation). |
+| **GitHub organizations and repositories (Actions secrets, OIDC cloud roles, self-hosted runners)** | Look for `ci-sync-` branches adding `sync-check.yml`, runs deleted right after completing and the `gheist` user agent (read-only [branch check script](gheist-branch-check.sh)). If found, rotate every secret the repository could read, revoke the pushing tokens and rebuild self-hosted runners that ran it; never approve held `sync-check` runs. Scope OIDC trust to protected branches. [Guide](details/github-gheist.md#remediation). |
+| **Apache Camel with `camel-saxon` (XQuery), including Spring Boot and Quarkus apps** | Upgrade `camel-saxon` to 4.23.0, 4.22.2 or 4.18.5 (4.22.1 is still affected; 4.19–4.21 and 4.17 and older get no fix), rebuild and redeploy; until then avoid XQuery over untrusted bodies that are already a `Source`, or supply a Saxon `Configuration` that refuses DOCTYPE and external entities. [Guide](details/apache-camel-saxon.md#remediation). |
+| **Oracle WebLogic, SOA Suite, Access Manager, E-Business Suite 12.2, JD Edwards, Database 19c/23ai, MySQL 8.4/9.7/26.7 and PeopleTools 8.61–8.63** | Apply the October 2026 CPU patches from Oracle's patch availability documents (CPU360, KA923, CPU417, CPU359, CPU378, CPU418), internet-facing middleware and EBS first; until then deny T3/IIOP from untrusted networks with WebLogic connection filters and remove `/OA_HTML/AppsTCFServer` from the EBS URL firewall allowlist. On PeopleSoft, also confirm that the June CVE-2026-35273 patch is installed, not just a WAF rule. [Guide](details/oracle-cpu-october.md#remediation). |
+| **ImageMagick (CLI, PHP Imagick, Python Wand, Ruby RMagick/MiniMagick, bundled copies such as Magick.NET)** | Upgrade to 7.1.2-33+ or 6.9.13-58+ or a fixed distro package (Debian stable and RHEL 6/7 were unfixed when checked), rebuild bundling images and restart workers; until then reject untrusted files starting with `BZh` and sandbox image processing. [Guide](details/imagemagick.md#remediation). |
 | **Electrum Bitcoin wallet (desktop and Android)** | Upgrade to 4.8.3 (verify signatures), check output address and amount before signing any fee bump, and prefer a server you run. [Guide](details/electrum.md#remediation). |
 | **Fortinet FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator** | Upgrade FortiOS to 8.0.2/7.6.8/7.4.13/7.2.14, FortiManager and FortiAnalyzer to 8.0.2/7.6.8/7.4.12 (move 7.2 to 7.4.12+ because FG-IR-26-178 has no 7.2 fix), FortiMail to 8.0.2/7.6.7/7.4.9 (7.2 to 7.4+) and FortiAuthenticator to 8.0.4/6.6.11; until then restrict admin interfaces to trusted IPs. [Guide](details/fortinet-october.md#remediation). |
 | **Signal (Android, iOS, Desktop) and RingRTC embedders** | Update to Android 8.27.0+, iOS 8.30.0+ or Desktop 8.29.0+ (RingRTC 2.72.0+) and restart the app; until then avoid calls with untrusted contacts. [Guide](details/signal.md#remediation). |
@@ -2195,7 +2529,7 @@ flowchart TD
 | **Docker Hub accounts and organizations** | No software to install (fixed service-side). If Docker emailed you on 2026-10-02, revoke unrecognized PATs, prefer organization access tokens, and check published image digests against CI records. [Guide](details/docker-hub-ghostpat.md#remediation). |
 | **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |
 | **HPE Aruba Networking AOS-8 / AOS-10 (controllers, conductors, gateways, APs)** | Upgrade to AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, 8.13.3.1+ or 8.10.0.24+ (other branches: move to a fixed supported branch); until then confine SSH/WebUI/API to a management VLAN and UDP 8211 (PAPI) to your own APs and controllers. [Guide](details/aruba-aos.md#remediation). |
-| **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a vendor kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix (AlmaLinux testing 4.18.0-553.177.2.el8_10 / 5.14.0-687.59.2.el9_8 / 6.12.0-211.68.2.el10_2, CloudLinux beta, or KernelCare EL10 live patch); no mainline, stable, RHEL, Debian or Ubuntu fix yet. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
+| **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a vendor kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix (AlmaLinux 8 production 4.18.0-553.178.1.el8_10, AlmaLinux testing 5.14.0-687.59.2.el9_8 / 6.12.0-211.68.2.el10_2, CloudLinux beta, or KernelCare EL10 live patch); no mainline, stable, RHEL, Debian or Ubuntu fix yet. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
 | **WordPress sites with Rank Math PRO** | If 3.0.123 was downloaded or updated 2026-10-15 20:02 – 2026-10-16 07:12 UTC and activated, treat the site as compromised: restore a pre-incident backup or follow the vendor's ordered cleanup, rotate every credential the site could reach, then install 3.0.124. Otherwise update to 3.0.124. Updating alone removes no persistence. [Guide](details/rankmath-pro.md#remediation). |
 | **FortiSIEM (on-premises)** | Upgrade 7.5.0 to 7.5.1+ (7.6 not affected); restrict TCP 27918 to FortiSIEM nodes; treat 7.0–7.4 as unknown (listed in the CVE record, not the advisory) and ask Fortinet; check `/opt/charting/redishb.sh` and `/opt/phoenix/bin/phLicenseTool` for unexpected changes. [Guide](details/fortisiem.md#remediation). |
 | **FortiSandbox / FortiSandbox PaaS** | Upgrade to 5.0.7+ or 4.4.10+ or move to 5.2 (PaaS 4.4 and all 4.2 units: migrate to a fixed release); until then restrict GUI access to a management network and review admin accounts and logins. [Guide](details/fortisandbox.md#remediation). |
@@ -2228,7 +2562,7 @@ flowchart TD
 | **PHP / WordPress / Laravel / Drupal / Joomla** | PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport; disable session upload progress pending the follow-up fix. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. [Guide](details/php2shell.md#remediation). |
 | **Node.js / Bun** | Node **22.23.4 / 24.22.1 / 26.12.1**; Bun **1.4.4**. Rebuild containers and restart workers. |
 | **Python** | `Brotli` **1.2.1**, `brotlicffi` **1.2.1.0**, Pillow **13.0.0** where installed. Pillow may require a Python upgrade. |
-| **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps. [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |
+| **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps; update Visual Studio and PowerShell 7 to [MSRC's fixed builds](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497). [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |
 | **Linux system `libbrotli` packages** | Debian bookworm `1.0.9-2+deb12u1` / trixie `1.1.0-2+deb13u1`; Amazon Linux 2023 `1.1.0-1.amzn2023.0.2`; others per vendor tracker (Ubuntu still needs-triage when reviewed). Backports keep old version strings; restart processes that load the library. [Guide](details/brotli.md#remediation). |
 | **Java / Scala / PHP / Ruby native Brotli** | Brotli4j **1.24.0** including native artifacts; PHP extension **0.21.1**; Ruby gem **0.9.1+**. Patch separate libcurl/native copies too. |
 | **FFmpeg / libjxl media workers** | Verify the loaded/bundled Brotli fix with your supplier; the libjxl source merge does not patch existing FFmpeg artifacts. Until verified, pause affected untrusted JPEG XL/metadata processing. [Guide](details/brotli.md#remediation). |
