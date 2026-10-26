@@ -1879,6 +1879,7 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | Proxy fixes | Varies by component | Separate Envoy/Istio release dates in the detailed timeline; do not infer from Node's date. |
 | Java / Ruby binding updates | 2026-10-24; time/TZ unknown | Brotli4j advisory identifies 1.24.0; Ruby maintainer confirms gem 0.9.1 fix. |
 | PHP extension patch | 2026-10-24 23:49 UTC | php-ext-brotli 0.21.1 bundles fixed Brotli 1.2.1. |
+| PHP Windows package rebuilds | 2026-10-23; time/TZ unknown | Official packages **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1** bundle Brotli 1.2.1. The `-1` suffix identifies the rebuilt dependency package; the PHP runtime version is unchanged. |
 | .NET advisory | 2026-10-25 19:06:12 UTC | Identifies fixed runtime/SDK builds; publication time is not first artifact availability. |
 | JFrog downstream research | 2026-10-25; time/TZ unknown | FFmpeg/libjxl pointer corruption/crash, ClickHouse crash, Arrow/pyarrow loop and .NET native crash. |
 | Debian system `brotli` fixes | 2026-10-23 19:09–21:09 UTC | DLA-4855-1 (bookworm `1.0.9-2+deb12u1`), DSA-6582-1 (trixie `1.1.0-2+deb13u1`). |
@@ -1886,7 +1887,7 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | ClickHouse backports merged | 2026-10-25 14:10 to 2026-10-26 09:02 UTC | All four branches (26.10, 26.9, 26.8, 26.3); no release containing them yet. |
 | Downstream fix-status check | 2026-10-26 | libjxl and ClickHouse source fixes merged; published fixed artifacts unconfirmed. Arrow dependency-update PR approved but still open. |
 | MSRC advisory | 2026-10-25 14:00 UTC | Critical (CVSS 3.1 8.1); fixed .NET SDKs, Visual Studio and PowerShell builds. |
-| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | MSRC rating and Visual Studio/PowerShell fixes, Alpine packages, DuckDB bundled copy. |
+| **Last updated** | **2026-10-26 16:01 EDT (UTC−04:00)** | Added the official PHP Windows rebuild identifiers; other existing patch data was not re-dated. |
 
 **HTTP2Shell, Node2Shell and Brotli2Shell are names for the same vulnerability, not separate CVEs.** The flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the names, it is **not specific to HTTP/2 or even HTTP**; exposure depends on decoding attacker-controlled Brotli data, including embedded file metadata and analytical buffers.
 
@@ -1919,6 +1920,7 @@ The important exposure distinction:
 | .NET runtime | **8.0.33 / 9.0.22 / 10.0.14**; preview **11.0.0-rc.3.26522.148** |
 | Java / Scala `Brotli4j` and `native-*` artifacts | **1.24.0**; update the BOM/wrapper and native artifacts together |
 | PHP `php-ext-brotli` | **0.21.1**; assess libcurl's decoder separately |
+| Official PHP Windows packages | **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1**; the `-1` package suffix, not `php -v`, identifies the rebuilt Brotli dependency |
 | Ruby `brotli` gem | **0.9.1+**; **0.9.0 is not fixed** |
 
 **Fixed downstream artifacts not yet established:** [libjxl PR #5062](https://github.com/libjxl/libjxl/pull/5062) and [ClickHouse PR #127419](https://github.com/ClickHouse/ClickHouse/pull/127419) merge Brotli 1.2.1, but a source merge or listed backport number is not proof of a published package. [Arrow PR #55167](https://github.com/apache/arrow/pull/55167) remains open. Require supplier evidence that the deployed build includes fixed Brotli; otherwise pause affected untrusted processing or reject it before decoding. See [per-product inventory and release qualifications](details/brotli.md#inventory-by-language-and-deployment).
@@ -1926,6 +1928,8 @@ The important exposure distinction:
 **Detection tools:** Use the [JFrog contextual scanner and Trail of Bits Brotli Checker guidance](details/brotli.md#official-researcher-detection-tools) for supported source/binary inspection. Matches identify candidate usage or code copies, not confirmed exploitation; empty results do not prove safety. Neither tool was run for this report.
 
 Microsoft's [MSRC entry](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497) rates it **Critical (CVSS 3.1 8.1)** and also lists fixed **Visual Studio** (2019 16.11.61, 2022 17.14.43, 2026 18.11.2) and **PowerShell** (7.4.22, 7.5.13, 7.6.9) builds; .NET Framework is excluded. DuckDB also bundles its own Brotli copy, with its [fix PR](https://github.com/duckdb/duckdb/pull/27791) still open. Default ASP.NET Core/HttpClient configurations do not enable automatic Brotli decompression. Upgrade shared runtimes and restart; **rebuild/redeploy self-contained and NativeAOT apps**, which retain their own decoders. See the [language-by-language inventory and remediation](details/brotli.md#inventory-by-language-and-deployment), including Go/Rust and vendor-backport caveats.
+
+**PHP on Windows needs a separate package check:** PHP's October 21 source releases address PHP2Shell, but its [October 23 Windows rebuilds](https://www.php.net/archive/2026.php) add the fixed Brotli 1.2.1 dependency. Install **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1** and restart every SAPI and worker. Because the PHP runtime version did not change, `php -v` alone cannot distinguish a rebuilt package; verify the `-1` filename or the official download hash. This does not patch separately bundled `php-ext-brotli`, libcurl or other native decoders.
 
 **Envoy 1.36 and Istio 1.29 are unsupported branches**; a fix for this CVE does not restore general security support. Prefer a supported branch. See the [cross-stack guidance](https://patchtheplanet.org/brotli) for embedded clients and temporary decoding controls.
 
@@ -2559,12 +2563,12 @@ flowchart TD
 | **Self-hosted Zammad** | Upgrade to 7.2.2+ (6.5.5 only as a stopgap for CVE-2026-102489; DEB/RPM installs need 7.2.2 for the root escalation), then run DIVD's log check. [Guide](details/zammad.md#remediation). |
 | **Tailscale SSH / headscale** | Review per-feature exposure; disable unnecessary SSH forwarding with the vendor's daemon setting and restart safely. Source fixes are merged; a complete fixed stable-release matrix was not established. |
 | **Microsoft Authenticator on Android** | Install **6.2606.4246 or a later supported release** in every profile; investigate and revoke exposed work-account tokens where compromise is suspected. |
-| **PHP / WordPress / Laravel / Drupal / Joomla** | PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport; disable session upload progress pending the follow-up fix. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. [Guide](details/php2shell.md#remediation). |
+| **PHP / WordPress / Laravel / Drupal / Joomla** | For PHP2Shell, use PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport and disable session upload progress pending the follow-up fix. On Windows, separately install the **`-1`** rebuild that carries Brotli 1.2.1 and restart workers; `php -v` does not prove it. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. [PHP2Shell guide](details/php2shell.md#remediation) · [Brotli guide](details/brotli.md#remediation). |
 | **Node.js / Bun** | Node **22.23.4 / 24.22.1 / 26.12.1**; Bun **1.4.4**. Rebuild containers and restart workers. |
 | **Python** | `Brotli` **1.2.1**, `brotlicffi` **1.2.1.0**, Pillow **13.0.0** where installed. Pillow may require a Python upgrade. |
 | **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps; update Visual Studio and PowerShell 7 to [MSRC's fixed builds](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497). [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |
 | **Linux system `libbrotli` packages** | Debian bookworm `1.0.9-2+deb12u1` / trixie `1.1.0-2+deb13u1`; Amazon Linux 2023 `1.1.0-1.amzn2023.0.2`; others per vendor tracker (Ubuntu still needs-triage when reviewed). Backports keep old version strings; restart processes that load the library. [Guide](details/brotli.md#remediation). |
-| **Java / Scala / PHP / Ruby native Brotli** | Brotli4j **1.24.0** including native artifacts; PHP extension **0.21.1**; Ruby gem **0.9.1+**. Patch separate libcurl/native copies too. |
+| **Java / Scala / PHP / Ruby native Brotli** | Brotli4j **1.24.0** including native artifacts; PHP extension **0.21.1**; official Windows PHP packages **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1**; Ruby gem **0.9.1+**. Patch separate libcurl/native copies too. |
 | **FFmpeg / libjxl media workers** | Verify the loaded/bundled Brotli fix with your supplier; the libjxl source merge does not patch existing FFmpeg artifacts. Until verified, pause affected untrusted JPEG XL/metadata processing. [Guide](details/brotli.md#remediation). |
 | **ClickHouse** | Require a supplier build containing fixed Brotli; listed source backports are not verified released packages. Until patched, reject Brotli HTTP bodies before decoding and pause untrusted `.br`/Parquet ingestion. [Guide](details/brotli.md#inventory-by-language-and-deployment). |
 | **Arrow / pyarrow** | Inspect Arrow's own bundled/system Brotli; updating Python `Brotli` alone is insufficient. No fixed wheel is established here: use a verified patched build or pause affected untrusted file/buffer processing. [Guide](details/brotli.md#inventory-by-language-and-deployment). |

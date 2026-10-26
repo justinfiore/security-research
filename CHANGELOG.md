@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-26 16:01 EDT (UTC−04:00) — PHP Windows Brotli rebuild identifiers
+
+**Partial review:** The overlapping research window, CISA KEV feed (catalog 2026.10.23), all five configured X timelines, and selected primary/vendor sources were checked. A full per-item primary-source refresh and complete NSA/Wiz coverage were not completed in this run; no checkpoint was advanced.
+
+- **PHP on Windows:** PHP's official Windows packages **8.2.35-1, 8.3.36-1, 8.4.27-1 and 8.5.12-1** bundle Brotli 1.2.1 for CVE-2026-111497. The `-1` suffix is essential: `php -v` still reports the same PHP runtime release. [Install the rebuilt package, verify its filename/hash and restart each SAPI or worker](black-october/details/brotli.md#remediation); separately assess extensions, libcurl and other bundled decoders.
+
 ## 2026-10-26 12:30 EDT (UTC−04:00) — Supermicro BMC, Avocent and WolfVision devices, Oracle October CPU and five more; Brotli reaches Visual Studio and PowerShell
 
 None of the new items is in CISA KEV (catalog 2026.10.23) and none has reported in-the-wild exploitation, except the Gheist token-abuse campaign.
