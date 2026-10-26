@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Orb setup for security-research. The repository has no package dependencies;
+# validation uses sh, python3, jq, Amp's gh and agent-browser from the base orb.
+# This installs shellcheck for script reviews and checks the expected tools.
+set -euo pipefail
+
+step() { printf '[setup] %s\n' "$*"; }
+
+missing=()
+command -v shellcheck >/dev/null 2>&1 || missing+=(shellcheck)
+if [ "${#missing[@]}" -gt 0 ]; then
+  step "installing ${missing[*]}"
+  time {
+    sudo apt-get update -qq
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends "${missing[@]}"
+  }
+else
+  step "system packages already present"
+fi
+
+step "checking validation tools"
+for tool in sh python3 git jq shellcheck; do
+  command -v "$tool" >/dev/null 2>&1 || { echo "[setup] missing required tool: $tool" >&2; exit 1; }
+done
+python3 -c 'import sys; assert sys.version_info >= (3, 8), sys.version'
+step "done"
