@@ -4,6 +4,25 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-26 10:18 EDT (UTC−04:00) — Ten High/Critical flaws in widely deployed developer and self-hosted software
+
+**Partial review:** Adds the ten candidates from the earlier discovery sweep. None is in CISA KEV (catalog 2026.10.23), but two already face exploitation attempts. X timelines and the Wiz vulnerability database were not reviewed for this update.
+
+- **Exploitation attempts outside KEV:**
+  - [Bricksforge WordPress plugin](black-october/black-october-2026.md#bricksforge-exploited-unauthenticated-file-upload-to-rce-cve-2026-85097): unauthenticated upload to RCE, attempts since 2026-10-07. Update to 3.1.8.10+ (prefer 4.0.x) and [hunt for uploaded PHP files](black-october/details/bricksforge.md#detection).
+  - [Langflow](black-october/black-october-2026.md#langflow-authenticated-rce-via-mcp-stdio-server-configuration-cve-2026-105740-and-cve-2026-105697): honeypot attempts using common credentials. **1.9.0 is incomplete; upgrade to 1.10.3+** and [disable auto-login](black-october/details/langflow.md#remediation).
+- **Unauthenticated RCE in web stacks:**
+  - [Next.js](black-october/black-october-2026.md#nextjs-unauthenticated-rce-in-use-cache-and-image-optimization-ghsa-673q-mjm6-r5xr-and-cve-2026-96889): upgrade to 16.4.1 or 15.5.28, with `sharp` 0.35.5+. One RCE has no CVE, so CVE-only scanners can miss it.
+  - [Drupal core Field UI](black-october/details/drupal.md#remediation): 11.4.10 / 11.3.19 / 10.6.19, plus Entity List 3.0.10.
+- **Configuration-dependent infrastructure fixes:**
+  - [NGINX](black-october/details/nginx.md#detection): 1.30.6 / 1.31.7. F5 rates it Critical, nginx.org medium.
+  - [curl/libcurl](black-october/details/curl.md#detection): 8.23.0; rebuild bundled copies.
+  - [Gitea built-in SSH server](black-october/details/gitea.md#detection): 28.0.0, the release after 1.27.3.
+- **Isolation and auth bypasses:**
+  - [PwnEscape guest-to-host kernel flaw and Vghost](black-october/details/pwnescape.md#remediation): VM and sandbox hosts need patched kernels; RHEL fixes were still pending.
+  - [Wasmtime sandbox escapes](black-october/details/wasmtime.md#remediation): CVE-2026-115889 affects all architectures. Lines 37–47 get no fixed release, so move to 36.0.19, 48.0.7, 49.0.4 or 50.x.
+  - [Laravel TokenGuard](black-october/details/laravel.md#detection): affects only `token`-driver guards on MySQL/MariaDB.
+
 ## 2026-10-26 09:28 EDT (UTC−04:00) — Twelve KEV-listed flaws, PHP2Shell exploitation and KEV updates
 
 **Partial review:** Every tracked issue was rechecked and CISA KEV additions since October 1 were reviewed. X timelines, the Wiz vulnerability database and part of BleepingComputer could not be checked, and several non-KEV High/Critical candidates (for example Next.js, NGINX, curl and Drupal) are not yet assessed here.

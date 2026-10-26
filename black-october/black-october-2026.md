@@ -15,6 +15,16 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Wasmtime — Cranelift sandbox escapes (CVE-2026-115889, CVE-2026-115893)](#wasmtime-cranelift-sandbox-escapes-from-untrusted-wasm-cve-2026-115889-and-cve-2026-115893)
+- [Laravel — TokenGuard API authentication bypass](#laravel-tokenguard-api-authentication-bypass-on-mysql-and-mariadb-cve-2026-114509)
+- [Next.js — unauthenticated RCE in use cache and Image Optimization](#nextjs-unauthenticated-rce-in-use-cache-and-image-optimization-ghsa-673q-mjm6-r5xr-and-cve-2026-96889)
+- [Drupal core — Field UI remote code execution (CVE-2026-108097)](#drupal-core-field-ui-remote-code-execution-cve-2026-108097)
+- [NGINX — configuration-dependent memory corruption and TLS session forgery](#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery-cve-2026-15176-cve-2026-93479-cve-2026-97205-and-cve-2026-97629)
+- [curl and libcurl — HTTP/2 upload use-after-free (CVE-2026-92392)](#curl-and-libcurl-use-after-free-when-a-server-resets-an-upload-cve-2026-92392)
+- [Linux kernel PwnEscape — guest-to-host escape (CVE-2026-99999, plus Vghost)](#linux-kernel-pwnescape-guest-to-host-escape-via-ipv4-checksum-metadata-cve-2026-99999)
+- [Bricksforge — exploited unauthenticated file upload to RCE](#bricksforge-exploited-unauthenticated-file-upload-to-rce-cve-2026-85097)
+- [Gitea — built-in SSH server authentication bypass (CVE-2026-103059)](#gitea-built-in-ssh-server-authentication-bypass-cve-2026-103059)
+- [Langflow — MCP stdio RCE with honeypot exploitation attempts (CVE-2026-105740, CVE-2026-105697)](#langflow-authenticated-rce-via-mcp-stdio-server-configuration-cve-2026-105740-and-cve-2026-105697)
 - [VeloCloud Orchestrator — authenticated SQL injection](#velocloud-orchestrator-authenticated-sql-injection-to-superuser-operator-cve-2026-114625)
 - [Siemens Software Center — exploited DLL side-loading](#siemens-software-center-dll-side-loading-exploited-in-clickfix-campaign-cve-2026-110936)
 - [PAN-OS — authenticated management interface RCE (CVE-2026-0322)](#pan-os-authenticated-management-interface-rce-cve-2026-0322)
@@ -50,6 +60,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **Patch widely deployed developer and self-hosted stacks too, even without KEV listings:** Next.js, NGINX, curl/libcurl, Drupal, Laravel, Gitea, Langflow, Wasmtime, the Bricksforge WordPress plugin, and Linux VM/sandbox hosts (PwnEscape). Bricksforge and Langflow already face exploitation attempts.
 - **Patch KEV-listed edge and enterprise software first.** CISA added FortiMail, Zammad, NetScaler, Ivanti Connect Secure, Windows Shell, PAN-OS, AhsayCBS, Cisco Secure Email Gateway, Atlassian Data Center, SiteGuard, Siemens Software Center and VeloCloud flaws to its Known Exploited Vulnerabilities catalog in October; several require forensic triage, not just patching.
 - **Review Tailscale SSH authorization and forwarding.** Tailworm's principal SSH chains require existing authorized access; disable unnecessary forwarding and track official fixes, rather than treating every VPN node as remotely exploitable.
 - **Update Microsoft Authenticator on Android**, especially devices with signed-in work accounts. AuthMask requires a malicious local app; patching does not revoke already stolen tokens.
@@ -86,6 +97,361 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Wasmtime: Cranelift sandbox escapes from untrusted Wasm (CVE-2026-115889 and CVE-2026-115893)
+
+[Back to TOC](#table-of-contents)
+
+**[CVE-2026-115889](https://www.cve.org/CVERecord?id=CVE-2026-115889) and [CVE-2026-115893](https://www.cve.org/CVERecord?id=CVE-2026-115893) — GitHub CNA (Bytecode Alliance) CVSS 3.1: 9.9 Critical each; NVD has not scored them**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Advisories credit external reporters without dates. |
+| Non-security fix for CVE-2026-115889 on main | 2026-03-20 06:44:27 UTC | Shipped in Wasmtime 43.0.0 (PR merged 2026-02-18), not described as a security fix. |
+| Fixed releases 36.0.19, 48.0.7, 49.0.4 | 2026-10-19 19:09:53–19:20:37 UTC | 36.0.19 fixes both; 48.0.7 and 49.0.4 fix CVE-2026-115893. |
+| Public announcement (GHSA-mghf-wjfp-p5xm, GHSA-897f-g5gm-fmxm) | 2026-10-19 19:21:02 and 19:21:24 UTC | Repository advisory publication times. |
+| Wasmtime 50.0.0 | 2026-10-20 16:22:46 UTC | Outside both affected ranges; includes the aarch64 backport. |
+| CVE records published | 2026-10-23 21:23:27 / 21:29:33 UTC | GitHub CNA. |
+| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**[Detailed guide](details/wasmtime.md):** [Detection](details/wasmtime.md#detection) · [Remediation](details/wasmtime.md#remediation) · [Verification](details/wasmtime.md#verification) · [Timeline](details/wasmtime.md#timeline)
+
+Both bugs are in Cranelift, Wasmtime's default compiler. **CVE-2026-115889** (any architecture): SSA value indices silently overflow when compiling a huge or crafted function, causing miscompilation and type confusion. **CVE-2026-115893** (aarch64/ARM64 only): a `br_table` with more than ~256,000 targets gets an out-of-range branch that jumps to an attacker-chosen offset.
+
+**Worst case:** a malicious Wasm module escapes the sandbox and runs code in the host process with its privileges and secrets.
+
+**Exploitation status:** No attacks reported by the maintainers or in reviewed sources. The attacker must be able to get a module compiled (CVSS PR:L).
+
+**Am I impacted?** Only services that compile Wasm from parties they do not fully trust (plugin hosts, multi-tenant function platforms, build or CI services running user modules). In each Rust workspace run `cargo tree -i wasmtime --locked` or check `Cargo.lock`; check `wasmtime --version`, `uname -m` on runtime hosts, and bundled copies in language bindings and products. Affected for CVE-2026-115889: before 36.0.19 and 37.0.0 to before 43.0.0. Affected for CVE-2026-115893: before 36.0.19, 37.0.0 to before 48.0.7, and 49.0.0 to before 49.0.4.
+
+**Patch:** Move to **36.0.19+**, **48.0.7+**, **49.0.4+** or **50.0.0+**; lines 37–47 and 24.x get no fix. Rebuild, redeploy, restart hosts and recompile cached precompiled modules. No workarounds are published; until patched, stop compiling untrusted modules or isolate the process. GitHub's global advisory database had no entry for the aarch64 flaw on 2026-10-26, so Dependabot may stay silent.
+
+Sources: [GHSA-897f-g5gm-fmxm](https://github.com/bytecodealliance/wasmtime/security/advisories/GHSA-897f-g5gm-fmxm), [GHSA-mghf-wjfp-p5xm](https://github.com/bytecodealliance/wasmtime/security/advisories/GHSA-mghf-wjfp-p5xm), [CNA record CVE-2026-115889](https://cveawg.mitre.org/api/cve/CVE-2026-115889), [CNA record CVE-2026-115893](https://cveawg.mitre.org/api/cve/CVE-2026-115893), [Wasmtime 36.0.19 release](https://github.com/bytecodealliance/wasmtime/releases/tag/v36.0.19), [The Hacker News](https://thehackernews.com/2026/10/two-critical-wasmtime-flaws-could-let.html).
+
+
+## Laravel: TokenGuard API authentication bypass on MySQL and MariaDB (CVE-2026-114509)
+
+[Back to TOC](#table-of-contents)
+
+**[CVE-2026-114509](https://www.cve.org/CVERecord?id=CVE-2026-114509) — GitHub CNA CVSS 4.0: 9.2 Critical; NVD has not scored it**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private report | Unknown | Reported via GitHub's advisory process before the August fixes. |
+| Fixed releases | 2026-08-25 14:19:59 UTC (12.68.0); 20:58:51 UTC (13.29.0) | Fixes shipped two months before disclosure; v13.27.0 already contains the fix commit, but the advisory designates 13.29.0. |
+| Public announcement (Laravel advisory GHSA-f9x3-7vq9-cph6) | 2026-10-19 13:32:50 UTC | Repository advisory publication time. |
+| Public PoC (Hakai Security) | 2026-10-20; time/TZ unknown | Technical analysis with Docker lab. |
+| CVE record published | 2026-10-21 21:49:29 UTC | GitHub CNA. |
+| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**[Detailed guide](details/laravel.md):** [Detection](details/laravel.md#detection) · [Remediation](details/laravel.md#remediation) · [Verification](details/laravel.md#verification) · [Timeline](details/laravel.md#timeline)
+
+Laravel's built-in `TokenGuard`, used by any guard with `'driver' => 'token'` (default `api_token` request key and column), accepts a non-string credential. On a MySQL or MariaDB user store, a crafted value makes the lookup match an existing user, so an **unauthenticated** attacker is logged in as that user on token-guarded routes.
+
+**Worst case:** API account takeover of the matched user, which researchers say is the first user whose stored token does not start with a digit. Impact depends on that account's privileges.
+
+**Exploitation status:** A public proof of concept exists. The reviewed sources report no in-the-wild exploitation, and access logs usually cannot show it because the payload travels in a JSON body.
+
+**Am I impacted?** Only if the app defines a `token` driver guard **and** stores users in MySQL/MariaDB. The default Laravel 13 skeleton has only a session guard. Sanctum (`sanctum` driver) and Passport (`passport` driver) use their own guards and are not named in the advisory. In each deployed app root, run `composer show laravel/framework` (or read `vendor/composer/installed.json`) and `grep -rn "'driver' => 'token'" config/`. Affected: below 12.68.0 (including 11.x and older) and 13.0.0 to below 13.29.0.
+
+**Patch:** Update `laravel/framework` to **12.68.0+** or **13.29.0+**, redeploy, and restart PHP-FPM/OPcache, Octane and queue workers. Laravel 11 is past security support; a v11.56.1 tag contains the fix but is not designated by the advisory. No vendor workaround is published. If abuse is suspected, rotate all `api_token` values.
+
+Sources: [Laravel advisory](https://github.com/laravel/framework/security/advisories/GHSA-f9x3-7vq9-cph6), [GitHub CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-114509), [Hakai Security analysis](https://yokai.hakaisecurity.io/en-ghsa-f9x3-7vq9-cph6-authentication-bypass-in-laravel-tokenguard), [v12.68.0](https://github.com/laravel/framework/releases/tag/v12.68.0), [v13.29.0](https://github.com/laravel/framework/releases/tag/v13.29.0), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+
+## Next.js: unauthenticated RCE in use cache and Image Optimization (GHSA-673q-mjm6-r5xr and CVE-2026-96889)
+
+[Back to TOC](#table-of-contents)
+
+**GHSA-673q-mjm6-r5xr and GHSA-2464-fhr4-w9xw ([CVE-2026-96889](https://www.cve.org/CVERecord?id=CVE-2026-96889)): Vercel Critical, CVSS 4.0 9.5 each. Red Hat, the CNA for the librsvg CVE, scores CVE-2026-96889 CVSS 3.1 7.8 High. The same release fixes a High DoS, [CVE-2026-94482](https://www.cve.org/CVERecord?id=CVE-2026-94482) (CVSS 4.0 8.2).**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Discovery | Unknown | The finders are not named. The librsvg flaw was reported to Red Hat 2026-09-23 and made public the same day. |
+| `sharp` 0.35.5 (fixed librsvg) | 2026-09-27 13:46 UTC | Workaround for the SVG issue. |
+| Advance notice | 2026-10-08; time/TZ unknown | "Two Critical and one High" announced, with no details. |
+| Advisories and fixed releases | 2026-10-14 17:46–17:47 UTC | `next` 15.5.28 and 16.4.1 on npm by 17:44 UTC. |
+| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**[Detailed guide](details/nextjs.md):** [Detection](details/nextjs.md#detection) · [Remediation](details/nextjs.md#remediation) · [Verification](details/nextjs.md#verification) · [Timeline](details/nextjs.md#timeline)
+
+There are two separate RCE paths:
+
+- In 16.x App Router apps that use Cache Components, a `use cache` function that returns multiple typed arrays can be exploited. The flaw comes from React Server Components, and there is no workaround.
+- The Image Optimization API passes SVG to `sharp`'s bundled librsvg, which has a use-after-free. Vercel says this is exploitable "when Next.js runs on glibc-based Linux".
+
+Vercel's sources do not say whether apps hosted on Vercel are protected.
+
+**Worst case:** Unauthenticated code execution in the Next.js server process, and theft of its secrets.
+
+**Exploitation:** No in-the-wild reports were found. CISA's SSVC entry for the librsvg CVE records a proof of concept.
+
+**Am I impacted?**
+
+- `use cache` RCE: `next` 16.0.0–16.4.0 with Cache Components.
+- SVG RCE: `next` 10.0.0–15.5.27 or 16.0.0–16.4.0 with `sharp` below 0.35.5 on glibc Linux. `images.dangerouslyAllowSVG: true` makes it more likely to be reachable.
+- DoS: 13.0.0–15.5.27 or 16.0.0–16.4.0 App Router apps with Server Actions.
+
+Check the deployed `node_modules`, not just the lockfile.
+
+**Patch:** Upgrade to **16.4.1** or **15.5.28**, confirm that the resolved `sharp` is **0.35.5+**, then rebuild and redeploy. Lines before 15.5 have no listed fix. Until you can upgrade, pin `sharp` 0.35.5+ or block sharp's SVG loader. There is no stopgap for `use cache`.
+
+Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/advisories/GHSA-673q-mjm6-r5xr), [GHSA-2464-fhr4-w9xw](https://github.com/vercel/next.js/security/advisories/GHSA-2464-fhr4-w9xw), [Next.js blog](https://nextjs.org/blog/nextjs-security-update-october-14-2026), [CVE-2026-96889 record](https://cveawg.mitre.org/api/cve/CVE-2026-96889), [sharp GHSA-wq5f-xc86-pv6w](https://github.com/advisories/GHSA-wq5f-xc86-pv6w), [React GHSA-xqc2-xf4c-x3h3](https://github.com/facebook/react/security/advisories/GHSA-xqc2-xf4c-x3h3).
+
+
+## Drupal core: Field UI remote code execution (CVE-2026-108097)
+
+[Back to TOC](#table-of-contents)
+
+**SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): Drupal Security Team Critical 19/25. No CVE record has been published yet and NVD has no entry, so there is no CNA or NVD score. A related advisory, SA-CONTRIB-2026-218 for Entity List ([CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099)), is also Critical 19/25.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Discovery | Unknown | Reported by Drew Webber (Drupal Security Team) and Octavio Galland. |
+| PSA-2026-10-12 | 2026-10-12 | Announced a release window of 2026-10-14 16:00–21:00 UTC. |
+| SA-CORE-2026-014 and core fixes | 2026-10-14 (RSS 16:10 UTC) | 11.4.10 at 16:16 UTC, 10.6.19 at 16:42 UTC, 11.3.19 at 17:10 UTC, 12.0.0-beta2 at 21:57 UTC. |
+| SA-CONTRIB-2026-218 (Entity List 3.0.10) | 2026-10-14 (RSS 17:26 UTC) | Release published 15:59 UTC. |
+| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**[Detailed guide](details/drupal.md):** [Detection](details/drupal.md#detection) · [Remediation](details/drupal.md#remediation) · [Verification](details/drupal.md#verification) · [Timeline](details/drupal.md#timeline)
+
+The flaw is in core's Field UI module. Drupal says core alone cannot be exploited, but "multiple serious exploit paths exist with contributed modules", and at least one of them needs no login. Custom code may also expose it. The contributed modules are not named. Entity List has its own separate RCE with the same pattern.
+
+**Worst case:** Unauthenticated code execution, with all site data readable and modifiable.
+
+**Exploitation:** Drupal rates it "Theoretical", meaning there is no public exploit. No exploitation has been reported. The PSA warned exploits could appear "within hours or days".
+
+**Am I impacted?** Drupal core 8.9.0 up to but not including 10.6.19, 11.0.0 up to 11.3.19, 11.4.0 up to 11.4.10, and 12.0.0-alpha1 up to 12.0.0-beta2 are affected. Entity List below 3.0.10 is affected separately. End-of-life branches (11.2 and older, 10.5 and older, Drupal 8 and 9) have **no fix**.
+
+**Patch:** Update core to **11.4.10**, **11.3.19** or **10.6.19** (or later), or **12.0.0-beta2**. Update Entity List to **3.0.10**, then run `drush updatedb`. Until then, uninstall `field_ui`. Drupal Steward covers only some attack vectors.
+
+Sources: [SA-CORE-2026-014](https://www.drupal.org/sa-core-2026-014), [SA-CONTRIB-2026-218](https://www.drupal.org/sa-contrib-2026-218), [PSA-2026-10-12](https://www.drupal.org/psa-2026-10-12), [Drupal release history](https://updates.drupal.org/release-history/drupal/current).
+
+
+## NGINX: configuration-dependent memory corruption and TLS session forgery (CVE-2026-15176, CVE-2026-93479, CVE-2026-97205 and CVE-2026-97629)
+
+[Back to TOC](#table-of-contents)
+
+**[CVE-2026-15176](https://www.cve.org/CVERecord?id=CVE-2026-15176), [CVE-2026-93479](https://www.cve.org/CVERecord?id=CVE-2026-93479), [CVE-2026-97205](https://www.cve.org/CVERecord?id=CVE-2026-97205): F5 (CNA) CVSS 4.0 9.2 Critical, CVSS 3.1 8.1 High. [CVE-2026-97629](https://www.cve.org/CVERecord?id=CVE-2026-97629): F5 CVSS 4.0 8.3 High, CVSS 3.1 6.5 Medium. nginx.org rates all four "medium".**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Discovery | Unknown | CVE-2026-15176 was found internally by F5. The other three were reported by external researchers. |
+| CVE records published | 2026-10-14 14:40 UTC | F5 CNA. |
+| nginx 1.30.6 and 1.31.7, NGINX Plus fixes, F5 K articles | 2026-10-14; time/TZ unknown | Plus 37.0.5.1 and 37.1.0.1. |
+| Debian DSA-6575-1 | 2026-10-21 15:28 UTC | trixie 1.26.3-3+deb13u10. |
+| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**[Detailed guide](details/nginx.md):** [Detection](details/nginx.md#detection) · [Remediation](details/nginx.md#remediation) · [Verification](details/nginx.md#verification) · [Timeline](details/nginx.md#timeline)
+
+Each flaw needs a specific configuration:
+
+- **CVE-2026-15176:** `alias` + `rewrite` + `$request_filename` in `set` or `return`, or `$request_filename` in a `log_format`.
+- **CVE-2026-93479:** a regex `map` whose captures are used by `root` or log formats, plus a broader trigger F5 does not fully describe.
+- **CVE-2026-97205:** `aio` + SSI `include virtual`.
+- **CVE-2026-97629:** `ssl_session_cache shared:` without `ssl_session_ticket_key`, which can bypass client-certificate checks.
+
+**Worst case:** For the three memory bugs, a worker crash (DoS), or code execution where ASLR is disabled or bypassed. For CVE-2026-97629, forged TLS sessions that get past mTLS.
+
+**Exploitation:** No reports were found. CISA's SSVC entries say "none".
+
+**Am I impacted?** These upstream versions are vulnerable:
+
+- 0.1.29–1.31.6 (CVE-2026-15176)
+- 1.30.0–1.30.5 and 1.31.2–1.31.6 (CVE-2026-93479)
+- 0.8.11–1.31.6 (CVE-2026-97205)
+- 1.23.2–1.31.6 (CVE-2026-97629)
+
+Then check the running configuration with `nginx -T`, piped to `grep` because the dump can contain secrets. Distribution backports change the picture: Debian found CVE-2026-93479 in its 1.26.3 package. F5 products such as Ingress Controller, Gateway Fabric, Instance Manager and F5 WAF for NGINX are also affected.
+
+**Patch:** Upgrade to **1.30.6** or **1.31.7+**, NGINX Plus **37.0.5.1** or **37.1.0.1** (R33–R36 have no fix), or your vendor's fixed package, then restart. F5's per-CVE configuration mitigations are a stopgap only.
+
+Sources: [nginx.org advisories](https://nginx.org/en/security_advisories.html), [F5 K000162416](https://my.f5.com/manage/s/article/K000162416), [K000162607](https://my.f5.com/manage/s/article/K000162607), [K000162608](https://my.f5.com/manage/s/article/K000162608), [K000162606](https://my.f5.com/manage/s/article/K000162606), [Debian DSA-6575-1](https://lists.debian.org/debian-security-announce/2026/msg00490.html).
+
+
+## curl and libcurl: use-after-free when a server resets an upload (CVE-2026-92392)
+
+[Back to TOC](#table-of-contents)
+
+**[CVE-2026-92392](https://www.cve.org/CVERecord?id=CVE-2026-92392): curl project severity High. CISA ADP CVSS 3.1 8.1 High. The curl CNA record has no CVSS score.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). The researcher's public report includes a remote code execution PoC; no in-the-wild exploitation has been reported. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private report to curl | 2026-09-15 (HackerOne, 18:30 UTC) | "Luna with Claude, Anthropic". |
+| Debian DSA-6558-1 | 2026-10-14 06:14 UTC | trixie 8.14.1-2+deb13u7. |
+| Advisory and curl 8.23.0 | 2026-10-14 08:00 UTC (advisory JSON) | The HackerOne report, with its PoC, was made public 06:40 UTC. CVE published 07:46 UTC. |
+| Rock-solid curl 8.20.2, 8.16.2 and 8.14.3 | 2026-10-14; time/TZ unknown | Commercial support customers only. |
+| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**[Detailed guide](details/curl.md):** [Detection](details/curl.md#detection) · [Remediation](details/curl.md#remediation) · [Verification](details/curl.md#verification) · [Timeline](details/curl.md#timeline)
+
+During an HTTP/2 upload, a server reply that resets the stream (`RST_STREAM` with `HTTP_1_1_REQUIRED` or `REFUSED_STREAM`) leaves curl using freed memory. Both the curl tool and libcurl are affected. The attacker must be, or be able to impersonate, the server that receives the upload.
+
+**Worst case:** Code execution in the uploading process, for example a CI job, backup agent or application. curl says this "has been proven", but only when a malicious server knows the exact build, architecture and heap layout, and with a payload of about 23 bytes.
+
+**Exploitation:** A public PoC exists. No exploitation has been reported. CISA's SSVC entry says "poc".
+
+**Am I impacted?** Check for curl or libcurl **8.12.0–8.22.0** that uploads over HTTP/2, which is the default for HTTPS when libcurl is built with HTTP/2 support. Inventory bundled and static copies too, such as Python wheels, language bindings, container base images and vendor agents, because a system package update does not reach them.
+
+**Patch:** Upgrade to **8.23.0** or your distribution's fixed package, rebuild the images and binaries that bundle libcurl, and restart. Until then, force HTTP/1.1 for uploads (`--http1.1` or `CURL_HTTP_VERSION_1_1`), which is curl's option C.
+
+Sources: [curl advisory](https://curl.se/docs/CVE-2026-92392.html), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-92392), [HackerOne #4030333](https://hackerone.com/reports/4030333), [Debian DSA-6558-1](https://lists.debian.org/debian-security-announce/2026/msg00472.html), [Rock-solid curl](https://rock-solid.curl.dev/download.html).
+
+
+## Linux kernel PwnEscape: guest-to-host escape via IPv4 checksum metadata (CVE-2026-99999)
+
+[Back to TOC](#table-of-contents)
+
+**[CVE-2026-99999](https://www.cve.org/CVERecord?id=CVE-2026-99999) — kernel.org CNA CVSS 3.1: 9.3 Critical; Red Hat and Amazon Linux CVSS 3.1: 8.8 Important (PR:L); Ubuntu priority: Medium. Companion [CVE-2026-74580](https://www.cve.org/CVERecord?id=CVE-2026-74580) "Vghost" — kernel.org CNA CVSS 3.1: 8.8 High.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | 2026-08-20 (to Vercel); 2026-09-04 (to kernel security); time/TZ unknown | Researcher-stated dates. |
+| Public netdev patch series | 2026-09-19 to 2026-09-22; time/TZ unknown | Patches were public before the vulnerability was announced. |
+| Public announcement | 2026-10-14; time/TZ unknown | Vercel findings post. An earlier X/Twitter mention reported on oss-security was not verified. |
+| Upstream stable fixes | 2026-10-15; time/TZ unknown | 5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.57, 7.2.11. Mainline 7.3 released 2026-10-18. |
+| CVE published | 2026-10-15 12:19 UTC | kernel.org CNA. |
+| Vghost CVE published / write-up | 2026-08-21 16:31 UTC / 2026-10-12, time/TZ unknown | Fixed in 5.10.265, 5.15.216, 6.1.183, 6.6.152, 6.12.104, 6.18.45, 7.1.9 and 7.2. |
+| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**[Detailed guide](details/pwnescape.md):** [Detection](details/pwnescape.md#detection) · [Remediation](details/pwnescape.md#remediation) · [Verification](details/pwnescape.md#verification) · [Timeline](details/pwnescape.md#timeline)
+
+The flaw is in the host kernel's **IPv4 networking stack**, not in KVM. A guest sends crafted virtio-net checksum metadata, and the VMM writes it to a host TAP device. The host then corrupts an already-validated IPv4 header and reads beyond the packet data when it fragments the packet. Red Hat says local attackers can trigger it too.
+
+**Worst case:** the guest escapes to the host. Vercel says the **host-memory leak was demonstrated on its production sandboxes**. The host crash and root command execution were shown **only on the researcher's own KVM and Firecracker machines**.
+
+**Vghost** is a separate vhost bug:
+
+- A user who can open `/dev/vhost-net` or `/dev/vhost-vsock` can become root. Several distributions ship those nodes world-writable (`0666`).
+- In device-IOTLB setups (vIOMMU with `iommu_platform`), a guest can write out of bounds into the host's QEMU heap.
+
+**Exploitation status:** No in-the-wild exploitation reported. CISA's SSVC entry records exploitation as "none". Red Hat's page mentions a "KEV active-exploit case", which the KEV feed does not support. A public PoC exists for Vghost.
+
+**Am I impacted?** Highest priority: KVM/QEMU, Firecracker and other virtio-net hosts that run untrusted guests (cloud and VPS hosts, CI VMs, code-execution and AI sandboxes), then multi-user Linux. If a provider runs the host, only the provider can patch it. Distribution kernels keep older base versions (for example RHEL `5.14.0-*`), so **`uname -r` alone does not prove the backport**. Check the vendor's advisory or package changelog and confirm the host has rebooted. When reviewed, Red Hat and Ubuntu had not shipped fixes; Amazon Linux had, and AlmaLinux had kernels in its testing repository.
+
+**Patch:** Boot a kernel that contains the fix: an upstream release listed above or a vendor backport. Drain guests first. Upstream lists no fix for the 5.4, 7.0 or 7.1 series. No workaround has been published. For Vghost, also remove world access to `/dev/vhost-*`, treat the `kvm` group as privileged, and do not give untrusted guests vIOMMU with `iommu_platform`.
+
+Sources: [kernel.org CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-99999), [pwn.ai write-up](https://pwn.ai/blog/pwnescape), [Vercel findings](https://vercel.com/blog/findings-from-the-1-million-dollar-vercel-sandbox-challenge), [Red Hat](https://access.redhat.com/security/cve/cve-2026-99999), [AlmaLinux](https://almalinux.org/blog/2026-10-16-pwnescape-cve-2026-99999), [Vghost CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-74580), [Tencent Vghost write-up](https://matrix.tencent.com/en/2026/10/12/vghost-cve-2026-74580), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+
+## Bricksforge: exploited unauthenticated file upload to RCE (CVE-2026-85097)
+
+[Back to TOC](#table-of-contents)
+
+**[CVE-2026-85097](https://www.cve.org/CVERecord?id=CVE-2026-85097) — Wordfence (CNA) CVSS 3.1: 9.8 Critical; Patchstack CVSS: 10.0 (figure repeated by The Hacker News); NVD has not scored it**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Patchstack has observed exploitation attempts since 2026-10-07 21:47:17 UTC. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown; vendor notified 2026-09-03 02:05:26 UTC | Wordfence CNA timeline. |
+| Fixed release 3.1.8.10 | Unknown; on or before 2026-10-07 | Vendor says 4.0.0 (2026-09-17) also contains the fix. |
+| Public announcement (Wordfence and Patchstack entries) | 2026-10-07; time/TZ unknown | Date-level publication. |
+| First observed exploitation attempts | 2026-10-07 21:47:17 UTC | Patchstack telemetry. |
+| CVE record published | 2026-10-08 06:42:09 UTC | Wordfence CNA. |
+| Further upload fix (4.0.1) and hardening (4.0.2) | 2026-10-08 and 2026-10-13; time/TZ unknown | Vendor changelog; no CVE named for the 4.0.1 issue. |
+| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**[Detailed guide](details/bricksforge.md):** [Detection](details/bricksforge.md#detection) · [Remediation](details/bricksforge.md#remediation) · [Verification](details/bricksforge.md#verification) · [Timeline](details/bricksforge.md#timeline)
+
+Bricksforge, a WordPress plugin that extends the Bricks Builder site builder, validates a Pro Forms upload's MIME type but later trusts the client-supplied `url` in `temporaryFileUploads`. An unauthenticated attacker fetches a nonce, uploads a GIF/PHP polyglot, and has it written to a `.php` path.
+
+**Worst case:** unauthenticated remote code execution as the web server user, leading to web shells, site takeover and data theft.
+
+**Exploitation status:** Patchstack reports automated attempts from 63 IPs against `/wp-json/bricksforge/v1/form_submit` (and once via `admin-ajax.php`), cycling PHP extensions, case and encodings. Attempts are confirmed; the number of successful compromises is not published.
+
+**Am I impacted?** Any WordPress site with Bricksforge **3.1.8.9 or earlier**. On a trusted host run `wp plugin list --name=bricksforge --fields=name,status,version --skip-plugins --skip-themes` from the WordPress root, or read the plugin header from the files. On every site, look for PHP files under `wp-content/uploads`, especially `bricksforge/tmp/` and `login_admin_*.php`.
+
+**Patch:** Update to **3.1.8.10 or later**; prefer the current 4.0.x (4.0.2 at review) because 4.0.1 fixed a further upload issue. If you cannot update, deactivate the plugin or block its form-submission endpoint and AJAX actions. Updating does not remove planted web shells: investigate, remove persistence and rotate WordPress secrets.
+
+Sources: [Wordfence record](https://www.wordfence.com/threat-intel/vulnerabilities/wordpress-plugins/bricksforge/bricksforge-3189-unauthenticated-arbitrary-file-upload-via-temporaryfileuploads-parameter), [Wordfence CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-85097), [Patchstack exploitation report](https://patchstack.com/articles/critical-unauthenticated-arbitrary-file-upload-vulnerability-exploited-in-bricksforge-plugin/), [Bricksforge changelog](https://bricksforge.io/version-changelog/), [The Hacker News](https://thehackernews.com/2026/10/attackers-exploit-cvss-100-bricksforge.html).
+
+
+## Gitea: built-in SSH server authentication bypass (CVE-2026-103059)
+
+[Back to TOC](#table-of-contents)
+
+**[CVE-2026-103059](https://www.cve.org/CVERecord?id=CVE-2026-103059) — CISA ADP CVSS 3.1: 9.1 Critical; Gitea advisory: 9.1 Critical (its text says "high rather than critical"); no score in the Gitea CNA record; NVD has added no score of its own**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Reporter credited; no date published. |
+| Fix merged to `main` (PR #39423) | 2026-09-25 13:22 UTC | Public in the repository before the advisory. |
+| Gitea 28.0.0 released | 2026-09-29 23:25 UTC (GitHub tag); blog dated 2026-09-30 | The release after 1.27.3. Gitea dropped the `1.` prefix. |
+| Public announcement (GHSA-8pwg-hcgm-54cp) | 2026-10-06 19:16 UTC | First publication of vulnerability details. |
+| CVE published | 2026-10-06 19:22 UTC | Gitea CNA. CISA ADP score added 2026-10-07. |
+| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**[Detailed guide](details/gitea.md):** [Detection](details/gitea.md#detection) · [Remediation](details/gitea.md#remediation) · [Verification](details/gitea.md#verification) · [Timeline](details/gitea.md#timeline)
+
+Gitea's **built-in Go SSH server** looked up the presented key with SQL `LIKE`, which ignores letter case on SQLite. An attacker downloads a victim's public RSA key from `/{username}.keys` and flips letter case until the altered key is usable. They can then forge a private key that Gitea accepts as the victim's.
+
+**Worst case:** an unauthenticated attacker gets git-over-SSH **read and write access as any user with an RSA key**: private repositories, pushes and LFS tokens. The log shows an ordinary key login. Pushing to repositories can also change CI workflows that hold secrets.
+
+**Exploitation status:** No exploitation reported. CISA's SSVC entry rates it Exploitation "none", Automatable "yes".
+
+**Am I impacted?** You are affected if you run **1.27.3 or earlier** with `START_SSH_SERVER = true` and **SQLite**. The **official rootless container image** is affected with no configuration changes.
+
+- MySQL/MariaDB and MSSQL are not addressed by the advisory; treat them as possibly affected.
+- **Not affected:** PostgreSQL, **OpenSSH front-ends** (system `sshd` or the `AuthorizedKeysCommand`), SSH certificate login and HTTP signature auth.
+
+Check `gitea --version`, `START_SSH_SERVER` and `DB_TYPE` in `app.ini`, and the image tag.
+
+**Patch:** Upgrade to **28.0.0 or later**; no 1.27.x fix exists. Read the 28.0 breaking changes first (Git 2.25+, new egress proxy). Until you upgrade, disable the built-in server and use OpenSSH, or disable SSH. Review pushes and workflow changes made over SSH during the exposure window.
+
+Sources: [Gitea advisory GHSA-8pwg-hcgm-54cp](https://github.com/go-gitea/gitea/security/advisories/GHSA-8pwg-hcgm-54cp), [Gitea CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-103059), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-103059), [Gitea 28.0.0 release](https://blog.gitea.com/release-of-28.0.0/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+
+## Langflow: authenticated RCE via MCP stdio server configuration (CVE-2026-105740 and CVE-2026-105697)
+
+[Back to TOC](#table-of-contents)
+
+**[CVE-2026-105740](https://www.cve.org/CVERecord?id=CVE-2026-105740) and [CVE-2026-105697](https://www.cve.org/CVERecord?id=CVE-2026-105697) — GitHub CNA CVSS 3.1: 9.9 Critical each; NVD: not yet scored**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Previdian honeypot sensors report exploitation attempts against CVE-2026-105740 since 2026-09-19. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Reporters credited; no dates published. |
+| Langflow 1.9.0 (partial fix) | 2026-04-14 22:39 UTC | Blocks the REST "Add MCP Server" route only. |
+| Langflow 1.10.3 (full fix) | 2026-07-23 16:08 UTC | Fixes the execution sink for both CVEs. |
+| Public announcement (GHSA-7w94-79vh-5mr2) | 2026-09-10 15:38 UTC | CVE-2026-105740 advisory, with PoC. |
+| First exploitation attempts (Previdian) | 2026-09-19 03:14 UTC | Third-party honeypot. Activity ramped up from 2026-10-11. |
+| GHSA-w794-rj3p-xv45 | 2026-09-28 17:26 UTC | CVE-2026-105697 advisory. |
+| CVEs published | 2026-10-05 20:16 UTC (105697); 20:46 UTC (105740) | GitHub CNA. |
+| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+**[Detailed guide](details/langflow.md):** [Detection](details/langflow.md#detection) · [Remediation](details/langflow.md#remediation) · [Verification](details/langflow.md#verification) · [Timeline](details/langflow.md#timeline)
+
+Any Langflow user, including a non-admin, can save an MCP server with the **stdio** transport. Langflow runs its command through `bash -c` without validation. The stored command runs again whenever anyone lists the MCP servers.
+
+**1.9.0 blocked only the REST route.** Through 1.10.2, MCP stdio configurations embedded in flows or passed as tweaks still executed (CVE-2026-105697).
+
+**Worst case:** OS command execution as the Langflow process user. Attackers can steal environment secrets such as LLM keys and `LANGFLOW_SECRET_KEY`, and leave a persistent backdoor in MCP settings. With **`LANGFLOW_AUTO_LOGIN=true`**, which the advisory calls the default for affected releases, `/api/v1/auto_login` hands out a token without credentials. In that case the attack needs no account at all.
+
+**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 4,896 attempts from 34 IPs as of 2026-10-26. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
+
+**Am I impacted?** Check the installed `langflow`, `langflow-base` and `lfx` versions in every environment and container. Any version **below 1.10.3** is affected. Exposure is highest when auto-login is on, the superuser password is weak or the legacy `langflow`, untrusted users have accounts, or the instance is reachable from the internet. Do not open the MCP Servers page on an unpatched instance to check for stored commands, because loading it re-runs them.
+
+**Patch:** Upgrade to **1.10.3 or later**, preferably the current release. Set `LANGFLOW_AUTO_LOGIN=false` with a strong `LANGFLOW_SUPERUSER_PASSWORD`. Restrict network access and accounts. 1.13 turns auto-login off by default, so prepare the existing superuser account before upgrading to keep access to your flows. If the instance was exposed, review MCP server configurations after upgrading, and rotate secrets, keys and sessions.
+
+Sources: [GHSA-7w94-79vh-5mr2](https://github.com/langflow-ai/langflow/security/advisories/GHSA-7w94-79vh-5mr2), [GHSA-w794-rj3p-xv45](https://github.com/langflow-ai/langflow/security/advisories/GHSA-w794-rj3p-xv45), [GitHub CNA record 105740](https://cveawg.mitre.org/api/cve/CVE-2026-105740), [GitHub CNA record 105697](https://cveawg.mitre.org/api/cve/CVE-2026-105697), [Previdian telemetry](https://previdian.com/CVE-2026-105740), [The Hacker News (secondary)](https://thehackernews.com/2026/10/langflows-critical-authenticated-rce.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## VeloCloud Orchestrator: authenticated SQL injection to superuser operator (CVE-2026-114625)
 
@@ -1217,8 +1583,8 @@ flowchart TD
     C --> D
 
     D --> E{"What do you operate?<br/>Follow every matching branch"}
-    E -->|Web apps and runtimes| F["Patch PHP, Node/Bun,<br/>Brotli, Pillow, GitLab and Ruby;<br/>apply PHP upload mitigation"]
-    E -->|Servers and appliances| I["Check Plex, Nextcloud CODE,<br/>KSMBD, HTTP/3, BeyondTrust<br/>and KEV-listed appliances;<br/>patch or contain affected features"]
+    E -->|Web apps and runtimes| F["Patch PHP, Node/Bun,<br/>Brotli, Pillow, GitLab, Ruby,<br/>Next.js, Laravel, Drupal and WordPress plugins;<br/>apply PHP upload mitigation"]
+    E -->|Servers and appliances| I["Check Plex, Nextcloud CODE,<br/>KSMBD, HTTP/3, BeyondTrust,<br/>NGINX, curl, VM-host kernels<br/>and KEV-listed appliances;<br/>patch or contain affected features"]
     E -->|Wi-Fi and Tailscale| J["Verify WPS firmware;<br/>restrict SSH and unneeded forwarding;<br/>track vendor fixes"]
     E -->|Android Authenticator| N["Update Authenticator;<br/>review work-account<br/>token exposure"]
 
@@ -1231,6 +1597,16 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Wasmtime embedders compiling untrusted Wasm** | Update the `wasmtime` crate to 36.0.19+, 48.0.7+, 49.0.4+ or 50.0.0+ (37–47 have no fix), rebuild and redeploy, recompile cached `.cwasm` modules, and check bundled copies in bindings and products. [Guide](details/wasmtime.md#remediation). |
+| **Laravel apps using a `token` driver guard** | Update `laravel/framework` to 12.68.0+ or 13.29.0+ (move off 11.x and older), reload PHP-FPM, Octane and queue workers, and rotate `api_token` values if abuse is suspected. [Guide](details/laravel.md#remediation). |
+| **Next.js (self-hosted or Vercel)** | Upgrade `next` to 16.4.1 (16.x) or 15.5.28 (15.x), confirm the resolved `sharp` is 0.35.5+, rebuild and redeploy every artifact; lines before 15.5 have no listed fix. [Guide](details/nextjs.md#remediation). |
+| **Drupal** | Update core to 11.4.10, 11.3.19 or 10.6.19 (or later) and Entity List to 3.0.10; until then uninstall `field_ui`; EOL branches get no fix. [Guide](details/drupal.md#remediation). |
+| **NGINX Open Source / NGINX Plus / F5 NGINX products** | Upgrade to 1.30.6 or 1.31.7+ (Plus 37.0.5.1 or 37.1.0.1; distro packages per vendor tracker) and restart; check `nginx -T` for alias+rewrite+$request_filename, regex map captures, aio+SSI and shared session cache without ticket keys. [Guide](details/nginx.md#remediation). |
+| **curl / libcurl (system, containers, bundled copies)** | Upgrade to curl 8.23.0 or a vendor-fixed package (e.g. Debian 8.14.1-2+deb13u7), rebuild images and binaries that bundle libcurl, restart; stopgap: force HTTP/1.1 for uploads. [Guide](details/curl.md#remediation). |
+| **Linux VM and sandbox hosts** | Boot a kernel with the CVE-2026-99999 fix (5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.57, 7.2.11, 7.3 or a vendor backport) plus the CVE-2026-74580 vhost fix; remove world access to /dev/vhost-*. [Guide](details/pwnescape.md#remediation). |
+| **WordPress sites with Bricksforge** | Update to 3.1.8.10+ (prefer current 4.0.x), or deactivate the plugin or block its form_submit endpoint; then hunt for PHP files under wp-content/uploads, especially bricksforge/tmp and login_admin_*.php. [Guide](details/bricksforge.md#remediation). |
+| **Gitea with the built-in SSH server** | Upgrade to 28.0.0+ (the release after 1.27.3), or switch to OpenSSH or disable SSH until upgraded. [Guide](details/gitea.md#remediation). |
+| **Langflow** | Upgrade to 1.10.3+ (1.9.0 is not enough), set LANGFLOW_AUTO_LOGIN=false with a strong superuser password, and keep it off the internet. [Guide](details/langflow.md#remediation). |
 | **Arista VeloCloud Orchestrator (on-prem)** | Upgrade to 5.2.3.18, 6.1.3.10 or 6.4.2.12 (or later on the same train), restrict UI access, block 74.82.197.86 and 38.54.50.151, and preserve logs; hosted VCO is already patched by Arista. [Guide](details/velocloud.md#remediation). |
 | **Siemens Software Center on Windows** | Update Siemens Software Center to V4.0.9.8+, block the Siemens IOCs, and hunt for SiemensSoftwareCenter.exe under AppData\Local\Programs on PCs that never installed it. [Guide](details/siemens-software-center.md#remediation). |
 | **Palo Alto Networks PAN-OS / Panorama** | Restrict the management interface to trusted IPs now and upgrade to the fixed PAN-OS hotfix for your branch (e.g. 11.1.16-h3, 11.2.16, 12.1.10-h2). [Guide](details/pan-os.md#remediation). |
