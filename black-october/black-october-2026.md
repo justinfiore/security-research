@@ -1,6 +1,8 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of October 25, 2026**
+**As of October 26, 2026**
+
+[Changelog and review history](../Changelog.md) · [Daily maintenance process](MAINTENANCE.md)
 
 “Black October” is an informal label for the unusually dense run of vulnerability disclosures and security incidents this month—particularly the October 19–23 cluster. It is **not one coordinated attack, one vulnerability family, or an official advisory list**.
 
@@ -28,6 +30,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [10. BeyondTrust Remote Support](#10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability)
 - [Related incidents: eMudhra, LiteLLM, and Railway](#related-incidents-these-need-more-than-vulnerability-patching)
   - [Am I impacted by the related incidents?](#am-i-impacted-by-the-related-incidents)
+    - [eMudhra / emSign](#emudhra--emsign)
+    - [LiteLLM](#litellm)
+    - [Railway](#railway)
 - [What should I patch? A stack-based decision guide](#what-should-i-patch-a-stack-based-decision-guide)
 
 ## The short version
@@ -51,16 +56,21 @@ Interpret results in three steps: **is the component present; does its exact bui
 
 | File | Purpose | Requirements |
 |---|---|---|
-| `stack-inventory.sh` | PHP settings, Node/Bun/Ruby versions, GitLab information, Nextcloud app list, or Go binary build metadata | POSIX shell and the selected product's tool |
-| `python-package-inventory.py` | Brotli, brotlicffi, Pillow, olefile, and LiteLLM package metadata without importing them | Trusted Python 3.8+; no third-party dependencies |
-| `linux-service-inventory.sh` | KSMBD presence, SMB/Plex listeners, and visible RDMA devices | Linux; `ss` for listener inspection |
+| [stack-inventory.sh](stack-inventory.sh) | PHP settings, Node/Bun/Ruby versions, GitLab information, Nextcloud app list, or Go binary build metadata | POSIX shell and the selected product's tool |
+| [python-package-inventory.py](python-package-inventory.py) | Brotli, brotlicffi, Pillow, olefile, and LiteLLM package metadata without importing them | Trusted Python 3.8+; no third-party dependencies |
+| [linux-service-inventory.sh](linux-service-inventory.sh) | KSMBD presence, SMB/Plex listeners, and visible RDMA devices | Linux; `ss` for listener inspection |
 
 An exit status of zero means the requested inventory commands completed, **not that the system is patched**. Nonzero status means the check failed or its input/tool is unavailable. The Linux script may finish with explicitly marked `UNKNOWN` partial results; read its output. Shell checks inspect tools on the current user's PATH, so run inside the correct deployment or set PATH to the intended runtime. Do not run them against a suspected compromised installation; use clean-host snapshot inspection instead.
+
+Each item links to a detailed operational guide. **Last updated** changes only when that item's content changes, not whenever a scheduled review runs. Unknown private-discovery or patch dates are marked explicitly; announcement, release, revocation and deployment are different events. Dates below are in 2026 unless stated otherwise; detailed timelines preserve source timezones.
 
 ## 1. PHP2Shell: unauthenticated execution below your application
 
 **CVE-2026-109618 and CVE-2026-109619 — Critical, CVSS 4.0: 9.2 each**  
-**Emergency release: October 21**
+**Dates:** Private discovery not established; advance notice **2026-10-20**; public advisories and emergency patches **2026-10-21**. Upload-progress mitigation announced **2026-10-23**; its full patch was not yet established in the reviewed notice.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/php2shell.md#detection) · [Remediation](details/php2shell.md#remediation) · [Verification](details/php2shell.md#verification) · [Timeline](details/php2shell.md#timeline)
 
 These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
@@ -102,7 +112,10 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 ## 2. HTTP2Shell / Node2Shell: a cross-stack Brotli decoder vulnerability
 
 **CVE-2026-111497 — Node.js: High; Google’s CVSS 4.0 rating: 9.2 Critical**  
-**Disclosed: October 21**
+**Dates:** Private discovery not established; Node announcement/patches and Google Brotli fixes **2026-10-21**; Bun and Python packages **2026-10-22**. Downstream proxy fixes have separate release dates in the timeline.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/brotli.md#detection) · [Remediation](details/brotli.md#remediation) · [Verification](details/brotli.md#verification) · [Timeline](details/brotli.md#timeline)
 
 **HTTP2Shell and Node2Shell are names for the same vulnerability, not separate CVEs.** The broader HTTP2Shell name reflects its impact beyond Node.js: the flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the name, it is **not specific to HTTP/2**; exposure depends on decoding attacker-controlled Brotli data, not the HTTP protocol version.
 
@@ -129,6 +142,8 @@ The important exposure distinction:
 | Google Brotli C library | **1.0.10 / 1.1.1 / 1.2.1**, depending on branch |
 | Envoy | **1.36.12 / 1.37.8 / 1.38.6 / 1.39.3 / 1.40.0** |
 | Istio | **1.29.9 / 1.30.6 / 1.31.2** |
+
+**Envoy 1.36 and Istio 1.29 are unsupported branches**; a fix for this CVE does not restore general security support. Prefer a supported branch. See the [cross-stack guidance](https://patchtheplanet.org/brotli) for embedded clients and temporary decoding controls.
 
 **Do not rely solely on a WAF or removing `br` from `Accept-Encoding`.** A malicious server can still return Brotli data, and an inbound WAF does not protect outbound response decoding.
 
@@ -166,7 +181,10 @@ Sources: [Node.js security release](https://nodejs.org/en/blog/vulnerability/oct
 ## 3. GitLab and Ruby: regex compilation becomes code execution
 
 **CVE-2026-97229 and CVE-2026-110264 — Critical, CVSS 3.1: 10.0 each**  
-**GitLab releases: October 12 and October 21; Ruby release: October 23**
+**Dates:** Private discovery dates not established; GitLab announcements/patches **2026-10-12** and **2026-10-21**; complete upstream Ruby fixes **2026-10-23**, following an incomplete 4.0.8 release on **2026-10-22**.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/gitlab-ruby.md#detection) · [Remediation](details/gitlab-ruby.md#remediation) · [Verification](details/gitlab-ruby.md#verification) · [Timeline](details/gitlab-ruby.md#timeline)
 
 Both vulnerabilities involve memory corruption while compiling specially crafted regular expressions.
 
@@ -208,14 +226,19 @@ sh stack-inventory.sh ruby
 
 Compare GitLab against the October 21 fixed release for its branch; do not stop after checking the narrower October 12 affected range. For other Ruby applications, trace user-supplied patterns into `Regexp.new`/`Regexp.compile` or interpolated regex construction. Matching untrusted text with a fixed developer-supplied pattern is a different condition. A shell's `ruby -v` does not establish GitLab's bundled Ruby version.
 
-For **CVE-2026-15723**, inspect the effective identity configuration for both OmniAuth SAML and LDAP auto-linking; both must be enabled for the described takeover path. For **CVE-2026-112212**, check whether the instance uses OAuth/OIDC discovery and consult the advisory for the affected flow. Do not infer safety for either identity issue merely from the RCE patch status of an older backport branch; use a supported release covering all listed fixes.
+For **CVE-2026-15723**, inspect the effective identity configuration for both OmniAuth SAML and LDAP auto-linking; both must be enabled for the described takeover path. For **CVE-2026-112212**, inspect GitLab's discovery endpoints and reverse-proxy/shared-cache behavior; this is not limited to GitLab acting as an external OIDC client. Do not infer safety for either identity issue merely from the RCE patch status of an older backport branch; use a supported release covering all listed fixes.
+
+GitLab now links threat-detection rules from both release notices. Use the [detailed detection guidance](details/gitlab-ruby.md#use-gitlabs-threat-detections) to correlate native worker crashes and suspicious CI/render requests; no alert does not prove no compromise.
 
 Sources: [October 12 GitLab advisory](https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-4-2-released/), [October 21 GitLab advisory](https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-5-1-released/), [Ruby advisory](https://www.ruby-lang.org/en/news/2026/10/23/regexp-fixes-for-gitlab-cves/).
 
 ## 4. Pillow: untrusted images reach native memory corruption and command execution
 
 **Multiple vulnerabilities; ratings range from Moderate to Critical**  
-**Fixed release: October 16**
+**Dates:** Private discovery dates not established; release notes and fixed Pillow 13.0.0 **2026-10-16**; individual advisories **2026-10-17 UTC**, with several revised **2026-10-19 UTC**.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection and affected ranges](details/pillow.md#detection) · [Remediation](details/pillow.md#remediation) · [Verification](details/pillow.md#verification) · [Timeline](details/pillow.md#timeline)
 
 Pillow is common in Python upload handlers, thumbnail services, document conversion, and machine-learning pipelines. Several independent paths matter:
 
@@ -249,7 +272,10 @@ Sources: [Pillow release notes](https://pillow.readthedocs.io/en/stable/releasen
 
 **CVE-2026-96652, -96654, -96655, and -96656**  
 **Researcher’s combined-chain rating: Critical, CVSS 3.1: 9.8**  
-**Public disclosure: October 16; fixes released in August**
+**Dates:** Initial discovery unknown; private report **2026-07-27**; fixed PMS beta **2026-08-03**, general release **2026-08-04**; chain disclosed **2026-10-16**.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/plex2shell.md#detection) · [Remediation](details/plex2shell.md#remediation) · [Verification](details/plex2shell.md#verification) · [Timeline](details/plex2shell.md#timeline)
 
 The chain combines:
 
@@ -275,7 +301,10 @@ Sources: [researcher disclosure](https://zmain.info/blog/plex2shell), [exploitat
 ## 6. Nextcloud’s built-in Collabora CODE server: unauthenticated command injection
 
 **CVE-2026-110447 — Critical, CVSS 4.0: 9.2**  
-**Advisory: October 14; fix released in September**
+**Dates:** Discovery **2026-09** (exact day/private report unknown); fixed app **2026-09-11** per reporting; community warning **2026-10-03**; formal advisory **2026-10-14**.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/nextcloud-code.md#detection) · [Remediation](details/nextcloud-code.md#remediation) · [Verification](details/nextcloud-code.md#verification) · [Timeline](details/nextcloud-code.md#timeline)
 
 This affects the optional **Collabora Online – Built-in CODE Server** app, `richdocumentscode`, rather than every Collabora deployment.
 
@@ -284,6 +313,8 @@ An unauthenticated request to its proxy can execute an OS command **when the bun
 **Worst case:** **RCE as the web-server user**, with potential access to Nextcloud data and credentials. Attacks planting webshells have been reported.
 
 **Patch:** `richdocumentscode` **26.4.303 or later**, or **remove the app**. The vendor explicitly warns that **disabling it is insufficient**.
+
+**“Latest compatible” can still be vulnerable:** the app store lists 26.4.104 for Nextcloud 25–29, below the fix threshold. Upgrade EOL Nextcloud or remove the app; do not force an incompatible package. See [supported migration guidance](details/nextcloud-code.md#patch-or-migrate).
 
 Standalone Collabora servers are not affected by this particular flaw. Nextcloud’s PHP runtime still needs the separate PHP2Shell fixes.
 
@@ -300,7 +331,10 @@ Sources: [vendor advisory](https://github.com/CollaboraOnline/online/security/ad
 ## 7. Linux KSMBD: serious kernel-level reports, but not “every Linux server”
 
 **ZDI-CAN-33774 and ZDI-CAN-33549 — ZDI rating: Critical, 9.0 each**  
-**Public reports: October 21–22**
+**Dates:** Private discovery/report dates not established; both public reports **2026-10-21**. Dispatch fix queued **2026-10-21**; SMB Direct patch posted/reviewed **2026-10-23**. Released kernel/NAS fix matrix not established.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/ksmbd.md#detection) · [Remediation](details/ksmbd.md#remediation) · [Verification](details/ksmbd.md#verification) · [Timeline](details/ksmbd.md#timeline)
 
 These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinary Samba installations or all Linux machines are vulnerable.
 
@@ -309,7 +343,7 @@ These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinar
 | **ZDI-CAN-33774** | Protocol-dispatch race reachable before authentication; stronger write paths involve share access. | Kernel memory corruption, potentially **RCE**. |
 | **ZDI-CAN-33549** | SMB Direct with an RDMA-capable interface and a writable share. | Integer underflow leading to kernel buffer corruption and potentially **RCE**. |
 
-No universal fixed distribution version was established in the sources reviewed. Maintainers were discussing fixes on October 23; **a proposed patch is not the same as a deployed distribution update**.
+Public demonstrations establish disclosure/crashes, **not successful RCE**. No universal fixed distribution version was established in the sources reviewed. The SMB Direct patch was posted and positively reviewed on October 23; **a reviewed patch is not the same as a deployed distribution update**. Software RXE can supply RDMA even without a physical RDMA card. See [prerequisites and fix tracking](details/ksmbd.md#evaluate-the-two-prerequisites-independently).
 
 **Action:** Identify whether you actually use KSMBD. Disable it if unnecessary, restrict access to trusted networks, and obtain an explicit remediation status from your kernel/NAS vendor. Never expose SMB directly to the internet.
 
@@ -326,7 +360,10 @@ Sources: [disclosure overview](https://thehackernews.com/2026/10/two-cvss-90-lin
 ## 8. WPSplinter: nearby attackers can compromise vulnerable routers
 
 **Broadcom legacy WPS implementation — no CVE or standardized score published**  
-**Disclosed: October 16**
+**Dates:** Initial discovery unknown; private reports **2026-07-18 / 2026-07-27**; public disclosure **2026-10-16**; ISP mitigation update **2026-10-20**. No universal fixed-firmware release matrix established.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/wpsplinter.md#detection) · [Remediation](details/wpsplinter.md#remediation) · [Verification](details/wpsplinter.md#verification) · [Timeline](details/wpsplinter.md#timeline)
 
 A Wi-Fi attacker within radio range can exploit fragmented WPS message handling **without the network password or completing WPS enrollment**.
 
@@ -338,6 +375,8 @@ The affected component appears across numerous vendors and ISP gateways. **A Bro
 
 There is no universal firmware version to recommend. Older eCos-based devices may have no practical migration path.
 
+The researcher's October 20 update reports Telenet unaffected, Proximus fleet-wide WPS mitigation with full patching pending, and Orange Belgium investigating. These are provider-specific findings, not clearance for every device or ordinary WPS toggle; see [temporary mitigation](details/wpsplinter.md#temporary-mitigation-must-remove-the-radio-attack-path).
+
 **Am I impacted?** Record the router/access point's **manufacturer, exact model, hardware revision, firmware build, and ISP customization** from its label and management interface. Compare that tuple with the researcher's device guidance and your vendor's advisory. Include mesh nodes, extenders, and ISP-supplied gateways, not just your primary router.
 
 A listed vulnerable model/build is actionable; an unlisted model is **unknown**, not cleared. Ask the vendor whether its firmware contains the vulnerable Broadcom WPS parser and which build fixes or removes it. Neither a MAC-address vendor lookup nor a “WPS disabled” screen proves remediation. There is no dependable generic read-only Python check for this firmware-level condition; avoid crash/exploit probes against your access point.
@@ -347,13 +386,16 @@ Source: [researcher’s WPSplinter advisory and device guidance](https://qkaiser
 ## 9. Header Accordions: HTTP/3 compression becomes resource exhaustion
 
 **Multiple implementations; includes CVE-2025-64702, CVE-2026-12523, and CVE-2025-13945**  
-**Research published: October 20**
+**Dates:** Project reports span **2025-11-09–2026-07-13**; exact initial discovery dates unknown. Combined research **2026-10-20**. Fixes: quic-go **2025-11-21**, Wireshark listed by **2025-12-03**, quiche **2026-07-14**, lsquic **2026-07-15**; other releases unverified in the reviewed matrix.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/header-accordions.md#detection) · [Remediation](details/header-accordions.md#remediation) · [Verification](details/header-accordions.md#verification) · [Per-component timeline](details/header-accordions.md#timeline)
 
 Small QPACK-compressed header blocks expand into disproportionate memory usage. Affected implementations enforce decoded-header limits too late, incompletely, or not at all.
 
 **Worst case:** **Denial of service** through memory exhaustion, crashes, or CPU pinning—not established RCE or data theft.
 
-Relevant software includes HTTP/3 deployments built on **quic-go, Cloudflare quiche, lsquic, Bun, aioquic/mitmproxy, and Rust’s `h3`**. Wireshark has a related capture-decoding crash rather than a public-server attack surface.
+Relevant software includes HTTP/3 deployments built on **quic-go, Cloudflare quiche, lsquic, Bun, aioquic/mitmproxy, and Rust’s `h3`**. Include quic-go **clients**, not only servers. Wireshark has a related crash during HTTP/3 capture decryption/dissection with keylog or embedded secrets, rather than a public-server attack surface.
 
 **Fixed library versions:** quic-go **0.57.0**, Cloudflare quiche **0.29.3**, lsquic **4.9.0**; Wireshark **4.6.2 / 4.4.12**. Several fixes predate October.
 
@@ -372,7 +414,10 @@ Source: [FoxIO research and implementation matrix](https://foxio.io/blog/header-
 ## 10. BeyondTrust Remote Support: an already-exploited appliance vulnerability
 
 **CVE-2026-102764 — Critical, CVSS 4.0: 9.3**  
-**Disclosed: October 15**
+**Dates:** Confirmed exploitation **2026-08-29**; private alert/detection **2026-09-27–28**; patches **2026-10-08**, RS SaaS complete by **2026-10-09**; public disclosure **2026-10-15**. Attacker's discovery date unknown.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/beyondtrust.md#detection) · [Remediation](details/beyondtrust.md#remediation) · [Verification](details/beyondtrust.md#verification) · [Timeline](details/beyondtrust.md#timeline)
 
 Improper origin validation in internal messaging permits an unauthenticated remote attacker to perform file operations on affected Remote Support appliances.
 
@@ -402,11 +447,38 @@ The LiteLLM postmortem attributes the entry point to an **exposed master key tha
 
 ### Am I impacted by the related incidents?
 
-**eMudhra / emSign:** Inventory client trust stores as well as your server certificates: operating-system stores, browsers, Java truststores, Python/application CA bundles, containers, and embedded clients can update independently. Match certificate fingerprints/serials and affected issuer chains against the incident record; a name containing “emSign” is not a precise affected-certificate test. Inspect Go build versions with `sh stack-inventory.sh go /path/to/deployed-binary` and compare with the fixed branches above. Updating the installed Go compiler does not repair existing binaries. For third-party appliances or opaque applications, obtain the vendor's trust-update status. A successful TLS connection is not proof that fraudulent chains are rejected.
+#### eMudhra / emSign
 
-**LiteLLM:** Inspect **historical** dependency manifests, CI install logs, registry digests, and deployment records for **1.107.0** and the malicious image digests in the incident guidance. A floating tag or today's package version cannot establish what ran during the incident. On a clean analysis host, run `python3 -I -S python-package-inventory.py /mnt/snapshot/path/to/site-packages` against a read-only mounted snapshot; use the clean host's interpreter, not the snapshot's. Do not run ordinary `python`, `pip`, or the LiteLLM CLI inside a suspected infected environment. Metadata/version matches identify candidates, not trustworthy integrity; compare artifact hashes with the vendor's indicators. If a malicious artifact executed, treat reachable secrets as exposed even when logs show no obvious exfiltration.
+**Dates:** Private discovery/report **2026-10-17**; public incident **2026-10-18**. OneCRL distribution **2026-10-17**, original intermediate revocations **2026-10-18**, cross-certificate revocation and Go patches **2026-10-19**; Firefox/ESR **2026-10-20**, Android follow-up **2026-10-21**. These are not one universal patch date.  
+**Last updated:** 2026-10-26 (America/New_York)
 
-**Railway:** From a clean browser/session, review your projects, shared variables, environment-specific variables, deployment history, and Railway's incident notices. Identify credentials stored before October 21 and the external services they authorize. Do not export or print secret values to perform this inventory; variable names, owners, creation/history records, and provider key IDs are sufficient. If you cannot establish whether a still-valid credential was present during the window, include it in the vendor-recommended rotation. Audit the credential's provider for unexpected use; absence of suspicious logs does not prove it was not disclosed. There is no local package-version script that can rule out this server-side exposure.
+**Detailed guide:** [Detection](details/emudhra.md#detection) · [Remediation](details/emudhra.md#remediation) · [Verification](details/emudhra.md#verification) · [Timeline and corrections](details/emudhra.md#timeline)
+
+Inventory client trust stores as well as your server certificates: operating-system stores, browsers, Java truststores, Python/application CA bundles, containers, and embedded clients can update independently. Match certificate fingerprints/serials and affected issuer chains against the incident record; a name containing “emSign” is not a precise affected-certificate test. Inspect Go build versions with `sh stack-inventory.sh go /path/to/deployed-binary` and compare with the fixed branches above. Updating the installed Go compiler does not repair existing binaries. For third-party appliances or opaque applications, obtain the vendor's trust-update status. A successful TLS connection is not proof that fraudulent chains are rejected.
+
+The affected keys comprise **six TLS and two code-signing intermediates**, plus cross-signs. Include certificates affected by resulting root distrust, not just compromised issuers. Firefox Android needs **158.0.2 or later** for the follow-up. **CA revocation is not proof that a client enforces the block**; test the effective verifier. The vendor's October 26 statement still promises a full root-cause review.
+
+#### LiteLLM
+
+**Dates:** Master key exposed **2026-05-27**; attacker token extraction **2026-10-10**; malicious release, public discovery and registry containment **2026-10-21**. Corrected postmortem **2026-10-23**, clarifications **2026-10-24**. No cleanup patch: 1.106.2 is a clean rollback target, not host recovery.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/litellm.md#detection) · [Remediation](details/litellm.md#remediation) · [Verification](details/litellm.md#verification) · [Registry timeline](details/litellm.md#timeline)
+
+Inspect **historical** dependency manifests, CI install logs, registry digests, and deployment records for **1.107.0** and the malicious image digests in the incident guidance. A floating tag or today's package version cannot establish what ran during the incident. On a clean analysis host, run `python3 -I -S python-package-inventory.py /mnt/snapshot/path/to/site-packages` against a read-only mounted snapshot; use the clean host's interpreter, not the snapshot's. Do not run ordinary `python`, `pip`, or the LiteLLM CLI inside a suspected infected environment. Metadata/version matches identify candidates, not trustworthy integrity; compare artifact hashes with the vendor's indicators. If a malicious artifact executed, treat reachable secrets as exposed even when logs show no obvious exfiltration.
+
+PyPI, GHCR and Docker Hub have different removal windows, and **cached artifacts remain dangerous after removal**. The vendor excludes its private enterprise release, not every public image used by an enterprise. The attacker used a signed official pipeline: signing alone did not establish trustworthy source or content.
+
+#### Railway
+
+**Dates:** First reported internal detection **2026-10-20**; public security disclosure **2026-10-21**; confirmed attacker eviction and preliminary report **2026-10-22**; recovery guides **2026-10-23**. No local software patch substitutes for issuer-side secret revocation.  
+**Last updated:** 2026-10-26 (America/New_York)
+
+**Detailed guide:** [Detection](details/railway.md#detection) · [Remediation](details/railway.md#remediation) · [Verification](details/railway.md#verification) · [Timeline and limits](details/railway.md#timeline)
+
+From a clean browser/session, review your projects, shared variables, environment-specific variables, deployment history, and Railway's incident notices. Identify credentials stored before October 21 and the external services they authorize. Do not export or print secret values to perform this inventory; variable names, owners, creation/history records, and provider key IDs are sufficient. If you cannot establish whether a still-valid credential was present during the window, include it in the vendor-recommended rotation. Audit the credential's provider for unexpected use; absence of suspicious logs does not prove it was not disclosed. There is no local package-version script that can rule out this server-side exposure.
+
+The vendor's **preliminary** estimate is at most **1.85% of workspaces (approximately 100,000)**; precautionary provider revocations do not prove individual exposure. Include private registry credentials and existing authenticated sessions in recovery. Commits pushed during the deployment pause **were not queued**: explicitly deploy the intended reviewed revision. Source-code-access findings remain unresolved.
 
 Sources: [Mozilla’s eMudhra incident record](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449), [Go security announcement](https://groups.google.com/g/golang-announce/c/66pojueaQek), [LiteLLM postmortem](https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain), [LiteLLM remediation guidance](https://github.com/BerriAI/litellm/issues/47826), [Railway preliminary report](https://blog.railway.com/p/preliminary-report-october-security-incident).
 
