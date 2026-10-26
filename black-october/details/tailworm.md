@@ -34,7 +34,9 @@ The principal SSH chains claim root-level execution or privileged socket/file op
 | Serve correction merged | 2026-10-25 00:39:53 UTC | PR **21931**, cross-mount app-capability leakage, corresponding to finding 11. Source merge is not a stable release. [PR][serve-fix] |
 | Public circulation | 2026-10-25; time/TZ unknown | User's X lead and vendor response; exact first-publication timestamp of the report unestablished. [Lead][lead] [Vendor][vendor] |
 | SSH forwarding correction merged | 2026-10-26 03:08:59 UTC | PR **21942**, forwarding operations moved to authenticated local-user credentials; not proof every finding is fixed. [PR][ssh-fix] |
-| Stable fix status checked | 2026-10-26 12:44 UTC | Tailscale **1.104.2** remained the latest stable version found. No Tailworm-specific stable fix/bulletin identified; follow subsequent releases. [Changelog][changelog] [Bulletins][bulletins] |
+| Further SSH hardening merged | 2026-10-25 18:31:40 UTC to 2026-10-26 14:49:12 UTC | PR **21930** (tsnet ListenSSH authorization, session queue bound), **21945** (gliderssh resource-exhaustion fixes) and **21943** (“launch sessions via the monitor”, normalizing incubator identity flags). PR **21944** (“enforce SSH policy at the connection level”) was still open. Source merges, not releases; mapping each PR to a numbered finding is not stated by Tailscale. [PR 21943][pr21943] [PR 21945][pr21945] [PR 21930][pr21930] [PR 21944][pr21944] |
+| headscale fix proposed | 2026-10-26 10:10:32 UTC | Open PR **#3586** “bound pending authentication without evicting sessions” cites Tailworm's registration-pressure finding. Not merged or released. [PR #3586][hs3586] |
+| Stable fix status checked | 2026-10-26 ~15:30 UTC | Tailscale **1.104.2** remained the latest stable version found; headscale **0.29.6** the latest release. No Tailworm-specific stable fix/bulletin identified; follow subsequent releases. [Changelog][changelog] [Bulletins][bulletins] |
 
 The earlier **TS-2026-004 / 1.98.9** Unix-socket symlink fix is not a fix-version claim for these later race findings. Neither Tailscale 1.104.2's October 21 release nor headscale 0.29.6 establishes remediation here. **“No patch exists” is also stale:** relevant source fixes have merged, but a complete released remediation matrix was not established.
 
@@ -90,7 +92,7 @@ Then restart `tailscaled` through your normal service-management procedure; this
 - Tighten SSH source/target/user scope to necessary access. Check-mode reauthentication is an extra barrier, **not a repair for post-authorization escalation**. Denying root login alone is insufficient for a reported escalation from another permitted OS user.
 - If embedded SSH is unnecessary, disable it through supported settings after ensuring another access path. **The vendor does not recommend universally disabling Tailscale SSH or the entire VPN** based on this report.
 - Remove unnecessary Serve mappings to privileged sockets; restrict connector entitlements and destinations using controls effective for the actual networking mode. Review headscale/DERP exposure separately; forwarding mitigation does not cover its denial-of-service claims.
-- Track official [bulletins][bulletins] and [release notes][changelog] for builds covering the applicable findings, including PRs 21931/21942. Do not deploy an arbitrary development build as a blanket fix or call every finding resolved because one PR merged.
+- Track official [bulletins][bulletins] and [release notes][changelog] for builds covering the applicable findings, including PRs 21931/21942/21930/21943/21945, open PR 21944 and headscale PR #3586. Do not deploy an arbitrary development build as a blanket fix or call every finding resolved because one PR merged.
 
 ## Verification
 
@@ -117,6 +119,11 @@ Preserve evidence and isolate affected access through a trusted control plane. I
 [sshd]: https://www.reddit.com/r/Tailscale/comments/1xeoj1l/comment/19rmx9cbecxk3/
 [serve-fix]: https://github.com/tailscale/tailscale/pull/21931
 [ssh-fix]: https://github.com/tailscale/tailscale/pull/21942
+[pr21943]: https://github.com/tailscale/tailscale/pull/21943
+[pr21945]: https://github.com/tailscale/tailscale/pull/21945
+[pr21930]: https://github.com/tailscale/tailscale/pull/21930
+[pr21944]: https://github.com/tailscale/tailscale/pull/21944
+[hs3586]: https://github.com/juanfont/headscale/pull/3586
 [bulletins]: https://tailscale.com/security-bulletins
 [changelog]: https://tailscale.com/changelog
 [docs]: https://tailscale.com/docs/features/tailscale-ssh

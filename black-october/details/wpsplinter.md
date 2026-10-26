@@ -34,6 +34,7 @@
 | ISP / coordination reports | 2026-07-29 | Proximus report, Orange/VOO contact attempts and Belgian coordination; these are not all acknowledgments. [Research][research] |
 | Public research / Hexacon presentation | 2026-10-16 | Technical article and conference talk. [Research][research] |
 | ISP-specific clarification | 2026-10-20 | Telenet reported unaffected; Proximus disabled WPS fleet-wide in preceding 24 hours; full patching still planned. Orange Belgium investigating. [Research update][research] |
+| Researcher: 2018 Broadcom patch still exploitable | 2026-10-23 20:00 UTC | Reconstruction of Broadcom's 2018 WPS patch argues the added bounds checks “still allow an integer underflow to reach memcpy”, which can stay exploitable on affected ARM libc builds (glibc before the 2.32 fix unless backported; µClibc/µClibc-ng under stated conditions). Lab debugger evidence of program-counter control only. Advice: “if you rely on Broadcom SDK, migrate to the version that uses hostapd.” The researcher has heard but cannot verify that Broadcom tells customers the patch is sufficient. Device list also expanded the same day (Tenda, Huawei HG8245Q, Netgear DGN2200/DGND4000, ZTE ZXHN H268A, TP-Link TD-W8950N/TD-W8970 V3 and others). [2018 patch analysis][patch2018] [Device list][devices] |
 | Fixed firmware available per OEM/ISP branch | No universal matrix established | Obtain confirmation for exact model, hardware revision, firmware and provider; do not treat a 2018 SDK change as proof of deployment. [Device guidance][devices] |
 
 The dated October 20 update takes precedence over the article’s older “none patched” discussion. Proximus’s coordinated mitigation is a specific reported exception, **not evidence that every consumer WPS toggle works**.
@@ -72,7 +73,7 @@ Examples in the current researcher list include Actiontec C3000A `CAD004-31.165L
 ### Durable repair or replacement
 
 1. Install only firmware confirmed by the OEM/ISP for your exact revision and region; preserve the previous build identifier and vendor case/advisory in the asset record.
-2. Confirm whether the fix repairs fragment handling, removes the legacy service or migrates to an unaffected implementation. “Firmware current” without WPSplinter-specific confirmation leaves the status unknown.
+2. Confirm whether the fix removes the legacy WPS Monitor service or migrates to the hostapd-based implementation. **An OEM statement that firmware carries Broadcom's 2018 fragment-handling patch is not sufficient:** the researcher's [2018 patch analysis][patch2018] shows an integer underflow can still reach `memcpy`, and exploitability depends on the build's libc. “Firmware current” without WPSplinter-specific confirmation leaves the status unknown.
 3. Do not attempt cross-model firmware or assume third-party firmware supports an obsolete platform. The researcher identifies eCos devices with no practical hostapd migration path. [Research][research]
 4. Replace unsupported equipment if no verified fix is available. Coordinate ISP-provisioned voice, IPTV, GPON and management requirements before replacing a gateway.
 5. Maintain containment until the replacement/updated device is verified. Back up configuration for analysis, but do not automatically restore it if compromise is suspected.
@@ -100,3 +101,4 @@ Examples in the current researcher list include Actiontec C3000A `CAD004-31.165L
 
 [devices]: https://qkaiser.github.io/broadcom-wps/
 [research]: https://quentinkaiser.be/security/2026/10/16/one-parser-two-bugs/
+[patch2018]: https://quentinkaiser.be/security/2026/10/23/broadcom-patch/

@@ -35,7 +35,8 @@
 | ZDI-CAN-33549 patch review | 2026-10-23, 11:02 UTC | Stefan Metzmacher: “looks good.” This supersedes “only discussing a fix,” not the need for a released vendor package. [Review][review] |
 | ZDI-CAN-33774 fix merged into mainline | 2026-10-26 01:47:41 UTC (2026-10-25 21:47 EDT) | Linus Torvalds merged `ksmbd-for-7.4-rc1` (merge `4e1b4fdf6113`), which contains `68f410faedaf`. This is the 7.4 merge window, **not a tagged release**: the commit is not in v7.3 (2026-10-18) and 7.4-rc1 was not tagged when reviewed. The commit carries no `Cc: stable` tag and credits a different reporter; the ZDI-CAN-33774 mapping comes from Sysdig. [Merge][merge] [Commit][fix33774] [Sysdig][sysdig] |
 | ZDI-CAN-33549 fix committed to `ksmbd-for-next` | 2026-10-26 19:15:10 +0900 (10:15:10 UTC) | `7193241a49c9`, “smb: smbdirect: fix buffer length underflow in RDMA transfers” (authored by Stefan Metzmacher 2026-10-23), with `Reported-by: … # ZDI-CAN-33549` and `Cc: stable@vger.kernel.org`. Maintainer branch only; not in mainline when reviewed. [Commit][fix33549] |
-| Fixed mainline/stable/distribution releases | None established as of 2026-10-26 ~09:10 EDT | Newest kernel.org releases at review time—mainline 7.3 (2026-10-18), stable 7.2.12 and longterm 6.18.58 / 6.12.114 / 6.6.160 (2026-10-21), longterm 6.1.190 / 5.15.223 / 5.10.272 (2026-10-15)—predate both fixes reaching mainline. No distribution or NAS advisory naming either report was found. [kernel.org releases][releases] |
+| Fixed mainline/stable/distribution releases | None established as of 2026-10-26 ~09:10 EDT | Newest kernel.org releases at review time—mainline 7.3 (2026-10-18), stable 7.2.12 and longterm 6.18.58 / 6.12.114 / 6.6.160 (2026-10-21), longterm 6.1.190 / 5.15.223 / 5.10.272 (2026-10-15)—predate both fixes reaching mainline. No distribution or NAS fix naming either report was found. [kernel.org releases][releases] |
+| Red Hat applicability statement (RHSB-2026-014) | 2026-10-24 18:31; TZ not stated | “No supported versions of Red Hat Enterprise Linux are affected by these vulnerabilities. The affected kernel modules are not built or the vulnerable features are not enabled.” [Red Hat][rhsb] |
 | CVE assignment | None as of this review | Neither report has a CVE; the kernel CNA assigns CVEs after a fix reaches a stable tree. [Kernel CVE process][kernelcve] [Updated reporting][news] |
 
 The October 26 news update points to existing maintainer work; the October 23 mailing-list follow-up confirmed a concrete SMB Direct patch was posted and reviewed, and that patch has since been committed to the maintainer branch. The ZDI-CAN-33774 fix is now in mainline Git but not in any tagged kernel. None of these facts certifies your running kernel. [Updated reporting][news]
@@ -62,6 +63,8 @@ sh linux-service-inventory.sh
 |---|---|---|
 | ZDI-CAN-33774 | KSMBD reachable for protocol negotiation; pre-authentication read/crash path, with share access relevant to the described write path. [ZDI][dispatch] [Sysdig][sysdig] | Strong passwords, no RDMA, or read-only shares do not remove the pre-authentication path. |
 | ZDI-CAN-33549 | SMB Direct enabled, hardware RDMA **or software RXE**, writable KSMBD share and a client able to negotiate SMB Direct. [Discussion][discussion] | No physical RDMA card does not exclude software RDMA; blocking only ordinary SMB TCP may not address every enabled transport. |
+
+**Distribution build status:** Red Hat says supported RHEL is not affected because the modules are not built or the features are not enabled. [Red Hat][rhsb] TuxCare reports that AlmaLinux and CloudLinux 9 and 10 do not build KSMBD at all, while Debian and Ubuntu build it as opt-in: it runs only after an administrator installs `ksmbd-tools` and starts the `ksmbd` service. [TuxCare][tuxcare] Sysdig reports that Ubuntu builds SMB Direct support and Debian does not. [Sysdig][sysdig] These statements cover stock distribution kernels only; custom, appliance and NAS kernels still need the vendor's own statement.
 
 The reports tested **7.3-rc3**; that is a tested version, not a complete affected range or minimum affected version. The SMB Direct report used a custom kernel with `CONFIG_SMB_SERVER_SMBDIRECT=y` and `CONFIG_RDMA_RXE=y` on Debian: do not infer immunity from a distribution’s default configuration alone. [ZDI][dispatch] [Discussion][discussion]
 
@@ -108,6 +111,7 @@ The reports tested **7.3-rc3**; that is a tested version, not a complete affecte
 
 - [ZDI dispatch report][dispatch]; [SMB Direct discussion][discussion]; [October 23 patch][patch] and [review][review] — primary report and maintainer evidence.
 - [Sysdig October 24 analysis][sysdig] — tested impact, commit status, telemetry limits and scoped mitigations.
+- [Red Hat RHSB-2026-014][rhsb] and [TuxCare][tuxcare] — distribution build and applicability statements.
 - [The Hacker News, updated October 26][news] — newer context; no universal distribution fix version.
 - [`ksmbd-for-7.4-rc1` mainline merge][merge], [ZDI-CAN-33774 fix commit][fix33774], [ZDI-CAN-33549 fix commit][fix33549], [kernel.org release list][releases] and [kernel CVE process][kernelcve] — fix landing, release and CVE status as of 2026-10-26.
 
@@ -122,3 +126,5 @@ The reports tested **7.3-rc3**; that is a tested version, not a complete affecte
 [fix33549]: https://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/smb.git/commit/?h=ksmbd-for-next&id=7193241a49c958782ba4b8df06da3734d1e317d2
 [releases]: https://www.kernel.org/releases.json
 [kernelcve]: https://docs.kernel.org/process/cve.html
+[rhsb]: https://access.redhat.com/security/vulnerabilities/RHSB-2026-014
+[tuxcare]: https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/

@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("directories", nargs="+", type=Path)
 args = parser.parse_args()
 
-wanted = {"brotli", "brotlicffi", "pillow", "olefile", "litellm"}
+wanted = {"brotli", "brotlicffi", "pillow", "olefile", "litellm", "sap-cloud-sdk"}
 for path in args.directories:
     if not path.is_dir():
         parser.error(f"UNKNOWN: not a package directory: {path}")

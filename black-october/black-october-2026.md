@@ -15,6 +15,13 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [HPE Aruba Networking AOS: unauthenticated RCE and authentication bypass](#hpe-aruba-networking-aos-unauthenticated-rce-and-authentication-bypass-in-wireless-infrastructure)
+- [Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix)
+- [Rank Math PRO for WordPress: malicious 3.0.123 builds](#rank-math-pro-for-wordpress-malicious-30123-builds-from-the-official-update-channel)
+- [FortiSIEM: unauthenticated gRPC path traversal to RCE](#fortisiem-unauthenticated-grpc-path-traversal-to-remote-code-execution)
+- [FortiSandbox: unauthenticated GUI authentication bypass](#fortisandbox-unauthenticated-gui-authentication-bypass)
+- [Adobe Commerce / Magento Open Source: BlockStrap - unauthenticated template-injection RCE](#adobe-commerce--magento-open-source-blockstrap---unauthenticated-template-injection-rce)
+- [SAP Cloud SDK for Python: OAuth2 SSRF leaks client credentials](#sap-cloud-sdk-for-python-oauth2-ssrf-leaking-multi-tenant-client-credentials)
 - [Wasmtime: Cranelift sandbox escapes](#wasmtime-cranelift-sandbox-escapes-from-untrusted-wasm)
 - [Laravel: TokenGuard API authentication bypass](#laravel-tokenguard-api-authentication-bypass-on-mysql-and-mariadb)
 - [Next.js: unauthenticated RCE in use cache and Image Optimization](#nextjs-unauthenticated-rce-in-use-cache-and-image-optimization)
@@ -60,11 +67,12 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update (none in CISA KEV yet):** patch [HPE Aruba AOS](#hpe-aruba-networking-aos-unauthenticated-rce-and-authentication-bypass-in-wireless-infrastructure) wireless infrastructure (eight CVSS 10.0 flaws), [FortiSIEM](#fortisiem-unauthenticated-grpc-path-traversal-to-remote-code-execution) (public exploit; Canada's Cyber Centre reports exploitation) and [FortiSandbox](#fortisandbox-unauthenticated-gui-authentication-bypass), [Magento / Adobe Commerce](#adobe-commerce--magento-open-source-blockstrap---unauthenticated-template-injection-rce) (CVSS 10.0 BlockStrap) and the [SAP Cloud SDK for Python](#sap-cloud-sdk-for-python-oauth2-ssrf-leaking-multi-tenant-client-credentials). [Rank Math PRO](#rank-math-pro-for-wordpress-malicious-30123-builds-from-the-official-update-channel) sites that pulled the malicious 3.0.123 build need cleanup and credential rotation, and Linux hosts running untrusted local code face a [public skb_zerocopy root exploit](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) with few vendor fixes yet.
 - **Patch widely deployed developer and self-hosted stacks too, even without KEV listings:** Next.js, NGINX, curl/libcurl, Drupal, Laravel, Gitea, Langflow, Wasmtime, the Bricksforge WordPress plugin, and Linux VM/sandbox hosts (PwnEscape). Bricksforge and Langflow already face exploitation attempts.
 - **Patch KEV-listed edge and enterprise software first.** CISA added FortiMail, Zammad, NetScaler, Ivanti Connect Secure, Windows Shell, PAN-OS, AhsayCBS, Cisco Secure Email Gateway, Atlassian Data Center, SiteGuard, Siemens Software Center and VeloCloud flaws to its Known Exploited Vulnerabilities catalog in October; several require forensic triage, not just patching.
 - **Review Tailscale SSH authorization and forwarding.** Tailworm's principal SSH chains require existing authorized access; disable unnecessary forwarding and track official fixes, rather than treating every VPN node as remotely exploitable.
 - **Update Microsoft Authenticator on Android**, especially devices with signed-in work accounts. AuthMask requires a malicious local app; patching does not revoke already stolen tokens.
-- **Prioritize exposed PHP, GitLab, Plex, and Nextcloud installations using the built-in Collabora CODE server.**
+- **Prioritize exposed PHP (including PAN-OS/Panorama management interfaces, which embed it), GitLab, Plex, and Nextcloud installations using the built-in Collabora CODE server.**
 - **Inventory every Brotli decoder**, including Node.js, Bun, Python, .NET, proxies, FFmpeg/libjxl, ClickHouse and Arrow/pyarrow. Untrusted responses, media metadata and analytical files can reach separate bundled copies; a runtime or Python binding update does not patch them all.
 - **Update Pillow wherever you process untrusted images**, including thumbnail workers and document pipelines.
 - **Check Ruby separately from GitLab.** The underlying regex bugs affect other applications compiling attacker-controlled patterns.
@@ -84,9 +92,10 @@ Interpret results in three steps: **is the component present; does its exact bui
 | File | Purpose | Requirements |
 |---|---|---|
 | [stack-inventory.sh](stack-inventory.sh) | PHP settings, Node/Bun/Ruby versions, GitLab information, Nextcloud app list, or Go binary build metadata | POSIX shell and the selected product's tool |
-| [python-package-inventory.py](python-package-inventory.py) | Brotli, brotlicffi, Pillow, olefile, and LiteLLM package metadata without importing them | Trusted Python 3.8+; no third-party dependencies |
+| [python-package-inventory.py](python-package-inventory.py) | Brotli, brotlicffi, Pillow, olefile, LiteLLM and SAP Cloud SDK for Python (`sap-cloud-sdk`) package metadata without importing them | Trusted Python 3.8+; no third-party dependencies |
 | [linux-service-inventory.sh](linux-service-inventory.sh) | KSMBD presence, SMB/Plex listeners, and visible RDMA devices | Linux; `ss` for listener inspection |
 | [check_brotli.py](check_brotli.py) | Response-header compression inventory; **not a vulnerability verdict**. [Usage and limits](details/brotli.md#response-header-inventory-script) | Python 3.9+; standard library; authorized HTTP(S) GET requests |
+| [rankmath-ioc-check.sh](rankmath-ioc-check.sh) | Offline Rank Math PRO 3.0.123 incident indicators in a WordPress copy (fake core file, installed PRO version, vendor-named strings, `.cache`/`.htaccess` patterns) and in operator-supplied SQL/crontab exports (option names, `wpsupport_`/`@wp-mail.net` admins, `#ms6v46`). Exit 0 is **not** proof of a clean site. [Usage and limits](details/rankmath-pro.md#offline-indicator-script) | POSIX shell, `find`, `grep`, `sed`; read access only; does not run PHP, WordPress or WP-CLI |
 
 An exit status of zero means the requested inventory commands completed, **not that the system is patched**. Nonzero status means the check failed or its input/tool is unavailable. The Linux script may finish with explicitly marked `UNKNOWN` partial results; read its output. Shell checks inspect tools on the current user's PATH, so run inside the correct deployment or set PATH to the intended runtime. Do not run them against a suspected compromised installation; use clean-host snapshot inspection instead.
 
@@ -97,6 +106,242 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## HPE Aruba Networking AOS: unauthenticated RCE and authentication bypass in wireless infrastructure
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/aruba-aos.md):** [Detection](details/aruba-aos.md#detection) · [Remediation](details/aruba-aos.md#remediation) · [Verification](details/aruba-aos.md#verification) · [Timeline](details/aruba-aos.md#timeline)
+
+**CVEs:** [CVE-2026-79844](https://www.cve.org/CVERecord?id=CVE-2026-79844), [CVE-2026-79845](https://www.cve.org/CVERecord?id=CVE-2026-79845), [CVE-2026-79846](https://www.cve.org/CVERecord?id=CVE-2026-79846), [CVE-2026-79847](https://www.cve.org/CVERecord?id=CVE-2026-79847), [CVE-2026-79848](https://www.cve.org/CVERecord?id=CVE-2026-79848), [CVE-2026-79849](https://www.cve.org/CVERecord?id=CVE-2026-79849), [CVE-2026-79850](https://www.cve.org/CVERecord?id=CVE-2026-79850), [CVE-2026-79851](https://www.cve.org/CVERecord?id=CVE-2026-79851), [CVE-2026-79852](https://www.cve.org/CVERecord?id=CVE-2026-79852), [CVE-2026-79853](https://www.cve.org/CVERecord?id=CVE-2026-79853), [CVE-2026-79854](https://www.cve.org/CVERecord?id=CVE-2026-79854), [CVE-2026-79855](https://www.cve.org/CVERecord?id=CVE-2026-79855), [CVE-2026-79856](https://www.cve.org/CVERecord?id=CVE-2026-79856), [CVE-2026-79857](https://www.cve.org/CVERecord?id=CVE-2026-79857), [CVE-2026-79858](https://www.cve.org/CVERecord?id=CVE-2026-79858), [CVE-2026-79859](https://www.cve.org/CVERecord?id=CVE-2026-79859), [CVE-2026-79860](https://www.cve.org/CVERecord?id=CVE-2026-79860), [CVE-2026-79861](https://www.cve.org/CVERecord?id=CVE-2026-79861), [CVE-2026-79862](https://www.cve.org/CVERecord?id=CVE-2026-79862), [CVE-2026-79863](https://www.cve.org/CVERecord?id=CVE-2026-79863), [CVE-2026-79864](https://www.cve.org/CVERecord?id=CVE-2026-79864), [CVE-2026-79865](https://www.cve.org/CVERecord?id=CVE-2026-79865), [CVE-2026-79866](https://www.cve.org/CVERecord?id=CVE-2026-79866), [CVE-2026-79867](https://www.cve.org/CVERecord?id=CVE-2026-79867), [CVE-2026-79868](https://www.cve.org/CVERecord?id=CVE-2026-79868), [CVE-2026-79869](https://www.cve.org/CVERecord?id=CVE-2026-79869), [CVE-2026-79870](https://www.cve.org/CVERecord?id=CVE-2026-79870), [CVE-2026-79871](https://www.cve.org/CVERecord?id=CVE-2026-79871), [CVE-2026-79872](https://www.cve.org/CVERecord?id=CVE-2026-79872), [CVE-2026-79873](https://www.cve.org/CVERecord?id=CVE-2026-79873), [CVE-2026-79874](https://www.cve.org/CVERecord?id=CVE-2026-79874), [CVE-2026-79875](https://www.cve.org/CVERecord?id=CVE-2026-79875), [CVE-2026-79876](https://www.cve.org/CVERecord?id=CVE-2026-79876), [CVE-2026-79877](https://www.cve.org/CVERecord?id=CVE-2026-79877), [CVE-2026-79878](https://www.cve.org/CVERecord?id=CVE-2026-79878), [CVE-2026-79879](https://www.cve.org/CVERecord?id=CVE-2026-79879), [CVE-2026-79880](https://www.cve.org/CVERecord?id=CVE-2026-79880), [CVE-2026-79881](https://www.cve.org/CVERecord?id=CVE-2026-79881), [CVE-2026-79882](https://www.cve.org/CVERecord?id=CVE-2026-79882), [CVE-2026-79883](https://www.cve.org/CVERecord?id=CVE-2026-79883), [CVE-2026-79884](https://www.cve.org/CVERecord?id=CVE-2026-79884), [CVE-2026-79885](https://www.cve.org/CVERecord?id=CVE-2026-79885), [CVE-2026-79886](https://www.cve.org/CVERecord?id=CVE-2026-79886), [CVE-2026-79887](https://www.cve.org/CVERecord?id=CVE-2026-79887), [CVE-2026-79888](https://www.cve.org/CVERecord?id=CVE-2026-79888), [CVE-2026-79889](https://www.cve.org/CVERecord?id=CVE-2026-79889), [CVE-2026-79890](https://www.cve.org/CVERecord?id=CVE-2026-79890), [CVE-2026-79891](https://www.cve.org/CVERecord?id=CVE-2026-79891), [CVE-2026-79892](https://www.cve.org/CVERecord?id=CVE-2026-79892), [CVE-2026-79893](https://www.cve.org/CVERecord?id=CVE-2026-79893), [CVE-2026-79894](https://www.cve.org/CVERecord?id=CVE-2026-79894), [CVE-2026-79895](https://www.cve.org/CVERecord?id=CVE-2026-79895), [CVE-2026-79955](https://www.cve.org/CVERecord?id=CVE-2026-79955), [CVE-2026-79956](https://www.cve.org/CVERecord?id=CVE-2026-79956), [CVE-2026-95704](https://www.cve.org/CVERecord?id=CVE-2026-95704), [CVE-2026-95705](https://www.cve.org/CVERecord?id=CVE-2026-95705), [CVE-2026-95706](https://www.cve.org/CVERecord?id=CVE-2026-95706), [CVE-2026-95707](https://www.cve.org/CVERecord?id=CVE-2026-95707), [CVE-2026-95708](https://www.cve.org/CVERecord?id=CVE-2026-95708), [CVE-2026-95709](https://www.cve.org/CVERecord?id=CVE-2026-95709), [CVE-2026-95710](https://www.cve.org/CVERecord?id=CVE-2026-95710), [CVE-2026-95711](https://www.cve.org/CVERecord?id=CVE-2026-95711), [CVE-2026-95712](https://www.cve.org/CVERecord?id=CVE-2026-95712), [CVE-2026-95713](https://www.cve.org/CVERecord?id=CVE-2026-95713), [CVE-2026-95714](https://www.cve.org/CVERecord?id=CVE-2026-95714), [CVE-2026-95715](https://www.cve.org/CVERecord?id=CVE-2026-95715), [CVE-2026-95716](https://www.cve.org/CVERecord?id=CVE-2026-95716), [CVE-2026-95717](https://www.cve.org/CVERecord?id=CVE-2026-95717), [CVE-2026-95718](https://www.cve.org/CVERecord?id=CVE-2026-95718), [CVE-2026-95719](https://www.cve.org/CVERecord?id=CVE-2026-95719), [CVE-2026-95720](https://www.cve.org/CVERecord?id=CVE-2026-95720), [CVE-2026-95721](https://www.cve.org/CVERecord?id=CVE-2026-95721)
+
+**HPE CVSS 3.1: eight CVEs at 10.0 Critical ([CVE-2026-79844](https://www.cve.org/CVERecord?id=CVE-2026-79844) through [CVE-2026-79851](https://www.cve.org/CVERecord?id=CVE-2026-79851)); 33 of 72 Critical, 31 High, 7 Medium, 1 Low; HPE bulletin severity: Critical; NVD has not scored them**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). HPE knows of no public exploit code or exploitation, CISA's SSVC entries record "Exploitation: none", and no exploitation reports were found through 2026-10-26. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Mostly HPE internal research, plus bug bounty and Siemens Energy reporters; no dates given. |
+| CVE IDs reserved | 2026-08-25 and 2026-09-22 (UTC) | Not disclosure. CVE-2026-79845 was reserved and published by VulDB for an unrelated product. |
+| HPE bulletin HPESBNW05162 rev.1 and fixed releases | 2026-10-22 16:00:00 UTC (CSAF release time) | Fixes 10.8.1.2, 10.7.2.7, 10.4.1.14, 8.13.3.1 and 8.10.0.24 announced as released. |
+| CVE records published | 2026-10-22 19:04:44–19:07:12 UTC | 71 HPE records; none for CVE-2026-79845. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+HPE's bulletin fixes 72 flaws in the AOS-8 and AOS-10 wireless operating systems that run Mobility Conductors, Mobility Controllers, Central-managed Mobility Gateways, AOS-10 APs and AOS-8 Instant APs, including virtual controllers. Nineteen Critical flaws are reachable over the network without authentication, through the web-based management interface, the CLI and SSH daemon (**[CVE-2026-79855](https://www.cve.org/CVERecord?id=CVE-2026-79855)**, AOS-8 SSH authentication bypass, 9.8), and **PAPI**, Aruba's access point management protocol on **UDP 8211**. Another 14 Critical flaws (9.6 and 9.3) need only adjacent-network access, one of them through AOS-10 Wi-Fi frame processing. The rest are High-rated denial-of-service, higher-complexity and authenticated flaws, plus eight Medium/Low issues fixed in the same releases. HPE says four of the flaws need "certain preconditions outside of the attacker's control".
+
+**CVE ID conflict:** HPE lists **CVE-2026-79845** as an AOS-10 PAPI authentication bypass (10.0), but the CVE.org and NVD records for that ID describe an unrelated VulDB issue. Track that flaw by HPE's bulletin until the ID is corrected.
+
+**Worst case:** An unauthenticated attacker runs commands as a privileged user or root on a controller, gateway or AP. From there they can change network and authentication configuration, read secrets and intercept client traffic.
+
+**Exploitation status:** None reported. HPE says it knew of no public discussion or exploit code at release on 2026-10-22, and BleepingComputer's 2026-10-23 report repeats this. HPE published no indicators of compromise.
+
+**Am I impacted?** Check the running version of every conductor, controller, gateway and AP (`show version` on AOS-8 controllers, read-only; Central's firmware view for AOS-10). Affected: **AOS-10.8 ≤ 10.8.1.1, 10.7 ≤ 10.7.2.6, 10.4 ≤ 10.4.1.13, AOS-8.13 ≤ 8.13.3.0, AOS-8.10 ≤ 8.10.0.23**. HPE presumes branches past End of Maintenance are affected and does not cover them. Devices are most at risk when SSH, WebUI/API or UDP 8211 is reachable from user, guest or external networks, but the adjacent-network flaws mean a firewall alone does not clear a device.
+
+**Patch:** Upgrade to **AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, AOS-8.13.3.1+ or 8.10.0.24+**, or move unsupported branches to a fixed supported branch. Expect reboots. Until upgraded, apply HPE's workaround: restrict the CLI and web management interfaces to a dedicated management VLAN or firewall policy and enable accounting. Also limit UDP 8211 to your own APs and controllers. Neither measure covers adjacent or Wi-Fi attackers.
+
+Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05162en_us&docLocale=en_US), [HPE CSAF](https://csaf.arubanetworking.hpe.com/2026/hpe_networking_-_hpesbnw05162.json), [HPE CNA record (CVE-2026-79844)](https://cveawg.mitre.org/api/cve/CVE-2026-79844), [CVE-2026-79845 record](https://cveawg.mitre.org/api/cve/CVE-2026-79845), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-79844), [BleepingComputer](https://www.bleepingcomputer.com/news/security/hpe-patches-eight-max-severity-rce-and-auth-bypass-aos-flaws), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/skb-zerocopy-lpe.md):** [Detection](details/skb-zerocopy-lpe.md#detection) · [Remediation](details/skb-zerocopy-lpe.md#remediation) · [Verification](details/skb-zerocopy-lpe.md#verification) · [Timeline](details/skb-zerocopy-lpe.md#timeline)
+
+**CVEs:** None assigned as of 2026-10-26; tracked as ZDI-CAN-33367. [CVE-2026-43284](https://www.cve.org/CVERecord?id=CVE-2026-43284) ("Dirty Frag") is the related earlier fix that this flaw bypasses, not this flaw.
+
+**ZDI-CAN-33367 — ZDI (reporter, not a CNA): CVSS 3.0 7.8 High (AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H). Red Hat: Important, "Potentially Affected" (RHSB-2026-014).**
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. A working public proof of concept exists; no in-the-wild exploitation had been reported as of Sysdig's October 24 analysis.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery | Unknown | ZDI reported to the kernel on 2026-10-21; another source reported the same bug with a patch about a week earlier. |
+| Public announcement | 2026-10-21 21:46 UTC | ZDI report with PoC source posted to LKML and netdev. |
+| Fix posted to netdev | 2026-10-22 10:42 UTC | v2 patch, copied to stable. |
+| KernelCare live patch (EL10) | 2026-10-23 14:59 UTC | AlmaLinux, CloudLinux, RHEL, Oracle Linux, Rocky Linux 10; EL9/EL8 pending. |
+| AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | AlmaLinux 8, 9, 10 in `almalinux-testing` only. |
+| Fix in netdev `net` tree | 2026-10-23 19:41 UTC | Commit 79dc34beb1fd, marked for stable; not in mainline. |
+| CloudLinux 7h/8 beta kernels | 2026-10-26 09:11 UTC | Beta, rolling out. |
+| Mainline/stable releases, RHEL fix | None established (as of 2026-10-26) | Newest kernel.org releases predate the fix; Red Hat has no fix. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
+
+**Worst case:** any shell account, CI job, compromised web application or suitably privileged container becomes root on the host; on shared hosting, that reaches every tenant.
+
+**Exploitation status:** the ZDI report was posted to public mailing lists with working PoC source. CloudLinux and TuxCare obtained root with it on AlmaLinux 8, 9 and 10, CloudLinux 9 and 10, Debian 12 and 13, and Ubuntu 24.04 and 26.04, bypassing Ubuntu's AppArmor user-namespace restriction. CentOS 6 and 7 kernels are not affected. No in-the-wild exploitation was reported as of October 23 (TuxCare) or October 24 (Sysdig).
+
+**Action:** Prioritize hosts where untrusted users, CI jobs or containers run code. Boot a vendor kernel that includes the fix, or apply a vendor live patch. Until then, set `user.max_user_namespaces = 0` where nothing needs unprivileged user namespaces, and block the `esp4`/`esp6` modules where IPsec is unused. Neither mitigation has been tested by its source against every path.
+
+**Am I impacted?** Run these read-only checks on the host, not only inside a container:
+
+```sh
+uname -r
+sysctl user.max_user_namespaces
+lsmod | grep -E '^(esp4|esp6|nlmon|act_pedit) '
+for m in esp4 esp6 nlmon act_pedit; do modprobe -n -v "$m"; done
+```
+
+A non-zero `user.max_user_namespaces` means ordinary users can take the exploit's first step. Ubuntu's `kernel.apparmor_restrict_unprivileged_userns` does not stop the public PoC. An empty `lsmod` result does not mean the modules are unavailable: they load on demand. A process that already holds network-admin rights, such as root in a privileged container, does not need user namespaces. Vulnerability scanners keyed on CVE IDs will not flag this issue. See [exposure checks](details/skb-zerocopy-lpe.md#read-only-exposure-checks) and [indicators and evidence limits](details/skb-zerocopy-lpe.md#indicators-and-evidence-limits).
+
+**Patch:** No mainline, stable or RHEL kernel contains the fix yet. Known vendor builds: AlmaLinux testing `kernel-4.18.0-553.177.2.el8_10`, `kernel-5.14.0-687.59.2.el9_8` and `kernel-6.12.0-211.68.2.el10_2`; CloudLinux beta `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`; KernelCare live patch for EL10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
+
+Sources: [ZDI report](https://lore.kernel.org/lkml/BYAPR01MB3830CECF5D0871064C59BA0280662@BYAPR01MB3830.prod.exchangelabs.com/), [fix commit](https://github.com/kernelorg-mirror/linux_kernel_git_netdev_net/commit/79dc34beb1fdb3da79753e51e15c68591a2561fe), [AlmaLinux](https://almalinux.org/blog/2026-10-23-zdi-can-33367/), [CloudLinux](https://blog.cloudlinux.com/zdi-can-33367), [TuxCare](https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/), [Sysdig](https://www.sysdig.com/blog/detecting-and-mitigating-zdi-can-33367-and-five-other-linux-flaws), [Red Hat RHSB-2026-014](https://access.redhat.com/security/vulnerabilities/RHSB-2026-014).
+
+## Rank Math PRO for WordPress: malicious 3.0.123 builds from the official update channel
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/rankmath-pro.md):** [Detection](details/rankmath-pro.md#detection) · [Remediation](details/rankmath-pro.md#remediation) · [Verification](details/rankmath-pro.md#verification) · [Timeline](details/rankmath-pro.md#timeline)
+
+**CVEs:** [CVE-2026-111862](https://www.cve.org/CVERecord?id=CVE-2026-111862)
+
+**[CVE-2026-111862](https://www.cve.org/CVERecord?id=CVE-2026-111862) — Wordfence (CNA) CVSS 3.1: 9.8 Critical (CWE-506 Embedded Malicious Code); Patchstack: 9.8, "High" priority; NVD has not scored it. A malicious-release incident, not a coding flaw.**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Rank Math confirmed that copies of 3.0.123 distributed through its official download and update channel during the affected window contained malware. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery | 2026-10-15; time unknown | CNA timeline "Discovered"; discoverer unknown. |
+| 3.0.123 first released (clean) | 2026-10-07; time/TZ unknown | Same version number later served with malware. |
+| Affected download/update window | 2026-10-15 20:02 UTC – 2026-10-16 07:12 UTC | Only copies obtained in this window are claimed as affected. |
+| Clean release 3.0.124 | 2026-10-16; time/TZ unknown | Replaces plugin files only. |
+| Public announcement (Rank Math notice) | 2026-10-16 20:32:21 UTC | Page publication metadata. Wordfence PSA also dated 2026-10-16. |
+| CVE record published | 2026-10-19 16:35:59 UTC | Wordfence CNA. |
+| Vendor: "several hundred customers" affected | 2026-10-20 (article date) | Statement to The Repository; root cause not disclosed. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+Attackers got malware into Rank Math PRO 3.0.123 packages served by rankmath.com's own download and update system. Copies downloaded or installed through an update between 2026-10-15 20:02 UTC and 2026-10-16 07:12 UTC were affected. 3.0.123 itself was released clean on 2026-10-07, so **the version number alone does not identify an affected copy**. The free Rank Math SEO plugin from WordPress.org is not affected. Rank Math has not said how its systems were breached.
+
+**Worst case:** once an affected copy is activated, a persistent backdoor that rebuilds itself on page visits, rogue administrators, server-level persistence (cron jobs, SSH keys), and exposure of every credential and API key the web server can read.
+
+**Exploitation status:** the malicious code shipped through the vendor's official channel; Rank Math told The Repository that "several hundred customers" received it. How many sites activated it and were compromised has not been published. CISA's ADP SSVC entry (2026-10-20) said "Exploitation: none", a point-in-time assessment that predates any published count of compromised sites.
+
+**Am I impacted?** Only if a site downloaded or updated to Rank Math PRO **3.0.123** inside the window. If it was then **activated**, treat the site as compromised, even if it now runs 3.0.124. Establish when the copy was obtained from Rank Math's notification email, update or management-tool logs, or backups; file times are not reliable. Look for `wp-includes/class-wp-cache-util.php`, the `wp_options` names `_uf6qdn2hmm`, `t8krdk990phb` and `_np5pvf754c`, administrators named `wpsupport_*` or using `@wp-mail[.]net`, crontab entries tagged `#ms6v46`, and connections to `rank1cdn[.]com`. From a clean host, run `sh rankmath-ioc-check.sh /mnt/snapshot/WP_ROOT site-db.sql` against a read-only copy and saved database export. A negative result does not prove the site is clean.
+
+**Patch:** **3.0.124** is the clean release, but **updating does not remove the malware's persistence**. If an affected copy was activated, restore the site and database from a backup made before 2026-10-15 20:02 UTC, or follow the vendor's ordered manual cleanup (delete the plugin folder, delete the three options and block `rank1cdn.com` *before* anything else). Then rotate every credential the site could reach, even after a restore, and install 3.0.124 last, downloaded by signing in at rankmath.com. If it was installed but never activated, delete it, install 3.0.124 and scan. No firewall rule can mitigate this (Patchstack).
+
+Sources: [Rank Math security notice](https://rankmath.com/kb/pro-3-0-123-security-incident/), [Rank Math PRO changelog](https://rankmath.com/changelog/pro/), [Wordfence CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-111862), [Wordfence PSA](https://www.wordfence.com/blog/2026/10/rank-math-seo-pro-3-0-123-malware/), [Patchstack](https://patchstack.com/database/wordpress/plugin/seo-by-rank-math-pro/vulnerability/wordpress-rank-math-seo-pro-plugin-3-0-123-unauthenticated-embedded-malicious-code-vulnerability), [The Hacker News](https://thehackernews.com/2026/10/popular-wordpress-seo-plugin-rank-math.html), [The Repository](https://www.therepository.email/rank-math-confirms-system-breach-delivered-malware-to-several-hundred-pro-customers).
+
+## FortiSIEM: unauthenticated gRPC path traversal to remote code execution
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/fortisiem.md):** [Detection](details/fortisiem.md#detection) · [Remediation](details/fortisiem.md#remediation) · [Verification](details/fortisiem.md#verification) · [Timeline](details/fortisiem.md#timeline)
+
+**CVEs:** [CVE-2026-106173](https://www.cve.org/CVERecord?id=CVE-2026-106173)
+
+**[CVE-2026-106173](https://www.cve.org/CVERecord?id=CVE-2026-106173) — Fortinet CVSS 3.1: 9.4 Critical (vector includes temporal metrics `E:H/RL:O/RC:C`; the base metrics alone score 9.8, which NVD shows as Fortinet's secondary score); Fortinet severity: Critical; public PoC; exploitation reported by Canada's Cyber Centre**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Canada's Cyber Centre said on 2026-10-23 that open-source reporting indicates the flaw is being exploited in the wild, while Fortinet's advisory still shows "Known Exploited: No". Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Found internally by Fortinet's Product Security team; no date given. |
+| Fortinet advisory FG-IR-26-180 | 2026-10-13; time/TZ unknown | Names 7.5.1 as the fix and restricting TCP 27918 as the workaround. The 7.5.1 release date was not established. |
+| CVE record published | 2026-10-13 17:37:09 UTC | CNA metadata. |
+| Horizon3.ai analysis and public PoC | 2026-10-20 (date only) | Exploitation chain overwrites a script that cron runs every 60 seconds. |
+| Canada Cyber Centre AV26-1037 Update 1 | 2026-10-23 (date only) | Cites open-source reporting of in-the-wild exploitation. Not the exploitation start date, which is unknown. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+FortiSIEM's phQueryMaster service runs a gRPC server on TCP 27918 that accepts any client without a client certificate. Its `SendQueryResult` method builds a file path from attacker-supplied metadata without validation, so an unauthenticated attacker can write files outside the intended directory. Horizon3 showed that a NUL byte in the same field gives full control of the file name.
+
+**Worst case:** Unauthenticated command execution on the SIEM. Horizon3's PoC overwrites `/opt/charting/redishb.sh`, which cron runs every 60 seconds. An attacker in control of the SIEM can read collected security data and the credentials FortiSIEM uses for monitored devices, and can hide activity from defenders.
+
+**Exploitation status:** A working public PoC has been available since 2026-10-20. Canada's Cyber Centre reported in-the-wild exploitation on 2026-10-23, citing unnamed open-source reporting. Fortinet's advisory still says "Known Exploited: No", and no Fortinet, honeypot or scanning-service report of attacks was found through 2026-10-26. Horizon3 found no application logs that reveal exploitation, so check file timestamps instead (see the [detail guide](details/fortisiem.md#compromise-indicators)).
+
+**Am I impacted?** Check the version of every FortiSIEM node. Fortinet's advisory lists only **7.5.0** as affected, says 7.6 and FortiSIEM Cloud are not affected, and does not mention other branches. The Fortinet-assigned CVE record also lists **7.0.0–7.4.2** as affected, so treat those branches as unknown, not cleared. The record also names FortiSIEMCloud and FortiSOC fix versions, which conflicts with the advisory's Cloud statement. Nodes are at risk when TCP 27918 is reachable from untrusted networks.
+
+**Patch:** Upgrade 7.5.0 to **7.5.1 or later** (or 7.6). For 7.0–7.4, restrict the port and ask Fortinet about a supported upgrade path to a fixed release. Until patched, allow TCP 27918 only from the FortiSIEM nodes that need it, which Fortinet says "prevents the issue". Patching does not undo overwritten files, so check them first.
+
+Sources: [Fortinet FG-IR-26-180](https://fortiguard.fortinet.com/psirt/FG-IR-26-180), [Fortinet CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-106173), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-106173), [Horizon3.ai analysis](https://horizon3.ai/attack-research/cve-2026-106173-deep-dive-fortisiem-grpc-path-traversal-file-write-rce/), [Canada Cyber Centre AV26-1037](https://www.cyber.gc.ca/en/alerts-advisories/fortinet-security-advisory-av26-1037), [The Hacker News](https://thehackernews.com/2026/10/critical-fortisiem-flaw-gets-public.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## FortiSandbox: unauthenticated GUI authentication bypass
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/fortisandbox.md):** [Detection](details/fortisandbox.md#detection) · [Remediation](details/fortisandbox.md#remediation) · [Verification](details/fortisandbox.md#verification) · [Timeline](details/fortisandbox.md#timeline)
+
+**CVEs:** [CVE-2026-107656](https://www.cve.org/CVERecord?id=CVE-2026-107656)
+
+**[CVE-2026-107656](https://www.cve.org/CVERecord?id=CVE-2026-107656) — Fortinet CVSS 3.1: 9.6 Critical (vector includes temporal E:F/RL:O/RC:C); Fortinet severity: Critical; ZDI CVSS 3.0: 7.3 High; NVD has not scored it**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Fortinet's advisory says "Known Exploited: No" and no exploitation was reported in reviewed sources through 2026-10-26, though an unvetted GitHub repository created 2026-10-25 claims exploit code. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Fortinet date unknown; ZDI report 2026-06-19 (time/TZ unknown) | Fortinet lists the discovery as internal and also credits TrendAI Research through ZDI. |
+| FortiSandbox 5.0.7 released | 2026-08-10 (time/TZ unknown) | Release-notes change log. The notes do not name the CVE. |
+| FortiSandbox 4.4.10 released | 2026-08-26 (time/TZ unknown) | Release-notes change log. The notes do not name the CVE. |
+| Fortinet advisory FG-IR-26-185 | 2026-10-13 (time/TZ unknown) | Public announcement. "Known Exploited: No"; no workaround or virtual patch. |
+| ZDI-26-771 | 2026-10-15 (time/TZ unknown) | Coordinated release. ZDI attributes the flaw to hard-coded credentials in `login_user_profile`. |
+| Unvetted exploit claim on GitHub | 2026-10-25 18:34:17 UTC | Repository creation time. Not reviewed or run; not evidence of attacks. |
+| CVE record published | 2026-10-26 13:45:03 UTC | CNA (Fortinet) metadata. NVD status "Received". |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+An authentication bypass (CWE-288) in the FortiSandbox web GUI lets a remote, unauthenticated attacker get past login with crafted HTTP requests. Fortinet classifies the impact as unauthorized code or command execution. ZDI, through which the researcher reported the flaw, attributes it to hard-coded credentials and rates it lower, at 7.3 (C:L/I:L/A:L).
+
+**Worst case:** Unauthenticated administrative access to the sandbox and, per Fortinet, code or command execution on it. That could let an attacker hide or alter malware verdicts for the FortiGate, FortiMail and other devices that submit files to it.
+
+**Exploitation status:** Fortinet says "Known Exploited: No", CISA's ADP assessment says exploitation "none", and the CVE is not in KEV. Fortinet's CVSS vector carries `E:F` (functional exploit code exists) without saying whose. An unvetted GitHub repository published on 2026-10-25 claims PoC and exploit code. It was not reviewed, and its description does not match ZDI's root cause. Fortinet published no IoCs. See the [detail guide](details/fortisandbox.md#log-review) for what to review.
+
+**Am I impacted?** Check the firmware of each FortiSandbox unit and PaaS instance (`status` in the CLI, read-only, or the dashboard). Fortinet lists **5.0.0–5.0.6 and 4.4.0–4.4.9** (and **PaaS 5.0.0–5.0.6 and all PaaS 4.4**) as affected; **5.2 is not affected**. Fortinet's own CNA record also lists **4.2** ("all versions"; machine-readable 4.2.1–4.2.8), which the advisory does not mention, and names no 4.2 fix. Treat 4.2 as affected. Risk is highest where the administrative GUI is reachable from the internet or from untrusted networks.
+
+**Patch:** Upgrade to **5.0.7+ or 4.4.10+**, or move to **5.2**. PaaS 5.0 → 5.0.7+; PaaS 4.4 → migrate to a fixed release. **4.2 has no fix, so move to 4.4.10+, 5.0.7+ or 5.2.** No vendor workaround exists. Until you upgrade, restrict GUI access to a management network at the network level. Patching does not remove an attacker's foothold, so preserve logs and review administrator accounts first.
+
+Sources: [Fortinet FG-IR-26-185](https://fortiguard.fortinet.com/psirt/FG-IR-26-185), [Fortinet CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-107656), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-107656), [ZDI-26-771](https://www.zerodayinitiative.com/advisories/ZDI-26-771), [FortiSandbox 5.0.7 release notes](https://docs.fortinet.com/document/fortisandbox/5.0.7/release-notes/860266/change-log), [FortiSandbox 4.4.10 release notes](https://docs.fortinet.com/document/fortisandbox/4.4.10/release-notes/860266/change-log), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Adobe Commerce / Magento Open Source: BlockStrap - unauthenticated template-injection RCE
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/magento-blockstrap.md):** [Detection](details/magento-blockstrap.md#detection) · [Remediation](details/magento-blockstrap.md#remediation) · [Verification](details/magento-blockstrap.md#verification) · [Timeline](details/magento-blockstrap.md#timeline)
+
+**CVEs:** [CVE-2026-103849](https://www.cve.org/CVERecord?id=CVE-2026-103849), [CVE-2026-92909](https://www.cve.org/CVERecord?id=CVE-2026-92909), [CVE-2026-91013](https://www.cve.org/CVERecord?id=CVE-2026-91013), [CVE-2026-100133](https://www.cve.org/CVERecord?id=CVE-2026-100133), [CVE-2026-92464](https://www.cve.org/CVERecord?id=CVE-2026-92464)
+
+**[CVE-2026-103849](https://www.cve.org/CVERecord?id=CVE-2026-103849) (BlockStrap) — Adobe (CNA) CVSS 3.1: 10.0 Critical, unauthenticated; NVD has not scored it. Same bulletin: CVE-2026-92909 9.8 (B2B), CVE-2026-91013 and CVE-2026-100133 9.3, CVE-2026-92464 9.1 (admin privileges required), all Adobe CVSS 3.1 Critical**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Adobe and Sansec reported no exploitation as of 2026-10-13 and 2026-10-15, and none was found in sources reviewed through 2026-10-26; CISA's ADP assessment records a proof of concept. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Adobe credits researcher "vozec"; CVE ID reserved 2026-10-01 11:27:51 UTC. |
+| Public announcement (Adobe APSB26-153) and isolated patches | 2026-10-13; CNA `datePublic` 17:00:00 UTC | Priority 2; "not aware of any exploits in the wild". |
+| CVE records published | 2026-10-13 18:15:47–18:15:53 UTC | Adobe CNA, all five CVEs. |
+| Mage-OS 3.6.0 (fixed) | 2026-10-14 (release notes); GitHub release 2026-10-15 14:26:31 UTC | Ports Adobe's October patch. |
+| Sansec analysis | 2026-10-15; time/TZ unknown | Four RCE routes reproduced, not published; no attacks seen on live stores. |
+| Public validation lab | 2026-10-18 08:12:41 UTC | Third-party; proves the injection primitive, not stock full RCE. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+BlockStrap is a second-pass directive injection in Magento's email template engine. The September StyleSmuggler hotfix signs trusted deferred directives, but attacker-controlled text in a child template can still be signed and rescanned at the root level, where a smuggled `{{block}}` directive runs. Adobe's October patch replaces that rescan with registered placeholders. The same patch fixes four more Critical flaws: CVE-2026-92909 (incorrect authorization to code execution, no login; the bulletin marks it B2B), CVE-2026-91013 and CVE-2026-100133 (stored XSS to privilege escalation; a victim must view the content), and CVE-2026-92464 (code execution needing high privileges).
+
+**Worst case:** an unauthenticated attacker runs PHP on the store server, then steals customer and order data and `env.php` secrets or plants card skimmers.
+
+**Exploitation status:** No attacks reported (Adobe 2026-10-13, Sansec 2026-10-15; nothing newer found through 2026-10-26). Sansec rebuilt four code-execution routes within 24 hours and expects attacks; the previous flaw in the same engine, StyleSmuggler ([CVE-2026-75650](https://www.cve.org/CVERecord?id=CVE-2026-75650)), was exploited and is in KEV (added 2026-09-08).
+
+**Am I impacted?** Adobe Commerce 2.4.4–2.4.9 and B2B 1.3.3–1.5.3 at "-2026-sep" or earlier, Magento Open Source 2.4.6–2.4.9 (the CVE record lists 2.4.7–2.4.9), and Mage-OS up to 3.5.0. The fix ships as an isolated patch, so check code, not the version: in the Magento root, `grep -c resolveDeferredDirectives vendor/magento/framework/Filter/Template.php` prints `0` when the fix is missing (Mage-OS: `vendor/mage-os/framework/...`). Adobe's Commerce Version Tool (`php vendor/bin/patch-status`) reports per-CVE status where installed.
+
+**Patch:** Apply the StyleSmuggler hotfix (`VULN-39341`) first if missing, then Adobe's October isolated patch on the latest release of your line (2.4.9, 2.4.8-p5, 2.4.7-p10; Commerce-only downloads for 2.4.6-p15, 2.4.5-p17, 2.4.4-p18); Cloud via the latest `magento-cloud-patches`; Mage-OS 3.6.0. A plain `composer install` stays vulnerable, so bake the patch into builds and restart PHP-FPM. Open Source 2.4.6 and older have no public Adobe patch: upgrade to 2.4.7-p10+. On 2.4.8-p5, also confirm the corrected patch (`248p5-2026-10-002-CE`).
+
+Sources: [Adobe APSB26-153](https://www.adobe.com/trust/security/products/commerce/apsb26-153.html), [Adobe KB ka-49323](https://experienceleague.adobe.com/en/docs/experience-cloud-kcs/kbarticles/ka-49323), [Adobe CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-103849), [Sansec analysis](https://sansec.io/research/blockstrap-magento-rce), [Mage-OS 3.6.0](https://mage-os.org/releases/2026-10-14-mage-os-3-6-0-release), [BleepingComputer](https://www.bleepingcomputer.com/news/security/critical-blockstrap-flaw-lets-hackers-run-code-on-magento-servers/).
+
+## SAP Cloud SDK for Python: OAuth2 SSRF leaking multi-tenant client credentials
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/sap-cloud-sdk-python.md):** [Detection](details/sap-cloud-sdk-python.md#detection) · [Remediation](details/sap-cloud-sdk-python.md#remediation) · [Verification](details/sap-cloud-sdk-python.md#verification) · [Timeline](details/sap-cloud-sdk-python.md#timeline)
+
+**CVEs:** [CVE-2026-89111](https://www.cve.org/CVERecord?id=CVE-2026-89111)
+
+**[CVE-2026-89111](https://www.cve.org/CVERecord?id=CVE-2026-89111) — SAP CNA CVSS 3.1: 10.0 Critical (same in SAP's GitHub advisory); NVD has not scored it**
+
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). CISA's ADP SSVC entry in the CVE record records "Exploitation: none", and the reviewed sources report no in-the-wild exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private report | Unknown | SAP's advisory credits reporter SunandM and gives no date. |
+| Fixed release 0.45.2 | 2026-08-21 14:04:49 UTC | GitHub release time. The release notes describe tenant validation as a bug fix, not a security fix. |
+| Public announcement (SAP Security Patch Day, CVE record) | 2026-10-13; CVE record 00:24:28 UTC | The Patch Day page gives only a date. SAP's repository advisory GHSA-4mv3-jxxm-9cx2 was published at 07:33:01 UTC. |
+| GitHub global advisory (unreviewed) | 2026-10-13 03:30:30 UTC | GHSA-m3j7-wp2j-mhc3 lists no package or version range, so Dependabot may not alert. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+
+`sap-cloud-sdk` before 0.45.2 inserts a caller-supplied tenant subdomain into the service binding's OAuth2 token URL without validating it. In a multi-tenant SAP BTP application, an attacker who controls that value can redirect the token request, which carries the binding's client ID and secret, to a server they control.
+
+**Worst case:** theft of the OAuth client credentials of the Destination, Document Management or other service bindings the SDK uses. The attacker can then obtain tokens as the application until the credentials are rotated.
+
+**Exploitation status:** The reviewed sources report no in-the-wild exploitation. CISA's SSVC entry (2026-10-14) records "Exploitation: none" and "Automatable: yes".
+
+**Am I impacted?** Only if the application passes a tenant value that callers can influence (request host, header, query or body) to the SDK. The affected calls are the Destination, Fragment and Certificate clients' `tenant=` argument, the DMS client's `tenant=` argument, and `agentgateway.create_client(tenant_subdomain=...)`. In each deployed environment, run `ls -d SITE_PACKAGES/sap_cloud_sdk-*.dist-info` (or `pip show sap-cloud-sdk`) and `grep -rnE 'tenant_subdomain|tenant[[:space:]]*=' --include='*.py' APP_ROOT`. Affected: all versions below 0.45.2.
+
+**Patch:** Upgrade `sap-cloud-sdk` to **0.45.2+** (current 0.62.0; requires Python 3.11+), rebuild, and restage or redeploy every instance. Version 0.45.2 raises `ValueError` for invalid tenant values, so handle that error. Vendor workaround: validate the tenant value against an allowlist of registered tenant subdomains before every SDK call. If abuse is suspected, rotate the affected service-binding credentials by recreating the binding or service key.
+
+Sources: [SAP advisory GHSA-4mv3-jxxm-9cx2](https://github.com/SAP/cloud-sdk-python/security/advisories/GHSA-4mv3-jxxm-9cx2), [SAP CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-89111), [SAP Security Patch Day – October 2026](https://support.sap.com/en/my-support/knowledge-base/security-notes-news/october-2026.html), [v0.45.2 release](https://github.com/SAP/cloud-sdk-python/releases/tag/v0.45.2), [BleepingComputer](https://www.bleepingcomputer.com/news/security/sap-warns-of-maximum-severity-oauth2-ssrf-security-flaw/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 <a name="wasmtime-cranelift-sandbox-escapes-from-untrusted-wasm-cve-2026-115889-and-cve-2026-115893"></a>
 
@@ -336,7 +581,10 @@ Sources: [curl advisory](https://curl.se/docs/CVE-2026-92392.html), [CVE record]
 | Upstream stable fixes | 2026-10-15; time/TZ unknown | 5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.57, 7.2.11. Mainline 7.3 released 2026-10-18. |
 | CVE published | 2026-10-15 12:19 UTC | kernel.org CNA. |
 | Vghost CVE published / write-up | 2026-08-21 16:31 UTC / 2026-10-12, time/TZ unknown | Fixed in 5.10.265, 5.15.216, 6.1.183, 6.6.152, 6.12.104, 6.18.45, 7.1.9 and 7.2. |
-| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| Debian and Oracle Linux fixes | 2026-10-16; time/TZ unknown | DSA-6568-1, DLA-4841-1; Oracle UEK ELSA-2026-500397/8/9. |
+| Red Hat fixed kernels | 2026-10-19 to 2026-10-24; time/TZ unknown | RHEL 10, 9, 7 ELS, then RHEL 8 (RHSA-2026:89083) on 2026-10-24. |
+| AlmaLinux production kernels | 2026-10-23 17:16 UTC | Moved from testing to production. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Red Hat, AlmaLinux, Debian and Oracle fixed kernels. |
 
 The flaw is in the host kernel's **IPv4 networking stack**, not in KVM. A guest sends crafted virtio-net checksum metadata, and the VMM writes it to a host TAP device. The host then corrupts an already-validated IPv4 header and reads beyond the packet data when it fragments the packet. Red Hat says local attackers can trigger it too.
 
@@ -349,11 +597,11 @@ The flaw is in the host kernel's **IPv4 networking stack**, not in KVM. A guest 
 
 **Exploitation status:** No in-the-wild exploitation reported. CISA's SSVC entry records exploitation as "none". Red Hat's page mentions a "KEV active-exploit case", which the KEV feed does not support. A public PoC exists for Vghost.
 
-**Am I impacted?** Highest priority: KVM/QEMU, Firecracker and other virtio-net hosts that run untrusted guests (cloud and VPS hosts, CI VMs, code-execution and AI sandboxes), then multi-user Linux. If a provider runs the host, only the provider can patch it. Distribution kernels keep older base versions (for example RHEL `5.14.0-*`), so **`uname -r` alone does not prove the backport**. Check the vendor's advisory or package changelog and confirm the host has rebooted. When reviewed, Red Hat and Ubuntu had not shipped fixes; Amazon Linux had, and AlmaLinux had kernels in its testing repository.
+**Am I impacted?** Highest priority: KVM/QEMU, Firecracker and other virtio-net hosts that run untrusted guests (cloud and VPS hosts, CI VMs, code-execution and AI sandboxes), then multi-user Linux. If a provider runs the host, only the provider can patch it. Distribution kernels keep older base versions (for example RHEL `5.14.0-*`), so **`uname -r` alone does not prove the backport**. Check the vendor's advisory or package changelog and confirm the host has rebooted. Fixed vendor kernels now include RHEL 10 `kernel-6.12.0-211.67.1.el10_2`, RHEL 9 `kernel-5.14.0-687.59.1.el9_8`, RHEL 8 `kernel-4.18.0-553.178.1.el8_10` (Red Hat), the matching AlmaLinux production kernels (AlmaLinux 8: `553.177.1`), Debian bookworm `6.1.190-1` / trixie `6.12.113-1`, Oracle UEK and Amazon Linux. Ubuntu, RHEL `kernel-rt` and OpenShift RHCOS had not shipped fixes when reviewed. On AlmaLinux 9, `kernel-5.14.0-687.58.1.el9_8` is newer than the old testing kernel but lacks the fix.
 
 **Patch:** Boot a kernel that contains the fix: an upstream release listed above or a vendor backport. Drain guests first. Upstream lists no fix for the 5.4, 7.0 or 7.1 series. No workaround has been published. For Vghost, also remove world access to `/dev/vhost-*`, treat the `kvm` group as privileged, and do not give untrusted guests vIOMMU with `iommu_platform`.
 
-Sources: [kernel.org CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-99999), [pwn.ai write-up](https://pwn.ai/blog/pwnescape), [Vercel findings](https://vercel.com/blog/findings-from-the-1-million-dollar-vercel-sandbox-challenge), [Red Hat](https://access.redhat.com/security/cve/cve-2026-99999), [AlmaLinux](https://almalinux.org/blog/2026-10-16-pwnescape-cve-2026-99999), [Vghost CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-74580), [Tencent Vghost write-up](https://matrix.tencent.com/en/2026/10/12/vghost-cve-2026-74580), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [kernel.org CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-99999), [pwn.ai write-up](https://pwn.ai/blog/pwnescape), [Vercel findings](https://vercel.com/blog/findings-from-the-1-million-dollar-vercel-sandbox-challenge), [Red Hat](https://access.redhat.com/security/cve/cve-2026-99999), [AlmaLinux](https://almalinux.org/blog/2026-10-16-pwnescape-cve-2026-99999), [Red Hat security data](https://access.redhat.com/hydra/rest/securitydata/cve/CVE-2026-99999.json), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99999), [Vghost CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-74580), [Tencent Vghost write-up](https://matrix.tencent.com/en/2026/10/12/vghost-cve-2026-74580), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 <a name="bricksforge-exploited-unauthenticated-file-upload-to-rce-cve-2026-85097"></a>
 
@@ -760,7 +1008,7 @@ Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026
 
 **CVEs:** [CVE-2026-105133](https://www.cve.org/CVERecord?id=CVE-2026-105133), [CVE-2026-105134](https://www.cve.org/CVERecord?id=CVE-2026-105134)
 
-**[CVE-2026-105133](https://www.cve.org/CVERecord?id=CVE-2026-105133) — VulDB CVSS 3.1: 7.3 High; VulDB CVSS 4.0: 6.9 Medium per the CNA record, 5.5 Medium as displayed by NVD with `E:P`. [CVE-2026-105134](https://www.cve.org/CVERecord?id=CVE-2026-105134) — VulDB CVSS 3.1: 10.0 Critical; CVSS 4.0: 10.0 (CNA) / 9.3 (NVD display). Both in CISA KEV.**
+**[CVE-2026-105133](https://www.cve.org/CVERecord?id=CVE-2026-105133) — VulDB CVSS 3.1: 7.3 High; VulDB CVSS 4.0: 6.9 Medium per the CNA record (now `E:A`), 5.5 Medium as still displayed by NVD with the older `E:P`. [CVE-2026-105134](https://www.cve.org/CVERecord?id=CVE-2026-105134) — VulDB CVSS 3.1: 10.0 Critical; CVSS 4.0: 10.0 (CNA) / 9.3 (NVD display). Both in CISA KEV.**
 
 **CISA KEV:** Listed — both CVEs added 2026-10-14, federal due date 2026-10-17.
 
@@ -771,7 +1019,8 @@ Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026
 | v10 hotfix 10.3.4.45 | 2026-10-10 per Ahsay (Huntress: 2026-10-12) | Sources disagree on the date. |
 | v7–v9 hotfix 9.15.2.70 | 2026-10-12; time/TZ unknown | v7/v8 first upgrade to 9.15.0.0. |
 | CISA KEV addition | 2026-10-14; time/TZ unknown | Federal due date 2026-10-17. |
-| **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
+| CVE records corrected | 2026-10-26 14:31 UTC | Affected range now "up to 9.15.2.69/10.3.4.44"; fixed 9.15.2.70 / 10.3.4.45. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | CVE record range correction. |
 
 AhsayCBS is a backup server used mainly by MSPs. Attackers chain the two flaws: an authentication bypass in `checkSysPwd`, then OS command injection via `/rps/api/json/UpdateReceivers.do`. Together they give unauthenticated remote code execution (SYSTEM on the Windows hosts Huntress investigated).
 
@@ -779,7 +1028,7 @@ AhsayCBS is a backup server used mainly by MSPs. Attackers chain the two flaws: 
 
 **Exploitation:** Huntress observed attacks from October 7, against five organizations by October 8. Ahsay began receiving partner reports on October 9.
 
-**Am I impacted?** The CVE record's range ("up to 10.3.2; 10.3.4 unaffected") is **wrong**. Huntress showed 10.3.4 is affected, and Ahsay says the earlier 10.3.4.0 and 9.15.2.59 patches did not fully fix the flaws. Treat any v7–v10 server without the hotfix as affected, especially if its console is reachable from the internet. Check for the [Ahsay and Huntress IOCs](details/ahsaycbs.md#indicators-to-check-read-only).
+**Am I impacted?** VulDB corrected the CVE records on 2026-10-26: affected is now **up to 9.15.2.69 / 10.3.4.44**, replacing the earlier wrong "up to 10.3.2; 10.3.4 unaffected" range (scanners using the old record may miss 10.3.4 builds). Huntress showed 10.3.4 is affected, and Ahsay says the earlier 10.3.4.0 and 9.15.2.59 patches did not fully fix the flaws. Treat any v7–v10 server without the hotfix as affected, especially if its console is reachable from the internet. Check for the [Ahsay and Huntress IOCs](details/ahsaycbs.md#indicators-to-check-read-only).
 
 **Patch:** v10: apply hotfix **10.3.4.45** or later. v7–v9: apply **9.15.2.70** (v7/v8 first upgrade to 9.15.0.0). Reboot after either. Ahsay says these fully address both CVEs. A later hardening hotfix (Oct 22) and v10.3.6 are additional hardening. If the server shows indicators, rebuild it as Ahsay describes rather than patching in place.
 
@@ -908,8 +1157,9 @@ Sources: [DIVD case](https://csirt.divd.nl/DIVD-2026-00015), [CNA record CVE-202
 | Serve correction merged | 2026-10-25 00:39:53 UTC | PR 21931 addresses cross-mount capability leakage. |
 | Public circulation/vendor response | 2026-10-25; time/TZ unknown | Exact first-publication time unknown; original X headline needs qualification. |
 | SSH forwarding correction merged | 2026-10-26 03:08:59 UTC | PR 21942; source merge is not a stable release. |
-| Fixed stable release | Not established at 2026-10-26 12:44 UTC | Latest Tailscale stable found was 1.104.2; do not mark it or headscale 0.29.6 fixed for this report. |
-| **Last updated** | **2026-10-26 08:47 EDT (UTC−04:00)** | Added with researcher/vendor distinctions and current source-fix status. |
+| More SSH hardening merged; headscale fix proposed | 2026-10-25 18:31 UTC to 2026-10-26 14:49 UTC | Tailscale PRs 21930, 21945, 21943 merged (21944 open); headscale PR #3586 open. Source changes, not releases. |
+| Fixed stable release | Not established at 2026-10-26 ~15:30 UTC | Latest Tailscale stable found was 1.104.2; do not mark it or headscale 0.29.6 fixed for this report. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Additional merged and proposed source fixes. |
 
 Erica Windisch reports **11 findings across SSH, Serve/Funnel, an experimental connector and headscale/DERP**. This is not 11 confirmed unauthenticated Tailscale SSH vulnerabilities. The principal SSH escalation chains require **an already-authorized source, permitted target access and applicable forwarding**. Ordinary OpenSSH carried over Tailscale is distinct. This developing report is included at the owner's request, with its severity attribution visible.
 
@@ -963,7 +1213,7 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 
 **CVEs:** [CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618), [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619), [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560)
 
-**[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619) — Critical, CVSS 4.0: 9.2 each**
+**[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619) — PHP (GitHub advisories) Critical, CVSS 4.0: 9.2 each; NVD CVSS 3.1: 9.8 Critical (CVE-2026-109618) and 8.1 High (CVE-2026-109619, AC:H)**
 
 **CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Exploitation evidence exists outside KEV: pre-disclosure attempts and researcher-confirmed honeypot RCE (see below). Absence from KEV is not evidence that exploitation has not occurred.
 
@@ -976,8 +1226,11 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Exploitation attempts using proofs of concept | 2026-10-21 ~02:00–08:00 UTC | Amazon; before public disclosure. |
 | Upload-progress mitigation | 2026-10-23; time/TZ unknown | Separate follow-up issue; full patch not established in the reviewed notice. |
 | Confirmed RCE against honeypots | 2026-10-24 15:35 UTC (first shell) | Researcher honeypots running PHP 8.4.26 Apache `mod_php`; consistent with CVE-2026-109618. |
+| Palo Alto Networks PAN-OS / Panorama advisory | 2026-10-21 16:00 UTC | Management web interface affected; hotfixes released 2026-10-25 and 2026-10-26, others pending. |
+| Public end-to-end PoC (“Steal My Bitcoin” challenge) | 2026-10-25 15:47:38 UTC (challenge solved) | Authorized challenge server; exploit tuned to one Alpine PHP 8.4.26 `cli-server` build. |
+| NVD scores added | By 2026-10-26 10:10 (NVD `lastModified`, zone not stated) | 9.8 and 8.1 (CVSS 3.1). |
 | CISA KEV | Not listed (catalog 2026.10.23) | Checked 2026-10-26. |
-| **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | Pre-disclosure exploitation attempts, confirmed honeypot RCE and follow-up fix status. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | NVD scores, PAN-OS/Panorama exposure and public PoC. |
 
 These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
@@ -986,13 +1239,13 @@ These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 | **CVE-2026-109618** | Out-of-memory handling interrupts initialization; cleanup subsequently treats partially initialized request data as valid. | **Unauthenticated remote code execution**, with access to the PHP process’s files, credentials, and databases. |
 | **CVE-2026-109619** | Request-owned global state survives after its backing memory is freed and can be reused by a later request in the same worker. | **Unauthenticated remote code execution** through stale memory. |
 
-**Affected technology:** PHP serving web requests through Apache `mod_php`, PHP-FPM, CGI, FrankenPHP, or LiteSpeed. Think WordPress, Drupal, Joomla, Nextcloud, Laravel, and custom PHP applications—but inventory the actual runtime.
+**Affected technology:** PHP serving web requests through Apache `mod_php`, PHP-FPM, CGI, FrankenPHP, or LiteSpeed. Think WordPress, Drupal, Joomla, Nextcloud, Laravel, and custom PHP applications—but inventory the actual runtime. **Appliances that embed PHP are affected too:** Palo Alto Networks says PAN-OS on PA-Series and VM-Series firewalls and Panorama are affected through the management web interface (HTTPS UI and XML API) and through dataplane interfaces with a management profile, with no special configuration required.
 
 PHP identifies **`mod_php` as the highest-risk configuration**, with demonstrated exploitation before application code runs. Application authentication therefore cannot be assumed to protect the vulnerable path.
 
-**Patch:** PHP **8.5.12, 8.4.27, 8.3.36, or 8.2.35**, or a distribution package explicitly backporting both fixes. Restart all affected workers. Older upstream branches need a verified vendor backport or migration.
+**Patch:** PHP **8.5.12, 8.4.27, 8.3.36, or 8.2.35**, or a distribution package explicitly backporting both fixes. Restart all affected workers. Older upstream branches need a verified vendor backport or migration. **PAN-OS / Panorama:** install the per-branch hotfix from [Palo Alto's advisory](https://security.paloaltonetworks.com/CVE-2026-109618) (released so far: 10.2.18-h13, 11.1.16-h4, 11.2.10-h16, 11.1.4-h38, 11.1.6-h40, 11.1.10-h36, 11.1.13-h16; other branches had ETAs of 10/27–10/30 when reviewed). Until then, restrict management access to trusted internal IPs and enable Threat Prevention IDs 543004, 97622 and the related IDs the advisory lists. Palo Alto says CVE-2026-115560 does not affect PAN-OS.
 
-**Exploitation status:** Amazon reported exploitation attempts from 2026-10-17, before disclosure. On 2026-10-24 a researcher documented successful RCE against PHP 8.4.26 `mod_php` honeypots. CISA’s earlier no-observed-success statement predates this evidence. Not in CISA KEV as of catalog 2026.10.23. [Investigate exposed systems from at least 2026-10-17](details/php2shell.md#exploitation-status).
+**Exploitation status:** Amazon reported exploitation attempts from 2026-10-17, before disclosure. On 2026-10-24 a researcher documented successful RCE against PHP 8.4.26 `mod_php` honeypots. CISA’s earlier no-observed-success statement predates this evidence. A [public end-to-end exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC) was published after a researcher solved an authorized “Steal My Bitcoin” challenge on 2026-10-25; its author says it is tuned to an Alpine PHP 8.4.26 `cli-server` build and will not match a Debian `php-fpm` build, but adapting it lowers the bar for attackers. Palo Alto knows of no exploitation against its products. Not in CISA KEV as of catalog 2026.10.23. [Investigate exposed systems from at least 2026-10-17](details/php2shell.md#exploitation-status).
 
 ### The October 23 follow-up matters
 
@@ -1025,7 +1278,7 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 
 **CVEs:** [CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497), [CVE-2026-105482](https://www.cve.org/CVERecord?id=CVE-2026-105482), [CVE-2026-105483](https://www.cve.org/CVERecord?id=CVE-2026-105483), [CVE-2026-106069](https://www.cve.org/CVERecord?id=CVE-2026-106069)
 
-**[CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497) — Node.js: High; Google’s CVSS 4.0 rating: 9.2 Critical**
+**[CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497) — Node.js: High; Google’s CVSS 4.0 rating: 9.2 Critical; Red Hat: Important, CVSS 3.1 8.1 (AC:H)**
 
 **CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers the Brotli CVE and the three Node.js CVEs below; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred.
 
@@ -1041,8 +1294,11 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | PHP extension patch | 2026-10-24 23:49 UTC | php-ext-brotli 0.21.1 bundles fixed Brotli 1.2.1. |
 | .NET advisory | 2026-10-25 19:06:12 UTC | Identifies fixed runtime/SDK builds; publication time is not first artifact availability. |
 | JFrog downstream research | 2026-10-25; time/TZ unknown | FFmpeg/libjxl pointer corruption/crash, ClickHouse crash, Arrow/pyarrow loop and .NET native crash. |
-| Downstream fix-status check | 2026-10-26 | libjxl and ClickHouse source fixes merged; published fixed artifacts unconfirmed. Arrow dependency-update PR remains open. |
-| **Last updated** | **2026-10-26 10:00 EDT (UTC−04:00)** | Media/analytics exposure, demonstrated-impact limits and official detection tools. |
+| Debian system `brotli` fixes | 2026-10-23 19:09–21:09 UTC | DLA-4855-1 (bookworm `1.0.9-2+deb12u1`), DSA-6582-1 (trixie `1.1.0-2+deb13u1`). |
+| Amazon Linux 2023 fix | 2026-10-24; time/TZ unknown | ALAS2023-2026-3334, `1.1.0-1.amzn2023.0.2` backport. |
+| ClickHouse backports merged | 2026-10-25 14:10 to 2026-10-26 09:02 UTC | All four branches (26.10, 26.9, 26.8, 26.3); no release containing them yet. |
+| Downstream fix-status check | 2026-10-26 | libjxl and ClickHouse source fixes merged; published fixed artifacts unconfirmed. Arrow dependency-update PR approved but still open. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Red Hat rating, Linux distribution packages and ClickHouse backport status. |
 
 **HTTP2Shell, Node2Shell and Brotli2Shell are names for the same vulnerability, not separate CVEs.** The flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the names, it is **not specific to HTTP/2 or even HTTP**; exposure depends on decoding attacker-controlled Brotli data, including embedded file metadata and analytical buffers.
 
@@ -1352,8 +1608,9 @@ Sources: [vendor advisory](https://github.com/CollaboraOnline/online/security/ad
 | SMB Direct patch reviewed | 2026-10-23 11:02 UTC | Positive review; not proof of delivery to your kernel. |
 | Dispatch fix in mainline Git | 2026-10-26 01:47 UTC | Commit 68f410faedaf merged for 7.4-rc1; not yet in a tagged kernel. |
 | SMB Direct fix committed | 2026-10-26 10:15 UTC | Maintainer branch (ksmbd-for-next), marked for stable; not yet in mainline. |
-| Released kernel/NAS fixes | None established (as of 2026-10-26) | Newest kernel.org releases predate both fixes; no CVE or distribution advisory yet. |
-| **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | Upstream fix commits; no released kernel fix yet. |
+| Red Hat bulletin RHSB-2026-014 | 2026-10-24 18:31; TZ not stated | Supported RHEL is not affected: the module is not built or the features are not enabled. |
+| Released kernel/NAS fixes | None established (as of 2026-10-26) | Newest kernel.org releases predate both fixes; no CVE yet. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Distribution applicability statements added. |
 
 These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinary Samba installations or all Linux machines are vulnerable.
 
@@ -1363,6 +1620,8 @@ These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinar
 | **ZDI-CAN-33549** | SMB Direct with an RDMA-capable interface and a writable share. | Integer underflow leading to kernel buffer corruption and potentially **RCE**. |
 
 Public demonstrations establish disclosure/crashes, **not successful RCE**. As of October 26, the dispatch-race fix is in mainline Git for 7.4-rc1 and the SMB Direct fix is in the maintainer branch marked for stable backport, but no released mainline, stable, distribution or NAS kernel containing either fix, and no CVE, was established; **a committed fix is not the same as a deployed distribution update**. Software RXE can supply RDMA even without a physical RDMA card. See [prerequisites and fix tracking](details/ksmbd.md#evaluate-the-two-prerequisites-independently).
+
+**Distribution applicability:** Red Hat says no supported RHEL version is affected because the module is not built or the vulnerable features are not enabled. TuxCare reports AlmaLinux and CloudLinux 9/10 do not build KSMBD, while Debian and Ubuntu build it as opt-in (it runs only after `ksmbd-tools` is installed and the service started). Sysdig reports Ubuntu builds SMB Direct support and Debian does not. Custom and NAS kernels still need a vendor statement.
 
 **Action:** Identify whether you actually use KSMBD. Disable it if unnecessary, restrict access to trusted networks, and obtain an explicit remediation status from your kernel/NAS vendor. Never expose SMB directly to the internet.
 
@@ -1374,7 +1633,7 @@ sh linux-service-inventory.sh
 
 A port 445 listener alone does not identify KSMBD; Samba can use it too. Check kernel `CONFIG_SMB_SERVER`, KSMBD service/share configuration, and vendor documentation. An empty RDMA device listing does not settle the first report; RDMA/SMB Direct and a writable share are specific prerequisites for **ZDI-CAN-33549**. For **ZDI-CAN-33774**, assess KSMBD protocol access independently. Ask the vendor to map your exact kernel/firmware build to **both** reports; kernel version strings alone cannot confirm a fix.
 
-Sources: [disclosure overview](https://thehackernews.com/2026/10/two-cvss-90-linux-ksmbd-rce-flaws.html), [October 23 maintainer discussion](https://lists.samba.org/archive/samba-technical/2026-October/141179.html).
+Sources: [disclosure overview](https://thehackernews.com/2026/10/two-cvss-90-linux-ksmbd-rce-flaws.html), [Red Hat RHSB-2026-014](https://access.redhat.com/security/vulnerabilities/RHSB-2026-014), [TuxCare](https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/), [October 23 maintainer discussion](https://lists.samba.org/archive/samba-technical/2026-October/141179.html).
 
 <a name="8-wpsplinter-nearby-attackers-can-compromise-vulnerable-routers"></a>
 <a name="wpsplinter-nearby-attackers-can-compromise-vulnerable-routers"></a>
@@ -1397,7 +1656,8 @@ Sources: [disclosure overview](https://thehackernews.com/2026/10/two-cvss-90-lin
 | Public disclosure | 2026-10-16; time/TZ unknown | Technical research and conference presentation. |
 | ISP mitigation update | 2026-10-20; time/TZ unknown | Provider-specific findings, not universal firmware clearance. |
 | Fixed firmware releases | Not established | Obtain exact OEM/ISP build confirmation. |
-| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
+| 2018 patch analysis | 2026-10-23 20:00 UTC | Researcher argues Broadcom's 2018 patch remains exploitable on some libc builds. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | 2018 patch insufficiency research. |
 
 A Wi-Fi attacker within radio range can exploit fragmented WPS message handling **without the network password or completing WPS enrollment**.
 
@@ -1405,7 +1665,7 @@ A Wi-Fi attacker within radio range can exploit fragmented WPS message handling 
 
 The affected component appears across numerous vendors and ISP gateways. **A Broadcom chipset alone does not establish vulnerability**; firmware and hardware revision matter.
 
-**Action:** Check the researcher’s device list and ask the vendor/ISP about this specific issue. Install a confirmed fixed firmware or replace unsupported equipment. Do not assume the ordinary “disable WPS” toggle removes the vulnerable parser.
+**Action:** Check the researcher’s device list and ask the vendor/ISP about this specific issue. Install a confirmed fixed firmware or replace unsupported equipment. Do not assume the ordinary “disable WPS” toggle removes the vulnerable parser. Do not accept “includes Broadcom's 2018 patch” as a fix: the researcher's [October 23 analysis](https://quentinkaiser.be/security/2026/10/23/broadcom-patch/) argues that patch remains exploitable on some libc builds and recommends the hostapd-based SDK.
 
 There is no universal firmware version to recommend. Older eCos-based devices may have no practical migration path.
 
@@ -1513,11 +1773,11 @@ Sources: [vendor advisory](https://www.beyondtrust.com/trust-center/security-adv
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/emudhra.md):** [Detection](details/emudhra.md#detection) · [Remediation](details/emudhra.md#remediation) · [Verification](details/emudhra.md#verification) · [Timeline and corrections](details/emudhra.md#timeline)
 
-**CVEs:** [CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943), [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820), [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557)
+**CVEs:** [CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943), [CVE-2026-91403](https://www.cve.org/CVERecord?id=CVE-2026-91403), [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820), [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557)
 
 **Certificate-authority compromise — TLS impersonation and fraudulent code-signing trust.** This incident has no single incident-wide CVSS score; client-specific fixes have their own advisories, including Go **[CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943)**.
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). The CA compromise itself has no CVE; the related Go [CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943), Java [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820) and Python [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557) fixes are not listed. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). The CA compromise itself has no CVE; the related Go [CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943), Java [CVE-2026-91403](https://www.cve.org/CVERecord?id=CVE-2026-91403) and [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820), and Python [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557) fixes are not listed. Absence from KEV is not evidence that exploitation has not occurred.
 
 Eight intermediate CA private keys were trivially recoverable because of defective key generation. Attackers could issue fraudulent certificates accepted by clients that still trust the affected chains. **Worst case:** intercepted or modified TLS traffic and malicious code accepted under fraudulent signatures, depending on verifier policy and attacker positioning. This is not a general break of TLS cryptography.
 
@@ -1534,10 +1794,14 @@ Eight intermediate CA private keys were trivially recoverable because of defecti
 | Go patches released | 2026-10-19; time/TZ unknown | Go 1.27.3 / 1.26.10; rebuild deployed binaries. |
 | Firefox/ESR releases | 2026-10-20; time/TZ unknown | Separate from earlier OneCRL delivery. |
 | Android follow-up | 2026-10-21 08:29 UTC | Firefox Android 158.0.2. |
+| Java intermediate distrust | 2026-10-21; time/TZ unknown | [CVE-2026-91403](https://www.cve.org/CVERecord?id=CVE-2026-91403), Oracle CVSS 3.1 9.1 Critical. |
+| CERT-In advisory CIAD-2026-0050 | 2026-10-21; time/TZ unknown | No confirmed malicious use of the keys established as of October 21. |
+| Bun fix | 2026-10-23 02:02 UTC | Bun 1.4.4; rebuild compiled executables. |
 | Java follow-up alert | 2026-10-24; time/TZ unknown | [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820), Oracle CVSS 3.1 9.1 Critical; earlier emergency builds require further action. |
-| CPython key-blocking releases | 2026-10-26; time/TZ unknown | [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557); runtime protection in `ssl`, separate from CA-bundle updates. |
+| Python CVE published | 2026-10-24 14:15 UTC | CVE-2026-115557, PSF CVSS 4.0 9.4 Critical. |
+| CPython key-blocking releases | 2026-10-26; time/TZ unknown | [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557); runtime protection in `ssl`, separate from CA-bundle updates. Follow the release team's fixed versions, not the CVE record's broader range. |
 | Chrome root removal | **Expected** 2026-10-27 morning PDT (UTC−07:00) | Google forecast for Chrome Root Store users; not completed rollout as of this update. |
-| **Last updated** | **2026-10-26 09:26 EDT (UTC−04:00)** | Java follow-up, CPython fixes, alternate trust paths and detection guidance. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Bun fix, CERT-In advisory, Java and Python scores. |
 
 Inventory client trust stores as well as your server certificates: operating-system stores, browsers, Java truststores, Python/application CA bundles, containers, and embedded clients can update independently. Match certificate fingerprints/serials and affected issuer chains against the incident record; a name containing “emSign” is not a precise affected-certificate test. Inspect Go build versions with `sh stack-inventory.sh go /path/to/deployed-binary` and compare with the fixed branches above. Updating the installed Go compiler does not repair existing binaries. For third-party appliances or opaque applications, obtain the vendor's trust-update status. A successful TLS connection is not proof that fraudulent chains are rejected.
 
@@ -1585,15 +1849,16 @@ The corrected postmortem identifies an **exposed, unrevoked master key**, follow
 | Image-signing key changed | 2026-10-24 09:34:13 UTC (1.106.3 release) | New cosign key from commit `e82a3c6`; verifying with the old key fails. Backported to 1.103.8 / 1.104.6 / 1.105.4. |
 | Later release 1.106.4 | 2026-10-25 09:32:43 UTC (PyPI) | Latest PyPI version; not a malware-cleanup patch. |
 | Cleanup patch | Not applicable | 1.106.2 is a clean rollback target, not host recovery. |
-| **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | New signing key and later clean releases. |
+| Microsoft detection content | 2026-10-23; time/TZ unknown | Defender signatures, TVM-2026-0003 and hunting queries. |
+| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Official Microsoft detection content. |
 
-Inspect **historical** dependency manifests, CI install logs, registry digests, and deployment records for **1.107.0** and the malicious image digests in the incident guidance. A floating tag or today's package version cannot establish what ran during the incident. On a clean analysis host, run `python3 -I -S python-package-inventory.py /mnt/snapshot/path/to/site-packages` against a read-only mounted snapshot; use the clean host's interpreter, not the snapshot's. Do not run ordinary `python`, `pip`, or the LiteLLM CLI inside a suspected infected environment. Metadata/version matches identify candidates, not trustworthy integrity; compare artifact hashes with the vendor's indicators. If a malicious artifact executed, treat reachable secrets as exposed even when logs show no obvious exfiltration.
+Microsoft publishes [Defender detections, hunting queries and file hashes](https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/) for this incident. Inspect **historical** dependency manifests, CI install logs, registry digests, and deployment records for **1.107.0** and the malicious image digests in the incident guidance. A floating tag or today's package version cannot establish what ran during the incident. On a clean analysis host, run `python3 -I -S python-package-inventory.py /mnt/snapshot/path/to/site-packages` against a read-only mounted snapshot; use the clean host's interpreter, not the snapshot's. Do not run ordinary `python`, `pip`, or the LiteLLM CLI inside a suspected infected environment. Metadata/version matches identify candidates, not trustworthy integrity; compare artifact hashes with the vendor's indicators. If a malicious artifact executed, treat reachable secrets as exposed even when logs show no obvious exfiltration.
 
 PyPI, GHCR and Docker Hub have different removal windows, and **cached artifacts remain dangerous after removal**. The vendor excludes its private enterprise release, not every public image used by an enterprise. The attacker used a signed official pipeline: signing alone did not establish trustworthy source or content. From 1.106.3 (and its backports), [verify images with the vendor's **new cosign key**](details/litellm.md#verification) from commit `e82a3c6` and update pinned keys in admission policies.
 
 **Remediation:** Isolate affected environments and preserve evidence, then rebuild from verified clean artifacts and revoke reachable secrets at their issuers from a clean system. **Do not start with ordinary Python or `pip` in the suspected environment:** startup hooks can rerun malware. **1.106.2** was identified as a clean rollback target, **not a malware cleanup patch**; recovery must also cover detached loaders, poisoned caches, host/shared-mount access and already issued sessions.
 
-Sources: [canonical attack-chain postmortem](https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain), [vendor incident response](https://docs.litellm.ai/blog/security-incident-oct-21-2026), [researcher evidence and vendor follow-up](https://github.com/BerriAI/litellm/issues/47826).
+Sources: [canonical attack-chain postmortem](https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain), [vendor incident response](https://docs.litellm.ai/blog/security-incident-oct-21-2026), [researcher evidence and vendor follow-up](https://github.com/BerriAI/litellm/issues/47826), [Microsoft detections and hunting queries](https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/).
 
 <a name="railway"></a>
 
@@ -1658,13 +1923,20 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **HPE Aruba Networking AOS-8 / AOS-10 (controllers, conductors, gateways, APs)** | Upgrade to AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, 8.13.3.1+ or 8.10.0.24+ (other branches: move to a fixed supported branch); until then confine SSH/WebUI/API to a management VLAN and UDP 8211 (PAPI) to your own APs and controllers. [Guide](details/aruba-aos.md#remediation). |
+| **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a vendor kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix (AlmaLinux testing 4.18.0-553.177.2.el8_10 / 5.14.0-687.59.2.el9_8 / 6.12.0-211.68.2.el10_2, CloudLinux beta, or KernelCare EL10 live patch); no mainline, stable, RHEL, Debian or Ubuntu fix yet. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
+| **WordPress sites with Rank Math PRO** | If 3.0.123 was downloaded or updated 2026-10-15 20:02 – 2026-10-16 07:12 UTC and activated, treat the site as compromised: restore a pre-incident backup or follow the vendor's ordered cleanup, rotate every credential the site could reach, then install 3.0.124. Otherwise update to 3.0.124. Updating alone removes no persistence. [Guide](details/rankmath-pro.md#remediation). |
+| **FortiSIEM (on-premises)** | Upgrade 7.5.0 to 7.5.1+ (7.6 not affected); restrict TCP 27918 to FortiSIEM nodes; treat 7.0–7.4 as unknown (listed in the CVE record, not the advisory) and ask Fortinet; check `/opt/charting/redishb.sh` and `/opt/phoenix/bin/phLicenseTool` for unexpected changes. [Guide](details/fortisiem.md#remediation). |
+| **FortiSandbox / FortiSandbox PaaS** | Upgrade to 5.0.7+ or 4.4.10+ or move to 5.2 (PaaS 4.4 and all 4.2 units: migrate to a fixed release); until then restrict GUI access to a management network and review admin accounts and logins. [Guide](details/fortisandbox.md#remediation). |
+| **Adobe Commerce, Magento Open Source and Mage-OS** | Keep the StyleSmuggler hotfix (VULN-39341), apply Adobe's October 2026 isolated patch on the latest release of your line (Cloud: latest magento-cloud-patches; Mage-OS: 3.6.0; Open Source 2.4.6 and older: upgrade to 2.4.7-p10+), confirm `resolveDeferredDirectives` is in the deployed code, and restart PHP-FPM. [Guide](details/magento-blockstrap.md#remediation). |
+| **Python apps on SAP BTP using `sap-cloud-sdk` (multi-tenant)** | Upgrade `sap-cloud-sdk` to 0.45.2+, then restage or redeploy every instance. Until then, allowlist tenant values before every SDK call. Rotate Destination/DMS binding credentials if abuse is suspected. [Guide](details/sap-cloud-sdk-python.md#remediation). |
 | **Wasmtime embedders compiling untrusted Wasm** | Update the `wasmtime` crate to 36.0.19+, 48.0.7+, 49.0.4+ or 50.0.0+ (37–47 have no fix), rebuild and redeploy, recompile cached `.cwasm` modules, and check bundled copies in bindings and products. [Guide](details/wasmtime.md#remediation). |
 | **Laravel apps using a `token` driver guard** | Update `laravel/framework` to 12.68.0+ or 13.29.0+ (move off 11.x and older), reload PHP-FPM, Octane and queue workers, and rotate `api_token` values if abuse is suspected. [Guide](details/laravel.md#remediation). |
 | **Next.js (self-hosted or Vercel)** | Upgrade `next` to 16.4.1 (16.x) or 15.5.28 (15.x), confirm the resolved `sharp` is 0.35.5+, rebuild and redeploy every artifact; lines before 15.5 have no listed fix. [Guide](details/nextjs.md#remediation). |
 | **Drupal** | Update core to 11.4.10, 11.3.19 or 10.6.19 (or later) and Entity List to 3.0.10; until then uninstall `field_ui`; EOL branches get no fix. [Guide](details/drupal.md#remediation). |
 | **NGINX Open Source / NGINX Plus / F5 NGINX products** | Upgrade to 1.30.6 or 1.31.7+ (Plus 37.0.5.1 or 37.1.0.1; distro packages per vendor tracker) and restart; check `nginx -T` for alias+rewrite+$request_filename, regex map captures, aio+SSI and shared session cache without ticket keys. [Guide](details/nginx.md#remediation). |
 | **curl / libcurl (system, containers, bundled copies)** | Upgrade to curl 8.23.0 or a vendor-fixed package (e.g. Debian 8.14.1-2+deb13u7), rebuild images and binaries that bundle libcurl, restart; stopgap: force HTTP/1.1 for uploads. [Guide](details/curl.md#remediation). |
-| **Linux VM and sandbox hosts** | Boot a kernel with the CVE-2026-99999 fix (5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.57, 7.2.11, 7.3 or a vendor backport) plus the CVE-2026-74580 vhost fix; remove world access to /dev/vhost-*. [Guide](details/pwnescape.md#remediation). |
+| **Linux VM and sandbox hosts** | Boot a kernel with the CVE-2026-99999 fix (5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.57, 7.2.11, 7.3 or a vendor backport such as RHEL 9 `5.14.0-687.59.1.el9_8`, RHEL 8 `4.18.0-553.178.1.el8_10`, RHEL 10 `6.12.0-211.67.1.el10_2`) plus the CVE-2026-74580 vhost fix; remove world access to /dev/vhost-*. [Guide](details/pwnescape.md#remediation). |
 | **WordPress sites with Bricksforge** | Update to 3.1.8.10+ (prefer current 4.0.x), or deactivate the plugin or block its form_submit endpoint; then hunt for PHP files under wp-content/uploads, especially bricksforge/tmp and login_admin_*.php. [Guide](details/bricksforge.md#remediation). |
 | **Gitea with the built-in SSH server** | Upgrade to 28.0.0+ (the release after 1.27.3), or switch to OpenSSH or disable SSH until upgraded. [Guide](details/gitea.md#remediation). |
 | **Langflow** | Upgrade to 1.10.3+ (1.9.0 is not enough), set LANGFLOW_AUTO_LOGIN=false with a strong superuser password, and keep it off the internet. [Guide](details/langflow.md#remediation). |
@@ -1682,10 +1954,11 @@ flowchart TD
 | **Self-hosted Zammad** | Upgrade to 7.2.2+ (6.5.5 only as a stopgap for CVE-2026-102489; DEB/RPM installs need 7.2.2 for the root escalation), then run DIVD's log check. [Guide](details/zammad.md#remediation). |
 | **Tailscale SSH / headscale** | Review per-feature exposure; disable unnecessary SSH forwarding with the vendor's daemon setting and restart safely. Source fixes are merged; a complete fixed stable-release matrix was not established. |
 | **Microsoft Authenticator on Android** | Install **6.2606.4246 or a later supported release** in every profile; investigate and revoke exposed work-account tokens where compromise is suspected. |
-| **PHP / WordPress / Laravel / Drupal / Joomla** | PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport; disable session upload progress pending the follow-up fix. |
+| **PHP / WordPress / Laravel / Drupal / Joomla** | PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport; disable session upload progress pending the follow-up fix. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. [Guide](details/php2shell.md#remediation). |
 | **Node.js / Bun** | Node **22.23.4 / 24.22.1 / 26.12.1**; Bun **1.4.4**. Rebuild containers and restart workers. |
 | **Python** | `Brotli` **1.2.1**, `brotlicffi` **1.2.1.0**, Pillow **13.0.0** where installed. Pillow may require a Python upgrade. |
 | **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps. [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |
+| **Linux system `libbrotli` packages** | Debian bookworm `1.0.9-2+deb12u1` / trixie `1.1.0-2+deb13u1`; Amazon Linux 2023 `1.1.0-1.amzn2023.0.2`; others per vendor tracker (Ubuntu still needs-triage when reviewed). Backports keep old version strings; restart processes that load the library. [Guide](details/brotli.md#remediation). |
 | **Java / Scala / PHP / Ruby native Brotli** | Brotli4j **1.24.0** including native artifacts; PHP extension **0.21.1**; Ruby gem **0.9.1+**. Patch separate libcurl/native copies too. |
 | **FFmpeg / libjxl media workers** | Verify the loaded/bundled Brotli fix with your supplier; the libjxl source merge does not patch existing FFmpeg artifacts. Until verified, pause affected untrusted JPEG XL/metadata processing. [Guide](details/brotli.md#remediation). |
 | **ClickHouse** | Require a supplier build containing fixed Brotli; listed source backports are not verified released packages. Until patched, reject Brotli HTTP bodies before decoding and pause untrusted `.br`/Parquet ingestion. [Guide](details/brotli.md#inventory-by-language-and-deployment). |
@@ -1697,7 +1970,7 @@ flowchart TD
 | **KSMBD / Broadcom Wi-Fi** | Obtain an exact vendor fix status; restrict or disable the affected service, or replace unsupported hardware. |
 | **HTTP/3** | Upgrade the product to a build containing the fixed QPACK library (Bun **1.4.4** for Bun HTTP/3), or disable affected HTTP/3 support. |
 | **BeyondTrust Remote Support** | Apply **BT26-05-RS** and investigate vulnerable appliances exposed during the exploitation window. |
-| **All stacks making TLS connections** | [Refresh each effective trust store](details/emudhra.md#runtime-and-application-trust-store-inventory), including embedded copies and alternate chains; rebuild Go with **1.27.3 / 1.26.10+**. Java needs the **CVE-2026-114820** follow-up; CPython `ssl` fixes are **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**. |
+| **All stacks making TLS connections** | [Refresh each effective trust store](details/emudhra.md#runtime-and-application-trust-store-inventory), including embedded copies and alternate chains; rebuild Go with **1.27.3 / 1.26.10+**. Java needs the **CVE-2026-114820** follow-up; CPython `ssl` fixes are **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**; Bun **1.4.4** (rebuild compiled executables). |
 | **LiteLLM malicious artifacts** | [Isolate, rebuild and revoke reachable credentials](details/litellm.md#remediation); do not run ordinary Python startup hooks on suspected hosts. A downgrade alone is not recovery. |
 | **Railway secrets stored before October 21** | [Rotate at each issuer, update consumers and verify revocation](details/railway.md#remediation); include registry credentials and existing sessions. |
 

@@ -4,6 +4,29 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-26 11:30 EDT (UTC−04:00) — Seven new High/Critical items; PHP2Shell reaches PAN-OS; PwnEscape fixes ship
+
+**Partial review:** Every tracked item and the X timelines were rechecked. Not covered: the Wiz vulnerability database, NSA guidance listings, Microsoft's October Patch Tuesday and Oracle's October CPU beyond tracked items, and @IntCyberDigest before October 17. Several leads remain unassessed, including the Fortinet hardening releases with no advisories until November 10.
+
+- **New: seven High/Critical issues, none yet in CISA KEV:**
+  - [HPE Aruba AOS-8/AOS-10](black-october/black-october-2026.md#hpe-aruba-networking-aos-unauthenticated-rce-and-authentication-bypass-in-wireless-infrastructure): 72 CVEs, eight CVSS 10.0. Upgrade controllers, gateways and APs and [confine management and PAPI](black-october/details/aruba-aos.md#remediation).
+  - [FortiSIEM 7.5.0](black-october/details/fortisiem.md#remediation): unauthenticated RCE with a public exploit. Canada's Cyber Centre reports in-the-wild exploitation; Fortinet does not. Upgrade to 7.5.1, restrict TCP 27918 and [check the files the exploit overwrites](black-october/details/fortisiem.md#detection).
+  - [FortiSandbox](black-october/details/fortisandbox.md#remediation): unauthenticated GUI bypass. Use 5.0.7 / 4.4.10; treat 4.2 as affected.
+  - [Magento / Adobe Commerce BlockStrap](black-october/details/magento-blockstrap.md#remediation): CVSS 10.0 RCE. Apply the October isolated patch, keeping the StyleSmuggler hotfix; a plain Composer update does not fix it.
+  - [SAP Cloud SDK for Python](black-october/details/sap-cloud-sdk-python.md#remediation): use 0.45.2+. Multi-tenant BTP apps could leak OAuth client credentials; [the Python inventory script](black-october/details/sap-cloud-sdk-python.md#read-only-inventory) now reports `sap-cloud-sdk`.
+  - [Rank Math PRO 3.0.123](black-october/details/rankmath-pro.md#detection) shipped malware through official updates on 2026-10-15/16. Treat activated copies as compromised, rotate credentials and use the new offline indicator script.
+  - [Linux skb_zerocopy local root (ZDI-CAN-33367)](black-october/details/skb-zerocopy-lpe.md#remediation): public exploit, bypasses the Dirty Frag fix, no CVE. Few vendor kernels are fixed yet; restrict user namespaces or ESP modules on hosts running untrusted code.
+- **PHP2Shell:** PAN-OS and Panorama management interfaces embed affected PHP. [Install Palo Alto's per-branch hotfix or restrict management access](black-october/details/php2shell.md#remediation). NVD now scores the CVEs 9.8 and 8.1, and a [complete public exploit](black-october/details/php2shell.md#exploitation-status) exists.
+- **PwnEscape:** [Red Hat has shipped fixed kernels](black-october/details/pwnescape.md#detection) for RHEL 10, 9, 8 and 7 ELS. AlmaLinux, Debian and Oracle are also fixed. Ubuntu and RHEL `kernel-rt` are still pending.
+- **Brotli:** Debian and Amazon Linux system `libbrotli` packages are fixed and Red Hat rates the CVE Important (8.1). ClickHouse backports are merged but not yet released. [Restart processes that load the system library](black-october/details/brotli.md#remediation).
+- **eMudhra:** [Bun 1.4.4](black-october/details/emudhra.md#runtime-and-application-trust-store-inventory) blocks the keys; rebuild compiled Bun executables. CERT-In reports no confirmed malicious use. Python's CVE-2026-115557 record has a wrong affected range; follow the release versions.
+- **Other updates:**
+  - [AhsayCBS](black-october/details/ahsaycbs.md#detection): the CVE records now show the correct affected range, up to 10.3.4.44 / 9.15.2.69.
+  - [KSMBD](black-october/details/ksmbd.md#distinguish-ksmbd-from-unrelated-smb-services): Red Hat says supported RHEL is not affected.
+  - [LiteLLM](black-october/details/litellm.md#detection): Microsoft has published Defender detections and hunting queries.
+  - [WPSplinter](black-october/details/wpsplinter.md#durable-repair-or-replacement): firmware with only Broadcom's 2018 patch may still be exploitable.
+  - [Tailworm](black-october/details/tailworm.md#timeline): more SSH fixes are merged and a headscale fix is proposed, but there is still no stable release.
+
 ## 2026-10-26 10:18 EDT (UTC−04:00) — Ten High/Critical flaws in widely deployed developer and self-hosted software
 
 **Partial review:** Adds the ten candidates from the earlier discovery sweep. None is in CISA KEV (catalog 2026.10.23), but two already face exploitation attempts. X timelines and the Wiz vulnerability database were not reviewed for this update.

@@ -63,7 +63,10 @@ The bug is in the **host kernel's IPv4 networking stack**, not in KVM. Malformed
 | Researcher write-up (pwn.ai) | 2026-10-15; time not shown (site metadata: created 02:48:52 UTC) | The page shows no publication date. It was quoted on oss-security at 2026-10-15 15:25:54 −04:00. [pwn.ai][pwn] [oss-security][oss] |
 | CISA ADP SSVC | 2026-10-16 15:49 UTC | Exploitation: none. Automatable: no. Technical impact: total. [CNA ADP][cve] |
 | AlmaLinux testing kernels | 2026-10-16 20:17 UTC | Released to `almalinux-testing` ahead of RHEL. [AlmaLinux][alma] |
+| Debian, Oracle Linux fixes | 2026-10-16 | DSA-6568-1 (trixie `6.12.113-1`), DLA-4841-1 (bookworm `6.1.190-1`); Oracle UEK ELSA-2026-500397/500398/500399. [Debian][debian] [Oracle][oracle] |
 | Mainline 7.3 released | 2026-10-18 | 7.3 is the first mainline release with the fix. [kernel.org][kreleases] [CNA][cve] |
+| Red Hat fixed kernels | 2026-10-19 to 2026-10-24 (dates only) | RHEL 10 RHSA-2026:85321 (`kernel-6.12.0-211.67.1.el10_2`, 10-19); RHEL 9 RHSA-2026:86033 (`kernel-5.14.0-687.59.1.el9_8`, 10-20); RHEL 7 ELS RHSA-2026:88206 (10-22); RHEL 8 RHSA-2026:89083 (`kernel-4.18.0-553.178.1.el8_10`, 10-24); plus EUS/SAP streams. [Red Hat][rhapi] |
+| AlmaLinux production kernels | 2026-10-23 17:16 UTC | `kernel-4.18.0-553.177.1.el8_10`, `kernel-5.14.0-687.59.1.el9_8`, `kernel-6.12.0-211.67.1.el10_2`. AlmaLinux warns that `kernel-5.14.0-687.58.1.el9_8` is newer than its testing kernel but lacks the fix. [AlmaLinux][alma] |
 | Exploitation in the wild | None reported in the reviewed sources | The researcher expects public exploits within weeks. See the KEV note above about Red Hat's wording. [pwn.ai][pwn] [Red Hat][rh] |
 | CISA KEV addition | Not listed | Catalog 2026.10.23, checked 2026-10-26. [KEV][kev] |
 
@@ -80,6 +83,8 @@ The bug is in the **host kernel's IPv4 networking stack**, not in KVM. Malformed
 | CNA CVSS published | 2026-08-25; time/TZ unknown | 8.8 High. [Tencent][tencent] |
 | Technical write-up | 2026-10-12; time/TZ unknown | Tencent Zhuque Lab "Vghost" post. [Tencent][tencent] |
 | oss-security disclosure | 2026-10-14 10:16:22 +08:00 | Includes mitigations and a PoC link. [oss-security][oss-vg] |
+| Red Hat fixed kernels | 2026-10-19 to 2026-10-24 (dates only) | RHEL 10 RHSA-2026:85321 (`kernel-6.12.0-211.67.1.el10_2`, 10-19); RHEL 9 RHSA-2026:86033 (`kernel-5.14.0-687.59.1.el9_8`, 10-20); RHEL 7 ELS RHSA-2026:88206 (10-22); RHEL 8 RHSA-2026:89083 (`kernel-4.18.0-553.178.1.el8_10`, 10-24); plus EUS/SAP streams. [Red Hat][rhapi] |
+| AlmaLinux production kernels | 2026-10-23 17:16 UTC | `kernel-4.18.0-553.177.1.el8_10`, `kernel-5.14.0-687.59.1.el9_8`, `kernel-6.12.0-211.67.1.el10_2`. AlmaLinux warns that `kernel-5.14.0-687.58.1.el9_8` is newer than its testing kernel but lacks the fix. [AlmaLinux][alma] |
 | Exploitation in the wild | None reported | CISA ADP SSVC "none" (2026-10-16). [CNA ADP][cve-vg] |
 | CISA KEV addition | Not listed | Catalog 2026.10.23, checked 2026-10-26. [KEV][kev] |
 
@@ -101,9 +106,11 @@ Upstream fixed versions (CNA): **5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113,
 
 - **No upstream stable fix is listed for other series**, including 5.4, 7.0 and 7.1. Use a distribution backport or move to a fixed series.
 - **Distribution kernels keep older base versions.** For example, RHEL 9 reports 5.14.0-*, and Ubuntu 24.04 reports 6.8.0-*. Their `uname -r` cannot be compared with upstream numbers. Status when reviewed:
-  - **Red Hat:** all tracked RHEL streams affected; fixes are "being pursued". [Red Hat][rh]
+  - **Red Hat:** fixed kernels shipped for RHEL 10 (`kernel-6.12.0-211.67.1.el10_2`), RHEL 9 (`kernel-5.14.0-687.59.1.el9_8`), RHEL 8 (`kernel-4.18.0-553.178.1.el8_10`), RHEL 7 ELS (`kernel-3.10.0-1160.167.2.el7`) and listed EUS/SAP streams, 2026-10-19 to 2026-10-24. RHEL 6, RHEL 8/9 `kernel-rt` and OpenShift RHCOS were still listed as affected; the statement text still says fixes are "being pursued". [Red Hat][rhapi]
   - **Ubuntu:** releases show "Vulnerable" or "work in progress" (page updated 2026-10-23). [Ubuntu][ubuntu]
-  - **AlmaLinux:** testing kernels `kernel-4.18.0-553.174.2.el8_10`, `kernel-5.14.0-687.57.2.el9_8` and `kernel-6.12.0-211.66.2.el10_2`. [AlmaLinux][alma]
+  - **AlmaLinux:** production kernels `kernel-4.18.0-553.177.1.el8_10`, `kernel-5.14.0-687.59.1.el9_8` and `kernel-6.12.0-211.67.1.el10_2` (2026-10-23). `kernel-5.14.0-687.58.1.el9_8` does **not** contain the fix. [AlmaLinux][alma]
+  - **Debian:** bookworm-security `6.1.190-1` (DLA-4841-1), bookworm `linux-6.12` `6.12.113-1~deb12u1` (DLA-4850-1), trixie-security `6.12.113-1` (DSA-6568-1). [Debian][debian]
+  - **Oracle Linux UEK:** ELSA-2026-500397, -500398 and -500399. [Oracle][oracle]
   - **Amazon Linux:** advisories ALAS2-2026-3962, ALAS2KERNEL-5.4-2026-131, ALAS2KERNEL-5.10-2026-133, ALAS2KERNEL-5.15-2026-117, ALAS2023-2026-3197, ALAS2023-2026-3196 and ALAS2023-2026-3192. [Amazon Linux][alas]
 - **`uname -r` alone does not prove the fix is present.** It shows the running build string, not which patches the vendor backported. Check the vendor's advisory or package changelog for this CVE or the fix title `ipv4: validate checksum_start before completing checksum`. Also confirm the host has **rebooted** into that kernel.
 
@@ -171,7 +178,7 @@ Also review container runtime configuration for vhost devices passed into contai
 ## Remediation
 
 1. **Patch virtualization and sandbox hosts first.** Install a kernel with the fix: an upstream release from the list above, or your vendor's backport. Then **reboot into it**. Migrate or drain guests before rebooting. AlmaLinux points out that a reboot interrupts every guest on the host. [AlmaLinux][alma]
-2. **If your vendor has not shipped a fix,** as with RHEL and Ubuntu when reviewed, limit exposure until one is available:
+2. **If your vendor has not shipped a fix,** as with Ubuntu and RHEL `kernel-rt` when reviewed, limit exposure until one is available:
    - Do not place untrusted tenants on unpatched hosts.
    - Prefer hosts already running a fixed kernel for untrusted workloads.
    - Restrict who can create TUN/TAP devices or packet sockets on multi-user systems.
@@ -215,7 +222,7 @@ Also review container runtime configuration for vhost devices passed into contai
 - [pwn.ai PwnEscape write-up][pwn]: discovery, report dates, lab-only escape, fix history.
 - [Vercel challenge findings (2026-10-14)][vercel]: production leak, lab crash and code execution.
 - [oss-security 2026-10-15][oss]; [researcher's netdev v4 patch series][netdev-v4]; [upstream fix `6785011f8b16`][fix].
-- Vendor trackers: [Red Hat][rh], [Ubuntu][ubuntu], [Amazon Linux][alas], [AlmaLinux][alma].
+- Vendor trackers: [Red Hat][rh] ([security data API][rhapi]), [Ubuntu][ubuntu], [Amazon Linux][alas], [AlmaLinux][alma], [Debian][debian], [Oracle Linux][oracle].
 - [kernel.org releases][kreleases] and [stable ChangeLog files][korg] (upload times).
 - Vghost: [kernel.org CNA record CVE-2026-74580][cve-vg], [NVD][nvd-vg], [Tencent Zhuque Lab write-up][tencent], [oss-security 2026-10-14][oss-vg], [Linux CVE announcement][lore-vg].
 
@@ -231,6 +238,9 @@ Also review container runtime configuration for vhost devices passed into contai
 [ubuntu]: https://ubuntu.com/security/CVE-2026-99999
 [alas]: https://explore.alas.aws.amazon.com/CVE-2026-99999.html
 [alma]: https://almalinux.org/blog/2026-10-16-pwnescape-cve-2026-99999
+[rhapi]: https://access.redhat.com/hydra/rest/securitydata/cve/CVE-2026-99999.json
+[debian]: https://security-tracker.debian.org/tracker/CVE-2026-99999
+[oracle]: https://linux.oracle.com/cve/CVE-2026-99999.html
 [kreleases]: https://www.kernel.org/releases.json
 [korg]: https://cdn.kernel.org/pub/linux/kernel/
 [cve-vg]: https://cveawg.mitre.org/api/cve/CVE-2026-74580
