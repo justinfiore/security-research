@@ -4,7 +4,7 @@
 
 [Main Brotli summary and patch matrix](../black-october-2026.md#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability) · [Changelog](../../CHANGELOG.md)
 
-**[CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497)** is one cross-stack Brotli decoder bug with two nicknames. Node rates it High; the Google/CNA CVSS 4.0 rating is **9.2 Critical**. Malformed compressed data can corrupt process memory, causing disclosure, crashes or RCE. It is not an HTTP/2-specific defect and does not require a public inbound HTTP endpoint.
+**[CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497)** is one cross-stack Brotli decoder bug, also called **Brotli2Shell** in [JFrog's 2026-10-25 research](https://research.jfrog.com/post/brotli2shell-beyond-node2shell-and-http2shell/), alongside HTTP2Shell and Node2Shell. Node rates it High; the Google/CNA CVSS 4.0 rating is **9.2 Critical**. Malformed compressed data can corrupt process memory, causing disclosure, crashes or RCE. It is not an HTTP/2-specific defect and does not require a public inbound HTTP endpoint. File and buffer processing also matter: the new research reaches FFmpeg through libjxl/JPEG XL metadata, ClickHouse through HTTP bodies, and Apache Arrow/pyarrow through Brotli decoding. The demonstrated outcomes differ; do not label every stack a demonstrated RCE.
 
 **CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers the Brotli CVE and the three Node.js CVEs in this guide; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -14,6 +14,7 @@
 - [Detection](#detection)
   - [Map every decoder and input source](#map-every-decoder-and-input-source)
   - [Inventory by language and deployment](#inventory-by-language-and-deployment)
+  - [Official researcher detection tools](#official-researcher-detection-tools)
   - [Response-header inventory script](#response-header-inventory-script)
   - [Operational signals and evidence limits](#operational-signals-and-evidence-limits)
   - [Other Node DNS and TLS issues](#other-node-dns-and-tls-issues)
@@ -40,13 +41,19 @@
 | Ruby binding fix | 2026-10-24, time/TZ unknown: [maintainer confirms brotli 0.9.1](https://github.com/miyucy/brotli/issues/64) bundles 1.2.1 and rejects unpatched system libraries |
 | Java binding advisory | 2026-10-24, time/TZ unknown: [Brotli4j advisory](https://github.com/hyperxpro/Brotli4j/security/advisories/GHSA-x524-jrqf-vwq6) identifies 1.24.0 as fixed; advisory publication is not an exact artifact-availability timestamp |
 | PHP extension fix | 2026-10-24 23:49:20 UTC: [php-ext-brotli 0.21.1](https://github.com/kjdev/php-ext-brotli/releases/tag/0.21.1) bundles 1.2.1 |
-| .NET fixes and advisory | 2026-10-25, time/TZ unknown: [Microsoft advisory](https://github.com/dotnet/announcements/issues/494), runtimes 8.0.33 / 9.0.22 / 10.0.14 and preview 11.0.0-rc.3.26522.148. Supersedes earlier reports that no fixed .NET release was established |
+| .NET advisory publication | 2026-10-25 19:06:12 UTC: [Microsoft advisory](https://github.com/dotnet/announcements/issues/494) published, identifying fixed runtimes 8.0.33 / 9.0.22 / 10.0.14 and preview 11.0.0-rc.3.26522.148. This is the advisory issue's creation time, not the first availability of every artifact; supersedes earlier reports that no fixed .NET release was established |
+| Arrow upstream report | 2026-10-23 23:40:01 UTC: [issue #55166](https://github.com/apache/arrow/issues/55166) reports bundled Brotli 1.0.9 and file-processing exposure; this is a public issue timestamp, not JFrog's private discovery date |
+| libjxl source fix | 2026-10-24 17:09:23 UTC: [PR #5062](https://github.com/libjxl/libjxl/pull/5062) merged a Brotli 1.2.1 dependency bump. A source merge is not an FFmpeg or libjxl binary release |
+| ClickHouse source fix | 2026-10-25 11:58:00 UTC: [PR #127419](https://github.com/ClickHouse/ClickHouse/pull/127419) merged the Brotli 1.2.1 bump. Its current version information names 26.11.1.749-master and backports 26.10.3.6 / 26.9.26.18 / 26.8.35.17 / 26.3.61.13; these are not evidence of published release artifacts |
+| JFrog cross-stack demonstrations and detector | 2026-10-25, time/TZ unknown: [Brotli2Shell research](https://research.jfrog.com/post/brotli2shell-beyond-node2shell-and-http2shell/) reports FFmpeg pointer corruption/crash, ClickHouse crash, .NET native crash and pyarrow infinite loop. Exact private discovery/report dates for these demonstrations are not established |
+| .NET rollout confirmation / public-branch tracking | 2026-10-25 17:12:45 UTC: [Microsoft maintainer announces rollout](https://github.com/dotnet/runtime/issues/136422#issuecomment-6400646760); at 19:34:16 UTC the [issue was reopened for public-branch ports](https://github.com/dotnet/runtime/issues/136422#issuecomment-6402196766), not because released fixes were withdrawn |
+| Downstream release-status recheck | 2026-10-26: [ClickHouse releases](https://github.com/ClickHouse/ClickHouse/releases) do not yet list the four named backport releases; latest published stable is 26.10.2.103 (2026-10-24 04:17:23 UTC). [Arrow issue #55166](https://github.com/apache/arrow/issues/55166) and [PR #55167](https://github.com/apache/arrow/pull/55167) remain open; latest [Arrow release](https://github.com/apache/arrow/releases) is 26.0.0 (2026-10-09 07:37:33 UTC). Latest [libjxl release](https://github.com/libjxl/libjxl/releases) is 0.12.0 (2026-07-01 21:16:30 UTC), preceding its source fix. Fixed downstream release availability is not established by these records; check the deployed supplier's builds/backports separately |
 
 ## Detection
 
 ### Map every decoder and input source
 
-Inventory runtime-native libraries, Python wheels, Envoy/Istio proxies and other bundled C Brotli consumers. Record the deployed image digest and package/build, which party supplies it, and where it decodes untrusted data.
+Inventory runtime-native libraries, Python wheels, Envoy/Istio proxies and other bundled C Brotli consumers, including media workers and database/analytics jobs. Record the deployed image digest and package/build, which party supplies it, and where it decodes untrusted data.
 
 | Path | What to inspect |
 |---|---|
@@ -54,6 +61,7 @@ Inventory runtime-native libraries, Python wheels, Envoy/Istio proxies and other
 | Outbound response | `fetch`/HTTP clients, crawlers, preview generators, webhooks and import workers that automatically decode an attacker-controlled response |
 | Direct library call | `node:zlib` Brotli decompression or native/Python decode calls accepting uploaded/fetched bytes |
 | Proxy/service mesh | Effective request **and response** decompressor filters; the app runtime and proxy are separate patch targets |
+| Embedded file data / analytical buffers | FFmpeg → libjxl → JPEG XL `brob` metadata → Brotli; Arrow/pyarrow Parquet pages or direct buffer decompression; ClickHouse `.br` files and Parquet as well as HTTP. A file's outer format or HTTP header need not say Brotli |
 
 From `black-october/`, run only the checks relevant to the deployed environment:
 
@@ -80,8 +88,22 @@ Run local inventory only in trusted environments; inspect suspected compromised 
 | Go | `go version -m /path/to/binary`, module graph/SBOM and cgo linkage. Brotli is not in the standard library | [andybalholm/brotli **1.2.7**](https://github.com/andybalholm/brotli/issues/82) includes the analogous invalid-stream fix; this does not establish native C RCE in pure Go. Verify the underlying library for cgo and rebuild binaries |
 | Rust | `Cargo.lock`, `cargo tree -e features`, native/FFI dependencies and embedded decoder sources; Brotli is not in the standard library | Patch the actual native implementation or follow the pure-Rust project's advisory. No universal Rust crate fixed version is established here; memory-safety and algorithmic findings must not be conflated |
 | curl/libcurl, appliances, proxies | `curl --version`, deployed SBOM and vendor build records; record dynamic versus static/bundled libraries | Google library fixes **1.0.10 / 1.1.1 / 1.2.1** or a verified backport. Update/rebuild the owning package. The curl CLI can differ from libcurl loaded by an app |
+| FFmpeg / libjxl / JPEG XL | Inspect deployed FFmpeg build configuration and decoder list, libjxl linkage and its actual Brotli dependency; include thumbnailers, transcoders and metadata extraction jobs. Do not open untrusted media for inventory | [libjxl PR #5062](https://github.com/libjxl/libjxl/pull/5062) updates bundled Brotli to **1.2.1**; libjxl can also [use system Brotli](https://github.com/libjxl/libjxl/blob/ddfd9a18fa2156b064d08a319d741d00189dc250/third_party/CMakeLists.txt#L49-L71). No universal fixed FFmpeg/libjxl package version is established here: require supplier evidence for the loaded/linked decoder, not merely a newer FFmpeg executable |
+| ClickHouse | Record server version/build and image digest, HTTP ingress that accepts `Content-Encoding: br`, and `.br`/Parquet ingestion from files or object storage. Inspect each server, not just client packages | [PR #127419](https://github.com/ClickHouse/ClickHouse/pull/127419) replaces bundled 1.2.0 with **1.2.1**. Listed backport versions are **26.10.3.6 / 26.9.26.18 / 26.8.35.17 / 26.3.61.13**, but publication was not established on 2026-10-26; verify an available supplier artifact contains the fix before recommending it as released |
+| Apache Arrow / pyarrow | Inventory pyarrow wheel metadata and Arrow C++ libraries independently of the Python `Brotli`/`brotlicffi` packages; inspect Brotli-compressed Parquet, direct buffer APIs and bundled-versus-system dependency records | [Issue #55166](https://github.com/apache/arrow/issues/55166) identifies bundled **1.0.9**; [PR #55167](https://github.com/apache/arrow/pull/55167) remains open on 2026-10-26. No fixed Arrow/pyarrow release is established here. Require a build using fixed Brotli or a verified backport; upgrading the separate Python Brotli binding does not replace Arrow's bundled native copy |
 
 Use supported runtime branches; an old runtime is not a mitigation. In particular, older Node lines can contain the affected decoder, even when omitted from supported-release advisories. Vendor/distribution support and backports must be checked separately; a compatible extension fix does not restore support to an EOL interpreter. Scala.js/Native deployments inherit their actual JavaScript/native decoder risks, not automatically the JVM conclusions.
+
+### Official researcher detection tools
+
+Prefer these researcher-maintained tools over a new local decoder scanner. Review their source, requirements and scope before using them on authorized offline artifacts from a clean analysis host; none was executed for this guide update. Do not run exploit fixtures or decode suspect files to validate a finding.
+
+| Tool / official guidance | What it contributes | Prerequisites and evidence limits |
+|---|---|---|
+| [JFrog Brotli2Shell contextual scanner](https://github.com/jfrog/vulnerability_scanners/tree/main/brotli2shell_cve_2026_111497) | Potential decoder API usage in JavaScript and Python, Brotli CLI calls and ELF decoder symbols; includes high-level HTTP clients and middleware | Python **3.10+**; JavaScript parsing also requires `tree-sitter` and `tree-sitter-javascript`. Matches are not data-flow analysis or patch checks. Third-party directories are skipped unless explicitly targeted; `.mjs`, `.cjs`, TypeScript, PE/Mach-O and stripped static ELF code are coverage gaps. Review skipped files and JSON evidence; `applicable` is a candidate usage path, not confirmed exploitation, and `not applicable` is not a clean bill of health |
+| [Trail of Bits Brotli Checker](https://github.com/trailofbits/brotli-checker) and [scanner guide](https://github.com/trailofbits/brotli-checker/blob/main/docs/usage.md) | Per-copy source fingerprints and supported ELF binary-code matching across dependencies, application packages and unpacked containers; optional caller investigation | Python **3.12–3.15**; standalone scanner uses the standard library, optional Trailmark discovery requires `uv`. The scanner reads files without executing application code or sending network probes. Build/format coverage and resource limits still leave gaps. Its advisory snapshot is dated **2026-10-23**: verify current vendor backports independently |
+
+Keep **component presence → vulnerable build → untrusted-input reachability → observed failure → confirmed compromise** separate. The existing package-metadata and response-header scripts do not cover these native/file-processing paths. Scanner output supplements supplier build evidence; neither a match nor an empty result settles all five questions.
 
 ### Response-header inventory script
 
@@ -113,6 +135,17 @@ Redirects are off. Opt-in `--follow-redirects` permits five hops and can contact
 
 Investigate decompression-associated crashes, unusual child processes, unexpected outbound traffic or modified service files. Correlate request/job IDs with the remote data source and EDR/coredump evidence. A malformed stream rejection can be benign and a successful compromise need not produce a logged error. Do not fetch a suspected malicious response again on production just to reproduce it.
 
+[JFrog's 2026-10-25 demonstrations](https://research.jfrog.com/post/brotli2shell-beyond-node2shell-and-http2shell/) establish the following **tested outcomes**, not universal exploitability or in-the-wild exploitation:
+
+| Consumer | Demonstrated result | Investigation / limit |
+|---|---|---|
+| FFmpeg → libjxl | Crafted JPEG XL compressed metadata corrupts a pointer and crashes during decoder cleanup | The article uses “instruction-pointer control,” but its detailed evidence shows attacker-controlled pointer corruption and a segmentation fault, **not a complete FFmpeg RCE exploit**. Correlate media-job failures and native decoder/cleanup stacks; do not generalize to builds without this decoder path |
+| ClickHouse | One crafted **23 MB** HTTP body with `Content-Encoding: br` crashes the tested server during `BrotliReadBuffer` destruction/state cleanup, interrupting in-flight queries | This is a remotely triggerable DoS demonstration, not demonstrated ClickHouse RCE. Check ingress/job logs and server restarts. The tested size is not a safe lower bound for an input-size rule |
+| .NET | A local console application's two-stage decode triggers native `SIGSEGV`, terminating the process rather than raising an ordinary managed exception | Network exposure still requires enabled request/client decompression or explicit APIs accepting attacker input. The open [runtime tracking issue](https://github.com/dotnet/runtime/issues/136422) tracks public-branch ports; it does not override Microsoft's released fixes |
+| Apache Arrow / pyarrow | A **534-byte** input causes an indefinite CPU-consuming loop; Brotli **1.2.1** rejects the same input in under a second in JFrog's test | Investigate stuck data-processing jobs, sustained worker CPU and decompressor stacks even without a crash. This establishes DoS, not Arrow RCE. The small input also shows why compressed-input size limits alone are insufficient |
+
+These are diagnostic patterns, not unique IOCs. No crash, low CPU, an absent shell, or a passing HTTP-header inventory excludes memory disclosure or another reachable decoder. Preserve suspect inputs without replaying them and investigate from clean systems.
+
 ### Other Node DNS and TLS issues
 
 The same Node update fixes **[CVE-2026-105482](https://www.cve.org/CVERecord?id=CVE-2026-105482)** (DNS NUL truncation), **[CVE-2026-105483](https://www.cve.org/CVERecord?id=CVE-2026-105483)** (fullwidth-digit IP identity validation, Node 24/26), and **[CVE-2026-106069](https://www.cve.org/CVERecord?id=CVE-2026-106069)** (resolver/validator disagreement over noncanonical IPs). Trace user-controlled hosts into DNS allowlists and TLS connections independently of Brotli. Keep canonicalized validation and the actual destination consistent; do not disable TLS certificate verification as a workaround. Their public announcement/fix date is 2026-10-21; private discovery dates are not established here.
@@ -125,6 +158,12 @@ The same Node update fixes **[CVE-2026-105482](https://www.cve.org/CVERecord?id=
 3. Native consumers: obtain a build containing the fix from the supplier. The C library has branch fixes **1.0.10 / 1.1.1 / 1.2.1**. Do not use a simple cross-branch “version greater than 1.0.10” test.
 4. Envoy/Istio: update to a supplier-supported release containing the fix; use the [main patch matrix](../black-october-2026.md#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability) and vendor release evidence. Reconcile control-plane and data-plane versions; roll the proxy workload itself.
 5. If delayed, disable the vulnerable decoding path or stop processing untrusted Brotli data. Removing `br` from `Accept-Encoding` alone is inadequate: a malicious peer can send it anyway. Verify whether your client exposes undecoded bytes before relying on a header check; automatic decoding may happen first. Limit exposed input sources where disabling decoding is impossible.
+
+For the newly documented native consumers:
+
+- **FFmpeg/libjxl:** obtain a supplier build whose actual Brotli dependency includes the fix. A libjxl source bump does not update existing FFmpeg packages or static worker images. If unavailable, pause untrusted JPEG XL/media metadata processing or disable the affected path before parsing; filenames, MIME allowlists and outer HTTP encoding alone cannot identify embedded Brotli. Do not attempt to “sanitize” files by feeding them through the vulnerable parser.
+- **ClickHouse:** track [the merged fix and named backports](https://github.com/ClickHouse/ClickHouse/pull/127419) against [published releases](https://github.com/ClickHouse/ClickHouse/releases) and your supplier's build evidence. JFrog's “no patched release” statement describes publication on 2026-10-25; the independent 2026-10-26 check above still does not establish released backport artifacts. Until a fixed build is deployed, reject Brotli HTTP bodies before any decoder and restrict direct origins, **and** pause untrusted `.br`/Parquet ingestion; HTTP-only controls do not cover files.
+- **Arrow/pyarrow:** follow [issue #55166](https://github.com/apache/arrow/issues/55166) and [dependency-update PR #55167](https://github.com/apache/arrow/pull/55167). Use a supplier-verified build linked to patched Brotli or a verified backport; do not invent a fixed wheel version or substitute a `Brotli` package upgrade. If no verified build is available, pause affected untrusted file/buffer processing. Resource/time limits can reduce DoS impact but do not fix the native memory-corruption defect.
 
 **Envoy 1.36 and Istio 1.29 are unsupported:** the listed CVE backport does not restore general support. Prefer supported branches. The [cross-stack guidance](https://patchtheplanet.org/brotli) covers Express/Next.js, Python raw-response handling and proxy controls, plus embedded Electron/native clients and font/file decoding. Inspect those consumers even when no public web server is present.
 
@@ -151,6 +190,7 @@ After patching, rebuild/redeploy every self-contained, statically linked or Nati
 
 - Re-run inventory inside each running replica; retain supplier evidence for custom builds and backports.
 - With **benign fixtures**, test inbound compressed requests, outbound compressed responses and the direct decode paths your service actually uses. Include uncompressed controls so a broken middleware chain is not mistaken for successful mitigation.
+- Include benign JPEG XL metadata, Brotli-compressed Parquet and direct buffer-decode controls where used; verify the actual FFmpeg/libjxl, ClickHouse or Arrow artifact contains the fix. Test deliberately disabled paths reject inputs before decoding, and normal permitted media/data jobs still complete. Do not replay JFrog's crash/hang inputs.
 - Confirm decompression is disabled where intended and the application handles unsupported encoding safely; verify no automatic client/proxy decode occurs before the control.
 - Verify the other Node DNS/TLS regression fixes through the vendor release, not by merely observing Brotli works. Review worker/proxy rollouts for stale images.
 - In a controlled environment, exercise benign `br`, `BR`, stacked and duplicate encoding headers, malformed values and permitted uncompressed/gzip controls. Confirm **where** rejection occurred using gateway/application logs; a 415 alone does not prove the decoder was bypassed.
@@ -171,5 +211,12 @@ Isolate suspicious workers, preserve logs and snapshots, and map files, tokens a
 - [PHP extension 0.21.1 release](https://github.com/kjdev/php-ext-brotli/releases/tag/0.21.1)
 - [Ruby maintainer fix confirmation](https://github.com/miyucy/brotli/issues/64)
 - [Imperva exploit research and test limits](https://www.imperva.com/blog/node2shell-from-brotli-data-to-remote-code-execution/)
+- [JFrog Brotli2Shell research: native/file paths and demonstrated-impact limits](https://research.jfrog.com/post/brotli2shell-beyond-node2shell-and-http2shell/)
+- [JFrog official contextual scanner and limitations](https://github.com/jfrog/vulnerability_scanners/tree/main/brotli2shell_cve_2026_111497)
+- [Trail of Bits official Brotli Checker and guidance](https://github.com/trailofbits/brotli-checker)
+- [ClickHouse fix/backport tracking](https://github.com/ClickHouse/ClickHouse/pull/127419) and [release records](https://github.com/ClickHouse/ClickHouse/releases)
+- [libjxl Brotli dependency update](https://github.com/libjxl/libjxl/pull/5062) and [release records](https://github.com/libjxl/libjxl/releases)
+- [Apache Arrow bundled-decoder issue](https://github.com/apache/arrow/issues/55166), [proposed dependency update](https://github.com/apache/arrow/pull/55167) and [release records](https://github.com/apache/arrow/releases)
+- [.NET rollout and public-branch tracking](https://github.com/dotnet/runtime/issues/136422)
 - [Cross-ecosystem patch reporting](https://thehackernews.com/2026/10/brotli-decoder-flaw-behind-nodejs-rce.html)
 - [Cross-stack mitigations and support status](https://patchtheplanet.org/brotli)

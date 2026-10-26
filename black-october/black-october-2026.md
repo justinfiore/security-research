@@ -25,37 +25,37 @@ This report covers the major disclosures most relevant to developers and operato
 - [Bricksforge — exploited unauthenticated file upload to RCE](#bricksforge-exploited-unauthenticated-file-upload-to-rce-cve-2026-85097)
 - [Gitea — built-in SSH server authentication bypass (CVE-2026-103059)](#gitea-built-in-ssh-server-authentication-bypass-cve-2026-103059)
 - [Langflow — MCP stdio RCE with honeypot exploitation attempts (CVE-2026-105740, CVE-2026-105697)](#langflow-authenticated-rce-via-mcp-stdio-server-configuration-cve-2026-105740-and-cve-2026-105697)
-- [VeloCloud Orchestrator — authenticated SQL injection](#velocloud-orchestrator-authenticated-sql-injection-to-superuser-operator-cve-2026-114625)
-- [Siemens Software Center — exploited DLL side-loading](#siemens-software-center-dll-side-loading-exploited-in-clickfix-campaign-cve-2026-110936)
-- [PAN-OS — authenticated management interface RCE (CVE-2026-0322)](#pan-os-authenticated-management-interface-rce-cve-2026-0322)
-- [Cisco Secure Email Gateway — exploited AMP path traversal (CVE-2026-76519)](#cisco-secure-email-gateway-amp-attachment-path-traversal-cve-2026-76519)
-- [SiteGuard Server Edition — root command injection](#siteguard-server-edition-root-command-injection-via-statistics-feature-cve-2026-106931)
-- [Windows Shell — exploited MOTW bypass (CVE-2026-96951)](#windows-shell-mark-of-the-web-bypass-zero-day-cve-2026-96951)
-- [Ivanti Connect Secure — authentication bypass to command execution](#ivanti-connect-secure-authentication-bypass-to-command-execution-cve-2026-104935)
-- [Atlassian Data Center — unauthenticated web-root file read](#atlassian-data-center-unauthenticated-web-root-file-read-cve-2026-21589)
-- [AhsayCBS — exploited auth bypass and command injection (CVE-2026-105133, CVE-2026-105134)](#ahsaycbs-authentication-bypass-and-command-injection-chain-cve-2026-105133-and-cve-2026-105134)
-- [NetScaler — SAML memory overflow DoS](#netscaler-saml-memory-overflow-denial-of-service-cve-2026-88779)
-- [FortiMail — unauthenticated file write](#fortimail-unauthenticated-file-write-cve-2026-104286)
-- [Zammad — session hijack RCE and root escalation chain](#zammad-session-hijack-rce-and-root-escalation-chain-cve-2026-102489-and-cve-2026-102490)
-- [Tailworm — Tailscale SSH and related findings under review](#tailworm-tailscale-ssh-and-related-findings-under-review)
-- [AuthMask — Microsoft Authenticator for Android](#authmask-microsoft-authenticator-for-android-token-theft)
-- [PHP2Shell](#1-php2shell-unauthenticated-execution-below-your-application)
+- [VeloCloud Orchestrator: authenticated SQL injection](#velocloud-orchestrator-authenticated-sql-injection-to-superuser-operator)
+- [Siemens Software Center: exploited DLL side-loading](#siemens-software-center-dll-side-loading-exploited-in-clickfix-campaign)
+- [PAN-OS: authenticated management interface RCE](#pan-os-authenticated-management-interface-rce)
+- [Cisco Secure Email Gateway: AMP attachment path traversal](#cisco-secure-email-gateway-amp-attachment-path-traversal)
+- [SiteGuard Server Edition: root command injection](#siteguard-server-edition-root-command-injection-via-statistics-feature)
+- [Windows Shell: Mark of the Web bypass](#windows-shell-mark-of-the-web-bypass-zero-day)
+- [Ivanti Connect Secure: authentication bypass to command execution](#ivanti-connect-secure-authentication-bypass-to-command-execution)
+- [Atlassian Data Center: unauthenticated web-root file read](#atlassian-data-center-unauthenticated-web-root-file-read)
+- [AhsayCBS: authentication bypass and command injection chain](#ahsaycbs-authentication-bypass-and-command-injection-chain)
+- [NetScaler: SAML memory overflow denial of service](#netscaler-saml-memory-overflow-denial-of-service)
+- [FortiMail: unauthenticated file write](#fortimail-unauthenticated-file-write)
+- [Zammad: session hijack RCE and root escalation chain](#zammad-session-hijack-rce-and-root-escalation-chain)
+- [Tailscale / headscale: Tailworm - SSH findings under review](#tailscale--headscale-tailworm---ssh-and-related-findings-under-review)
+- [Microsoft Authenticator for Android: AuthMask - token theft](#microsoft-authenticator-for-android-authmask---token-theft)
+- [PHP: PHP2Shell - unauthenticated execution](#php-php2shell---unauthenticated-execution-below-your-application)
   - [The October 23 follow-up](#the-october-23-follow-up-matters)
-- [HTTP2Shell / Node2Shell — Brotli](#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability)
+- [Brotli consumers: HTTP2Shell / Node2Shell / Brotli2Shell - cross-stack decoder corruption](#brotli-consumers-nodejs-bun-python-net-ffmpeg-clickhouse-arrow-and-others-http2shell--node2shell--brotli2shell---cross-stack-decoder-corruption)
   - [Other high-severity Node.js fixes](#other-high-severity-nodejs-fixes-in-the-same-release)
-- [GitLab and Ruby](#3-gitlab-and-ruby-regex-compilation-becomes-code-execution)
+- [GitLab and Ruby: regex compilation becomes code execution](#gitlab-and-ruby-regex-compilation-becomes-code-execution)
   - [GitLab identity vulnerabilities](#related-gitlab-identity-vulnerabilities)
   - [Ruby applications](#ruby-applications-need-their-own-update)
-- [Pillow](#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution)
-- [Plex2Shell](#5-plex2shell-a-home-server-compromise-chain-is-being-exploited)
-- [Nextcloud’s built-in Collabora CODE server](#6-nextclouds-built-in-collabora-code-server-unauthenticated-command-injection)
-- [Linux KSMBD](#7-linux-ksmbd-serious-kernel-level-reports-but-not-every-linux-server)
-- [WPSplinter](#8-wpsplinter-nearby-attackers-can-compromise-vulnerable-routers)
-- [Header Accordions — HTTP/3](#9-header-accordions-http3-compression-becomes-resource-exhaustion)
-- [BeyondTrust Remote Support](#10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability)
-- [eMudhra / emSign — certificate-authority compromise](#emudhra--emsign)
-- [LiteLLM — malicious release and credential theft](#litellm)
-- [Railway — exposed environment secrets](#railway)
+- [Pillow: image-processing memory corruption and command execution](#pillow-untrusted-images-reach-native-memory-corruption-and-command-execution)
+- [Plex Media Server: Plex2Shell - exploited remote code execution chain](#plex-media-server-plex2shell---exploited-remote-code-execution-chain)
+- [Nextcloud’s built-in Collabora CODE server: unauthenticated command injection](#nextclouds-built-in-collabora-code-server-unauthenticated-command-injection)
+- [Linux KSMBD: kernel memory disclosure and denial of service](#linux-ksmbd-kernel-memory-disclosure-and-denial-of-service)
+- [Broadcom legacy WPS: WPSplinter - nearby router compromise](#broadcom-legacy-wps-wpsplinter---nearby-router-compromise)
+- [HTTP/3 stacks: Header Accordions - compression-driven resource exhaustion](#http3-stacks-header-accordions---compression-driven-resource-exhaustion)
+- [BeyondTrust Remote Support: exploited unauthenticated file operations](#beyondtrust-remote-support-exploited-unauthenticated-file-operations)
+- [TLS and code-signing trust stores: eMudhra / emSign - CA compromise](#tls-and-code-signing-trust-stores-emudhra--emsign---certificate-authority-compromise)
+- [LiteLLM: malicious release and credential theft](#litellm-malicious-release-and-credential-theft)
+- [Railway: environment secret exposure](#railway-environment-secret-exposure)
 - [What should I patch? A stack-based decision guide](#what-should-i-patch-a-stack-based-decision-guide)
 
 ## The short version
@@ -65,7 +65,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **Review Tailscale SSH authorization and forwarding.** Tailworm's principal SSH chains require existing authorized access; disable unnecessary forwarding and track official fixes, rather than treating every VPN node as remotely exploitable.
 - **Update Microsoft Authenticator on Android**, especially devices with signed-in work accounts. AuthMask requires a malicious local app; patching does not revoke already stolen tokens.
 - **Prioritize exposed PHP, GitLab, Plex, and Nextcloud installations using the built-in Collabora CODE server.**
-- **Update Node.js, Bun, and Python’s Brotli packages.** The Brotli flaw can arrive through an outbound HTTP response, not just an incoming request.
+- **Inventory every Brotli decoder**, including Node.js, Bun, Python, .NET, proxies, FFmpeg/libjxl, ClickHouse and Arrow/pyarrow. Untrusted responses, media metadata and analytical files can reach separate bundled copies; a runtime or Python binding update does not patch them all.
 - **Update Pillow wherever you process untrusted images**, including thumbnail workers and document pipelines.
 - **Check Ruby separately from GitLab.** The underlying regex bugs affect other applications compiling attacker-controlled patterns.
 - **Update certificate trust data and rebuild Go applications.** The eMudhra incident affects clients even if your own website uses another certificate authority.
@@ -453,9 +453,13 @@ Any Langflow user, including a non-admin, can save an MCP server with the **stdi
 
 Sources: [GHSA-7w94-79vh-5mr2](https://github.com/langflow-ai/langflow/security/advisories/GHSA-7w94-79vh-5mr2), [GHSA-w794-rj3p-xv45](https://github.com/langflow-ai/langflow/security/advisories/GHSA-w794-rj3p-xv45), [GitHub CNA record 105740](https://cveawg.mitre.org/api/cve/CVE-2026-105740), [GitHub CNA record 105697](https://cveawg.mitre.org/api/cve/CVE-2026-105697), [Previdian telemetry](https://previdian.com/CVE-2026-105740), [The Hacker News (secondary)](https://thehackernews.com/2026/10/langflows-critical-authenticated-rce.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
-## VeloCloud Orchestrator: authenticated SQL injection to superuser operator (CVE-2026-114625)
+<a name="velocloud-orchestrator-authenticated-sql-injection-to-superuser-operator-cve-2026-114625"></a>
 
-[Back to TOC](#table-of-contents)
+## VeloCloud Orchestrator: authenticated SQL injection to superuser operator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/velocloud.md):** [Detection](details/velocloud.md#detection) · [Remediation](details/velocloud.md#remediation) · [Verification](details/velocloud.md#verification) · [Timeline](details/velocloud.md#timeline)
+
+**CVEs:** [CVE-2026-114625](https://www.cve.org/CVERecord?id=CVE-2026-114625)
 
 **[CVE-2026-114625](https://www.cve.org/CVERecord?id=CVE-2026-114625): Arista CVSS 3.1 9.9 Critical; Arista CVSS 4.0 9.4 Critical; in CISA KEV**
 
@@ -468,8 +472,6 @@ Sources: [GHSA-7w94-79vh-5mr2](https://github.com/langflow-ai/langflow/security/
 | Arista Security Advisory 0199 and on-prem fixes | 2026-10-22; time/TZ unknown | Already known to be exploited. CVE published 20:47 UTC. |
 | CISA KEV addition | 2026-10-23 (date only) | Due **2026-10-26**; forensic triage required. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
-
-**[Detailed guide](details/velocloud.md):** [Detection](details/velocloud.md#detection) · [Remediation](details/velocloud.md#remediation) · [Verification](details/velocloud.md#verification) · [Timeline](details/velocloud.md#timeline)
 
 This is a SQL injection flaw in **on-premises** VeloCloud Orchestrator (VCO). Any authenticated user, down to the *Enterprise Read Only* role, can pose as a local "superuser operator" and reach internal-only functions. Arista says no configuration prevents the exposure. Hosted VCO, including Dedicated, has been patched by Arista. VeloCloud Edge and Gateway are not affected.
 
@@ -489,9 +491,13 @@ Arista has not assessed end-of-support releases. Review web access logs for the 
 
 Sources: [Arista Security Advisory 0199](https://www.arista.com/en/support/advisories-notices/security-advisory/24838-security-advisory-0199), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-114625), [CISA KEV](https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-114625), [The Hacker News](https://thehackernews.com/2026/10/arista-warns-of-critical-velocloud-sql.html).
 
-## Siemens Software Center: DLL side-loading exploited in ClickFix campaign (CVE-2026-110936)
+<a name="siemens-software-center-dll-side-loading-exploited-in-clickfix-campaign-cve-2026-110936"></a>
 
-[Back to TOC](#table-of-contents)
+## Siemens Software Center: DLL side-loading exploited in ClickFix campaign
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/siemens-software-center.md):** [Detection](details/siemens-software-center.md#detection) · [Remediation](details/siemens-software-center.md#remediation) · [Verification](details/siemens-software-center.md#verification) · [Timeline](details/siemens-software-center.md#timeline)
+
+**CVEs:** [CVE-2026-110936](https://www.cve.org/CVERecord?id=CVE-2026-110936)
 
 **[CVE-2026-110936](https://www.cve.org/CVERecord?id=CVE-2026-110936): Siemens CVSS 4.0 8.4 High, but Siemens CVSS 3.1 6.7 Medium (both local, high privilege); in CISA KEV**
 
@@ -505,8 +511,6 @@ Sources: [Arista Security Advisory 0199](https://www.arista.com/en/support/advis
 | Active exploitation and IOCs | 2026-10-19; time/TZ unknown | Siemens ProductCERT blog post. Exploitation start date unknown. |
 | CISA KEV addition | 2026-10-20 (date only) | Due 2026-11-03; no forensic triage required. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
-
-**[Detailed guide](details/siemens-software-center.md):** [Detection](details/siemens-software-center.md#detection) · [Remediation](details/siemens-software-center.md#remediation) · [Verification](details/siemens-software-center.md#verification) · [Timeline](details/siemens-software-center.md#timeline)
 
 Siemens Software Center versions before V4.0.9.8 load DLLs from an uncontrolled search path. Attackers bundled a **genuine, signed** copy (version 3.5.8.7) with malicious DLLs and delivered it as `AllMyBasic.msi` through the "Romulus" ClickFix campaign.
 
@@ -525,9 +529,13 @@ A valid Siemens signature does **not** clear a file. The [detail guide](details/
 
 Sources: [Siemens SSA-580366](https://cert-portal.siemens.com/productcert/html/ssa-580366.html), [Siemens exploitation blog](https://productcert.siemens.com/news/2026/10/19/active-exploitation-of-cve-2026-110936-in-siemens-software-center/), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-110936), [CISA KEV](https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-110936).
 
-## PAN-OS: authenticated management interface RCE (CVE-2026-0322)
+<a name="pan-os-authenticated-management-interface-rce-cve-2026-0322"></a>
 
-[Back to TOC](#table-of-contents)
+## PAN-OS: authenticated management interface RCE
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/pan-os.md):** [Detection](details/pan-os.md#detection) · [Remediation](details/pan-os.md#remediation) · [Verification](details/pan-os.md#verification) · [Timeline](details/pan-os.md#timeline)
+
+**CVEs:** [CVE-2026-0322](https://www.cve.org/CVERecord?id=CVE-2026-0322)
 
 **[CVE-2026-0322](https://www.cve.org/CVERecord?id=CVE-2026-0322) — Palo Alto Networks CVSS 4.0: 8.6 High (8.5 if management is limited to a jump box); NVD CVSS 3.1: 7.2 High; CISA KEV**
 
@@ -541,8 +549,6 @@ Sources: [Siemens SSA-580366](https://cert-portal.siemens.com/productcert/html/s
 | PAN-OS 11.2.16 published | 2026-10-15 18:30 UTC | The only fix for 11.2.14–11.2.15. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
 
-**[Detailed guide](details/pan-os.md):** [Detection](details/pan-os.md#detection) · [Remediation](details/pan-os.md#remediation) · [Verification](details/pan-os.md#verification) · [Timeline](details/pan-os.md#timeline)
-
 A code-injection flaw in the PAN-OS management interface lets an **authenticated** administrator-level attacker run code as **root**. It affects PA-Series and VM-Series firewalls and **Panorama**. Cloud NGFW and Prisma Access are not affected.
 
 **Worst case:** someone who already holds management credentials, or reaches the interface with stolen ones, takes full control of the firewall or Panorama, including its secrets and policy. The vendor does not claim unauthenticated exploitation.
@@ -555,9 +561,13 @@ A code-injection flaw in the PAN-OS management interface lets an **authenticated
 
 Sources: [Palo Alto Networks advisory](https://security.paloaltonetworks.com/CVE-2026-0322), [CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-0322), [NVD](https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-0322), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
-## Cisco Secure Email Gateway: AMP attachment path traversal (CVE-2026-76519)
+<a name="cisco-secure-email-gateway-amp-attachment-path-traversal-cve-2026-76519"></a>
 
-[Back to TOC](#table-of-contents)
+## Cisco Secure Email Gateway: AMP attachment path traversal
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cisco-seg.md):** [Detection](details/cisco-seg.md#detection) · [Remediation](details/cisco-seg.md#remediation) · [Verification](details/cisco-seg.md#verification) · [Timeline](details/cisco-seg.md#timeline)
+
+**CVEs:** [CVE-2026-76519](https://www.cve.org/CVERecord?id=CVE-2026-76519)
 
 **[CVE-2026-76519](https://www.cve.org/CVERecord?id=CVE-2026-76519) — Cisco CVSS 3.1: 9.8 Critical; Cisco SIR: Critical; CISA KEV**
 
@@ -572,8 +582,6 @@ Sources: [Palo Alto Networks advisory](https://security.paloaltonetworks.com/CVE
 | CISA KEV addition | 2026-10-14; time/TZ unknown | Federal due date 2026-10-17. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
 
-**[Detailed guide](details/cisco-seg.md):** [Detection](details/cisco-seg.md#detection) · [Remediation](details/cisco-seg.md#remediation) · [Verification](details/cisco-seg.md#verification) · [Timeline](details/cisco-seg.md#timeline)
-
 A path traversal in how the gateway's AMP **File Reputation** feature handles attachments lets an unauthenticated attacker write files and run commands as **root**, simply by sending an email through the gateway. No recipient needs to click anything.
 
 **Worst case:** root on the mail gateway, with access to mail flow, credentials and cluster SSH keys, which can lead to compromise of other cluster members.
@@ -586,9 +594,13 @@ A path traversal in how the gateway's AMP **File Reputation** feature handles at
 
 Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-esa-afw-zqYJkjxp), [Cisco hardening release](https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hardening-esa-dfCrfXkm), [Cisco CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-76519), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
-## SiteGuard Server Edition: root command injection via statistics feature (CVE-2026-106931)
+<a name="siteguard-server-edition-root-command-injection-via-statistics-feature-cve-2026-106931"></a>
 
-[Back to TOC](#table-of-contents)
+## SiteGuard Server Edition: root command injection via statistics feature
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/siteguard.md):** [Detection](details/siteguard.md#detection) · [Remediation](details/siteguard.md#remediation) · [Verification](details/siteguard.md#verification) · [Timeline](details/siteguard.md#timeline)
+
+**CVEs:** [CVE-2026-106931](https://www.cve.org/CVERecord?id=CVE-2026-106931)
 
 **[CVE-2026-106931](https://www.cve.org/CVERecord?id=CVE-2026-106931): JPCERT/CC (CNA) and vendor CVSS 4.0 8.5 High and CVSS 3.0 7.8 High; vendor label 緊急 (urgent) and JVN label "Critical"; in CISA KEV**
 
@@ -601,8 +613,6 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 | Public vendor advisory, JVN and JPCERT/CC alert | 2026-10-14; time/TZ unknown | Exploitation already confirmed by the vendor. CVE published 04:45 UTC. |
 | CISA KEV addition | 2026-10-20 (date only) | Due 2026-10-23; forensic triage required. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
-
-**[Detailed guide](details/siteguard.md):** [Detection](details/siteguard.md#detection) · [Remediation](details/siteguard.md#remediation) · [Verification](details/siteguard.md#verification) · [Timeline](details/siteguard.md#timeline)
 
 SiteGuard Server Edition is EG Secure Solutions' host-based web application firewall (WAF) for Apache httpd, Nginx and IIS, and is widely used in Japan. Its **statistics feature**, enabled by default, has an OS command injection flaw. The published CVSS vectors are **local, low-privilege** (AV:L/PR:L). The reviewed sources do not explain how attackers in the wild reached the feature.
 
@@ -621,9 +631,13 @@ IIS Ver3.10 through Ver4.00 Update 4 are not affected. Check the version and the
 
 Sources: [EG Secure Solutions advisory (Japanese)](https://www.eg-secure.co.jp/siteguard/news/alert-202610-1), [JVN#88474777](https://jvn.jp/en/jp/JVN88474777/), [JPCERT-AT-2026-0032](https://www.jpcert.or.jp/at/2026/at260032.html), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-106931), [CISA KEV](https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-106931).
 
-## Windows Shell: Mark of the Web bypass zero-day (CVE-2026-96951)
+<a name="windows-shell-mark-of-the-web-bypass-zero-day-cve-2026-96951"></a>
 
-[Back to TOC](#table-of-contents)
+## Windows Shell: Mark of the Web bypass zero-day
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/windows-shell.md):** [Detection](details/windows-shell.md#detection) · [Remediation](details/windows-shell.md#remediation) · [Verification](details/windows-shell.md#verification) · [Timeline](details/windows-shell.md#timeline)
+
+**CVEs:** [CVE-2026-96951](https://www.cve.org/CVERecord?id=CVE-2026-96951)
 
 **[CVE-2026-96951](https://www.cve.org/CVERecord?id=CVE-2026-96951) — Microsoft CVSS 3.1: 8.8 High; vendor severity: Important; Microsoft: Exploited: Yes; CISA KEV**
 
@@ -637,8 +651,6 @@ Sources: [EG Secure Solutions advisory (Japanese)](https://www.eg-secure.co.jp/s
 | CISA KEV addition | 2026-10-13; time/TZ unknown | Federal due date 2026-10-16. Not the date exploitation started. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
 
-**[Detailed guide](details/windows-shell.md):** [Detection](details/windows-shell.md#detection) · [Remediation](details/windows-shell.md#remediation) · [Verification](details/windows-shell.md#verification) · [Timeline](details/windows-shell.md#timeline)
-
 A command-injection flaw in Windows Shell lets a crafted file or link evade **Mark of the Web (MOTW)** protections. The user must open the file or click the link, for example from email or instant messaging. Microsoft also lists Outlook.com, which it fixed on the service side.
 
 **Worst case:** a malicious download or attachment runs without the usual SmartScreen or Protected View warnings, as the signed-in user. It is a bypass that enables a follow-on payload, not user-free remote code execution.
@@ -651,9 +663,13 @@ A command-injection flaw in Windows Shell lets a crafted file or link evade **Ma
 
 Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-96951), [Microsoft CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-96951), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), [Rapid7 analysis](https://www.rapid7.com/blog/post/em-patch-tuesday-october-2026/).
 
-## Ivanti Connect Secure: authentication bypass to command execution (CVE-2026-104935)
+<a name="ivanti-connect-secure-authentication-bypass-to-command-execution-cve-2026-104935"></a>
 
-[Back to TOC](#table-of-contents)
+## Ivanti Connect Secure: authentication bypass to command execution
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ivanti-connect-secure.md):** [Detection](details/ivanti-connect-secure.md#detection) · [Remediation](details/ivanti-connect-secure.md#remediation) · [Verification](details/ivanti-connect-secure.md#verification) · [Timeline](details/ivanti-connect-secure.md#timeline)
+
+**CVEs:** [CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935), [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357)
 
 **[CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935) — Ivanti (CNA) CVSS 3.1: 8.6 High (the advisory labels the vector CVSS 3.0); no NVD score of its own; CISA KEV (forensic triage required)**
 
@@ -670,8 +686,6 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Chained privilege escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) | 2026-10-15 20:56:58 UTC | Assigned by the MITRE CNA (CVSS 3.1: 7.0); fix not confirmed in reviewed sources. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
 
-**[Detailed guide](details/ivanti-connect-secure.md):** [Detection](details/ivanti-connect-secure.md#detection) · [Remediation](details/ivanti-connect-secure.md#remediation) · [Verification](details/ivanti-connect-secure.md#verification) · [Timeline](details/ivanti-connect-secure.md#timeline)
-
 A spoofed internal-routing header (`X-DSCGI-PATH`) sent to the public `welcome.cgi` login script reaches a protected CGI. Combined with a file-write race in `wu.cgi`, this lets an unauthenticated attacker execute commands on the Connect Secure VPN appliance.
 
 **Worst case:** Unauthenticated command execution on the VPN edge. In the wild, it was chained with a separate root escalation, and attackers stole LDAP credentials, searched for LAPS passwords and BitLocker keys, sniffed traffic, and exfiltrated data.
@@ -684,9 +698,13 @@ A spoofed internal-routing header (`X-DSCGI-PATH`) sent to the public `welcome.c
 
 Sources: [Ivanti advisory](https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-Connect-Secure-CVE-2026-104935?language=en_US), [Ivanti CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-104935), [CISA alert](https://www.cisa.gov/news-events/alerts/2026/10/13/cisa-urges-patching-newly-exploited-vulnerability-ivanti-connect-secure), [Volexity analysis](https://www.volexity.com/blog/2026/10/13/a-series-of-unauthenticated-events-chained-exploitation-of-ivanti-connect-secure-zero-days/), [CVE-2026-111357 record](https://cveawg.mitre.org/api/cve/CVE-2026-111357), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
-## Atlassian Data Center: unauthenticated web-root file read (CVE-2026-21589)
+<a name="atlassian-data-center-unauthenticated-web-root-file-read-cve-2026-21589"></a>
 
-[Back to TOC](#table-of-contents)
+## Atlassian Data Center: unauthenticated web-root file read
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/atlassian-dc.md):** [Detection](details/atlassian-dc.md#detection) · [Remediation](details/atlassian-dc.md#remediation) · [Verification](details/atlassian-dc.md#verification) · [Timeline](details/atlassian-dc.md#timeline)
+
+**CVEs:** [CVE-2026-21589](https://www.cve.org/CVERecord?id=CVE-2026-21589)
 
 **[CVE-2026-21589](https://www.cve.org/CVERecord?id=CVE-2026-21589): Atlassian CVSS 4.0 9.3 Critical; NVD CVSS 3.1 7.5 High; in CISA KEV**
 
@@ -700,8 +718,6 @@ Sources: [Ivanti advisory](https://hub.ivanti.com/s/article/Security-Advisory-Iv
 | First exploitation attempts | 2026-10-06 (per SANS ISC) | Honeypots saw the published PoC URLs. |
 | CISA KEV addition | 2026-10-15 (date only) | Due 2026-10-18; forensic triage required. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
-
-**[Detailed guide](details/atlassian-dc.md):** [Detection](details/atlassian-dc.md#detection) · [Remediation](details/atlassian-dc.md#remediation) · [Verification](details/atlassian-dc.md#verification) · [Timeline](details/atlassian-dc.md#timeline)
 
 A shared Atlassian web-resource library turns `::` back into `/`. That lets an unauthenticated attacker read any file inside the application's web root, as long as they know its exact path. It cannot list directories or read files outside the Tomcat context. The affected products are Bitbucket, Confluence, Jira Software, Jira Service Management, Bamboo and Crowd Data Center, plus Crucible and Fisheye. Atlassian has patched its Cloud products; no Cloud customer action is required.
 
@@ -725,9 +741,13 @@ Until you can upgrade, take the instance off the internet and apply Atlassian's 
 
 Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026-21589-arbitrary-file-access-vulnerability-impacts-multiple-products-1870495748.html), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-21589), [NVD](https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-21589), [CISA KEV](https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-21589), [watchTowr analysis](https://labs.watchtowr.com/you-wont-hear-about-these-even-in-myths-atlassian-jira-confluence-and-more-pre-auth-arbitrary-file-read-cve-2026-21589), [SANS ISC](https://isc.sans.edu/diary/Scans+for+Atlassian+vulnerablity+CVE202621589/33406/).
 
-## AhsayCBS: authentication bypass and command injection chain (CVE-2026-105133 and CVE-2026-105134)
+<a name="ahsaycbs-authentication-bypass-and-command-injection-chain-cve-2026-105133-and-cve-2026-105134"></a>
 
-[Back to TOC](#table-of-contents)
+## AhsayCBS: authentication bypass and command injection chain
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ahsaycbs.md):** [Detection](details/ahsaycbs.md#detection) · [Remediation](details/ahsaycbs.md#remediation) · [Verification](details/ahsaycbs.md#verification) · [Timeline](details/ahsaycbs.md#timeline)
+
+**CVEs:** [CVE-2026-105133](https://www.cve.org/CVERecord?id=CVE-2026-105133), [CVE-2026-105134](https://www.cve.org/CVERecord?id=CVE-2026-105134)
 
 **[CVE-2026-105133](https://www.cve.org/CVERecord?id=CVE-2026-105133) — VulDB CVSS 3.1: 7.3 High; VulDB CVSS 4.0: 6.9 Medium per the CNA record, 5.5 Medium as displayed by NVD with `E:P`. [CVE-2026-105134](https://www.cve.org/CVERecord?id=CVE-2026-105134) — VulDB CVSS 3.1: 10.0 Critical; CVSS 4.0: 10.0 (CNA) / 9.3 (NVD display). Both in CISA KEV.**
 
@@ -742,8 +762,6 @@ Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026
 | CISA KEV addition | 2026-10-14; time/TZ unknown | Federal due date 2026-10-17. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
 
-**[Detailed guide](details/ahsaycbs.md):** [Detection](details/ahsaycbs.md#detection) · [Remediation](details/ahsaycbs.md#remediation) · [Verification](details/ahsaycbs.md#verification) · [Timeline](details/ahsaycbs.md#timeline)
-
 AhsayCBS is a backup server used mainly by MSPs. Attackers chain the two flaws: an authentication bypass in `checkSysPwd`, then OS command injection via `/rps/api/json/UpdateReceivers.do`. Together they give unauthenticated remote code execution (SYSTEM on the Windows hosts Huntress investigated).
 
 **Worst case:** an attacker fully controls the backup server and can reach customers' backups, add malicious replication receivers, and plant webshells.
@@ -756,9 +774,13 @@ AhsayCBS is a backup server used mainly by MSPs. Attackers chain the two flaws: 
 
 Sources: [Ahsay status and IOCs](https://www.ahsay.com/en/company/announcements/ahsaycbs-vulnerability-status-update), [Ahsay hotfix alert](https://www.ahsay.com/en/company/announcements/patch-cve-105133-105134-update), [VulDB CNA record 105133](https://cveawg.mitre.org/api/cve/CVE-2026-105133), [VulDB CNA record 105134](https://cveawg.mitre.org/api/cve/CVE-2026-105134), [Huntress research](https://www.huntress.com/blog/ahsaycbs-flaws-exploit), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
-## NetScaler: SAML memory overflow denial of service (CVE-2026-88779)
+<a name="netscaler-saml-memory-overflow-denial-of-service-cve-2026-88779"></a>
 
-[Back to TOC](#table-of-contents)
+## NetScaler: SAML memory overflow denial of service
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/netscaler.md):** [Detection](details/netscaler.md#detection) · [Remediation](details/netscaler.md#remediation) · [Verification](details/netscaler.md#verification) · [Timeline](details/netscaler.md#timeline)
+
+**CVEs:** [CVE-2026-88779](https://www.cve.org/CVERecord?id=CVE-2026-88779), [CVE-2026-88771](https://www.cve.org/CVERecord?id=CVE-2026-88771)
 
 **[CVE-2026-88779](https://www.cve.org/CVERecord?id=CVE-2026-88779) — NetScaler (CNA) CVSS 4.0: 8.7 High; NVD CVSS 3.1: 7.5 High; Citrix severity: High; CISA KEV**
 
@@ -774,8 +796,6 @@ Sources: [Ahsay status and IOCs](https://www.ahsay.com/en/company/announcements/
 | Rapid7 chained-intrusion analysis | 2026-10-19; time/TZ unknown | Describes an early-October root compromise using both CVEs. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
 
-**[Detailed guide](details/netscaler.md):** [Detection](details/netscaler.md#detection) · [Remediation](details/netscaler.md#remediation) · [Verification](details/netscaler.md#verification) · [Timeline](details/netscaler.md#timeline)
-
 A memory-bounds flaw lets an unauthenticated network attacker crash NetScaler ADC or Gateway authentication when the appliance acts as a **SAML Service Provider or Identity Provider**. Appliances without SAML configured do not meet Citrix's precondition.
 
 **Worst case:** On its own, an authentication outage (denial of service) with no data-integrity impact, according to Citrix. In unpatched deployments, attackers have used the crash and reboot to execute commands injected through **CVE-2026-88771**, leading to root, web shells, and configuration and key theft (Rapid7).
@@ -788,9 +808,13 @@ A memory-bounds flaw lets an unauthenticated network attacker crash NetScaler AD
 
 Sources: [Citrix CTX697174](https://support.citrix.com/support-home/kbsearch/article?articleNumber=CTX697174), [NetScaler CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-88779), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-88779), [CISA alert](https://www.cisa.gov/news-events/alerts/2026/09/27/critical-zero-day-vulnerabilities-exploited-citrix-netscaler-adc-gateway), [Rapid7 analysis](https://www.rapid7.com/blog/post/ra-netscaler-intrusions-chaining-cve-2026-88771-and-cve-2026-88779/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
-## FortiMail: unauthenticated file write (CVE-2026-104286)
+<a name="fortimail-unauthenticated-file-write-cve-2026-104286"></a>
 
-[Back to TOC](#table-of-contents)
+## FortiMail: unauthenticated file write
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/fortimail.md):** [Detection](details/fortimail.md#detection) · [Remediation](details/fortimail.md#remediation) · [Verification](details/fortimail.md#verification) · [Timeline](details/fortimail.md#timeline)
+
+**CVEs:** [CVE-2026-104286](https://www.cve.org/CVERecord?id=CVE-2026-104286)
 
 **[CVE-2026-104286](https://www.cve.org/CVERecord?id=CVE-2026-104286) — Fortinet CVSS 3.1: 9.8 Critical; Fortinet severity: Critical; CISA KEV (forensic triage required)**
 
@@ -806,8 +830,6 @@ Sources: [Citrix CTX697174](https://support.citrix.com/support-home/kbsearch/art
 | Fixed releases / solution update | 2026-10-05; time/TZ unknown | Advisory "Solution update"; FortiMail Cloud moved to 7.6.7/8.0.2 GA that day. The release date of 7.4.9 was not established. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
 
-**[Detailed guide](details/fortimail.md):** [Detection](details/fortimail.md#detection) · [Remediation](details/fortimail.md#remediation) · [Verification](details/fortimail.md#verification) · [Timeline](details/fortimail.md#timeline)
-
 A path traversal with NULL-byte mishandling in FortiMail's web interface lets an unauthenticated attacker write arbitrary files on the appliance through crafted HTTP/HTTPS requests. Fortinet's workaround targets the IBE (Identity-Based Encryption) service exposed through webmail.
 
 **Worst case:** Arbitrary file write that Fortinet classifies as unauthorized code or command execution on the mail gateway. Fortinet's IoCs include a root cron command and a rogue remote **archive account**, which suggests a route for persistence and mail exfiltration.
@@ -820,9 +842,13 @@ A path traversal with NULL-byte mishandling in FortiMail's web interface lets an
 
 Sources: [Fortinet FG-IR-26-175](https://fortiguard.fortinet.com/psirt/FG-IR-26-175), [Fortinet CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-104286), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-104286), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
-## Zammad: session hijack RCE and root escalation chain (CVE-2026-102489 and CVE-2026-102490)
+<a name="zammad-session-hijack-rce-and-root-escalation-chain-cve-2026-102489-and-cve-2026-102490"></a>
 
-[Back to TOC](#table-of-contents)
+## Zammad: session hijack RCE and root escalation chain
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/zammad.md):** [Detection](details/zammad.md#detection) · [Remediation](details/zammad.md#remediation) · [Verification](details/zammad.md#verification) · [Timeline](details/zammad.md#timeline)
+
+**CVEs:** [CVE-2026-102489](https://www.cve.org/CVERecord?id=CVE-2026-102489), [CVE-2026-102490](https://www.cve.org/CVERecord?id=CVE-2026-102490)
 
 **[CVE-2026-102489](https://www.cve.org/CVERecord?id=CVE-2026-102489) — DIVD CVSS 4.0: 8.7 High (9.4 Critical when chained); NVD CVSS 3.1: 9.8 Critical. [CVE-2026-102490](https://www.cve.org/CVERecord?id=CVE-2026-102490) — DIVD CVSS 4.0: 8.5 High (9.4 Critical when chained); Zammad GHSA CVSS 4.0: 8.5 High; NVD CVSS 3.1: 7.8 High. Both in CISA KEV.**
 
@@ -840,8 +866,6 @@ Sources: [Fortinet FG-IR-26-175](https://fortiguard.fortinet.com/psirt/FG-IR-26-
 | Zammad 6.5.5 (CVE-2026-102489 stopgap) | 2026-10-15; time/TZ unknown | Emergency fix for the unsupported 6.5 series; requires the new package repository. |
 | **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
 
-**[Detailed guide](details/zammad.md):** [Detection](details/zammad.md#detection) · [Remediation](details/zammad.md#remediation) · [Verification](details/zammad.md#verification) · [Timeline](details/zammad.md#timeline)
-
 **CVE-2026-102489** is a session hijack in Zammad that leads to remote code execution as the `zammad` user. It is exploitable on **6.3.0–6.5.4**. The bug is present in 7.0–7.1, but DIVD and Zammad say it cannot be exploited there, and 7.2.0 hardens the code. **CVE-2026-102490** affects only **DEB/RPM (packager.io) installs**: packaged services ran as root and executed files the `zammad` account could write. It affects every packaged version from 1.5.0 up to, but not including, 7.2.2. Source installs and official container images are not affected.
 
 **Worst case:** Chained, the two flaws give an unauthenticated attacker root on the host, plus access to ticket data and stored integration credentials.
@@ -854,9 +878,13 @@ Sources: [Fortinet FG-IR-26-175](https://fortiguard.fortinet.com/psirt/FG-IR-26-
 
 Sources: [DIVD case](https://csirt.divd.nl/DIVD-2026-00015), [CNA record CVE-2026-102489](https://cveawg.mitre.org/api/cve/CVE-2026-102489), [CNA record CVE-2026-102490](https://cveawg.mitre.org/api/cve/CVE-2026-102490), [Zammad GHSA](https://github.com/zammad/zammad/security/advisories/GHSA-p97w-927q-8vxq), [Zammad statement](https://community.zammad.org/t/take-care-local-privilege-escalation-cve-2026-102490-is-reported-as-being-actively-exploited/21297/2), [Zammad 6.5.5](https://zammad.com/en/product/releases/6-5-5), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
-## Tailworm: Tailscale SSH and related findings under review
+<a name="tailworm-tailscale-ssh-and-related-findings-under-review"></a>
 
-[Back to TOC](#table-of-contents)
+## Tailscale / headscale: Tailworm - SSH and related findings under review
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/tailworm.md):** [Detection](details/tailworm.md#detection) · [Remediation](details/tailworm.md#remediation) · [Verification](details/tailworm.md#verification) · [Timeline](details/tailworm.md#timeline) · Vulnerability Info Site: [tailworm.com](https://tailworm.com/)
+
+**CVEs:** No Tailworm-specific identifiers established in the reviewed sources.
 
 **Several researcher-rated High findings; no Tailworm-specific CVE or vendor CVSS rating established**
 
@@ -872,8 +900,6 @@ Sources: [DIVD case](https://csirt.divd.nl/DIVD-2026-00015), [CNA record CVE-202
 | Fixed stable release | Not established at 2026-10-26 12:44 UTC | Latest Tailscale stable found was 1.104.2; do not mark it or headscale 0.29.6 fixed for this report. |
 | **Last updated** | **2026-10-26 08:47 EDT (UTC−04:00)** | Added with researcher/vendor distinctions and current source-fix status. |
 
-**[Detailed guide](details/tailworm.md):** [Detection](details/tailworm.md#detection) · [Remediation](details/tailworm.md#remediation) · [Verification](details/tailworm.md#verification) · [Timeline](details/tailworm.md#timeline)
-
 Erica Windisch reports **11 findings across SSH, Serve/Funnel, an experimental connector and headscale/DERP**. This is not 11 confirmed unauthenticated Tailscale SSH vulnerabilities. The principal SSH escalation chains require **an already-authorized source, permitted target access and applicable forwarding**. Ordinary OpenSSH carried over Tailscale is distinct. This developing report is included at the owner's request, with its severity attribution visible.
 
 **Worst case claimed/demonstrated in the lab:** Root-level execution on permitted SSH targets, privileged socket/file operations, credential interception and rogue-node enrollment in the tested configuration. Other findings concern SSRF-like destination access, resource exhaustion or capability-header leakage with different prerequisites. Claimed automated spread remains bounded by access policy; it is not unrestricted access to every tailnet device. No in-the-wild campaign was established in the reviewed primary material.
@@ -884,9 +910,13 @@ Erica Windisch reports **11 findings across SSH, Serve/Funnel, an experimental c
 
 Sources: [researcher report](https://tailworm.com/), [Tailscale engineering response](https://www.reddit.com/r/Tailscale/comments/1xeoj1l/recent_tailscale_vulnerability_reports/), [vendor mitigation](https://www.reddit.com/r/Tailscale/comments/1xeoj1l/comment/19rnk0ct2vkdc/), [SSH correction](https://github.com/tailscale/tailscale/pull/21942), [Serve correction](https://github.com/tailscale/tailscale/pull/21931), [user-provided X lead](https://x.com/IntCyberDigest/status/2114291878720151623).
 
-## AuthMask: Microsoft Authenticator for Android token theft
+<a name="authmask-microsoft-authenticator-for-android-token-theft"></a>
 
-[Back to TOC](#table-of-contents)
+## Microsoft Authenticator for Android: AuthMask - token theft
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/authmask.md):** [Detection](details/authmask.md#detection) · [Remediation](details/authmask.md#remediation) · [Verification](details/authmask.md#verification) · [Timeline](details/authmask.md#timeline) · Vulnerability Info Site: [enclave.ai](https://enclave.ai/blog/authmask-we-made-microsoft-authenticator-hand-over-tokens)
+
+**CVEs:** [CVE-2026-80097](https://www.cve.org/CVERecord?id=CVE-2026-80097)
 
 **[CVE-2026-80097](https://www.cve.org/CVERecord?id=CVE-2026-80097) — Microsoft CVSS 3.1: 8.6 High; vendor severity: Important**
 
@@ -901,8 +931,6 @@ Sources: [researcher report](https://tailworm.com/), [Tailscale engineering resp
 | AuthMask technical research | 2026-10-23; time/TZ unknown | Detailed Enclave disclosure; news lead published October 26. |
 | **Last updated** | **2026-10-26 08:43 EDT (UTC−04:00)** | Added from the user-supplied lead and verified primary sources. |
 
-**[Detailed guide](details/authmask.md):** [Detection](details/authmask.md#detection) · [Remediation](details/authmask.md#remediation) · [Verification](details/authmask.md#verification) · [Timeline](details/authmask.md#timeline)
-
 An untrusted app on the same Android device can impersonate an installed Microsoft first-party app when requesting tokens from Authenticator's broker. The demonstrated setup has a signed-in work account. **Zero declared Android permissions does not mean remote exploitation without an installed malicious app.**
 
 **Worst case:** Account-token disclosure and unauthorized delegated access to Microsoft 365 mail, files and calendars, with researcher-demonstrated scopes for changing authentication methods/passkeys. This can enable account persistence; it is not established device-root RCE or extraction of every user's TOTP secrets.
@@ -916,10 +944,13 @@ An untrusted app on the same Android device can impersonate an installed Microso
 Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-80097), [Microsoft CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-80097), [Enclave research](https://enclave.ai/blog/authmask-we-made-microsoft-authenticator-hand-over-tokens), [user-provided X lead](https://x.com/The_Cyber_News/status/2114630691896127947).
 
 <a name="1-php2shell-unauthenticated-execution-below-your-application"></a>
+<a name="php2shell-unauthenticated-execution-below-your-application"></a>
 
-## PHP2Shell: unauthenticated execution below your application
+## PHP: PHP2Shell - unauthenticated execution below your application
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/php2shell.md):** [Detection](details/php2shell.md#detection) · [Remediation](details/php2shell.md#remediation) · [Verification](details/php2shell.md#verification) · [Timeline](details/php2shell.md#timeline) · Vulnerability Info Site: [php2shell.com](https://php2shell.com/)
+
+**CVEs:** [CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618), [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619), [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560)
 
 **[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619) — Critical, CVSS 4.0: 9.2 each**
 
@@ -936,8 +967,6 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Confirmed RCE against honeypots | 2026-10-24 15:35 UTC (first shell) | Researcher honeypots running PHP 8.4.26 Apache `mod_php`; consistent with CVE-2026-109618. |
 | CISA KEV | Not listed (catalog 2026.10.23) | Checked 2026-10-26. |
 | **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | Pre-disclosure exploitation attempts, confirmed honeypot RCE and follow-up fix status. |
-
-**[Detailed guide](details/php2shell.md):** [Detection](details/php2shell.md#detection) · [Remediation](details/php2shell.md#remediation) · [Verification](details/php2shell.md#verification) · [Timeline](details/php2shell.md#timeline)
 
 These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
@@ -977,10 +1006,13 @@ sh stack-inventory.sh php
 Sources: [PHP advisories, including the October 23 update](https://www.php.net/archive/2026.php), [CISA alert](https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching), [Amazon pre-disclosure exploitation report](https://aws.amazon.com/blogs/security/amazon-threat-intelligence-identifies-php2shell-exploitation-prior-to-public-disclosure-in-madpot), [confirmed honeypot RCE](https://github.com/0x4D31/honeypot-data/blob/main/reports/php2shell/2026-10-24-confirmed-rce.md).
 
 <a name="2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability"></a>
+<a name="http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability"></a>
 
-## HTTP2Shell / Node2Shell: a cross-stack Brotli decoder vulnerability
+## Brotli consumers (Node.js, Bun, Python, .NET, FFmpeg, ClickHouse, Arrow and others): HTTP2Shell / Node2Shell / Brotli2Shell - cross-stack decoder corruption
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/brotli.md):** [Detection](details/brotli.md#detection) · [Remediation](details/brotli.md#remediation) · [Verification](details/brotli.md#verification) · [Timeline](details/brotli.md#timeline) · Vulnerability Info Site: [patchtheplanet.org](https://patchtheplanet.org/brotli), [research.jfrog.com](https://research.jfrog.com/post/brotli2shell-beyond-node2shell-and-http2shell/)
+
+**CVEs:** [CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497), [CVE-2026-105482](https://www.cve.org/CVERecord?id=CVE-2026-105482), [CVE-2026-105483](https://www.cve.org/CVERecord?id=CVE-2026-105483), [CVE-2026-106069](https://www.cve.org/CVERecord?id=CVE-2026-106069)
 
 **[CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497) — Node.js: High; Google’s CVSS 4.0 rating: 9.2 Critical**
 
@@ -996,23 +1028,26 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | Proxy fixes | Varies by component | Separate Envoy/Istio release dates in the detailed timeline; do not infer from Node's date. |
 | Java / Ruby binding updates | 2026-10-24; time/TZ unknown | Brotli4j advisory identifies 1.24.0; Ruby maintainer confirms gem 0.9.1 fix. |
 | PHP extension patch | 2026-10-24 23:49 UTC | php-ext-brotli 0.21.1 bundles fixed Brotli 1.2.1. |
-| .NET patches | 2026-10-25; time/TZ unknown | Microsoft released fixed runtime/SDK builds; see matrix below. |
-| **Last updated** | **2026-10-26 09:23 EDT (UTC−04:00)** | Cross-language fixes, decoder containment and response-header inventory guidance. |
+| .NET advisory | 2026-10-25 19:06:12 UTC | Identifies fixed runtime/SDK builds; publication time is not first artifact availability. |
+| JFrog downstream research | 2026-10-25; time/TZ unknown | FFmpeg/libjxl pointer corruption/crash, ClickHouse crash, Arrow/pyarrow loop and .NET native crash. |
+| Downstream fix-status check | 2026-10-26 | libjxl and ClickHouse source fixes merged; published fixed artifacts unconfirmed. Arrow dependency-update PR remains open. |
+| **Last updated** | **2026-10-26 10:00 EDT (UTC−04:00)** | Media/analytics exposure, demonstrated-impact limits and official detection tools. |
 
-**[Detailed guide](details/brotli.md):** [Detection](details/brotli.md#detection) · [Remediation](details/brotli.md#remediation) · [Verification](details/brotli.md#verification) · [Timeline](details/brotli.md#timeline)
-
-**HTTP2Shell and Node2Shell are names for the same vulnerability, not separate CVEs.** The broader HTTP2Shell name reflects its impact beyond Node.js: the flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the name, it is **not specific to HTTP/2**; exposure depends on decoding attacker-controlled Brotli data, not the HTTP protocol version.
+**HTTP2Shell, Node2Shell and Brotli2Shell are names for the same vulnerability, not separate CVEs.** The flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the names, it is **not specific to HTTP/2 or even HTTP**; exposure depends on decoding attacker-controlled Brotli data, including embedded file metadata and analytical buffers.
 
 Malformed Brotli input can overflow an internal buffer in Google’s native decoder.
 
 **Worst case:** **RCE, process-memory disclosure, or denial of service.** Researchers demonstrated RCE on a specific official Node.js Linux ARM64 build; that does not establish universal exploit reliability across every consumer.
 
-**Affected technology:** Node.js, Bun, Python `Brotli` and `brotlicffi`, modern .NET, native Java/Scala/PHP/Ruby bindings, and other applications embedding the vulnerable C library. Envoy and Istio are relevant when configured to decompress Brotli. Language presence alone is not exposure: identify the actual decoder and input path. Pure-Go/Java/Rust implementations do not automatically inherit the C exploit.
+**New downstream evidence:** [JFrog's research](https://research.jfrog.com/post/brotli2shell-beyond-node2shell-and-http2shell/) demonstrates pointer corruption and a cleanup crash in **FFmpeg through libjxl's JPEG XL metadata decoding**, a server crash from a **23 MB ClickHouse HTTP body**, an indefinite CPU loop from a **534-byte Arrow/pyarrow input**, and a native **.NET crash**. These are not complete RCE demonstrations for those products. Small inputs can still exhaust workers; HTTP body-size limits do not address every path.
+
+**Affected technology:** Node.js, Bun, Python `Brotli` and `brotlicffi`, modern .NET, native Java/Scala/PHP/Ruby bindings, FFmpeg builds using affected libjxl, ClickHouse, Arrow/pyarrow, and other applications embedding the vulnerable C library. Envoy and Istio are relevant when configured to decompress Brotli. Language presence alone is not exposure: identify the actual decoder and input path. Pure-Go/Java/Rust implementations do not automatically inherit the C exploit.
 
 The important exposure distinction:
 
 - A server can be vulnerable when middleware decodes a request with `Content-Encoding: br`.
 - A client or backend worker can be vulnerable when it fetches and automatically decompresses an attacker-controlled response.
+- A media/data worker can reach Brotli inside JPEG XL metadata, `.br` files or Parquet, even without an HTTP encoding header. Arrow's bundled decoder is separate from Python's `Brotli` package.
 - A plain Node HTTP server does not automatically decompress incoming bodies merely because it uses Node.
 
 **Patch targets:**
@@ -1030,6 +1065,10 @@ The important exposure distinction:
 | Java / Scala `Brotli4j` and `native-*` artifacts | **1.24.0**; update the BOM/wrapper and native artifacts together |
 | PHP `php-ext-brotli` | **0.21.1**; assess libcurl's decoder separately |
 | Ruby `brotli` gem | **0.9.1+**; **0.9.0 is not fixed** |
+
+**Fixed downstream artifacts not yet established:** [libjxl PR #5062](https://github.com/libjxl/libjxl/pull/5062) and [ClickHouse PR #127419](https://github.com/ClickHouse/ClickHouse/pull/127419) merge Brotli 1.2.1, but a source merge or listed backport number is not proof of a published package. [Arrow PR #55167](https://github.com/apache/arrow/pull/55167) remains open. Require supplier evidence that the deployed build includes fixed Brotli; otherwise pause affected untrusted processing or reject it before decoding. See [per-product inventory and release qualifications](details/brotli.md#inventory-by-language-and-deployment).
+
+**Detection tools:** Use the [JFrog contextual scanner and Trail of Bits Brotli Checker guidance](details/brotli.md#official-researcher-detection-tools) for supported source/binary inspection. Matches identify candidate usage or code copies, not confirmed exploitation; empty results do not prove safety. Neither tool was run for this report.
 
 Microsoft separately rates .NET's impact **8.1 High (CVSS 3.1)** and excludes .NET Framework from its advisory. Default ASP.NET Core/HttpClient configurations do not enable automatic Brotli decompression. Upgrade shared runtimes and restart; **rebuild/redeploy self-contained and NativeAOT apps**, which retain their own decoders. See the [language-by-language inventory and remediation](details/brotli.md#inventory-by-language-and-deployment), including Go/Rust and vendor-backport caveats.
 
@@ -1076,7 +1115,9 @@ Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/an
 
 ## GitLab and Ruby: regex compilation becomes code execution
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/gitlab-ruby.md):** [Detection](details/gitlab-ruby.md#detection) · [Remediation](details/gitlab-ruby.md#remediation) · [Verification](details/gitlab-ruby.md#verification) · [Timeline](details/gitlab-ruby.md#timeline)
+
+**CVEs:** [CVE-2026-97229](https://www.cve.org/CVERecord?id=CVE-2026-97229), [CVE-2026-110264](https://www.cve.org/CVERecord?id=CVE-2026-110264), [CVE-2026-15723](https://www.cve.org/CVERecord?id=CVE-2026-15723), [CVE-2026-112212](https://www.cve.org/CVERecord?id=CVE-2026-112212)
 
 **[CVE-2026-97229](https://www.cve.org/CVERecord?id=CVE-2026-97229) and [CVE-2026-110264](https://www.cve.org/CVERecord?id=CVE-2026-110264) — Critical, CVSS 3.1: 10.0 each**
 
@@ -1090,8 +1131,6 @@ Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/an
 | Partial upstream Ruby fix | 2026-10-22; time/TZ unknown | Ruby 4.0.8 is insufficient for the complete set. |
 | Complete upstream Ruby fixes | 2026-10-23; time/TZ unknown | Ruby 4.0.9 / 3.4.12 / 3.3.13. |
 | **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
-
-**[Detailed guide](details/gitlab-ruby.md):** [Detection](details/gitlab-ruby.md#detection) · [Remediation](details/gitlab-ruby.md#remediation) · [Verification](details/gitlab-ruby.md#verification) · [Timeline](details/gitlab-ruby.md#timeline)
 
 Both vulnerabilities involve memory corruption while compiling specially crafted regular expressions.
 
@@ -1143,7 +1182,9 @@ Sources: [October 12 GitLab advisory](https://docs.gitlab.com/releases/patches/p
 
 ## Pillow: untrusted images reach native memory corruption and command execution
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/pillow.md):** [Detection and affected ranges](details/pillow.md#detection) · [Remediation](details/pillow.md#remediation) · [Verification](details/pillow.md#verification) · [Timeline](details/pillow.md#timeline)
+
+**CVEs:** [CVE-2026-96639](https://www.cve.org/CVERecord?id=CVE-2026-96639), [CVE-2026-112398](https://www.cve.org/CVERecord?id=CVE-2026-112398), [CVE-2026-112900](https://www.cve.org/CVERecord?id=CVE-2026-112900), [CVE-2026-112393](https://www.cve.org/CVERecord?id=CVE-2026-112393), [CVE-2026-112403](https://www.cve.org/CVERecord?id=CVE-2026-112403)
 
 **Multiple vulnerabilities; ratings range from Moderate to Critical**
 
@@ -1156,8 +1197,6 @@ Sources: [October 12 GitLab advisory](https://docs.gitlab.com/releases/patches/p
 | Individual advisories published | 2026-10-17 UTC; time unknown | Five highlighted advisories, published after the release. |
 | Advisory revisions | 2026-10-19 UTC; time unknown | Several advisory records revised, including [CVE-2026-112403](https://www.cve.org/CVERecord?id=CVE-2026-112403) to maintainer High; not another package release. |
 | **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | Corrected CVE-2026-112403 maintainer severity. |
-
-**[Detailed guide](details/pillow.md):** [Detection and affected ranges](details/pillow.md#detection) · [Remediation](details/pillow.md#remediation) · [Verification](details/pillow.md#verification) · [Timeline](details/pillow.md#timeline)
 
 Pillow is common in Python upload handlers, thumbnail services, document conversion, and machine-learning pipelines. Several independent paths matter:
 
@@ -1188,12 +1227,14 @@ The metadata script also lists `olefile`. On Linux/macOS, `command -v gs` checks
 Sources: [Pillow release notes](https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html), [multi-frame advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-v9pv-5gc8-w2m6), [FlashPix advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-5x8w-8jj5-q52h), [additional vulnerability details](https://thehackernews.com/2026/10/critical-flaw-in-pythons-popular-pillow.html).
 
 <a name="5-plex2shell-a-home-server-compromise-chain-is-being-exploited"></a>
+<a name="plex2shell-a-home-server-compromise-chain-is-being-exploited"></a>
 
-## Plex2Shell: a home-server compromise chain is being exploited
+## Plex Media Server: Plex2Shell - exploited remote code execution chain
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/plex2shell.md):** [Detection](details/plex2shell.md#detection) · [Remediation](details/plex2shell.md#remediation) · [Verification](details/plex2shell.md#verification) · [Timeline](details/plex2shell.md#timeline) · Vulnerability Info Site: [zmain.info](https://zmain.info/blog/plex2shell)
 
-**[CVE-2026-96652](https://www.cve.org/CVERecord?id=CVE-2026-96652), -96654, -96655, and -96656**\
+**CVEs:** [CVE-2026-96652](https://www.cve.org/CVERecord?id=CVE-2026-96652), [CVE-2026-96654](https://www.cve.org/CVERecord?id=CVE-2026-96654), [CVE-2026-96655](https://www.cve.org/CVERecord?id=CVE-2026-96655), [CVE-2026-96656](https://www.cve.org/CVERecord?id=CVE-2026-96656)
+
 **Researcher’s combined-chain rating: Critical, CVSS 3.1: 9.8**
 
 **CISA KEV:** Listed — all four CVEs added 2026-10-20; federal due date 2026-10-23 for -96654 and -96656, 2026-11-03 for -96652 and -96655.
@@ -1213,8 +1254,6 @@ Sources: [Pillow release notes](https://pillow.readthedocs.io/en/stable/releasen
 | Vendor confirms active exploitation | 2026-10-19 20:17 UTC | Plex: “actively and widely exploited.” |
 | CISA KEV addition (all four) | 2026-10-20; date only | Due 2026-10-23 for -96654/-96656 and 2026-11-03 for -96652/-96655; forensic triage required for -96656. |
 | **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | Vendor-confirmed exploitation, CISA KEV addition and per-CVE ratings. |
-
-**[Detailed guide](details/plex2shell.md):** [Detection](details/plex2shell.md#detection) · [Remediation](details/plex2shell.md#remediation) · [Verification](details/plex2shell.md#verification) · [Timeline](details/plex2shell.md#timeline)
 
 The chain combines:
 
@@ -1241,7 +1280,9 @@ Sources: [researcher disclosure](https://zmain.info/blog/plex2shell), [exploitat
 
 ## Nextcloud’s built-in Collabora CODE server: unauthenticated command injection
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/nextcloud-code.md):** [Detection](details/nextcloud-code.md#detection) · [Remediation](details/nextcloud-code.md#remediation) · [Verification](details/nextcloud-code.md#verification) · [Timeline](details/nextcloud-code.md#timeline)
+
+**CVEs:** [CVE-2026-110447](https://www.cve.org/CVERecord?id=CVE-2026-110447)
 
 **[CVE-2026-110447](https://www.cve.org/CVERecord?id=CVE-2026-110447) — Critical, CVSS 4.0: 9.2**
 
@@ -1255,8 +1296,6 @@ Sources: [researcher disclosure](https://zmain.info/blog/plex2shell), [exploitat
 | Formal advisory | 2026-10-14; time/TZ unknown | Public vendor/CVE disclosure. |
 | CISA KEV addition | 2026-10-23; date only | Due 2026-10-26; apply vendor mitigations per BOD 26-04 or discontinue use. Not the exploitation start date. |
 | **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | CISA KEV addition. |
-
-**[Detailed guide](details/nextcloud-code.md):** [Detection](details/nextcloud-code.md#detection) · [Remediation](details/nextcloud-code.md#remediation) · [Verification](details/nextcloud-code.md#verification) · [Timeline](details/nextcloud-code.md#timeline)
 
 This affects the optional **Collabora Online – Built-in CODE Server** app, `richdocumentscode`, rather than every Collabora deployment.
 
@@ -1281,10 +1320,13 @@ Find `richdocumentscode` and its version in both the enabled and disabled lists.
 Sources: [vendor advisory](https://github.com/CollaboraOnline/online/security/advisories/GHSA-g3vx-3m76-fghh), [exploitation reporting](https://www.bleepingcomputer.com/news/security/hackers-exploit-collabora-rce-flaw-to-backdoor-nextcloud-servers/), [CISA KEV](https://www.cisa.gov/known-exploited-vulnerabilities-catalog).
 
 <a name="7-linux-ksmbd-serious-kernel-level-reports-but-not-every-linux-server"></a>
+<a name="linux-ksmbd-serious-kernel-level-reports-but-not-every-linux-server"></a>
 
-## Linux KSMBD: serious kernel-level reports, but not “every Linux server”
+## Linux KSMBD: kernel memory disclosure and denial of service
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ksmbd.md):** [Detection](details/ksmbd.md#detection) · [Remediation](details/ksmbd.md#remediation) · [Verification](details/ksmbd.md#verification) · [Timeline](details/ksmbd.md#timeline)
+
+**CVEs:** No identifiers established in the reviewed sources; tracked as ZDI-CAN-33774 and ZDI-CAN-33549.
 
 **ZDI-CAN-33774 and ZDI-CAN-33549 — ZDI rating: Critical, 9.0 each**
 
@@ -1301,8 +1343,6 @@ Sources: [vendor advisory](https://github.com/CollaboraOnline/online/security/ad
 | SMB Direct fix committed | 2026-10-26 10:15 UTC | Maintainer branch (ksmbd-for-next), marked for stable; not yet in mainline. |
 | Released kernel/NAS fixes | None established (as of 2026-10-26) | Newest kernel.org releases predate both fixes; no CVE or distribution advisory yet. |
 | **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | Upstream fix commits; no released kernel fix yet. |
-
-**[Detailed guide](details/ksmbd.md):** [Detection](details/ksmbd.md#detection) · [Remediation](details/ksmbd.md#remediation) · [Verification](details/ksmbd.md#verification) · [Timeline](details/ksmbd.md#timeline)
 
 These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinary Samba installations or all Linux machines are vulnerable.
 
@@ -1326,10 +1366,13 @@ A port 445 listener alone does not identify KSMBD; Samba can use it too. Check k
 Sources: [disclosure overview](https://thehackernews.com/2026/10/two-cvss-90-linux-ksmbd-rce-flaws.html), [October 23 maintainer discussion](https://lists.samba.org/archive/samba-technical/2026-October/141179.html).
 
 <a name="8-wpsplinter-nearby-attackers-can-compromise-vulnerable-routers"></a>
+<a name="wpsplinter-nearby-attackers-can-compromise-vulnerable-routers"></a>
 
-## WPSplinter: nearby attackers can compromise vulnerable routers
+## Broadcom legacy WPS: WPSplinter - nearby router compromise
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wpsplinter.md):** [Detection](details/wpsplinter.md#detection) · [Remediation](details/wpsplinter.md#remediation) · [Verification](details/wpsplinter.md#verification) · [Timeline](details/wpsplinter.md#timeline) · Vulnerability Info Site: [qkaiser.github.io](https://qkaiser.github.io/broadcom-wps/)
+
+**CVEs:** No identifiers established in the reviewed sources.
 
 **Broadcom legacy WPS implementation — no CVE or standardized score published**
 
@@ -1344,8 +1387,6 @@ Sources: [disclosure overview](https://thehackernews.com/2026/10/two-cvss-90-lin
 | ISP mitigation update | 2026-10-20; time/TZ unknown | Provider-specific findings, not universal firmware clearance. |
 | Fixed firmware releases | Not established | Obtain exact OEM/ISP build confirmation. |
 | **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
-
-**[Detailed guide](details/wpsplinter.md):** [Detection](details/wpsplinter.md#detection) · [Remediation](details/wpsplinter.md#remediation) · [Verification](details/wpsplinter.md#verification) · [Timeline](details/wpsplinter.md#timeline)
 
 A Wi-Fi attacker within radio range can exploit fragmented WPS message handling **without the network password or completing WPS enrollment**.
 
@@ -1366,10 +1407,13 @@ A listed vulnerable model/build is actionable; an unlisted model is **unknown**,
 Source: [researcher’s WPSplinter advisory and device guidance](https://qkaiser.github.io/broadcom-wps/).
 
 <a name="9-header-accordions-http3-compression-becomes-resource-exhaustion"></a>
+<a name="header-accordions-http3-compression-becomes-resource-exhaustion"></a>
 
-## Header Accordions: HTTP/3 compression becomes resource exhaustion
+## HTTP/3 stacks: Header Accordions - compression-driven resource exhaustion
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/header-accordions.md):** [Detection](details/header-accordions.md#detection) · [Remediation](details/header-accordions.md#remediation) · [Verification](details/header-accordions.md#verification) · [Per-component timeline](details/header-accordions.md#timeline) · Vulnerability Info Site: [foxio.io](https://foxio.io/blog/header-accordions-qpack-amplification-attacks-against-http-3-servers)
+
+**CVEs:** [CVE-2025-64702](https://www.cve.org/CVERecord?id=CVE-2025-64702), [CVE-2026-12523](https://www.cve.org/CVERecord?id=CVE-2026-12523), [CVE-2025-13945](https://www.cve.org/CVERecord?id=CVE-2025-13945)
 
 **Multiple implementations; includes [CVE-2025-64702](https://www.cve.org/CVERecord?id=CVE-2025-64702), [CVE-2026-12523](https://www.cve.org/CVERecord?id=CVE-2026-12523), and [CVE-2025-13945](https://www.cve.org/CVERecord?id=CVE-2025-13945)**
 
@@ -1388,8 +1432,6 @@ Source: [researcher’s WPSplinter advisory and device guidance](https://qkaiser
 | Bun advisory | 2026-10-24 00:13 UTC | GHSA-cf8x-9m69-3gg3, vendor-rated High, no CVE; HTTP/3 server and opt-in HTTP/3 fetch client. |
 | h3, aioquic/mitmproxy fixes | Not established (as of 2026-10-26) | No fixed releases found; h3 fix PRs still open. |
 | **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | Bun HTTP/3 fix and remaining unfixed stacks. |
-
-**[Detailed guide](details/header-accordions.md):** [Detection](details/header-accordions.md#detection) · [Remediation](details/header-accordions.md#remediation) · [Verification](details/header-accordions.md#verification) · [Per-component timeline](details/header-accordions.md#timeline)
 
 Small QPACK-compressed header blocks expand into disproportionate memory usage. Affected implementations enforce decoded-header limits too late, incompletely, or not at all.
 
@@ -1412,10 +1454,13 @@ Look for `github.com/quic-go/quic-go`, its version, and any replacement module. 
 Source: [FoxIO research and implementation matrix](https://foxio.io/blog/header-accordions-qpack-amplification-attacks-against-http-3-servers).
 
 <a name="10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability"></a>
+<a name="beyondtrust-remote-support-an-already-exploited-appliance-vulnerability"></a>
 
-## BeyondTrust Remote Support: an already-exploited appliance vulnerability
+## BeyondTrust Remote Support: exploited unauthenticated file operations
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/beyondtrust.md):** [Detection](details/beyondtrust.md#detection) · [Remediation](details/beyondtrust.md#remediation) · [Verification](details/beyondtrust.md#verification) · [Timeline](details/beyondtrust.md#timeline)
+
+**CVEs:** [CVE-2026-102764](https://www.cve.org/CVERecord?id=CVE-2026-102764)
 
 **[CVE-2026-102764](https://www.cve.org/CVERecord?id=CVE-2026-102764) — Critical: vendor CVSS 4.0 9.3; NVD CVSS 3.1 9.8**
 
@@ -1432,8 +1477,6 @@ Source: [FoxIO research and implementation matrix](https://foxio.io/blog/header-
 | Public disclosure | 2026-10-15; time/TZ unknown | Coordinated advisory and research. |
 | CISA KEV addition | 2026-10-16; date only | Due 2026-10-19; apply vendor mitigations per BOD 26-04 or discontinue use. Not the exploitation start date. |
 | **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | CISA KEV addition and NVD severity attribution. |
-
-**[Detailed guide](details/beyondtrust.md):** [Detection](details/beyondtrust.md#detection) · [Remediation](details/beyondtrust.md#remediation) · [Verification](details/beyondtrust.md#verification) · [Timeline](details/beyondtrust.md#timeline)
 
 Improper origin validation in internal messaging permits an unauthenticated remote attacker to perform file operations on affected Remote Support appliances.
 
@@ -1453,10 +1496,13 @@ Sources: [vendor advisory](https://www.beyondtrust.com/trust-center/security-adv
 
 <a name="related-incidents-these-need-more-than-vulnerability-patching"></a>
 <a name="am-i-impacted-by-the-related-incidents"></a>
+<a name="emudhra--emsign"></a>
 
-## eMudhra / emSign
+## TLS and code-signing trust stores: eMudhra / emSign - certificate-authority compromise
 
-[Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/emudhra.md):** [Detection](details/emudhra.md#detection) · [Remediation](details/emudhra.md#remediation) · [Verification](details/emudhra.md#verification) · [Timeline and corrections](details/emudhra.md#timeline)
+
+**CVEs:** [CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943), [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820), [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557)
 
 **Certificate-authority compromise — TLS impersonation and fraudulent code-signing trust.** This incident has no single incident-wide CVSS score; client-specific fixes have their own advisories, including Go **[CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943)**.
 
@@ -1482,8 +1528,6 @@ Eight intermediate CA private keys were trivially recoverable because of defecti
 | Chrome root removal | **Expected** 2026-10-27 morning PDT (UTC−07:00) | Google forecast for Chrome Root Store users; not completed rollout as of this update. |
 | **Last updated** | **2026-10-26 09:26 EDT (UTC−04:00)** | Java follow-up, CPython fixes, alternate trust paths and detection guidance. |
 
-**[Detailed guide](details/emudhra.md):** [Detection](details/emudhra.md#detection) · [Remediation](details/emudhra.md#remediation) · [Verification](details/emudhra.md#verification) · [Timeline and corrections](details/emudhra.md#timeline)
-
 Inventory client trust stores as well as your server certificates: operating-system stores, browsers, Java truststores, Python/application CA bundles, containers, and embedded clients can update independently. Match certificate fingerprints/serials and affected issuer chains against the incident record; a name containing “emSign” is not a precise affected-certificate test. Inspect Go build versions with `sh stack-inventory.sh go /path/to/deployed-binary` and compare with the fixed branches above. Updating the installed Go compiler does not repair existing binaries. For third-party appliances or opaque applications, obtain the vendor's trust-update status. A successful TLS connection is not proof that fraudulent chains are rejected.
 
 The affected keys comprise **six TLS and two code-signing intermediates**, plus cross-signs. Include certificates affected by resulting root distrust, not just compromised issuers. Firefox Android needs **158.0.2 or later** for the follow-up. **CA revocation is not proof that a client enforces the block**; test the effective verifier. The vendor's October 26 statement still promises a full root-cause review.
@@ -1499,9 +1543,13 @@ The affected keys comprise **six TLS and two code-signing intermediates**, plus 
 
 Sources: [Mozilla incident record](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449), [Go security announcement](https://groups.google.com/g/golang-announce/c/66pojueaQek), [vendor statement](https://emudhra.com/en/post/certificate-security-incident). See the detailed guide for per-runtime checks and vendor trust-distribution guidance.
 
-## LiteLLM
+<a name="litellm"></a>
 
-[Back to TOC](#table-of-contents)
+## LiteLLM: malicious release and credential theft
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/litellm.md):** [Detection](details/litellm.md#detection) · [Remediation](details/litellm.md#remediation) · [Verification](details/litellm.md#verification) · [Registry timeline](details/litellm.md#timeline)
+
+**CVEs:** No incident-specific identifiers established in the reviewed sources.
 
 **Supply-chain compromise — credential theft and arbitrary code execution.** This is a malicious release incident, not a software bug with one incident-wide CVSS score.
 
@@ -1528,8 +1576,6 @@ The corrected postmortem identifies an **exposed, unrevoked master key**, follow
 | Cleanup patch | Not applicable | 1.106.2 is a clean rollback target, not host recovery. |
 | **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | New signing key and later clean releases. |
 
-**[Detailed guide](details/litellm.md):** [Detection](details/litellm.md#detection) · [Remediation](details/litellm.md#remediation) · [Verification](details/litellm.md#verification) · [Registry timeline](details/litellm.md#timeline)
-
 Inspect **historical** dependency manifests, CI install logs, registry digests, and deployment records for **1.107.0** and the malicious image digests in the incident guidance. A floating tag or today's package version cannot establish what ran during the incident. On a clean analysis host, run `python3 -I -S python-package-inventory.py /mnt/snapshot/path/to/site-packages` against a read-only mounted snapshot; use the clean host's interpreter, not the snapshot's. Do not run ordinary `python`, `pip`, or the LiteLLM CLI inside a suspected infected environment. Metadata/version matches identify candidates, not trustworthy integrity; compare artifact hashes with the vendor's indicators. If a malicious artifact executed, treat reachable secrets as exposed even when logs show no obvious exfiltration.
 
 PyPI, GHCR and Docker Hub have different removal windows, and **cached artifacts remain dangerous after removal**. The vendor excludes its private enterprise release, not every public image used by an enterprise. The attacker used a signed official pipeline: signing alone did not establish trustworthy source or content. From 1.106.3 (and its backports), [verify images with the vendor's **new cosign key**](details/litellm.md#verification) from commit `e82a3c6` and update pinned keys in admission policies.
@@ -1538,9 +1584,13 @@ PyPI, GHCR and Docker Hub have different removal windows, and **cached artifacts
 
 Sources: [canonical attack-chain postmortem](https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain), [vendor incident response](https://docs.litellm.ai/blog/security-incident-oct-21-2026), [researcher evidence and vendor follow-up](https://github.com/BerriAI/litellm/issues/47826).
 
-## Railway
+<a name="railway"></a>
 
-[Back to TOC](#table-of-contents)
+## Railway: environment secret exposure
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/railway.md):** [Detection](details/railway.md#detection) · [Remediation](details/railway.md#remediation) · [Verification](details/railway.md#verification) · [Timeline and limits](details/railway.md#timeline)
+
+**CVEs:** No incident-specific identifiers established in the reviewed sources.
 
 **Platform-side secret exposure — credential abuse and downstream data/system compromise.** No single incident-wide CVSS score or local package patch describes this incident.
 
@@ -1558,8 +1608,6 @@ Sources: [canonical attack-chain postmortem](https://docs.litellm.ai/blog/securi
 | Deployment/login recovery guides | 2026-10-23 16:30 UTC | Blog RSS. |
 | Local software patch | Not applicable | Issuer-side revocation and replacement of exposed credentials required. |
 | **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | Exact publication times from vendor metadata. |
-
-**[Detailed guide](details/railway.md):** [Detection](details/railway.md#detection) · [Remediation](details/railway.md#remediation) · [Verification](details/railway.md#verification) · [Timeline and limits](details/railway.md#timeline)
 
 From a clean browser/session, review your projects, shared variables, environment-specific variables, deployment history, and Railway's incident notices. Identify credentials stored before October 21 and the external services they authorize. Do not export or print secret values to perform this inventory; variable names, owners, creation/history records, and provider key IDs are sufficient. If you cannot establish whether a still-valid credential was present during the window, include it in the vendor-recommended rotation. Audit the credential's provider for unexpected use; absence of suspicious logs does not prove it was not disclosed. There is no local package-version script that can rule out this server-side exposure.
 
@@ -1585,10 +1633,12 @@ flowchart TD
     D --> E{"What do you operate?<br/>Follow every matching branch"}
     E -->|Web apps and runtimes| F["Patch PHP, Node/Bun,<br/>Brotli, Pillow, GitLab, Ruby,<br/>Next.js, Laravel, Drupal and WordPress plugins;<br/>apply PHP upload mitigation"]
     E -->|Servers and appliances| I["Check Plex, Nextcloud CODE,<br/>KSMBD, HTTP/3, BeyondTrust,<br/>NGINX, curl, VM-host kernels<br/>and KEV-listed appliances;<br/>patch or contain affected features"]
+    E -->|Media and analytics| O["Check FFmpeg/libjxl,<br/>ClickHouse and Arrow decoders;<br/>verify fixed supplier builds<br/>or pause untrusted processing"]
     E -->|Wi-Fi and Tailscale| J["Verify WPS firmware;<br/>restrict SSH and unneeded forwarding;<br/>track vendor fixes"]
     E -->|Android Authenticator| N["Update Authenticator;<br/>review work-account<br/>token exposure"]
 
     F --> L["Update trust stores;<br/>rebuild Go binaries"]
+    O --> L
     I --> L
     J --> L
     N --> L
@@ -1626,6 +1676,9 @@ flowchart TD
 | **Python** | `Brotli` **1.2.1**, `brotlicffi` **1.2.1.0**, Pillow **13.0.0** where installed. Pillow may require a Python upgrade. |
 | **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps. [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |
 | **Java / Scala / PHP / Ruby native Brotli** | Brotli4j **1.24.0** including native artifacts; PHP extension **0.21.1**; Ruby gem **0.9.1+**. Patch separate libcurl/native copies too. |
+| **FFmpeg / libjxl media workers** | Verify the loaded/bundled Brotli fix with your supplier; the libjxl source merge does not patch existing FFmpeg artifacts. Until verified, pause affected untrusted JPEG XL/metadata processing. [Guide](details/brotli.md#remediation). |
+| **ClickHouse** | Require a supplier build containing fixed Brotli; listed source backports are not verified released packages. Until patched, reject Brotli HTTP bodies before decoding and pause untrusted `.br`/Parquet ingestion. [Guide](details/brotli.md#inventory-by-language-and-deployment). |
+| **Arrow / pyarrow** | Inspect Arrow's own bundled/system Brotli; updating Python `Brotli` alone is insufficient. No fixed wheel is established here: use a verified patched build or pause affected untrusted file/buffer processing. [Guide](details/brotli.md#inventory-by-language-and-deployment). |
 | **GitLab** | Latest supported patch release covering October 21; **19.3.6 / 19.4.3 / 19.5.1** also cover the identity flaws above. |
 | **Other Ruby applications** | Ruby **3.3.13 / 3.4.12 / 4.0.9**, especially where users supply regex patterns. |
 | **Plex** | Media Server **1.43.3.10861 or later**; investigate previously exposed vulnerable servers. |

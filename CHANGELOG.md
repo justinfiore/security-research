@@ -23,6 +23,14 @@ New findings, corrected impact assessments, patch releases, and detection or rem
   - [Wasmtime sandbox escapes](black-october/details/wasmtime.md#remediation): CVE-2026-115889 affects all architectures. Lines 37–47 get no fixed release, so move to 36.0.19, 48.0.7, 49.0.4 or 50.x.
   - [Laravel TokenGuard](black-october/details/laravel.md#detection): affects only `token`-driver guards on MySQL/MariaDB.
 
+## 2026-10-26 10:00 EDT (UTC−04:00) — Brotli media and analytics exposure
+
+**Partial review:** Targeted Brotli downstream update, not a complete refresh of all tracked issues or search for new disclosures.
+
+- **Brotli2Shell is another alias for CVE-2026-111497.** JFrog demonstrates FFmpeg/libjxl pointer corruption and a cleanup crash, ClickHouse server DoS, an Arrow/pyarrow CPU loop and a .NET native crash—not complete RCE exploits for those products. [Review the demonstrated outcomes and investigation limits](black-october/details/brotli.md#operational-signals-and-evidence-limits).
+- **Inventory media and analytics decoders separately.** JPEG XL metadata, `.br` files and Parquet can reach copies untouched by a Node or Python binding update. libjxl and ClickHouse source fixes are merged, but published fixed artifacts remain unconfirmed; Arrow's dependency-update PR remains open. [Verify supplier builds or pause affected untrusted processing](black-october/details/brotli.md#inventory-by-language-and-deployment).
+- **Detection guidance:** Added [JFrog's contextual scanner and Trail of Bits Brotli Checker](black-october/details/brotli.md#official-researcher-detection-tools), including prerequisites, coverage gaps and why matches or empty results do not establish exposure or safety.
+
 ## 2026-10-26 09:28 EDT (UTC−04:00) — Twelve KEV-listed flaws, PHP2Shell exploitation and KEV updates
 
 **Partial review:** Every tracked issue was rechecked and CISA KEV additions since October 1 were reviewed. X timelines, the Wiz vulnerability database and part of BleepingComputer could not be checked, and several non-KEV High/Critical candidates (for example Next.js, NGINX, curl and Drupal) are not yet assessed here.
