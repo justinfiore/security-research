@@ -2,7 +2,15 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents) · [Maintenance policy](black-october/MAINTENANCE.md#changelog-on-every-run)
 
-Each entry records a documentation/research run, not a claim that readers' systems were patched. Item-level **Last updated** dates change only when the corresponding content changes. A complete review with no substantive changes records **No Changes this run.** Incomplete reviews report their coverage gaps instead.
+Each entry records a run that changed documentation or scripts, not a claim that readers' systems were patched. Item-level **Last updated** dates change only when the corresponding content changes. Runs without content changes leave this file untouched and do not commit or push; their outcomes and coverage gaps stay in their run threads. Historical entries retain the conventions in effect when written.
+
+## 2026-10-26 08:58 EDT (UTC−04:00) — Setup: hourly maintenance policy
+
+**Scope:** Maintenance-policy alignment with the owner's replacement schedule and completion rules; no vulnerability research or discovery cutoff advanced.
+
+- Updated the [schedule description](black-october/MAINTENANCE.md#schedule-and-scope) to hourly Eastern runs in fresh Medium threads under the workspace project. The replacement uses the project-default orb size; **a1.small** remains unverified. The old daily schedule was removed by the scheduling thread.
+- Changed [changelog conventions](black-october/MAINTENANCE.md#changelog-on-every-run) so unchanged runs never generate changelog-only commits. Partial/blocked runs report missing coverage in their threads and include it in the changelog only when publishing material changes.
+- Added [conditional archiving](black-october/MAINTENANCE.md#validate-and-deliver): complete coverage plus verified publication or no changes permits archiving; errors, incomplete coverage or attention needed keep the run visible and require an owner mention with a specific question. Historical entries below remain unchanged.
 
 ## 2026-10-26 08:52 EDT (UTC−04:00) — Setup: diagram readability
 

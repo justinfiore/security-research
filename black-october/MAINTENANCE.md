@@ -4,7 +4,8 @@
 
 ## Schedule and scope
 
-- Run every day at **04:00 America/New_York** (Eastern time, including DST), in the dedicated **Medium / a1.small** Amp orb. Scheduling lives in Amp, not GitHub Actions.
+- Run **hourly on the hour, America/New_York** (Eastern time, including DST), starting a fresh **Medium** thread for each run in the Amp project **pressganey/security-research**. Scheduling lives in Amp, not GitHub Actions. Fresh orbs use the project-default size; the originally requested **a1.small** size has not been verified for this replacement schedule.
+- The schedule is `34066e1b-ab2f-5966-af37-9824e3bd68a1`, hosted on [the schedule thread](https://ampcode.com/threads/T-01a17848-85d5-7201-9e74-81562adffff5). It replaces the removed daily schedule. Archive run threads only under the clean-completion conditions below.
 - Maintain the existing vulnerability groups and related incidents. Add newly verified High/Critical vulnerability items found during each run; continue after October under this collection until the owner changes the scope.
 - The repository on GitHub, **justinfiore/security-research**, branch **main**, is the shared source of truth. Never use a stale local copy as the baseline.
 - This procedure authorizes documentation/script maintenance and commits/pushes to main. It does not authorize patching anyone's infrastructure, rotating actual credentials, executing exploits, changing repository permissions, or publishing private data.
@@ -76,11 +77,11 @@ Each main item includes a **Last updated** table row with its actual revision ti
 
 ## Changelog on every run
 
-Prepend a uniquely timestamped heading in root `Changelog.md`, newest first. Include Eastern timezone/UTC offset, research window, and status **Complete**, **Partial**, **Blocked**, or **Setup**. A Setup entry is not a completed daily discovery sweep.
+Evaluate whether documentation or scripts materially changed before touching root `Changelog.md`. For changed runs only, prepend a uniquely timestamped heading, newest first. Include Eastern timezone/UTC offset, research window, and status **Complete**, **Partial**, **Blocked**, or **Setup**. A Setup entry is not a completed discovery sweep.
 
 - Changed run: bullet substantive changes with **relative deep links** to the changed sections of the main/detail documents. Separate newly discovered facts from editorial work. Include important failed source checks and unresolved candidates.
-- Complete no-change run: write **No Changes this run.** exactly, with the run timestamp and coverage metadata. Commit this changelog-only update.
-- Incomplete run: mark **Partial/Blocked**, list missing coverage and errors, and do not claim a clean no-change review. Validated partial findings may be published with their limits; never publish unverified remediation claims to meet a schedule.
+- No-content-change run: leave `Changelog.md` and item dates untouched; do not commit or push. Report the research window, outcome and coverage limits in the run thread instead. Never create changelog-only entries just to record a run.
+- Incomplete run: report **Partial/Blocked**, missing coverage and errors in the run thread; if material changes are being published, include those limits in their changelog entry too. Do not claim a clean no-change review. Validated partial findings may be published with their limits; never publish unverified remediation claims to meet a schedule.
 - Do not rewrite prior run entries or advance the last successful research cutoff on an incomplete run. Before retrying after an uncertain push, inspect remote history to avoid duplicating the same run.
 
 ## Validate and deliver
@@ -89,5 +90,6 @@ Prepend a uniquely timestamped heading in root `Changelog.md`, newest first. Inc
 2. Check every relative Markdown link and fragment, including main TOC, backlinks and changelog links. Preserve old anchors. Keep Mermaid syntax valid when the stack decision guide changes.
 3. For script changes, run syntax checks and targeted behavior tests, including missing-tool and unknown-state behavior. Do not run actual remediation against production as a test.
 4. Review `git diff`, make sure only intended guides, scripts, maintenance instructions and changelog changes are staged, and keep `PROJECTS.md` ignored.
-5. Commit the intended changes (including the changelog) and push to **main**. If remote main advanced, reconcile without dropping either writer's changes and validate again; never force-push or bypass branch protection.
-6. Confirm GitHub's main commit matches the delivered work. Report the linked result and material source/test limitations. If auth, conflicts or validation prevent delivery, preserve local work and report the blocker; do not claim publication.
+5. If documentation or scripts materially changed, commit the intended changes (including the changelog) and push to **main**. Otherwise skip committing and pushing. If remote main advanced, reconcile without dropping either writer's changes and validate again; never force-push or bypass branch protection.
+6. After a push, confirm GitHub's main commit matches the delivered work. Report the linked result and material source/test limitations. If auth, conflicts or validation prevent delivery, preserve local work and report the blocker; do not claim publication.
+7. Archive the run thread only after complete research coverage and either successfully committed, pushed and remotely verified changes, or no content changes. If there are errors, incomplete coverage, unpushed work, failed validation/delivery, or anything needing the owner's attention, leave it unarchived and tag `@user_01K8NQA1YGERA907RW4792G397` with one specific question. Successful publication alone does not make an incomplete research run eligible for archiving.
