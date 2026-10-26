@@ -4,7 +4,19 @@
 
 [Main AuthMask summary](../black-october-2026.md#authmask-microsoft-authenticator-for-android-token-theft) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-80097 — Microsoft CVSS 3.1: 8.6 High; vendor severity: Important.** A malicious app on the same Android device can exploit improper caller authentication in the Authenticator broker to obtain tokens for the signed-in work account. The researcher demonstrated delegated access to mail, files and calendars, plus scopes for changing authentication methods/passkeys. This is **local privilege escalation and account-token disclosure**, not unauthenticated internet RCE or a general break of MFA.
+**[CVE-2026-80097](https://www.cve.org/CVERecord?id=CVE-2026-80097) — Microsoft CVSS 3.1: 8.6 High; vendor severity: Important.** A malicious app on the same Android device can exploit improper caller authentication in the Authenticator broker to obtain tokens for the signed-in work account. The researcher demonstrated delegated access to mail, files and calendars, plus scopes for changing authentication methods/passkeys. This is **local privilege escalation and account-token disclosure**, not unauthenticated internet RCE or a general break of MFA.
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Establish the affected device and app profile](#establish-the-affected-device-and-app-profile)
+  - [Preserve the interaction disagreement](#preserve-the-interaction-disagreement)
+  - [Investigate account activity, not only app permissions](#investigate-account-activity-not-only-app-permissions)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 

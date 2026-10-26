@@ -6,6 +6,20 @@
 
 **Scope:** ZDI-CAN-33774 (protocol-dispatch race) and ZDI-CAN-33549 (SMB Direct integer underflow) affect the **in-kernel KSMBD server**, not ordinary Samba `smbd`. ZDI rates both 9.0; public demonstrations establish memory disclosure/crashes, **not successful RCE**. [Research assessment][sysdig]
 
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Distinguish KSMBD from unrelated SMB services](#distinguish-ksmbd-from-unrelated-smb-services)
+  - [Evaluate the two prerequisites independently](#evaluate-the-two-prerequisites-independently)
+  - [Evidence limits and incident triage](#evidence-limits-and-incident-triage)
+- [Remediation](#remediation)
+  - [Temporary risk reduction](#temporary-risk-reduction)
+  - [Obtain a release that covers both reports](#obtain-a-release-that-covers-both-reports)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
+
 ## Timeline
 
 | Event | Date | Evidence and qualification |

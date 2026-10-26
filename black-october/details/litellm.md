@@ -6,6 +6,15 @@
 
 All seven `litellm==1.107.0` PyPI wheels and affected public container images carried a credential stealer and remote-code loader. **Do not run ordinary Python, `pip`, or the LiteLLM CLI in a suspected environment.** Startup hooks can execute without importing LiteLLM. Quarantine, investigate from a clean host, rebuild, and recover credentials; an in-place version downgrade is not sufficient.
 
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
+
 ## Timeline
 
 All times below are UTC. Publication/removal windows describe vendor registries, not the last possible execution of a cached copy.

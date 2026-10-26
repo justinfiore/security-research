@@ -8,7 +8,30 @@ Eight P-384 intermediate CA keys were trivially recoverable: **six TLS and two c
 
 **Priority:** inventory the software that *validates* certificates: outbound API clients, identity/JWKS fetchers, package managers, CI runners, update agents, TLS-inspecting proxies, and code-signature verifiers. For TLS impersonation an attacker also needs to intercept or redirect a connection; possessing a CA key does not by itself compromise every endpoint. Browser protection does not establish that a server-side application is protected.
 
-**October 26 update:** do not reuse an early "fixed Java" table. Oracle's October 24 **CVE-2026-114820** alert lists the earlier emergency builds as affected and requires a further root-removal update. CPython has now also released **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**, blocking the compromised keys in `ssl` (**CVE-2026-115557**). See the [runtime inventory](#runtime-and-application-trust-store-inventory) and [verification limits](#verification).
+**October 26 update:** do not reuse an early "fixed Java" table. Oracle's October 24 **[CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820)** alert lists the earlier emergency builds as affected and requires a further root-removal update. CPython has now also released **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**, blocking the compromised keys in `ssl` (**[CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557)**). See the [runtime inventory](#runtime-and-application-trust-store-inventory) and [verification limits](#verification).
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Trust paths and what each mitigation changes](#trust-paths-and-what-each-mitigation-changes)
+- [Detection](#detection)
+  - [Runtime and application trust-store inventory](#runtime-and-application-trust-store-inventory)
+    - [Node.js and embedded JavaScript runtimes](#nodejs-and-embedded-javascript-runtimes)
+    - [Java and Scala](#java-and-scala)
+    - [Python](#python)
+    - [PHP](#php)
+    - [.NET / C#](#net--c)
+    - [Go](#go)
+    - [Ruby](#ruby)
+    - [Rust](#rust)
+  - [Containers, OS stores and alternate copies](#containers-os-stores-and-alternate-copies)
+- [Remediation](#remediation)
+  - [Central controls, CT and egress limits](#central-controls-ct-and-egress-limits)
+- [Verification](#verification)
+  - [Java: use the official offline checker, with its actual limits](#java-use-the-official-offline-checker-with-its-actual-limits)
+  - [Optional application-path tests: no universal PASS](#optional-application-path-tests-no-universal-pass)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 
@@ -25,11 +48,11 @@ Times below are UTC where specified; release dates without times follow the publ
 | 2026-10-19 14:55 | Sectigo reported completion of cross-certificate revocation; new CRL/OCSP data was propagating to CDN edges (comment 13). |
 | 2026-10-19; time/TZ not stated | Apple began blocking the 12 TLS intermediate certificates (six originals and six cross-signs) through automatic certificate configuration updates for its networking/security frameworks. |
 | 2026-10-19 around 22:00 | Google reports equivalent Android/Googlebook protection through Google Play services; restarting a device can trigger the update. This is not protection for every app's independently bundled verifier. |
-| 2026-10-19 | Go release history dates **1.27.3 / 1.26.10** to this day: `crypto/x509` blocking, **CVE-2026-111943**. The linked Google Groups announcement displays October 20; use release history for the release date. |
+| 2026-10-19 | Go release history dates **1.27.3 / 1.26.10** to this day: `crypto/x509` blocking, **[CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943)**. The linked Google Groups announcement displays October 20; use release history for the release date. |
 | 2026-10-20 | Mozilla public security post and Firefox **158.0.1**, ESR **115.43.1 / 153.5.1** releases; NSS **3.131.1** trust-list update announced. eMudhra's statement was first published this day. |
 | 2026-10-20 21:00:02 | Debian published DSA-6572-1 removing both the emSign G3 and Comodo AAA roots; Ubuntu's USN-8944-1, dated the same day, describes emSign G3 removal and a CA-bundle refresh. |
 | 2026-10-21 08:29 | Firefox Android **158.0.2** released to fix some clients not immediately applying bundled OneCRL changes after startup. Do not stop Android remediation at 158.0.1. |
-| 2026-10-21 | Oracle/OpenJDK published **CVE-2026-91403** intermediate-distrust advisories; Node.js security releases included an eMudhra `ca-cert` update. |
+| 2026-10-21 | Oracle/OpenJDK published **[CVE-2026-91403](https://www.cve.org/CVERecord?id=CVE-2026-91403)** intermediate-distrust advisories; Node.js security releases included an eMudhra `ca-cert` update. |
 | 2026-10-22 | eMudhra announced withdrawal from global TLS issuance and offered Sectigo replacement certificates. This is a transition announcement, not universal root removal. |
 | 2026-10-23; time/TZ not stated | Apple began blocking `emSign ECC Root CA - G3`; its article separately warns that macOS tools using `/etc/ssl/cert.pem` still need a bundle update or administrator workaround. |
 | 2026-10-24 | Oracle published **CVE-2026-114820**, CVSS 3.1 **9.1**, with further Java root-removal updates. OpenJDK guidance, updated 19:24 UTC, requires release-note evidence for **JDK-8395690 / CVE-2026-114820** even after recent Java updates. |
@@ -133,7 +156,7 @@ The paths and APIs below locate candidate trust sources; they are **not universa
 
 - **Images are separate machines for trust purposes.** Patch/rebuild both build and runtime stages, pull the intended fixed base digest, invalidate stale package-install layers, and redeploy running instances. A new host package, mutable tag, or CI compiler does not change an existing image or process. Include sidecars, init containers, copied JDKs, mounted bundles, secrets/config maps, serverless layers and native libraries. Pinned/EOL images may never receive upstream rebuilds; require explicit maintained-package evidence rather than assuming they are safe.
 - **OS packages:** [Debian DSA-6572-1](https://lists.debian.org/debian-security-announce/2026/msg00487.html) fixes trixie `ca-certificates` in **20250419+deb13u1**, removing both emSign G3 and Comodo AAA. [Ubuntu USN-8944-1](https://ubuntu.com/security/notices/USN-8944-1) specifies **20260816ubuntu0.22.04.1 / 20260816ubuntu0.24.04.1 / 20260816ubuntu0.26.04.1 / 20260816ubuntu0.26.10.1** for the corresponding releases; its notice describes emSign removal and a bundle refresh, not proof about every separately configured AAA copy. Java needs the additional Debian/Ubuntu step above. Use distro version comparisons and backport records, not upstream-only numeric comparisons.
-- **RHEL/UBI/OpenShift:** [RHSB-2026-012](https://access.redhat.com/security/vulnerabilities/RHSB-2026-012) tracks **CVE-2026-114406**, links RHEL 8/9/10 errata, and includes RHEL 6/7 in its affected list. It provides platform-specific mitigation links and directs customers to rebuild dependent images. Treat other distro branches, Alpine, Amazon Linux, Bottlerocket, Azure Linux and appliance images as **unverified here** until their current advisory and the deployed artifacts are checked; October 24 "no patch yet" claims are not carried forward as October 26 facts.
+- **RHEL/UBI/OpenShift:** [RHSB-2026-012](https://access.redhat.com/security/vulnerabilities/RHSB-2026-012) tracks **[CVE-2026-114406](https://www.cve.org/CVERecord?id=CVE-2026-114406)**, links RHEL 8/9/10 errata, and includes RHEL 6/7 in its affected list. It provides platform-specific mitigation links and directs customers to rebuild dependent images. Treat other distro branches, Alpine, Amazon Linux, Bottlerocket, Azure Linux and appliance images as **unverified here** until their current advisory and the deployed artifacts are checked; October 24 "no patch yet" claims are not carried forward as October 26 facts.
 - **macOS:** [Apple's incident guidance](https://support.apple.com/en-us/149555) separates its automatically blocked framework path from tools using `/etc/ssl/cert.pem` and apps with independent roots. Follow its administrator workaround only with backups and availability review; removal of emSign alone does not block AAA cross-signs, and a later OS update can restore the edited file.
 - **Static inspection limits:** parse every certificate in a PEM bundle, not just the first one. Inspect JKS/PKCS#12 stores with appropriate read-only tooling; scan extracted package/image contents, not just filenames. `grep emSign` against base64 PEM data or a listing of `/etc/ssl/certs` cannot certify absence. Missing/unreadable paths, hashed symlinks, compiled-in anchors, conditional fallback bundles and custom verification code are coverage gaps, not "clean" results. Package scanners can miss CA data that is not declared as a dependency.
 

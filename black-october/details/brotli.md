@@ -4,7 +4,22 @@
 
 [Main Brotli summary and patch matrix](../black-october-2026.md#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-111497** is one cross-stack Brotli decoder bug with two nicknames. Node rates it High; the Google/CNA CVSS 4.0 rating is **9.2 Critical**. Malformed compressed data can corrupt process memory, causing disclosure, crashes or RCE. It is not an HTTP/2-specific defect and does not require a public inbound HTTP endpoint.
+**[CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497)** is one cross-stack Brotli decoder bug with two nicknames. Node rates it High; the Google/CNA CVSS 4.0 rating is **9.2 Critical**. Malformed compressed data can corrupt process memory, causing disclosure, crashes or RCE. It is not an HTTP/2-specific defect and does not require a public inbound HTTP endpoint.
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Map every decoder and input source](#map-every-decoder-and-input-source)
+  - [Inventory by language and deployment](#inventory-by-language-and-deployment)
+  - [Response-header inventory script](#response-header-inventory-script)
+  - [Operational signals and evidence limits](#operational-signals-and-evidence-limits)
+  - [Other Node DNS and TLS issues](#other-node-dns-and-tls-issues)
+- [Remediation](#remediation)
+  - [Contain before the first decoder](#contain-before-the-first-decoder)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 
@@ -98,7 +113,7 @@ Investigate decompression-associated crashes, unusual child processes, unexpecte
 
 ### Other Node DNS and TLS issues
 
-The same Node update fixes **CVE-2026-105482** (DNS NUL truncation), **CVE-2026-105483** (fullwidth-digit IP identity validation, Node 24/26), and **CVE-2026-106069** (resolver/validator disagreement over noncanonical IPs). Trace user-controlled hosts into DNS allowlists and TLS connections independently of Brotli. Keep canonicalized validation and the actual destination consistent; do not disable TLS certificate verification as a workaround. Their public announcement/fix date is 2026-10-21; private discovery dates are not established here.
+The same Node update fixes **[CVE-2026-105482](https://www.cve.org/CVERecord?id=CVE-2026-105482)** (DNS NUL truncation), **[CVE-2026-105483](https://www.cve.org/CVERecord?id=CVE-2026-105483)** (fullwidth-digit IP identity validation, Node 24/26), and **[CVE-2026-106069](https://www.cve.org/CVERecord?id=CVE-2026-106069)** (resolver/validator disagreement over noncanonical IPs). Trace user-controlled hosts into DNS allowlists and TLS connections independently of Brotli. Keep canonicalized validation and the actual destination consistent; do not disable TLS certificate verification as a workaround. Their public announcement/fix date is 2026-10-21; private discovery dates are not established here.
 
 ## Remediation
 

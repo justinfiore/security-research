@@ -4,7 +4,20 @@
 
 [Main PHP summary](../black-october-2026.md#1-php2shell-unauthenticated-execution-below-your-application) · [Patch decision guide](../black-october-2026.md#what-should-i-patch-a-stack-based-decision-guide) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-109618 / CVE-2026-109619: Critical, CVSS 4.0 9.2.** Memory corruption during request initialization/cleanup can lead to unauthenticated RCE. This guide also covers the distinct, conditional upload-progress issue **CVE-2026-115560**, whose full advisory/score was not yet available in the sources reviewed.
+**[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) / [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619): Critical, CVSS 4.0 9.2.** Memory corruption during request initialization/cleanup can lead to unauthenticated RCE. This guide also covers the distinct, conditional upload-progress issue **[CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560)**, whose full advisory/score was not yet available in the sources reviewed.
+
+## Table of contents
+
+- [Timeline](#timeline)
+  - [Exploitation status](#exploitation-status)
+- [Detection](#detection)
+  - [Inventory the web runtime, not only CLI PHP](#inventory-the-web-runtime-not-only-cli-php)
+  - [Upload-progress prerequisite check](#upload-progress-prerequisite-check)
+  - [Look for suspicious execution](#look-for-suspicious-execution)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 

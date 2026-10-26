@@ -6,6 +6,19 @@
 
 **Scope:** Broadcom’s legacy WPS Monitor EAP-fragment reassembly on eCos and Linux. An attacker within radio range can reach the parser without the Wi-Fi key or completing WPS enrollment. Memory disclosure and code execution were demonstrated; privileges depend on firmware. No CVE was assigned by Broadcom. [Research][research] [Device guidance][devices]
 
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Build a device-level inventory](#build-a-device-level-inventory)
+  - [Safe evidence collection](#safe-evidence-collection)
+- [Remediation](#remediation)
+  - [Temporary mitigation must remove the radio attack path](#temporary-mitigation-must-remove-the-radio-attack-path)
+  - [Durable repair or replacement](#durable-repair-or-replacement)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
+
 ## Timeline
 
 | Event | Date | Evidence and qualification |

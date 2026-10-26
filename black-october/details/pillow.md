@@ -6,6 +6,18 @@
 
 Pillow **13.0.0** fixes multiple independent native-memory, argument-injection and resource-exhaustion problems. An image-processing service can be exposed through uploaded files, fetched images, queued thumbnails or document conversions. The five highlighted issues below have different prerequisites; do not treat one format filter as a complete fix. Severity disagreements in the [main table](../black-october-2026.md#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution) remain attributed rather than flattened into a single score.
 
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Locate every processing environment](#locate-every-processing-environment)
+  - [Map each issue to an actual operation](#map-each-issue-to-an-actual-operation)
+  - [Signals worth investigating](#signals-worth-investigating)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
+
 ## Timeline
 
 | Event | Date and evidence |
@@ -31,11 +43,11 @@ The [metadata inventory](../python-package-inventory.py) lists Pillow and `olefi
 
 | Issue | Affected package range in advisory | Exposure to investigate |
 |---|---|---|
-| **CVE-2026-96639** — Critical 9.8, multi-frame storage reuse | 11.0.0–12.3.0 | Seeking/iterating through untrusted frames whose modes change; single-image checks may miss later frames |
-| **CVE-2026-112398** — Critical, FPX/JPEG overflow | Through 12.3.0 | FlashPix decoding with optional `olefile`; MIME/extension filtering does not prevent format recognition from content |
-| **CVE-2026-112900** — maintainer Moderate, CVE 9.2, EPS filename injection | 2.6.0–12.3.0 | Ghostscript subprocess rendering with attacker-influenced filenames, not just EPS content |
-| **CVE-2026-112393** — maintainer High, CVE 9.2, TIFF encoder overflow | Through 12.3.0 | Saving compressed TIFF to file-like objects such as `BytesIO`; output encoding can be exposed even when upload decoding is constrained |
-| **CVE-2026-112403** — maintainer High, CVE 9.2 Critical, lossless JPEG overflow | Through 12.3.0 | `draft()`/thumbnail paths on crafted lossless JPEGs; demonstrated crash does not by itself establish RCE |
+| **[CVE-2026-96639](https://www.cve.org/CVERecord?id=CVE-2026-96639)** — Critical 9.8, multi-frame storage reuse | 11.0.0–12.3.0 | Seeking/iterating through untrusted frames whose modes change; single-image checks may miss later frames |
+| **[CVE-2026-112398](https://www.cve.org/CVERecord?id=CVE-2026-112398)** — Critical, FPX/JPEG overflow | Through 12.3.0 | FlashPix decoding with optional `olefile`; MIME/extension filtering does not prevent format recognition from content |
+| **[CVE-2026-112900](https://www.cve.org/CVERecord?id=CVE-2026-112900)** — maintainer Moderate, CVE 9.2, EPS filename injection | 2.6.0–12.3.0 | Ghostscript subprocess rendering with attacker-influenced filenames, not just EPS content |
+| **[CVE-2026-112393](https://www.cve.org/CVERecord?id=CVE-2026-112393)** — maintainer High, CVE 9.2, TIFF encoder overflow | Through 12.3.0 | Saving compressed TIFF to file-like objects such as `BytesIO`; output encoding can be exposed even when upload decoding is constrained |
+| **[CVE-2026-112403](https://www.cve.org/CVERecord?id=CVE-2026-112403)** — maintainer High, CVE 9.2 Critical, lossless JPEG overflow | Through 12.3.0 | `draft()`/thumbnail paths on crafted lossless JPEGs; demonstrated crash does not by itself establish RCE |
 
 Review calls to `Image.open`, frame iteration/`seek`, `thumbnail`, `draft` and TIFF `save`, including wrappers in document pipelines. Trace the source of filenames and output tags. Check Ghostscript via `command -v gs` as the worker user on Linux/macOS and inspect any configured absolute executable paths. An absent dependency only narrows its specific path.
 

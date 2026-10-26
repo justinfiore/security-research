@@ -4,7 +4,21 @@
 
 [Main guide](../black-october-2026.md#10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-102764:** improper origin validation in Remote Support internal messaging permits unauthenticated file operations. **Remote Support ≤26.2.3** is affected; **BT26-05-RS** covers versions **24.3.1–26.2.3**. Observed root compromise and lateral movement are attack-chain outcomes, not merely the initial file-operation primitive. [Advisory][advisory] [Mandiant][mandiant]
+**[CVE-2026-102764](https://www.cve.org/CVERecord?id=CVE-2026-102764):** improper origin validation in Remote Support internal messaging permits unauthenticated file operations. **Remote Support ≤26.2.3** is affected; **BT26-05-RS** covers versions **24.3.1–26.2.3**. Observed root compromise and lateral movement are attack-chain outcomes, not merely the initial file-operation primitive. [Advisory][advisory] [Mandiant][mandiant]
+
+## Table of contents
+
+- [Timeline](#timeline)
+  - [CISA KEV status and severity attribution](#cisa-kev-status-and-severity-attribution)
+- [Detection](#detection)
+  - [Inventory appliance state and historical exposure](#inventory-appliance-state-and-historical-exposure)
+  - [Hunt off-box evidence first](#hunt-off-box-evidence-first)
+- [Remediation](#remediation)
+  - [Patch-first for unconfirmed incidents; preserve and isolate suspected compromise](#patch-first-for-unconfirmed-incidents-preserve-and-isolate-suspected-compromise)
+  - [Temporary containment and operational safety](#temporary-containment-and-operational-safety)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 

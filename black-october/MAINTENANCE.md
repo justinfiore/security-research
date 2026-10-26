@@ -68,7 +68,11 @@ Review each account's posts within the run's overlapping research window, using 
 
 In the main guide, put `[Back to TOC](#table-of-contents)` immediately below each vulnerability or incident heading. Keep incidents such as eMudhra, LiteLLM and Railway as individual first-class items with their own detail pages, not a grouped appendix. Keep this navigation when adding new items.
 
-Each main entry deep-links to its detail guide's **Detection**, **Remediation**, **Verification** and **Timeline** sections. Detailed guides live in `details/`, link back to the specific main entry, and include:
+Each main entry links the **Detailed guide** label to the detail page without a fragment, for example `**[Detailed guide](details/brotli.md):**`, followed by deep links to its **Detection**, **Remediation**, **Verification** and **Timeline** sections. Detailed guides live in `details/` and link back to the specific main entry. Each has a `## Table of contents` after its introduction and before its timeline, with unordered links to every subsequent heading and nested bullets for subsections. Keep TOCs synchronized with headings without changing existing anchors.
+
+In both the main guide and each detailed guide, link the first body mention of every distinct CVE to `https://www.cve.org/CVERecord?id=<CVE-ID>`. Keep CVE IDs in headings and TOC labels plain to preserve navigation; use the first prose or table mention for the record link. Retain vendor/CNA advisories as supporting sources. Generate the CVE.org link even when an assigned record is not published yet, but preserve that qualification: a generated URL is not evidence of publication or validation. Never invent an identifier for an unassigned issue.
+
+Detailed guides include:
 
 1. Severity, affected components, attack conditions and worst-case result.
 2. `## Timeline`: discovery/private report date, public announcement date, patch availability by component/branch and later milestones, with source links.

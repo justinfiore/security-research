@@ -8,6 +8,20 @@
 
 The principal SSH chains claim root-level execution or privileged socket/file operations from **already-authorized Tailscale SSH access with applicable forwarding enabled**. A compromised permitted device can therefore threaten reachable targets and credentials in the demonstrated configurations. This is not unauthenticated internet-wide RCE, and ordinary OpenSSH carried over the Tailscale network is a different implementation. [Research][research] [Vendor response][vendor]
 
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Inventory the implementation and authorization boundaries](#inventory-the-implementation-and-authorization-boundaries)
+  - [Interpret the eleven findings separately](#interpret-the-eleven-findings-separately)
+  - [Hunt behavior without running the proof of concept](#hunt-behavior-without-running-the-proof-of-concept)
+- [Remediation](#remediation)
+  - [Disable unnecessary forwarding using the vendor's mitigation](#disable-unnecessary-forwarding-using-the-vendors-mitigation)
+  - [Restrict exposure and track released fixes](#restrict-exposure-and-track-released-fixes)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
+
 ## Timeline
 
 | Event | Date and time (timezone) | Notes and source |
@@ -48,7 +62,7 @@ All severity labels in this table are **the researcher's**, not vendor or CNA CV
 | 10: Serve all-interfaces knob | Configuration note | Non-default `TS_SERVE_ALLOW_ALL_INTERFACES`; source inspection, not reproduced in a LAN lab. |
 | 11: HTTP/2 cross-mount capabilities | Medium with header authorization; otherwise Low–Medium | TLS/h2, multiple mounts and a capability-bearing peer; same-peer capability bleed, not arbitrary other-user impersonation. Relevant source fix merged. |
 
-The report's rogue-node enrollment was demonstrated with **Tailnet Lock disabled**. Capturing material in a lock-enabled lab is not evidence of successfully disabling the lock. Its attempted connector-to-tailnet bridge was refuted by its own testing. **CVE-2025-14282 is a Dropbear precedent cited by the report, not a Tailscale CVE.**
+The report's rogue-node enrollment was demonstrated with **Tailnet Lock disabled**. Capturing material in a lock-enabled lab is not evidence of successfully disabling the lock. Its attempted connector-to-tailnet bridge was refuted by its own testing. **[CVE-2025-14282](https://www.cve.org/CVERecord?id=CVE-2025-14282) is a Dropbear precedent cited by the report, not a Tailscale CVE.**
 
 ### Hunt behavior without running the proof of concept
 

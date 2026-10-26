@@ -6,10 +6,23 @@
 
 **Two CVEs, both in CISA KEV, with different scope and fixes:**
 
-- **CVE-2026-102489, session fixation/hijack → RCE as the `zammad` user.** DIVD (CNA) CVSS 4.0: **8.7 High** on its own ("GENERAL" scenario) and **9.4 Critical** when chained with CVE-2026-102490. NVD CVSS 3.1: **9.8 Critical**. NVD displays only DIVD's chained 9.4 score. The flaw is exploitable on **Zammad 6.3.0 through 6.5.4**. The bug is present in 7.0.0–7.1.x but, according to DIVD and Zammad, cannot be exploited there.
+- **[CVE-2026-102489](https://www.cve.org/CVERecord?id=CVE-2026-102489), session fixation/hijack → RCE as the `zammad` user.** DIVD (CNA) CVSS 4.0: **8.7 High** on its own ("GENERAL" scenario) and **9.4 Critical** when chained with [CVE-2026-102490](https://www.cve.org/CVERecord?id=CVE-2026-102490). NVD CVSS 3.1: **9.8 Critical**. NVD displays only DIVD's chained 9.4 score. The flaw is exploitable on **Zammad 6.3.0 through 6.5.4**. The bug is present in 7.0.0–7.1.x but, according to DIVD and Zammad, cannot be exploited there.
 - **CVE-2026-102490, improper privilege management → local root.** This affects **DEB/RPM packages built with packager.io only**. DIVD CVSS 4.0: **8.5 High** on its own and **9.4 Critical** when chained. Zammad's GitHub advisory: CVSS 4.0 **8.5 High**. NVD CVSS 3.1: **7.8 High**. An attacker who can already run code or write files as the `zammad` service account can become root, because packaged services started as root and executed `zammad`-writable files. Source installs and official container images are not affected. Fixed in **7.2.2**.
 
 Chained, the two CVEs give remote unauthenticated root on the host. DIVD reports that its own network was breached this way.
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Which CVE applies to which install](#which-cve-applies-to-which-install)
+  - [Read-only inventory](#read-only-inventory)
+  - [Log indicators (CVE-2026-102489)](#log-indicators-cve-2026-102489)
+  - [Host indicators (CVE-2026-102490)](#host-indicators-cve-2026-102490)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 

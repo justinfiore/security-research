@@ -4,9 +4,20 @@
 
 [Main SiteGuard summary](../black-october-2026.md#siteguard-server-edition-root-command-injection-via-statistics-feature-cve-2026-106931) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-106931: JPCERT/CC (CNA) and vendor CVSS 4.0 8.5 High (CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N) and CVSS 3.0 7.8 High (AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H). The vendor labels it 緊急 (urgent) and JVN labels it "Critical". Listed in CISA KEV on 2026-10-20.** SiteGuard Server Edition is a host-based web application firewall (WAF) from EG Secure Solutions that is built into Apache httpd, Nginx or IIS. It has an OS command injection flaw (CWE-78) in its **statistics feature**, which is **enabled by default**. Exploitation can run arbitrary OS commands as **root or SYSTEM** on the web server. The vendor says exploitation has been confirmed. [Vendor][vendor] [JVN][jvn] [CNA][cve]
+**[CVE-2026-106931](https://www.cve.org/CVERecord?id=CVE-2026-106931): JPCERT/CC (CNA) and vendor CVSS 4.0 8.5 High (CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N) and CVSS 3.0 7.8 High (AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H). The vendor labels it 緊急 (urgent) and JVN labels it "Critical". Listed in CISA KEV on 2026-10-20.** SiteGuard Server Edition is a host-based web application firewall (WAF) from EG Secure Solutions that is built into Apache httpd, Nginx or IIS. It has an OS command injection flaw (CWE-78) in its **statistics feature**, which is **enabled by default**. Exploitation can run arbitrary OS commands as **root or SYSTEM** on the web server. The vendor says exploitation has been confirmed. [Vendor][vendor] [JVN][jvn] [CNA][cve]
 
 **Read the attack vector carefully.** The published vectors are **local, low-privilege** (AV:L/PR:L). The reviewed sources do not explain how attackers in the wild reached the statistics feature, or whether web traffic passing through the WAF can influence it. Do not assume that the server must be reachable over the internet for it to be at risk, and do not assume it must not be. Treat every affected install as exposed.
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Affected versions](#affected-versions)
+  - [Inventory steps](#inventory-steps)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 

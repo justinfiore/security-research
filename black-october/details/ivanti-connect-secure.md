@@ -4,12 +4,23 @@
 
 [Main Ivanti Connect Secure summary](../black-october-2026.md#ivanti-connect-secure-authentication-bypass-to-command-execution-cve-2026-104935) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-104935 — Ivanti (CNA) CVSS 3.1: 8.6 High (`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:L`); Ivanti's advisory labels the same vector "CVSS:3.0"; NVD has no score of its own; in CISA KEV and exploited as a zero-day.** An authentication bypass by spoofing (CWE-290) in the Ivanti Connect Secure (ICS) VPN lets a remote unauthenticated attacker execute arbitrary commands. Volexity found the CVE covers two flaws:
+**[CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935) — Ivanti (CNA) CVSS 3.1: 8.6 High (`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:L`); Ivanti's advisory labels the same vector "CVSS:3.0"; NVD has no score of its own; in CISA KEV and exploited as a zero-day.** An authentication bypass by spoofing (CWE-290) in the Ivanti Connect Secure (ICS) VPN lets a remote unauthenticated attacker execute arbitrary commands. Volexity found the CVE covers two flaws:
 
 - an authentication bypass: a request to the public `/dana-na/auth/url_default/welcome.cgi` carrying an `X-DSCGI-PATH` header is routed to a protected CGI;
 - a race-condition file write and execution in `wu.cgi`.
 
-In the wild, attackers chained it with a separate **root privilege escalation**, the `dsinvoked`/DSCache flaw. MITRE later assigned that flaw **CVE-2026-111357** (MITRE CNA CVSS 3.1: 7.0 High). It is **not fixed** by the CVE-2026-104935 updates, and its fix status was not established in the reviewed sources.
+In the wild, attackers chained it with a separate **root privilege escalation**, the `dsinvoked`/DSCache flaw. MITRE later assigned that flaw **[CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357)** (MITRE CNA CVSS 3.1: 7.0 High). It is **not fixed** by the CVE-2026-104935 updates, and its fix status was not established in the reviewed sources.
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Inventory](#inventory)
+  - [Request and host indicators](#request-and-host-indicators)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 

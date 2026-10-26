@@ -4,9 +4,20 @@
 
 [Main VeloCloud summary](../black-october-2026.md#velocloud-orchestrator-authenticated-sql-injection-to-superuser-operator-cve-2026-114625) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-114625: Arista CVSS 3.1 9.9 Critical (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H); Arista CVSS 4.0 9.4 Critical (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H). NVD has added no score of its own. Listed in CISA KEV on 2026-10-23, due 2026-10-26.** This is a SQL injection flaw (CWE-89) in **on-premises VeloCloud Orchestrator (VCO)**. **Any authenticated user**, down to the lowest built-in tenant role, *Enterprise Read Only*, can gain operator privileges, pose as a local "superuser operator", and reach internal-only functions that affect the VCO host. Arista detected the issue itself and says it is **actively exploited**. The orchestrator controls SD-WAN edges and gateways, so a compromise threatens the whole managed network. [Arista advisory][adv] [CNA][cve]
+**[CVE-2026-114625](https://www.cve.org/CVERecord?id=CVE-2026-114625): Arista CVSS 3.1 9.9 Critical (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H); Arista CVSS 4.0 9.4 Critical (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H). NVD has added no score of its own. Listed in CISA KEV on 2026-10-23, due 2026-10-26.** This is a SQL injection flaw (CWE-89) in **on-premises VeloCloud Orchestrator (VCO)**. **Any authenticated user**, down to the lowest built-in tenant role, *Enterprise Read Only*, can gain operator privileges, pose as a local "superuser operator", and reach internal-only functions that affect the VCO host. Arista detected the issue itself and says it is **actively exploited**. The orchestrator controls SD-WAN edges and gateways, so a compromise threatens the whole managed network. [Arista advisory][adv] [CNA][cve]
 
 **SaaS vs on-premises:** Arista says that hosted VCO, **including Dedicated**, "were impacted and have already been patched". Hosted customers do not need to upgrade, but should still review tenant activity. **On-prem operators must upgrade.** VeloCloud Edge and Gateway are listed as **not affected**. [Arista advisory][adv]
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Inventory](#inventory)
+  - [Log and IOC review (read-only)](#log-and-ioc-review-read-only)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 
@@ -36,7 +47,7 @@
 
 3. **Reachability:** Arista says VCO is exposed by default and "there is no configuration that can prevent the exposure". An attacker needs network access to the web UI and **any valid session**. Review who holds VCO accounts, including Enterprise Read Only users, partner and MSP users, and API tokens. Review where the UI can be reached from.
 
-This is the third exploited VCO flaw listed in CISA KEV this year. The earlier ones are CVE-2026-16812 (KEV 2026-07-27, Advisory 0144) and CVE-2026-93952 (KEV 2026-09-22, Advisory 0183). [KEV][kev] The Hacker News reports that releases which fixed those earlier flaws are **still affected** by this one. Being patched for the July or September advisories does not clear CVE-2026-114625. Upgrade to the 0199 builds. [THN][thn]
+This is the third exploited VCO flaw listed in CISA KEV this year. The earlier ones are [CVE-2026-16812](https://www.cve.org/CVERecord?id=CVE-2026-16812) (KEV 2026-07-27, Advisory 0144) and [CVE-2026-93952](https://www.cve.org/CVERecord?id=CVE-2026-93952) (KEV 2026-09-22, Advisory 0183). [KEV][kev] The Hacker News reports that releases which fixed those earlier flaws are **still affected** by this one. Being patched for the July or September advisories does not clear CVE-2026-114625. Upgrade to the 0199 builds. [THN][thn]
 
 ### Log and IOC review (read-only)
 

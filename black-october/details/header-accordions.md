@@ -6,13 +6,27 @@
 
 **Scope:** implementation-specific QPACK/HTTP/3 resource exhaustion, not established RCE. Include HTTP/3 **clients as well as servers** for quic-go, and analyst workstations decoding HTTP/3 captures in Wireshark. The named research groups findings with different disclosure and patch dates. [Research][research] [quic-go advisory][go]
 
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Locate every decoder that untrusted peers can reach](#locate-every-decoder-that-untrusted-peers-can-reach)
+  - [Component-specific interpretation](#component-specific-interpretation)
+  - [Look for denial-of-service evidence](#look-for-denial-of-service-evidence)
+- [Remediation](#remediation)
+  - [Temporary controls when fix status is unknown](#temporary-controls-when-fix-status-is-unknown)
+  - [Deploy the fixed implementation](#deploy-the-fixed-implementation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
+
 ## Timeline
 
 | Component / event | Report date | Public announcement | Fix availability and source |
 |---|---|---|---|
-| quic-go / CVE-2025-64702 | 2025-11-09 | Advisory 2025-12-11 | **0.57.0**, released 2025-11-21. [Research][research] [Advisory][go] |
-| Wireshark / CVE-2025-13945 | 2025-11-14 | Advisory 2025-12-03 | **4.6.2 / 4.4.12** listed by December 3 advisory; research explicitly dates 4.6.2 release December 3. [Research][research] [Advisory][wireshark] |
-| Cloudflare quiche / CVE-2026-12523 | 2025-11-15 | Advisory 2026-07-14 | **0.29.3**, released 2026-07-14. [Research][research] [Advisory][quiche] |
+| quic-go / [CVE-2025-64702](https://www.cve.org/CVERecord?id=CVE-2025-64702) | 2025-11-09 | Advisory 2025-12-11 | **0.57.0**, released 2025-11-21. [Research][research] [Advisory][go] |
+| Wireshark / [CVE-2025-13945](https://www.cve.org/CVERecord?id=CVE-2025-13945) | 2025-11-14 | Advisory 2025-12-03 | **4.6.2 / 4.4.12** listed by December 3 advisory; research explicitly dates 4.6.2 release December 3. [Research][research] [Advisory][wireshark] |
+| Cloudflare quiche / [CVE-2026-12523](https://www.cve.org/CVERecord?id=CVE-2026-12523) | 2025-11-15 | Advisory 2026-07-14 | **0.29.3**, released 2026-07-14. [Research][research] [Advisory][quiche] |
 | hyperium h3 | 2025-12-04 | In combined research 2026-10-20; earliest separate public date not established | No fixed release as of 2026-10-26; latest `h3` release is 0.0.8 (2025-05-06). December 5, 2025 issue closure was not a shipped fix; new issue #379 and fix PRs #377/#378 (opened 2026-10-22) remain open. [Research][research] [h3 issue][h3issue] |
 | Bun (no CVE) | 2026-05-24 | Combined research 2026-10-20; Bun advisory **GHSA-cf8x-9m69-3gg3** 2026-10-24 00:13 UTC | **1.4.4**, GitHub release 2026-10-22 10:11 UTC. Advisory rates it **High** (no CVSS score or CVE published); affected `>= 1.3.14, < 1.4.4`. [Bun advisory][bun] [Release][bunrel] |
 | aioquic / mitmproxy | 2026-07-13 | In combined research 2026-10-20; earliest separate public date not established | No verified fixed version as of 2026-10-26: no aioquic commit after 1.7.0 (2026-10-16), and mitmproxy 12.3.0 / 12.3.1 (2026-10-22 / 2026-10-25) changelogs list no HTTP/3 header-limit fix. [Research][research] [mitmproxy changelog][mitmlog] |

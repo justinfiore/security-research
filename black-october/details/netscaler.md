@@ -4,7 +4,18 @@
 
 [Main NetScaler summary](../black-october-2026.md#netscaler-saml-memory-overflow-denial-of-service-cve-2026-88779) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-88779 — NetScaler (CNA) CVSS 4.0: 8.7 High; NVD CVSS 3.1: 7.5 High; Citrix bulletin severity: High; in CISA KEV.** A memory-buffer bounds error (CWE-119) lets an unauthenticated network attacker crash NetScaler ADC or NetScaler Gateway authentication processing. This causes a **denial of service**, and Citrix rates no confidentiality or integrity impact. It applies only when the appliance is configured as a **SAML Service Provider** (`add authentication samlAction`) or a **SAML Identity Provider** (`add authentication samlIdPProfile`). The flaw is not RCE on its own. However, CISA and Rapid7 describe attackers using it to **force a crash/reboot** that executes code previously injected through **CVE-2026-88771**, so treat it as part of a compromise chain on unpatched appliances.
+**[CVE-2026-88779](https://www.cve.org/CVERecord?id=CVE-2026-88779) — NetScaler (CNA) CVSS 4.0: 8.7 High; NVD CVSS 3.1: 7.5 High; Citrix bulletin severity: High; in CISA KEV.** A memory-buffer bounds error (CWE-119) lets an unauthenticated network attacker crash NetScaler ADC or NetScaler Gateway authentication processing. This causes a **denial of service**, and Citrix rates no confidentiality or integrity impact. It applies only when the appliance is configured as a **SAML Service Provider** (`add authentication samlAction`) or a **SAML Identity Provider** (`add authentication samlIdPProfile`). The flaw is not RCE on its own. However, CISA and Rapid7 describe attackers using it to **force a crash/reboot** that executes code previously injected through **[CVE-2026-88771](https://www.cve.org/CVERecord?id=CVE-2026-88771)**, so treat it as part of a compromise chain on unpatched appliances.
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Inventory and precondition](#inventory-and-precondition)
+  - [Crash and chain indicators](#crash-and-chain-indicators)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 
@@ -52,7 +63,7 @@
 
 ## Remediation
 
-1. Upgrade every affected appliance, including both HA nodes, to the fixed build for its branch listed above. This requires a reboot and planned downtime. Appliances already patched for the earlier CTX697096 bulletin (CVE-2026-88771 through CVE-2026-88778) **still need this separate update** if they use SAML, and the reverse also applies. [Bulletin][ctx] [watchTowr FAQ][wt]
+1. Upgrade every affected appliance, including both HA nodes, to the fixed build for its branch listed above. This requires a reboot and planned downtime. Appliances already patched for the earlier CTX697096 bulletin (CVE-2026-88771 through [CVE-2026-88778](https://www.cve.org/CVERecord?id=CVE-2026-88778)) **still need this separate update** if they use SAML, and the reverse also applies. [Bulletin][ctx] [watchTowr FAQ][wt]
 2. **If compromise is suspected, preserve evidence before updating**, because CISA warns that updates may reduce forensic visibility.
 3. Interim mitigation: watchTowr (secondary) reports that Citrix offers Global Deny List signatures for specific intermediate builds with Virtual patching enabled in NetScaler Console. The Citrix blog describing this returned HTTP 403 during this review, so confirm the details with Citrix before relying on them. Removing SAML SP/IdP configuration also removes the precondition, but it breaks SSO.
 

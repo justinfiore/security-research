@@ -4,9 +4,21 @@
 
 [Main Siemens Software Center summary](../black-october-2026.md#siemens-software-center-dll-side-loading-exploited-in-clickfix-campaign-cve-2026-110936) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-110936: Siemens CVSS 4.0 8.4 High (CVSS:4.0/AV:L/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N), but Siemens CVSS 3.1 6.7 Medium (CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H). Both scores come from Siemens and appear in the advisory and the CVE record. NVD has added no score of its own. Listed in CISA KEV on 2026-10-20.** Siemens Software Center (SSC) is a Windows tool for downloading, installing, activating and updating Siemens software. Versions before **V4.0.9.8** load DLLs from an uncontrolled search path (CWE-427), so a DLL placed in a directory it searches runs with the application's privileges. Siemens reports **active exploitation**. Attackers bundled a **genuine, validly signed** SSC (version 3.5.8.7) with malicious DLLs and delivered it outside official channels as `AllMyBasic.msi` in the "Romulus" multi-platform ClickFix campaign. [SSA-580366][ssa] [Siemens blog][blog] [CNA][cve]
+**[CVE-2026-110936](https://www.cve.org/CVERecord?id=CVE-2026-110936): Siemens CVSS 4.0 8.4 High (CVSS:4.0/AV:L/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N), but Siemens CVSS 3.1 6.7 Medium (CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H). Both scores come from Siemens and appear in the advisory and the CVE record. NVD has added no score of its own. Listed in CISA KEV on 2026-10-20.** Siemens Software Center (SSC) is a Windows tool for downloading, installing, activating and updating Siemens software. Versions before **V4.0.9.8** load DLLs from an uncontrolled search path (CWE-427), so a DLL placed in a directory it searches runs with the application's privileges. Siemens reports **active exploitation**. Attackers bundled a **genuine, validly signed** SSC (version 3.5.8.7) with malicious DLLs and delivered it outside official channels as `AllMyBasic.msi` in the "Romulus" multi-platform ClickFix campaign. [SSA-580366][ssa] [Siemens blog][blog] [CNA][cve]
 
 **What this means for defenders:** the threat is mainly **attackers bringing their own vulnerable signed binary** to a PC, not attacks on SSC installs you already have. Updating your SSC protects your installations, but it **does not stop** an attacker from dropping an old signed copy on any Windows PC, including PCs that never had SSC. Siemens says to detect on folder and behaviour, because "the file itself is genuine". [Siemens blog][blog]
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Legitimate installations](#legitimate-installations)
+  - [Campaign indicators (from Siemens)](#campaign-indicators-from-siemens)
+  - [Read-only host check (PowerShell)](#read-only-host-check-powershell)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 

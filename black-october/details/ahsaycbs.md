@@ -4,9 +4,20 @@
 
 [Main AhsayCBS summary](../black-october-2026.md#ahsaycbs-authentication-bypass-and-command-injection-chain-cve-2026-105133-and-cve-2026-105134) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-105133 (improper authentication, CWE-287) — VulDB (CNA) CVSS 3.1: 7.3 High (`AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L`). VulDB CVSS 4.0: the CNA record says 6.9 Medium, while NVD shows VulDB's same vector, which includes `E:P`, as 5.5 Medium.** **CVE-2026-105134 (OS command injection, CWE-78/77) — VulDB CVSS 3.1: 10.0 Critical (`S:C/C:H/I:H/A:H`). VulDB CVSS 4.0: 10.0 Critical in the CNA record; NVD shows 9.3 Critical (with `E:P`).** No NVD primary score was found for either CVE. The 4.0 scores differ between the CNA record and NVD because NVD's figure includes the exploit-maturity (threat) metric. The other disagreement is that the bypass is Medium under 4.0 but High under 3.1. Ahsay publishes no CVSS score.
+**[CVE-2026-105133](https://www.cve.org/CVERecord?id=CVE-2026-105133) (improper authentication, CWE-287) — VulDB (CNA) CVSS 3.1: 7.3 High (`AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L`). VulDB CVSS 4.0: the CNA record says 6.9 Medium, while NVD shows VulDB's same vector, which includes `E:P`, as 5.5 Medium.** **[CVE-2026-105134](https://www.cve.org/CVERecord?id=CVE-2026-105134) (OS command injection, CWE-78/77) — VulDB CVSS 3.1: 10.0 Critical (`S:C/C:H/I:H/A:H`). VulDB CVSS 4.0: 10.0 Critical in the CNA record; NVD shows 9.3 Critical (with `E:P`).** No NVD primary score was found for either CVE. The 4.0 scores differ between the CNA record and NVD because NVD's figure includes the exploit-maturity (threat) metric. The other disagreement is that the bypass is Medium under 4.0 but High under 3.1. Ahsay publishes no CVSS score.
 
 Attackers **chain the two flaws**. CVE-2026-105133 bypasses authentication through the `random` argument to `checkSysPwd` (`com/ahsay/obs/api/ApiStructsAction.java`). CVE-2026-105134 then injects OS commands through the `random` argument at `/rps/api/json/UpdateReceivers.do` (Replication Receiver). Huntress observed unauthenticated remote code execution as **NT AUTHORITY\SYSTEM** on Windows hosts: JSP webshells, malicious replication receivers, and XMRig miners disguised as Microsoft Edge. **Worst case:** an attacker fully controls the backup server that holds or brokers many customers' backups. AhsayCBS is used mainly by MSPs.
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Inventory and exposure](#inventory-and-exposure)
+  - [Indicators to check (read-only)](#indicators-to-check-read-only)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 

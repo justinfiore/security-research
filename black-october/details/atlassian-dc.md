@@ -4,9 +4,21 @@
 
 [Main Atlassian Data Center summary](../black-october-2026.md#atlassian-data-center-unauthenticated-web-root-file-read-cve-2026-21589) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-21589: Atlassian CVSS 4.0 9.3 Critical; NVD CVSS 3.1 7.5 High (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N). Listed in CISA KEV on 2026-10-15.** An unauthenticated remote attacker can read specific files inside the web application root of **Bitbucket, Confluence, Jira Software, Jira Service Management, Bamboo and Crowd Data Center, plus Crucible and Fisheye**. The attacker must know the file's exact name and path. The flaw does not list directories, and researchers found it cannot reach files outside the Tomcat context, such as `/etc/passwd`. The **worst case depends on configuration**. watchTowr showed that a Jira instance using Crowd stores the Crowd application name and plaintext password in `WEB-INF/classes/crowd.properties`. Reading that file let them call Crowd's API and add a user to `jira-administrators`. Atlassian says its affected Cloud products are patched and need no customer action. [Advisory][adv] [CNA][cve] [NVD][nvd] [watchTowr][wt]
+**[CVE-2026-21589](https://www.cve.org/CVERecord?id=CVE-2026-21589): Atlassian CVSS 4.0 9.3 Critical; NVD CVSS 3.1 7.5 High (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N). Listed in CISA KEV on 2026-10-15.** An unauthenticated remote attacker can read specific files inside the web application root of **Bitbucket, Confluence, Jira Software, Jira Service Management, Bamboo and Crowd Data Center, plus Crucible and Fisheye**. The attacker must know the file's exact name and path. The flaw does not list directories, and researchers found it cannot reach files outside the Tomcat context, such as `/etc/passwd`. The **worst case depends on configuration**. watchTowr showed that a Jira instance using Crowd stores the Crowd application name and plaintext password in `WEB-INF/classes/crowd.properties`. Reading that file let them call Crowd's API and add a user to `jira-administrators`. Atlassian says its affected Cloud products are patched and need no customer action. [Advisory][adv] [CNA][cve] [NVD][nvd] [watchTowr][wt]
 
 The two scores measure different things. Atlassian's 4.0 vector sets the subsequent-system impact to High (SC:H/SI:H/SA:H). NVD's 3.1 vector scores only confidentiality of the vulnerable system (C:H, I:N, A:N). Both are shown here because the item qualifies for this guide under either score.
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Inventory and fixed versions](#inventory-and-fixed-versions)
+  - [Exposure](#exposure)
+  - [Access-log search (read-only)](#access-log-search-read-only)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 

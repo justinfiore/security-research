@@ -4,7 +4,21 @@
 
 [Main guide](../black-october-2026.md#6-nextclouds-built-in-collabora-code-server-unauthenticated-command-injection) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-110447:** `richdocumentscode` before **26.4.303** permits unauthenticated OS command injection through `proxy.php` **while the bundled CODE server is stopped**. Commands run as the web-server user. Disabling the app is insufficient; update it or remove it. [Vendor advisory][advisory]
+**[CVE-2026-110447](https://www.cve.org/CVERecord?id=CVE-2026-110447):** `richdocumentscode` before **26.4.303** permits unauthenticated OS command injection through `proxy.php` **while the bundled CODE server is stopped**. Commands run as the web-server user. Disabling the app is insufficient; update it or remove it. [Vendor advisory][advisory]
+
+## Table of contents
+
+- [Timeline](#timeline)
+  - [CISA KEV status](#cisa-kev-status)
+- [Detection](#detection)
+  - [Identify the app, not merely “Collabora”](#identify-the-app-not-merely-collabora)
+  - [Investigate suspicious requests and file changes](#investigate-suspicious-requests-and-file-changes)
+- [Remediation](#remediation)
+  - [Temporary mitigation before restarting anything](#temporary-mitigation-before-restarting-anything)
+  - [Patch or migrate](#patch-or-migrate)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 
@@ -73,7 +87,7 @@ These are recommended operator checks, not claims that every request or changed 
 3. For EOL **Nextcloud 29 or earlier**, follow the vendor instruction to upgrade Nextcloud or remove this app; do not force-install an incompatible package to evade compatibility checks. [Advisory][advisory]
 4. Container/image deployments must update any baked-in app and persistent app volume; ensure a stale image or rollback does not repopulate the vulnerable copy.
 5. Restart/redeploy the relevant web workers according to the deployment procedure so old PHP code caches are not retained, keeping exposure blocked until verification is complete.
-6. Patch the Nextcloud PHP runtime separately as described in the main guide. The advisory says the fix for **CVE-2025-66208** does not prevent this different path. [Advisory][advisory]
+6. Patch the Nextcloud PHP runtime separately as described in the main guide. The advisory says the fix for **[CVE-2025-66208](https://www.cve.org/CVERecord?id=CVE-2025-66208)** does not prevent this different path. [Advisory][advisory]
 
 ## Verification
 

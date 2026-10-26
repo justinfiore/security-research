@@ -4,9 +4,22 @@
 
 [Main guide](../black-october-2026.md#5-plex2shell-a-home-server-compromise-chain-is-being-exploited) · [Changelog](../../CHANGELOG.md)
 
-**Scope:** CVE-2026-96652, CVE-2026-96654, CVE-2026-96655 and CVE-2026-96656 form the researcher’s unauthenticated RCE chain. Its combined CVSS 3.1 score is 9.8, not the score of every constituent CVE. The demonstrated final execution is as the Plex service account, not automatically root. [Research][research]
+**Scope:** [CVE-2026-96652](https://www.cve.org/CVERecord?id=CVE-2026-96652), [CVE-2026-96654](https://www.cve.org/CVERecord?id=CVE-2026-96654), [CVE-2026-96655](https://www.cve.org/CVERecord?id=CVE-2026-96655) and [CVE-2026-96656](https://www.cve.org/CVERecord?id=CVE-2026-96656) form the researcher’s unauthenticated RCE chain. Its combined CVSS 3.1 score is 9.8, not the score of every constituent CVE. The demonstrated final execution is as the Plex service account, not automatically root. [Research][research]
 
 **Per-CVE ratings from the CNA (CISA, `cisa-cg`):** CVE-2026-96652 Medium, CVSS 3.1 4.3 / CVSS 4.0 5.3; CVE-2026-96654 Medium, 6.5 / 6.9; CVE-2026-96655 Medium, 4.3 / 5.3; CVE-2026-96656 High, 7.2 / 8.6. [CVE records][cve96652] The chain's severity comes from combining them. Plex's [October 19 notice][vendor] labels CVE-2026-96654 as loopback access to internal agent functions and CVE-2026-96655 as admin-token disclosure. The CVE records and [KEV][kev] describe CVE-2026-96654 as encoded-URI plugin-function abuse and CVE-2026-96655 as an authenticated SSRF. Use the CVE IDs together; the patch target is the same.
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Establish which server and build are exposed](#establish-which-server-and-build-are-exposed)
+  - [Investigate prior exposure](#investigate-prior-exposure)
+- [Remediation](#remediation)
+  - [Temporary containment](#temporary-containment)
+  - [Update the deployment, not just the client](#update-the-deployment-not-just-the-client)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 

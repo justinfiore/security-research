@@ -4,14 +4,26 @@
 
 [Main Cisco Secure Email Gateway summary](../black-october-2026.md#cisco-secure-email-gateway-amp-attachment-path-traversal-cve-2026-76519) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**CVE-2026-76519 — Cisco CVSS 3.1: 9.8 Critical (`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`); Cisco SIR: Critical; CWE-23 (relative path traversal). Bug ID CSCwu56223.** The flaw is in how the **Advanced Malware Protection (AMP) File Reputation** feature handles email attachments. An **unauthenticated, remote** attacker who **sends an email with a crafted attachment** through an affected gateway can write arbitrary files and **execute commands as root** on the underlying OS. No login, and no click by a recipient, is required. Cisco has confirmed active exploitation. NVD shows only Cisco's score; no separate NVD score was found. **Worst case:** root on the mail gateway, which gives access to mail flow and quarantines, credentials, and cluster SSH keys that can be used to compromise other cluster members.
+**[CVE-2026-76519](https://www.cve.org/CVERecord?id=CVE-2026-76519) — Cisco CVSS 3.1: 9.8 Critical (`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`); Cisco SIR: Critical; CWE-23 (relative path traversal). Bug ID CSCwu56223.** The flaw is in how the **Advanced Malware Protection (AMP) File Reputation** feature handles email attachments. An **unauthenticated, remote** attacker who **sends an email with a crafted attachment** through an affected gateway can write arbitrary files and **execute commands as root** on the underlying OS. No login, and no click by a recipient, is required. Cisco has confirmed active exploitation. NVD shows only Cisco's score; no separate NVD score was found. **Worst case:** root on the mail gateway, which gives access to mail flow and quarantines, credentials, and cluster SSH keys that can be used to compromise other cluster members.
+
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+  - [Which configurations are affected](#which-configurations-are-affected)
+  - [Read-only CLI checks](#read-only-cli-checks)
+  - [Off-box evidence](#off-box-evidence)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
 
 ## Timeline
 
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
 | Private discovery | Unknown | Cisco says the flaw "was found during internal security scanning." The CVE ID was reserved on 2026-08-19 12:02:03 UTC; that is when the ID was reserved, not when the flaw was found. [Cisco advisory][cisco] [CVE JSON][cve] |
-| Fixed AsyncOS releases first listed | 2026-09-14 16:00 GMT | The **September 2026 hardening release** advisory lists the same first-fixed Secure Email Gateway releases (15.5.5-014, 16.5.0-780) and a CWE-23 grouping CVE (CVE-2026-76440). It did not name CVE-2026-76519 until revision 1.1 on 2026-10-14. When each build was actually available to download was not established. [Hardening advisory][hardening] |
+| Fixed AsyncOS releases first listed | 2026-09-14 16:00 GMT | The **September 2026 hardening release** advisory lists the same first-fixed Secure Email Gateway releases (15.5.5-014, 16.5.0-780) and a CWE-23 grouping CVE ([CVE-2026-76440](https://www.cve.org/CVERecord?id=CVE-2026-76440)). It did not name CVE-2026-76519 until revision 1.1 on 2026-10-14. When each build was actually available to download was not established. [Hardening advisory][hardening] |
 | Content Scanner Tools 25.3.0.5525 | Date unknown | This updated package carries the fix to all supported releases. Its release date is not stated. [Cisco advisory][cisco] |
 | Cisco learns of exploitation | 2026-10 (exact day not established) | "In October 2026, the Cisco PSIRT became aware of active exploitation." [Cisco advisory][cisco] |
 | Cisco public advisory | 2026-10-14 16:00 GMT | `cisco-sa-esa-afw-zqYJkjxp`, version 1.0 Final. On the same day, hardening advisory v1.1 added a link to it. [Cisco advisory][cisco] [Hardening advisory][hardening] |

@@ -6,6 +6,15 @@
 
 Railway reports unauthorized access to internal systems and decryption of a subset of customers' stored environment variables. **This is a platform-side secret exposure, not a local dependency vulnerability.** Follow its precautionary recommendation to revoke and replace sensitive variables stored before October 21, including database/API secrets and private registry credentials; investigate the services those credentials authorize.
 
+## Table of contents
+
+- [Timeline](#timeline)
+- [Detection](#detection)
+- [Remediation](#remediation)
+- [Verification](#verification)
+- [Compromise response](#compromise-response)
+- [Sources](#sources)
+
 ## Timeline
 
 Times below are UTC. The October 22 report is preliminary; the initial October 21 disclosure did not describe the full earlier attack window.
