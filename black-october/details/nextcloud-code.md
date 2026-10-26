@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main guide](../black-october-2026.md#6-nextclouds-built-in-collabora-code-server-unauthenticated-command-injection) · [Changelog](../../Changelog.md)
+[Main guide](../black-october-2026.md#6-nextclouds-built-in-collabora-code-server-unauthenticated-command-injection) · [Changelog](../../CHANGELOG.md)
 
 **CVE-2026-110447:** `richdocumentscode` before **26.4.303** permits unauthenticated OS command injection through `proxy.php` **while the bundled CODE server is stopped**. Commands run as the web-server user. Disabling the app is insufficient; update it or remove it. [Vendor advisory][advisory]
 

@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main Pillow summary](../black-october-2026.md#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution) · [Changelog](../../Changelog.md)
+[Main Pillow summary](../black-october-2026.md#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution) · [Changelog](../../CHANGELOG.md)
 
 Pillow **13.0.0** fixes multiple independent native-memory, argument-injection and resource-exhaustion problems. An image-processing service can be exposed through uploaded files, fetched images, queued thumbnails or document conversions. The five highlighted issues below have different prerequisites; do not treat one format filter as a complete fix. Severity disagreements in the [main table](../black-october-2026.md#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution) remain attributed rather than flattened into a single score.
 

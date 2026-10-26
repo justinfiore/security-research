@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main guide](../black-october-2026.md#5-plex2shell-a-home-server-compromise-chain-is-being-exploited) · [Changelog](../../Changelog.md)
+[Main guide](../black-october-2026.md#5-plex2shell-a-home-server-compromise-chain-is-being-exploited) · [Changelog](../../CHANGELOG.md)
 
 **Scope:** CVE-2026-96652, CVE-2026-96654, CVE-2026-96655 and CVE-2026-96656 form the researcher’s unauthenticated RCE chain. Its combined CVSS 3.1 score is 9.8, not the score of every constituent CVE. The demonstrated final execution is as the Plex service account, not automatically root. [Research][research]
 

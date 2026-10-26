@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main GitLab/Ruby summary](../black-october-2026.md#3-gitlab-and-ruby-regex-compilation-becomes-code-execution) · [Changelog](../../Changelog.md)
+[Main GitLab/Ruby summary](../black-october-2026.md#3-gitlab-and-ruby-regex-compilation-becomes-code-execution) · [Changelog](../../CHANGELOG.md)
 
 The principal GitLab issues **CVE-2026-97229** and **CVE-2026-110264** are **Critical, CVSS 3.1 10.0**: attacker-controlled regex compilation can lead to unauthenticated server-side code execution under the vendor's described conditions. The same maintenance window should cover **CVE-2026-15723** (account takeover, High 8.2) and **CVE-2026-112212** (OAuth/OIDC cache poisoning, High 7.5). Ruby's underlying fixes also cover related GitLab-assigned CVEs; this is not a reason to count the same engine flaw twice.
 

@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main AuthMask summary](../black-october-2026.md#authmask-microsoft-authenticator-for-android-token-theft) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../Changelog.md)
+[Main AuthMask summary](../black-october-2026.md#authmask-microsoft-authenticator-for-android-token-theft) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **CVE-2026-80097 — Microsoft CVSS 3.1: 8.6 High; vendor severity: Important.** A malicious app on the same Android device can exploit improper caller authentication in the Authenticator broker to obtain tokens for the signed-in work account. The researcher demonstrated delegated access to mail, files and calendars, plus scopes for changing authentication methods/passkeys. This is **local privilege escalation and account-token disclosure**, not unauthenticated internet RCE or a general break of MFA.
 

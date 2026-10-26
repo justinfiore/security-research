@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main guide](../black-october-2026.md#8-wpsplinter-nearby-attackers-can-compromise-vulnerable-routers) · [Changelog](../../Changelog.md)
+[Main guide](../black-october-2026.md#8-wpsplinter-nearby-attackers-can-compromise-vulnerable-routers) · [Changelog](../../CHANGELOG.md)
 
 **Scope:** Broadcom’s legacy WPS Monitor EAP-fragment reassembly on eCos and Linux. An attacker within radio range can reach the parser without the Wi-Fi key or completing WPS enrollment. Memory disclosure and code execution were demonstrated; privileges depend on firmware. No CVE was assigned by Broadcom. [Research][research] [Device guidance][devices]
 

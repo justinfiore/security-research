@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main guide](../black-october-2026.md#9-header-accordions-http3-compression-becomes-resource-exhaustion) · [Changelog](../../Changelog.md)
+[Main guide](../black-october-2026.md#9-header-accordions-http3-compression-becomes-resource-exhaustion) · [Changelog](../../CHANGELOG.md)
 
 **Scope:** implementation-specific QPACK/HTTP/3 resource exhaustion, not established RCE. Include HTTP/3 **clients as well as servers** for quic-go, and analyst workstations decoding HTTP/3 captures in Wireshark. The named research groups findings with different disclosure and patch dates. [Research][research] [quic-go advisory][go]
 

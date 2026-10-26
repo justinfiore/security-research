@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Back to LiteLLM summary](../black-october-2026.md#litellm) · [Changelog](../../Changelog.md)
+[Back to LiteLLM summary](../black-october-2026.md#litellm) · [Changelog](../../CHANGELOG.md)
 
 All seven `litellm==1.107.0` PyPI wheels and affected public container images carried a credential stealer and remote-code loader. **Do not run ordinary Python, `pip`, or the LiteLLM CLI in a suspected environment.** Startup hooks can execute without importing LiteLLM. Quarantine, investigate from a clean host, rebuild, and recover credentials; an in-place version downgrade is not sufficient.
 

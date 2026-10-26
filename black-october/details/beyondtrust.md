@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main guide](../black-october-2026.md#10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability) · [Changelog](../../Changelog.md)
+[Main guide](../black-october-2026.md#10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability) · [Changelog](../../CHANGELOG.md)
 
 **CVE-2026-102764:** improper origin validation in Remote Support internal messaging permits unauthenticated file operations. **Remote Support ≤26.2.3** is affected; **BT26-05-RS** covers versions **24.3.1–26.2.3**. Observed root compromise and lateral movement are attack-chain outcomes, not merely the initial file-operation primitive. [Advisory][advisory] [Mandiant][mandiant]
 

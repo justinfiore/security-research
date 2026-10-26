@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main guide](../black-october-2026.md#7-linux-ksmbd-serious-kernel-level-reports-but-not-every-linux-server) · [Changelog](../../Changelog.md)
+[Main guide](../black-october-2026.md#7-linux-ksmbd-serious-kernel-level-reports-but-not-every-linux-server) · [Changelog](../../CHANGELOG.md)
 
 **Scope:** ZDI-CAN-33774 (protocol-dispatch race) and ZDI-CAN-33549 (SMB Direct integer underflow) affect the **in-kernel KSMBD server**, not ordinary Samba `smbd`. ZDI rates both 9.0; public demonstrations establish memory disclosure/crashes, **not successful RCE**. [Research assessment][sysdig]
 

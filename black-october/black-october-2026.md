@@ -2,7 +2,7 @@
 
 **As of October 26, 2026**
 
-[Changelog and review history](../Changelog.md) · [Hourly maintenance process](MAINTENANCE.md)
+[Security updates](../CHANGELOG.md) · [Hourly maintenance process](MAINTENANCE.md)
 
 “Black October” is an informal label for the unusually dense run of vulnerability disclosures and security incidents this month—particularly the October 19–23 cluster. It is **not one coordinated attack, one vulnerability family, or an official advisory list**.
 

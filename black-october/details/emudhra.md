@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Back to eMudhra summary](../black-october-2026.md#emudhra--emsign) · [Changelog](../../Changelog.md)
+[Back to eMudhra summary](../black-october-2026.md#emudhra--emsign) · [Changelog](../../CHANGELOG.md)
 
 Eight P-384 intermediate CA keys were trivially recoverable: **six TLS and two code-signing keys**, with additional cross-signed certificates carrying the same keys. This is defective CA key generation, not a general break of TLS or proof that every eMudhra product was breached. Clients trusting these keys could accept fraudulent certificates even when their own servers use another CA.
 

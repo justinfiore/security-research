@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Main Tailworm summary](../black-october-2026.md#tailworm-tailscale-ssh-and-related-findings-under-review) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../Changelog.md)
+[Main Tailworm summary](../black-october-2026.md#tailworm-tailscale-ssh-and-related-findings-under-review) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **Researcher-rated High for several findings; no Tailworm-specific CVE, vendor CVSS rating or complete fixed-release matrix established.** Erica Windisch's report covers **11 numbered findings across Tailscale SSH, Serve/Funnel, an experimental connector and headscale/DERP**—not 11 independently confirmed Tailscale SSH RCEs. Included at the owner's request as a developing disclosure; this does not change the normal admission threshold for new High/Critical vulnerabilities.
 

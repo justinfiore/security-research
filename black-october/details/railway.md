@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-10-26 (America/New_York)
 
-[Back to Railway summary](../black-october-2026.md#railway) · [Changelog](../../Changelog.md)
+[Back to Railway summary](../black-october-2026.md#railway) · [Changelog](../../CHANGELOG.md)
 
 Railway reports unauthorized access to internal systems and decryption of a subset of customers' stored environment variables. **This is a platform-side secret exposure, not a local dependency vulnerability.** Follow its precautionary recommendation to revoke and replace sensitive variables stored before October 21, including database/API secrets and private registry credentials; investigate the services those credentials authorize.
 
