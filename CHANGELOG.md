@@ -4,6 +4,15 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-27 09:27 EDT (UTC−04:00) — PHP2Shell hotfixes and incident recovery updates
+
+**Review scope:** Discovery (CISA KEV catalog 2026.10.26, all five configured X timelines, CISA, NSA, Wiz and security-news sources) and a fresh primary-source sweep of every tracked item were completed. A few vendor pages were inaccessible or login-gated; their direct links remain in the guides, and no new claim relies on them.
+
+- **PHP2Shell / PAN-OS:** Palo Alto released additional [PAN-OS and Panorama hotfixes](black-october/details/php2shell.md#timeline), including 12.2.4-h1, 12.1.7-h11, 10.2.13-h27 and 10.2.16-h12. Install the hotfix listed for your branch; do not use an earlier ETA as a patch decision.
+- **Railway:** [Recovery remains in progress](black-october/details/railway.md#timeline). Replace provider-revoked replacement OpenAI/Anthropic keys and redeploy, but do not rotate working replacements solely because of the October 24 batch-processing notice.
+- **Langflow:** Third-party honeypot telemetry now reports [4,924 attempts](black-october/details/langflow.md#timeline) from 34 IPs; that remains attempt telemetry from one sensor, not proof of compromise.
+- **Oracle CPU:** Oracle [Revision 2](black-october/details/oracle-cpu-october.md#timeline) updates Siebel CRM version information and credits; the reviewed CPU counts, impact, patch availability and KEV status are unchanged.
+
 ## 2026-10-27 08:04 EDT (UTC−04:00) — Tailscale confirms serious SSH privilege escalation
 
 **Partial review:** Discovery included the live CISA KEV catalog (2026.10.26), all five configured X timelines, CISA/NSA/Wiz searches, and the newly published Tailscale investigation. A fresh primary-source sweep of every tracked item was not completed, so the maintenance checkpoint was not advanced.

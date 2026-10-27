@@ -1,6 +1,6 @@
 # Oracle Fusion Middleware, E-Business Suite, Database and MySQL: October 2026 Critical Patch Update
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-27 (America/New_York)
 
 [Main Oracle October CPU summary](../black-october-2026.md#oracle-fusion-middleware-e-business-suite-database-and-mysql-october-2026-critical-patch-update) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -51,6 +51,7 @@ For Oracle's own CVEs, NVD shows only Oracle's score (status "Awaiting Analysis"
 | Renewed ShinyHunters PeopleSoft campaign | Reported 2026-09-25 | GTIG says the actor bypasses WAF rules by requesting `/%50SEMHUB/` instead of `/PSEMHUB/`, has deployed web shells on dozens of systems, and installs the SIDEEYE backdoor on Windows hosts. [GTIG][gtig] |
 | Oracle pre-release announcement | 2026-10-15 | Reported by Waratek, which says it described 1,283 patches; the pre-release itself was not reviewed. [Waratek][waratek] |
 | **Public announcement**: October 2026 CPU released | 2026-10-20 (time not stated) | Oracle modification history: "2026-October-20, Rev 1. Initial Release." Patches are delivered through the My Oracle Support patch availability documents linked from the advisory. MySQL 8.4.13 and 9.7.4 release notes are dated the same day. [Oracle CPU][cpu] [MySQL 8.4.13][mysql-8413] [MySQL 9.7 notes][mysql-97] |
+| Oracle CPU Revision 2 | 2026-10-26; time/TZ unknown | Oracle updated the CPU to Revision 2, changing Siebel CRM version information and credits. The reviewed CPU counts, impact statements, patch availability and KEV status did not change. [Oracle CPU][cpu] |
 | CVE records published | 2026-10-20 21:22:48–21:25:18 UTC | Oracle CNA records for the Oracle-assigned CVEs. NVD received them at 22:18–22:20 UTC. [CVE JSON][cve-101767] [NVD][nvd-91323] |
 | Horizon3.ai CVE-2026-101767 summary | 2026-10-20 (per Rescana; the page shows no date) | Includes mitigations and behavioural indicators (see [Log and host review](#log-and-host-review)). [Horizon3.ai][h3] [Rescana][rescana] |
 | CISA ADP SSVC assessments | 2026-10-21 10:55 UTC (CVE-2026-101767, -91323, -83399); 2026-10-23 11:01 UTC (-91299); 2026-10-24 03:55 UTC (-101809) | Exploitation: none; Automatable: yes; Technical impact: total. No ADP assessment yet for CVE-2026-87337, -91216, -91221 or -91231. [CVE JSON][cve-101767] |

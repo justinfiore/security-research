@@ -371,11 +371,12 @@ Sources: [Apache Camel advisory](https://camel.apache.org/security/CVE-2026-9088
 | Private discovery/report | Unknown for most; CVE-2026-101767 reported 2026-07-24 (time/TZ unknown) | Horizon3.ai reported the EBS flaw to Oracle. |
 | ShinyHunters renews PeopleSoft CVE-2026-35273 attacks | Reported 2026-09-25 | Mandiant/GTIG: a WAF bypass using `/%50SEMHUB/`. The flaw was fixed by a June Security Alert. |
 | CPU released (public announcement) | 2026-10-20; time not stated | Oracle Rev 1: 1,295 patches. MySQL 8.4.13 and 9.7.4 are dated the same day. |
+| Oracle CPU Revision 2 | 2026-10-26; time/TZ unknown | Siebel CRM version information and credits changed; the reviewed CPU counts, impact, patch availability and KEV status did not. |
 | CVE records published | 2026-10-20 21:22–21:25 UTC | Oracle CNA. |
 | Horizon3.ai EBS write-up | 2026-10-20 (per Rescana) | Indicators: unauthenticated POSTs to `/OA_HTML/AppsTCFServer`. |
 | Waratek, Rescana: no exploitation reported | 2026-10-21 | CISA ADP "Exploitation: none" recorded 2026-10-21 to 2026-10-24 for five CVEs. |
 | Next security release | 2026-11-17 | Oracle now ships monthly CSPUs. |
-| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| **Last updated** | **2026-10-27 09:27 EDT (UTC−04:00)** | Oracle CPU Revision 2 changed Siebel CRM version information and credits. |
 
 Oracle's quarterly CPU fixes 1,295 issues, and 112 of its risk-matrix rows score 9.0 or higher. This entry covers only the most severe **unauthenticated** network flaws in widely deployed products. For everything else, use Oracle's [risk matrices](https://www.oracle.com/security-alerts/cpuoct2026.html). Oracle discloses no root causes. Horizon3.ai describes [CVE-2026-101767](https://horizon3.ai/attack-research/vulnerabilities/cve-2026-101767/) as SQL injection in the EBS Thin Client Framework servlet that runs SQL as `APPS` and then OS commands. The servlet is allowed by the default EBS URL firewall.
 
@@ -1284,7 +1285,7 @@ Sources: [Gitea advisory GHSA-8pwg-hcgm-54cp](https://github.com/go-gitea/gitea/
 | First exploitation attempts (Previdian) | 2026-09-19 03:14 UTC | Third-party honeypot. Activity ramped up from 2026-10-11. |
 | GHSA-w794-rj3p-xv45 | 2026-09-28 17:26 UTC | CVE-2026-105697 advisory. |
 | CVEs published | 2026-10-05 20:16 UTC (105697); 20:46 UTC (105740) | GitHub CNA. |
-| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| **Last updated** | **2026-10-27 09:27 EDT (UTC−04:00)** | Updated third-party honeypot attempt count; success remains unconfirmed. |
 
 Any Langflow user, including a non-admin, can save an MCP server with the **stdio** transport. Langflow runs its command through `bash -c` without validation. The stored command runs again whenever anyone lists the MCP servers.
 
@@ -1292,7 +1293,7 @@ Any Langflow user, including a non-admin, can save an MCP server with the **stdi
 
 **Worst case:** OS command execution as the Langflow process user. Attackers can steal environment secrets such as LLM keys and `LANGFLOW_SECRET_KEY`, and leave a persistent backdoor in MCP settings. With **`LANGFLOW_AUTO_LOGIN=true`**, which the advisory calls the default for affected releases, `/api/v1/auto_login` hands out a token without credentials. In that case the attack needs no account at all.
 
-**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 4,896 attempts from 34 IPs as of 2026-10-26. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
+**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 4,924 attempts from 34 IPs as of 2026-10-27. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
 
 **Am I impacted?** Check the installed `langflow`, `langflow-base` and `lfx` versions in every environment and container. Any version **below 1.10.3** is affected. Exposure is highest when auto-login is on, the superuser password is weak or the legacy `langflow`, untrusted users have accounts, or the instance is reachable from the internet. Do not open the MCP Servers page on an unpatched instance to check for stored commands, because loading it re-runs them.
 
@@ -1817,11 +1818,11 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Exploitation attempts using proofs of concept | 2026-10-21 ~02:00–08:00 UTC | Amazon; before public disclosure. |
 | Upload-progress mitigation | 2026-10-23; time/TZ unknown | Separate follow-up issue; full patch not established in the reviewed notice. |
 | Confirmed RCE against honeypots | 2026-10-24 15:35 UTC (first shell) | Researcher honeypots running PHP 8.4.26 Apache `mod_php`; consistent with CVE-2026-109618. |
-| Palo Alto Networks PAN-OS / Panorama advisory | 2026-10-21 16:00 UTC | Management web interface affected; hotfixes released 2026-10-25 and 2026-10-26, others pending. |
+| Palo Alto Networks PAN-OS / Panorama advisory | 2026-10-21 16:00 UTC | Management web interface affected; hotfixes released 2026-10-25 through 2026-10-27, including 12.2.4-h1, 12.1.7-h11, 10.2.13-h27 and 10.2.16-h12. |
 | Public end-to-end PoC (“Steal My Bitcoin” challenge) | 2026-10-25 15:47:38 UTC (challenge solved) | Authorized challenge server; exploit tuned to one Alpine PHP 8.4.26 `cli-server` build. |
 | NVD scores added | By 2026-10-26 10:10 (NVD `lastModified`, zone not stated) | 9.8 and 8.1 (CVSS 3.1). |
 | CISA KEV listing | 2026-10-26; time/TZ unknown | CISA added CVE-2026-109618 and CVE-2026-109619, requires forensic triage, and sets a federal civilian due date of 2026-10-29. |
-| **Last updated** | **2026-10-27 06:58 EDT (UTC−04:00)** | CISA KEV listing and required forensic triage for both emergency PHP CVEs. |
+| **Last updated** | **2026-10-27 09:27 EDT (UTC−04:00)** | Palo Alto released additional PHP2Shell hotfixes. |
 
 These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
@@ -1834,7 +1835,7 @@ These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
 PHP identifies **`mod_php` as the highest-risk configuration**, with demonstrated exploitation before application code runs. Application authentication therefore cannot be assumed to protect the vulnerable path.
 
-**Patch:** PHP **8.5.12, 8.4.27, 8.3.36, or 8.2.35**, or a distribution package explicitly backporting both fixes. Restart all affected workers. Older upstream branches need a verified vendor backport or migration. **PAN-OS / Panorama:** install the per-branch hotfix from [Palo Alto's advisory](https://security.paloaltonetworks.com/CVE-2026-109618) (released so far: 10.2.18-h13, 11.1.16-h4, 11.2.10-h16, 11.1.4-h38, 11.1.6-h40, 11.1.10-h36, 11.1.13-h16; other branches had ETAs of 10/27–10/30 when reviewed). Until then, restrict management access to trusted internal IPs and enable Threat Prevention IDs 543004, 97622 and the related IDs the advisory lists. Palo Alto says CVE-2026-115560 does not affect PAN-OS.
+**Patch:** PHP **8.5.12, 8.4.27, 8.3.36, or 8.2.35**, or a distribution package explicitly backporting both fixes. Restart all affected workers. Older upstream branches need a verified vendor backport or migration. **PAN-OS / Panorama:** install the per-branch hotfix from [Palo Alto's advisory](https://security.paloaltonetworks.com/CVE-2026-109618), including newly released **12.2.4-h1, 12.1.7-h11, 10.2.13-h27 and 10.2.16-h12**; use the vendor's matrix for other branches rather than an earlier ETA. Until then, restrict management access to trusted internal IPs and enable Threat Prevention IDs 543004, 97622 and the related IDs the advisory lists. Palo Alto says CVE-2026-115560 does not affect PAN-OS.
 
 **Exploitation status:** Amazon reported exploitation attempts from 2026-10-17, before disclosure. On 2026-10-24 a researcher documented successful RCE against PHP 8.4.26 `mod_php` honeypots. CISA’s earlier no-observed-success statement predates this evidence, and CISA added both emergency CVEs to KEV on 2026-10-26. A [public end-to-end exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC) was published after a researcher solved an authorized “Steal My Bitcoin” challenge on 2026-10-25; its author says it is tuned to an Alpine PHP 8.4.26 `cli-server` build and will not match a Debian `php-fpm` build, but adapting it lowers the bar for attackers. Palo Alto knows of no exploitation against its products. [Investigate exposed systems from at least 2026-10-17](details/php2shell.md#exploitation-status).
 
@@ -2481,14 +2482,17 @@ Sources: [canonical attack-chain postmortem](https://docs.litellm.ai/blog/securi
 | Provider recovery guides | 2026-10-22 00:43–00:47 UTC | Blog RSS. |
 | Preliminary report | 2026-10-22 23:31:37 UTC | Page metadata/RSS; scope and forensic findings remain preliminary. |
 | Deployment/login recovery guides | 2026-10-23 16:30 UTC | Blog RSS. |
+| Higher-risk notifications completed | 2026-10-23 18:57:54 UTC | Does not establish that other workspaces were unaffected. |
+| Replacement-key clarification | 2026-10-24; time/TZ unknown | OpenAI/Anthropic may have revoked replacement keys because Railway could not filter a later key batch by creation date; the notice does not establish replacement-key compromise. |
+| Recovery status | 2026-10-27 03:22 UTC | Recovery remained in progress: new signups were paused and `station.railway.com` degraded or unavailable. |
 | Local software patch | Not applicable | Issuer-side revocation and replacement of exposed credentials required. |
-| **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | Exact publication times from vendor metadata. |
+| **Last updated** | **2026-10-27 08:04 EDT (UTC−04:00)** | Recovery status and provider revocation clarification. |
 
 From a clean browser/session, review your projects, shared variables, environment-specific variables, deployment history, and Railway's incident notices. Identify credentials stored before October 21 and the external services they authorize. Do not export or print secret values to perform this inventory; variable names, owners, creation/history records, and provider key IDs are sufficient. If you cannot establish whether a still-valid credential was present during the window, include it in the vendor-recommended rotation. Audit the credential's provider for unexpected use; absence of suspicious logs does not prove it was not disclosed. There is no local package-version script that can rule out this server-side exposure.
 
-The vendor's **preliminary** estimate is at most **1.85% of workspaces (approximately 100,000)**; precautionary provider revocations do not prove individual exposure. Include private registry credentials and existing authenticated sessions in recovery. Commits pushed during the deployment pause **were not queued**: explicitly deploy the intended reviewed revision. Source-code-access findings remain unresolved.
+The vendor's **preliminary** estimate is at most **1.85% of workspaces (approximately 100,000)**; precautionary provider revocations do not prove individual exposure. Railway says higher-risk-workspace notifications are complete, but that does not clear other workspaces. Include private registry credentials and existing authenticated sessions in recovery. Commits pushed during the deployment pause **were not queued**: explicitly deploy the intended reviewed revision. Source-code-access findings remain unresolved.
 
-**Remediation:** Follow the precautionary recommendation to revoke and replace sensitive variables stored before October 21. Rotate at the **issuing provider**, update every consumer and redeploy, then verify old credentials and sessions no longer work. Editing `DATABASE_URL` or a dashboard variable alone does not change the actual database password. Preserve logs and investigate misuse; rotation cannot recover already exfiltrated data.
+**Remediation:** Follow the precautionary recommendation to revoke and replace sensitive variables stored before October 21. Rotate at the **issuing provider**, update every consumer and redeploy, then verify old credentials and sessions no longer work. A provider-revoked replacement OpenAI/Anthropic key must be replaced, but the October 24 notice does not require another rotation of a working replacement key. Editing `DATABASE_URL` or a dashboard variable alone does not change the actual database password. Preserve logs and investigate misuse; rotation cannot recover already exfiltrated data.
 
 Sources: [initial disclosure](https://blog.railway.com/p/security-disclosure-wednesday-october-21st), [preliminary report](https://blog.railway.com/p/preliminary-report-october-security-incident), [deployment recovery guidance](https://blog.railway.com/p/security-disclosure-recommendation-recover-failing-deploys).
 

@@ -1,6 +1,6 @@
 # PHP2Shell: detection and remediation
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-27 (America/New_York)
 
 [Main PHP summary](../black-october-2026.md#1-php2shell-unauthenticated-execution-below-your-application) · [Patch decision guide](../black-october-2026.md#what-should-i-patch-a-stack-based-decision-guide) · [Changelog](../../CHANGELOG.md)
 
@@ -32,7 +32,8 @@
 | Detection guidance | 2026-10-23: [CISA alert](https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching) adds Sigma/partner guidance; its no-observed-successful-exploitation statement is explicitly date-bounded |
 | Earliest reported exploitation attempt | 2026-10-17 (time/TZ unknown): [Amazon Threat Intelligence](https://aws.amazon.com/blogs/security/amazon-threat-intelligence-identifies-php2shell-exploitation-prior-to-public-disclosure-in-madpot) saw an attempt against its MadPot honeypots four days before disclosure; further attempts from about 2026-10-21 02:00 UTC. Amazon said it was unclear whether these attempts would have succeeded |
 | Confirmed RCE against honeypots | 2026-10-24, first shell 15:35 UTC: [Adel Karimi's honeypot report](https://github.com/0x4D31/honeypot-data/blob/main/reports/php2shell/2026-10-24-confirmed-rce.md) records 35 Apache-parent shells on three PHP 8.4.26 Apache `mod_php` honeypots; consistent with CVE-2026-109618. Reported by [BleepingComputer](https://www.bleepingcomputer.com/news/security/php2shell-security-flaws-now-sucessfully-exploited-in-the-wild/) on 2026-10-26 |
-| Palo Alto Networks product advisory | 2026-10-21 16:00 UTC initial publication; hotfixes 10.2.18-h13, 11.1.16-h4 and 11.2.10-h16 listed as released 2026-10-25 05:25 UTC, and 11.1.4-h38, 11.1.6-h40, 11.1.10-h36 and 11.1.13-h16 on 2026-10-26 05:45 UTC: [PAN-OS/Panorama advisory](https://security.paloaltonetworks.com/CVE-2026-109618). Other branches (12.2, 12.1, remaining 11.2 and 10.2 hotfixes) had ETAs of 10/27–10/30 when reviewed |
+| Palo Alto Networks product advisory | 2026-10-21 16:00 UTC initial publication; hotfixes 10.2.18-h13, 11.1.16-h4 and 11.2.10-h16 listed as released 2026-10-25 05:25 UTC, and 11.1.4-h38, 11.1.6-h40, 11.1.10-h36 and 11.1.13-h16 on 2026-10-26 05:45 UTC: [PAN-OS/Panorama advisory](https://security.paloaltonetworks.com/CVE-2026-109618). |
+| Additional PAN-OS / Panorama hotfixes released | 2026-10-27; time/TZ unknown | Palo Alto lists 12.2.4-h1, 12.1.7-h11, 10.2.13-h27 and 10.2.16-h12 as released. Use the advisory's per-branch matrix rather than an earlier ETA. [PAN-OS/Panorama advisory](https://security.paloaltonetworks.com/CVE-2026-109618) |
 | Public end-to-end exploit | 2026-10-25 15:47:38 UTC: a researcher solved the authorized “Steal My Bitcoin” challenge server and published the [exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC). Tuned to Alpine PHP 8.4.26 `cli-server` with four workers; author reports about 7 of 10 runs succeeding in a lab. A public PoC, not in-the-wild exploitation |
 | NVD scores | By 2026-10-26 10:10 (NVD `lastModified`; zone not stated): CVSS 3.1 9.8 (CVE-2026-109618) and 8.1 (CVE-2026-109619), status Analyzed. [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-109618) |
 | CISA KEV listing | 2026-10-26; time/TZ unknown: CISA added CVE-2026-109618 and CVE-2026-109619 to [KEV](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), requires forensic triage for both, and sets a federal civilian due date of 2026-10-29; CVE-2026-115560 is not listed |

@@ -1,6 +1,6 @@
 # Langflow: authenticated RCE via MCP stdio server configuration
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-27 (America/New_York)
 
 [Main Langflow summary](../black-october-2026.md#langflow-authenticated-rce-via-mcp-stdio-server-configuration) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -22,7 +22,7 @@
 **Exploitation evidence comes from one third party only.** Previdian, a honeypot-sensor vendor, reports exploitation attempts it attributes to CVE-2026-105740:
 
 - First observed **2026-09-19 03:14 UTC**.
-- **4,896 attempts from 34 IPs in 17 countries**, all seen by **one sensor**, as of its 2026-10-26 page.
+- **4,924 attempts from 34 IPs in 17 countries**, all seen by **one sensor**, as of its 2026-10-27 page.
 - The sequence included a version check, an `auto_login` attempt (disabled in the honeypot), a **login with a common username and password**, and then the MCP server endpoint.
 
 Previdian says these are attempts, not proof of success. Neither Langflow advisory reports exploitation. CISA's SSVC entry lists 105740 as "poc" and 105697 as "none". [Previdian][prev] [The Hacker News (secondary)][thn] [CNA ADP][cve40]
@@ -56,7 +56,7 @@ Previdian says these are attempts, not proof of success. Neither Langflow adviso
 | Previdian records in-the-wild attempts; activity ramps up | 2026-10-11 (record 17:42 UTC) | 333 attempts that day, according to The Hacker News. [Previdian][prev] [THN][thn] |
 | The Hacker News report | 2026-10-15 | 1,423 attempts from 27 IPs, later updated to 1,706 attempts from 28 IPs. These figures are superseded by Previdian's live counts. [THN][thn] |
 | Langflow 1.13.0 released | 2026-10-22 21:20:30 UTC | Official packages and images now default to `LANGFLOW_AUTO_LOGIN=false`, a breaking change. [Releases][releases] [Langflow auth docs][auth] |
-| Previdian live count | As of 2026-10-26 | 4,896 attempts, 34 IPs, 17 countries, one sensor. [Previdian][prev] |
+| Previdian live count | As of 2026-10-27 | 4,924 attempts, 34 IPs, 17 countries, one sensor. [Previdian][prev] |
 | CISA KEV addition | Not listed | Catalog 2026.10.23, checked 2026-10-26. [KEV][kev] |
 
 ## Detection
