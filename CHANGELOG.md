@@ -12,7 +12,7 @@ New findings, corrected impact assessments, patch releases, and detection or rem
 
 ## 2026-10-27 07:01 EDT (UTC−04:00) — PHP2Shell KEV, Tailworm and PwnEscape fixes
 
-**Partial review:** Discovery (including the live CISA KEV feed, NSA, Wiz and all configured X timelines) and a fresh source sweep of every tracked item were completed. A small number of primary advisory pages were inaccessible or login-gated; affected guides were not changed without accessible authoritative confirmation.
+**Review scope:** Discovery (including the live CISA KEV feed, NSA, Wiz and all configured X timelines) and a fresh source sweep of every tracked item were completed. A small number of primary advisory pages were inaccessible or login-gated; their direct vendor links remain in the affected guides, and no new claim was published without accessible authoritative confirmation.
 
 - **PHP2Shell:** CISA added [CVE-2026-109618 and CVE-2026-109619 to KEV](black-october/details/php2shell.md#timeline) on 2026-10-26, requires forensic triage, and sets a federal civilian due date of 2026-10-29. [Patch the PHP runtime immediately and investigate exposed systems from at least 2026-10-17](black-october/details/php2shell.md#remediation); CVE-2026-115560 remains outside KEV.
 - **Tailworm:** More [Tailscale source fixes](black-october/details/tailworm.md#timeline) have merged for privileged Unix forwarding and Serve paths, but no numbered Tailscale or headscale release includes them yet. Keep the forwarding and exposure mitigations in place rather than deploying an arbitrary development build.
