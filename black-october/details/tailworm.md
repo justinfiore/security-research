@@ -4,7 +4,7 @@
 
 [Main Tailworm summary](../black-october-2026.md#tailworm-tailscale-ssh-and-related-findings-under-review) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**Researcher-rated High for several findings; no Tailworm-specific CVE, vendor CVSS rating or complete fixed-release matrix established.** Erica Windisch's report covers **11 numbered findings across Tailscale SSH, Serve/Funnel, an experimental connector and headscale/DERP**—not 11 independently confirmed Tailscale SSH RCEs. Included at the owner's request as a developing disclosure; this does not change the normal admission threshold for new High/Critical vulnerabilities.
+**Tailscale confirms serious, authorization- and configuration-dependent SSH privilege-escalation issues; no Tailworm-specific CVE, vendor CVSS rating or complete fixed-release matrix is established.** Erica Windisch's report covers **11 numbered findings across Tailscale SSH, Serve/Funnel, an experimental connector and headscale/DERP**—not 11 independently confirmed Tailscale SSH RCEs. Tailscale says it is still verifying the complete scope and affected configurations. Included at the owner's request as a developing disclosure; this does not change the normal admission threshold for new High/Critical vulnerabilities.
 
 The principal SSH chains claim root-level execution or privileged socket/file operations from **already-authorized Tailscale SSH access with applicable forwarding enabled**. A compromised permitted device can therefore threaten reachable targets and credentials in the demonstrated configurations. This is not unauthenticated internet-wide RCE, and ordinary OpenSSH carried over the Tailscale network is a different implementation. [Research][research] [Vendor response][vendor]
 
@@ -38,6 +38,7 @@ The principal SSH chains claim root-level execution or privileged socket/file op
 | Connection-level SSH policy enforcement merged | 2026-10-26 15:48:37 UTC | PR **21944** (“enforce SSH policy at the connection level”) re-evaluates authenticated connections on policy updates and at session and forwarding gates, closing connections whose grants are revoked or narrowed, including forwarding permissions. Further hardening PRs opened at 16:10 UTC, including **21959** (relay Unix-forward payloads as the bound user) and 21957/21958/21960, were not merged. Source changes, not a release; latest stable is still v1.104.2. [PR 21944][pr21944] |
 | Further upstream fixes merged | 2026-10-27; time/TZ not established | The researcher reports that **21959/21963** complete Unix-forward privilege dropping; **21966** refuses `serve --tcp` forwarding to the LocalAPI socket; and **21980** makes Serve capability handling per-request. The relay-response body bound also merged. None was in a numbered Tailscale or headscale release at the report update. [Research][research] |
 | headscale fix proposed | 2026-10-26 10:10:32 UTC | Open PR **#3586** “bound pending authentication without evicting sessions” cites Tailworm's registration-pressure finding. Not merged or released. [PR #3586][hs3586] |
+| Tailscale investigation update | 2026-10-26; time/TZ unknown | Tailscale says that most identified SSH issues concern privilege escalation and are serious, but depend on the connecting user/device's permissions, system configuration and other conditions. It has implemented fixes for most identified issues and targets a patched client release by the end of 2026-10-27, subject to testing; it will publish confirmed scope, versions and configurations with the release. [Vendor update][vendor-update] |
 | Stable fix status checked | 2026-10-27; time/TZ not established | Tailscale **1.104.2** and headscale **0.29.6** remained the latest numbered releases at the research update. No Tailworm-specific stable fix/bulletin identified; follow subsequent releases. [Research][research] [Changelog][changelog] [Bulletins][bulletins] |
 
 The earlier **TS-2026-004 / 1.98.9** Unix-socket symlink fix is not a fix-version claim for these later race findings. Neither Tailscale 1.104.2's October 21 release nor headscale 0.29.6 establishes remediation here. **“No patch exists” is also stale:** relevant source fixes have merged, but a complete released remediation matrix was not established.
@@ -94,7 +95,7 @@ Then restart `tailscaled` through your normal service-management procedure; this
 - Tighten SSH source/target/user scope to necessary access. Check-mode reauthentication is an extra barrier, **not a repair for post-authorization escalation**. Denying root login alone is insufficient for a reported escalation from another permitted OS user.
 - If embedded SSH is unnecessary, disable it through supported settings after ensuring another access path. **The vendor does not recommend universally disabling Tailscale SSH or the entire VPN** based on this report.
 - Remove unnecessary Serve mappings to privileged sockets; restrict connector entitlements and destinations using controls effective for the actual networking mode. Review headscale/DERP exposure separately; forwarding mitigation does not cover its denial-of-service claims.
-- Track official [bulletins][bulletins] and [release notes][changelog] for builds covering the applicable findings, including the merged SSH/Serve fix series through PRs 21959, 21963, 21966 and 21980, and headscale PR #3586. Do not deploy an arbitrary development build as a blanket fix or call every finding resolved because one PR merged.
+- Track the official [investigation update][vendor-update], [bulletins][bulletins] and [release notes][changelog] for builds covering the applicable findings, including the merged SSH/Serve fix series through PRs 21959, 21963, 21966 and 21980, and headscale PR #3586. Tailscale targets a patched client release by the end of 2026-10-27, subject to testing; do not deploy an arbitrary development build as a blanket fix or call every finding resolved because one PR merged.
 
 ## Verification
 
@@ -110,12 +111,13 @@ Preserve evidence and isolate affected access through a trusted control plane. I
 ## Sources
 
 - [Researcher report][research] — all findings, tested versions, limitations and claimed severity.
-- [Tailscale engineering response][vendor], [forwarding mitigation][mitigation], and [ordinary sshd clarification][sshd] — vendor scope and current advice.
+- [Tailscale investigation update][vendor-update], [engineering response][vendor], [forwarding mitigation][mitigation], and [ordinary sshd clarification][sshd] — vendor scope and current advice.
 - [Serve fix PR][serve-fix] and [SSH fix PR][ssh-fix] — merged code and timestamps, not stable-release guarantees.
 - [Security bulletins][bulletins], [release changelog][changelog], [SSH documentation][docs], and [headscale release][headscale].
 - [User-supplied X lead][lead] — discovery context; not independent confirmation of every claim.
 
 [research]: https://tailworm.com/
+[vendor-update]: https://tailscale.com/ssh-investigation-update
 [vendor]: https://www.reddit.com/r/Tailscale/comments/1xeoj1l/recent_tailscale_vulnerability_reports/
 [mitigation]: https://www.reddit.com/r/Tailscale/comments/1xeoj1l/comment/19rnk0ct2vkdc/
 [sshd]: https://www.reddit.com/r/Tailscale/comments/1xeoj1l/comment/19rmx9cbecxk3/

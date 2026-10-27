@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-27 08:04 EDT (UTC−04:00) — Tailscale confirms serious SSH privilege escalation
+
+**Partial review:** Discovery included the live CISA KEV catalog (2026.10.26), all five configured X timelines, CISA/NSA/Wiz searches, and the newly published Tailscale investigation. A fresh primary-source sweep of every tracked item was not completed, so the maintenance checkpoint was not advanced.
+
+- **Tailworm:** Tailscale now confirms [serious privilege-escalation issues](black-october/details/tailworm.md#timeline) affecting authorization- and configuration-dependent Tailscale SSH scenarios. [Disable unneeded SSH forwarding, tighten SSH access policies and prepare to update](black-october/details/tailworm.md#remediation); the vendor targets a patched client release by the end of October 27 subject to testing, but has not published a fixed version or complete affected-configuration matrix.
+
 ## 2026-10-27 04:02 EDT (UTC−04:00) — PAN-OS Brotli inspection update
 
 **Partial review:** The live CISA KEV feed, all five configured X timelines, discovery sources, and Palo Alto Networks' primary advisory were reviewed. A complete fresh primary-source sweep of every tracked item was not completed, so the maintenance checkpoint was not advanced.
