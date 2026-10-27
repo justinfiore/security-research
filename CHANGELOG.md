@@ -4,6 +4,13 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-27 16:01 EDT (UTC−04:00) — GoAhead TLS backend fixes and DuckDB source-fix status
+
+**Partial review:** Discovery, all five configured X timelines, the live CISA KEV catalog (2026.10.27), and a fresh primary-source sweep of every tracked item were completed. Adobe Commerce CVE-2026-48356 was newly added to KEV and needs a dedicated guide update before the maintenance checkpoint can advance.
+
+- **GoAhead:** Add the [backend-specific TLS guidance](black-october/details/goahead-tls.md#remediation). Embedded device-management servers using affected OpenSSL-compatible or Mbed TLS builds should move to **6.1.1+**; on legacy LibreSSL builds, enable issuer verification or migrate to a supported TLS backend. A configured CRL is not enforced by affected OpenSSL-compatible builds.
+- **Brotli / DuckDB:** DuckDB's [upstream decoder fix is merged](black-october/details/brotli.md#inventory-by-language-and-deployment), but no fixed DuckDB release is established. Keep deployed DuckDB builds in the unknown state until the supplier identifies a released or backported artifact with the fix.
+
 ## 2026-10-27 09:27 EDT (UTC−04:00) — PHP2Shell hotfixes and incident recovery updates
 
 **Review scope:** Discovery (CISA KEV catalog 2026.10.26, all five configured X timelines, CISA, NSA, Wiz and security-news sources) and a fresh primary-source sweep of every tracked item were completed. A few vendor pages were inaccessible or login-gated; their direct links remain in the guides, and no new claim relies on them.

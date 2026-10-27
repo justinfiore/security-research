@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [GoAhead embedded web server: TLS backend flaws bypass revocation or expose sessions](#goahead-embedded-web-server-tls-backend-flaws-bypass-revocation-or-expose-sessions)
 - [Google MCP Toolbox for Databases: Cloud Storage file exfiltration and overwrite](#google-mcp-toolbox-for-databases-cloud-storage-tools-exfiltrate-host-files-and-overwrite-local-files)
 - [Vertiv Avocent ACS8000 / ACS800: unauthenticated root command injection](#vertiv-avocent-acs8000-and-acs800-console-servers-unauthenticated-root-command-injection-via-the-wsserver-terminal-websocket)
 - [Bandit (Elixir/Phoenix): unauthenticated denial of service](#bandit-elixir-and-phoenix-web-server-unauthenticated-denial-of-service-over-http2-http11-and-websocket)
@@ -125,6 +126,29 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## GoAhead embedded web server: TLS backend flaws bypass revocation or expose sessions
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/goahead-tls.md):** [Detection](details/goahead-tls.md#detection) · [Remediation](details/goahead-tls.md#remediation) · [Verification](details/goahead-tls.md#verification) · [Timeline](details/goahead-tls.md#timeline)
+
+**CVEs:** [CVE-2026-115881](https://www.cve.org/CVERecord?id=CVE-2026-115881), [CVE-2026-115884](https://www.cve.org/CVERecord?id=CVE-2026-115884). The related Mbed TLS flaw, GOAHEAD-SA-2026-0005, has no public CVE record.
+
+**EmbedThis (vendor) rates the OpenSSL-compatible CRL flaw CVSS 9.1 Critical and the LibreSSL legacy-verifier flaw CVSS 7.4 High. FoxIO rates the separate Mbed TLS DHE-parameter flaw 5.9 Medium.**
+
+**CISA KEV:** Not listed (catalog 2026.10.27, checked 2026-10-27) for either CVE. FoxIO published proof-of-concept reproductions, but no in-the-wild exploitation was reported. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Vendor fix release | 2026-08-02; time/TZ unknown | GoAhead 6.1.1 fixes the OpenSSL and Mbed TLS defects. |
+| Vendor advisories published | 2026-10-12; time/TZ unknown | GOAHEAD-SA-2026-0004 through -0006. |
+| Public technical disclosure | 2026-10-26 20:21 UTC | FoxIO published the backend-specific analysis. |
+| **Last updated** | **2026-10-27 16:01 EDT (UTC−04:00)** | Added from primary vendor and researcher sources. |
+
+GoAhead is an embedded device-management web server. Exposure depends on its compiled TLS backend and build-time verification settings, not simply its version. In OpenSSL-compatible builds 3.4.5–6.1.0 with a configured CRL, the server loads but does not enforce revocation, so a revoked client certificate can retain mTLS access. In Mbed TLS builds 4.0.2–6.1.0, an affected TLS 1.2 DHE_RSA connection to a permissive client can be passively decrypted. LibreSSL 3.2.x or 3.3.2–3.3.6 builds with peer verification on but issuer verification off can accept an over-depth client chain.
+
+**Patch:** Upgrade affected OpenSSL-compatible or Mbed TLS builds to **6.1.1 or later**. For the LibreSSL legacy case, enable issuer verification with a trusted CA bundle, or use OpenSSL or LibreSSL 4.x. Until upgraded, do not treat a loaded CRL as enforced; remove revoked client access through the device's supported identity controls and restrict management interfaces to a dedicated network.
+
+Sources: [EmbedThis advisories](https://github.com/embedthis/goahead/security/advisories), [FoxIO technical disclosure](https://foxio.io/blog/choose-your-backend-three-tls-bugs-in-goahead), [GoAhead TLS documentation](https://www.embedthis.com/goahead/doc/users/ssl.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Google MCP Toolbox for Databases: Cloud Storage tools exfiltrate host files and overwrite local files
 
@@ -1933,7 +1957,7 @@ The important exposure distinction:
 
 **Detection tools:** Use the [JFrog contextual scanner and Trail of Bits Brotli Checker guidance](details/brotli.md#official-researcher-detection-tools) for supported source/binary inspection. Matches identify candidate usage or code copies, not confirmed exploitation; empty results do not prove safety. Neither tool was run for this report.
 
-Microsoft's [MSRC entry](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497) rates it **Critical (CVSS 3.1 8.1)** and also lists fixed **Visual Studio** (2019 16.11.61, 2022 17.14.43, 2026 18.11.2) and **PowerShell** (7.4.22, 7.5.13, 7.6.9) builds; .NET Framework is excluded. DuckDB also bundles its own Brotli copy, with its [fix PR](https://github.com/duckdb/duckdb/pull/27791) still open. Default ASP.NET Core/HttpClient configurations do not enable automatic Brotli decompression. Upgrade shared runtimes and restart; **rebuild/redeploy self-contained and NativeAOT apps**, which retain their own decoders. See the [language-by-language inventory and remediation](details/brotli.md#inventory-by-language-and-deployment), including Go/Rust and vendor-backport caveats.
+Microsoft's [MSRC entry](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497) rates it **Critical (CVSS 3.1 8.1)** and also lists fixed **Visual Studio** (2019 16.11.61, 2022 17.14.43, 2026 18.11.2) and **PowerShell** (7.4.22, 7.5.13, 7.6.9) builds; .NET Framework is excluded. DuckDB also bundles its own Brotli copy; its [fix PR](https://github.com/duckdb/duckdb/pull/27791) merged, but no fixed DuckDB release is established. Default ASP.NET Core/HttpClient configurations do not enable automatic Brotli decompression. Upgrade shared runtimes and restart; **rebuild/redeploy self-contained and NativeAOT apps**, which retain their own decoders. See the [language-by-language inventory and remediation](details/brotli.md#inventory-by-language-and-deployment), including Go/Rust and vendor-backport caveats.
 
 **PHP on Windows needs a separate package check:** PHP's October 21 source releases address PHP2Shell, but its [October 23 Windows rebuilds](https://www.php.net/archive/2026.php) add the fixed Brotli 1.2.1 dependency. Install **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1** and restart every SAPI and worker. Because the PHP runtime version did not change, `php -v` alone cannot distinguish a rebuilt package; verify the `-1` filename or the official download hash. This does not patch separately bundled `php-ext-brotli`, libcurl or other native decoders.
 
