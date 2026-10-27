@@ -1148,6 +1148,7 @@ During an HTTP/2 upload, a server reply that resets the stream (`RST_STREAM` wit
 Sources: [curl advisory](https://curl.se/docs/CVE-2026-92392.html), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-92392), [HackerOne #4030333](https://hackerone.com/reports/4030333), [Debian DSA-6558-1](https://lists.debian.org/debian-security-announce/2026/msg00472.html), [Rock-solid curl](https://rock-solid.curl.dev/download.html).
 
 <a name="linux-kernel-pwnescape-guest-to-host-escape-via-ipv4-checksum-metadata-cve-2026-99999"></a>
+<a name="linux-kernel-pwnescape---guest-to-host-escape-via-ipv4-checksum-metadata"></a>
 
 ## Linux kernel: PwnEscape - guest-to-host escape via IPv4 checksum metadata
 
@@ -1169,8 +1170,9 @@ Sources: [curl advisory](https://curl.se/docs/CVE-2026-92392.html), [CVE record]
 | Vghost CVE published / write-up | 2026-08-21 16:31 UTC / 2026-10-12, time/TZ unknown | Fixed in 5.10.265, 5.15.216, 6.1.183, 6.6.152, 6.12.104, 6.18.45, 7.1.9 and 7.2. |
 | Debian and Oracle Linux fixes | 2026-10-16; time/TZ unknown | DSA-6568-1, DLA-4841-1; Oracle UEK ELSA-2026-500397/8/9. |
 | Red Hat fixed kernels | 2026-10-19 to 2026-10-24; time/TZ unknown | RHEL 10, 9, 7 ELS, then RHEL 8 (RHSA-2026:89083) on 2026-10-24. |
+| Red Hat real-time fixed kernels | 2026-10-22 to 2026-10-24; time/TZ unknown | RHEL 7 ELS, RHEL 9.2 SAP Solutions and RHEL 8 now have fixed `kernel-rt` builds; general RHEL 9 `kernel-rt` remains affected. |
 | AlmaLinux production kernels | 2026-10-23 17:16 UTC | Moved from testing to production. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Red Hat, AlmaLinux, Debian and Oracle fixed kernels. |
+| **Last updated** | **2026-10-27 07:01 EDT (UTC−04:00)** | Red Hat real-time kernel fixed-build availability. |
 
 The flaw is in the host kernel's **IPv4 networking stack**, not in KVM. A guest sends crafted virtio-net checksum metadata, and the VMM writes it to a host TAP device. The host then corrupts an already-validated IPv4 header and reads beyond the packet data when it fragments the packet. Red Hat says local attackers can trigger it too.
 
@@ -1183,7 +1185,7 @@ The flaw is in the host kernel's **IPv4 networking stack**, not in KVM. A guest 
 
 **Exploitation status:** No in-the-wild exploitation reported. CISA's SSVC entry records exploitation as "none". Red Hat's page mentions a "KEV active-exploit case", which the KEV feed does not support. A public PoC exists for Vghost.
 
-**Am I impacted?** Highest priority: KVM/QEMU, Firecracker and other virtio-net hosts that run untrusted guests (cloud and VPS hosts, CI VMs, code-execution and AI sandboxes), then multi-user Linux. If a provider runs the host, only the provider can patch it. Distribution kernels keep older base versions (for example RHEL `5.14.0-*`), so **`uname -r` alone does not prove the backport**. Check the vendor's advisory or package changelog and confirm the host has rebooted. Fixed vendor kernels now include RHEL 10 `kernel-6.12.0-211.67.1.el10_2`, RHEL 9 `kernel-5.14.0-687.59.1.el9_8`, RHEL 8 `kernel-4.18.0-553.178.1.el8_10` (Red Hat), the matching AlmaLinux production kernels (AlmaLinux 8: `553.177.1`), Debian bookworm `6.1.190-1` / trixie `6.12.113-1`, Oracle UEK and Amazon Linux. Ubuntu, RHEL `kernel-rt` and OpenShift RHCOS had not shipped fixes when reviewed. On AlmaLinux 9, `kernel-5.14.0-687.58.1.el9_8` is newer than the old testing kernel but lacks the fix.
+**Am I impacted?** Highest priority: KVM/QEMU, Firecracker and other virtio-net hosts that run untrusted guests (cloud and VPS hosts, CI VMs, code-execution and AI sandboxes), then multi-user Linux. If a provider runs the host, only the provider can patch it. Distribution kernels keep older base versions (for example RHEL `5.14.0-*`), so **`uname -r` alone does not prove the backport**. Check the vendor's advisory or package changelog and confirm the host has rebooted. Fixed vendor kernels now include RHEL 10 `kernel-6.12.0-211.67.1.el10_2`, RHEL 9 `kernel-5.14.0-687.59.1.el9_8`, RHEL 8 `kernel-4.18.0-553.178.1.el8_10`, plus RHEL 7 ELS, RHEL 9.2 SAP Solutions and RHEL 8 fixed `kernel-rt` builds (Red Hat); the matching AlmaLinux production kernels (AlmaLinux 8: `553.177.1`), Debian bookworm `6.1.190-1` / trixie `6.12.113-1`, Oracle UEK and Amazon Linux. Ubuntu, general RHEL 9 `kernel-rt` and OpenShift RHCOS had not shipped fixes when reviewed. On AlmaLinux 9, `kernel-5.14.0-687.58.1.el9_8` is newer than the old testing kernel but lacks the fix.
 
 **Patch:** Boot a kernel that contains the fix: an upstream release listed above or a vendor backport. Drain guests first. Upstream lists no fix for the 5.4, 7.0 or 7.1 series. No workaround has been published. For Vghost, also remove world access to `/dev/vhost-*`, treat the `kvm` group as privileged, and do not give untrusted guests vIOMMU with `iommu_platform`.
 
@@ -1745,8 +1747,9 @@ Sources: [DIVD case](https://csirt.divd.nl/DIVD-2026-00015), [CNA record CVE-202
 | SSH forwarding correction merged | 2026-10-26 03:08:59 UTC | PR 21942; source merge is not a stable release. |
 | More SSH hardening merged; headscale fix proposed | 2026-10-25 18:31 UTC to 2026-10-26 14:49 UTC | Tailscale PRs 21930, 21945, 21943 merged; headscale PR #3586 open. Source changes, not releases. |
 | Connection-level SSH policy enforcement merged | 2026-10-26 15:48 UTC | PR 21944 closes connections, including forwarding, when SSH policy grants are revoked or narrowed. Not yet in a release (latest v1.104.2). |
-| Fixed stable release | Not established at 2026-10-26 ~15:30 UTC | Latest Tailscale stable found was 1.104.2; do not mark it or headscale 0.29.6 fixed for this report. |
-| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Connection-level SSH policy fix merged (PR 21944). |
+| Further upstream fixes merged | 2026-10-27; time/TZ unknown | PRs 21959/21963 complete Unix-forward privilege dropping; 21966 blocks LocalAPI TCP forwarding; 21980 makes Serve capability handling per request. No numbered release yet. |
+| Fixed stable release | Not established at 2026-10-27; time/TZ unknown | Latest Tailscale stable found was 1.104.2 and headscale 0.29.6; do not mark either fixed for this report. |
+| **Last updated** | **2026-10-27 07:01 EDT (UTC−04:00)** | Further Tailworm source fixes merged; no numbered release. |
 
 Erica Windisch reports **11 findings across SSH, Serve/Funnel, an experimental connector and headscale/DERP**. This is not 11 confirmed unauthenticated Tailscale SSH vulnerabilities. The principal SSH escalation chains require **an already-authorized source, permitted target access and applicable forwarding**. Ordinary OpenSSH carried over Tailscale is distinct. This developing report is included at the owner's request, with its severity attribution visible.
 
@@ -1802,7 +1805,7 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 
 **[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619) — PHP (GitHub advisories) Critical, CVSS 4.0: 9.2 each; NVD CVSS 3.1: 9.8 Critical (CVE-2026-109618) and 8.1 High (CVE-2026-109619, AC:H)**
 
-**CISA KEV:** Listed — added 2026-10-26, federal due date 2026-10-29 for both [CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619). [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560) is not listed.
+**CISA KEV:** Listed — added 2026-10-26, federal due date 2026-10-29 for both [CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619). CISA flags forensic triage as required for both. [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560) is not listed.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1816,8 +1819,8 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Palo Alto Networks PAN-OS / Panorama advisory | 2026-10-21 16:00 UTC | Management web interface affected; hotfixes released 2026-10-25 and 2026-10-26, others pending. |
 | Public end-to-end PoC (“Steal My Bitcoin” challenge) | 2026-10-25 15:47:38 UTC (challenge solved) | Authorized challenge server; exploit tuned to one Alpine PHP 8.4.26 `cli-server` build. |
 | NVD scores added | By 2026-10-26 10:10 (NVD `lastModified`, zone not stated) | 9.8 and 8.1 (CVSS 3.1). |
-| CISA KEV listing | 2026-10-26; time/TZ unknown | CISA added CVE-2026-109618 and CVE-2026-109619; federal civilian agencies' due date is 2026-10-29. |
-| **Last updated** | **2026-10-26 20:02 EDT (UTC−04:00)** | CISA KEV listing for both emergency PHP CVEs. |
+| CISA KEV listing | 2026-10-26; time/TZ unknown | CISA added CVE-2026-109618 and CVE-2026-109619, requires forensic triage, and sets a federal civilian due date of 2026-10-29. |
+| **Last updated** | **2026-10-27 06:58 EDT (UTC−04:00)** | CISA KEV listing and required forensic triage for both emergency PHP CVEs. |
 
 These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
@@ -2393,10 +2396,10 @@ Eight intermediate CA private keys were trivially recoverable because of defecti
 | CERT-In advisory CIAD-2026-0050 | 2026-10-21; time/TZ unknown | No confirmed malicious use of the keys established as of October 21. |
 | Bun fix | 2026-10-23 02:02 UTC | Bun 1.4.4; rebuild compiled executables. |
 | Java follow-up alert | 2026-10-24; time/TZ unknown | [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820), Oracle CVSS 3.1 9.1 Critical; earlier emergency builds require further action. |
-| Python CVE published | 2026-10-24 14:15 UTC | CVE-2026-115557, PSF CVSS 4.0 9.4 Critical. |
-| CPython key-blocking releases | 2026-10-26; time/TZ unknown | [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557); runtime protection in `ssl`, separate from CA-bundle updates. Follow the release team's fixed versions, not the CVE record's broader range. |
+| Python CVE published | 2026-10-24 14:15 UTC; updated 2026-10-27 00:36 UTC | CVE-2026-115557, PSF CVSS 4.0 9.4 Critical; the updated record gives branch-specific affected ranges ending before the fixed releases. |
+| CPython key-blocking releases | 2026-10-26; time/TZ unknown | [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557); runtime protection in `ssl`, separate from CA-bundle updates. |
 | Chrome root removal | **Expected** 2026-10-27 morning PDT (UTC−07:00) | Google forecast for Chrome Root Store users; not completed rollout as of this update. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Bun fix, CERT-In advisory, Java and Python scores. |
+| **Last updated** | **2026-10-27 07:01 EDT (UTC−04:00)** | PSF corrected CPython affected ranges for CVE-2026-115557. |
 
 Inventory client trust stores as well as your server certificates: operating-system stores, browsers, Java truststores, Python/application CA bundles, containers, and embedded clients can update independently. Match certificate fingerprints/serials and affected issuer chains against the incident record; a name containing “emSign” is not a precise affected-certificate test. Inspect Go build versions with `sh stack-inventory.sh go /path/to/deployed-binary` and compare with the fixed branches above. Updating the installed Go compiler does not repair existing binaries. For third-party appliances or opaque applications, obtain the vendor's trust-update status. A successful TLS connection is not proof that fraudulent chains are rejected.
 

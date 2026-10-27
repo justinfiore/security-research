@@ -10,11 +10,14 @@ New findings, corrected impact assessments, patch releases, and detection or rem
 
 - **PAN-OS / Brotli:** [CVE-2026-111497 affects only firewalls that both decrypt TLS/SSL and inspect Brotli on the dataplane](black-october/details/brotli.md#pan-os); the management interface, PAN-OS 11.1 and 10.2 are not affected. [Install the branch-specific hotfix when available, or disable Brotli inspection and verify it is off](black-october/details/brotli.md#pan-os) while preserving approved traffic-inspection controls.
 
-## 2026-10-26 20:02 EDT (UTC−04:00) — PHP2Shell is now in CISA KEV
+## 2026-10-27 07:01 EDT (UTC−04:00) — PHP2Shell KEV, Tailworm and PwnEscape fixes
 
-**Partial review:** The overlapping discovery window, live CISA KEV feed and all configured X timelines were reviewed. The required fresh per-item primary-source sweep, including complete NSA/Wiz coverage, was not completed; this update does not represent a complete collection refresh.
+**Partial review:** Discovery (including the live CISA KEV feed, NSA, Wiz and all configured X timelines) and a fresh source sweep of every tracked item were completed. A small number of primary advisory pages were inaccessible or login-gated; affected guides were not changed without accessible authoritative confirmation.
 
-- **PHP2Shell:** CISA added [CVE-2026-109618 and CVE-2026-109619 to KEV](black-october/details/php2shell.md#timeline) on 2026-10-26, with a federal civilian due date of 2026-10-29. [Patch the PHP runtime immediately and investigate exposed systems from at least 2026-10-17](black-october/details/php2shell.md#remediation); CVE-2026-115560 remains outside KEV.
+- **PHP2Shell:** CISA added [CVE-2026-109618 and CVE-2026-109619 to KEV](black-october/details/php2shell.md#timeline) on 2026-10-26, requires forensic triage, and sets a federal civilian due date of 2026-10-29. [Patch the PHP runtime immediately and investigate exposed systems from at least 2026-10-17](black-october/details/php2shell.md#remediation); CVE-2026-115560 remains outside KEV.
+- **Tailworm:** More [Tailscale source fixes](black-october/details/tailworm.md#timeline) have merged for privileged Unix forwarding and Serve paths, but no numbered Tailscale or headscale release includes them yet. Keep the forwarding and exposure mitigations in place rather than deploying an arbitrary development build.
+- **PwnEscape:** Red Hat has published fixed real-time kernel builds for RHEL 7 ELS, RHEL 9.2 SAP Solutions and RHEL 8; [install the exact supported build and reboot](black-october/details/pwnescape.md#remediation). General RHEL 9 `kernel-rt` remains affected.
+- **eMudhra / CPython:** The PSF corrected [CVE-2026-115557 affected ranges](black-october/details/emudhra.md#runtime-and-application-trust-store-inventory) to end before the released Python fixes. Continue updating bundled certificate stores and tools separately.
 
 ## 2026-10-26 17:27 EDT (UTC−04:00) — GitHub Actions privileged-workflow audit guidance
 

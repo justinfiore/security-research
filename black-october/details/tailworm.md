@@ -1,6 +1,6 @@
 # Tailworm: Tailscale SSH and related findings under review
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-27 (America/New_York)
 
 [Main Tailworm summary](../black-october-2026.md#tailworm-tailscale-ssh-and-related-findings-under-review) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -36,8 +36,9 @@ The principal SSH chains claim root-level execution or privileged socket/file op
 | SSH forwarding correction merged | 2026-10-26 03:08:59 UTC | PR **21942**, forwarding operations moved to authenticated local-user credentials; not proof every finding is fixed. [PR][ssh-fix] |
 | Further SSH hardening merged | 2026-10-25 18:31:40 UTC to 2026-10-26 14:49:12 UTC | PR **21930** (tsnet ListenSSH authorization, session queue bound), **21945** (gliderssh resource-exhaustion fixes) and **21943** (“launch sessions via the monitor”, normalizing incubator identity flags). PR **21944** was still open at the time. Source merges, not releases; mapping each PR to a numbered finding is not stated by Tailscale. [PR 21943][pr21943] [PR 21945][pr21945] [PR 21930][pr21930] [PR 21944][pr21944] |
 | Connection-level SSH policy enforcement merged | 2026-10-26 15:48:37 UTC | PR **21944** (“enforce SSH policy at the connection level”) re-evaluates authenticated connections on policy updates and at session and forwarding gates, closing connections whose grants are revoked or narrowed, including forwarding permissions. Further hardening PRs opened at 16:10 UTC, including **21959** (relay Unix-forward payloads as the bound user) and 21957/21958/21960, were not merged. Source changes, not a release; latest stable is still v1.104.2. [PR 21944][pr21944] |
+| Further upstream fixes merged | 2026-10-27; time/TZ not established | The researcher reports that **21959/21963** complete Unix-forward privilege dropping; **21966** refuses `serve --tcp` forwarding to the LocalAPI socket; and **21980** makes Serve capability handling per-request. The relay-response body bound also merged. None was in a numbered Tailscale or headscale release at the report update. [Research][research] |
 | headscale fix proposed | 2026-10-26 10:10:32 UTC | Open PR **#3586** “bound pending authentication without evicting sessions” cites Tailworm's registration-pressure finding. Not merged or released. [PR #3586][hs3586] |
-| Stable fix status checked | 2026-10-26 ~15:30 UTC | Tailscale **1.104.2** remained the latest stable version found; headscale **0.29.6** the latest release. No Tailworm-specific stable fix/bulletin identified; follow subsequent releases. [Changelog][changelog] [Bulletins][bulletins] |
+| Stable fix status checked | 2026-10-27; time/TZ not established | Tailscale **1.104.2** and headscale **0.29.6** remained the latest numbered releases at the research update. No Tailworm-specific stable fix/bulletin identified; follow subsequent releases. [Research][research] [Changelog][changelog] [Bulletins][bulletins] |
 
 The earlier **TS-2026-004 / 1.98.9** Unix-socket symlink fix is not a fix-version claim for these later race findings. Neither Tailscale 1.104.2's October 21 release nor headscale 0.29.6 establishes remediation here. **“No patch exists” is also stale:** relevant source fixes have merged, but a complete released remediation matrix was not established.
 
@@ -93,7 +94,7 @@ Then restart `tailscaled` through your normal service-management procedure; this
 - Tighten SSH source/target/user scope to necessary access. Check-mode reauthentication is an extra barrier, **not a repair for post-authorization escalation**. Denying root login alone is insufficient for a reported escalation from another permitted OS user.
 - If embedded SSH is unnecessary, disable it through supported settings after ensuring another access path. **The vendor does not recommend universally disabling Tailscale SSH or the entire VPN** based on this report.
 - Remove unnecessary Serve mappings to privileged sockets; restrict connector entitlements and destinations using controls effective for the actual networking mode. Review headscale/DERP exposure separately; forwarding mitigation does not cover its denial-of-service claims.
-- Track official [bulletins][bulletins] and [release notes][changelog] for builds covering the applicable findings, including PRs 21931/21942/21930/21943/21945, PR 21944 (merged 2026-10-26), open PR 21959 and headscale PR #3586. Do not deploy an arbitrary development build as a blanket fix or call every finding resolved because one PR merged.
+- Track official [bulletins][bulletins] and [release notes][changelog] for builds covering the applicable findings, including the merged SSH/Serve fix series through PRs 21959, 21963, 21966 and 21980, and headscale PR #3586. Do not deploy an arbitrary development build as a blanket fix or call every finding resolved because one PR merged.
 
 ## Verification
 

@@ -6,7 +6,7 @@
 
 **[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) / [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619): PHP (GitHub advisories) Critical, CVSS 4.0 9.2 each. NVD CVSS 3.1: 9.8 Critical for CVE-2026-109618 (`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`) and 8.1 High for CVE-2026-109619 (`AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`). Palo Alto Networks rates the PAN-OS impact CVSS-B 8.7 High (7.1 when management access is limited to a jump box).** Memory corruption during request initialization/cleanup can lead to unauthenticated RCE. This guide also covers the distinct, conditional upload-progress issue **[CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560)**, whose full advisory/score was not yet available in the sources reviewed.
 
-**CISA KEV:** Listed — added 2026-10-26, federal due date 2026-10-29 for both [CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619). [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560) is not listed. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — added 2026-10-26, federal due date 2026-10-29 for both [CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619). CISA flags forensic triage as required for both. [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560) is not listed. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -35,7 +35,7 @@
 | Palo Alto Networks product advisory | 2026-10-21 16:00 UTC initial publication; hotfixes 10.2.18-h13, 11.1.16-h4 and 11.2.10-h16 listed as released 2026-10-25 05:25 UTC, and 11.1.4-h38, 11.1.6-h40, 11.1.10-h36 and 11.1.13-h16 on 2026-10-26 05:45 UTC: [PAN-OS/Panorama advisory](https://security.paloaltonetworks.com/CVE-2026-109618). Other branches (12.2, 12.1, remaining 11.2 and 10.2 hotfixes) had ETAs of 10/27–10/30 when reviewed |
 | Public end-to-end exploit | 2026-10-25 15:47:38 UTC: a researcher solved the authorized “Steal My Bitcoin” challenge server and published the [exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC). Tuned to Alpine PHP 8.4.26 `cli-server` with four workers; author reports about 7 of 10 runs succeeding in a lab. A public PoC, not in-the-wild exploitation |
 | NVD scores | By 2026-10-26 10:10 (NVD `lastModified`; zone not stated): CVSS 3.1 9.8 (CVE-2026-109618) and 8.1 (CVE-2026-109619), status Analyzed. [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-109618) |
-| CISA KEV listing | 2026-10-26; time/TZ unknown: CISA added CVE-2026-109618 and CVE-2026-109619 to [KEV](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), with a federal civilian due date of 2026-10-29; CVE-2026-115560 is not listed |
+| CISA KEV listing | 2026-10-26; time/TZ unknown: CISA added CVE-2026-109618 and CVE-2026-109619 to [KEV](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), requires forensic triage for both, and sets a federal civilian due date of 2026-10-29; CVE-2026-115560 is not listed |
 | CVE-2026-115560 fix/advisory | No fixed release, advisory or severity score published as of 2026-10-26; its [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-115560) was not yet published. PHP says the full advisory will come with the next regular release |
 
 ### Exploitation status
