@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-27 04:02 EDT (UTC−04:00) — PAN-OS Brotli inspection update
+
+**Partial review:** The live CISA KEV feed, all five configured X timelines, discovery sources, and Palo Alto Networks' primary advisory were reviewed. A complete fresh primary-source sweep of every tracked item was not completed, so the maintenance checkpoint was not advanced.
+
+- **PAN-OS / Brotli:** [CVE-2026-111497 affects only firewalls that both decrypt TLS/SSL and inspect Brotli on the dataplane](black-october/details/brotli.md#pan-os); the management interface, PAN-OS 11.1 and 10.2 are not affected. [Install the branch-specific hotfix when available, or disable Brotli inspection and verify it is off](black-october/details/brotli.md#pan-os) while preserving approved traffic-inspection controls.
+
 ## 2026-10-26 20:02 EDT (UTC−04:00) — PHP2Shell is now in CISA KEV
 
 **Partial review:** The overlapping discovery window, live CISA KEV feed and all configured X timelines were reviewed. The required fresh per-item primary-source sweep, including complete NSA/Wiz coverage, was not completed; this update does not represent a complete collection refresh.

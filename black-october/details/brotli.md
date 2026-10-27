@@ -1,6 +1,6 @@
 # HTTP2Shell / Node2Shell: detection and remediation
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-27 (America/New_York)
 
 [Main Brotli summary and patch matrix](../black-october-2026.md#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability) · [Changelog](../../CHANGELOG.md)
 
@@ -52,6 +52,7 @@
 | Linux distribution packages | Debian: [DLA-4855-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00049.html) (bookworm `1.0.9-2+deb12u1`, 2026-10-23 19:09:40 −03:00) and [DSA-6582-1](https://www.debian.org/security/2026/dsa-6582) (trixie `1.1.0-2+deb13u1`, 2026-10-23 21:09:31 UTC); sid fixed in `1.2.0-4.1`, forky still vulnerable ([tracker][debbrotli]). Debian's `nodejs` uses the system library. Amazon Linux 2023: [ALAS2023-2026-3334][alasbrotli] (released 2026-10-24, `1.1.0-1.amzn2023.0.2` backport, Important). Ubuntu: brotli `needs-triage` on every release when reviewed. Red Hat lists only RHSA-2026:87420 (Hardened Images) as fixed. [Red Hat][rhbrotli] Alpine: `brotli` 1.2.1-r0 (edge, 3.24, 3.23) and 1.1.1-r0 (3.21) and `nodejs-current` 26.12.1-r0 marked fixed; release date not established. [Alpine][alpinebrotli] Fedora updates were still in testing/pending on 2026-10-26. |
 | ClickHouse backports merged | 2026-10-25 14:10:47 UTC (26.10, PR #127778) through 2026-10-26 06:21:46 / 06:29:01 / 09:02:26 UTC (26.8 #127810, 26.9 #127811, 26.3 #127809). Merged on every listed branch; no release containing them was published when reviewed |
 | Downstream release-status recheck | 2026-10-26: [ClickHouse releases](https://github.com/ClickHouse/ClickHouse/releases) do not yet list the four named backport releases; latest published stable is 26.10.2.103 (2026-10-24 04:17:23 UTC). [Arrow issue #55166](https://github.com/apache/arrow/issues/55166) remains open and [PR #55167](https://github.com/apache/arrow/pull/55167) was approved 2026-10-24 but is not merged; latest [Arrow release](https://github.com/apache/arrow/releases) is 26.0.0 (2026-10-09 07:37:33 UTC). Latest [libjxl release](https://github.com/libjxl/libjxl/releases) is 0.12.0 (2026-07-01 21:16:30 UTC), preceding its source fix. Fixed downstream release availability is not established by these records; check the deployed supplier's builds/backports separately |
+| Palo Alto Networks advisory | 2026-10-26, updated 2026-10-27: [PAN-OS portfolio status](https://security.paloaltonetworks.com/CVE-2026-111497) identifies conditionally affected PAN-OS 11.2/12.1/12.2 releases and fixed hotfixes or ETAs; it does not affect the management interface, PAN-OS 11.1 or 10.2 |
 
 ## Detection
 
@@ -96,6 +97,7 @@ Run local inventory only in trusted environments; inspect suspected compromised 
 | ClickHouse | Record server version/build and image digest, HTTP ingress that accepts `Content-Encoding: br`, and `.br`/Parquet ingestion from files or object storage. Inspect each server, not just client packages | [PR #127419](https://github.com/ClickHouse/ClickHouse/pull/127419) replaces bundled 1.2.0 with **1.2.1**. Listed backport versions are **26.10.3.6 / 26.9.26.18 / 26.8.35.17 / 26.3.61.13**, but publication was not established on 2026-10-26; verify an available supplier artifact contains the fix before recommending it as released |
 | DuckDB | Record DuckDB library/CLI versions in applications, notebooks and data pipelines, and whether they read Brotli-compressed Parquet or other untrusted files | DuckDB bundles its own Brotli copy. [PR #27791](https://github.com/duckdb/duckdb/pull/27791) pulls in the upstream fix but was still open on 2026-10-26; no fixed DuckDB release is established here. Updating system or Python Brotli does not replace it |
 | Apache Arrow / pyarrow | Inventory pyarrow wheel metadata and Arrow C++ libraries independently of the Python `Brotli`/`brotlicffi` packages; inspect Brotli-compressed Parquet, direct buffer APIs and bundled-versus-system dependency records | [Issue #55166](https://github.com/apache/arrow/issues/55166) identifies bundled **1.0.9**; [PR #55167](https://github.com/apache/arrow/pull/55167) remains open on 2026-10-26. No fixed Arrow/pyarrow release is established here. Require a build using fixed Brotli or a verified backport; upgrading the separate Python Brotli binding does not replace Arrow's bundled native copy |
+| PAN-OS | On PAN-OS 11.2.4+, run `show system setting brotli`; exposure requires `Enabled: yes`, TLS/SSL decryption and Brotli inspection on the dataplane. The management interface is not affected; PAN-OS 11.1 and 10.2 are unaffected | Upgrade to the fixed hotfix for the deployed branch: 12.2.4-h1; 12.1.4-h13, 12.1.7-h11 or 12.1.10-h3; or 11.2.4-h23, 11.2.7-h23, 11.2.10-h17, 11.2.13-h4 or 11.2.16-h1, subject to the vendor's release availability. Otherwise disable Brotli inspection and test policy impact |
 
 Use supported runtime branches; an old runtime is not a mitigation. In particular, older Node lines can contain the affected decoder, even when omitted from supported-release advisories. Vendor/distribution support and backports must be checked separately; a compatible extension fix does not restore support to an EOL interpreter. Scala.js/Native deployments inherit their actual JavaScript/native decoder risks, not automatically the JVM conclusions.
 
@@ -164,6 +166,12 @@ The same Node update fixes **[CVE-2026-105482](https://www.cve.org/CVERecord?id=
 4. Envoy/Istio: update to a supplier-supported release containing the fix; use the [main patch matrix](../black-october-2026.md#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability) and vendor release evidence. Reconcile control-plane and data-plane versions; roll the proxy workload itself.
 5. If delayed, disable the vulnerable decoding path or stop processing untrusted Brotli data. Removing `br` from `Accept-Encoding` alone is inadequate: a malicious peer can send it anyway. Verify whether your client exposes undecoded bytes before relying on a header check; automatic decoding may happen first. Limit exposed input sources where disabling decoding is impossible.
 
+### PAN-OS
+
+Palo Alto Networks rates CVE-2026-111497 Critical (CVSS 4.0 9.2) but describes a narrower PAN-OS exposure: PA-Series and VM-Series firewalls need TLS/SSL decryption **and** Brotli inspection enabled on the dataplane. The management web/API interface is not affected, and PAN-OS 11.1 and 10.2 are unaffected. On 11.2.4 or later, use `show system setting brotli` (or `show system setting brotli-encoding`) and treat `Enabled: yes` as the configuration prerequisite; on 12.1.2+, the Web UI exposes the same setting at **Device → Setup → Content-ID**.
+
+Install the vendor hotfix for the deployed branch: **12.2.4-h1**; **12.1.4-h13, 12.1.7-h11 or 12.1.10-h3**; or **11.2.4-h23, 11.2.7-h23, 11.2.10-h17, 11.2.13-h4 or 11.2.16-h1**, once the vendor has released it. Vendor-listed ETAs are not an installed fix. Until then, disable the inspection engine with `set system setting brotli-encoding disable`, then verify `show system setting brotli` reports `Enabled: no`. This is a configuration change that can alter traffic inspection; test it with approved traffic and preserve normal change control. Palo Alto reports no known malicious exploitation.
+
 **PHP on Windows:** update the official package itself to **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1** or a later vendor-confirmed build. The base PHP runtime number is unchanged from the October 21 PHP2Shell release, so `php -v` alone cannot establish that this Brotli rebuild is installed; use the `-1` package suffix and the PHP download's SHA-256. Restart PHP-FPM, Apache, IIS FastCGI, workers and other processes that loaded the replaced DLLs. This covers the bundled Windows dependency, not a separate extension, libcurl, bundled application library or another PHP deployment.
 
 For the newly documented native consumers:
@@ -215,6 +223,7 @@ Isolate suspicious workers, preserve logs and snapshots, and map files, tokens a
 - [Bun advisory and compiled-executable guidance](https://github.com/oven-sh/bun/security/advisories/GHSA-663w-cv8g-jj2p)
 - [Microsoft .NET advisory and runtime/SDK matrix](https://github.com/dotnet/announcements/issues/494)
 - [MSRC CVE-2026-111497](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497) — Critical rating; .NET SDK, Visual Studio and PowerShell fixed builds
+- [Palo Alto Networks PAN-OS portfolio status](https://security.paloaltonetworks.com/CVE-2026-111497) — applicability, hotfixes, temporary mitigation and exploitation status
 - [Alpine security tracker](https://security.alpinelinux.org/vuln/CVE-2026-111497) and [DuckDB PR #27791](https://github.com/duckdb/duckdb/pull/27791)
 - [Brotli4j wrapper/native-artifact advisory](https://github.com/hyperxpro/Brotli4j/security/advisories/GHSA-x524-jrqf-vwq6)
 - [PHP extension 0.21.1 release](https://github.com/kjdev/php-ext-brotli/releases/tag/0.21.1)
