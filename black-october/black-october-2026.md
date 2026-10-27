@@ -1802,7 +1802,7 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 
 **[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619) — PHP (GitHub advisories) Critical, CVSS 4.0: 9.2 each; NVD CVSS 3.1: 9.8 Critical (CVE-2026-109618) and 8.1 High (CVE-2026-109619, AC:H)**
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Exploitation evidence exists outside KEV: pre-disclosure attempts and researcher-confirmed honeypot RCE (see below). Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Listed — added 2026-10-26, federal due date 2026-10-29 for both [CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619). [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560) is not listed.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1816,8 +1816,8 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Palo Alto Networks PAN-OS / Panorama advisory | 2026-10-21 16:00 UTC | Management web interface affected; hotfixes released 2026-10-25 and 2026-10-26, others pending. |
 | Public end-to-end PoC (“Steal My Bitcoin” challenge) | 2026-10-25 15:47:38 UTC (challenge solved) | Authorized challenge server; exploit tuned to one Alpine PHP 8.4.26 `cli-server` build. |
 | NVD scores added | By 2026-10-26 10:10 (NVD `lastModified`, zone not stated) | 9.8 and 8.1 (CVSS 3.1). |
-| CISA KEV | Not listed (catalog 2026.10.23) | Checked 2026-10-26. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | NVD scores, PAN-OS/Panorama exposure and public PoC. |
+| CISA KEV listing | 2026-10-26; time/TZ unknown | CISA added CVE-2026-109618 and CVE-2026-109619; federal civilian agencies' due date is 2026-10-29. |
+| **Last updated** | **2026-10-26 20:02 EDT (UTC−04:00)** | CISA KEV listing for both emergency PHP CVEs. |
 
 These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
@@ -1832,7 +1832,7 @@ PHP identifies **`mod_php` as the highest-risk configuration**, with demonstrate
 
 **Patch:** PHP **8.5.12, 8.4.27, 8.3.36, or 8.2.35**, or a distribution package explicitly backporting both fixes. Restart all affected workers. Older upstream branches need a verified vendor backport or migration. **PAN-OS / Panorama:** install the per-branch hotfix from [Palo Alto's advisory](https://security.paloaltonetworks.com/CVE-2026-109618) (released so far: 10.2.18-h13, 11.1.16-h4, 11.2.10-h16, 11.1.4-h38, 11.1.6-h40, 11.1.10-h36, 11.1.13-h16; other branches had ETAs of 10/27–10/30 when reviewed). Until then, restrict management access to trusted internal IPs and enable Threat Prevention IDs 543004, 97622 and the related IDs the advisory lists. Palo Alto says CVE-2026-115560 does not affect PAN-OS.
 
-**Exploitation status:** Amazon reported exploitation attempts from 2026-10-17, before disclosure. On 2026-10-24 a researcher documented successful RCE against PHP 8.4.26 `mod_php` honeypots. CISA’s earlier no-observed-success statement predates this evidence. A [public end-to-end exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC) was published after a researcher solved an authorized “Steal My Bitcoin” challenge on 2026-10-25; its author says it is tuned to an Alpine PHP 8.4.26 `cli-server` build and will not match a Debian `php-fpm` build, but adapting it lowers the bar for attackers. Palo Alto knows of no exploitation against its products. Not in CISA KEV as of catalog 2026.10.23. [Investigate exposed systems from at least 2026-10-17](details/php2shell.md#exploitation-status).
+**Exploitation status:** Amazon reported exploitation attempts from 2026-10-17, before disclosure. On 2026-10-24 a researcher documented successful RCE against PHP 8.4.26 `mod_php` honeypots. CISA’s earlier no-observed-success statement predates this evidence, and CISA added both emergency CVEs to KEV on 2026-10-26. A [public end-to-end exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC) was published after a researcher solved an authorized “Steal My Bitcoin” challenge on 2026-10-25; its author says it is tuned to an Alpine PHP 8.4.26 `cli-server` build and will not match a Debian `php-fpm` build, but adapting it lowers the bar for attackers. Palo Alto knows of no exploitation against its products. [Investigate exposed systems from at least 2026-10-17](details/php2shell.md#exploitation-status).
 
 ### The October 23 follow-up matters
 

@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-26 20:02 EDT (UTC−04:00) — PHP2Shell is now in CISA KEV
+
+**Partial review:** The overlapping discovery window, live CISA KEV feed and all configured X timelines were reviewed. The required fresh per-item primary-source sweep, including complete NSA/Wiz coverage, was not completed; this update does not represent a complete collection refresh.
+
+- **PHP2Shell:** CISA added [CVE-2026-109618 and CVE-2026-109619 to KEV](black-october/details/php2shell.md#timeline) on 2026-10-26, with a federal civilian due date of 2026-10-29. [Patch the PHP runtime immediately and investigate exposed systems from at least 2026-10-17](black-october/details/php2shell.md#remediation); CVE-2026-115560 remains outside KEV.
+
 ## 2026-10-26 17:27 EDT (UTC−04:00) — GitHub Actions privileged-workflow audit guidance
 
 **Review scope:** Every tracked item's primary advisory, release or incident source was refreshed, alongside the configured CISA KEV, X, NSA and Wiz sources. Unavailable secondary pages did not leave an item without a current primary source.
