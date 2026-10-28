@@ -531,11 +531,11 @@ Sources: [GHSA-pwpf-8799-94cj](https://github.com/ImageMagick/ImageMagick/securi
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/electrum.md):** [Detection](details/electrum.md#detection) · [Remediation](details/electrum.md#remediation) · [Verification](details/electrum.md#verification) · [Timeline](details/electrum.md#timeline)
 
-**CVEs:** None assigned. Tracked as GitHub advisory [GHSA-6jp4-8v48-cc5v](https://github.com/spesmilo/electrum/security/advisories/GHSA-6jp4-8v48-cc5v).
+**CVEs:** [CVE-2026-117601](https://www.cve.org/CVERecord?id=CVE-2026-117601).
 
-**High (Electrum maintainers; no CVSS score); exploited in the wild**
+**High (Electrum maintainers); CVE issuer VulnCheck scores CVE-2026-117601 CVSS 4.0 9.3; exploited in the wild**
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. The maintainers say malicious servers are exploiting it in the wild, and one reporter lost funds.
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-28). The maintainers say malicious servers are exploiting it in the wild, and one reporter lost funds. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -543,7 +543,8 @@ Sources: [GHSA-pwpf-8799-94cj](https://github.com/ImageMagick/ImageMagick/securi
 | Fix tagged (4.8.3) | 2026-10-23 17:19 UTC | Fix merged 13:33 UTC (`90fe308`). |
 | Binaries released | 2026-10-24; time/TZ unknown | Per the advisory. |
 | Advisory published (public announcement) | 2026-10-24 12:52 UTC | GitHub security advisory. |
-| **Last updated** | **2026-10-26 11:45 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| CVE published | 2026-10-27; time/TZ unknown | VulnCheck assigned CVE-2026-117601 (CVSS 4.0 9.3) for Electrum <4.8.3. |
+| **Last updated** | **2026-10-28 16:00 EDT (UTC−04:00)** | Added published CVE and its issuer's severity attribution. |
 
 Electrum trusts its server for unconfirmed transactions. A malicious server can swallow the payment you broadcast and show a conflicting, invalidly signed transaction instead. The fake pays an attacker address whose last four characters match your recipient's.
 
@@ -555,7 +556,7 @@ Electrum trusts its server for unconfirmed transactions. A malicious server can 
 
 **Patch:** Upgrade to **4.8.3** and verify the download's signatures. Before signing **any** transaction, including fee bumps, check the full address and amount.
 
-Sources: [GHSA-6jp4-8v48-cc5v](https://github.com/spesmilo/electrum/security/advisories/GHSA-6jp4-8v48-cc5v), [fix commit](https://github.com/spesmilo/electrum/commit/90fe30822561e515a9d2d6e5a352cc07780999eb), [4.8.3 release notes](https://github.com/spesmilo/electrum/blob/4.8.3/RELEASE-NOTES).
+Sources: [GHSA-6jp4-8v48-cc5v](https://github.com/spesmilo/electrum/security/advisories/GHSA-6jp4-8v48-cc5v), [CVE-2026-117601](https://www.cve.org/CVERecord?id=CVE-2026-117601), [fix commit](https://github.com/spesmilo/electrum/commit/90fe30822561e515a9d2d6e5a352cc07780999eb), [4.8.3 release notes](https://github.com/spesmilo/electrum/blob/4.8.3/RELEASE-NOTES).
 
 ## Fortinet FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator: October 2026 hardening release and SQL injection fixes
 

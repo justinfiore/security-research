@@ -4,7 +4,7 @@
 
 [Main Electrum summary](../black-october-2026.md#electrum-bitcoin-wallet-malicious-server-swaps-broadcast-transactions-so-a-fee-bump-pays-the-attacker) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**[GHSA-6jp4-8v48-cc5v][ghsa]: rated High by the Electrum maintainers. No CVSS score, no CWE and no CVE has been assigned. Exploited in the wild, with at least one confirmed loss of funds.** Electrum is a light client: by documented design, it trusts its main server for unconfirmed (mempool) transactions. A malicious server can exploit this as follows: [Advisory][ghsa]
+**[GHSA-6jp4-8v48-cc5v][ghsa]: rated High by the Electrum maintainers. [CVE-2026-117601][cve] assigns CVSS 4.0 9.3; it identifies Electrum < 4.8.3 and 4.8.3 as fixed. Exploited in the wild, with at least one confirmed loss of funds.** Electrum is a light client: by documented design, it trusts its main server for unconfirmed (mempool) transactions. A malicious server can exploit this as follows: [Advisory][ghsa]
 
 1. When the user broadcasts a payment (tx1), the server swallows it and never relays it to the Bitcoin network.
 2. It inserts a **conflicting tx2 with invalid signatures** into the wallet's history. Tx2 spends the same inputs to an attacker address, ground so that its last four characters match the legitimate recipient's.
@@ -13,7 +13,7 @@
 
 **Affected:** Electrum **< 4.8.3** on all platforms, including desktop and Android. **Not affected:** clients that connect only to servers they trust, such as their own. **Fixed:** **4.8.3**. Merge commit `90fe308` makes the client verify signatures of the wallet's own (`is_mine`) inputs on mempool transactions before adding them to history. The fix is deliberately limited: incoming transactions and inputs from other wallets are still not validated before confirmation. [Advisory][ghsa] [Fix][fix]
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. The maintainers state that "some servers are performing this attack in the wild" and report a user who lost funds after fee-bumping. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-28). The maintainers state that "some servers are performing this attack in the wild" and report a user who lost funds after fee-bumping. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -37,7 +37,8 @@
 | 4.8.3 tagged | 2026-10-23 17:19:56 UTC | Signed tag. The release notes call it a "security update". [Tag][tag] [Release notes][notes] |
 | 4.8.3 binaries released | 2026-10-24; time/TZ unknown | Per the advisory timeline. [Advisory][ghsa] [Downloads][dl] |
 | Advisory published (public announcement) | 2026-10-24 12:52:42 UTC | GitHub advisory, published by SomberNight. Last updated 2026-10-25 14:45:58 UTC. [Advisory][ghsa] |
-| CVE / CISA KEV | Not applicable | No CVE assigned as of 2026-10-26. |
+| CVE published | 2026-10-27; time/TZ unknown | VulnCheck assigned CVE-2026-117601, CVSS 4.0 9.3, for Electrum <4.8.3. [CVE record][cve] |
+| CISA KEV | Not listed (catalog 2026.10.28, checked 2026-10-28) | Absence from KEV is not evidence that exploitation has not occurred. |
 
 ## Detection
 
@@ -84,9 +85,11 @@ A clean history does not prove a different server was honest. The fix still does
 ## Sources
 
 - [GHSA-6jp4-8v48-cc5v][ghsa]: description, affected and fixed versions, exploitation remarks, timeline and credits.
+- [CVE-2026-117601][cve]: CVSS 4.0 score and affected/fixed version assignment.
 - [Fix merge commit 90fe308][fix]; [4.8.3 tag][tag]; [4.8.3 release notes][notes]; [download directory][dl].
 
 [ghsa]: https://github.com/spesmilo/electrum/security/advisories/GHSA-6jp4-8v48-cc5v
+[cve]: https://www.cve.org/CVERecord?id=CVE-2026-117601
 [fix]: https://github.com/spesmilo/electrum/commit/90fe30822561e515a9d2d6e5a352cc07780999eb
 [tag]: https://github.com/spesmilo/electrum/tree/4.8.3
 [notes]: https://github.com/spesmilo/electrum/blob/4.8.3/RELEASE-NOTES

@@ -4,6 +4,11 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-28 16:00 EDT (UTC−04:00) — Electrum CVE assignment and Railway recovery status
+
+- **Electrum:** [CVE-2026-117601](black-october/details/electrum.md#timeline) now assigns CVSS 4.0 9.3 to the already tracked exploited malicious-server transaction-swap issue. Upgrade to [4.8.3](black-october/details/electrum.md#remediation) and verify every fee-bump recipient and amount.
+- **Railway:** [Recovery remains in monitoring](black-october/details/railway.md#timeline); new signups remain paused. Continue issuer-side secret rotation and confirm service recovery before storing replacement credentials.
+
 ## 2026-10-28 12:00 EDT (UTC−04:00) — Veeam Backup & Replication Critical update
 
 - **Veeam Backup & Replication / Veeam Software Appliance:** Update affected deployments to [13.1.2 or 13.0.3](black-october/details/veeam-backup.md#remediation) to correct CVE-2026-108142, a Critical unauthenticated authorization bypass in the CDP Coordinator Service. Restrict management access to trusted administration networks during rollout.
