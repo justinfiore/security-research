@@ -1760,7 +1760,7 @@ Sources: [DIVD case](https://csirt.divd.nl/DIVD-2026-00015), [CNA record CVE-202
 
 **CVEs:** No Tailworm-specific identifiers established in the reviewed sources.
 
-**Tailscale confirms serious privilege-escalation issues; no Tailworm-specific CVE or vendor CVSS rating established**
+**Tailscale v1.104.4 addresses confirmed SSH vulnerabilities and three Serve/Funnel bugs; no Tailworm-specific CVE or vendor CVSS rating established**
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. No in-the-wild campaign was established in the reviewed sources.
 
@@ -1776,7 +1776,8 @@ Sources: [DIVD case](https://csirt.divd.nl/DIVD-2026-00015), [CNA record CVE-202
 | Further upstream fixes merged | 2026-10-27; time/TZ unknown | PRs 21959/21963 complete Unix-forward privilege dropping; 21966 blocks LocalAPI TCP forwarding; 21980 makes Serve capability handling per request. No numbered release yet. |
 | Vendor investigation update | 2026-10-26; time/TZ unknown | Tailscale confirms that most identified SSH issues are serious privilege escalations under configuration- and authorization-dependent conditions. It says it has fixes for most issues and targets a patched client release by the end of 2026-10-27, subject to testing; no version is published. |
 | Fixed stable release | Not established at 2026-10-27; time/TZ unknown | Latest Tailscale stable found was 1.104.2 and headscale 0.29.6; do not mark either fixed for this report. |
-| **Last updated** | **2026-10-27 08:04 EDT (UTC−04:00)** | Tailscale confirms serious SSH privilege-escalation issues; no numbered fix release yet. |
+| Tailscale v1.104.4 released | 2026-10-28; time/TZ unknown | Tailscale says this release addresses its confirmed SSH vulnerabilities and three Serve/Funnel bugs, with four security bulletins; two other Serve/Funnel behaviors work as designed. This does not establish a complete fix matrix for all Tailworm findings or headscale. [Vendor release](https://tailscale.com/blog/tailscale-ssh-findings-fixes) |
+| **Last updated** | **2026-10-28 04:03 EDT (UTC−04:00)** | Added Tailscale v1.104.4 vendor fix status and retained the unresolved Tailworm/headscale scope. |
 
 Erica Windisch reports **11 findings across SSH, Serve/Funnel, an experimental connector and headscale/DERP**. This is not 11 confirmed unauthenticated Tailscale SSH vulnerabilities. The principal SSH escalation chains require **an already-authorized source, permitted target access and applicable forwarding**. Ordinary OpenSSH carried over Tailscale is distinct. This developing report is included at the owner's request, with its severity attribution visible.
 
@@ -1784,9 +1785,9 @@ Erica Windisch reports **11 findings across SSH, Serve/Funnel, an experimental c
 
 **Am I impacted?** Inventory the deployed Tailscale/headscale version, whether **embedded Tailscale SSH** is enabled, who can reach which target/local user, and whether forwarding is allowed. Separately inspect Serve/Funnel, experimental connectors and custom DERP/headscale exposure. `tailscale version` is an inventory clue, not a complete vulnerability check. See the [per-finding prerequisites](details/tailworm.md#interpret-the-eleven-findings-separately); some reported paths fail closed or require non-default configuration.
 
-**Action now:** Tailscale confirms that the issue set includes serious, authorization- and configuration-dependent privilege escalation, and recommends **`TS_SSH_DISABLE_FORWARDING=1` in the `tailscaled` service environment**, then restarting the daemon, where forwarding is unnecessary. Preserve another administrative path first. This mitigates forwarding chains, not every finding; tighten SSH scope and remove dangerous Serve socket mappings too. It has implemented fixes for most identified issues but has not published a patched version. Follow official release notes rather than deploying arbitrary development builds or treating a merged PR as complete remediation.
+**Action now:** Update Tailscale to **v1.104.4 or later**. Tailscale says it addresses confirmed SSH vulnerabilities and three Serve/Funnel bugs; it characterizes two other Serve/Funnel behaviors as working as designed. Preserve another administrative path first. Continue to use **`TS_SSH_DISABLE_FORWARDING=1` in the `tailscaled` service environment** when forwarding is unnecessary, tighten SSH scope and remove dangerous Serve socket mappings. These actions do not establish that every Tailworm finding or headscale issue is resolved; follow official release notes rather than deploying arbitrary development builds.
 
-Sources: [researcher report](https://tailworm.com/), [Tailscale investigation and remediation update](https://tailscale.com/ssh-investigation-update), [SSH correction](https://github.com/tailscale/tailscale/pull/21942), [Serve correction](https://github.com/tailscale/tailscale/pull/21931), [user-provided X lead](https://x.com/IntCyberDigest/status/2114291878720151623).
+Sources: [researcher report](https://tailworm.com/), [Tailscale investigation and remediation update](https://tailscale.com/ssh-investigation-update), [Tailscale v1.104.4 release](https://tailscale.com/blog/tailscale-ssh-findings-fixes), [SSH correction](https://github.com/tailscale/tailscale/pull/21942), [Serve correction](https://github.com/tailscale/tailscale/pull/21931), [user-provided X lead](https://x.com/IntCyberDigest/status/2114291878720151623).
 
 <a name="authmask-microsoft-authenticator-for-android-token-theft"></a>
 

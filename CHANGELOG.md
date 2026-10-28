@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-28 04:03 EDT (UTC−04:00) — Tailscale Tailworm fixes
+
+**Partial review:** All configured X timelines and CISA KEV discovery were reviewed, along with the Tailscale primary release. The full existing-item primary-source sweep was not completed, and the required pre-research start timestamp was missed; the successful-run checkpoint cannot advance.
+
+- **Tailscale / Tailworm:** Update Tailscale deployments to [v1.104.4 or later](black-october/details/tailworm.md#remediation). Tailscale says it addresses confirmed SSH vulnerabilities and three Serve/Funnel bugs; retain SSH/Serve mitigations and treat headscale and any unmapped Tailworm findings as unresolved until their respective vendors publish complete fix status.
+
 ## 2026-10-28 00:03 EDT (UTC−04:00) — Brotli KEV update
 
 **Partial review:** CISA KEV discovery and three of five configured X timelines were reviewed; `@IntCyberDigest` timed out, and `@NSACyber` and `@CISAgov` stopped before the overlapping window. The full existing-item primary-source sweep was not completed, and this run's required pre-research start timestamp was not retained, so the checkpoint cannot advance.
