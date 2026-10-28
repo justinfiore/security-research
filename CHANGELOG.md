@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-27 20:04 EDT (UTC−04:00) — Adobe Commerce / Magento KEV update
+
+**Partial review:** The live CISA KEV catalog (2026.10.27), all five configured X timelines, and selected primary sources were reviewed. This run cannot establish a successful-run checkpoint because its required start timestamp was not captured before research began; a full existing-item primary-source sweep was also not completed.
+
+- **Adobe Commerce / Magento Open Source:** CISA added [CVE-2026-48356 to KEV](black-october/details/magento-blockstrap.md#cisa-kev), with a federal civilian due date of 2026-11-10. Install Adobe's [July 2026 update for your supported product line](black-october/details/magento-blockstrap.md#remediation), then retain the separate October BlockStrap patch sequence.
+
 ## 2026-10-27 16:01 EDT (UTC−04:00) — GoAhead TLS backend fixes and DuckDB source-fix status
 
 **Partial review:** Discovery, all five configured X timelines, the live CISA KEV catalog (2026.10.27), and a fresh primary-source sweep of every tracked item were completed. Adobe Commerce CVE-2026-48356 was newly added to KEV and needs a dedicated guide update before the maintenance checkpoint can advance.
