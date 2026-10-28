@@ -6,8 +6,6 @@ New findings, corrected impact assessments, patch releases, and detection or rem
 
 ## 2026-10-28 12:00 EDT (UTC−04:00) — Veeam Backup & Replication Critical update
 
-**Partial review:** Veeam's primary security bulletin, the CISA KEV catalog, and four of five configured X timelines were reviewed. `@IntCyberDigest` timed out, and the required complete existing-item primary-source sweep was not completed; the maintenance checkpoint cannot advance.
-
 - **Veeam Backup & Replication / Veeam Software Appliance:** Update affected deployments to [13.1.2 or 13.0.3](black-october/details/veeam-backup.md#remediation) to correct CVE-2026-108142, a Critical unauthenticated authorization bypass in the CDP Coordinator Service. Restrict management access to trusted administration networks during rollout.
 - **Veeam Agent for Linux:** Update [managed 13.1 agents to 13.1.2](black-october/details/veeam-backup.md#remediation) for the separate High local privilege escalation CVE-2026-105477.
 
@@ -20,32 +18,22 @@ New findings, corrected impact assessments, patch releases, and detection or rem
 
 ## 2026-10-28 04:03 EDT (UTC−04:00) — Tailscale Tailworm fixes
 
-**Partial review:** All configured X timelines and CISA KEV discovery were reviewed, along with the Tailscale primary release. The full existing-item primary-source sweep was not completed, and the required pre-research start timestamp was missed; the successful-run checkpoint cannot advance.
-
 - **Tailscale / Tailworm:** Update Tailscale deployments to [v1.104.4 or later](black-october/details/tailworm.md#remediation). Tailscale says it addresses confirmed SSH vulnerabilities and three Serve/Funnel bugs; retain SSH/Serve mitigations and treat headscale and any unmapped Tailworm findings as unresolved until their respective vendors publish complete fix status.
 
 ## 2026-10-28 00:03 EDT (UTC−04:00) — Brotli KEV update
-
-**Partial review:** CISA KEV discovery and three of five configured X timelines were reviewed; `@IntCyberDigest` timed out, and `@NSACyber` and `@CISAgov` stopped before the overlapping window. The full existing-item primary-source sweep was not completed, and this run's required pre-research start timestamp was not retained, so the checkpoint cannot advance.
 
 - **Brotli / HTTP2Shell:** CISA added [CVE-2026-111497 to KEV](black-october/details/brotli.md#timeline) based on evidence of active exploitation, with a federal civilian due date of 2026-11-10. Prioritize the [component-specific updates and temporary decoder controls](black-october/details/brotli.md#remediation); the related Node.js CVEs are not listed.
 
 ## 2026-10-27 20:04 EDT (UTC−04:00) — Adobe Commerce / Magento KEV update
 
-**Partial review:** The live CISA KEV catalog (2026.10.27), all five configured X timelines, and selected primary sources were reviewed. This run cannot establish a successful-run checkpoint because its required start timestamp was not captured before research began; a full existing-item primary-source sweep was also not completed.
-
 - **Adobe Commerce / Magento Open Source:** CISA added [CVE-2026-48356 to KEV](black-october/details/adobe-commerce-upload.md#timeline), with a federal civilian due date of 2026-11-10. Install Adobe's [July 2026 update for your supported product line](black-october/details/adobe-commerce-upload.md#remediation), then retain the separate October BlockStrap patch sequence.
 
 ## 2026-10-27 16:01 EDT (UTC−04:00) — GoAhead TLS backend fixes and DuckDB source-fix status
-
-**Partial review:** Discovery, all five configured X timelines, the live CISA KEV catalog (2026.10.27), and a fresh primary-source sweep of every tracked item were completed. Adobe Commerce CVE-2026-48356 was newly added to KEV and needs a dedicated guide update before the maintenance checkpoint can advance.
 
 - **GoAhead:** Add the [backend-specific TLS guidance](black-october/details/goahead-tls.md#remediation). Embedded device-management servers using affected OpenSSL-compatible or Mbed TLS builds should move to **6.1.1+**; on legacy LibreSSL builds, enable issuer verification or migrate to a supported TLS backend. A configured CRL is not enforced by affected OpenSSL-compatible builds.
 - **Brotli / DuckDB:** DuckDB's [upstream decoder fix is merged](black-october/details/brotli.md#inventory-by-language-and-deployment), but no fixed DuckDB release is established. Keep deployed DuckDB builds in the unknown state until the supplier identifies a released or backported artifact with the fix.
 
 ## 2026-10-27 09:27 EDT (UTC−04:00) — PHP2Shell hotfixes and incident recovery updates
-
-**Review scope:** Discovery (CISA KEV catalog 2026.10.26, all five configured X timelines, CISA, NSA, Wiz and security-news sources) and a fresh primary-source sweep of every tracked item were completed. A few vendor pages were inaccessible or login-gated; their direct links remain in the guides, and no new claim relies on them.
 
 - **PHP2Shell / PAN-OS:** Palo Alto released additional [PAN-OS and Panorama hotfixes](black-october/details/php2shell.md#timeline), including 12.2.4-h1, 12.1.7-h11, 10.2.13-h27 and 10.2.16-h12. Install the hotfix listed for your branch; do not use an earlier ETA as a patch decision.
 - **Railway:** [Recovery remains in progress](black-october/details/railway.md#timeline). Replace provider-revoked replacement OpenAI/Anthropic keys and redeploy, but do not rotate working replacements solely because of the October 24 batch-processing notice.
@@ -54,19 +42,13 @@ New findings, corrected impact assessments, patch releases, and detection or rem
 
 ## 2026-10-27 08:04 EDT (UTC−04:00) — Tailscale confirms serious SSH privilege escalation
 
-**Partial review:** Discovery included the live CISA KEV catalog (2026.10.26), all five configured X timelines, CISA/NSA/Wiz searches, and the newly published Tailscale investigation. A fresh primary-source sweep of every tracked item was not completed, so the maintenance checkpoint was not advanced.
-
 - **Tailworm:** Tailscale now confirms [serious privilege-escalation issues](black-october/details/tailworm.md#timeline) affecting authorization- and configuration-dependent Tailscale SSH scenarios. [Disable unneeded SSH forwarding, tighten SSH access policies and prepare to update](black-october/details/tailworm.md#remediation); the vendor targets a patched client release by the end of October 27 subject to testing, but has not published a fixed version or complete affected-configuration matrix.
 
 ## 2026-10-27 04:02 EDT (UTC−04:00) — PAN-OS Brotli inspection update
 
-**Partial review:** The live CISA KEV feed, all five configured X timelines, discovery sources, and Palo Alto Networks' primary advisory were reviewed. A complete fresh primary-source sweep of every tracked item was not completed, so the maintenance checkpoint was not advanced.
-
 - **PAN-OS / Brotli:** [CVE-2026-111497 affects only firewalls that both decrypt TLS/SSL and inspect Brotli on the dataplane](black-october/details/brotli.md#pan-os); the management interface, PAN-OS 11.1 and 10.2 are not affected. [Install the branch-specific hotfix when available, or disable Brotli inspection and verify it is off](black-october/details/brotli.md#pan-os) while preserving approved traffic-inspection controls.
 
 ## 2026-10-27 07:01 EDT (UTC−04:00) — PHP2Shell KEV, Tailworm and PwnEscape fixes
-
-**Review scope:** Discovery (including the live CISA KEV feed, NSA, Wiz and all configured X timelines) and a fresh source sweep of every tracked item were completed. A small number of primary advisory pages were inaccessible or login-gated; their direct vendor links remain in the affected guides, and no new claim was published without accessible authoritative confirmation.
 
 - **PHP2Shell:** CISA added [CVE-2026-109618 and CVE-2026-109619 to KEV](black-october/details/php2shell.md#timeline) on 2026-10-26, requires forensic triage, and sets a federal civilian due date of 2026-10-29. [Patch the PHP runtime immediately and investigate exposed systems from at least 2026-10-17](black-october/details/php2shell.md#remediation); CVE-2026-115560 remains outside KEV.
 - **Tailworm:** More [Tailscale source fixes](black-october/details/tailworm.md#timeline) have merged for privileged Unix forwarding and Serve paths, but no numbered Tailscale or headscale release includes them yet. Keep the forwarding and exposure mitigations in place rather than deploying an arbitrary development build.
@@ -75,13 +57,9 @@ New findings, corrected impact assessments, patch releases, and detection or rem
 
 ## 2026-10-26 17:27 EDT (UTC−04:00) — GitHub Actions privileged-workflow audit guidance
 
-**Review scope:** Every tracked item's primary advisory, release or incident source was refreshed, alongside the configured CISA KEV, X, NSA and Wiz sources. Unavailable secondary pages did not leave an item without a current primary source.
-
 - **GitHub Actions Gheist:** [Audit privileged workflows](black-october/details/github-gheist.md#remediation) for untrusted-event checkouts, artifact execution, direct event-data shell interpolation and persistent self-hosted runner state. These are separate paths from the stolen-token Gheist campaign, but can expose the same repository secrets. Restrict privileged workflows to authorized actors, use a reviewed head SHA, keep untrusted event data out of shell source, and do not execute artifacts from lower-trust runs.
 
 ## 2026-10-26 16:01 EDT (UTC−04:00) — PHP Windows Brotli rebuild identifiers
-
-**Partial review:** The overlapping research window, CISA KEV feed (catalog 2026.10.23), all five configured X timelines, and selected primary/vendor sources were checked. A full per-item primary-source refresh and complete NSA/Wiz coverage were not completed in this run; no checkpoint was advanced.
 
 - **PHP on Windows:** PHP's official Windows packages **8.2.35-1, 8.3.36-1, 8.4.27-1 and 8.5.12-1** bundle Brotli 1.2.1 for CVE-2026-111497. The `-1` suffix is essential: `php -v` still reports the same PHP runtime release. [Install the rebuilt package, verify its filename/hash and restart each SAPI or worker](black-october/details/brotli.md#remediation); separately assess extensions, libcurl and other bundled decoders.
 
@@ -107,8 +85,6 @@ None of the new items is in CISA KEV (catalog 2026.10.23) and none has reported 
 
 ## 2026-10-26 11:45 EDT (UTC−04:00) — Electrum theft, Fortinet hardening release and six more High/Critical items
 
-**Partial review:** These come from the logged-in X timeline review (all five accounts, back to 2026-10-12; @IntCyberDigest before 2026-10-17 was covered by web search and its newsletter). Not covered: per-product review of Oracle's October CPU, and the leads listed in the run thread. CISA KEV is unchanged at catalog 2026.10.23.
-
 - **Exploited outside KEV:** [Electrum Bitcoin wallet](black-october/black-october-2026.md#electrum-bitcoin-wallet-malicious-server-swaps-broadcast-transactions-so-a-fee-bump-pays-the-attacker). Rogue servers swap broadcast transactions so a fee bump pays the attacker, with one confirmed theft. Upgrade to 4.8.3, and [check outputs before any fee bump](black-october/details/electrum.md#remediation).
 - **Fortinet:** the [October 2026 hardening release](black-october/details/fortinet-october.md#remediation) carries critical and high fixes for FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator, with advisories withheld until 2026-11-10. The guide also covers two High SQL injection advisories. On FortiManager/FortiAnalyzer 7.2, move to 7.4.12+: the hardening release and FG-IR-26-178 disagree on whether 7.2 is fixed.
 - **Signal calling:** a call peer can keep your microphone live after hang-up (MITRE 9.3). Update to [Android 8.27.0, iOS 8.30.0 or Desktop 8.29.0](black-october/details/signal.md#remediation) or later.
@@ -119,8 +95,6 @@ None of the new items is in CISA KEV (catalog 2026.10.23) and none has reported 
 - **Progress MarkLogic Server:** 31 CVEs, five Critical, with low-privilege paths to administrator. [Upgrade to 11.3.7 or 12.1.0](black-october/details/marklogic.md#remediation).
 
 ## 2026-10-26 11:30 EDT (UTC−04:00) — Seven new High/Critical items; PHP2Shell reaches PAN-OS; PwnEscape fixes ship
-
-**Partial review:** Every tracked item and the X timelines were rechecked. Not covered: the Wiz vulnerability database, NSA guidance listings, Microsoft's October Patch Tuesday and Oracle's October CPU beyond tracked items, and @IntCyberDigest before October 17. Several leads remain unassessed, including the Fortinet hardening releases with no advisories until November 10.
 
 - **New: seven High/Critical issues, none yet in CISA KEV:**
   - [HPE Aruba AOS-8/AOS-10](black-october/black-october-2026.md#hpe-aruba-networking-aos-unauthenticated-rce-and-authentication-bypass-in-wireless-infrastructure): 72 CVEs, eight CVSS 10.0. Upgrade controllers, gateways and APs and [confine management and PAPI](black-october/details/aruba-aos.md#remediation).
@@ -143,8 +117,6 @@ None of the new items is in CISA KEV (catalog 2026.10.23) and none has reported 
 
 ## 2026-10-26 10:18 EDT (UTC−04:00) — Ten High/Critical flaws in widely deployed developer and self-hosted software
 
-**Partial review:** Adds the ten candidates from the earlier discovery sweep. None is in CISA KEV (catalog 2026.10.23), but two already face exploitation attempts. X timelines and the Wiz vulnerability database were not reviewed for this update.
-
 - **Exploitation attempts outside KEV:**
   - [Bricksforge WordPress plugin](black-october/black-october-2026.md#bricksforge-exploited-unauthenticated-file-upload-to-rce-cve-2026-85097): unauthenticated upload to RCE, attempts since 2026-10-07. Update to 3.1.8.10+ (prefer 4.0.x) and [hunt for uploaded PHP files](black-october/details/bricksforge.md#detection).
   - [Langflow](black-october/black-october-2026.md#langflow-authenticated-rce-via-mcp-stdio-server-configuration-cve-2026-105740-and-cve-2026-105697): honeypot attempts using common credentials. **1.9.0 is incomplete; upgrade to 1.10.3+** and [disable auto-login](black-october/details/langflow.md#remediation).
@@ -162,15 +134,11 @@ None of the new items is in CISA KEV (catalog 2026.10.23) and none has reported 
 
 ## 2026-10-26 10:00 EDT (UTC−04:00) — Brotli media and analytics exposure
 
-**Partial review:** Targeted Brotli downstream update, not a complete refresh of all tracked issues or search for new disclosures.
-
 - **Brotli2Shell is another alias for CVE-2026-111497.** JFrog demonstrates FFmpeg/libjxl pointer corruption and a cleanup crash, ClickHouse server DoS, an Arrow/pyarrow CPU loop and a .NET native crash—not complete RCE exploits for those products. [Review the demonstrated outcomes and investigation limits](black-october/details/brotli.md#operational-signals-and-evidence-limits).
 - **Inventory media and analytics decoders separately.** JPEG XL metadata, `.br` files and Parquet can reach copies untouched by a Node or Python binding update. libjxl and ClickHouse source fixes are merged, but published fixed artifacts remain unconfirmed; Arrow's dependency-update PR remains open. [Verify supplier builds or pause affected untrusted processing](black-october/details/brotli.md#inventory-by-language-and-deployment).
 - **Detection guidance:** Added [JFrog's contextual scanner and Trail of Bits Brotli Checker](black-october/details/brotli.md#official-researcher-detection-tools), including prerequisites, coverage gaps and why matches or empty results do not establish exposure or safety.
 
 ## 2026-10-26 09:28 EDT (UTC−04:00) — Twelve KEV-listed flaws, PHP2Shell exploitation and KEV updates
-
-**Partial review:** Every tracked issue was rechecked and CISA KEV additions since October 1 were reviewed. X timelines, the Wiz vulnerability database and part of BleepingComputer could not be checked, and several non-KEV High/Critical candidates (for example Next.js, NGINX, curl and Drupal) are not yet assessed here.
 
 - **New: 12 actively exploited flaws (CISA KEV).** Patch and run the forensic checks for [VeloCloud Orchestrator](black-october/black-october-2026.md#velocloud-orchestrator-authenticated-sql-injection-to-superuser-operator-cve-2026-114625) (KEV due today), [Siemens Software Center](black-october/details/siemens-software-center.md#detection), [PAN-OS / Panorama management interface](black-october/details/pan-os.md#remediation), [Cisco Secure Email Gateway](black-october/details/cisco-seg.md#remediation), [SiteGuard Server Edition](black-october/details/siteguard.md#remediation), [Windows Shell MOTW bypass](black-october/details/windows-shell.md#remediation), [Ivanti Connect Secure](black-october/details/ivanti-connect-secure.md#compromise-response), [Atlassian Data Center](black-october/details/atlassian-dc.md#remediation), [AhsayCBS](black-october/details/ahsaycbs.md#remediation), [NetScaler SAML](black-october/details/netscaler.md#remediation), [FortiMail](black-october/details/fortimail.md#remediation) and [Zammad](black-october/details/zammad.md#remediation). Stack-specific actions are in the [patch table](black-october/black-october-2026.md#what-should-i-patch-a-stack-based-decision-guide).
 - **PHP2Shell is exploited.** Amazon saw attempts from 2026-10-17, before disclosure, and a researcher confirmed RCE on PHP 8.4.26 `mod_php` honeypots on 2026-10-24. [Investigate exposed PHP from October 17](black-october/details/php2shell.md#exploitation-status); the upload-progress follow-up still has no fix, so keep the mitigation.
@@ -183,8 +151,6 @@ None of the new items is in CISA KEV (catalog 2026.10.23) and none has reported 
 
 ## 2026-10-26 09:23 EDT (UTC−04:00) — Brotli cross-language patches and trust recovery
 
-**Partial review:** Targeted Brotli and eMudhra guidance update, not a complete refresh of all tracked issues or search for new disclosures.
-
 - **Brotli / HTTP2Shell:** Microsoft now identifies fixed .NET runtimes **8.0.33 / 9.0.22 / 10.0.14**, plus a fixed .NET 11 preview. Update deployed runtimes and [rebuild self-contained/NativeAOT apps](black-october/details/brotli.md#inventory-by-language-and-deployment); automatic request/client decompression is not enabled by default.
 - **Brotli bindings:** Added **Brotli4j 1.24.0** (including native artifacts), **PHP extension 0.21.1** and **Ruby gem 0.9.1+**, with [per-language inventory and native-library caveats](black-october/details/brotli.md#inventory-by-language-and-deployment). Bun compiled executables also require [rebuilding with fixed 1.4.4](black-october/details/brotli.md#remediation).
 - **Brotli detection and containment:** Added a [safe response-header inventory script and interpretation guide](black-october/details/brotli.md#response-header-inventory-script); its results do **not** establish vulnerability or patch status. Expanded [pre-decoder controls](black-october/details/brotli.md#contain-before-the-first-decoder) for duplicate/stacked encodings, bypass paths, outbound clients and file workers.
@@ -194,14 +160,10 @@ None of the new items is in CISA KEV (catalog 2026.10.23) and none has reported 
 
 ## 2026-10-26 08:47 EDT (UTC−04:00) — Tailworm and AuthMask
 
-**Partial review:** These two disclosures were reviewed; other tracked issues were not refreshed in this update.
-
 - **Tailworm — new tracking:** Several researcher-rated High findings require prior Tailscale SSH authorization and applicable forwarding; the report also covers non-SSH features. [Source fixes have merged, but a complete fixed stable-release matrix was not established](black-october/details/tailworm.md#timeline). Apply the vendor's [unnecessary-forwarding mitigation](black-october/details/tailworm.md#disable-unnecessary-forwarding-using-the-vendors-mitigation) and review [per-finding prerequisites](black-october/details/tailworm.md#interpret-the-eleven-findings-separately). No blanket “disable Tailscale” recommendation.
 - **AuthMask / CVE-2026-80097 — new tracking:** Microsoft rates this **8.6 High** and identifies **6.2606.4246** as the corrected fixed Android build. A malicious local app can obtain signed-in work-account tokens. Review [affected-device detection](black-october/details/authmask.md#detection), [remediation](black-october/details/authmask.md#remediation), and the [Microsoft/researcher interaction disagreement](black-october/details/authmask.md#preserve-the-interaction-disagreement). September disclosure is distinct from October research; the exact July patch rollout date remains unestablished.
 
 ## 2026-10-26 08:22 EDT (UTC−04:00) — Updated exposure and remediation guidance
-
-**Partial review:** Existing issues were reviewed against their cited sources; this was not a complete search for new disclosures.
 
 - **PHP:** The October 23 upload-progress issue needs a [separate mitigation after installing the October 21 emergency releases](black-october/details/php2shell.md#timeline). Added [CISA-backed detection guidance](black-october/details/php2shell.md#look-for-suspicious-execution).
 - **Brotli / HTTP2Shell / Node2Shell:** [Cross-stack remediation](black-october/details/brotli.md#remediation) covers outbound-client exposure, downstream encoded-byte forwarding, and unsupported Envoy/Istio branches. [Patch dates differ by library, runtime, Python package and proxy](black-october/details/brotli.md#timeline).
