@@ -70,5 +70,11 @@ if [ "$state" != reached ]; then
   echo "NOTE: @$handle stopped loading posts before $since; check older posts with a web search." >&2
 fi
 
-ab eval '[...window.__posts.values()].filter(p => p.kind !== "post" || p.t >= Date.parse("'"$since"'")).sort((a, b) => b.t - a.t).map(p => new Date(p.t).toISOString() + "\t" + p.kind + "\t" + p.url + "\t" + p.text).join("\n")' \
-  | python3 -c 'import json, sys; out = json.loads(sys.stdin.read()); print(out) if out else None'
+posts=$(ab eval '[...window.__posts.values()].filter(p => p.kind !== "post" || p.t >= Date.parse("'"$since"'")).sort((a, b) => b.t - a.t).map(p => new Date(p.t).toISOString() + "\t" + p.kind + "\t" + p.url + "\t" + p.text).join("\n")' \
+  | python3 -c 'import json, sys; out = json.loads(sys.stdin.read()); print(out) if out else None')
+if [ -n "$posts" ]; then
+  printf '%s\n' "$posts"
+elif [ "$state" = reached ]; then
+  # A successful read with nothing new is a normal result, not a failure.
+  echo "NONE: @$handle has no posts since $since (timeline read successfully)." >&2
+fi
