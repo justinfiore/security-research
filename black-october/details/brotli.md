@@ -1,12 +1,12 @@
 # HTTP2Shell / Node2Shell: detection and remediation
 
-**Last updated:** 2026-10-27 (America/New_York)
+**Last updated:** 2026-10-28 (America/New_York)
 
 [Main Brotli summary and patch matrix](../black-october-2026.md#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497)** is one cross-stack Brotli decoder bug, also called **Brotli2Shell** in [JFrog's 2026-10-25 research](https://research.jfrog.com/post/brotli2shell-beyond-node2shell-and-http2shell/), alongside HTTP2Shell and Node2Shell. Node rates it High; the Google/CNA CVSS 4.0 rating is **9.2 Critical**; [Red Hat][rhbrotli] rates it **Important, CVSS 3.1 8.1** (`AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`) and says there is no public, reliable RCE proof of concept. Malformed compressed data can corrupt process memory, causing disclosure, crashes or RCE. It is not an HTTP/2-specific defect and does not require a public inbound HTTP endpoint. File and buffer processing also matter: the new research reaches FFmpeg through libjxl/JPEG XL metadata, ClickHouse through HTTP bodies, and Apache Arrow/pyarrow through Brotli decoding. The demonstrated outcomes differ; do not label every stack a demonstrated RCE.
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers the Brotli CVE and the three Node.js CVEs in this guide; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** [CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497) Listed — added 2026-10-27, federal due date 2026-11-10. The related Node.js CVEs ([CVE-2026-105482](https://www.cve.org/CVERecord?id=CVE-2026-105482), [CVE-2026-105483](https://www.cve.org/CVERecord?id=CVE-2026-105483) and [CVE-2026-106069](https://www.cve.org/CVERecord?id=CVE-2026-106069)) are not listed. CISA's listing establishes reliable evidence of in-the-wild exploitation; the due date binds U.S. federal civilian agencies and is an urgency signal for other organizations. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -53,6 +53,7 @@
 | ClickHouse backports merged | 2026-10-25 14:10:47 UTC (26.10, PR #127778) through 2026-10-26 06:21:46 / 06:29:01 / 09:02:26 UTC (26.8 #127810, 26.9 #127811, 26.3 #127809). Merged on every listed branch; no release containing them was published when reviewed |
 | Downstream release-status recheck | 2026-10-26: [ClickHouse releases](https://github.com/ClickHouse/ClickHouse/releases) do not yet list the four named backport releases; latest published stable is 26.10.2.103 (2026-10-24 04:17:23 UTC). [Arrow issue #55166](https://github.com/apache/arrow/issues/55166) remains open and [PR #55167](https://github.com/apache/arrow/pull/55167) was approved 2026-10-24 but is not merged; latest [Arrow release](https://github.com/apache/arrow/releases) is 26.0.0 (2026-10-09 07:37:33 UTC). Latest [libjxl release](https://github.com/libjxl/libjxl/releases) is 0.12.0 (2026-07-01 21:16:30 UTC), preceding its source fix. Fixed downstream release availability is not established by these records; check the deployed supplier's builds/backports separately |
 | Palo Alto Networks advisory | 2026-10-26, updated 2026-10-27: [PAN-OS portfolio status](https://security.paloaltonetworks.com/CVE-2026-111497) identifies conditionally affected PAN-OS 11.2/12.1/12.2 releases and fixed hotfixes or ETAs; it does not affect the management interface, PAN-OS 11.1 or 10.2 |
+| CISA KEV addition | 2026-10-27, time/TZ unknown: CISA [added CVE-2026-111497 to KEV](https://www.cisa.gov/news-events/alerts/2026/10/27/cisa-adds-two-known-exploited-vulnerabilities-catalog) based on evidence of active exploitation; federal civilian agencies have a 2026-11-10 due date |
 
 ## Detection
 

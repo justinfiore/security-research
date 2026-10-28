@@ -1897,7 +1897,7 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 
 **[CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497) — Node.js: High; Google’s CVSS 4.0 rating: 9.2 Critical; Red Hat: Important, CVSS 3.1 8.1 (AC:H)**
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers the Brotli CVE and the three Node.js CVEs below; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** [CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497) Listed — added 2026-10-27, federal due date 2026-11-10. The related Node.js CVEs ([CVE-2026-105482](https://www.cve.org/CVERecord?id=CVE-2026-105482), [CVE-2026-105483](https://www.cve.org/CVERecord?id=CVE-2026-105483) and [CVE-2026-106069](https://www.cve.org/CVERecord?id=CVE-2026-106069)) are not listed. CISA's listing establishes reliable evidence of in-the-wild exploitation; the due date binds U.S. federal civilian agencies and is an urgency signal for other organizations.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1918,7 +1918,8 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | Downstream fix-status check | 2026-10-26 | libjxl and ClickHouse source fixes merged; published fixed artifacts unconfirmed. Arrow dependency-update PR approved but still open. |
 | MSRC advisory | 2026-10-25 14:00 UTC | Critical (CVSS 3.1 8.1); fixed .NET SDKs, Visual Studio and PowerShell builds. |
 | Palo Alto Networks advisory | 2026-10-26; updated 2026-10-27 | PAN-OS 11.2, 12.1 and 12.2 fixes/ETAs; only Brotli inspection with TLS/SSL decryption is exposed. |
-| **Last updated** | **2026-10-27 04:02 EDT (UTC−04:00)** | Added PAN-OS applicability, patch status and temporary mitigation. |
+| CISA KEV addition | 2026-10-27; time/TZ unknown | CISA added CVE-2026-111497 based on evidence of active exploitation; the federal civilian due date is 2026-11-10. |
+| **Last updated** | **2026-10-28 00:03 EDT (UTC−04:00)** | Added the CISA KEV status and urgency guidance for CVE-2026-111497. |
 
 **HTTP2Shell, Node2Shell and Brotli2Shell are names for the same vulnerability, not separate CVEs.** The flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the names, it is **not specific to HTTP/2 or even HTTP**; exposure depends on decoding attacker-controlled Brotli data, including embedded file metadata and analytical buffers.
 

@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-28 00:03 EDT (UTC−04:00) — Brotli KEV update
+
+**Partial review:** CISA KEV discovery and three of five configured X timelines were reviewed; `@IntCyberDigest` timed out, and `@NSACyber` and `@CISAgov` stopped before the overlapping window. The full existing-item primary-source sweep was not completed, and this run's required pre-research start timestamp was not retained, so the checkpoint cannot advance.
+
+- **Brotli / HTTP2Shell:** CISA added [CVE-2026-111497 to KEV](black-october/details/brotli.md#timeline) based on evidence of active exploitation, with a federal civilian due date of 2026-11-10. Prioritize the [component-specific updates and temporary decoder controls](black-october/details/brotli.md#remediation); the related Node.js CVEs are not listed.
+
 ## 2026-10-27 20:04 EDT (UTC−04:00) — Adobe Commerce / Magento KEV update
 
 **Partial review:** The live CISA KEV catalog (2026.10.27), all five configured X timelines, and selected primary sources were reviewed. This run cannot establish a successful-run checkpoint because its required start timestamp was not captured before research began; a full existing-item primary-source sweep was also not completed.
