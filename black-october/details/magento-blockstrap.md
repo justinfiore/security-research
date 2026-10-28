@@ -6,8 +6,6 @@
 
 **[CVE-2026-103849](https://www.cve.org/CVERecord?id=CVE-2026-103849) ("BlockStrap"): Adobe (CNA) CVSS 3.1 10.0 Critical (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H), CWE-1336, no authentication required. NVD lists Adobe's score as its only CVSS data (status "Awaiting Analysis"). Adobe rates the bulletin priority 2 and was not aware of exploits in the wild at publication; Sansec had seen no attacks on live stores as of 2026-10-15.** [Adobe][apsb] [CNA][cve] [NVD][nvd] [Sansec][sansec]
 
-**[CVE-2026-48356](https://www.cve.org/CVERecord?id=CVE-2026-48356): Adobe CVSS 3.1 9.6 Critical (CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:L), CWE-434. It is a separate unrestricted dangerous-file-upload issue in the July Commerce update. Adobe's bulletin says exploitation requires user interaction and stated it was not aware of in-the-wild exploitation when last updated; CISA added it to KEV on 2026-10-27.** [Adobe July bulletin][apsb73] [CVE record][cve48356] [KEV][kev]
-
 BlockStrap is a template-engine injection in Magento's email template filter (`Magento\Framework\Filter\Template`). Sansec describes it as a second-pass directive injection: the September StyleSmuggler hotfix signs trusted deferred directives, but attacker-controlled text in a child template can still be signed and rescanned at the root level, where a smuggled `{{block}}` directive runs inside Magento's rendering. Adobe's October patch replaces the signed rescan with registered placeholders. [Sansec][sansec] [Mage-OS 3.6.0][mageos]
 
 **Affected (Adobe bulletin):** Adobe Commerce 2.4.4 through 2.4.9 at "-2026-sep" and earlier; Adobe Commerce B2B 1.3.3, 1.3.4, 1.4.2, 1.5.2 and 1.5.3 at "-2026-sep" and earlier; Magento Open Source 2.4.6 through 2.4.9 at "-2026-sep" and earlier. The CVE record's Magento Open Source entry lists only 2.4.7–2.4.9. Mage-OS up to 3.5.0 is affected (Sansec); Mage-OS 3.6.0 contains the fix. [Adobe][apsb] [CNA][cve] [Sansec][sansec] [Mage-OS 3.6.0][mageos]
@@ -25,9 +23,7 @@ BlockStrap is a template-engine injection in Magento's email template filter (`M
 
 **Separate prerequisite:** the October patch does **not** include the September StyleSmuggler hotfix (`VULN-39341`, [CVE-2026-75650](https://www.cve.org/CVERecord?id=CVE-2026-75650), APSB26-146), which CISA KEV lists as exploited (added 2026-09-08). Both fixes are required. [Adobe KB][kb] [StyleSmuggler KB][kb146] [KEV][kev]
 
-<a name="cisa-kev"></a>
-
-**CISA KEV:** [CVE-2026-48356](https://www.cve.org/CVERecord?id=CVE-2026-48356) is listed — added 2026-10-27, federal due date 2026-11-10. The BlockStrap CVEs and the other October-bulletin CVEs remain not listed (catalog 2026.10.27, checked 2026-10-27). No exploitation of CVE-2026-103849 was reported by Adobe (2026-10-13) or Sansec (2026-10-15); CISA's ADP assessment records "Exploitation: poc". Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.10.27, checked 2026-10-28). No exploitation of CVE-2026-103849 was reported by Adobe (2026-10-13) or Sansec (2026-10-15); CISA's ADP assessment records "Exploitation: poc". Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -63,7 +59,6 @@ BlockStrap is a template-engine injection in Magento's email template filter (`M
 | BleepingComputer coverage | 2026-10-16; page shows 04:00 PM, TZ not stated | Repeats Sansec; no attacks observed. [BleepingComputer][bc] |
 | Adobe KB ka-49323 last updated | 2026-10-16; time/TZ unknown | [Adobe KB][kb] |
 | Public validation lab (dinosn) created | 2026-10-18 08:12:41 UTC | Primitive + guest GraphQL carrier; no stock full-RCE chain claimed. [Lab][labrepo] [Lab re-analysis][lab] |
-| CISA KEV: CVE-2026-48356 | Added 2026-10-27; time/TZ unknown | Federal civilian due date 2026-11-10. The October BlockStrap CVEs are not listed (catalog 2026.10.27, checked 2026-10-27). [KEV][kev] |
 
 ## Detection
 
@@ -157,18 +152,16 @@ Patching does not remove backdoors or skimmers. If indicators are found, or the 
 
 ## Sources
 
-- [Adobe APSB26-73][apsb73]: CVE-2026-48356 affected and updated versions, CVSS and exploitation statement.
 - [Adobe APSB26-153][apsb]: BlockStrap affected/updated versions, CVSS, priority, exploitation statement and credits.
 - [Adobe KB ka-49323][kb], [2.4.8-p5 replacement KB][kb2485], [How to apply an isolated patch][howto], [Commerce Version Tool][cvt]: patch files, prerequisites, Cloud path, verification.
 - [Adobe APSB26-146 StyleSmuggler hotfix][kb146]: `VULN-39341`, QPT check, credential rotation.
-- CVE records (Adobe CNA, CISA ADP): [CVE-2026-48356][cve48356], [CVE-2026-103849][cve], [CVE-2026-92909][cve92909], [CVE-2026-91013][cve91013], [CVE-2026-100133][cve100133], [CVE-2026-92464][cve92464]; [NVD][nvd]; [CISA KEV feed][kev] (catalog 2026.10.27).
+- CVE records (Adobe CNA, CISA ADP): [CVE-2026-103849][cve], [CVE-2026-92909][cve92909], [CVE-2026-91013][cve91013], [CVE-2026-100133][cve100133], [CVE-2026-92464][cve92464]; [NVD][nvd]; [CISA KEV feed][kev] (catalog 2026.10.27).
 - [Sansec BlockStrap analysis][sansec]: mechanism, four routes, no exploitation observed, patch caveats and checks.
 - [Mage-OS 3.6.0 release notes][mageos] and [GitHub release][mageosgh].
 - [magento/magento2 issue #41535][issue]: lock-file side effect.
 - Third-party, unvetted: [dinosn validation lab][labrepo] and its [re-analysis][lab] (not run for this guide).
 - Secondary: [BleepingComputer][bc].
 
-[apsb73]: https://www.adobe.com/trust/security/products/commerce/apsb26-73.html
 [apsb]: https://www.adobe.com/trust/security/products/commerce/apsb26-153.html
 [kb]: https://experienceleague.adobe.com/en/docs/experience-cloud-kcs/kbarticles/ka-49323
 [kb2485]: https://experienceleague.adobe.com/en/docs/experience-cloud-kcs/kbarticles/ka-50927
@@ -176,7 +169,6 @@ Patching does not remove backdoors or skimmers. If indicators are found, or the 
 [cvt]: https://experienceleague.adobe.com/en/docs/commerce-operations/tools/commerce-version-tool/intro
 [kb146]: https://experienceleague.adobe.com/en/docs/commerce-knowledge-base/kb/announcements/commerce-apsb26-146
 [cve]: https://cveawg.mitre.org/api/cve/CVE-2026-103849
-[cve48356]: https://www.cve.org/CVERecord?id=CVE-2026-48356
 [cve92909]: https://cveawg.mitre.org/api/cve/CVE-2026-92909
 [cve91013]: https://cveawg.mitre.org/api/cve/CVE-2026-91013
 [cve100133]: https://cveawg.mitre.org/api/cve/CVE-2026-100133

@@ -41,6 +41,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [Rank Math PRO for WordPress: malicious 3.0.123 builds](#rank-math-pro-for-wordpress-malicious-30123-builds-from-the-official-update-channel)
 - [FortiSIEM: unauthenticated gRPC path traversal to RCE](#fortisiem-unauthenticated-grpc-path-traversal-to-remote-code-execution)
 - [FortiSandbox: unauthenticated GUI authentication bypass](#fortisandbox-unauthenticated-gui-authentication-bypass)
+- [Adobe Commerce / Magento Open Source: exploited dangerous-file upload](#adobe-commerce--magento-open-source-exploited-dangerous-file-upload)
 - [Adobe Commerce / Magento Open Source: BlockStrap - unauthenticated template-injection RCE](#adobe-commerce--magento-open-source-blockstrap---unauthenticated-template-injection-rce)
 - [SAP Cloud SDK for Python: OAuth2 SSRF leaks client credentials](#sap-cloud-sdk-for-python-oauth2-ssrf-leaking-multi-tenant-client-credentials)
 - [Wasmtime: Cranelift sandbox escapes](#wasmtime-cranelift-sandbox-escapes-from-untrusted-wasm)
@@ -956,15 +957,38 @@ An authentication bypass (CWE-288) in the FortiSandbox web GUI lets a remote, un
 
 Sources: [Fortinet FG-IR-26-185](https://fortiguard.fortinet.com/psirt/FG-IR-26-185), [Fortinet CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-107656), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-107656), [ZDI-26-771](https://www.zerodayinitiative.com/advisories/ZDI-26-771), [FortiSandbox 5.0.7 release notes](https://docs.fortinet.com/document/fortisandbox/5.0.7/release-notes/860266/change-log), [FortiSandbox 4.4.10 release notes](https://docs.fortinet.com/document/fortisandbox/4.4.10/release-notes/860266/change-log), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
+## Adobe Commerce / Magento Open Source: exploited dangerous-file upload
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/adobe-commerce-upload.md):** [Detection](details/adobe-commerce-upload.md#detection) · [Remediation](details/adobe-commerce-upload.md#remediation) · [Verification](details/adobe-commerce-upload.md#verification) · [Timeline](details/adobe-commerce-upload.md#timeline)
+
+**CVEs:** [CVE-2026-48356](https://www.cve.org/CVERecord?id=CVE-2026-48356)
+
+**Adobe (CNA) CVSS 3.1: 9.3 Critical (AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:N). Adobe's July bulletin rates the issue Critical with a 9.6 score under a different vector; retain the attribution disagreement.**
+
+**CISA KEV:** Listed — added 2026-10-27, federal due date 2026-11-10. CISA's listing establishes in-the-wild exploitation; Adobe's August bulletin revision stated it was not aware of exploits for the issues it addressed. This chronology is unresolved by the public sources.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public announcement and fixed updates | 2026-07-14; time/TZ unknown | Adobe APSB26-73. |
+| Bulletin last updated | 2026-08-11; time/TZ unknown | Adobe still stated no known exploitation for the bulletin. |
+| CISA KEV addition | 2026-10-27; time/TZ unknown | Federal civilian due date 2026-11-10. |
+| **Last updated** | **2026-10-28 16:01 EDT (UTC−04:00)** | Separated from the unrelated BlockStrap entry. |
+
+The flaw permits dangerous-file upload that can lead to arbitrary code execution in the current user's context. The CNA says an unauthenticated attacker must cause a victim to visit a malicious URL or interact with a compromised page; this is not the same mechanism or patch as October's BlockStrap template-injection vulnerability.
+
+**Patch:** Install Adobe's July 2026 update for the deployed product line: Commerce 2.4.9/2.4.8/2.4.7/2.4.6/2.4.5/2.4.4 `-2026-jul`; Commerce B2B 1.5.3/1.5.2/1.4.2/1.3.4/1.3.3 `-2026-jul`; Magento Open Source 2.4.9/2.4.8/2.4.7/2.4.6 `-2026-jul`; or Adobe Commerce Events 1.21.0. Apply the separate October BlockStrap patch sequence where applicable. Preserve logs and investigate before cleanup because the KEV listing means patching alone cannot establish that the flaw was not used.
+
+Sources: [Adobe APSB26-73](https://www.adobe.com/trust/security/products/commerce/apsb26-73.html), [Adobe CNA record](https://www.cve.org/CVERecord?id=CVE-2026-48356), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
 ## Adobe Commerce / Magento Open Source: BlockStrap - unauthenticated template-injection RCE
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/magento-blockstrap.md):** [Detection](details/magento-blockstrap.md#detection) · [Remediation](details/magento-blockstrap.md#remediation) · [Verification](details/magento-blockstrap.md#verification) · [Timeline](details/magento-blockstrap.md#timeline)
 
-**CVEs:** [CVE-2026-48356](https://www.cve.org/CVERecord?id=CVE-2026-48356), [CVE-2026-103849](https://www.cve.org/CVERecord?id=CVE-2026-103849), [CVE-2026-92909](https://www.cve.org/CVERecord?id=CVE-2026-92909), [CVE-2026-91013](https://www.cve.org/CVERecord?id=CVE-2026-91013), [CVE-2026-100133](https://www.cve.org/CVERecord?id=CVE-2026-100133), [CVE-2026-92464](https://www.cve.org/CVERecord?id=CVE-2026-92464)
+**CVEs:** [CVE-2026-103849](https://www.cve.org/CVERecord?id=CVE-2026-103849), [CVE-2026-92909](https://www.cve.org/CVERecord?id=CVE-2026-92909), [CVE-2026-91013](https://www.cve.org/CVERecord?id=CVE-2026-91013), [CVE-2026-100133](https://www.cve.org/CVERecord?id=CVE-2026-100133), [CVE-2026-92464](https://www.cve.org/CVERecord?id=CVE-2026-92464)
 
 **[CVE-2026-103849](https://www.cve.org/CVERecord?id=CVE-2026-103849) (BlockStrap) — Adobe (CNA) CVSS 3.1: 10.0 Critical, unauthenticated; NVD has not scored it. Same bulletin: CVE-2026-92909 9.8 (B2B), CVE-2026-91013 and CVE-2026-100133 9.3, CVE-2026-92464 9.1 (admin privileges required), all Adobe CVSS 3.1 Critical**
 
-**CISA KEV:** [CVE-2026-48356](https://www.cve.org/CVERecord?id=CVE-2026-48356) is listed — added 2026-10-27, federal due date 2026-11-10. The other CVEs in this entry are not listed (catalog 2026.10.27, checked 2026-10-27). Adobe and Sansec reported no exploitation of the October BlockStrap CVEs as of 2026-10-13 and 2026-10-15, and CISA's ADP assessment records a proof of concept. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.27, checked 2026-10-28). Adobe and Sansec reported no exploitation of the October BlockStrap CVEs as of 2026-10-13 and 2026-10-15, and CISA's ADP assessment records a proof of concept. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -974,8 +998,7 @@ Sources: [Fortinet FG-IR-26-185](https://fortiguard.fortinet.com/psirt/FG-IR-26-
 | Mage-OS 3.6.0 (fixed) | 2026-10-14 (release notes); GitHub release 2026-10-15 14:26:31 UTC | Ports Adobe's October patch. |
 | Sansec analysis | 2026-10-15; time/TZ unknown | Four RCE routes reproduced, not published; no attacks seen on live stores. |
 | Public validation lab | 2026-10-18 08:12:41 UTC | Third-party; proves the injection primitive, not stock full RCE. |
-| CISA KEV addition: CVE-2026-48356 | 2026-10-27; time/TZ unknown | Federal civilian due date 2026-11-10. |
-| **Last updated** | **2026-10-27 20:04 EDT (UTC−04:00)** | Added KEV status and Adobe July-update remediation for CVE-2026-48356. |
+| **Last updated** | **2026-10-28 16:01 EDT (UTC−04:00)** | Separated the unrelated July CVE into its own entry. |
 
 BlockStrap is a second-pass directive injection in Magento's email template engine. The September StyleSmuggler hotfix signs trusted deferred directives, but attacker-controlled text in a child template can still be signed and rescanned at the root level, where a smuggled `{{block}}` directive runs. Adobe's October patch replaces that rescan with registered placeholders. The same patch fixes four more Critical flaws: CVE-2026-92909 (incorrect authorization to code execution, no login; the bulletin marks it B2B), CVE-2026-91013 and CVE-2026-100133 (stored XSS to privilege escalation; a victim must view the content), and CVE-2026-92464 (code execution needing high privileges).
 
@@ -985,9 +1008,9 @@ BlockStrap is a second-pass directive injection in Magento's email template engi
 
 **Am I impacted?** Adobe Commerce 2.4.4–2.4.9 and B2B 1.3.3–1.5.3 at "-2026-sep" or earlier, Magento Open Source 2.4.6–2.4.9 (the CVE record lists 2.4.7–2.4.9), and Mage-OS up to 3.5.0. The fix ships as an isolated patch, so check code, not the version: in the Magento root, `grep -c resolveDeferredDirectives vendor/magento/framework/Filter/Template.php` prints `0` when the fix is missing (Mage-OS: `vendor/mage-os/framework/...`). Adobe's Commerce Version Tool (`php vendor/bin/patch-status`) reports per-CVE status where installed.
 
-**Patch:** CVE-2026-48356 is fixed by Adobe's July 2026 updates: Commerce 2.4.9-2026-jul, 2.4.8-2026-jul, 2.4.7-2026-jul, 2.4.6-2026-jul, 2.4.5-2026-jul or 2.4.4-2026-jul; B2B 1.5.3-2026-jul, 1.5.2-2026-jul, 1.4.2-2026-jul, 1.3.4-2026-jul or 1.3.3-2026-jul; and Magento Open Source 2.4.9-2026-jul, 2.4.8-2026-jul, 2.4.7-2026-jul or 2.4.6-2026-jul. Apply the StyleSmuggler hotfix (`VULN-39341`) first if missing, then Adobe's October isolated patch for the separate BlockStrap CVEs; Cloud uses the latest `magento-cloud-patches`; Mage-OS uses 3.6.0. A plain `composer install` stays vulnerable to the October issues, so bake the patches into builds and restart PHP-FPM. Open Source 2.4.6 and older have no public October Adobe patch: upgrade to 2.4.7-p10+. On 2.4.8-p5, also confirm the corrected patch (`248p5-2026-10-002-CE`).
+**Patch:** Apply the StyleSmuggler hotfix (`VULN-39341`) first if missing, then Adobe's October isolated patch for the BlockStrap CVEs; Cloud uses the latest `magento-cloud-patches`; Mage-OS uses 3.6.0. A plain `composer install` stays vulnerable to the October issues, so bake the patches into builds and restart PHP-FPM. Open Source 2.4.6 and older have no public October Adobe patch: upgrade to 2.4.7-p10+. On 2.4.8-p5, also confirm the corrected patch (`248p5-2026-10-002-CE`). See the [separate July CVE entry](#adobe-commerce--magento-open-source-exploited-dangerous-file-upload) for CVE-2026-48356.
 
-Sources: [Adobe APSB26-73](https://www.adobe.com/trust/security/products/commerce/apsb26-73.html), [Adobe APSB26-153](https://www.adobe.com/trust/security/products/commerce/apsb26-153.html), [Adobe KB ka-49323](https://experienceleague.adobe.com/en/docs/experience-cloud-kcs/kbarticles/ka-49323), [Adobe CNA record](https://www.cve.org/CVERecord?id=CVE-2026-48356), [Sansec analysis](https://sansec.io/research/blockstrap-magento-rce), [Mage-OS 3.6.0](https://mage-os.org/releases/2026-10-14-mage-os-3-6-0-release), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), [BleepingComputer](https://www.bleepingcomputer.com/news/security/critical-blockstrap-flaw-lets-hackers-run-code-on-magento-servers/).
+Sources: [Adobe APSB26-153](https://www.adobe.com/trust/security/products/commerce/apsb26-153.html), [Adobe KB ka-49323](https://experienceleague.adobe.com/en/docs/experience-cloud-kcs/kbarticles/ka-49323), [Sansec analysis](https://sansec.io/research/blockstrap-magento-rce), [Mage-OS 3.6.0](https://mage-os.org/releases/2026-10-14-mage-os-3-6-0-release), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), [BleepingComputer](https://www.bleepingcomputer.com/news/security/critical-blockstrap-flaw-lets-hackers-run-code-on-magento-servers/).
 
 ## SAP Cloud SDK for Python: OAuth2 SSRF leaking multi-tenant client credentials
 
