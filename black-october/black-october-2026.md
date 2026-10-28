@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Veeam Backup & Replication and Agent for Linux: authorization bypass and local privilege escalation](#veeam-backup--replication-and-agent-for-linux-authorization-bypass-and-local-privilege-escalation)
 - [TeamViewer clients: crafted screen images can execute code](#teamviewer-clients-crafted-screen-images-can-execute-code)
 - [EPICS Base: network request handling can corrupt memory](#epics-base-network-request-handling-can-corrupt-memory)
 - [GoAhead embedded web server: TLS backend flaws bypass revocation or expose sessions](#goahead-embedded-web-server-tls-backend-flaws-bypass-revocation-or-expose-sessions)
@@ -87,6 +88,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update affected Windows-based Veeam Backup & Replication and Veeam Software Appliance deployments to **13.1.2 / 13.0.3**. Also update managed Veeam Agent for Linux installations to **13.1.2**. Restrict backup-management service access to trusted administration networks while rolling out the Critical authorization-bypass fix.
 - **New this update:** Update [TeamViewer clients](#teamviewer-clients-crafted-screen-images-can-execute-code) to 15.83 or the vendor's supported fixed legacy builds; do not open untrusted session recordings. Industrial-control operators using [EPICS Base](#epics-base-network-request-handling-can-corrupt-memory) should plan a validated update to 7.0.11 and preserve network segmentation until it is deployed.
 - **New this update (none in CISA KEV yet):** update [Supermicro BMC firmware](#supermicro-bmc-firmware-ipmi-and-rmcp-session-flaws-can-lead-to-bmc-administrator-access) and keep UDP 623 off untrusted networks; confine [Vertiv Avocent ACS8000/ACS800](#vertiv-avocent-acs8000-and-acs800-console-servers-unauthenticated-root-command-injection-via-the-wsserver-terminal-websocket) console-server web access (no confirmed fix) and update [WolfVision Cynap](#wolfvision-cynap-collaboration-systems-unauthenticated-wolfprot-command-injection-and-shared-vsolution-matrix-ssh-root-key) devices; apply [Oracle's October CPU](#oracle-fusion-middleware-e-business-suite-database-and-mysql-october-2026-critical-patch-update) to WebLogic, SOA Suite, E-Business Suite and other exposed Oracle middleware; upgrade [Google MCP Toolbox for Databases](#google-mcp-toolbox-for-databases-cloud-storage-tools-exfiltrate-host-files-and-overwrite-local-files) to 1.10.0+ and set its bucket and path allowlists, [Bandit](#bandit-elixir-and-phoenix-web-server-unauthenticated-denial-of-service-over-http2-http11-and-websocket) to 1.14.0, [Apache Camel `camel-saxon`](#apache-camel-camel-saxon-xquery-xml-external-entity-processing) and [ImageMagick](#imagemagick-stack-buffer-overflow-when-reading-bzip2-compressed-images). GitHub organizations should hunt for [Gheist](#github-actions-gheist---stolen-tokens-plant-secret-dumping-workflows) `ci-sync-` branches that dump Actions secrets.
 - **Added earlier on October 26 (none in CISA KEV yet):** patch [HPE Aruba AOS](#hpe-aruba-networking-aos-unauthenticated-rce-and-authentication-bypass-in-wireless-infrastructure) wireless infrastructure (eight CVSS 10.0 flaws), [FortiSIEM](#fortisiem-unauthenticated-grpc-path-traversal-to-remote-code-execution) (public exploit; Canada's Cyber Centre reports exploitation) and [FortiSandbox](#fortisandbox-unauthenticated-gui-authentication-bypass), [Magento / Adobe Commerce](#adobe-commerce--magento-open-source-blockstrap---unauthenticated-template-injection-rce) (CVSS 10.0 BlockStrap) and the [SAP Cloud SDK for Python](#sap-cloud-sdk-for-python-oauth2-ssrf-leaking-multi-tenant-client-credentials). [Rank Math PRO](#rank-math-pro-for-wordpress-malicious-30123-builds-from-the-official-update-channel) sites that pulled the malicious 3.0.123 build need cleanup and credential rotation, and Linux hosts running untrusted local code face a [public skb_zerocopy root exploit](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) with few vendor fixes yet.
@@ -129,6 +131,25 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Veeam Backup & Replication and Agent for Linux: authorization bypass and local privilege escalation
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/veeam-backup.md):** [Detection](details/veeam-backup.md#detection) · [Remediation](details/veeam-backup.md#remediation) · [Verification](details/veeam-backup.md#verification) · [Timeline](details/veeam-backup.md#timeline)
+
+**CVEs:** [CVE-2026-108142](https://www.cve.org/CVERecord?id=CVE-2026-108142), [CVE-2026-105477](https://www.cve.org/CVERecord?id=CVE-2026-105477). Veeam also fixed the related Medium path-traversal CVEs CVE-2026-108140 and CVE-2026-108141 in the same Backup & Replication builds.
+
+**Veeam rates CVE-2026-108142 CVSS 4.0 9.1 Critical and CVE-2026-105477 CVSS 4.0 7.3 High.** The Critical issue lets an unauthenticated attacker bypass authorization on the CDP Coordinator Service in affected Windows-based Backup & Replication and Veeam Software Appliance deployments. The High issue is a local privilege escalation on managed Veeam Agent for Linux installations.
+
+**CISA KEV:** Not listed (catalog 2026.10.27, checked 2026-10-28) for either CVE. Veeam's bulletin does not report active exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public bulletin and fixed releases | 2026-10-27; time/TZ unknown | Veeam published KB4948 and the fixed Backup & Replication and Agent builds. |
+| **Last updated** | **2026-10-28 12:00 EDT (UTC−04:00)** | Added from Veeam's security bulletin. |
+
+**Patch:** Update affected Backup & Replication deployments to **13.1.2 (build 13.1.2.57)** or **13.0.3 (build 13.0.3.63)**, and managed Veeam Agent for Linux to **13.1.2 (build 13.1.2.11)**. Limit backup-management access to trusted administrative networks until every affected instance is updated; network restriction is not a substitute for the patch.
+
+Sources: [Veeam KB4948](https://www.veeam.com/kb4948), [CVE-2026-108142](https://www.cve.org/CVERecord?id=CVE-2026-108142), [CVE-2026-105477](https://www.cve.org/CVERecord?id=CVE-2026-105477), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## TeamViewer clients: crafted screen images can execute code
 
@@ -2597,6 +2618,7 @@ flowchart TD
 | Your stack | Minimum action |
 |---|---|
 | **Google MCP Toolbox for Databases with the Cloud Storage source** | Upgrade to 1.10.0+ (latest 1.15.0) and set `allowedBuckets` and `allowedLocalRoots` on every `cloud-storage` source (upgrading alone keeps allow-all defaults; the prebuilt config sets neither), or remove the upload/download tools; run as an unprivileged user on localhost or stdio and restart. [Guide](details/google-mcp-toolbox.md#remediation). |
+| **Veeam Backup & Replication / Veeam Software Appliance / managed Veeam Agent for Linux** | Update affected Backup & Replication installations to 13.1.2 (build 13.1.2.57) or 13.0.3 (build 13.0.3.63), and managed Linux agents to 13.1.2 (build 13.1.2.11). Restrict backup-management services to trusted administrative networks while rolling out the update. [Guide](details/veeam-backup.md#remediation). |
 | **Vertiv Avocent ACS8000 / ACS800 console servers** | Restrict the web UI (HTTP/HTTPS) to a management network now, or disable web access in the Security Profile; no fixed version is confirmed, so treat 2.32.5 and earlier as affected and 2.32.6 as unknown until Vertiv confirms a fix, and review appliance accounts and configuration. [Guide](details/vertiv-avocent-acs.md#remediation). |
 | **Elixir/Phoenix apps served by Bandit (Phoenix 1.7.11+ default adapter)** | Upgrade `bandit` to 1.14.0+ (no backports), rebuild and redeploy every node, and test the new HTTP/2 stream and header-size defaults; until then disable HTTP/2 (`http_2_options: [enabled: false]`) and lower `max_fragmented_message_size`. [Guide](details/elixir-bandit.md#remediation). |
 | **WolfVision Cynap collaboration devices** | Update to v2.00c/v2.00d (Pure Next Gen, Bridge), v1.78a (Pro, Core Pro, Receiver, Pure, Pure Mini, Pure Pro) or v1.72e (Videobar), updating all Matrix stations together; restrict TCP 50915/50917/80/443 and 50930 to trusted hosts; decommission or isolate the unfixed Cynap, Cynap Core and Cynap Pure SDM. [Guide](details/wolfvision-cynap.md#remediation). |

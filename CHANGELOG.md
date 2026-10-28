@@ -4,6 +4,13 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-28 12:00 EDT (UTC−04:00) — Veeam Backup & Replication Critical update
+
+**Partial review:** Veeam's primary security bulletin, the CISA KEV catalog, and four of five configured X timelines were reviewed. `@IntCyberDigest` timed out, and the required complete existing-item primary-source sweep was not completed; the maintenance checkpoint cannot advance.
+
+- **Veeam Backup & Replication / Veeam Software Appliance:** Update affected deployments to [13.1.2 or 13.0.3](black-october/details/veeam-backup.md#remediation) to correct CVE-2026-108142, a Critical unauthenticated authorization bypass in the CDP Coordinator Service. Restrict management access to trusted administration networks during rollout.
+- **Veeam Agent for Linux:** Update [managed 13.1 agents to 13.1.2](black-october/details/veeam-backup.md#remediation) for the separate High local privilege escalation CVE-2026-105477.
+
 ## 2026-10-28 08:01 EDT (UTC−04:00) — TeamViewer client and EPICS Base Critical fixes
 
 - **TeamViewer:** Update clients to [15.83 or the vendor's supported fixed legacy build](black-october/details/teamviewer.md#remediation). Crafted screen images or recordings can execute code only after the documented user interaction; TeamViewer reported no known active exploitation when it published the bulletin.
