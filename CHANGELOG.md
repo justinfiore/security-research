@@ -4,6 +4,13 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-28 08:01 EDT (UTC−04:00) — TeamViewer client and EPICS Base Critical fixes
+
+- **TeamViewer:** Update clients to [15.83 or the vendor's supported fixed legacy build](black-october/details/teamviewer.md#remediation). Crafted screen images or recordings can execute code only after the documented user interaction; TeamViewer reported no known active exploitation when it published the bulletin.
+- **EPICS Base:** Update [7.0.10 and earlier to 7.0.11](black-october/details/epics-base.md#remediation) through validated OT change management. Keep control-network segmentation while the update is staged; CISA reports no known public exploitation of the tracked Critical CVE at publication.
+- **Supermicro BMC:** The eight CVE records are now published; retain the [existing board-specific BMC firmware update and management-network isolation plan](black-october/details/supermicro-bmc.md#remediation).
+- **LiteLLM:** Later releases [1.106.5 and matching backports](black-october/details/litellm.md#remediation) are available, but they are not designated malware-cleanup releases. Preserve the incident-recovery process and verify clean artifacts.
+
 ## 2026-10-28 04:03 EDT (UTC−04:00) — Tailscale Tailworm fixes
 
 **Partial review:** All configured X timelines and CISA KEV discovery were reviewed, along with the Tailscale primary release. The full existing-item primary-source sweep was not completed, and the required pre-research start timestamp was missed; the successful-run checkpoint cannot advance.

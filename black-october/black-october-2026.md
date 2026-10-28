@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of October 26, 2026**
+**As of October 28, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [TeamViewer clients: crafted screen images can execute code](#teamviewer-clients-crafted-screen-images-can-execute-code)
+- [EPICS Base: network request handling can corrupt memory](#epics-base-network-request-handling-can-corrupt-memory)
 - [GoAhead embedded web server: TLS backend flaws bypass revocation or expose sessions](#goahead-embedded-web-server-tls-backend-flaws-bypass-revocation-or-expose-sessions)
 - [Google MCP Toolbox for Databases: Cloud Storage file exfiltration and overwrite](#google-mcp-toolbox-for-databases-cloud-storage-tools-exfiltrate-host-files-and-overwrite-local-files)
 - [Vertiv Avocent ACS8000 / ACS800: unauthenticated root command injection](#vertiv-avocent-acs8000-and-acs800-console-servers-unauthenticated-root-command-injection-via-the-wsserver-terminal-websocket)
@@ -85,6 +87,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [TeamViewer clients](#teamviewer-clients-crafted-screen-images-can-execute-code) to 15.83 or the vendor's supported fixed legacy builds; do not open untrusted session recordings. Industrial-control operators using [EPICS Base](#epics-base-network-request-handling-can-corrupt-memory) should plan a validated update to 7.0.11 and preserve network segmentation until it is deployed.
 - **New this update (none in CISA KEV yet):** update [Supermicro BMC firmware](#supermicro-bmc-firmware-ipmi-and-rmcp-session-flaws-can-lead-to-bmc-administrator-access) and keep UDP 623 off untrusted networks; confine [Vertiv Avocent ACS8000/ACS800](#vertiv-avocent-acs8000-and-acs800-console-servers-unauthenticated-root-command-injection-via-the-wsserver-terminal-websocket) console-server web access (no confirmed fix) and update [WolfVision Cynap](#wolfvision-cynap-collaboration-systems-unauthenticated-wolfprot-command-injection-and-shared-vsolution-matrix-ssh-root-key) devices; apply [Oracle's October CPU](#oracle-fusion-middleware-e-business-suite-database-and-mysql-october-2026-critical-patch-update) to WebLogic, SOA Suite, E-Business Suite and other exposed Oracle middleware; upgrade [Google MCP Toolbox for Databases](#google-mcp-toolbox-for-databases-cloud-storage-tools-exfiltrate-host-files-and-overwrite-local-files) to 1.10.0+ and set its bucket and path allowlists, [Bandit](#bandit-elixir-and-phoenix-web-server-unauthenticated-denial-of-service-over-http2-http11-and-websocket) to 1.14.0, [Apache Camel `camel-saxon`](#apache-camel-camel-saxon-xquery-xml-external-entity-processing) and [ImageMagick](#imagemagick-stack-buffer-overflow-when-reading-bzip2-compressed-images). GitHub organizations should hunt for [Gheist](#github-actions-gheist---stolen-tokens-plant-secret-dumping-workflows) `ci-sync-` branches that dump Actions secrets.
 - **Added earlier on October 26 (none in CISA KEV yet):** patch [HPE Aruba AOS](#hpe-aruba-networking-aos-unauthenticated-rce-and-authentication-bypass-in-wireless-infrastructure) wireless infrastructure (eight CVSS 10.0 flaws), [FortiSIEM](#fortisiem-unauthenticated-grpc-path-traversal-to-remote-code-execution) (public exploit; Canada's Cyber Centre reports exploitation) and [FortiSandbox](#fortisandbox-unauthenticated-gui-authentication-bypass), [Magento / Adobe Commerce](#adobe-commerce--magento-open-source-blockstrap---unauthenticated-template-injection-rce) (CVSS 10.0 BlockStrap) and the [SAP Cloud SDK for Python](#sap-cloud-sdk-for-python-oauth2-ssrf-leaking-multi-tenant-client-credentials). [Rank Math PRO](#rank-math-pro-for-wordpress-malicious-30123-builds-from-the-official-update-channel) sites that pulled the malicious 3.0.123 build need cleanup and credential rotation, and Linux hosts running untrusted local code face a [public skb_zerocopy root exploit](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) with few vendor fixes yet.
 - **Patch widely deployed developer and self-hosted stacks too, even without KEV listings:** Next.js, NGINX, curl/libcurl, Drupal, Laravel, Gitea, Langflow, Wasmtime, the Bricksforge WordPress plugin, and Linux VM/sandbox hosts (PwnEscape). Bricksforge and Langflow already face exploitation attempts.
@@ -126,6 +129,45 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## TeamViewer clients: crafted screen images can execute code
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/teamviewer.md):** [Detection](details/teamviewer.md#detection) · [Remediation](details/teamviewer.md#remediation) · [Verification](details/teamviewer.md#verification) · [Timeline](details/teamviewer.md#timeline)
+
+**CVEs:** [CVE-2026-92372](https://www.cve.org/CVERecord?id=CVE-2026-92372), [CVE-2026-92374](https://www.cve.org/CVERecord?id=CVE-2026-92374), [CVE-2026-111585](https://www.cve.org/CVERecord?id=CVE-2026-111585)
+
+**TeamViewer (CNA) scores CVE-2026-92372 and CVE-2026-111585 CVSS 3.1 8.8 High; CVE-2026-92374 is 7.8 High.** The two 8.8 flaws require users to start a remote-control session with an attacker-controlled or compromised host; CVE-2026-92372 can also be triggered by opening a crafted `.tvs` recording. The 7.8 macOS helper flaw is a local low-privilege escalation.
+
+**CISA KEV:** Not listed (catalog 2026.10.27, checked 2026-10-28) for all three CVEs. TeamViewer reported no known active exploitation when it published its bulletin. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public bulletin and fixed releases | 2026-10-27; time/TZ unknown | TeamViewer published TV-2026-1011. |
+| **Last updated** | **2026-10-28 08:01 EDT (UTC−04:00)** | Added from TeamViewer's bulletin and CNA records. |
+
+**Patch:** Update Full Client, Host, Portable and Remote Control App to **15.83 or later**, or the supported fixed legacy builds in TeamViewer's bulletin. Do not open untrusted recordings or connect to unverified remote systems while remediation is pending; these are mitigations, not substitutes for the update.
+
+Sources: [TeamViewer TV-2026-1011](https://www.teamviewer.com/en/resources/trust-center/security-bulletins/tv-2026-1011), [CVE-2026-92372](https://www.cve.org/CVERecord?id=CVE-2026-92372), [CVE-2026-92374](https://www.cve.org/CVERecord?id=CVE-2026-92374), [CVE-2026-111585](https://www.cve.org/CVERecord?id=CVE-2026-111585), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## EPICS Base: network request handling can corrupt memory
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/epics-base.md):** [Detection](details/epics-base.md#detection) · [Remediation](details/epics-base.md#remediation) · [Verification](details/epics-base.md#verification) · [Timeline](details/epics-base.md#timeline)
+
+**CVEs:** [CVE-2026-114595](https://www.cve.org/CVERecord?id=CVE-2026-114595)
+
+**CISA ICS-CERT (CNA) scores CVE-2026-114595 CVSS 3.1 9.8 Critical and CVSS 4.0 9.3 Critical.** EPICS Base 7.0.10 and earlier can allocate an incorrectly sized buffer while processing a network request, leading to memory corruption, denial of service, or potential remote code execution.
+
+**CISA KEV:** Not listed (catalog 2026.10.27, checked 2026-10-28). CISA reported no known public exploitation specifically targeting these vulnerabilities at publication. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fixed release | 2026-10-27; time/TZ unknown | CISA and the CNA direct affected users to EPICS Base 7.0.11. |
+| Public announcement | 2026-10-27; time/TZ unknown | CISA published ICSA-26-300-01. |
+| **Last updated** | **2026-10-28 08:01 EDT (UTC−04:00)** | Added from CISA's ICS advisory and CNA record. |
+
+**Patch:** Upgrade to **EPICS Base 7.0.11** using validated OT change management. Until deployment, restrict EPICS network services to their intended control network and do not test malformed requests against production systems.
+
+Sources: [CISA ICSA-26-300-01](https://www.cisa.gov/news-events/ics-advisories/icsa-26-300-01), [CVE-2026-114595](https://www.cve.org/CVERecord?id=CVE-2026-114595), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## GoAhead embedded web server: TLS backend flaws bypass revocation or expose sessions
 
@@ -285,11 +327,11 @@ Sources: [WolfVision CVE-2026-59106](https://wolfvision.com/de/security/cve-2026
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/supermicro-bmc.md):** [Detection](details/supermicro-bmc.md#detection) · [Remediation](details/supermicro-bmc.md#remediation) · [Verification](details/supermicro-bmc.md#verification) · [Timeline](details/supermicro-bmc.md#timeline)
 
-**CVEs:** [CVE-2026-18450](https://www.cve.org/CVERecord?id=CVE-2026-18450), [CVE-2026-65220](https://www.cve.org/CVERecord?id=CVE-2026-65220), [CVE-2026-18449](https://www.cve.org/CVERecord?id=CVE-2026-18449), [CVE-2026-65219](https://www.cve.org/CVERecord?id=CVE-2026-65219), [CVE-2026-65211](https://www.cve.org/CVERecord?id=CVE-2026-65211), [CVE-2026-65213](https://www.cve.org/CVERecord?id=CVE-2026-65213), [CVE-2026-65210](https://www.cve.org/CVERecord?id=CVE-2026-65210), [CVE-2026-18451](https://www.cve.org/CVERecord?id=CVE-2026-18451) (all eight records still RESERVED, not published, as of 2026-10-26)
+**CVEs:** [CVE-2026-18450](https://www.cve.org/CVERecord?id=CVE-2026-18450), [CVE-2026-65220](https://www.cve.org/CVERecord?id=CVE-2026-65220), [CVE-2026-18449](https://www.cve.org/CVERecord?id=CVE-2026-18449), [CVE-2026-65219](https://www.cve.org/CVERecord?id=CVE-2026-65219), [CVE-2026-65211](https://www.cve.org/CVERecord?id=CVE-2026-65211), [CVE-2026-65213](https://www.cve.org/CVERecord?id=CVE-2026-65213), [CVE-2026-65210](https://www.cve.org/CVERecord?id=CVE-2026-65210), [CVE-2026-18451](https://www.cve.org/CVERecord?id=CVE-2026-18451). All eight CVE records were published on 2026-10-27.
 
 **CVE-2026-18450 — Supermicro CVSS 3.1: 9.8 Critical (AC:L); runZero CVSS 3.1: 8.1 High (AC:H, a live session ID is needed). CVE-2026-65220 8.8, CVE-2026-18449 7.5, CVE-2026-65219 7.4 and CVE-2026-65211 7.2 are High (Supermicro and runZero agree); CVE-2026-65213 6.6, CVE-2026-65210 4.9 and CVE-2026-18451 3.1 are lower. NVD has not scored them.**
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Supermicro says it is "not aware of any malicious use of these vulnerabilities in the wild", and runZero reports no exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.27, checked 2026-10-28). Supermicro says it is "not aware of any malicious use of these vulnerabilities in the wild", and runZero reports no exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -297,7 +339,8 @@ Sources: [WolfVision CVE-2026-59106](https://wolfvision.com/de/security/cve-2026
 | Supermicro notified | 2026-07-24 – 2026-08-27 (time/TZ unknown) | Per runZero advisory timelines |
 | **Public announcement**: runZero "Lights Out" update and advisories | 2026-10-26 09:00 EDT (13:00 UTC) | Covers eight Supermicro CVEs. The Dell and Avocent issues in the same update are outside this entry. |
 | Supermicro advisory v1.0 | 2026-10-26 (time/TZ unknown) | Fixed BMC firmware listed per board for 402 SKUs. Two SKUs are "TBD"; X9/X10 are not listed. |
-| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| CVE records published | 2026-10-27; time/TZ unknown | All eight previously reserved records became public. |
+| **Last updated** | **2026-10-28 08:01 EDT (UTC−04:00)** | Corrected CVE-record publication status. |
 
 runZero found that Supermicro BMC firmware fails in several places in IPMI-over-LAN (RMCP+, UDP 623) session setup:
 
@@ -2474,10 +2517,10 @@ The corrected postmortem identifies an **exposed, unrevoked master key**, follow
 | Corrected postmortem | 2026-10-23 21:00 UTC | Supersedes earlier entry-point theories. |
 | Vendor clarifications | 2026-10-24 UTC; time unknown | Clean-artifact and entry-point clarification. |
 | Image-signing key changed | 2026-10-24 09:34:13 UTC (1.106.3 release) | New cosign key from commit `e82a3c6`; verifying with the old key fails. Backported to 1.103.8 / 1.104.6 / 1.105.4. |
-| Later release 1.106.4 | 2026-10-25 09:32:43 UTC (PyPI) | Latest PyPI version; not a malware-cleanup patch. |
+| Later releases | 2026-10-25 09:32:43 UTC (1.106.4); 2026-10-27 (1.106.5) | 1.106.5 with 1.105.6, 1.104.8 and 1.103.10 backports is later than 1.106.4; no release is designated as a malware-cleanup patch. |
 | Cleanup patch | Not applicable | 1.106.2 is a clean rollback target, not host recovery. |
 | Microsoft detection content | 2026-10-23; time/TZ unknown | Defender signatures, TVM-2026-0003 and hunting queries. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Official Microsoft detection content. |
+| **Last updated** | **2026-10-28 08:01 EDT (UTC−04:00)** | Corrected the latest-release status; this does not change incident recovery requirements. |
 
 Microsoft publishes [Defender detections, hunting queries and file hashes](https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/) for this incident. Inspect **historical** dependency manifests, CI install logs, registry digests, and deployment records for **1.107.0** and the malicious image digests in the incident guidance. A floating tag or today's package version cannot establish what ran during the incident. On a clean analysis host, run `python3 -I -S python-package-inventory.py /mnt/snapshot/path/to/site-packages` against a read-only mounted snapshot; use the clean host's interpreter, not the snapshot's. Do not run ordinary `python`, `pip`, or the LiteLLM CLI inside a suspected infected environment. Metadata/version matches identify candidates, not trustworthy integrity; compare artifact hashes with the vendor's indicators. If a malicious artifact executed, treat reachable secrets as exposed even when logs show no obvious exfiltration.
 
