@@ -4,6 +4,13 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-28 20:04 EDT (UTC−04:00) — Bandit HTTP/2 request-body fix
+
+- **Linux Fragnesia:** CISA added [CVE-2026-46300 to KEV](black-october/details/linux-fragnesia.md#timeline), reporting active exploitation and a PHP2Shell chain to root. Install a vendor-fixed kernel, reboot into it, and investigate suspected compromise.
+- **Bandit:** Upgrade [Elixir/Phoenix HTTP servers to 1.14.1](black-october/details/elixir-bandit.md#remediation), not 1.14.0. CVE-2026-116078 lets an unauthenticated HTTP/2 client exhaust memory with many tiny request-body frames on routes that read bodies; disable HTTP/2 as the vendor workaround while the update is deployed.
+- **Windows Shell:** Microsoft’s revision 2.0 adds [supported Edge software](black-october/details/windows-shell.md#remediation) to the update table for the exploited MOTW bypass. Apply both the Windows cumulative update and the indicated Edge update.
+- **Linux skb_zerocopy:** [Linux 7.3 includes the upstream fix](black-october/details/skb-zerocopy-lpe.md#timeline), but distribution backports remain a separate verification step; use only vendor builds that explicitly include the fix.
+
 ## 2026-10-28 16:00 EDT (UTC−04:00) — Electrum CVE assignment and Railway recovery status
 
 - **Electrum:** [CVE-2026-117601](black-october/details/electrum.md#timeline) now assigns CVSS 4.0 9.3 to the already tracked exploited malicious-server transaction-swap issue. Upgrade to [4.8.3](black-october/details/electrum.md#remediation) and verify every fee-bump recipient and amount.

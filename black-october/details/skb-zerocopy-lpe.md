@@ -50,7 +50,7 @@
 | Fix committed to the netdev `net` tree | 2026-10-23 19:41:58 UTC (15:41:58 EDT) | Commit `79dc34beb1fd` by Jakub Kicinski, with `Reviewed-by: Eric Dumazet` and `Cc: stable@kernel.org`. A maintainer tree, not a released kernel. [Fix commit][commit] |
 | Red Hat bulletin | 2026-10-24 18:31 (TZ not stated) | RHSB-2026-014: "Potentially Affected", Important; says upstream patches are not yet available and no CVEs are assigned. No RHEL fix. [Red Hat][rh] |
 | CloudLinux 7 hybrid and 8 beta kernels | 2026-10-26 09:11 UTC | `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`, beta and rolling out. [CloudLinux][cl] |
-| Mainline, stable and longterm releases | None established as of 2026-10-26 ~11:20 EDT | The commit was not in `torvalds/linux` master (latest commit 2026-10-26 04:04 UTC, 7.4 merge window). Newest kernel.org releases (7.3 on 2026-10-18; 7.2.12, 6.18.58, 6.12.114, 6.6.160 on 2026-10-21; 6.1.190, 5.15.223, 5.10.272 on 2026-10-15) predate the fix. [kernel.org releases][releases] |
+| Mainline release | Linux 7.3, 2026-10-18 | Linux 7.3 includes `79dc34beb1fd`; do not infer backport status for stable or longterm vendor kernels from the mainline release. [kernel.org releases][releases] [Fix commit][commit] |
 | CVE assignment | None as of this review | CloudLinux (updated 2026-10-26) and AlmaLinux say no CVE is assigned. The kernel CNA assigns CVEs after a fix reaches a stable tree. No Debian or Ubuntu tracker entry or notice was found. [CloudLinux][cl] [Kernel CVE process][kernelcve] |
 
 ## Detection

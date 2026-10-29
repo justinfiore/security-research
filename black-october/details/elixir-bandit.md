@@ -1,14 +1,14 @@
 # Bandit (Elixir and Phoenix web server): unauthenticated denial of service over HTTP/2, HTTP/1.1 and WebSocket
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-28 (America/New_York)
 
 [Main Bandit summary](../black-october-2026.md#bandit-elixir-and-phoenix-web-server-unauthenticated-denial-of-service-over-http2-http11-and-websocket) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**Ten High advisories: nine CVEs scored by the Erlang Ecosystem Foundation (EEF, CNA) at CVSS 4.0 8.7 High, except one at 8.2 High, plus one High GitHub advisory with no CVE. Two further Medium (6.3) CVEs were published alongside them. NVD has not scored them (status "Received"); not in CISA KEV.** [Bandit](https://github.com/mtrudel/bandit) is the pure-Elixir HTTP server that new Phoenix applications use by default (since Phoenix 1.7.11), and that Plug applications can run directly. On 2026-10-26 its maintainers published twelve GitHub security advisories, all fixed in **Bandit 1.14.0**. The High ones let a **remote, unauthenticated** client exhaust memory or CPU on the BEAM node with small amounts of traffic. Most need HTTP/2; others hit HTTP/1.1 chunked bodies, header parsing on both protocols, or WebSocket. [Advisories][advisories] [1.14.0 changelog][changelog] [Phoenix 1.7.11 changelog][phoenix]
+**Eleven High advisories: ten CVEs scored by the Erlang Ecosystem Foundation (EEF, CNA) at CVSS 4.0 8.7 High, except one at 8.2 High, plus one High GitHub advisory with no CVE. Two further Medium (6.3) CVEs were published alongside them. NVD has not scored them (status "Received"); not in CISA KEV.** [Bandit](https://github.com/mtrudel/bandit) is the pure-Elixir HTTP server that new Phoenix applications use by default (since Phoenix 1.7.11), and that Plug applications can run directly. On 2026-10-26 its maintainers published twelve GitHub security advisories, fixed in **Bandit 1.14.0**. On 2026-10-28, a thirteenth advisory added a separate HTTP/2 request-body memory-exhaustion path fixed in **1.14.1**. The High flaws let a **remote, unauthenticated** client exhaust memory or CPU on the BEAM node with small amounts of traffic. [Advisories][advisories] [1.14.0 changelog][changelog] [CVE-2026-116078 advisory][a116078] [Phoenix 1.7.11 changelog][phoenix]
 
 **Worst case:** one client with little bandwidth takes the BEAM node out of memory or keeps every scheduler busy. That stops **every application on the node**, not just the HTTP listener, including LiveView and Channels sessions. The advisories describe denial of service only. The two Medium CVEs are different: [CVE-2026-114216](https://www.cve.org/CVERecord?id=CVE-2026-114216) is request smuggling behind certain proxies, and [CVE-2026-110314](https://www.cve.org/CVERecord?id=CVE-2026-110314) lets a WebSocket client keep invoking handlers after the server closed the session. [Advisories][advisories]
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26); none of the eleven CVEs below is in the feed, and GHSA-fmr8-qrvr-4ww5 has no CVE, so KEV cannot list it. CISA's ADP SSVC enrichment marks Exploitation "none" on the ten records that carry it (all except CVE-2026-110314). Several advisories include proof-of-concept code, but no exploitation was reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-28); none of the twelve CVEs below is in the feed, and GHSA-fmr8-qrvr-4ww5 has no CVE, so KEV cannot list it. CISA's ADP SSVC enrichment marks Exploitation "none" on the ten earlier records that carry it (all except CVE-2026-110314). Several advisories include proof-of-concept code, but no exploitation was reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means)
 
 ## Table of contents
 
@@ -19,7 +19,7 @@
   - [Reachability](#reachability)
   - [Runtime signals](#runtime-signals)
 - [Remediation](#remediation)
-  - [Upgrade to 1.14.0](#upgrade-to-1140)
+  - [Upgrade to 1.14.1](#upgrade-to-1141)
   - [Workarounds until you can upgrade](#workarounds-until-you-can-upgrade)
 - [Verification](#verification)
 - [Compromise response](#compromise-response)
@@ -35,16 +35,17 @@
 | **Public announcement**: GitHub advisories published | 2026-10-26 13:35:21–13:35:41 UTC | Twelve advisories. [Advisories][advisories] |
 | NVD | 2026-10-26 from 14:16 UTC (NVD API) | Status "Received"; shows the EEF CVSS 4.0 scores. [NVD][nvd] |
 | CISA ADP SSVC | 2026-10-26 | Exploitation: none; Automatable: yes; Technical impact: partial. [CVE JSON][cve108525] |
-| CISA KEV | Not listed as of catalog 2026.10.23 (checked 2026-10-26) | [KEV JSON][kev] |
+| CISA KEV | Not listed as of catalog 2026.10.28 (checked 2026-10-28) | [KEV JSON][kev] |
 
 Earlier Bandit advisories (for example the May 2026 WebSocket and chunked-encoding flaws fixed in 1.11.x, and [CVE-2026-105659](https://www.cve.org/CVERecord?id=CVE-2026-105659), 8.7, advisory published 2026-10-12 and fixed in 1.13.0, released 2026-10-15) are not tracked here; 1.14.0 includes their fixes.
 
 ## Advisories and scores
 
-All scores are **EEF (CNA) CVSS 4.0** from the CVE records, matching the GitHub advisories. The High vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N` (8.7) unless noted. "Affected" is the GitHub advisory range; all are fixed in **1.14.0**. [Advisories][advisories] [CVE records][cve108525]
+All scores are **EEF (CNA) CVSS 4.0** from the CVE records, matching the GitHub advisories. The High vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N` (8.7) unless noted. The original batch is fixed in **1.14.0**; CVE-2026-116078 is fixed in **1.14.1**. [Advisories][advisories] [CVE records][cve108525]
 
 | CVE / advisory | What a client does | Score | Protocol | Affected | Published workaround |
 |---|---|---|---|---|---|
+| [CVE-2026-116078](https://www.cve.org/CVERecord?id=CVE-2026-116078) / [GHSA-pxjf-g536-7r93][a116078] | Sends many 1-byte DATA frames to request-body readers; each frame is retained as a separate list element, so memory grows roughly 5–8× the payload | 8.7 High | HTTP/2 | 0.3.1 to <1.14.1 | Disable HTTP/2 |
 | [CVE-2026-108525](https://www.cve.org/CVERecord?id=CVE-2026-108525) / [GHSA-c3g7-2pg5-qvwh][a108525] | Floods DATA frames past the receive window on a stream stalled on a large response; frames queue in the stream mailbox until the node runs out of memory | 8.7 High | HTTP/2 | 0.3.1 to <1.14.0 | Disable HTTP/2 |
 | [CVE-2026-108529](https://www.cve.org/CVERecord?id=CVE-2026-108529) / [GHSA-j363-h72p-296m][a108529] | Holds thousands of response streams blocked, then sends 9-byte SETTINGS or connection WINDOW_UPDATE frames that each cost quadratic CPU | 8.7 High | HTTP/2 | GHSA: 0.3.6 to <1.14.0; **CVE record: 0.3.4 to <1.14.0** | None published |
 | [CVE-2026-109584](https://www.cve.org/CVERecord?id=CVE-2026-109584) / [GHSA-7gfj-7gvq-3xqj][a109584] | HPACK "cookie bomb": a 49 KB header block made the server build a 183 MB cookie value (compression amplification, CWE-409) | 8.7 High | HTTP/2 | 0.3.3 to <1.14.0 | On 1.12.2+, set `max_header_list_size` (e.g. 65,536); or disable HTTP/2 |
@@ -70,7 +71,7 @@ All scores are **EEF (CNA) CVSS 4.0** from the CVE records, matching the GitHub 
    - Source tree: `grep -A1 '"bandit"' mix.lock` shows the locked version; `grep -rn 'Bandit' config/ lib/ mix.exs` shows whether the Phoenix endpoint uses `adapter: Bandit.PhoenixAdapter` or a supervisor starts `{Bandit, ...}`.
    - Built release: `ls _build/prod/rel/*/lib | grep bandit` or, on the deployed host, `ls /path/to/release/lib | grep bandit` (directory name `bandit-<version>`).
    - Running node, if you already use remote shells: `bin/<app> rpc 'IO.puts(Application.spec(:bandit, :vsn))'`. It only reads application metadata.
-2. Anything below **1.14.0** is affected by at least CVE-2026-111101, CVE-2026-113436 and the HTTP/2 flaws. Which others apply depends on the version (see the table).
+2. Anything below **1.14.1** is affected by CVE-2026-116078 when it accepts HTTP/2 request bodies. Anything below 1.14.0 is also affected by at least CVE-2026-111101, CVE-2026-113436 and the earlier HTTP/2 flaws. Which others apply depends on the version (see the table).
 3. Phoenix applications generated before 1.7.11, or configured with `Phoenix.Endpoint.Cowboy2Adapter`, use Cowboy instead and are **not** affected by these Bandit advisories. Check the endpoint's `adapter:` setting rather than the Phoenix version. [Phoenix 1.7.11 changelog][phoenix]
 
 ### Reachability
@@ -92,9 +93,9 @@ Missing signals do not mean the service was not targeted; most deployments do no
 
 ## Remediation
 
-### Upgrade to 1.14.0
+### Upgrade to 1.14.1
 
-1. Set `{:bandit, "~> 1.14"}` (or at least `>= 1.14.0`) in `mix.exs`, run `mix deps.update bandit`, and confirm `mix.lock` shows 1.14.0 or later. 1.14.0 keeps 1.13.1's Elixir (~> 1.13), Thousand Island (~> 1.6) and HPAX (~> 1.1) requirements. There is no backport to older 1.x or 0.x lines. [mix.exs at 1.14.0][mixexs] [Changelog][changelog]
+1. Set `{:bandit, "~> 1.14"}` (or at least `>= 1.14.1`) in `mix.exs`, run `mix deps.update bandit`, and confirm `mix.lock` shows 1.14.1 or later. 1.14.0 keeps 1.13.1's Elixir (~> 1.13), Thousand Island (~> 1.6) and HPAX (~> 1.1) requirements; 1.14.1 is required for CVE-2026-116078. There is no backport to older 1.x or 0.x lines. [CVE-2026-116078 advisory][a116078] [Changelog][changelog]
 2. Rebuild the release or container image and redeploy every node. A running BEAM keeps the old code until restarted (or until a hot upgrade that you have tested).
 3. **Behaviour changes to test** (from the changelog): HTTP/2 now advertises `max_concurrent_streams` 500 and `max_header_list_size` 262,144 bytes by default, so applications that send very large headers (big cookies or JWTs) may see stream resets. `read_body` over HTTP/2 may return more than `:length` bytes. HTTP/1 request-line parsing is stricter: an absolute-form target with an empty path and a query now gets 400. A server-initiated WebSocket close now closes the connection after a timeout. [Changelog][changelog]
 
@@ -102,7 +103,7 @@ Missing signals do not mean the service was not targeted; most deployments do no
 
 These are the advisories' own workarounds. Set them in the Bandit options, which for Phoenix are the `http:` / `https:` keyword lists of the endpoint configuration. [Phoenix adapter][phoenixadapter] [Advisories][advisories]
 
-- **Disable HTTP/2** with `http_2_options: [enabled: false]`. This removes the paths of CVE-2026-108525, -111103, -115269, -109584 and -110499 and GHSA-fmr8-qrvr-4ww5, and the HTTP/2 route to CVE-2026-113436. CVE-2026-108529 also needs HTTP/2, so this removes it too, although its advisory does not list a workaround. Clients fall back to HTTP/1.1.
+- **Disable HTTP/2** with `http_2_options: [enabled: false]`. This removes the paths of CVE-2026-116078, -108525, -111103, -115269, -109584 and -110499 and GHSA-fmr8-qrvr-4ww5, and the HTTP/2 route to CVE-2026-113436. CVE-2026-108529 also needs HTTP/2, so this removes it too, although its advisory does not list a workaround. Clients fall back to HTTP/1.1.
 - Short of disabling HTTP/2: `http_2_options: [max_requests: 1000, default_local_settings: [max_concurrent_streams: 100, max_header_list_size: 65_536]]` limits CVE-2026-110499 and CVE-2026-109584 and caps streams. Before 1.14.0, CVE-2026-111103 can bypass the stream and request limits. `max_header_list_size` needs 1.12.2+ and `max_requests` 0.7.0+.
 - Lower `websocket_options: [max_fragmented_message_size: 65_536]`, or the largest message you need, to shrink CVE-2026-114213's memory ceiling (about 150× the limit).
 - **No configuration workaround** exists for CVE-2026-111101 on servers that must accept HTTP/1.1, or for CVE-2026-113436. Rate-limit connections per client at the edge and set memory limits so one node's exhaustion does not cascade, but upgrade.
@@ -111,7 +112,7 @@ Changing protocol settings **changes behaviour**; deploy them like any configura
 
 ## Verification
 
-- Confirm every deployed release contains `lib/bandit-1.14.0` (or later), or that `Application.spec(:bandit, :vsn)` on the running node returns 1.14.0+.
+- Confirm every deployed release contains `lib/bandit-1.14.1` (or later), or that `Application.spec(:bandit, :vsn)` on the running node returns 1.14.1+.
 - Benign functional controls: confirm HTTP/1.1 and HTTP/2 requests succeed, for example `curl -sI --http2 https://your-host/` and `curl -sI --http1.1 https://your-host/`, check `curl -v` output for the negotiated protocol, and confirm LiveView or Channels pages connect.
 - If you kept a workaround such as disabling HTTP/2, confirm with `curl -v --http2` that ALPN no longer negotiates `h2`.
 - Do not run the advisories' proof-of-concept code against production; it is designed to exhaust the node.
@@ -127,14 +128,15 @@ These flaws cause denial of service; none of the advisories describes code execu
 
 ## Sources
 
-- [Bandit security advisories][advisories] — all twelve advisories: descriptions, PoCs, affected ranges, CVSS 4.0 vectors, workarounds, credits and publication times. Individual advisories are linked in the [table](#advisories-and-scores).
+- [Bandit security advisories][advisories] — all thirteen advisories: descriptions, PoCs, affected ranges, CVSS 4.0 vectors, workarounds, credits and publication times. Individual advisories are linked in the [table](#advisories-and-scores).
 - [EEF CNA CVE records][cve108525] (one per CVE, e.g. [CVE-2026-108529 JSON][cve108529]) — CVSS 4.0 scores, affected ranges, publication times, CISA ADP SSVC.
 - [NVD][nvd] — status "Received".
 - [Bandit 1.14.0 changelog][changelog], [Hex release][hex], [mix.exs][mixexs], [Bandit options][options], [Phoenix adapter docs][phoenixadapter].
 - [Phoenix 1.7.11 changelog][phoenix] — Bandit becomes the default for new applications.
-- [CISA KEV JSON feed][kev] — not listed (catalog 2026.10.23).
+- [CISA KEV JSON feed][kev] — not listed (catalog 2026.10.28).
 
 [advisories]: https://github.com/mtrudel/bandit/security/advisories
+[a116078]: https://github.com/mtrudel/bandit/security/advisories/GHSA-pxjf-g536-7r93
 [a108525]: https://github.com/mtrudel/bandit/security/advisories/GHSA-c3g7-2pg5-qvwh
 [a108529]: https://github.com/mtrudel/bandit/security/advisories/GHSA-j363-h72p-296m
 [a109584]: https://github.com/mtrudel/bandit/security/advisories/GHSA-7gfj-7gvq-3xqj

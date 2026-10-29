@@ -30,7 +30,7 @@
 | CVE record published | 2026-10-13 19:01:26 UTC | CVE record metadata. [CVE JSON][cve] |
 | CISA KEV addition | 2026-10-13 (date only) | `dateAdded` 2026-10-13, `dueDate` 2026-10-16, ransomware use "Unknown", forensic triage "Yes". Being added to KEV does not show when exploitation started. [KEV JSON][kev] |
 | Exploitation evidence | Not dated | Microsoft states exploitation was detected but publishes no actor, campaign, start date or IOCs. The CISA ADP SSVC entry ("Exploitation: active") is timestamped 2026-10-08, which is earlier than publication. Treat that as record metadata, not as an exploitation date. [MSRC][msrc] [CVE JSON][cve] |
-| CNA record update | 2026-10-25 18:48:18 UTC | Microsoft updated the CVE record. The MSRC revision history still shows only revision 1.0, and this review found no substantive change. [CVE JSON][cve] |
+| MSRC revision 2.0 | 2026-10-26; time/TZ unknown | Microsoft added supported Edge software to the Security Updates table and directs customers to update it to the listed version. [MSRC][msrc] |
 
 ## Detection
 
@@ -77,7 +77,8 @@ Compare `CurrentBuild.UBR` (for example `26100.9711`) with the table. `Get-HotFi
 2. Prioritize user endpoints that receive email or chat attachments or browse the web, and multi-user hosts (RDS/VDI). Servers where users rarely open files are lower priority but still affected.
 3. While you roll out the update, keep in place controls that do not depend on MOTW alone: attachment detonation and file-type blocking at the email gateway, ASR rules for Office and script content, application control (WDAC/AppLocker), and SmartScreen enforcement. These reduce risk but do **not** replace the update.
 4. **Outlook.com:** MSRC lists a service-side fixed build and no customer-installable package was identified. Account owners have nothing to install.
-5. Rollback caution: uninstalling the cumulative update to fix a compatibility problem reintroduces the vulnerability. Use Known Issue Rollback or vendor guidance where available instead of removing the security update.
+5. **Microsoft Edge:** MSRC revision 2.0 added Edge software to its Security Updates table. Update supported Edge through its normal managed browser-update channel; the browser’s About page or fleet browser-compliance report should show the version Microsoft lists for this CVE.
+6. Rollback caution: uninstalling the cumulative update to fix a compatibility problem reintroduces the vulnerability. Use Known Issue Rollback or vendor guidance where available instead of removing the security update.
 
 ## Verification
 
