@@ -4,6 +4,13 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-29 08:03 EDT (UTC−04:00) — Cisco exploitation updates and Ultralytics model-file code injection
+
+- **Cisco Secure Firewall ASA / FTD:** Upgrade Remote Access SSL VPN deployments to [Cisco's first fixed release for their train](black-october/details/cisco-secure-firewall-vpn.md#remediation). Cisco reports active exploitation of CVE-2026-76418, which can reload an appliance when secondary authentication is configured; use Cisco's temporary mitigation only after evaluating its VPN and security impact.
+- **Cisco Catalyst SD-WAN:** Upgrade Controller, Manager and Validator components to the [listed fixed release](black-october/details/cisco-sdwan-keydrift.md#remediation), restrict ports 22 and 830 to known peers, and investigate unexplained `vmanage-admin` authentication or peering events. Cisco linked limited exploitation to Talos's KeyDrift investigation, which includes persistence and key-material theft evidence.
+- **Ultralytics:** Do not open untrusted model files in affected workflows. [CVE-2026-118618](black-october/details/ultralytics-parse-model.md#remediation) lets an opened malicious model execute Python code as the current user; no vendor fixed-version statement is established.
+- **Supermicro BMC:** Apply the higher applicable firmware version in both [October 26 advisory tables](black-october/details/supermicro-bmc.md#remediation). The separate High CVE-2026-16521 syslog command injection can execute an administrator-supplied payload after the related service restarts; keep BMCs isolated and restrict privileged access.
+
 ## 2026-10-29 04:03 EDT (UTC−04:00) — Tabularis MCP SQL injection and AlmaLinux kernel fixes
 
 - **Tabularis:** Upgrade to [0.28.0 or later](black-october/details/tabularis.md#remediation). CVE-2026-118378 can let attacker-influenced MCP tool calls modify or delete SQLite data despite Tabularis read-only mode and write approval.

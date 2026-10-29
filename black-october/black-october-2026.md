@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of October 28, 2026**
+**As of October 29, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Cisco Secure Firewall ASA and FTD: exploited SSL VPN denial of service](#cisco-secure-firewall-asa-and-ftd-exploited-ssl-vpn-denial-of-service)
+- [Cisco Catalyst SD-WAN: KeyDrift authentication bypass and key theft](#cisco-catalyst-sd-wan-keydrift-authentication-bypass-and-key-theft)
+- [Ultralytics: parse_model code injection through an untrusted model file](#ultralytics-parse_model-code-injection-through-an-untrusted-model-file)
 - [Tabularis: MCP SQLite read-only bypass through SQL injection](#tabularis-mcp-sqlite-read-only-bypass-through-sql-injection)
 - [Adobe Campaign Classic: eight Critical code-execution and authorization flaws](#adobe-campaign-classic-eight-critical-code-execution-and-authorization-flaws)
 - [Adobe Connect: Critical code injection in desktop and Android clients](#adobe-connect-critical-code-injection-in-desktop-and-android-clients)
@@ -139,6 +142,72 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Cisco Secure Firewall ASA and FTD: exploited SSL VPN denial of service
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cisco-secure-firewall-vpn.md):** [Detection](details/cisco-secure-firewall-vpn.md#detection) · [Remediation](details/cisco-secure-firewall-vpn.md#remediation) · [Verification](details/cisco-secure-firewall-vpn.md#verification) · [Timeline](details/cisco-secure-firewall-vpn.md#timeline)
+
+**CVEs:** [CVE-2026-76418](https://www.cve.org/CVERecord?id=CVE-2026-76418)
+
+**[CVE-2026-76418](https://www.cve.org/CVERecord?id=CVE-2026-76418) — Cisco CVSS 3.1 8.6 High; actively exploited**
+
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Cisco reports active exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Cisco advisory and fixed releases | 2026-10-28 19:15 GMT | Cisco `cisco-sa-asaftd-tunnel-dos-s6mgkb75`. |
+| Active exploitation known to Cisco | 2026-10 (exact day not established) | Cisco PSIRT statement. |
+| **Last updated** | **2026-10-29 08:03 EDT (UTC−04:00)** | Added from Cisco's primary advisory. |
+
+An unauthenticated attacker can reload an affected ASA or FTD appliance by reaching its SSL VPN service with a crafted request. The vulnerable path requires reachable Remote Access SSL VPN plus secondary authentication in the applicable tunnel group; a successful VPN login is not needed.
+
+**Patch:** upgrade ASA to 9.16.4.104, 9.18.4.96, 9.20.4.50, 9.22.3.200, 9.23.1.48 or the listed 9.24 fix; upgrade FTD to the first fixed build for its 7.0–10.1 train. Cisco's detailed table and the tested temporary secondary-authentication mitigation are in the [guide](details/cisco-secure-firewall-vpn.md#remediation).
+
+Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-asaftd-tunnel-dos-s6mgkb75), [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-76418), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Cisco Catalyst SD-WAN: KeyDrift authentication bypass and key theft
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cisco-sdwan-keydrift.md):** [Detection](details/cisco-sdwan-keydrift.md#detection) · [Remediation](details/cisco-sdwan-keydrift.md#remediation) · [Verification](details/cisco-sdwan-keydrift.md#verification) · [Timeline](details/cisco-sdwan-keydrift.md#timeline)
+
+**CVEs:** [CVE-2026-20127](https://www.cve.org/CVERecord?id=CVE-2026-20127)
+
+**[CVE-2026-20127](https://www.cve.org/CVERecord?id=CVE-2026-20127) — Cisco CVSS 3.1 10.0 Critical; limited exploitation**
+
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Cisco reports limited exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Cisco advisory and initial fixes | 2026-02-25 16:00 GMT | `cisco-sa-sdwan-rpa-EHchtZk`. |
+| KeyDrift report and advisory update | 2026-10-28; time/TZ not established | Talos disclosed historical UAT-11473 activity; Cisco linked it from revision 2.1. |
+| **Last updated** | **2026-10-29 08:03 EDT (UTC−04:00)** | Added Cisco's exploitation update and Talos incident evidence. |
+
+The peering-authentication bypass affects Catalyst SD-WAN Controller, Manager and Validator, including on-prem and Cisco-hosted deployments. Cisco Talos reports KeyDrift malware installed after exploitation to persist, collect control-plane keying material and provide backdoor capabilities.
+
+**Patch:** move 20.9 to 20.9.8.2; 20.11–20.12 to a listed 20.12 fixed release; 20.13–20.15 to 20.15.4.2; and 20.16–20.18 to 20.18.2.1. Restrict ports 22 and 830 to known control components while upgrades proceed, then follow the [detection and recovery guide](details/cisco-sdwan-keydrift.md).
+
+Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sdwan-rpa-EHchtZk), [Cisco Talos KeyDrift report](https://blog.talosintelligence.com/uat-11473-keydrift/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Ultralytics: parse_model code injection through an untrusted model file
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ultralytics-parse-model.md):** [Detection](details/ultralytics-parse-model.md#detection) · [Remediation](details/ultralytics-parse-model.md#remediation) · [Verification](details/ultralytics-parse-model.md#verification) · [Timeline](details/ultralytics-parse-model.md#timeline)
+
+**CVEs:** [CVE-2026-118618](https://www.cve.org/CVERecord?id=CVE-2026-118618)
+
+**[CVE-2026-118618](https://www.cve.org/CVERecord?id=CVE-2026-118618) — ZDI CVSS 3.0 7.8 High**
+
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). No active exploitation is reported by the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Report to vendor | 2026-06-18; time/TZ unknown | ZDI says it reported the issue through the vendor's GitHub account. |
+| Public disclosure | 2026-10-28; time/TZ unknown | ZDI-26-817 / ZDI-CAN-30121. |
+| **Last updated** | **2026-10-29 08:03 EDT (UTC−04:00)** | Added from ZDI and CNA records. |
+
+Ultralytics `parse_model` can execute attacker-supplied Python code when a user visits a malicious page or opens a malicious model file. ZDI identifies 8.4.65 as affected and does not establish a fixed version.
+
+**Remediate:** do not load untrusted model files; isolate externally supplied model processing without credentials or production mounts, and wait for an official fixed-version statement rather than assuming a later release is safe. See the [detailed guide](details/ultralytics-parse-model.md#remediation).
+
+Sources: [ZDI-26-817](https://zerodayinitiative.com/advisories/ZDI-CAN-30121/), [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-118618), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Tabularis: MCP SQLite read-only bypass through SQL injection
 
@@ -472,11 +541,11 @@ Sources: [WolfVision CVE-2026-59106](https://wolfvision.com/de/security/cve-2026
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/supermicro-bmc.md):** [Detection](details/supermicro-bmc.md#detection) · [Remediation](details/supermicro-bmc.md#remediation) · [Verification](details/supermicro-bmc.md#verification) · [Timeline](details/supermicro-bmc.md#timeline)
 
-**CVEs:** [CVE-2026-18450](https://www.cve.org/CVERecord?id=CVE-2026-18450), [CVE-2026-65220](https://www.cve.org/CVERecord?id=CVE-2026-65220), [CVE-2026-18449](https://www.cve.org/CVERecord?id=CVE-2026-18449), [CVE-2026-65219](https://www.cve.org/CVERecord?id=CVE-2026-65219), [CVE-2026-65211](https://www.cve.org/CVERecord?id=CVE-2026-65211), [CVE-2026-65213](https://www.cve.org/CVERecord?id=CVE-2026-65213), [CVE-2026-65210](https://www.cve.org/CVERecord?id=CVE-2026-65210), [CVE-2026-18451](https://www.cve.org/CVERecord?id=CVE-2026-18451). All eight CVE records were published on 2026-10-27.
+**CVEs:** [CVE-2026-18450](https://www.cve.org/CVERecord?id=CVE-2026-18450), [CVE-2026-65220](https://www.cve.org/CVERecord?id=CVE-2026-65220), [CVE-2026-18449](https://www.cve.org/CVERecord?id=CVE-2026-18449), [CVE-2026-65219](https://www.cve.org/CVERecord?id=CVE-2026-65219), [CVE-2026-65211](https://www.cve.org/CVERecord?id=CVE-2026-65211), [CVE-2026-65213](https://www.cve.org/CVERecord?id=CVE-2026-65213), [CVE-2026-65210](https://www.cve.org/CVERecord?id=CVE-2026-65210), [CVE-2026-18451](https://www.cve.org/CVERecord?id=CVE-2026-18451), [CVE-2026-16521](https://www.cve.org/CVERecord?id=CVE-2026-16521). The first eight CVE records were published on 2026-10-27; Supermicro's separate October 26 advisory names CVE-2026-16521.
 
-**CVE-2026-18450 — Supermicro CVSS 3.1: 9.8 Critical (AC:L); runZero CVSS 3.1: 8.1 High (AC:H, a live session ID is needed). CVE-2026-65220 8.8, CVE-2026-18449 7.5, CVE-2026-65219 7.4 and CVE-2026-65211 7.2 are High (Supermicro and runZero agree); CVE-2026-65213 6.6, CVE-2026-65210 4.9 and CVE-2026-18451 3.1 are lower. NVD has not scored them.**
+**CVE-2026-18450 — Supermicro CVSS 3.1: 9.8 Critical (AC:L); runZero CVSS 3.1: 8.1 High (AC:H, a live session ID is needed). CVE-2026-65220 8.8, CVE-2026-18449 7.5, CVE-2026-65219 7.4, CVE-2026-65211 7.2 and CVE-2026-16521 7.2 are High; Supermicro and runZero agree on the first four. CVE-2026-65213 6.6, CVE-2026-65210 4.9 and CVE-2026-18451 3.1 are lower. NVD has not scored them.**
 
-**CISA KEV:** Not listed (catalog 2026.10.27, checked 2026-10-28). Supermicro says it is "not aware of any malicious use of these vulnerabilities in the wild", and runZero reports no exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Supermicro says it is "not aware of any malicious use of these vulnerabilities in the wild", and runZero reports no exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -485,7 +554,7 @@ Sources: [WolfVision CVE-2026-59106](https://wolfvision.com/de/security/cve-2026
 | **Public announcement**: runZero "Lights Out" update and advisories | 2026-10-26 09:00 EDT (13:00 UTC) | Covers eight Supermicro CVEs. The Dell and Avocent issues in the same update are outside this entry. |
 | Supermicro advisory v1.0 | 2026-10-26 (time/TZ unknown) | Fixed BMC firmware listed per board for 402 SKUs. Two SKUs are "TBD"; X9/X10 are not listed. |
 | CVE records published | 2026-10-27; time/TZ unknown | All eight previously reserved records became public. |
-| **Last updated** | **2026-10-28 08:01 EDT (UTC−04:00)** | Corrected CVE-record publication status. |
+| **Last updated** | **2026-10-29 08:03 EDT (UTC−04:00)** | Added Supermicro's separate High syslog command-injection advisory and its distinct firmware table. |
 
 runZero found that Supermicro BMC firmware fails in several places in IPMI-over-LAN (RMCP+, UDP 623) session setup:
 
@@ -500,11 +569,11 @@ From Administrator, OEM commands read BMC files and stored credentials (CVE-2026
 
 **Exploitation:** none reported by Supermicro or runZero. runZero's advisories publish detailed packet-level reproduction steps, so treat UDP 623 exposure as urgent.
 
-**Am I impacted?** Check each Supermicro board model (`dmidecode -t baseboard`) and its full BMC firmware version (web UI or Redfish), and compare them with [Supermicro's per-board table](https://www.supermicro.com/en/support/security_BMC_IPMI_Oct_2026_1), summarized by family in the [detail guide](details/supermicro-bmc.md#fixed-firmware-by-board-family). Risk is highest where UDP 623 is reachable from user or production networks or the internet, including through the shared host NIC on the default "Failover" LAN setting. It is also higher where SMCRAKP is enabled or low-privilege IPMI accounts exist.
+**Am I impacted?** Check each Supermicro board model (`dmidecode -t baseboard`) and its full BMC firmware version (web UI or Redfish), and compare them with both [Supermicro per-board tables](https://www.supermicro.com/en/support/security_BMC_IPMI_Oct_2026_1) and [the separate CVE-2026-16521 advisory](https://www.supermicro.com/en/support/security_BMC_IPMI_Oct_2026_2), summarized by family in the [detail guide](details/supermicro-bmc.md#fixed-firmware-by-board-family). Risk is highest where UDP 623 is reachable from user or production networks or the internet, including through the shared host NIC on the default "Failover" LAN setting. It is also higher where SMCRAKP is enabled or low-privilege IPMI accounts exist.
 
-**Patch:** Update the BMC firmware to the version in Supermicro's table for your exact board. Fixes vary per SKU, for example X11 01.74.26/03.75.35/03.78.08 and H11 01.52.26. Turn System Lockdown off for the update. **X12DGU and X13SEW-TF-OS1 are "TBD", and X9/X10 have no listed fix.** Whatever your patch status, put BMCs on an isolated management network, and disable the IPMI LAN port (UDP 623) where it is unused; that also disables Serial-over-LAN and LAN-based IPMI tools. Also disable SMCRAKP and remove unneeded IPMI accounts.
+**Patch:** Update BMC firmware to the higher applicable version from Supermicro's two advisory tables for your exact board. This now includes CVE-2026-16521, a High syslog command injection that can execute an administrator-supplied payload when the related service restarts. Turn System Lockdown off for the update. **X12DGU and X13SEW-TF-OS1 are "TBD", and X9/X10 have no listed fix in the original advisory.** Whatever your patch status, put BMCs on an isolated management network, and disable the IPMI LAN port (UDP 623) where it is unused; that also disables Serial-over-LAN and LAN-based IPMI tools. Also disable SMCRAKP and remove unneeded IPMI accounts.
 
-Sources: [Supermicro advisory](https://www.supermicro.com/en/support/security_BMC_IPMI_Oct_2026_1), [runZero "Lights Out" blog](https://www.runzero.com/blog/lights-out-exposed/), [runZero advisory CVE-2026-18450](https://www.runzero.com/advisories/smc-ipmi-auth-bypass-cve-2026-18450/) (other CVEs linked from the [detail guide](details/supermicro-bmc.md#sources)), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [Supermicro advisory 1](https://www.supermicro.com/en/support/security_BMC_IPMI_Oct_2026_1), [Supermicro advisory 2](https://www.supermicro.com/en/support/security_BMC_IPMI_Oct_2026_2), [runZero "Lights Out" blog](https://www.runzero.com/blog/lights-out-exposed/), [runZero advisory CVE-2026-18450](https://www.runzero.com/advisories/smc-ipmi-auth-bypass-cve-2026-18450/) (other CVEs linked from the [detail guide](details/supermicro-bmc.md#sources)), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## GitHub Actions: Gheist - stolen tokens plant secret-dumping workflows
 

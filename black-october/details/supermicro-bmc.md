@@ -1,10 +1,10 @@
 # Supermicro BMC firmware: IPMI and RMCP+ session flaws can lead to BMC administrator access
 
-**Last updated:** 2026-10-28 (America/New_York)
+**Last updated:** 2026-10-29 (America/New_York)
 
 [Main Supermicro BMC summary](../black-october-2026.md#supermicro-bmc-firmware-ipmi-and-rmcp-session-flaws-can-lead-to-bmc-administrator-access) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**Eight CVEs in Supermicro baseboard management controller (BMC) firmware, reported by runZero. The top issue, [CVE-2026-18450](https://www.cve.org/CVERecord?id=CVE-2026-18450), is Critical 9.8 according to Supermicro but High 8.1 according to runZero. Four more are High. None is in CISA KEV.** Supermicro's advisory of 2026-10-26 lists the CVEs with CVSS 3.1 scores and lists fixed BMC firmware for 402 board SKUs. Two SKUs show the fix as "TBD", and the table lists no X9 or X10 boards, although runZero observed some of the flaws on X9 and X10. All eight CVE records were published on 2026-10-27; their NVD enrichment status is not a substitute for Supermicro's vendor scoring or fixed-firmware table. [Supermicro][smc] [runZero blog][blog]
+**Eight CVEs in Supermicro baseboard management controller (BMC) firmware, reported by runZero, plus a separate Supermicro advisory containing [CVE-2026-16521](https://www.cve.org/CVERecord?id=CVE-2026-16521). The top runZero issue, [CVE-2026-18450](https://www.cve.org/CVERecord?id=CVE-2026-18450), is Critical 9.8 according to Supermicro but High 8.1 according to runZero. CVE-2026-16521 is Supermicro CVSS 3.1 7.2 High command injection in the syslog feature that requires high privileges and executes a supplied command when the related service restarts. None is in CISA KEV.** Supermicro's two October 26 advisories list fixed BMC firmware per board SKU. The first lists 402 SKUs with two "TBD" fixes; the second has its own larger table, including X12DGU as TBD. The tables are the authority for the specific advisory/board combination. Supermicro says it is not aware of malicious use for either disclosure. [Supermicro advisory 1][smc] [Supermicro advisory 2][smc2] [runZero blog][blog]
 
 The two sources agree on every score except CVE-2026-18450:
 
@@ -21,7 +21,7 @@ The two sources agree on every score except CVE-2026-18450:
 
 **Worst case:** the flaws chain. An attacker who can reach UDP 623 and holds any low-privilege IPMI account can become Administrator (CVE-2026-65220). Where SMCRAKP is enabled, the account password is not needed at all (CVE-2026-18449). From Administrator, the attacker can then read BMC files and credentials (CVE-2026-65210) or write BMC memory for persistent control (CVE-2026-65211, X13) or root command execution (CVE-2026-65213, X14). BMC control includes power, boot, console, virtual media and user administration for the host. runZero notes that these OEM paths depend on compatible firmware. Supermicro's advisory does not map each CVE to individual boards. runZero found the issues "with the help of AI tools" and confirmed them on the hardware and firmware named above. Its blog separately lists other leads it could **not** reproduce on real hardware. This guide does not treat those as vulnerabilities.
 
-**CISA KEV:** Not listed (catalog 2026.10.27, checked 2026-10-28). Supermicro says it "is not aware of any malicious use of these vulnerabilities in the wild", and runZero reports no exploitation; runZero's public advisories include enough protocol detail to reproduce several issues. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Supermicro says it "is not aware of any malicious use of these vulnerabilities in the wild", and runZero reports no exploitation; runZero's public advisories include enough protocol detail to reproduce several issues. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means)
 
 ## Table of contents
 
@@ -47,8 +47,9 @@ The two sources agree on every score except CVE-2026-18450:
 | CVE record management transferred to Supermicro | 2026-10-23 (time/TZ unknown) | For CVE-2026-65210, -65211, -65213, -65219 and -65220 (runZero timelines) |
 | **Public announcement**: runZero "Lights Out" update and advisories | 2026-10-26 09:00 EDT (13:00 UTC) | Blog update and each advisory are stamped "Updated October 26, 2026, 9:00am EDT". The advisory page metadata shows `2026-10-26T09:00:00-04:00`. [Blog][blog] |
 | Supermicro advisory, version 1.0 "First issuance" | 2026-10-26 (time/TZ unknown) | Lists fixed BMC firmware per board, with two SKUs "TBD". Supermicro says it "is currently testing and validating affected products", so confirm availability on each board's download page. [Supermicro][smc] |
+| Separate Supermicro BMC advisory (2), version 1.0 | 2026-10-26 (time/TZ unknown) | Adds CVE-2026-16521, a High syslog command-injection flaw, and a distinct per-board fixed-firmware table. [Supermicro advisory 2][smc2] |
 | CVE records published | 2026-10-27; time/TZ unknown | All eight CVE.org records are now published. [CVE-2026-18450][cve18450] |
-| CISA KEV | Not listed as of catalog 2026.10.27 (checked 2026-10-28) | [KEV JSON][kev] |
+| CISA KEV | Not listed as of catalog 2026.10.28 (checked 2026-10-29) | [KEV JSON][kev] |
 
 ## Detection
 
@@ -56,7 +57,7 @@ The two sources agree on every score except CVE-2026-18450:
 
 1. Find every Supermicro server, blade, multi-node, edge system, switch (SSE-) and chassis management module (CMM). Your asset system may record only the chassis model, so get the **motherboard model** too. From the host OS, `sudo dmidecode -t baseboard` reports the board's "Product Name" (read-only). The BMC web dashboard also shows the board model and the BMC firmware version. [X13/H13/B13 BMC manual][manual]
 2. Read the full BMC firmware version from the web UI dashboard (or Component Info), or with an authenticated Redfish GET of `/redfish/v1/Managers/1` (the standard `FirmwareVersion` property). From the host, `sudo ipmitool mc info` shows a "Firmware Revision" through the local in-band interface. That value may show only major.minor (for example `1.74`), which is not enough to compare against fixes such as 01.74.26. These commands only read; this guide did not run them against real hardware.
-3. Compare each board with the [fixed-firmware summary below](#fixed-firmware-by-board-family). Then look up the exact SKU in [Supermicro's advisory table][smc], which is the authority.
+3. Compare each board with the [fixed-firmware summary below](#fixed-firmware-by-board-family). Then look up the exact SKU in both [Supermicro advisory tables][smc] [and][smc2]; each is authoritative for the CVEs it covers.
 4. Treat as **not fixed**: any board whose version is below its row; the two "TBD" SKUs; and any board absent from the table. That includes X9 and X10, which runZero observed as affected by CVE-2026-18450 (X9, X10), CVE-2026-18449 (X10) and CVE-2026-65220 (X10DSC+).
 
 ### Fixed firmware by board family
@@ -105,7 +106,7 @@ Supermicro and runZero published **no IoCs**. Treat the following as hunting ide
 
 ## Remediation
 
-1. **Update BMC firmware** to at least the version in Supermicro's table for your exact board, using the firmware on that board's Supermicro download page and its release notes. Supermicro says "all affected Supermicro motherboard SKUs will require a BMC update", and also that it is still testing and validating products. If the listed version is not yet downloadable, contact Supermicro support. You can update through the BMC web UI (Maintenance → Firmware Management) or Supermicro Update Manager (`sum ... -c UpdateBmc`). **System Lockdown blocks firmware updates**, so it must be turned off for the update and back on afterwards. The BMC restarts, which interrupts remote console and monitoring but not the host OS. Back up the BMC configuration first, and update only from images you downloaded from Supermicro. [Supermicro][smc] [Manual][manual]
+1. **Update BMC firmware** to at least the version in Supermicro's applicable table for your exact board, using the firmware on that board's Supermicro download page and its release notes. Apply the higher applicable target when a board is in both [advisory 1][smc] and [advisory 2][smc2]. Supermicro says all affected motherboard SKUs require a BMC update and that it is still testing and validating products. If the listed version is not yet downloadable, contact Supermicro support. You can update through the BMC web UI (Maintenance → Firmware Management) or Supermicro Update Manager (`sum ... -c UpdateBmc`). **System Lockdown blocks firmware updates**, so it must be turned off for the update and back on afterwards. The BMC restarts, which interrupts remote console and monitoring but not the host OS. Back up the BMC configuration first, and update only from images you downloaded from Supermicro. [Manual][manual]
 2. **Isolate BMC networks now**, whatever your patch status. Put BMCs on a dedicated management VLAN or network that only jump hosts and management servers can reach, never on the internet. Set the LAN selection to **Dedicated** where a dedicated port exists, so the BMC cannot fail over onto a shared production NIC. Use the BMC's **IP Access Control** to accept only management addresses. Block UDP 623 at network boundaries, over IPv6 too. [Best practices][bp]
 3. **Disable IPMI over LAN where you do not use it**: Configuration → Network → Port → IPMI LAN Port (UDP 623). This removes the network path for every RMCP+ issue here. It also disables **Serial-over-LAN**, and it breaks tools that talk IPMI over the network: `ipmitool -I lanplus`, IPMIView, SUM or SSM in IPMI mode, and IPMI-based monitoring. The web UI and Redfish keep working. Test this on one unit first. [Manual][manual]
 4. **Reduce the remaining preconditions until patched:**
@@ -132,7 +133,8 @@ Supermicro and runZero published **no IoCs**. Treat the following as hunting ide
 
 ## Sources
 
-- [Supermicro advisory, BMC firmware, October 26, 2026 (1)][smc] — CVE list, Supermicro CVSS 3.1 scores and vectors, the per-board fixed-firmware table (402 SKUs, two TBD), the remediation statement, "not aware of any malicious use", and version 1.0 dated 2026-10-26.
+- [Supermicro advisory, BMC firmware, October 26, 2026 (1)][smc] — runZero CVE list, Supermicro CVSS 3.1 scores and vectors, fixed-firmware table, remediation statement and no-known-malicious-use statement.
+- [Supermicro advisory, BMC firmware, October 26, 2026 (2)][smc2] — CVE-2026-16521 High syslog command injection, its distinct fixed-firmware table, remediation statement and no-known-malicious-use statement.
 - [runZero, "Lights Out: The server in your server, exposed and disclosed"][blog] — 2026-10-26 09:00 EDT update. Covers the chaining summary, runZero's 8.1 rating for CVE-2026-18450, findings it could not reproduce and functionality Supermicro calls intended, and detection guidance.
 - runZero advisories: [CVE-2026-18450][a18450], [CVE-2026-18449][a18449], [CVE-2026-65219][a65219], [CVE-2026-65220][a65220], [CVE-2026-65210][a65210], [CVE-2026-65211][a65211], [CVE-2026-65213][a65213], [CVE-2026-18451][a18451] — vectors, affected firmware observed, preconditions and timelines.
 - [Published Supermicro CVE records][cve18450] (all eight) and [NVD API][nvd] — record publication status and vendor/CNA attribution; use Supermicro's advisory for its fixed-firmware table.
@@ -141,6 +143,7 @@ Supermicro and runZero published **no IoCs**. Treat the following as hunting ide
 - [runZero oobscan][oobscan] — active scanning tool. It was not reviewed in depth or run for this guide.
 
 [smc]: https://www.supermicro.com/en/support/security_BMC_IPMI_Oct_2026_1
+[smc2]: https://www.supermicro.com/en/support/security_BMC_IPMI_Oct_2026_2
 [blog]: https://www.runzero.com/blog/lights-out-exposed/
 [adv]: https://www.runzero.com/advisories
 [a18450]: https://www.runzero.com/advisories/smc-ipmi-auth-bypass-cve-2026-18450/
