@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-29 00:03 EDT (UTC−04:00) — Adobe Critical updates and eMudhra Windows response
+
+- **Adobe Campaign Classic:** Update fully on-premise and hybrid components to [7.4.4 build 9403](black-october/details/adobe-campaign-classic.md#remediation), then restart `nlserver`. Adobe fixed eight Critical CVEs in build 9402 and earlier; Adobe-hosted instances were remediated by Adobe.
+- **Adobe Connect:** Update Desktop to [the platform-specific fixed release and Android Mobile to 4.5](black-october/details/adobe-connect.md#remediation) for the Critical code-injection CVE-2026-48360, then relaunch the desktop client.
+- **eMudhra / emSign:** Apply the [Microsoft Windows and Edge trust updates](black-october/details/emudhra.md#net--c) where applicable, but continue to inventory Linux, custom and bundled stores separately. eMudhra says Sectigo replacements are available; do not infer universal protection from a platform update.
+
 ## 2026-10-28 16:00 EDT (UTC−04:00) — Chrome and EDK II Critical disclosures
 
 - **Chrome 156:** Update desktop Chrome to [Google's fixed builds](black-october/details/chrome-156.md#remediation) and relaunch. Google lists four Critical vulnerabilities: CVE-2026-118306, CVE-2026-118331, CVE-2026-118344 and CVE-2026-118348.

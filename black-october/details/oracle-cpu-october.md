@@ -186,7 +186,7 @@ The October CPU does **not** fix CVE-2026-35273. It was fixed by Oracle's 2026-0
 
 ## Sources
 
-- [Oracle Critical Patch Update Advisory, October 2026][cpu] (Rev 1, 2026-10-20) — counts, risk matrices (rows, scores, vectors, protocols, versions), credits, "also addresses" lists, client-only note, workarounds text and the monthly release schedule. Also the [text form][verbose] and [CSAF][csaf], plus the matrix anchors for [Fusion Middleware][fmw], [EBS][ebs], [JD Edwards][jde], [Database][db], [MySQL][mysql] and [PeopleSoft][ps].
+- [Oracle Critical Patch Update Advisory, October 2026][cpu] (Rev 2, 2026-10-26) — counts, risk matrices (rows, scores, vectors, protocols, versions), credits, "also addresses" lists, client-only note, workarounds text and the monthly release schedule. Also the [text form][verbose] and [CSAF][csaf], plus the matrix anchors for [Fusion Middleware][fmw], [EBS][ebs], [JD Edwards][jde], [Database][db], [MySQL][mysql] and [PeopleSoft][ps].
 - CVE records (Oracle CNA, with CISA ADP): [CVE-2026-87337][cve-87337], [CVE-2026-101767][cve-101767], and the same API for the other Oracle-assigned CVEs. Upstream records: [CVE-2026-75803][cve-75803] (OpenSSL), [CVE-2025-15467][cve-15467] (OpenSSL, with CISA and Red Hat ADP scores), [CVE-2026-9547][cve-9547] (curl) and [CVE-2026-33466][cve-33466] (Elastic). NVD: [CVE-2026-91323][nvd-91323] (status and source of scores).
 - Upstream severity: [OpenSSL advisory 2026-08-25][ossl-0825] (CVE-2026-75803, Low), [OpenSSL advisory 2026-01-27][ossl-0127] (CVE-2025-15467, High), [curl CVE-2026-9547][curl-9547] (Low), [Elastic ESA-2026-29][esa] (Logstash fixes).
 - [Horizon3.ai: CVE-2026-101767][h3] — root cause, TCF servlet, mitigations, indicators, and the 2026-07-24 report date.

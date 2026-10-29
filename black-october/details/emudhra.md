@@ -1,6 +1,6 @@
 # eMudhra / emSign: compromised intermediate CA keys
 
-**Last updated:** 2026-10-27 (America/New_York)
+**Last updated:** 2026-10-29 (America/New_York)
 
 [Back to eMudhra summary](../black-october-2026.md#emudhra--emsign) · [Changelog](../../CHANGELOG.md)
 
@@ -64,6 +64,8 @@ Times below are UTC where specified; release dates without times follow the publ
 | 2026-10-24 14:15:14 UTC; updated 2026-10-27 00:36:07 UTC | [CVE-2026-115557](https://cveawg.mitre.org/api/cve/CVE-2026-115557) published by the PSF CNA: CVSS 4.0 **9.4 Critical** (`AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`). The updated record now gives branch-specific affected ranges ending before the released fixed versions. |
 | 2026-10-26 | CPython released `ssl` key-blocking fixes in **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**. These are separate from earlier pip/certifi bundle updates. |
 | 2026-10-27 morning PDT (**expected**) | Google expects Chrome Root Store removal of `emSign ECC Root CA - G3` to reach devices relying on that store, with prerelease channels earlier. This is a forecast, **not a completed rollout** as of this guide's update. |
+| 2026-10-26 | Microsoft released an out-of-band Windows update that removes seven affected certificates; its blog says Edge followed with a Certificate Trust List update on 2026-10-27. This is a Windows/Edge response, not evidence that Linux, custom or bundled stores are protected. [Microsoft][msrc-response] |
+| 2026-10-28 | eMudhra Update 6 says about 30,800 affected G3 certificates belong to one U.S. client ecosystem, G1 remains active, and Sectigo replacement certificates are available. This vendor statement does not establish universal client protection. [eMudhra Update 6][emudhra-update-6] |
 
 **Corrections and limits:** The current eMudhra statement now says notification October 17 and revocation October 18; older October 18/19 dates were challenged in Bugzilla comment 35. The precise correction time is not published. Its shorthand “eight TLS” must not replace Mozilla's six-TLS/two-code-signing inventory. The wrap/unwrap explanation remains preliminary, not proof of an HSM hardware defect.
 
@@ -137,7 +139,7 @@ The paths and APIs below locate candidate trust sources; they are **not universa
 
 - **Trust source:** the usual .NET X.509 path uses platform facilities: Windows certificate stores, Linux OpenSSL root locations, and Apple's trust settings on macOS. Microsoft's [cross-platform cryptography documentation](https://learn.microsoft.com/en-us/dotnet/standard/security/cross-platform-cryptography) describes the differences, including Linux `SSL_CERT_FILE`/`SSL_CERT_DIR` and fallback paths. Inventory the account-specific as well as machine store where applicable.
 - **Overrides:** review `X509ChainPolicy.CustomTrustStore`/`TrustMode`, `ServerCertificateCustomValidationCallback`, `RemoteCertificateValidationCallback`, custom handlers, and NuGet/native dependencies with their own roots (including legacy native gRPC). An `HttpClient` test does not exercise every custom or native verifier.
-- **Remediation:** refresh the actual OS/container trust data and custom stores, not just the SDK on the build host. On Windows, inspect effective disallowed-certificate contents and update policy; a sync timestamp alone does not prove the required entries were received or enforced. [Fleet's guide](https://fleetdm.com/guides/find-and-fix-emudhra-intermediate-ca-exposure) reports the October 20 Microsoft update and supplies investigation leads, but no Microsoft incident-specific primary statement was verified here. Microsoft's documentation explicitly says the .NET **Disallowed store is not used for Linux chain building**: do not transplant a Windows workaround to Linux. No universal .NET fixed-version threshold is asserted.
+- **Remediation:** refresh the actual OS/container trust data and custom stores, not just the SDK on the build host. Microsoft says its October 26 out-of-band Windows update removes seven affected certificates, and Edge received a Certificate Trust List update on October 27; verify the actual Windows/Edge state and do not apply that claim to Linux, custom or bundled stores. On Windows, inspect effective disallowed-certificate contents and update policy; a sync timestamp alone does not prove the required entries were received or enforced. Microsoft's documentation explicitly says the .NET **Disallowed store is not used for Linux chain building**: do not transplant a Windows workaround to Linux. No universal .NET fixed-version threshold is asserted. [Microsoft][msrc-response]
 
 #### Go
 
@@ -241,9 +243,13 @@ In particular, catching every Java `SSLException` (or Ruby SSL error/.NET authen
 - [Mozilla security post, including Android correction](https://blog.mozilla.org/security/2026/10/20/protecting-firefox-users-following-the-compromise-of-emudhra-intermediate-certificates/).
 - [Go security announcement](https://groups.google.com/g/golang-announce/c/66pojueaQek) and [Go release history](https://go.dev/doc/devel/release): mitigation scope and release dates.
 - [eMudhra statement, updated October 26](https://emudhra.com/en/post/certificate-security-incident) and [October 22 TLS-business exit announcement](https://emudhra.com/en/press-release/emudhra-to-exit-global-ssl-tls-certificate-business).
+- [Microsoft response](https://www.microsoft.com/en-us/msrc/blog/2026/10/microsoft-response-to-compromised-emudhra-certificate-authority-keys) and [eMudhra Update 6](https://emudhra.com/en/post/certificate-security-incident) — Windows/Edge response and eMudhra's 2026-10-28 replacement/status update.
 - [Google Chrome/Android response](https://blog.google/security/protecting-chrome-and-android-users-from-compromised-emudhra-intermediate-ca-certificates/) and [Apple support guidance](https://support.apple.com/en-us/149555): delivery dates, CT scope, planned Chrome root removal, and Apple's separate command-line bundle gap.
 - [OpenJDK October 21 advisory](https://openjdk.org/groups/vulnerability/advisories/2026-10-21), [current OpenJDK operations guidance](https://openjdk.org/emudhra), [ops.java](https://ops.java/emudhra), and Oracle's [October 21](https://www.oracle.com/security-alerts/alert-cve-2026-91403.html) / [October 24](https://www.oracle.com/security-alerts/alert-cve-2026-114820.html) alerts: distinguish the initial intermediate block from the subsequent root-removal requirement. [Official checker source](https://cr.openjdk.org/~mr/CheckCerts.java): reviewed for its exact scope, not copied as a universal scanner.
 - [Python packaging guidance](https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576) and [October 26 CPython release announcement](https://discuss.python.org/t/python-3-15-2-3-14-10-3-13-18-3-12-16-and-3-11-18-are-out/109678): independent bundle updates and new runtime key blocking.
 - Runtime, distribution and product-specific sources are linked alongside their claims above. Vendor investigations describe their own observations and tools; they are not independent proof of a reader's deployment state.
 
 Consequential version and remediation claims above were refreshed against public primary advisories on 2026-10-26 rather than copied from the October 24 guide. Exact replacement JDK vendor builds, unlisted OS branches and per-client enforcement remain **unverified here**. These are published findings and response procedures, not a forensic assessment of your systems; final root-cause evidence and universal client protection were unavailable. No customer inventory, private live-test result, or claim of universally completed patch delivery is included.
+
+[msrc-response]: https://www.microsoft.com/en-us/msrc/blog/2026/10/microsoft-response-to-compromised-emudhra-certificate-authority-keys
+[emudhra-update-6]: https://emudhra.com/en/post/certificate-security-incident

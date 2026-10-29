@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Adobe Campaign Classic: eight Critical code-execution and authorization flaws](#adobe-campaign-classic-eight-critical-code-execution-and-authorization-flaws)
+- [Adobe Connect: Critical code injection in desktop and Android clients](#adobe-connect-critical-code-injection-in-desktop-and-android-clients)
 - [Linux kernel: Fragnesia - ESP-in-TCP page-cache overwrite](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite)
 - [Google Chrome 156: Critical browser security fixes](#google-chrome-156-critical-browser-security-fixes)
 - [TianoCore EDK II: PXE pre-boot remote code execution](#tianocore-edk-ii-pxe-pre-boot-remote-code-execution)
@@ -136,6 +138,44 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Adobe Campaign Classic: eight Critical code-execution and authorization flaws
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/adobe-campaign-classic.md):** [Detection](details/adobe-campaign-classic.md#detection) · [Remediation](details/adobe-campaign-classic.md#remediation) · [Verification](details/adobe-campaign-classic.md#verification) · [Timeline](details/adobe-campaign-classic.md#timeline)
+
+**CVEs:** [CVE-2026-104350](https://www.cve.org/CVERecord?id=CVE-2026-104350), [CVE-2026-104351](https://www.cve.org/CVERecord?id=CVE-2026-104351), [CVE-2026-104353](https://www.cve.org/CVERecord?id=CVE-2026-104353), [CVE-2026-104354](https://www.cve.org/CVERecord?id=CVE-2026-104354), [CVE-2026-105489](https://www.cve.org/CVERecord?id=CVE-2026-105489), [CVE-2026-105779](https://www.cve.org/CVERecord?id=CVE-2026-105779), [CVE-2026-105780](https://www.cve.org/CVERecord?id=CVE-2026-105780), [CVE-2026-105781](https://www.cve.org/CVERecord?id=CVE-2026-105781).
+
+**Adobe rates all eight flaws Critical (CVSS 3.1 9.1–9.9).** The affected Campaign Classic v7 components can permit arbitrary code execution, security-feature bypass or privilege escalation. Adobe reports no known exploitation for APSB26-162.
+
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Adobe does not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public bulletin and fixed build | 2026-10-27; time/TZ unknown | Adobe published APSB26-162 for Campaign Classic v7. |
+| **Last updated** | **2026-10-29 00:03 EDT (UTC−04:00)** | Added from Adobe's bulletin and release guidance. |
+
+**Patch:** Update fully on-premise Campaign Classic and on-premise hybrid components from **7.4.4 build 9402 or earlier** to **7.4.4 build 9403**, then restart the Adobe Campaign server (`nlserver`). Adobe-hosted instances have already been remediated. Restrict administration to trusted operators while deploying the update; that restriction does not replace patching.
+
+Sources: [Adobe APSB26-162](https://www.adobe.com/trust/security/products/campaign/apsb26-162.html), [Adobe Campaign Classic release notes](https://experienceleague.adobe.com/en/docs/campaign-classic/using/release-notes/latest-release), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Adobe Connect: Critical code injection in desktop and Android clients
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/adobe-connect.md):** [Detection](details/adobe-connect.md#detection) · [Remediation](details/adobe-connect.md#remediation) · [Verification](details/adobe-connect.md#verification) · [Timeline](details/adobe-connect.md#timeline)
+
+**CVEs:** [CVE-2026-48360](https://www.cve.org/CVERecord?id=CVE-2026-48360).
+
+**Adobe rates CVE-2026-48360 CVSS 3.1 9.6 Critical.** The code-injection flaw can result in arbitrary code execution in Adobe Connect Desktop and Android Mobile clients.
+
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Adobe reports no known exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public bulletin and fixed releases | 2026-10-27; time/TZ unknown | Adobe published APSB26-182. |
+| **Last updated** | **2026-10-29 00:03 EDT (UTC−04:00)** | Added from Adobe's bulletin. |
+
+**Patch:** Update Desktop to **2026.9.61** (Windows), **2026.10.66** (Mac Silicon), or **2026.10.170** (Mac Intel), and Android Mobile to **4.5**. Relaunch Desktop after the supported update; the client version must match its platform-specific fixed target.
+
+Sources: [Adobe APSB26-182](https://www.adobe.com/trust/security/products/connect/apsb26-182.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Linux kernel: Fragnesia - ESP-in-TCP page-cache overwrite
 
@@ -2578,11 +2618,13 @@ Eight intermediate CA private keys were trivially recoverable because of defecti
 | Python CVE published | 2026-10-24 14:15 UTC; updated 2026-10-27 00:36 UTC | CVE-2026-115557, PSF CVSS 4.0 9.4 Critical; the updated record gives branch-specific affected ranges ending before the fixed releases. |
 | CPython key-blocking releases | 2026-10-26; time/TZ unknown | [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557); runtime protection in `ssl`, separate from CA-bundle updates. |
 | Chrome root removal | **Expected** 2026-10-27 morning PDT (UTC−07:00) | Google forecast for Chrome Root Store users; not completed rollout as of this update. |
-| **Last updated** | **2026-10-27 07:01 EDT (UTC−04:00)** | PSF corrected CPython affected ranges for CVE-2026-115557. |
+| Microsoft Windows and Edge response | 2026-10-26 / 2026-10-27; time/TZ unknown | Microsoft's out-of-band Windows update removes seven affected certificates; Edge followed with a Certificate Trust List update. This does not establish protection for other platforms or independently bundled stores. |
+| eMudhra Update 6 | 2026-10-28; time/TZ unknown | eMudhra says about 30,800 affected G3 certificates belong to one U.S. client ecosystem, G1 remains active, and Sectigo replacements are available. |
+| **Last updated** | **2026-10-29 00:03 EDT (UTC−04:00)** | Added Microsoft and eMudhra follow-up status. |
 
 Inventory client trust stores as well as your server certificates: operating-system stores, browsers, Java truststores, Python/application CA bundles, containers, and embedded clients can update independently. Match certificate fingerprints/serials and affected issuer chains against the incident record; a name containing “emSign” is not a precise affected-certificate test. Inspect Go build versions with `sh stack-inventory.sh go /path/to/deployed-binary` and compare with the fixed branches above. Updating the installed Go compiler does not repair existing binaries. For third-party appliances or opaque applications, obtain the vendor's trust-update status. A successful TLS connection is not proof that fraudulent chains are rejected.
 
-The affected keys comprise **six TLS and two code-signing intermediates**, plus cross-signs. Include certificates affected by resulting root distrust, not just compromised issuers. Firefox Android needs **158.0.2 or later** for the follow-up. **CA revocation is not proof that a client enforces the block**; test the effective verifier. The vendor's October 26 statement still promises a full root-cause review.
+The affected keys comprise **six TLS and two code-signing intermediates**, plus cross-signs. Include certificates affected by resulting root distrust, not just compromised issuers. Firefox Android needs **158.0.2 or later** for the follow-up. **CA revocation is not proof that a client enforces the block**; test the effective verifier. Microsoft reports its out-of-band Windows update removes seven affected certificates and Edge received a Certificate Trust List update, but that does not cover Linux, custom or bundled trust stores. eMudhra's October 28 Update 6 says G1 remains active and Sectigo replacements are available; its promised full root-cause review remains incomplete.
 
 **Remediation:** Update each independently managed trust store and replace certificates chaining through distrusted issuers. Rebuild/redeploy Go binaries with **1.27.3 / 1.26.10 or later supported fixes**; updating only the installed compiler leaves old binaries untouched. Review historical certificate and connection evidence when impersonation is suspected; trust updates cannot undo disclosed credentials or data.
 
@@ -2593,7 +2635,7 @@ The affected keys comprise **six TLS and two code-signing intermediates**, plus 
 - **Alternate chains:** removing `emSign ECC Root CA - G3` alone does not block Sectigo cross-signs under **AAA Certificate Services**. Check direct anchors and the vendor's current policy, not only root names. [Trust-path guidance](details/emudhra.md#trust-paths-and-what-each-mitigation-changes) distinguishes intermediate blocks, root removal and revocation.
 - **Certificate owners:** prepare replacement chains before Google's **expected October 27 morning PDT** root removal. Legitimate certificates under the removed root may fail too. [Central controls and CT](details/emudhra.md#central-controls-ct-and-egress-limits) have coverage limits: a WAF, hostname allowlist or absence of CT evidence does not prove outbound TLS safety.
 
-Sources: [Mozilla incident record](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449), [Go security announcement](https://groups.google.com/g/golang-announce/c/66pojueaQek), [vendor statement](https://emudhra.com/en/post/certificate-security-incident). See the detailed guide for per-runtime checks and vendor trust-distribution guidance.
+Sources: [Mozilla incident record](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449), [Go security announcement](https://groups.google.com/g/golang-announce/c/66pojueaQek), [Microsoft response](https://www.microsoft.com/en-us/msrc/blog/2026/10/microsoft-response-to-compromised-emudhra-certificate-authority-keys), and [eMudhra Update 6](https://emudhra.com/en/post/certificate-security-incident). See the detailed guide for per-runtime checks and vendor trust-distribution guidance.
 
 <a name="litellm"></a>
 
