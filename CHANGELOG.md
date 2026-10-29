@@ -4,6 +4,11 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-28 16:00 EDT (UTC−04:00) — Chrome and EDK II Critical disclosures
+
+- **Chrome 156:** Update desktop Chrome to [Google's fixed builds](black-october/details/chrome-156.md#remediation) and relaunch. Google lists four Critical vulnerabilities: CVE-2026-118306, CVE-2026-118331, CVE-2026-118344 and CVE-2026-118348.
+- **TianoCore EDK II:** Isolate PXE provisioning networks and [obtain an OEM firmware update](black-october/details/edk2-pxe.md#remediation) for CVE-2026-97631. The upstream advisory lists a source fix but no patched EDK II release.
+
 ## 2026-10-28 20:04 EDT (UTC−04:00) — Bandit HTTP/2 request-body fix
 
 - **Linux Fragnesia:** CISA added [CVE-2026-46300 to KEV](black-october/details/linux-fragnesia.md#timeline), reporting active exploitation and a PHP2Shell chain to root. Install a vendor-fixed kernel, reboot into it, and investigate suspected compromise.

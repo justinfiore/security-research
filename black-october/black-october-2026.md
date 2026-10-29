@@ -16,6 +16,8 @@ This report covers the major disclosures most relevant to developers and operato
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
 - [Linux kernel: Fragnesia - ESP-in-TCP page-cache overwrite](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite)
+- [Google Chrome 156: Critical browser security fixes](#google-chrome-156-critical-browser-security-fixes)
+- [TianoCore EDK II: PXE pre-boot remote code execution](#tianocore-edk-ii-pxe-pre-boot-remote-code-execution)
 - [Veeam Backup & Replication and Agent for Linux: authorization bypass and local privilege escalation](#veeam-backup--replication-and-agent-for-linux-authorization-bypass-and-local-privilege-escalation)
 - [TeamViewer clients: crafted screen images can execute code](#teamviewer-clients-crafted-screen-images-can-execute-code)
 - [EPICS Base: network request handling can corrupt memory](#epics-base-network-request-handling-can-corrupt-memory)
@@ -153,6 +155,44 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 **Patch:** Install your distribution’s vendor-supported kernel build that explicitly fixes CVE-2026-46300, then reboot into it. Verify the exact vendor build, not only its upstream version; distributions backport independently. Restrict untrusted local code while waiting for a fix, but do not treat that as a replacement for the update.
 
 Sources: [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-46300), [Ubuntu tracker](https://ubuntu.com/security/CVE-2026-46300), [CISA KEV alert](https://www.cisa.gov/news-events/alerts/2026/10/28/cisa-adds-two-known-exploited-vulnerabilities-catalog), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Google Chrome 156: Critical browser security fixes
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/chrome-156.md):** [Detection](details/chrome-156.md#detection) · [Remediation](details/chrome-156.md#remediation) · [Verification](details/chrome-156.md#verification) · [Timeline](details/chrome-156.md#timeline)
+
+**CVEs:** [CVE-2026-118306](https://www.cve.org/CVERecord?id=CVE-2026-118306), [CVE-2026-118331](https://www.cve.org/CVERecord?id=CVE-2026-118331), [CVE-2026-118344](https://www.cve.org/CVERecord?id=CVE-2026-118344), [CVE-2026-118348](https://www.cve.org/CVERecord?id=CVE-2026-118348)
+
+**Google rates these four Chrome 156 flaws Critical.** They affect FileSystem, FileAPI, Layout and Skia; Google restricts further details while users receive updates.
+
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-28). Google does not report active exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Stable release announcement | 2026-10-27; time/TZ unknown | Google announced Chrome 156.0.8078.73 for Linux and 156.0.8078.73/.74 for Windows and macOS. |
+| **Last updated** | **2026-10-28 16:00 EDT (UTC−04:00)** | Added from Google's Chrome release post. |
+
+**Patch:** Update Windows/macOS Chrome to **156.0.8078.73/.74+** and Linux Chrome to **156.0.8078.73+**, then relaunch. Use the supported update channel; Chrome 156 alone does not prove the security update is installed.
+
+Sources: [Google Chrome 156 desktop stable release](https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_0562499947.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## TianoCore EDK II: PXE pre-boot remote code execution
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/edk2-pxe.md):** [Detection](details/edk2-pxe.md#detection) · [Remediation](details/edk2-pxe.md#remediation) · [Verification](details/edk2-pxe.md#verification) · [Timeline](details/edk2-pxe.md#timeline)
+
+**CVEs:** [CVE-2026-97631](https://www.cve.org/CVERecord?id=CVE-2026-97631)
+
+**TianoCore rates CVE-2026-97631 CVSS 4.0 9.5 Critical.** An attacker able to deliver an ICMP error while a system PXE boots can corrupt DXE memory and potentially execute code before Secure Boot measures the operating system.
+
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-28). The advisory does not report active exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public announcement | 2026-10-22; time/TZ unknown | TianoCore published GHSA-99cj-7hg9-mp4m. |
+| **Last updated** | **2026-10-28 16:00 EDT (UTC−04:00)** | Added from TianoCore's advisory. |
+
+**Patch:** Obtain an OEM firmware update incorporating TianoCore's source fix. The advisory still lists no patched EDK II release. Disable unneeded PXE and isolate provisioning networks while awaiting a vendor firmware update; do not flash arbitrary upstream firmware.
+
+Sources: [TianoCore GHSA-99cj-7hg9-mp4m](https://github.com/tianocore/edk2/security/advisories/GHSA-99cj-7hg9-mp4m), [source-fix PR](https://github.com/tianocore/edk2/pull/13302), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Veeam Backup & Replication and Agent for Linux: authorization bypass and local privilege escalation
 
