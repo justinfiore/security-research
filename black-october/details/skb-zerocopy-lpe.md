@@ -1,6 +1,6 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-29 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -46,7 +46,7 @@
 | TuxCare ELS kernel for AlmaLinux 9.2 ESU lists the fix | 2026-10-23 10:36:48 UTC (OSV publication time) | OSV import of TuxCare advisory CLSA-2026-1792751700: `kernel-5.14.0-284.1101.el9_2.tuxcare.11.els17`. Seen only through OSV; not confirmed on a TuxCare advisory page. [OSV][osv] |
 | KernelCare live patch released for EL10 | 2026-10-23 14:59 UTC | Production feed for AlmaLinux, CloudLinux, RHEL, Oracle Linux and Rocky Linux 10, built from the upstream fix candidate and verified against the public PoC. EL9 in review, EL8 in progress, Debian/Ubuntu not started. [CloudLinux][cl] [TuxCare][tux] |
 | AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | `kernel-4.18.0-553.177.2.el8_10`, `kernel-5.14.0-687.59.2.el9_8`, `kernel-6.12.0-211.68.2.el10_2` in `almalinux-testing`, backported ahead of RHEL. Not yet in production repositories at the time. [AlmaLinux][alma] |
-| AlmaLinux 8 production kernel | 2026-10-25 14:54 (repository listing; TZ not shown) | `kernel-4.18.0-553.178.1.el8_10` in BaseOS; its RPM changelog includes "net: skbuff: propagate shared-frag marker in skb_zerocopy()". `553.179.1` followed on 2026-10-26. AlmaLinux 9 and 10 production kernels do not carry the fix yet. [AlmaLinux repository][almarepo] |
+| AlmaLinux production kernels | 2026-10-28; time/TZ unknown | The fix reached regular production repositories for AlmaLinux 8 (`kernel-4.18.0-553.178.1.el8_10`), 9 (`kernel-5.14.0-687.60.1.el9_8`), and 10 (`kernel-6.12.0-211.69.1.el10_2`). [AlmaLinux][alma] |
 | Fix committed to the netdev `net` tree | 2026-10-23 19:41:58 UTC (15:41:58 EDT) | Commit `79dc34beb1fd` by Jakub Kicinski, with `Reviewed-by: Eric Dumazet` and `Cc: stable@kernel.org`. A maintainer tree, not a released kernel. [Fix commit][commit] |
 | Red Hat bulletin | 2026-10-24 18:31 (TZ not stated) | RHSB-2026-014: "Potentially Affected", Important; says upstream patches are not yet available and no CVEs are assigned. No RHEL fix. [Red Hat][rh] |
 | CloudLinux 7 hybrid and 8 beta kernels | 2026-10-26 09:11 UTC | `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`, beta and rolling out. [CloudLinux][cl] |
@@ -73,7 +73,7 @@ Affected status by distribution, as reported (not a complete matrix):
 ### Kernel build and fix status
 
 1. Record the **running** kernel with `uname -r`, and the installed packages with `rpm -q kernel` or `dpkg -l 'linux-image*'`. A newer installed package does not help until the host reboots into it.
-2. Compare against a vendor build that explicitly includes "net: skbuff: propagate shared-frag marker in skb_zerocopy()" or names ZDI-CAN-33367. Known builds as of 2026-10-26 are listed under [Fixed kernels and live patches](#fixed-kernels-and-live-patches).
+2. Compare against a vendor build that explicitly includes "net: skbuff: propagate shared-frag marker in skb_zerocopy()" or names ZDI-CAN-33367. Known builds as of 2026-10-29 are listed under [Fixed kernels and live patches](#fixed-kernels-and-live-patches).
 3. Do not accept a CVE-2026-43284, [CVE-2026-46300](https://www.cve.org/CVERecord?id=CVE-2026-46300) ("Fragnesia"), [CVE-2026-43503](https://www.cve.org/CVERecord?id=CVE-2026-43503) or CVE-2026-90049 fix as coverage. Those are different paths. Vulnerability scanners keyed on CVE IDs will not report this issue until a CVE exists. [Sysdig][sysdig] [TuxCare][tux]
 4. With KernelCare, run `kcarectl --patch-info | grep -i 33367`. CloudLinux warns that `kcarectl --info` returns nothing for a specific issue even on a patched server. [CloudLinux][cl]
 
@@ -110,13 +110,13 @@ The existing [Linux inventory script](../linux-service-inventory.sh) checks only
 
 ### Fixed kernels and live patches
 
-The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FRAG` to the destination buffer. It is in the netdev `net` tree as `79dc34beb1fd`, marked for stable, but **not in mainline or any kernel.org release** as of 2026-10-26. Use vendor builds; do not apply maintainer-tree commits to production kernels yourself. [Fix commit][commit] [kernel.org releases][releases]
+The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FRAG` to the destination buffer. It is in the netdev `net` tree as `79dc34beb1fd`, marked for stable, but **not in mainline or any kernel.org release** as of 2026-10-29. Use vendor builds; do not apply maintainer-tree commits to production kernels yourself. [Fix commit][commit] [kernel.org releases][releases]
 
-| Distribution / product | Fixed build or status (as of 2026-10-26) | Channel | Source |
+| Distribution / product | Fixed build or status (as of 2026-10-29) | Channel | Source |
 |---|---|---|---|
-| AlmaLinux 8 | `kernel-4.18.0-553.178.1.el8_10` or later in production (testing `553.177.2` also carries the fix) | Production BaseOS since 2026-10-25; established from the repository and RPM changelog, no AlmaLinux announcement found | [AlmaLinux repository][almarepo] [AlmaLinux][alma] |
-| AlmaLinux 9 | `kernel-5.14.0-687.59.2.el9_8` or later | `almalinux-testing` only | [AlmaLinux][alma] |
-| AlmaLinux 10 | `kernel-6.12.0-211.68.2.el10_2` or later | `almalinux-testing` only | [AlmaLinux][alma] |
+| AlmaLinux 8 | `kernel-4.18.0-553.178.1.el8_10` or later | Production repository | [AlmaLinux][alma] |
+| AlmaLinux 9 | `kernel-5.14.0-687.60.1.el9_8` or later | Production repository | [AlmaLinux][alma] |
+| AlmaLinux 10 | `kernel-6.12.0-211.69.1.el10_2` or later | Production repository | [AlmaLinux][alma] |
 | AlmaLinux Kitten 10 | Next regular kernel update; no separate build | — | [AlmaLinux][alma] |
 | CloudLinux 7 hybrid | `kernel-4.18.0-553.177.1.lve.1.el7h` | Beta (`cl7h_beta`), rolling out | [CloudLinux][cl] |
 | CloudLinux 8 | `kernel-4.18.0-553.177.1.lve.1.el8` | Beta (`cloudlinux-updates-testing`), rolling out | [CloudLinux][cl] |
@@ -127,7 +127,7 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | RHEL | No fix; "Potentially Affected", Important | — | [Red Hat][rh] |
 | Debian, Ubuntu | No advisory, tracker entry or fixed kernel found | — | — |
 
-- Install the fixed kernel and **reboot into it**. A testing or beta kernel is not production-supported: AlmaLinux recommends disabling `almalinux-testing` again after the reboot (`dnf config-manager --disable almalinux-testing`). [AlmaLinux][alma]
+- Install the fixed kernel and **reboot into it**. AlmaLinux's original testing builds are superseded by regular production updates; disable `almalinux-testing` again if it was enabled for this issue (`dnf config-manager --disable almalinux-testing`). [AlmaLinux][alma]
 - Keep the previous kernel as a boot fallback; if you roll back, reapply the temporary mitigations below before returning the host to service.
 - A live patch counts only when the vendor states coverage for this issue and `kcarectl --patch-info` shows it applied.
 

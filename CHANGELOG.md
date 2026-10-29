@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-29 04:03 EDT (UTC−04:00) — Tabularis MCP SQL injection and AlmaLinux kernel fixes
+
+- **Tabularis:** Upgrade to [0.28.0 or later](black-october/details/tabularis.md#remediation). CVE-2026-118378 can let attacker-influenced MCP tool calls modify or delete SQLite data despite Tabularis read-only mode and write approval.
+- **Linux skb_zerocopy:** AlmaLinux 9 and 10 now have [production fixed kernels](black-october/details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches): `5.14.0-687.60.1.el9_8` and `6.12.0-211.69.1.el10_2`. Install the appropriate vendor kernel and reboot; the Dirty Frag fix alone does not cover this local root path.
+- **Railway:** [Recovery remains in monitoring](black-october/details/railway.md#timeline) and new signups remain paused. Continue issuer-side secret rotation and verify platform recovery before placing replacement secrets there.
+
 ## 2026-10-29 00:03 EDT (UTC−04:00) — Adobe Critical updates and eMudhra Windows response
 
 - **Adobe Campaign Classic:** Update fully on-premise and hybrid components to [7.4.4 build 9403](black-october/details/adobe-campaign-classic.md#remediation), then restart `nlserver`. Adobe fixed eight Critical CVEs in build 9402 and earlier; Adobe-hosted instances were remediated by Adobe.

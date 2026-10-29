@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Tabularis: MCP SQLite read-only bypass through SQL injection](#tabularis-mcp-sqlite-read-only-bypass-through-sql-injection)
 - [Adobe Campaign Classic: eight Critical code-execution and authorization flaws](#adobe-campaign-classic-eight-critical-code-execution-and-authorization-flaws)
 - [Adobe Connect: Critical code injection in desktop and Android clients](#adobe-connect-critical-code-injection-in-desktop-and-android-clients)
 - [Linux kernel: Fragnesia - ESP-in-TCP page-cache overwrite](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite)
@@ -138,6 +139,26 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Tabularis: MCP SQLite read-only bypass through SQL injection
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/tabularis.md):** [Detection](details/tabularis.md#detection) · [Remediation](details/tabularis.md#remediation) · [Verification](details/tabularis.md#verification) · [Timeline](details/tabularis.md#timeline)
+
+**CVEs:** [CVE-2026-118378](https://www.cve.org/CVERecord?id=CVE-2026-118378)
+
+**VulnCheck CNA rates CVE-2026-118378 CVSS 4.0 8.5 High; the vendor advisory rates it CVSS 3.1 7.8 High.** Tabularis's SQLite MCP `describe_table` path can execute stacked statements from an attacker-influenced table name, bypassing the product's MCP read-only mode and write-approval controls.
+
+**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). The vendor advisory and CNA record do not report active exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public advisory and CVE publication | 2026-10-28; time/TZ unknown | VulnCheck published CVE-2026-118378; the upstream GitHub advisory identifies the SQLite MCP path and fixed release. |
+| Fixed release | 2026-10-28; time/TZ unknown | Tabularis 0.28.0 includes the vendor's patch. |
+| **Last updated** | **2026-10-29 04:03 EDT (UTC−04:00)** | Added from the upstream advisory, release notes and CNA record. |
+
+**Patch:** Upgrade Tabularis to **0.28.0 or later**. Until every SQLite MCP server is updated, do not expose databases whose contents or integrity matter to MCP clients processing untrusted content; remove or disable that MCP connection where the product supports it. Read-only mode and write approval are not effective compensating controls for this path.
+
+Sources: [Tabularis GHSA-xrx3-j98v-67x9](https://github.com/TabularisDB/tabularis/security/advisories/GHSA-xrx3-j98v-67x9), [CVE-2026-118378](https://www.cve.org/CVERecord?id=CVE-2026-118378), [Tabularis 0.28.0 release](https://github.com/TabularisDB/tabularis/releases/tag/v0.28.0), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Adobe Campaign Classic: eight Critical code-execution and authorization flaws
 
@@ -934,11 +955,11 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | Fix posted to netdev | 2026-10-22 10:42 UTC | v2 patch, copied to stable. |
 | KernelCare live patch (EL10) | 2026-10-23 14:59 UTC | AlmaLinux, CloudLinux, RHEL, Oracle Linux, Rocky Linux 10; EL9/EL8 pending. |
 | AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | AlmaLinux 8, 9, 10 in `almalinux-testing`. |
-| AlmaLinux 8 production kernel | 2026-10-25 14:54 (repository listing; TZ not shown) | `kernel-4.18.0-553.178.1.el8_10`; AlmaLinux 9/10 production not yet fixed. |
+| AlmaLinux production kernels | 2026-10-28; time/TZ unknown | The fix reached regular production repositories: `4.18.0-553.178.1.el8_10` (8), `5.14.0-687.60.1.el9_8` (9), and `6.12.0-211.69.1.el10_2` (10). |
 | Fix in netdev `net` tree | 2026-10-23 19:41 UTC | Commit 79dc34beb1fd, marked for stable; not in mainline. |
 | CloudLinux 7h/8 beta kernels | 2026-10-26 09:11 UTC | Beta, rolling out. |
 | Mainline/stable releases, RHEL fix | None established (as of 2026-10-26) | Newest kernel.org releases predate the fix; Red Hat has no fix. |
-| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | AlmaLinux 8 production kernel. |
+| **Last updated** | **2026-10-29 04:03 EDT (UTC−04:00)** | AlmaLinux 9 and 10 production kernels joined the existing AlmaLinux 8 fix. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -959,7 +980,7 @@ for m in esp4 esp6 nlmon act_pedit; do modprobe -n -v "$m"; done
 
 A non-zero `user.max_user_namespaces` means ordinary users can take the exploit's first step. Ubuntu's `kernel.apparmor_restrict_unprivileged_userns` does not stop the public PoC. An empty `lsmod` result does not mean the modules are unavailable: they load on demand. A process that already holds network-admin rights, such as root in a privileged container, does not need user namespaces. Vulnerability scanners keyed on CVE IDs will not flag this issue. See [exposure checks](details/skb-zerocopy-lpe.md#read-only-exposure-checks) and [indicators and evidence limits](details/skb-zerocopy-lpe.md#indicators-and-evidence-limits).
 
-**Patch:** No mainline, stable or RHEL kernel contains the fix yet. Known vendor builds: AlmaLinux 8 production `kernel-4.18.0-553.178.1.el8_10` (testing `553.177.2`); AlmaLinux testing `kernel-5.14.0-687.59.2.el9_8` and `kernel-6.12.0-211.68.2.el10_2`; CloudLinux beta `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`; KernelCare live patch for EL10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
+**Patch:** No mainline, stable or RHEL kernel contains the fix yet. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10); CloudLinux beta builds and the KernelCare EL10 live patch remain additional options. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
 
 Sources: [ZDI report](https://lore.kernel.org/lkml/BYAPR01MB3830CECF5D0871064C59BA0280662@BYAPR01MB3830.prod.exchangelabs.com/), [fix commit](https://github.com/kernelorg-mirror/linux_kernel_git_netdev_net/commit/79dc34beb1fdb3da79753e51e15c68591a2561fe), [AlmaLinux](https://almalinux.org/blog/2026-10-23-zdi-can-33367/), [CloudLinux](https://blog.cloudlinux.com/zdi-can-33367), [TuxCare](https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/), [Sysdig](https://www.sysdig.com/blog/detecting-and-mitigating-zdi-can-33367-and-five-other-linux-flaws), [Red Hat RHSB-2026-014](https://access.redhat.com/security/vulnerabilities/RHSB-2026-014).
 
@@ -2703,9 +2724,9 @@ Sources: [canonical attack-chain postmortem](https://docs.litellm.ai/blog/securi
 | Deployment/login recovery guides | 2026-10-23 16:30 UTC | Blog RSS. |
 | Higher-risk notifications completed | 2026-10-23 18:57:54 UTC | Does not establish that other workspaces were unaffected. |
 | Replacement-key clarification | 2026-10-24; time/TZ unknown | OpenAI/Anthropic may have revoked replacement keys because Railway could not filter a later key batch by creation date; the notice does not establish replacement-key compromise. |
-| Recovery status | 2026-10-27 03:22 UTC | Recovery remained in progress: new signups were paused and `station.railway.com` degraded or unavailable. |
+| Recovery status | 2026-10-28 15:27 UTC | Recovery remained in monitoring; new signups were still paused while Railway prioritized reliability for existing customers. |
 | Local software patch | Not applicable | Issuer-side revocation and replacement of exposed credentials required. |
-| **Last updated** | **2026-10-27 08:04 EDT (UTC−04:00)** | Recovery status and provider revocation clarification. |
+| **Last updated** | **2026-10-29 04:03 EDT (UTC−04:00)** | Recovery still in monitoring; new signups remain paused. |
 
 From a clean browser/session, review your projects, shared variables, environment-specific variables, deployment history, and Railway's incident notices. Identify credentials stored before October 21 and the external services they authorize. Do not export or print secret values to perform this inventory; variable names, owners, creation/history records, and provider key IDs are sufficient. If you cannot establish whether a still-valid credential was present during the window, include it in the vendor-recommended rotation. Audit the credential's provider for unexpected use; absence of suspicious logs does not prove it was not disclosed. There is no local package-version script that can rule out this server-side exposure.
 
