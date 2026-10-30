@@ -1,6 +1,6 @@
 # Fortinet FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator: October 2026 hardening release and SQL injection fixes
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Fortinet October summary](../black-october-2026.md#fortinet-fortios-fortimanager-fortianalyzer-fortimail-and-fortiauthenticator-october-2026-hardening-release-and-sql-injection-fixes) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -25,6 +25,14 @@ This guide groups three related Fortinet October 2026 fix sets. They have differ
 **Worst case:** For part A, unknown until Fortinet publishes the advisories; Fortinet rates some fixes critical and warns that attackers can diff patches quickly. For part B, a low-privileged FortiAnalyzer or FortiManager user can execute commands and read or write files on a central management or logging system that holds device configurations and credentials. For part C, an authenticated webmail user can execute code or commands on the mail gateway.
 
 **Out of scope here:** The exploited FortiMail file write is tracked in [fortimail.md](fortimail.md), FortiSandbox in [fortisandbox.md](fortisandbox.md) and FortiSIEM in [fortisiem.md](fortisiem.md). The FortiOS path traversal [CVE-2025-61624](https://www.cve.org/CVERecord?id=CVE-2025-61624) was added to KEV on 2026-10-16 after Unit 42 tied it to PEERSTITCH intrusions, but it is not admitted as an item because its scores are below High (Fortinet CNA 5.4 with temporal metrics, Fortinet base 6.0, NVD 6.5 Medium). Patch it with [FG-IR-26-122][fg122] anyway. [KEV JSON][kev] [Unit 42][unit42]
+
+**Related campaign (k0t), not fixed by these releases:** On 2026-10-21 Group-IB and NyxLab reported a campaign by an actor they call **k0t**, which they assess as a likely initial access broker. It targets exposed Fortinet devices and Palo Alto GlobalProtect portals, and many of the FortiGate compromises are dated February–June 2026. On Fortinet devices it uses no new vulnerability:
+
+- It exploits the older FortiWeb path traversal [CVE-2025-64446](https://www.cve.org/CVERecord?id=CVE-2025-64446) to create a local administrator. Fortinet rated it Critical (CVSS 3.1 9.8 base, 9.4 temporal) and fixed it in FortiWeb 8.0.2, 7.6.5, 7.4.10, 7.2.12 and 7.0.12. It has been in KEV since 2025-11-14.
+- Group-IB says FortiGate is not vulnerable to that exploit, so the tool brute-forces the FortiGate REST API login with common usernames and passwords.
+- After logging in, it downloads the FortiGate configuration and decrypts the stored secrets offline with the default key behind [CVE-2019-6693](https://www.cve.org/CVERecord?id=CVE-2019-6693), recovering LDAP/Active Directory bind and local-user credentials. CVE-2019-6693 has been in KEV since 2025-06-25. Fortinet's FG-IR-19-007 says the administrator password is not affected; Group-IB reports recovering administrator credentials, and this guide has not resolved that difference.
+
+What to do: patch FortiWeb, keep FortiGate and FortiWeb management interfaces off the internet, and enforce MFA and strong, unique administrator passwords. Enable `private-data-encryption` with your own key; FG-IR-19-007 warns that it can cause FortiManager install errors and HA split-brain on managed or clustered FortiGates, so test it first. Treat any configuration an attacker may have downloaded as a credential disclosure. Group-IB publishes network and file IOCs. [Group-IB][k0t] [FG-IR-25-910][fg910] [FG-IR-19-007][fg19007] [KEV JSON][kev]
 
 **CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). None of [CVE-2025-46773](https://www.cve.org/CVERecord?id=CVE-2025-46773), [CVE-2026-23705](https://www.cve.org/CVERecord?id=CVE-2026-23705), [CVE-2026-23706](https://www.cve.org/CVERecord?id=CVE-2026-23706), [CVE-2026-23707](https://www.cve.org/CVERecord?id=CVE-2026-23707) or [CVE-2025-57739](https://www.cve.org/CVERecord?id=CVE-2025-57739) is listed, and the hardening-release fixes have no CVE yet, so KEV cannot list them. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -134,6 +142,7 @@ No matches does not prove a device is clean: the undisclosed flaws may not leave
 - On FortiManager or FortiAnalyzer, assume stored device credentials and configurations may be exposed if compromise is suspected. Rotate administrator passwords, API keys and any credentials stored for managed devices, and review policies pushed to managed FortiGates.
 - On FortiMail, review mail routing, archive accounts and policies, and rotate administrator and LDAP/bind credentials.
 - On FortiGate, compare the running configuration with a known-good backup, and review VPN users, local administrators and automation stitches. A device-level compromise (for example by the separately exploited CVE-2025-61624) may need Fortinet's guidance for memory-resident implants; upgrading alone may not remove persistence. [Unit 42][unit42]
+- If an internet-facing FortiGate or FortiWeb may have been accessed by the k0t campaign (see "Related campaign" at the top of this guide), look for unexpected local administrators and trusted-host ranges of `0.0.0.0/0`, configuration exports, and repeated login failures and lockouts from unfamiliar addresses. Rotate every credential stored in the configuration, especially LDAP/AD bind accounts. Then hunt in the internal network for OpenConnect VPN sessions, MeshCentral/MeshAgent, Atera, AnyDesk, AdaptixC2 and Rclone, and match Group-IB's IOCs against your own logs only. [Group-IB][k0t]
 
 ## Sources
 
@@ -144,6 +153,8 @@ No matches does not prove a device is clean: the undisclosed flaws may not leave
 - [ASD's ACSC alert][acsc] and [Canadian Cyber Centre AV26-1081][cccs]: government notices.
 - [CISA KEV JSON feed][kev]: none of the five CVEs listed; CVE-2025-61624 added 2026-10-16, due 2026-10-19.
 - [Unit 42 PEERSTITCH report][unit42] and [FG-IR-26-122][fg122]: context for CVE-2025-61624.
+- [Group-IB and NyxLab: "Stray Cat, Open Doors" (2026-10-21)][k0t]: the k0t campaign, its tooling, brute-force and configuration-decryption methods, recommendations and IOCs.
+- [FG-IR-25-910][fg910] (CVE-2025-64446: severity, scores, fixed FortiWeb versions, workaround) and [FG-IR-19-007][fg19007] (CVE-2019-6693: default configuration-encryption key, the administrator-password exception, `private-data-encryption` caveats).
 
 [blog]: https://www.fortinet.com/blog/ciso-collective/fortinet-releases-security-hardening-release-for-multiple-products
 [fos768]: https://docs.fortinet.com/document/fortigate/7.6.8/fortios-release-notes/4/change-log
@@ -160,3 +171,6 @@ No matches does not prove a device is clean: the undisclosed flaws may not leave
 [cccs]: https://www.cyber.gc.ca/en/alerts-advisories/fortinet-security-advisory-av26-1081
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
 [unit42]: https://unit42.paloaltonetworks.com/fortimanager-cve-2024-47575-peerstitch-malware
+[k0t]: https://www.group-ib.com/blog/stray-cat-network-edge/
+[fg910]: https://fortiguard.fortinet.com/psirt/FG-IR-25-910
+[fg19007]: https://fortiguard.fortinet.com/psirt/FG-IR-19-007

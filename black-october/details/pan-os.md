@@ -1,10 +1,12 @@
 # PAN-OS: authenticated management interface RCE
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main PAN-OS summary](../black-october-2026.md#pan-os-authenticated-management-interface-rce-cve-2026-0322) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-0322](https://www.cve.org/CVERecord?id=CVE-2026-0322) — Palo Alto Networks CVSS 4.0: 8.6 High (CVSS-BT, `AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/…/E:A`), or 8.5 High when management access is limited to a jump box (`AV:A`); vendor urgency: HIGHEST. NVD CVSS 3.1: 7.2 High (`AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H`). CWE-94.** This is a code-injection flaw in the PAN-OS **management interface**. An **authenticated** attacker with network access to that interface can run arbitrary code **as root**. It applies to PA-Series and VM-Series firewalls and to **Panorama** (virtual and M-Series). **Cloud NGFW and Prisma Access are not affected.** Palo Alto Networks reports "very limited exploitation." **Worst case:** someone holding high-privilege management credentials (PR:H), or a session to that effect, takes root on the firewall or Panorama. From there they could reach traffic, VPN and authentication secrets, and change policy. On Panorama, that could extend to managed firewalls. Unauthenticated exploitation is **not** claimed.
+
+**Also check GlobalProtect:** a separate, **unauthenticated** GlobalProtect VPN authentication bypass, [CVE-2026-0257](https://www.cve.org/CVERecord?id=CVE-2026-0257), fixed in May 2026, is being exploited by ransomware operators and the k0t campaign this month. It affects firewalls (and Prisma Access) that use authentication-override cookies, even when the management interface is locked down. See [GlobalProtect CVE-2026-0257](#related-globalprotect-cve-2026-0257-exploited-by-ransomware-operators-and-k0t).
 
 **CISA KEV:** Listed — added 2026-10-14, federal due date 2026-10-17. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -18,6 +20,7 @@
 - [Remediation](#remediation)
 - [Verification](#verification)
 - [Compromise response](#compromise-response)
+- [Related: GlobalProtect CVE-2026-0257 exploited by ransomware operators and k0t](#related-globalprotect-cve-2026-0257-exploited-by-ransomware-operators-and-k0t)
 - [Sources](#sources)
 
 ## Timeline
@@ -102,6 +105,52 @@ Palo Alto Networks rates the risk **highest when the management interface is rea
 
 Root-level code execution on a firewall or Panorama means the device itself cannot be trusted. If IOCs or suspicious admin activity appear, isolate management access, preserve the tech-support file and logs held off the device, and engage Palo Alto Networks support. The advisory does not give a device-specific recovery procedure for this CVE, so ask support whether a factory reset or reimage is needed rather than only upgrading in place. Rotate everything stored on or passing through the device: local and external admin credentials, API keys, LDAP/RADIUS bind credentials, IPsec pre-shared keys, GlobalProtect and SSL decryption certificates and keys, and any secrets in the configuration. On Panorama, audit configuration pushed to managed firewalls during the exposure window. CISA marks this KEV entry as requiring forensic triage under BOD 26-04 for covered agencies. [KEV JSON][kev]
 
+## Related: GlobalProtect CVE-2026-0257 exploited by ransomware operators and k0t
+
+This is a different flaw from CVE-2026-0322. It needs **no authentication** and no access to the management interface.
+
+**[CVE-2026-0257](https://www.cve.org/CVERecord?id=CVE-2026-0257) — Palo Alto Networks CVSS 4.0: 7.8 High (CVSS-BT, `AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:N/VA:N/SC:H/SI:H/SA:N/E:A/…`); vendor urgency: HIGHEST. NVD CVSS 3.1: 9.1 Critical (`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N`). CWE-565.** It is an authentication bypass in the GlobalProtect portal and gateway that lets an attacker establish an unauthorized VPN connection. It applies only when authentication-override cookies are enabled and "a specific certificate configuration exists". Panorama and Cloud NGFW are not affected. **Prisma Access** 10.2 and 11.2 are affected, unlike CVE-2026-0322. [PAN 0257 advisory][pan-0257]
+
+Group-IB and NyxLab say k0t's tool forges an authentication-override cookie. It encrypts an `admin` session string with the public key from the target's TLS certificate and submits it with an empty password to `/ssl-vpn/login.esp`, then connects with OpenConnect. [Group-IB][k0t]
+
+**CISA KEV (CVE-2026-0257):** Listed — added 2026-05-29, federal due date 2026-06-01; `knownRansomwareCampaignUse`: Known. Unit 42's brief says it was added on 2026-05-13, but the KEV feed gives 2026-05-29. [KEV JSON][kev] [Unit 42][u42-0257]
+
+| Event | Date and time (timezone) | Notes and source |
+|---|---|---|
+| Public announcement (Palo Alto advisory) | 2026-05-13 16:00 UTC | Initial publication; the advisory timeline records fix-release updates from 2026-05-14 through 2026-05-28. Discovered internally. [PAN 0257 JSON][pan-0257-json] |
+| Public proof of concept | 2026-05-29 | Per Unit 42 ("pre-proof-of-concept release (May 29, 2026)"). [Unit 42][u42-0257] |
+| Exploitation status updated; CISA KEV addition | 2026-05-29 | Palo Alto Networks: "limited exploit attempts on unpatched PAN-OS devices without mitigations applied." KEV due date 2026-06-01. [PAN 0257 advisory][pan-0257] [KEV JSON][kev] |
+| Unit 42 threat brief | 2026-06-05 | Exploitation attempts by an unidentified actor; only a small portion of the probed devices established VPN sessions. Lists IOCs. [Unit 42][u42-0257] |
+| Ransomware use reported | 2026-10-19 16:00 PT (23:00 UTC) | Unit 42 update: Spikey Scorpius (Qilin) and Tarnished Scorpius (Inc) exploit it to get a VPN session that bypasses MFA, then use RMM tools, RDP and SMB, and in one case pivot to vCenter/ESXi to dump domain credentials from a domain controller's virtual disk. Unit 42 also cites public reporting that links it to Settra ransomware. [Unit 42][u42-0257] |
+| Unit 42 verification and remediation guidance | 2026-10-20 13:30 PT (20:30 UTC) | Adds the warning that GlobalProtect profiles mapped to management-interface services can expose the management interface on ports 4443 and 3879. [Unit 42][u42-0257] |
+| k0t campaign report | 2026-10-21 | Group-IB and NyxLab describe k0t's CVE-2026-0257 tool (`exploit_2026_0257.py`) for GlobalProtect VPN access; many k0t victims were later listed by Qilin and The Gentlemen, a link Group-IB calls unconfirmed. [Group-IB][k0t] |
+
+**Am I affected?** Check whether authentication-override cookies are enabled. On the portal, go to Network → GlobalProtect → Portals → *portal* → Agent → *agent configuration* → Authentication, and look for "Generate cookie for authentication override" or "Accept cookie for authentication override". On the gateway, go to Network → GlobalProtect → Gateways → *gateway* → Agent → *client settings* → Authentication Override, and look for "Accept cookie for authentication override". Then compare the running version with the advisory's fixed builds:
+
+- **12.1:** 12.1.4-h6 or 12.1.7
+- **11.2:** 11.2.4-h17, 11.2.7-h14, 11.2.10-h7 or 11.2.12
+- **11.1:** 11.1.4-h33, 11.1.6-h32, 11.1.7-h6, 11.1.10-h25, 11.1.13-h5 or 11.1.15
+- **10.2:** 10.2.7-h34, 10.2.10-h36, 10.2.13-h21, 10.2.16-h7 or 10.2.18-h6
+- **Prisma Access:** 10.2.10-h36 or 11.2.7-h13
+
+Every CVE-2026-0322 minimum fixed build in the [table above](#inventory-and-version) is in the same or a later hotfix line than these. So a device fully patched for CVE-2026-0322 should also have the CVE-2026-0257 fix. That is an inference from version ordering, not a Palo Alto statement; confirm it against the advisory. The 0257 advisory does not list 12.2. [PAN 0257 advisory][pan-0257]
+
+**Remediation:**
+
+1. Upgrade **every** portal and gateway that generates or accepts cookies, including internal ones and the on-premises firewalls in hybrid Prisma Access deployments. Palo Alto warns that a partial rollout causes cookie-compatibility failures. GlobalProtect users must re-authenticate once after the upgrade.
+2. If `set global-protect enable-auth-override-cookie-hmac no` was used during a phased upgrade, set it back to `yes` once every component is upgraded. Without it, the fix is not fully enforced.
+3. Until patched, either disable authentication override or use a **new, dedicated** certificate for authentication-override cookies, never the portal or gateway certificate. Palo Alto says a certificate already used for other services must not be reused, even after you remove it from those services. [PAN 0257 advisory][pan-0257]
+
+**Hunt and respond:**
+
+- Search GlobalProtect logs for successful **gateway-connected** events from the Unit 42 IP addresses `23.128.228[.]6`, `104.207.144[.]154`, `146.19.216[.]119`, `146.19.216[.]120`, `146.19.216[.]125`, `179.43.172[.]213`, `185.195.232[.]139`, `198.12.106[.]60` and `202.144.192[.]47`.
+- Also look for host IDs or device names such as `aa:bb:cc:dd:ee:ff`, `00:11:22:33:44:55`, `WINDOWS-LAPTOP-001`, `DESKTOP-GP01` and `GP-CLIENT`, and for sessions with `endpoint_os_version` "Microsoft Windows 10 Pro 64-bit" and an empty `source_user_info.domain` (the proof-of-concept defaults).
+- Treat any match as a VPN intrusion. Activate incident response, then hunt internally for RMM tools, RDP/SMB lateral movement, and access to vCenter, ESXi and backup servers.
+- Rotate the authentication-override cookie certificate and the credentials of any user whose session was abused.
+- Check that no GlobalProtect profile exposes the management interface on ports 4443 or 3879 (see [Management-interface exposure](#management-interface-exposure)).
+
+These are defanged indicators; search only your own logs. Finding nothing does not prove there was no intrusion, especially for activity after the public proof of concept, whose values attackers can change. [Unit 42][u42-0257] [Group-IB][k0t]
+
 ## Sources
 
 - [Palo Alto Networks advisory][pan] and [CVE-JSON from the vendor][pan-json]: affected and fixed builds, scores, Panorama scope, exploitation status, Threat IDs, IOC IPs, 2026-10-15 update.
@@ -109,6 +158,9 @@ Root-level code execution on a firewall or Panorama means the device itself cann
 - [NVD][nvd]: NVD CVSS 3.1 7.2; vendor CVSS 4.0 8.6.
 - [CISA KEV JSON feed][kev]: `dateAdded`, `dueDate`, `requiredAction`.
 - [Management access best practices][pan-bp]: exposure guidance referenced by the vendor.
+- [Palo Alto Networks CVE-2026-0257 advisory][pan-0257] and [its CVE-JSON][pan-0257-json]: GlobalProtect bypass scope, scores, fixed builds, workarounds, FAQ (HMAC setting, phased upgrades, Prisma Access), exploitation status. [NVD CVE-2026-0257][nvd-0257]: NVD CVSS 3.1 9.1.
+- [Unit 42 threat brief on CVE-2026-0257][u42-0257] (updated 2026-10-19 and 2026-10-20): ransomware use, post-access tactics, IOCs, ports 4443/3879 exposure.
+- [Group-IB and NyxLab k0t report (2026-10-21)][k0t]: k0t's CVE-2026-0257 tool.
 
 [pan]: https://security.paloaltonetworks.com/CVE-2026-0322
 [pan-json]: https://security.paloaltonetworks.com/json/CVE-2026-0322
@@ -116,3 +168,8 @@ Root-level code execution on a firewall or Panorama means the device itself cann
 [cve]: https://cveawg.mitre.org/api/cve/CVE-2026-0322
 [nvd]: https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-0322
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+[pan-0257]: https://security.paloaltonetworks.com/CVE-2026-0257
+[pan-0257-json]: https://security.paloaltonetworks.com/json/CVE-2026-0257
+[nvd-0257]: https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-0257
+[u42-0257]: https://unit42.paloaltonetworks.com/active-exploitation-of-pan-os-cve-2026-0257/
+[k0t]: https://www.group-ib.com/blog/stray-cat-network-edge/

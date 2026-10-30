@@ -1,6 +1,6 @@
 # Laravel: TokenGuard API authentication bypass on MySQL and MariaDB
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Laravel summary](../black-october-2026.md#laravel-tokenguard-api-authentication-bypass-on-mysql-and-mariadb) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -38,6 +38,7 @@
 | Hakai Security analysis and public PoC | 2026-10-20; time/TZ unknown | Python exploit and Docker lab published on GitHub. [Hakai][hakai] |
 | CVE record published | 2026-10-21 21:49:29 UTC | GitHub CNA; reserved 16:15:06 UTC the same day. NVD published 2026-10-21 22:16:49 (NVD API, UTC). [CNA][cve] [NVD][nvd] |
 | GitHub Advisory Database review | 2026-10-23 21:50:27 UTC | Reviewed entry, so Dependabot can alert. [GitHub advisory][gad] |
+| CISA ADP SSVC enrichment | 2026-10-28 18:32:04 UTC | The CISA ADP ("CISA ADP Vulnrichment") container in the CVE record gives SSVC 2.0.3 values: Exploitation **none**, Automatable **no**, Technical Impact **total**. CISA added no CVSS score; NVD still shows only the GitHub CNA score, status "Awaiting Analysis" (checked 2026-10-30). SSVC defines "none" as no evidence of active exploitation **and** no public proof of concept, yet Hakai published a PoC on 2026-10-20; this guide keeps the PoC finding. SSVC is CISA's assessment at that time, not proof of no exploitation, and is separate from KEV. [CNA][cve] [NVD][nvd] [Hakai][hakai] |
 | CISA KEV | Not listed (catalog 2026.10.23, checked 2026-10-26) | [KEV][kev] |
 | Exploitation | None reported in reviewed sources | SecurityOnline (2026-10-23) reports "No confirmed exploitation yet". [SecurityOnline][so] |
 
@@ -122,7 +123,7 @@ Finding nothing does not prove the application was not exploited.
 ## Sources
 
 - [Laravel advisory GHSA-f9x3-7vq9-cph6][ghsa]: description, affected and patched versions, CVSS 4.0, publication time.
-- [CVE record (GitHub CNA)][cve], [NVD][nvd] and [GitHub Advisory Database][gad]: timestamps and ranges.
+- [CVE record (GitHub CNA)][cve], [NVD][nvd] and [GitHub Advisory Database][gad]: timestamps and ranges. The CVE record's CISA ADP container holds the 2026-10-28 SSVC values (Exploitation none, Automatable no, Technical Impact total).
 - [Fix commit 13.x][c13], [fix commit 12.x][c12], releases [v12.68.0][r1268], [v13.27.0][r1327], [v13.29.0][r1329].
 - Framework source: [AuthManager `createTokenDriver`][authmgr], [TokenGuard][tg]; [Laravel 13 skeleton `config/auth.php`][skel]; [Sanctum service provider][sanctum]; [Passport service provider][passport]; [Laravel support policy][policy].
 - [CISA KEV feed][kev]: not listed.

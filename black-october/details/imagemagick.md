@@ -1,6 +1,6 @@
 # ImageMagick: stack buffer overflow when reading bzip2-compressed images
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main ImageMagick summary](../black-october-2026.md#imagemagick-stack-buffer-overflow-when-reading-bzip2-compressed-images) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -34,8 +34,10 @@
 | Fix committed | 2026-09-29 16:29:13 UTC (ImageMagick 7, `cf40ce9`); 2026-09-29 16:28:49 UTC (ImageMagick 6, `9b4d4e0`) | Both commit messages are the GHSA-pwpf-8799-94cj URL. [IM7 commit][fix7] [IM6 commit][fix6] |
 | Fixed releases 7.1.2-33 and 6.9.13-58 | 2026-10-10 13:49:53 UTC and 13:49:59 UTC | GitHub release publication times. [7.1.2-33][rel7] [6.9.13-58][rel6] |
 | **Public announcement**: GitHub advisory GHSA-pwpf-8799-94cj | 2026-10-10 14:00:15 UTC | Severity High, CVSS 3.1 8.1. No CVE ID on the advisory itself. [GHSA][ghsa] |
-| CVE reserved and published | Reserved 2026-10-25 12:22:53 UTC; published 2026-10-25 13:19:58 UTC | VulnCheck as CNA; the record's `datePublic` is 2026-10-10. NVD lists it as published 2026-10-25 14:16:53 (NVD API, UTC), status "Awaiting Analysis". [CVE JSON][cve] [NVD][nvd] |
+| Later releases 7.1.2-34 and 6.9.13-59 | 2026-10-14 20:45:10 UTC and 20:39:34 UTC | GitHub release publication times. Both contain this CVE's fix commits but do not change it: neither touches `blob.c`, and GHSA-pwpf-8799-94cj still designates 7.1.2-33 / 6.9.13-58 as patched. 7.1.2-34 fixes two Low ImageMagick 7 advisories: [GHSA-x48p-6655-8qgv][ghsa-morph] (`-morph` heap over-write, CVSS 3.1 3.3) and [GHSA-g5j8-ff59-wp88][ghsa-tiff] (TIFF stack overflow when the DNG decoder is disabled, CVSS 3.1 3.7). Both releases also include an `inline` coder commit that references GHSA-vmj6-qx38-9gf5; that advisory was not public when checked on 2026-10-30, so its severity is unknown. [7.1.2-34][rel7-34] [6.9.13-59][rel6-59] |
+| CVE reserved and published | Reserved 2026-10-25 12:22:53 UTC; published 2026-10-25 13:19:58 UTC | VulnCheck as CNA; the record's `datePublic` is 2026-10-10. NVD lists it as published 2026-10-25 14:16:53 (NVD API, UTC). NVD's status was "Awaiting Analysis" on 2026-10-26 and "Undergoing Analysis" when checked on 2026-10-30, still with no NVD score. [CVE JSON][cve] [NVD][nvd] |
 | Red Hat assessment | Public date 2026-10-25 13:19:58 UTC (as recorded by Red Hat) | Important, CVSS 3.1 7.8 (draft); Bugzilla 2560428. [Red Hat][redhat] |
+| CISA ADP SSVC enrichment | 2026-10-29 19:53:08 UTC | The CISA ADP container in the CVE record gives SSVC 2.0.3 values: Exploitation **none**, Automatable **no**, Technical Impact **partial**. This is CISA's decision-support input, not a CVSS score or KEV listing. [CVE JSON][cve] |
 | CISA KEV | Not listed as of catalog 2026.10.23 (checked 2026-10-26) | [KEV JSON][kev] |
 
 ## Detection
@@ -72,7 +74,7 @@ No crash or no `BZh` file found does **not** prove the flaw was not triggered: w
 
 ## Remediation
 
-1. Upgrade to **ImageMagick 7.1.2-33 or later**, or **6.9.13-58 or later** for ImageMagick 6. Where you use distribution packages, install the vendor's fixed package once available. At the time of checking, Debian stable and Red Hat had no fixed package. [GHSA][ghsa] [Debian tracker][debian] [Red Hat][redhat]
+1. Upgrade to **ImageMagick 7.1.2-33 or later**, or **6.9.13-58 or later** for ImageMagick 6. The newest upstream releases when checked on 2026-10-30, **7.1.2-34** and **6.9.13-59** (2026-10-14), also contain this fix; they do not raise the minimum for this CVE, but 7.1.2-34 also fixes two Low ImageMagick 7 issues. Where you use distribution packages, install the vendor's fixed package once available. At the time of checking, Debian stable and Red Hat had no fixed package. [GHSA][ghsa] [Debian tracker][debian] [Red Hat][redhat]
 2. Rebuild container images and products that bundle ImageMagick, then **restart** every long-running process that loaded the old library (PHP-FPM pools, application servers, queue workers). An updated package does not replace a library already mapped into a running process.
 3. **Interim measures (not vendor-validated for this CVE):** until you can upgrade, reject untrusted input files whose first three bytes are `BZh` before they reach ImageMagick, or decompress bzip2 yourself in a separate, sandboxed step. Run image processing as an unprivileged user in a sandbox or container with no secrets and limited network access. Keep a restrictive `policy.xml` that disables coders you do not need. That reduces general attack surface, but this guide has not confirmed that any policy setting blocks this bzip2 path. These measures are this guide's inference, not ImageMagick guidance.
 
@@ -92,10 +94,11 @@ No crash or no `BZh` file found does **not** prove the flaw was not triggered: w
 
 - [GitHub advisory GHSA-pwpf-8799-94cj][ghsa] — title, description, CVSS 3.1 8.1, CWEs, affected and patched versions, publication 2026-10-10 14:00:15 UTC, reporter credit.
 - [VulnCheck CNA record][cve] — CWE-121, CVSS 4.0 7.2 and CVSS 3.1 8.1, affected ranges, `datePublic`, publication time.
-- [NVD][nvd] — status "Awaiting Analysis"; displays VulnCheck's scores.
+- [NVD][nvd] — status "Undergoing Analysis" (2026-10-30); displays VulnCheck's scores and no NVD score.
 - [VulnCheck advisory][vulncheck] — third-party advisory referenced by the CVE record.
 - Fix commits: [ImageMagick 7 `cf40ce9`][fix7], [ImageMagick 6 `9b4d4e0`][fix6]; [`blob.c` at 7.1.2-33][blob] — bzip2 detection and read path.
-- Releases: [7.1.2-33][rel7], [6.9.13-58][rel6].
+- Releases: [7.1.2-33][rel7], [6.9.13-58][rel6]; later releases [7.1.2-34][rel7-34] and [6.9.13-59][rel6-59] with their Low advisories [GHSA-x48p-6655-8qgv][ghsa-morph] and [GHSA-g5j8-ff59-wp88][ghsa-tiff].
+- [CISA ADP SSVC in the CVE record][cve] — Exploitation none, Automatable no, Technical Impact partial (2026-10-29).
 - [Debian security tracker][debian] and [Red Hat CVE data][redhat] — distribution status and Red Hat's rating.
 - [CISA KEV JSON feed][kev] — not listed (catalog 2026.10.23).
 
@@ -108,6 +111,10 @@ No crash or no `BZh` file found does **not** prove the flaw was not triggered: w
 [blob]: https://github.com/ImageMagick/ImageMagick/blob/7.1.2-33/MagickCore/blob.c
 [rel7]: https://github.com/ImageMagick/ImageMagick/releases/tag/7.1.2-33
 [rel6]: https://github.com/ImageMagick/ImageMagick6/releases/tag/6.9.13-58
+[rel7-34]: https://github.com/ImageMagick/ImageMagick/releases/tag/7.1.2-34
+[rel6-59]: https://github.com/ImageMagick/ImageMagick6/releases/tag/6.9.13-59
+[ghsa-morph]: https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-x48p-6655-8qgv
+[ghsa-tiff]: https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-g5j8-ff59-wp88
 [debian]: https://security-tracker.debian.org/tracker/CVE-2026-116149
 [redhat]: https://access.redhat.com/security/cve/CVE-2026-116149
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

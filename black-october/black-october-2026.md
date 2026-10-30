@@ -27,6 +27,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [Linux kernel: IPv4 TCP SYN-ACK options use-after-free](#linux-kernel-ipv4-tcp-syn-ack-options-use-after-free)
 - [Ultralytics: parse_model code injection through an untrusted model file](#ultralytics-parse_model-code-injection-through-an-untrusted-model-file)
 - [Tabularis: MCP SQLite read-only bypass through SQL injection](#tabularis-mcp-sqlite-read-only-bypass-through-sql-injection)
+- [Microsoft Edge: logic-only Pwn2Own chain from a web page to code execution](#microsoft-edge-logic-only-pwn2own-chain-from-a-web-page-to-code-execution)
+- [Telegram clients: rlottie sticker code execution and Desktop one-click file theft](#telegram-clients-rlottie-sticker-code-execution-and-desktop-one-click-file-theft)
+- [Mitsubishi Electric ICONICS GENESIS and GENESIS64 SCADA: fixed unlock response and excess DCOM permissions](#mitsubishi-electric-iconics-genesis-and-genesis64-scada-fixed-unlock-response-and-excess-dcom-permissions)
 - [Adobe Campaign Classic: eight Critical code-execution and authorization flaws](#adobe-campaign-classic-eight-critical-code-execution-and-authorization-flaws)
 - [Adobe Connect: Critical code injection in desktop and Android clients](#adobe-connect-critical-code-injection-in-desktop-and-android-clients)
 - [Linux kernel: Fragnesia - ESP-in-TCP page-cache overwrite](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite)
@@ -355,6 +358,75 @@ Sources: [ZDI-26-817](https://zerodayinitiative.com/advisories/ZDI-CAN-30121/), 
 
 Sources: [Tabularis GHSA-xrx3-j98v-67x9](https://github.com/TabularisDB/tabularis/security/advisories/GHSA-xrx3-j98v-67x9), [CVE-2026-118378](https://www.cve.org/CVERecord?id=CVE-2026-118378), [Tabularis 0.28.0 release](https://github.com/TabularisDB/tabularis/releases/tag/v0.28.0), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
+## Microsoft Edge: logic-only Pwn2Own chain from a web page to code execution
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/edge-pwn2own.md):** [Detection](details/edge-pwn2own.md#detection) · [Remediation](details/edge-pwn2own.md#remediation) · [Verification](details/edge-pwn2own.md#verification) · [Timeline](details/edge-pwn2own.md#timeline)
+
+**CVEs:** [CVE-2026-45495](https://www.cve.org/CVERecord?id=CVE-2026-45495), [CVE-2026-45494](https://www.cve.org/CVERecord?id=CVE-2026-45494), [CVE-2026-45492](https://www.cve.org/CVERecord?id=CVE-2026-45492)
+
+**Microsoft rates CVE-2026-45495 CVSS 3.1 8.8 Important (remote code execution); NVD rates it 9.8 Critical and ZDI 7.5 High.** CVE-2026-45494 (universal XSS) and CVE-2026-45492 (origin-validation bypass) are Microsoft 5.4 Moderate links in the same chain. Orange Tsai chained these Edge logic bugs, with no memory corruption, at Pwn2Own Berlin to run code outside Edge's sandbox on Windows. Microsoft also has no identifier for several other links, including Windows features and a Microsoft web-service CORS issue.
+
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). Microsoft records "Exploited: No"; the demonstration was a contest entry. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Pwn2Own Berlin demonstration | 2026-05-14; time/TZ unknown | ZDI confirmed the full win. |
+| Edge Stable fix | 2026-05-15 07:00 PDT (UTC−07:00) | Edge 148.0.3967.70 lists all three CVEs; iOS and Android 148.0.3967.70 followed on 2026-05-19 and 2026-05-21. |
+| Full technical write-up | 2026-10-28; time/TZ unknown | Orange Tsai's blog. |
+| **Last updated** | **2026-10-30 11:05 EDT (UTC−04:00)** | Added from Microsoft, ZDI and researcher sources. |
+
+**Patch:** Make sure every Edge install, including VDI images, kiosks and machines where updates are frozen, is at **148.0.3967.70 or later** (ideally the current Stable release), then relaunch. No supported workaround is published.
+
+Sources: [Microsoft Edge security release notes](https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security), [MSRC CVE-2026-45495](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-45495), [ZDI-26-331](https://www.zerodayinitiative.com/advisories/ZDI-26-331/), [Orange Tsai write-up](https://blog.orange.tw/posts/2026-10-the-last-proof-of-human-craft-browser-full-chain), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Telegram clients: rlottie sticker code execution and Desktop one-click file theft
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/telegram-clients.md):** [Detection](details/telegram-clients.md#detection) · [Remediation](details/telegram-clients.md#remediation) · [Verification](details/telegram-clients.md#verification) · [Timeline](details/telegram-clients.md#timeline)
+
+**CVEs:** [CVE-2026-107181](https://www.cve.org/CVERecord?id=CVE-2026-107181), [CVE-2026-111105](https://www.cve.org/CVERecord?id=CVE-2026-111105). The OffensiveCon sticker zero-click findings and NebuSec's Android call flaw have no CVE assigned.
+
+**VulnCheck (CNA) rates CVE-2026-107181 CVSS 4.0 8.6 High (3.1: 8.1); ZDI (CNA) rates CVE-2026-111105 CVSS 3.0 7.0 High.** In Telegram Desktop before 7.2.9, one clicked external link can inject commands into the app's local IPC and upload local files, including session data, to an attacker's chat. Separately, an rlottie animated-sticker flaw can run code in Telegram clients when a malicious file is opened. ZDI published it as a 0-day. Unscored, researcher-reported claims add an iOS sticker zero-click chain (OffensiveCon, 2026-10-28) and an Android code-execution flaw triggered by answering a call (NebuSec, 2026-10-29).
+
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). CISA SSVC records a public proof of concept for CVE-2026-107181 and no exploitation for CVE-2026-111105. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Desktop 7.2.9 published | 2026-09-17 09:31 UTC | Fixes CVE-2026-107181; no vendor advisory. |
+| Desktop write-up / CVE published | 2026-10-03 / 2026-10-07 13:35 UTC | Researcher write-up; VulnCheck CNA record. |
+| ZDI 0-day advisory, CVE-2026-111105 | 2026-10-15 17:42 UTC | No fixed version listed. Telegram said server-side validation mitigates it. |
+| Sticker zero-click research presented | 2026-10-28; time/TZ unknown | OffensiveCon Tokyo. Telegram says the issue is "already fixed with tLottie". |
+| **Last updated** | **2026-10-30 11:05 EDT (UTC−04:00)** | Added from CNA, ZDI, researcher and Telegram source-code evidence. |
+
+**Patch:** Update Telegram Desktop to **7.2.9+** and Android to **12.10.4+**, then restart. On those versions Telegram's source no longer renders stickers with rlottie. iOS can still switch back to rlottie through a server killswitch, so its fix is unconfirmed. Until Desktop is updated, enable "Ask where to save each file". If an old Desktop may have been targeted, terminate other sessions. See the [client table](details/telegram-clients.md#patch-status-by-client).
+
+Sources: [CVE-2026-107181](https://www.cve.org/CVERecord?id=CVE-2026-107181), [researcher write-up](https://beaksec.github.io/posts/telegram-desktop-one-click-account-takeover/), [ZDI-26-757](https://www.zerodayinitiative.com/advisories/ZDI-26-757/), [OffensiveCon abstract](https://www.offensivecon.jp/speakers/2026/saifeldeen-aziz.html), [Telegram on X](https://x.com/telegram/status/2115546860764963218), [NebuSec on X](https://x.com/nebusecurity/status/2115601122727702634), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Mitsubishi Electric ICONICS GENESIS and GENESIS64 SCADA: fixed unlock response and excess DCOM permissions
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/mitsubishi-iconics-genesis.md):** [Detection](details/mitsubishi-iconics-genesis.md#detection) · [Remediation](details/mitsubishi-iconics-genesis.md#remediation) · [Verification](details/mitsubishi-iconics-genesis.md#verification) · [Timeline](details/mitsubishi-iconics-genesis.md#timeline)
+
+**CVEs:** [CVE-2026-16438](https://www.cve.org/CVERecord?id=CVE-2026-16438), [CVE-2026-16436](https://www.cve.org/CVERecord?id=CVE-2026-16436), [CVE-2026-16437](https://www.cve.org/CVERecord?id=CVE-2026-16437), [CVE-2023-4863](https://www.cve.org/CVERecord?id=CVE-2023-4863) (bundled libwebp)
+
+**Mitsubishi Electric (CNA) CVSS 4.0: 9.4 Critical for CVE-2026-16438 (excess DCOM permissions; needs the products' administrator account), 9.2 Critical for CVE-2026-16436 (fixed, shared unlock challenge response; no authentication), 7.1 High for CVE-2026-16437 (local administrator tampering) and 9.3 for the bundled libwebp CVE-2023-4863 (local). The CSAF advisory CISA republished gives CVSS 3.1 9.1 Critical, 8.1 High, 6.4 Medium and 8.2 High. NVD has not scored them.**
+
+**CISA KEV:** CVE-2026-16436, CVE-2026-16437 and CVE-2026-16438: Not listed (catalog 2026.10.29, checked 2026-10-30). CISA's ADP assessment records "Exploitation: none", and neither Mitsubishi nor CISA reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. CVE-2023-4863: Listed — added 2023-09-13, federal due date 2023-10-04, for Google Chromium WebP; that listing is not evidence that ICONICS products were attacked.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | Found by Mitsubishi Electric itself. |
+| Public announcement | 2026-10-15; time/TZ unknown | Mitsubishi Electric advisory 2026-006, with fixed versions. |
+| CVE records published | 2026-10-15 08:29–08:31 UTC | Mitsubishi Electric CNA. |
+| CISA republication | 2026-10-27; revised 2026-10-29 | ICSA-26-300-02; revision 3 updated vendor and product names only. |
+| **Last updated** | **2026-10-30 11:05 EDT (UTC−04:00)** | Added from Mitsubishi's advisory, CISA's republication and the CNA records. |
+
+The Windows-based ICONICS SCADA/HMI family shares one fixed unlock challenge response across all users, so anyone who obtains it can unlock the system without authenticating (CVE-2026-16436). Its installers also give the products' administrator account default DCOM permissions, letting that account launch and operate DCOM objects remotely without UAC elevation (CVE-2026-16438). Mitsubishi says either can lead to information disclosure, tampering, deletion or denial of service.
+
+**Am I impacted?** GENESIS 11.03 and earlier (Windows shows "ICONICS GENESIS" 11.3.578 or earlier); GENESIS64, ICONICS Suite, Hyper Historian, AnalytiX, MobileHMI and IoTWorX 10.97.3 and earlier ("ICONICS Suite" 10.97.306.55 or earlier); and every version of MC Works64, GENESIS32 and BizViz. ICONICS Suite 10.97.3 fixes only the libwebp flaw.
+
+**Patch:** Under OT change control, update ICONICS Suite (and the products bundled with it) to **10.98+**, IoTWorX to **10.98+** and GENESIS to **11.04+**. **MC Works64, GENESIS32 and BizViz will not be fixed**: apply Mitsubishi's mitigations and plan a move to GENESIS64 or GENESIS. Until updated, block remote login and DCOM from untrusted networks, allow only administrators to log in, and apply Mitsubishi's challenge-file workaround (replace `ClientChallengeTable.dat` / `SecurityChallenges.dat` with a blank file that only a separate administrator account can change).
+
+Sources: [Mitsubishi Electric 2026-006](https://www.mitsubishielectric.com/psirt/vulnerability/pdf/2026-006_en.pdf), [CISA ICSA-26-300-02](https://www.cisa.gov/news-events/ics-advisories/icsa-26-300-02), [CVE-2026-16438 CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-16438), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
 ## Adobe Campaign Classic: eight Critical code-execution and authorization flaws
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/adobe-campaign-classic.md):** [Detection](details/adobe-campaign-classic.md#detection) · [Remediation](details/adobe-campaign-classic.md#remediation) · [Verification](details/adobe-campaign-classic.md#verification) · [Timeline](details/adobe-campaign-classic.md#timeline)
@@ -406,7 +478,8 @@ Sources: [Adobe APSB26-182](https://www.adobe.com/trust/security/products/connec
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | CISA KEV addition | 2026-10-28; time/TZ unknown | CISA reports active exploitation and requires forensic triage for covered agencies. |
-| **Last updated** | **2026-10-28 20:04 EDT (UTC−04:00)** | Added from kernel.org, Ubuntu and CISA sources. |
+| Chained with PHP2Shell in the wild | 2026-10-23 18:14 UTC to 2026-10-24 11:35 UTC (timestamped compromises) | Dream: custom PHP2Shell exploit plus Fragnesia rooted 24 PAN-OS firewalls and one management server; Unit 42 verified. |
+| **Last updated** | **2026-10-30 11:01 EDT (UTC−04:00)** | Added Dream's in-the-wild PHP2Shell chain evidence. |
 
 **Patch:** Install your distribution’s vendor-supported kernel build that explicitly fixes CVE-2026-46300, then reboot into it. Verify the exact vendor build, not only its upstream version; distributions backport independently. Restrict untrusted local code while waiting for a fix, but do not treat that as a replacement for the update.
 
@@ -771,7 +844,7 @@ Sources: [Apache Camel advisory](https://camel.apache.org/security/CVE-2026-9088
 
 **Oracle CVSS 3.1, all remotely exploitable without authentication: 10.0 Critical for Access Manager, three SOA Suite flaws, the EBS Workflow Notification Mailer and the JD Edwards Orchestrator; 9.8 Critical for WebLogic (HTTP and T3/IIOP), the EBS Application Object Library SQL injection, and third-party components in Database (OpenSSL), MySQL (OpenSSL, curl) and PeopleTools (Logstash). Upstream scores for the third-party CVEs are lower: OpenSSL Low and CISA ADP 9.1 (CVE-2026-75803); OpenSSL High, CISA ADP 8.8 and Red Hat ADP 9.8 (CVE-2025-15467); curl Low and CISA ADP 7.4 (CVE-2026-9547); Elastic 8.1 and NVD 9.8 (CVE-2026-33466).**
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Waratek reported no known exploitation of any newly fixed CVE on 2026-10-21, Rescana said the same for CVE-2026-101767, and CISA ADP records "Exploitation: none" for five of the Oracle CVEs. Absence from KEV is not evidence that exploitation has not occurred. The older PeopleSoft flaw [CVE-2026-35273](https://www.cve.org/CVERecord?id=CVE-2026-35273), which this CPU does not fix, is Listed — added 2026-06-12, federal due date 2026-06-15.
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). On 2026-10-27 Defused reported that its EBS decoys recorded "exploratory exploits" against CVE-2026-101767: these are attempts against honeypots, and no successful exploitation has been reported. Absence from KEV is not evidence that exploitation has not occurred. The older PeopleSoft flaw [CVE-2026-35273](https://www.cve.org/CVERecord?id=CVE-2026-35273), which this CPU does not fix, is Listed — added 2026-06-12, federal due date 2026-06-15.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -783,13 +856,14 @@ Sources: [Apache Camel advisory](https://camel.apache.org/security/CVE-2026-9088
 | Horizon3.ai EBS write-up | 2026-10-20 (per Rescana) | Indicators: unauthenticated POSTs to `/OA_HTML/AppsTCFServer`. |
 | Waratek, Rescana: no exploitation reported | 2026-10-21 | CISA ADP "Exploitation: none" recorded 2026-10-21 to 2026-10-24 for five CVEs. |
 | Next security release | 2026-11-17 | Oracle now ships monthly CSPUs. |
-| **Last updated** | **2026-10-27 09:27 EDT (UTC−04:00)** | Oracle CPU Revision 2 changed Siebel CRM version information and credits. |
+| Exploitation attempts (CVE-2026-101767) | 2026-10-27; reported 15:15 UTC | Defused's EBS decoys recorded "exploratory exploits"; no compromise reported, not in KEV. |
+| **Last updated** | **2026-10-30 11:05 EDT (UTC−04:00)** | Added Defused's report of exploitation attempts against CVE-2026-101767 and KEV catalog 2026.10.29. |
 
 Oracle's quarterly CPU fixes 1,295 issues, and 112 of its risk-matrix rows score 9.0 or higher. This entry covers only the most severe **unauthenticated** network flaws in widely deployed products. For everything else, use Oracle's [risk matrices](https://www.oracle.com/security-alerts/cpuoct2026.html). Oracle discloses no root causes. Horizon3.ai describes [CVE-2026-101767](https://horizon3.ai/attack-research/vulnerabilities/cve-2026-101767/) as SQL injection in the EBS Thin Client Framework servlet that runs SQL as `APPS` and then OS commands. The servlet is allowed by the default EBS URL firewall.
 
 **Worst case:** Unauthenticated takeover of WebLogic, SOA Suite, EBS or JD Edwards, or full access to Access Manager data. Access Manager is the single sign-on layer for other applications.
 
-**Exploitation:** No exploitation of the new CVEs has been reported. The active Oracle threat is still PeopleSoft CVE-2026-35273. ShinyHunters is deploying web shells and the SIDEEYE backdoor on servers that were mitigated with WAF rules but never patched.
+**Exploitation:** Attackers began probing EBS CVE-2026-101767 on 2026-10-27: Defused's decoys recorded "exploratory exploits", but no successful compromise has been reported, and Oracle and CISA have not called it exploited. Patch internet-facing EBS now, and review web tiers that were unpatched on or after that date ([Log and host review](details/oracle-cpu-october.md#log-and-host-review)). No exploitation of the other new CVEs has been reported. The active Oracle threat is still PeopleSoft CVE-2026-35273. ShinyHunters is deploying web shells and the SIDEEYE backdoor on servers that were mitigated with WAF rules but never patched.
 
 **Am I impacted?** Use `opatch lspatches` and version queries (read-only, listed in the guide) to check each product:
 
@@ -812,7 +886,7 @@ Oracle says unsupported releases are likely affected too.
 
 PeopleSoft: also confirm that the June CVE-2026-35273 patch is installed, because a WAF rule alone does not protect you.
 
-Sources: [Oracle CPU October 2026](https://www.oracle.com/security-alerts/cpuoct2026.html), [text risk matrices](https://www.oracle.com/security-alerts/cpuoct2026verbose.html), [CVE-2026-101767 CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-101767), [Horizon3.ai](https://horizon3.ai/attack-research/vulnerabilities/cve-2026-101767/), [Waratek](https://waratek.com/news/oracle-releases-the-october-2026-critical-patch-update/), [Rescana](https://www.rescana.com/post/oracle-e-business-suite-cve-2026-101767-prepare-now), [Oracle alert CVE-2026-35273](https://www.oracle.com/security-alerts/alert-cve-2026-35273.html), [Mandiant/GTIG](https://cloud.google.com/blog/topics/threat-intelligence/shinyhunters-renewed-mass-exploitation-campaign-targeting-oracle-peoplesoft), [OpenSSL advisory 2026-08-25](https://openssl-library.org/news/secadv/20260825.txt), [curl CVE-2026-9547](https://curl.se/docs/CVE-2026-9547.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [Oracle CPU October 2026](https://www.oracle.com/security-alerts/cpuoct2026.html), [text risk matrices](https://www.oracle.com/security-alerts/cpuoct2026verbose.html), [CVE-2026-101767 CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-101767), [Horizon3.ai](https://horizon3.ai/attack-research/vulnerabilities/cve-2026-101767/), [Waratek](https://waratek.com/news/oracle-releases-the-october-2026-critical-patch-update/), [Rescana](https://www.rescana.com/post/oracle-e-business-suite-cve-2026-101767-prepare-now), [Oracle alert CVE-2026-35273](https://www.oracle.com/security-alerts/alert-cve-2026-35273.html), [Mandiant/GTIG](https://cloud.google.com/blog/topics/threat-intelligence/shinyhunters-renewed-mass-exploitation-campaign-targeting-oracle-peoplesoft), [OpenSSL advisory 2026-08-25](https://openssl-library.org/news/secadv/20260825.txt), [curl CVE-2026-9547](https://curl.se/docs/CVE-2026-9547.html), [Defused](https://x.com/DefusedCyber/status/2115099999973364147), [Censys](https://censys.com/advisory/cve-2026-101767), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## ImageMagick: stack buffer overflow when reading bzip2-compressed images
 
@@ -831,7 +905,8 @@ Sources: [Oracle CPU October 2026](https://www.oracle.com/security-alerts/cpuoct
 | Fixed releases 7.1.2-33 and 6.9.13-58 | 2026-10-10 13:49 UTC | GitHub releases. |
 | GHSA-pwpf-8799-94cj (public announcement) | 2026-10-10 14:00 UTC | Severity High. |
 | CVE record published | 2026-10-25 13:19 UTC | VulnCheck as CNA. |
-| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| CISA ADP SSVC | 2026-10-29 19:53 UTC | Exploitation none, Automatable no, Technical Impact partial; not a CVSS score or KEV listing. |
+| **Last updated** | **2026-10-30 11:01 EDT (UTC−04:00)** | Confirmed 7.1.2-34 / 6.9.13-59 do not change the fixed versions; added CISA SSVC. |
 
 ImageMagick transparently decompresses any input file that starts with the bzip2 signature `BZh` when built with the bzlib delegate. A crafted bzip2-compressed image overwrites stack memory during that decoding. Any service that runs ImageMagick on untrusted files is exposed: uploads, thumbnails, fetched images and document conversion, including through PHP Imagick, Python Wand, Ruby RMagick/MiniMagick and bundled copies such as Magick.NET.
 
@@ -841,7 +916,7 @@ ImageMagick transparently decompresses any input file that starts with the bzip2
 
 **Am I impacted?** You are if any host, container or bundled copy runs ImageMagick 7 **before 7.1.2-33** or ImageMagick 6 **before 6.9.13-58** on untrusted input. `magick -version` (or `convert -version`) is read-only and shows the version and whether `bzlib` is among the built-in delegates. Distribution packages differ: when checked, Debian had fixed only unstable (bookworm, trixie and forky vulnerable), Red Hat listed RHEL 6 and 7 as affected, and Ubuntu had no record.
 
-**Patch:** Upgrade to **7.1.2-33+** or **6.9.13-58+**, or a fixed distribution package once available. Rebuild images that bundle ImageMagick and restart PHP-FPM, app servers and workers. Until then, reject untrusted files that start with `BZh` before ImageMagick reads them and sandbox image workers. This is this guide's suggestion, not vendor guidance.
+**Patch:** Upgrade to **7.1.2-33+** or **6.9.13-58+** (the later 7.1.2-34 / 6.9.13-59 releases also contain this fix and add only Low-severity fixes), or a fixed distribution package once available. Rebuild images that bundle ImageMagick and restart PHP-FPM, app servers and workers. Until then, reject untrusted files that start with `BZh` before ImageMagick reads them and sandbox image workers. This is this guide's suggestion, not vendor guidance.
 
 Sources: [GHSA-pwpf-8799-94cj](https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-pwpf-8799-94cj), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-116149), [fix commit](https://github.com/ImageMagick/ImageMagick/commit/cf40ce974c3f780b7f6913bcff7bec27087c9104), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-116149), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-116149), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -894,19 +969,19 @@ Sources: [GHSA-6jp4-8v48-cc5v](https://github.com/spesmilo/electrum/security/adv
 | FortiOS, FortiManager and FortiAnalyzer builds | 2026-10-22; time/TZ unknown | FortiOS 7.6.8 release notes dated 2026-10-22. |
 | ACSC alert (Critical) and Cyber Centre AV26-1081 | 2026-10-23 | ACSC not aware of exploitation in Australia. |
 | Hardening advisories and CVEs | Planned 2026-11-10 | Fortinet Patch Tuesday. |
-| **Last updated** | **2026-10-26 11:45 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| **Last updated** | **2026-10-30 11:05 EDT (UTC−04:00)** | Added the k0t campaign (FortiWeb CVE-2025-64446, FortiGate brute force, CVE-2019-6693 config decryption). |
 
 Fortinet shipped a coordinated **security hardening release** for FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator but is withholding advisories until 2026-11-10, warning that attackers can diff the patches within days. Separately, its 2026-10-13 advisories fixed SQL injection flaws that let a **low-privileged FortiAnalyzer or FortiManager user** run commands and read or write files (FG-IR-26-178), and let an **authenticated FortiMail webmail user** run code or commands (FG-IR-26-184). FortiSandbox ([details/fortisandbox.md](details/fortisandbox.md)), FortiSIEM ([details/fortisiem.md](details/fortisiem.md)) and the exploited FortiMail file write ([details/fortimail.md](details/fortimail.md)) are tracked separately.
 
 **Worst case:** Compromise of firewalls, central management or logging systems holding device credentials, or the mail gateway. The hardening flaws' impact is undisclosed.
 
-**Exploitation:** None reported for these fixes. The unrelated FortiOS path traversal [CVE-2025-61624](https://www.cve.org/CVERecord?id=CVE-2025-61624) (Fortinet 5.4/6.0, NVD 6.5 Medium) was added to KEV on 2026-10-16 after Unit 42 tied it to PEERSTITCH intrusions; it is below this guide's High threshold but should be patched too.
+**Exploitation:** None reported for these fixes. The unrelated FortiOS path traversal [CVE-2025-61624](https://www.cve.org/CVERecord?id=CVE-2025-61624) (Fortinet 5.4/6.0, NVD 6.5 Medium) was added to KEV on 2026-10-16 after Unit 42 tied it to PEERSTITCH intrusions; it is below this guide's High threshold but should be patched too. Separately, Group-IB and NyxLab's k0t report (2026-10-21) describes FortiGate brute-forcing, FortiWeb [CVE-2025-64446](https://www.cve.org/CVERecord?id=CVE-2025-64446) exploitation and offline decryption of FortiGate configurations with the default key ([CVE-2019-6693](https://www.cve.org/CVERecord?id=CVE-2019-6693)); no new Fortinet flaw is involved. Patch FortiWeb, enable `private-data-encryption` and rotate credentials stored in any exposed configuration ([details](details/fortinet-october.md#compromise-response)).
 
 **Am I impacted?** Run `get system status` (read-only) on each unit. Affected by the hardening release: FortiOS below 8.0.2/7.6.8/7.4.13/7.2.14; FortiManager and FortiAnalyzer below 8.0.2/7.6.8/7.4.12/7.2.13; FortiMail below 8.0.2/7.6.7/7.4.9 and all 7.2; FortiAuthenticator below 8.0.4/6.6.11. FG-IR-26-178 affects FortiAnalyzer/FortiManager 7.6.0–7.6.4, 7.4 (FAZ to 7.4.7, FMG to 7.4.6) and all 7.2; 8.0 is not affected. FG-IR-26-184 affects FortiMail 7.6.0–7.6.3, 7.4.0–7.4.5 and 7.2.0–7.2.8.
 
 **Patch:** Install the hardening builds above; they also cover FG-IR-26-178 and FG-IR-26-184 on 7.4 and later. FortiManager and FortiAnalyzer 7.2 have no FG-IR-26-178 fix, so move to 7.4.12+ or 7.6.8+; move FortiMail 7.2 to 7.4.9+. Until then, restrict HTTPS/SSH admin access to trusted IPs, keep FortiManager off the internet, enforce MFA and review low-privileged admin accounts.
 
-Sources: [Fortinet hardening release blog](https://www.fortinet.com/blog/ciso-collective/fortinet-releases-security-hardening-release-for-multiple-products), [FG-IR-26-178](https://fortiguard.fortinet.com/psirt/FG-IR-26-178), [FG-IR-26-184](https://fortiguard.fortinet.com/psirt/FG-IR-26-184), [FortiOS 7.6.8 release notes](https://docs.fortinet.com/document/fortigate/7.6.8/fortios-release-notes/4/change-log), [ASD's ACSC alert](https://www.cyber.gov.au/alert/critical-vulnerabilities-in-fortinet-products), [Cyber Centre AV26-1081](https://www.cyber.gc.ca/en/alerts-advisories/fortinet-security-advisory-av26-1081), [CVE-2025-46773 CNA record](https://cveawg.mitre.org/api/cve/CVE-2025-46773), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [Fortinet hardening release blog](https://www.fortinet.com/blog/ciso-collective/fortinet-releases-security-hardening-release-for-multiple-products), [FG-IR-26-178](https://fortiguard.fortinet.com/psirt/FG-IR-26-178), [FG-IR-26-184](https://fortiguard.fortinet.com/psirt/FG-IR-26-184), [FortiOS 7.6.8 release notes](https://docs.fortinet.com/document/fortigate/7.6.8/fortios-release-notes/4/change-log), [ASD's ACSC alert](https://www.cyber.gov.au/alert/critical-vulnerabilities-in-fortinet-products), [Cyber Centre AV26-1081](https://www.cyber.gc.ca/en/alerts-advisories/fortinet-security-advisory-av26-1081), [CVE-2025-46773 CNA record](https://cveawg.mitre.org/api/cve/CVE-2025-46773), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), [Group-IB k0t report](https://www.group-ib.com/blog/stray-cat-network-edge/), [FG-IR-25-910](https://fortiguard.fortinet.com/psirt/FG-IR-25-910).
 
 ## Signal calling (RingRTC): hang-up may not end a flooded call
 
@@ -1415,7 +1490,8 @@ Sources: [GHSA-897f-g5gm-fmxm](https://github.com/bytecodealliance/wasmtime/secu
 | Public announcement (Laravel advisory GHSA-f9x3-7vq9-cph6) | 2026-10-19 13:32:50 UTC | Repository advisory publication time. |
 | Public PoC (Hakai Security) | 2026-10-20; time/TZ unknown | Technical analysis with Docker lab. |
 | CVE record published | 2026-10-21 21:49:29 UTC | GitHub CNA. |
-| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| CISA ADP SSVC | 2026-10-28 18:32 UTC | Exploitation none, Automatable no, Technical Impact total; a public PoC nevertheless exists. Not a KEV listing. |
+| **Last updated** | **2026-10-30 11:01 EDT (UTC−04:00)** | Added CISA SSVC enrichment. |
 
 Laravel's built-in `TokenGuard`, used by any guard with `'driver' => 'token'` (default `api_token` request key and column), accepts a non-string credential. On a MySQL or MariaDB user store, a crafted value makes the lookup match an existing user, so an **unauthenticated** attacker is logged in as that user on token-guarded routes.
 
@@ -1827,19 +1903,20 @@ Sources: [Siemens SSA-580366](https://cert-portal.siemens.com/productcert/html/s
 | Vendor disclosure and most fixes | 2026-10-14 16:00 UTC | Hotfix builds listed for 10.2 through 12.2. |
 | CISA KEV addition | 2026-10-14; time/TZ unknown | Federal due date 2026-10-17. |
 | PAN-OS 11.2.16 published | 2026-10-15 18:30 UTC | The only fix for 11.2.14–11.2.15. |
-| **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
+| Related GlobalProtect CVE-2026-0257 exploitation | 2026-10-19 (Unit 42 update); 2026-10-21 (Group-IB k0t report) | Ransomware operators and k0t use it for VPN access; KEV-listed since 2026-05-29. |
+| **Last updated** | **2026-10-30 11:05 EDT (UTC−04:00)** | Added GlobalProtect CVE-2026-0257 exploitation, remediation and hunting guidance. |
 
 A code-injection flaw in the PAN-OS management interface lets an **authenticated** administrator-level attacker run code as **root**. It affects PA-Series and VM-Series firewalls and **Panorama**. Cloud NGFW and Prisma Access are not affected.
 
 **Worst case:** someone who already holds management credentials, or reaches the interface with stolen ones, takes full control of the firewall or Panorama, including its secrets and policy. The vendor does not claim unauthenticated exploitation.
 
-**Exploitation:** Palo Alto Networks reports "very limited exploitation" and lists three source IPs in its advisory FAQ.
+**Exploitation:** Palo Alto Networks reports "very limited exploitation" and lists three source IPs in its advisory FAQ. Separately, the unauthenticated GlobalProtect bypass [CVE-2026-0257](https://www.cve.org/CVERecord?id=CVE-2026-0257) (fixed May 2026; Palo Alto CVSS 4.0 7.8 High, NVD 9.1 Critical; in KEV since 2026-05-29 with known ransomware use) is being used by Qilin and Inc ransomware operators (Unit 42, 2026-10-19) and the k0t campaign (Group-IB, 2026-10-21) to open VPN sessions. Firewalls and Prisma Access using authentication-override cookies are exposed even when management access is locked down ([details](details/pan-os.md#related-globalprotect-cve-2026-0257-exploited-by-ransomware-operators-and-k0t)).
 
 **Am I impacted?** Run `show system info` on each firewall and Panorama and compare `sw-version` with the [fixed-build table](details/pan-os.md#inventory-and-version). Then check whether the management interface, or any dataplane interface with a management profile, can be reached from untrusted networks. Exposure to the internet is the highest-risk case.
 
-**Patch:** Upgrade to the fixed build for your branch, for example 12.2.4, 12.1.10-h2, 11.2.16, 11.1.16-h3, 10.2.18-h12, or the listed intermediate hotfixes. There is no workaround. Restrict management access to trusted IPs or a jump box now. Threat IDs 510046/510047 give only limited coverage, and only with management traffic decrypted.
+**Patch:** Upgrade to the fixed build for your branch, for example 12.2.4, 12.1.10-h2, 11.2.16, 11.1.16-h3, 10.2.18-h12, or the listed intermediate hotfixes. There is no workaround. Restrict management access to trusted IPs or a jump box now. Threat IDs 510046/510047 give only limited coverage, and only with management traffic decrypted. For CVE-2026-0257, upgrade every GlobalProtect portal and gateway (and Prisma Access) to the [advisory's fixed builds](details/pan-os.md#related-globalprotect-cve-2026-0257-exploited-by-ransomware-operators-and-k0t); until then, disable authentication override or use a new dedicated cookie certificate. Search GlobalProtect logs for Unit 42's indicators.
 
-Sources: [Palo Alto Networks advisory](https://security.paloaltonetworks.com/CVE-2026-0322), [CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-0322), [NVD](https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-0322), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [Palo Alto Networks advisory](https://security.paloaltonetworks.com/CVE-2026-0322), [CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-0322), [NVD](https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-0322), [CVE-2026-0257 advisory](https://security.paloaltonetworks.com/CVE-2026-0257), [Unit 42 CVE-2026-0257 brief](https://unit42.paloaltonetworks.com/active-exploitation-of-pan-os-cve-2026-0257/), [Group-IB k0t report](https://www.group-ib.com/blog/stray-cat-network-edge/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 <a name="cisco-secure-email-gateway-amp-attachment-path-traversal-cve-2026-76519"></a>
 
@@ -2255,7 +2332,9 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Public end-to-end PoC (“Steal My Bitcoin” challenge) | 2026-10-25 15:47:38 UTC (challenge solved) | Authorized challenge server; exploit tuned to one Alpine PHP 8.4.26 `cli-server` build. |
 | NVD scores added | By 2026-10-26 10:10 (NVD `lastModified`, zone not stated) | 9.8 and 8.1 (CVSS 3.1). |
 | CISA KEV listing | 2026-10-26; time/TZ unknown | CISA added CVE-2026-109618 and CVE-2026-109619, requires forensic triage, and sets a federal civilian due date of 2026-10-29. |
-| **Last updated** | **2026-10-27 09:27 EDT (UTC−04:00)** | Palo Alto released additional PHP2Shell hotfixes. |
+| PHP2Shell + Fragnesia chain to root (Dream) | 2026-10-23 18:14 UTC to 2026-10-24 11:35 UTC (timestamped compromises) | Dream reported 25 servers rooted (24 PAN-OS firewalls, one management server) on 2026-10-26; Unit 42 independently verified the tooling and results. |
+| Windows IIS / PHP-CGI report (Morphisec) | 2026-10-28; publication date, attack date not stated | Blocked post-exploitation on one customer server; attribution to PHP2Shell not independently verified. |
+| **Last updated** | **2026-10-30 11:01 EDT (UTC−04:00)** | Added Dream's PHP2Shell + Fragnesia root-chain details and indicators, and Morphisec's Windows IIS / PHP-CGI report. |
 
 These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
@@ -2270,7 +2349,7 @@ PHP identifies **`mod_php` as the highest-risk configuration**, with demonstrate
 
 **Patch:** PHP **8.5.12, 8.4.27, 8.3.36, or 8.2.35**, or a distribution package explicitly backporting both fixes. Restart all affected workers. Older upstream branches need a verified vendor backport or migration. **PAN-OS / Panorama:** install the per-branch hotfix from [Palo Alto's advisory](https://security.paloaltonetworks.com/CVE-2026-109618), including newly released **12.2.4-h1, 12.1.7-h11, 10.2.13-h27 and 10.2.16-h12**; use the vendor's matrix for other branches rather than an earlier ETA. Until then, restrict management access to trusted internal IPs and enable Threat Prevention IDs 543004, 97622 and the related IDs the advisory lists. Palo Alto says CVE-2026-115560 does not affect PAN-OS.
 
-**Exploitation status:** Amazon reported exploitation attempts from 2026-10-17, before disclosure. On 2026-10-24 a researcher documented successful RCE against PHP 8.4.26 `mod_php` honeypots. CISA’s earlier no-observed-success statement predates this evidence, and CISA added both emergency CVEs to KEV on 2026-10-26. A [public end-to-end exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC) was published after a researcher solved an authorized “Steal My Bitcoin” challenge on 2026-10-25; its author says it is tuned to an Alpine PHP 8.4.26 `cli-server` build and will not match a Debian `php-fpm` build, but adapting it lowers the bar for attackers. On 2026-10-29, Palo Alto confirmed exploitation against internet-exposed PAN-OS management interfaces and independently verified the reported PHP2Shell-to-root chain. [Investigate exposed systems from at least 2026-10-17](details/php2shell.md#exploitation-status).
+**Exploitation status:** Amazon reported exploitation attempts from 2026-10-17, before disclosure. On 2026-10-24 a researcher documented successful RCE against PHP 8.4.26 `mod_php` honeypots. CISA’s earlier no-observed-success statement predates this evidence, and CISA added both emergency CVEs to KEV on 2026-10-26. A [public end-to-end exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC) was published after a researcher solved an authorized “Steal My Bitcoin” challenge on 2026-10-25; its author says it is tuned to an Alpine PHP 8.4.26 `cli-server` build and will not match a Debian `php-fpm` build, but adapting it lowers the bar for attackers. On 2026-10-29, Palo Alto confirmed exploitation against internet-exposed PAN-OS management interfaces and independently verified [Dream's report](https://dreamgroup.com/blog/chained-php2shell-exploit-roots-25-servers) of a PHP2Shell + [Fragnesia](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite) chain that rooted 24 PAN-OS firewalls and a management server, then attacked Active Directory. Where the Fragnesia kernel fix is missing, treat PHP2Shell compromise as potential root compromise. Morphisec separately reported blocked post-exploitation on a Windows IIS / PHP-CGI server that it attributes to PHP2Shell; that attribution is not independently verified. [Investigate exposed systems from at least 2026-10-17](details/php2shell.md#exploitation-status) and use the [PAN-OS and IIS indicators](details/php2shell.md#look-for-suspicious-execution).
 
 ### The October 23 follow-up matters
 
@@ -2326,14 +2405,15 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | Downstream fix-status check | 2026-10-26 | libjxl and ClickHouse source fixes merged; published fixed artifacts unconfirmed. Arrow dependency-update PR approved but still open. |
 | MSRC advisory | 2026-10-25 14:00 UTC | Critical (CVSS 3.1 8.1); fixed .NET SDKs, Visual Studio and PowerShell builds. |
 | Palo Alto Networks advisory | 2026-10-26; updated 2026-10-27 | PAN-OS 11.2, 12.1 and 12.2 fixes/ETAs; only Brotli inspection with TLS/SSL decryption is exposed. |
+| ELLIO in-the-wild exploit attempt | 2026-10-26 15:08 UTC | Request built for official Node.js 24.22.0 x86-64; ELLIO found the attacker's chain non-working in its test. ELLIO also reproduced RCE on that x86-64 build. |
 | CISA KEV addition | 2026-10-27; time/TZ unknown | CISA added CVE-2026-111497 based on evidence of active exploitation; the federal civilian due date is 2026-11-10. |
-| **Last updated** | **2026-10-28 00:03 EDT (UTC−04:00)** | Added the CISA KEV status and urgency guidance for CVE-2026-111497. |
+| **Last updated** | **2026-10-30 11:01 EDT (UTC−04:00)** | Added ELLIO's x86-64 RCE reproduction and observed in-the-wild exploit attempt with indicators. |
 
 **HTTP2Shell, Node2Shell and Brotli2Shell are names for the same vulnerability, not separate CVEs.** The flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the names, it is **not specific to HTTP/2 or even HTTP**; exposure depends on decoding attacker-controlled Brotli data, including embedded file metadata and analytical buffers.
 
 Malformed Brotli input can overflow an internal buffer in Google’s native decoder.
 
-**Worst case:** **RCE, process-memory disclosure, or denial of service.** Researchers demonstrated RCE on a specific official Node.js Linux ARM64 build; that does not establish universal exploit reliability across every consumer.
+**Worst case:** **RCE, process-memory disclosure, or denial of service.** Researchers demonstrated RCE on specific official Node.js builds: Imperva on Linux ARM64 and ELLIO on 24.22.0 x86-64. On 2026-10-26 ELLIO's sensors recorded an exploit attempt aimed at Node.js 24.22.0 x86-64; the attacker's chain failed in ELLIO's test, and no successful compromise is established. Exploits are tuned per build, so this does not establish universal reliability, and failed attempts typically crash workers. [Indicators](details/brotli.md#operational-signals-and-evidence-limits).
 
 **New downstream evidence:** [JFrog's research](https://research.jfrog.com/post/brotli2shell-beyond-node2shell-and-http2shell/) demonstrates pointer corruption and a cleanup crash in **FFmpeg through libjxl's JPEG XL metadata decoding**, a server crash from a **23 MB ClickHouse HTTP body**, an indefinite CPU loop from a **534-byte Arrow/pyarrow input**, and a native **.NET crash**. These are not complete RCE demonstrations for those products. Small inputs can still exhaust workers; HTTP body-size limits do not address every path.
 
@@ -2408,7 +2488,7 @@ For optional response-compression inventory, run `python3 check_brotli.py https:
 
 For the **three additional Node.js vulnerabilities**, review whether user-controlled URLs/hostnames reach DNS resolution, hostname allowlists, or TLS clients. The NUL-truncation issue concerns DNS/allowlist handling; the two IP-format issues concern TLS identity validation. Even if Brotli is unused, these are independent reasons to install the Node security release.
 
-Sources: [Node.js security release](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases), [Python advisory](https://github.com/advisories/GHSA-9v8h-qqgm-4m35), [HTTP2Shell naming and cross-stack scope](https://www.aikido.dev/blog/python-packages-vulnerable-node2shell-brotli-cve-2026-111497), [cross-ecosystem impact and patch matrix](https://thehackernews.com/2026/10/brotli-decoder-flaw-behind-nodejs-rce.html).
+Sources: [Node.js security release](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases), [Python advisory](https://github.com/advisories/GHSA-9v8h-qqgm-4m35), [ELLIO x86-64 RCE and in-the-wild attempt](https://ellio.tech/en/blog/node2shell-cve-2026-111497-rce-on-stock-nodejs-builds/), [HTTP2Shell naming and cross-stack scope](https://www.aikido.dev/blog/python-packages-vulnerable-node2shell-brotli-cve-2026-111497), [cross-ecosystem impact and patch matrix](https://thehackernews.com/2026/10/brotli-decoder-flaw-behind-nodejs-rce.html).
 
 Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/announcements/issues/494), [Brotli4j advisory](https://github.com/hyperxpro/Brotli4j/security/advisories/GHSA-x524-jrqf-vwq6), [PHP extension release](https://github.com/kjdev/php-ext-brotli/releases/tag/0.21.1), [Ruby maintainer confirmation](https://github.com/miyucy/brotli/issues/64).
 
@@ -2838,7 +2918,10 @@ Eight intermediate CA private keys were trivially recoverable because of defecti
 | Chrome root removal | **Expected** 2026-10-27 morning PDT (UTC−07:00) | Google forecast for Chrome Root Store users; not completed rollout as of this update. |
 | Microsoft Windows and Edge response | 2026-10-26 / 2026-10-27; time/TZ unknown | Microsoft's out-of-band Windows update removes seven affected certificates; Edge followed with a Certificate Trust List update. This does not establish protection for other platforms or independently bundled stores. |
 | eMudhra Update 6 | 2026-10-28; time/TZ unknown | eMudhra says about 30,800 affected G3 certificates belong to one U.S. client ecosystem, G1 remains active, and Sectigo replacements are available. |
-| **Last updated** | **2026-10-29 00:03 EDT (UTC−04:00)** | Added Microsoft and eMudhra follow-up status. |
+| Cisco advisory | 2026-10-23 16:00 GMT; v1.4 2026-10-28 19:39 GMT | Informational, interim cisco-sa-emudhra-info-ScS22A1r: per-product remediation, fix target dates (some into 2027) and products still under investigation. |
+| Apple command-line tool gap | 2026-10-29; time/TZ unknown | Apple says macOS curl, git, python3, ruby, perl and openssl use `/etc/ssl/cert.pem` without Apple's block and can still accept the certificates until a future macOS update. |
+| eMudhra Update 7 | 2026-10-30; time/TZ unknown | eMudhra names KPMG as independent external reviewer; no scope detail or completion date. The promised root-cause analysis is not yet published. No change to client remediation. |
+| **Last updated** | **2026-10-30 11:01 EDT (UTC−04:00)** | Added Cisco advisory, Apple's macOS command-line tool guidance and eMudhra Update 7. |
 
 Inventory client trust stores as well as your server certificates: operating-system stores, browsers, Java truststores, Python/application CA bundles, containers, and embedded clients can update independently. Match certificate fingerprints/serials and affected issuer chains against the incident record; a name containing “emSign” is not a precise affected-certificate test. Inspect Go build versions with `sh stack-inventory.sh go /path/to/deployed-binary` and compare with the fixed branches above. Updating the installed Go compiler does not repair existing binaries. For third-party appliances or opaque applications, obtain the vendor's trust-update status. A successful TLS connection is not proof that fraudulent chains are rejected.
 
@@ -2852,6 +2935,8 @@ The affected keys comprise **six TLS and two code-signing intermediates**, plus 
 - **Python:** **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18** add key blocking in `ssl`; the last three are source-only upstream releases. Independently update **certifi 2026.10.19**, **pip 26.2.2**, and other bundled tools. See [effective-store inventory and packaging limits](details/emudhra.md#python); native extensions can bypass Python's verifier.
 - **Alternate chains:** removing `emSign ECC Root CA - G3` alone does not block Sectigo cross-signs under **AAA Certificate Services**. Check direct anchors and the vendor's current policy, not only root names. [Trust-path guidance](details/emudhra.md#trust-paths-and-what-each-mitigation-changes) distinguishes intermediate blocks, root removal and revocation.
 - **Certificate owners:** prepare replacement chains before Google's **expected October 27 morning PDT** root removal. Legitimate certificates under the removed root may fail too. [Central controls and CT](details/emudhra.md#central-controls-ct-and-egress-limits) have coverage limits: a WAF, hostname allowlist or absence of CT evidence does not prove outbound TLS safety.
+- **macOS command-line tools:** Apple says curl, git, python3, ruby, perl and openssl from macOS or the Xcode Command Line Tools check `/etc/ssl/cert.pem` without Apple's block and can still accept the affected certificates until a future macOS update. Apply Apple's [administrator workaround](details/emudhra.md#containers-os-stores-and-alternate-copies) only with backups, and recheck after each macOS update.
+- **Cisco products:** check each product in Cisco's interim [cisco-sa-emudhra-info-ScS22A1r](https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-emudhra-info-ScS22A1r); several fixes have only target dates, and IOS XE and Nexus trains remain under investigation. See [Remediation](details/emudhra.md#remediation).
 
 Sources: [Mozilla incident record](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449), [Go security announcement](https://groups.google.com/g/golang-announce/c/66pojueaQek), [Microsoft response](https://www.microsoft.com/en-us/msrc/blog/2026/10/microsoft-response-to-compromised-emudhra-certificate-authority-keys), and [eMudhra Update 6](https://emudhra.com/en/post/certificate-security-incident). See the detailed guide for per-runtime checks and vendor trust-distribution guidance.
 
@@ -2963,6 +3048,9 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Mitsubishi Electric ICONICS GENESIS, GENESIS64 / ICONICS Suite, IoTWorX, MC Works64, GENESIS32, BizViz** | Update ICONICS Suite to 10.98+, GENESIS to 11.04+ and IoTWorX to 10.98+ under OT change control; MC Works64, GENESIS32 and BizViz get no fix, so apply Mitsubishi's challenge-file workaround, block remote login and DCOM from untrusted networks, and plan migration. [Guide](details/mitsubishi-iconics-genesis.md#remediation). |
+| **Microsoft Edge** | Confirm every install, including VDI images and kiosks, is on 148.0.3967.70 or later and relaunch. [Guide](details/edge-pwn2own.md#remediation). |
+| **Telegram Desktop / Android / iOS** | Update Desktop to 7.2.9+ and Android to 12.10.4+ and restart; iOS fix status is unconfirmed. [Guide](details/telegram-clients.md#remediation). |
 | **Google MCP Toolbox for Databases with the Cloud Storage source** | Upgrade to 1.10.0+ (latest 1.15.0) and set `allowedBuckets` and `allowedLocalRoots` on every `cloud-storage` source (upgrading alone keeps allow-all defaults; the prebuilt config sets neither), or remove the upload/download tools; run as an unprivileged user on localhost or stdio and restart. [Guide](details/google-mcp-toolbox.md#remediation). |
 | **Veeam Backup & Replication / Veeam Software Appliance / managed Veeam Agent for Linux** | Update affected Backup & Replication installations to 13.1.2 (build 13.1.2.57) or 13.0.3 (build 13.0.3.63), and managed Linux agents to 13.1.2 (build 13.1.2.11). Restrict backup-management services to trusted administrative networks while rolling out the update. [Guide](details/veeam-backup.md#remediation). |
 | **Vertiv Avocent ACS8000 / ACS800 console servers** | Restrict the web UI (HTTP/HTTPS) to a management network now, or disable web access in the Security Profile; no fixed version is confirmed, so treat 2.32.5 and earlier as affected and 2.32.6 as unknown until Vertiv confirms a fix, and review appliance accounts and configuration. [Guide](details/vertiv-avocent-acs.md#remediation). |

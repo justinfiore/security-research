@@ -1,6 +1,6 @@
 # Linux kernel: Fragnesia - ESP-in-TCP page-cache overwrite
 
-**Last updated:** 2026-10-28 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Fragnesia summary](../black-october-2026.md#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -24,6 +24,7 @@
 | CVE published | 2026-05-23; time/TZ unknown | kernel.org CNA record. [CVE record][cve] |
 | Ubuntu fixed releases | 2026-06 onward; dates vary by package | Ubuntu lists fixed kernel builds for supported releases and flavors. [Ubuntu][ubuntu] |
 | CISA KEV addition | 2026-10-28; time/TZ unknown | CISA reports active exploitation and requires forensic triage for covered agencies. [KEV][kev] |
+| Chained with PHP2Shell in the wild | Campaign 2026-10-08 to 2026-10-24 per Dream's timeline (time/TZ unknown); timestamped compromises 2026-10-23 18:14 UTC and 2026-10-24 10:09 and 11:35 UTC; report 2026-10-26, updated 2026-10-29 | Dream Research recovered tooling that ran a custom PHP2Shell exploit and then Fragnesia, overwriting `/etc/pam.d/su` through the page cache so `su root` succeeds without a password, to root 24 PAN-OS firewalls and one management server; Unit 42 independently verified the tooling and results. See the [PHP2Shell guide](php2shell.md#exploitation-status) for indicators. [Dream][dream] [Unit 42][unit42] |
 
 ## Detection
 
@@ -54,8 +55,11 @@ CISA’s KEV entry requires forensic triage for covered agencies and reports the
 - [kernel.org CNA CVE record][cve] — description, CVSS score and fix commits.
 - [Ubuntu CVE tracker][ubuntu] — affected status, supported fixed kernel builds and mitigation context.
 - [CISA KEV JSON feed][kev] and [CISA’s October 28 alert][cisa-alert] — active-exploitation status, due date and forensic-triage requirement.
+- [Dream Research][dream] and [Unit 42][unit42] — the PHP2Shell + Fragnesia chain to root on PAN-OS devices.
 
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-46300
 [ubuntu]: https://ubuntu.com/security/CVE-2026-46300
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
 [cisa-alert]: https://www.cisa.gov/news-events/alerts/2026/10/28/cisa-adds-two-known-exploited-vulnerabilities-catalog
+[dream]: https://dreamgroup.com/blog/chained-php2shell-exploit-roots-25-servers
+[unit42]: https://unit42.paloaltonetworks.com/cve-2026-109618-cve-2026-109619/

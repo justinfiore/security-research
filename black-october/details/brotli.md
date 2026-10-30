@@ -1,6 +1,6 @@
 # HTTP2Shell / Node2Shell: detection and remediation
 
-**Last updated:** 2026-10-28 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Brotli summary and patch matrix](../black-october-2026.md#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability) · [Changelog](../../CHANGELOG.md)
 
@@ -53,6 +53,7 @@
 | ClickHouse backports merged | 2026-10-25 14:10:47 UTC (26.10, PR #127778) through 2026-10-26 06:21:46 / 06:29:01 / 09:02:26 UTC (26.8 #127810, 26.9 #127811, 26.3 #127809). Merged on every listed branch; no release containing them was published when reviewed |
 | Downstream release-status recheck | 2026-10-26: [ClickHouse releases](https://github.com/ClickHouse/ClickHouse/releases) do not yet list the four named backport releases; latest published stable is 26.10.2.103 (2026-10-24 04:17:23 UTC). [Arrow issue #55166](https://github.com/apache/arrow/issues/55166) remains open and [PR #55167](https://github.com/apache/arrow/pull/55167) was approved 2026-10-24 but is not merged; latest [Arrow release](https://github.com/apache/arrow/releases) is 26.0.0 (2026-10-09 07:37:33 UTC). Latest [libjxl release](https://github.com/libjxl/libjxl/releases) is 0.12.0 (2026-07-01 21:16:30 UTC), preceding its source fix. Fixed downstream release availability is not established by these records; check the deployed supplier's builds/backports separately |
 | Palo Alto Networks advisory | 2026-10-26, updated 2026-10-27: [PAN-OS portfolio status](https://security.paloaltonetworks.com/CVE-2026-111497) identifies conditionally affected PAN-OS 11.2/12.1/12.2 releases and fixed hotfixes or ETAs; it does not affect the management interface, PAN-OS 11.1 or 10.2 |
+| x86-64 RCE reproduction and in-the-wild exploit traffic | Post dated 2026-10-25: [ELLIO][ellio] reports reproducing a shell on the official, unmodified Node.js **24.22.0 x86-64** build (plain `node:http`, `node:24.22.0-slim` as root, Express 5.3.0 and Koa 3); 24.22.1 rejected the input. Update dated 2026-10-26: at **15:08 UTC** its sensors received a 23,069,983-byte Brotli request body built for Node.js v24.22.0 x86-64 from 94.154.43.7. ELLIO says the delivery copies public PoCs with an original ROP chain, and that this chain scored 0 of 50 attempts against its own vulnerable target. This is an observed exploitation attempt, not a confirmed compromise |
 | CISA KEV addition | 2026-10-27, time/TZ unknown: CISA [added CVE-2026-111497 to KEV](https://www.cisa.gov/news-events/alerts/2026/10/27/cisa-adds-two-known-exploited-vulnerabilities-catalog) based on evidence of active exploitation; federal civilian agencies have a 2026-11-10 due date |
 
 ## Detection
@@ -152,6 +153,8 @@ Investigate decompression-associated crashes, unusual child processes, unexpecte
 | .NET | A local console application's two-stage decode triggers native `SIGSEGV`, terminating the process rather than raising an ordinary managed exception | Network exposure still requires enabled request/client decompression or explicit APIs accepting attacker input. The open [runtime tracking issue](https://github.com/dotnet/runtime/issues/136422) tracks public-branch ports; it does not override Microsoft's released fixes |
 | Apache Arrow / pyarrow | A **534-byte** input causes an indefinite CPU-consuming loop; Brotli **1.2.1** rejects the same input in under a second in JFrog's test | Investigate stuck data-processing jobs, sustained worker CPU and decompressor stacks even without a crash. This establishes DoS, not Arrow RCE. The small input also shows why compressed-input size limits alone are insufficient |
 
+**Observed in-the-wild attempt ([ELLIO][ellio], 2026-10-26 15:08 UTC):** a single HTTP request with a Brotli-coded body of **23,069,983 bytes**, SHA-256 `7fcbdaaecd4419e2930927844f3b772668204737a4e7602a2290c991c93c5c4b`, from **94.154.43.7**, tuned to the official Node.js **v24.22.0 x86-64** binary. ELLIO says the same address also carried PHP2Shell exploits and VPN probing, so treat it as shared mass-exploitation infrastructure, not attribution or a complete blocklist. The chain redirects only stdin before running `/bin/sh`, so a successful attempt may produce no response output; look for follow-on reverse shells or downloads. ELLIO also observed an exposure checker with user agent `Mozilla/5.0 (compatible; node2shell-check/1.0)` sending valid and malformed `Content-Encoding: br` POST bodies; that marks reconnaissance, not exploitation. Per-build offsets mean failed attempts usually crash the worker: a burst of Node worker crashes or restarts after large `br` request bodies is an investigation signal, and on hosts with `systemd-coredump` those cores can hold other users' session data.
+
 These are diagnostic patterns, not unique IOCs. No crash, low CPU, an absent shell, or a passing HTTP-header inventory excludes memory disclosure or another reachable decoder. Preserve suspect inputs without replaying them and investigate from clean systems.
 
 ### Other Node DNS and TLS issues
@@ -231,6 +234,7 @@ Isolate suspicious workers, preserve logs and snapshots, and map files, tokens a
 - [PHP Windows Brotli rebuild announcement and downloads](https://www.php.net/archive/2026.php)
 - [Ruby maintainer fix confirmation](https://github.com/miyucy/brotli/issues/64)
 - [Imperva exploit research and test limits](https://www.imperva.com/blog/node2shell-from-brotli-data-to-remote-code-execution/)
+- [ELLIO x86-64 RCE reproduction and 2026-10-26 in-the-wild exploit traffic][ellio]
 - [JFrog Brotli2Shell research: native/file paths and demonstrated-impact limits](https://research.jfrog.com/post/brotli2shell-beyond-node2shell-and-http2shell/)
 - [JFrog official contextual scanner and limitations](https://github.com/jfrog/vulnerability_scanners/tree/main/brotli2shell_cve_2026_111497)
 - [Trail of Bits official Brotli Checker and guidance](https://github.com/trailofbits/brotli-checker)
@@ -245,3 +249,4 @@ Isolate suspicious workers, preserve logs and snapshots, and map files, tokens a
 [alasbrotli]: https://alas.aws.amazon.com/AL2023/ALAS2023-2026-3334.html
 [msrcbrotli]: https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497
 [alpinebrotli]: https://security.alpinelinux.org/vuln/CVE-2026-111497
+[ellio]: https://ellio.tech/en/blog/node2shell-cve-2026-111497-rce-on-stock-nodejs-builds/
