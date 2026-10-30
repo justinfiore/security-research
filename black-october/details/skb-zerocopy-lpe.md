@@ -1,6 +1,6 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-10-29 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -47,6 +47,7 @@
 | KernelCare live patch released for EL10 | 2026-10-23 14:59 UTC | Production feed for AlmaLinux, CloudLinux, RHEL, Oracle Linux and Rocky Linux 10, built from the upstream fix candidate and verified against the public PoC. EL9 in review, EL8 in progress, Debian/Ubuntu not started. [CloudLinux][cl] [TuxCare][tux] |
 | AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | `kernel-4.18.0-553.177.2.el8_10`, `kernel-5.14.0-687.59.2.el9_8`, `kernel-6.12.0-211.68.2.el10_2` in `almalinux-testing`, backported ahead of RHEL. Not yet in production repositories at the time. [AlmaLinux][alma] |
 | AlmaLinux production kernels | 2026-10-28; time/TZ unknown | The fix reached regular production repositories for AlmaLinux 8 (`kernel-4.18.0-553.178.1.el8_10`), 9 (`kernel-5.14.0-687.60.1.el9_8`), and 10 (`kernel-6.12.0-211.69.1.el10_2`). [AlmaLinux][alma] |
+| CloudLinux 9 and 10 production kernels | 2026-10-28; time/TZ unknown | CloudLinux ships the same AlmaLinux builds: `kernel-5.14.0-687.60.1.el9_8` (9) and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 8 ELS and 9 ELS remain pending. [CloudLinux][cl] |
 | Fix committed to the netdev `net` tree | 2026-10-23 19:41:58 UTC (15:41:58 EDT) | Commit `79dc34beb1fd` by Jakub Kicinski, with `Reviewed-by: Eric Dumazet` and `Cc: stable@kernel.org`. A maintainer tree, not a released kernel. [Fix commit][commit] |
 | Red Hat bulletin | 2026-10-24 18:31 (TZ not stated) | RHSB-2026-014: "Potentially Affected", Important; says upstream patches are not yet available and no CVEs are assigned. No RHEL fix. [Red Hat][rh] |
 | CloudLinux 7 hybrid and 8 beta kernels | 2026-10-26 09:11 UTC | `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`, beta and rolling out. [CloudLinux][cl] |
@@ -120,10 +121,11 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | AlmaLinux Kitten 10 | Next regular kernel update; no separate build | — | [AlmaLinux][alma] |
 | CloudLinux 7 hybrid | `kernel-4.18.0-553.177.1.lve.1.el7h` | Beta (`cl7h_beta`), rolling out | [CloudLinux][cl] |
 | CloudLinux 8 | `kernel-4.18.0-553.177.1.lve.1.el8` | Beta (`cloudlinux-updates-testing`), rolling out | [CloudLinux][cl] |
-| CloudLinux 9, 10 | Follows the AlmaLinux kernels; no CloudLinux build released yet | — | [CloudLinux][cl] |
+| CloudLinux 9 | `kernel-5.14.0-687.60.1.el9_8` or later | Production, through the AlmaLinux kernel update | [CloudLinux][cl] |
+| CloudLinux 10 | `kernel-6.12.0-211.69.1.el10_2` or later | Production, through the AlmaLinux kernel update | [CloudLinux][cl] |
 | CloudLinux 8 ELS, 9 ELS | Pending on the extended-support channel | — | [CloudLinux][cl] |
 | TuxCare ELS AlmaLinux 9.2 ESU | `kernel-5.14.0-284.1101.el9_2.tuxcare.11.els17` lists the fix | OSV-imported TuxCare data (unconfirmed on TuxCare's site) | [OSV][osv] |
-| KernelCare live patch | Released for EL10 (AlmaLinux, CloudLinux, RHEL, Oracle Linux, Rocky Linux 10) on 2026-10-23; EL9 in review; EL8 in progress; Debian/Ubuntu not started | KernelCare production feed (not yet ePortal, per TuxCare) | [TuxCare][tux] [CloudLinux][cl] |
+| KernelCare live patch | Released for CloudLinux 10 and AlmaLinux 10 on 2026-10-23; CloudLinux 9 in review; CloudLinux 8 in progress; Debian/Ubuntu not started | KernelCare production feed (not yet ePortal, per TuxCare) | [TuxCare][tux] [CloudLinux][cl] |
 | RHEL | No fix; "Potentially Affected", Important | — | [Red Hat][rh] |
 | Debian, Ubuntu | No advisory, tracker entry or fixed kernel found | — | — |
 
@@ -184,7 +186,7 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 - [ZDI-CAN-33367 report on LKML][report] (public report, CVSS vector, tested version 7.3-rc1 on Debian trixie, PoC source) and [ZDI upcoming advisories][zdi] (reported date, deadline, CVSS 3.0 calculator link).
 - [Eric Dumazet's reply][dumazet], [v2 patch][patch] and [netdev `net` commit `79dc34beb1fd`][commit] — fix authorship, review, stable tag and commit time.
 - [AlmaLinux, 2026-10-23][alma] — affected releases, testing kernels, `esp4`/`esp6` mitigation, cache-eviction guidance.
-- [CloudLinux, updated 2026-10-26][cl] — confirmed root, affected matrix, beta kernels, KernelCare status, user-namespace and module mitigations, CageFS test.
+- [CloudLinux, updated 2026-10-28][cl] — confirmed root, affected matrix, CloudLinux 9/10 production kernels, beta kernels, KernelCare status, user-namespace and module mitigations, CageFS test.
 - [TuxCare, 2026-10-22 (modified 2026-10-23)][tux] — tested kernels, AppArmor bypass, prerequisites, KernelCare status, exploitation status.
 - [Sysdig, 2026-10-24][sysdig] — syscall sequence, detection rule, related CVEs, seccomp guidance, exploitation status.
 - [Red Hat RHSB-2026-014][rh] — Red Hat severity and status.

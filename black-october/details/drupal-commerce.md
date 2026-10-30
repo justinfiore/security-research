@@ -19,11 +19,11 @@
 ## Timeline
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| Public advisory and fixed releases | 2026-10-22; time/TZ unknown | Drupal SA-CONTRIB-2026-254. |
+| Public advisory and fixed releases | 2026-10-28; time/TZ unknown | Drupal SA-CONTRIB-2026-254. The advisory page is dated 2026-October-28. |
 | **Last updated** | **2026-10-30 (America/New_York)** | Added from Drupal’s advisory. |
 
 ## Detection
-From each Drupal project root, run `composer show drupal/commerce` and compare the installed branch and version. Affected releases are Commerce Core below 8.x-2.41 and 3.x from 3.0.0 through 3.1.x; the vendor advisory does not provide safe indicators beyond version and order review.
+From each Drupal project root, run `composer show drupal/commerce` and compare the installed branch and version. Drupal's advisory lists affected releases as Commerce Core below 8.x-2.41 and 3.x from 3.0.0 before 3.3.13, which includes 3.2.x and 3.3.0 through 3.3.12. The advisory does not provide safe indicators beyond version and order review.
 
 Review orders, refunds, discounts, customer-account changes and fulfilment records for inconsistencies around the exposure period. A clean review does not prove no exploitation.
 

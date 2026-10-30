@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [WordPress: unauthenticated code execution during a core upgrade](#wordpress-unauthenticated-code-execution-during-a-core-upgrade)
 - [Progress WS_FTP Server: Critical authentication and command-injection flaws](#progress-ws_ftp-server-critical-authentication-and-command-injection-flaws)
 - [Linux kernel: IPv4 TCP options use-after-free](#linux-kernel-ipv4-tcp-options-use-after-free)
 - [Jenkins: October core security fixes](#jenkins-october-core-security-fixes)
@@ -154,6 +155,26 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
+## WordPress: unauthenticated code execution during a core upgrade
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-upgrade-window.md):** [Detection](details/wordpress-upgrade-window.md#detection) · [Remediation](details/wordpress-upgrade-window.md#remediation) · [Verification](details/wordpress-upgrade-window.md#verification) · [Timeline](details/wordpress-upgrade-window.md#timeline)
+
+**CVEs:** None assigned. Wordfence tracks the flaw without a CVE ID.
+
+**Wordfence rates the flaw CVSS 3.1 8.1 High. WordPress publishes no score of its own.** During a full-package core upgrade, affected releases unpack the new files, including the installer, into a predictable directory under `wp-content/upgrade`. An unauthenticated attacker who requests that installer during the unpack can run PHP. Wordfence says the window lasts seconds in a lab. The other fixes in 7.1.4 mostly need a Contributor account or higher.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Wordfence recorded more than 18,500 probe requests for staged `setup-config.php` paths in the first 21 hours after its firewall rule; it does not report a confirmed compromise. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public release | 2026-10-28; time/TZ unknown | WordPress 7.1.4, with backports through the 4.7 branch. |
+| Exploitation attempts | 2026-10-28 20:30 UTC onward | Wordfence's first match was nine minutes after its firewall rule. Probes, not confirmed compromise. |
+| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | Added from the WordPress release and Wordfence's write-up. |
+
+**Patch:** Update to **7.1.4**, or the fixed release for the installed branch (7.0.8, 6.9.11, 6.8.12, 6.7.11, 6.6.11, 6.5.14, 6.4.14, and the older branch releases through 4.7.39). Confirm the update on **Dashboard → Updates**; do not assume a background update finished. WordPress 4.6 and earlier get no fix. A firewall rule is not a substitute, because the request never loads WordPress.
+
+Sources: [WordPress 7.1.4](https://wordpress.org/news/2026/10/wordpress-7-1-4/), [version documentation](https://wordpress.org/documentation/wordpress-version/version-7-1-4/), [Wordfence](https://www.wordfence.com/blog/2026/10/wordpress-7-1-4-security-release-rce/), [Patchstack](https://patchstack.com/articles/wordpress-7-1-4-security-release).
+
 ## Progress WS_FTP Server: Critical authentication and command-injection flaws
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/progress-wsftp.md):** [Detection](details/progress-wsftp.md#detection) · [Remediation](details/progress-wsftp.md#remediation) · [Verification](details/progress-wsftp.md#verification) · [Timeline](details/progress-wsftp.md#timeline)
@@ -180,16 +201,18 @@ Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE
 
 **CVEs:** [CVE-2026-98432](https://www.cve.org/CVERecord?id=CVE-2026-98432)
 
-**kernel.org rates CVE-2026-98432 CVSS 3.1 9.8 Critical; Red Hat rates its product impact 8.1 High.** The IPv4 TCP race can free socket options while they are in use during retransmitted SYN processing or request-socket migration.
+**kernel.org and Red Hat's public page both rate CVE-2026-98432 CVSS 3.1 9.8 Critical.** Red Hat labels its score preliminary. The IPv4 TCP race can free socket options while they are in use during retransmitted SYN processing or request-socket migration. On 2026-10-27 Anthropic reported a lab proof of concept that runs commands as root against a server exposing a multipath TCP listener; it did not publish the exploit and does not report in-the-wild use.
 
-**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No primary source reviewed reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No primary source reviewed reports in-the-wild exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | CVE publication | 2026-10-15; time/TZ unknown | kernel.org CNA record. |
-| **Last updated** | **2026-10-30 08:04 EDT (UTC−04:00)** | Added after vendor status review. |
+| Anthropic lab proof of concept | 2026-10-27; time/TZ unknown | Remote root against a multipath TCP listener. Exploit not published; not in-the-wild use. |
+| Go MPTCP stopgap | 2026-10-29; time/TZ unknown | Go says `GODEBUG=multipathtcp=0` blocks the demonstrated listener shape and is not a kernel fix. |
+| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | Red Hat public score now 9.8, plus the Anthropic lab proof of concept and Go stopgap. |
 
-**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. At review, Red Hat lists no supported mitigation and Ubuntu lists supported generic kernels as vulnerable with fixes in progress; restrict unnecessary untrusted TCP exposure while awaiting a vendor update.
+**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. At review, Red Hat lists no supported mitigation and Ubuntu lists supported generic kernels as vulnerable with fixes in progress; restrict unnecessary untrusted TCP exposure while awaiting a vendor update. Go 1.24 and later enable multipath TCP on Linux listen sockets by default. Setting `GODEBUG=multipathtcp=0`, or `godebug multipathtcp=0` in the main module, disables that default and blocks the listener shape Anthropic demonstrated, but Go says this is fragile and does not fix the kernel bug.
 
 Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432), [Red Hat advisory](https://access.redhat.com/security/cve/CVE-2026-98432), [Ubuntu advisory](https://ubuntu.com/security/CVE-2026-98432), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -310,9 +333,9 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 
 **CVEs:** [CVE-2026-98432](https://www.cve.org/CVERecord?id=CVE-2026-98432)
 
-**kernel.org CNA CVSS 3.1 9.8 Critical.** The IPv4 TCP SYN-ACK path can use freed IP options, creating a remote unauthenticated use-after-free.
+**kernel.org CNA CVSS 3.1 9.8 Critical.** The IPv4 TCP SYN-ACK path can use freed IP options, creating a remote unauthenticated use-after-free. On 2026-10-27 Anthropic reported a lab proof of concept for remote root against a multipath TCP listener; it is not in-the-wild exploitation, and the bug is not limited to multipath TCP.
 
-**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No exploitation is reported by the CNA. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No in-the-wild exploitation is reported by the CNA. Absence from KEV is not evidence that exploitation has not occurred.
 
 **Patch:** install a vendor kernel that includes the upstream fix and reboot; upstream fixed floors include 5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.56, 7.2.10 and 7.3. [Guide](details/linux-tcp-rcu.md#remediation).
 
@@ -1229,7 +1252,8 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | Fix in netdev `net` tree | 2026-10-23 19:41 UTC | Commit 79dc34beb1fd, marked for stable; not in mainline. |
 | CloudLinux 7h/8 beta kernels | 2026-10-26 09:11 UTC | Beta, rolling out. |
 | Mainline/stable releases, RHEL fix | None established (as of 2026-10-26) | Newest kernel.org releases predate the fix; Red Hat has no fix. |
-| **Last updated** | **2026-10-29 04:03 EDT (UTC−04:00)** | AlmaLinux 9 and 10 production kernels joined the existing AlmaLinux 8 fix. |
+| CloudLinux 9 and 10 production kernels | 2026-10-28; time/TZ unknown | Same AlmaLinux builds, shipped to CloudLinux production. |
+| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | CloudLinux 9 and 10 production kernels. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -1250,7 +1274,7 @@ for m in esp4 esp6 nlmon act_pedit; do modprobe -n -v "$m"; done
 
 A non-zero `user.max_user_namespaces` means ordinary users can take the exploit's first step. Ubuntu's `kernel.apparmor_restrict_unprivileged_userns` does not stop the public PoC. An empty `lsmod` result does not mean the modules are unavailable: they load on demand. A process that already holds network-admin rights, such as root in a privileged container, does not need user namespaces. Vulnerability scanners keyed on CVE IDs will not flag this issue. See [exposure checks](details/skb-zerocopy-lpe.md#read-only-exposure-checks) and [indicators and evidence limits](details/skb-zerocopy-lpe.md#indicators-and-evidence-limits).
 
-**Patch:** No mainline, stable or RHEL kernel contains the fix yet. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10); CloudLinux beta builds and the KernelCare EL10 live patch remain additional options. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
+**Patch:** No mainline, stable or RHEL kernel contains the fix yet. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 9 and 10 ship those same AlmaLinux builds to production (`kernel-5.14.0-687.60.1.el9_8` and `kernel-6.12.0-211.69.1.el10_2`). CloudLinux 7 hybrid and 8 remain beta, and CloudLinux 8 ELS and 9 ELS are still pending. The KernelCare live patch is released for CloudLinux 10 and AlmaLinux 10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
 
 Sources: [ZDI report](https://lore.kernel.org/lkml/BYAPR01MB3830CECF5D0871064C59BA0280662@BYAPR01MB3830.prod.exchangelabs.com/), [fix commit](https://github.com/kernelorg-mirror/linux_kernel_git_netdev_net/commit/79dc34beb1fdb3da79753e51e15c68591a2561fe), [AlmaLinux](https://almalinux.org/blog/2026-10-23-zdi-can-33367/), [CloudLinux](https://blog.cloudlinux.com/zdi-can-33367), [TuxCare](https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/), [Sysdig](https://www.sysdig.com/blog/detecting-and-mitigating-zdi-can-33367-and-five-other-linux-flaws), [Red Hat RHSB-2026-014](https://access.redhat.com/security/vulnerabilities/RHSB-2026-014).
 
@@ -1598,7 +1622,8 @@ Sources: [SA-CORE-2026-014](https://www.drupal.org/sa-core-2026-014), [SA-CONTRI
 | CVE records published | 2026-10-14 14:40 UTC | F5 CNA. |
 | nginx 1.30.6 and 1.31.7, NGINX Plus fixes, F5 K articles | 2026-10-14; time/TZ unknown | Plus 37.0.5.1 and 37.1.0.1. |
 | Debian DSA-6575-1 | 2026-10-21 15:28 UTC | trixie 1.26.3-3+deb13u10. |
-| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| Ubuntu USN-8955-1 | 2026-10-26; time/TZ unknown | Fixed nginx packages for 22.04, 24.04, 26.04 and 26.10. |
+| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | Ubuntu fixed packages for the October NGINX CVEs. |
 
 Each flaw needs a specific configuration:
 
@@ -2261,7 +2286,8 @@ Sources: [DIVD case](https://csirt.divd.nl/DIVD-2026-00015), [CNA record CVE-202
 | Vendor investigation update | 2026-10-26; time/TZ unknown | Tailscale confirms that most identified SSH issues are serious privilege escalations under configuration- and authorization-dependent conditions. It says it has fixes for most issues and targets a patched client release by the end of 2026-10-27, subject to testing; no version is published. |
 | Fixed stable release | Not established at 2026-10-27; time/TZ unknown | Latest Tailscale stable found was 1.104.2 and headscale 0.29.6; do not mark either fixed for this report. |
 | Tailscale v1.104.4 released | 2026-10-28; time/TZ unknown | Tailscale says this release addresses its confirmed SSH vulnerabilities and three Serve/Funnel bugs, with four security bulletins; two other Serve/Funnel behaviors work as designed. This does not establish a complete fix matrix for all Tailworm findings or headscale. [Vendor release](https://tailscale.com/blog/tailscale-ssh-findings-fixes) |
-| **Last updated** | **2026-10-28 04:03 EDT (UTC−04:00)** | Added Tailscale v1.104.4 vendor fix status and retained the unresolved Tailworm/headscale scope. |
+| headscale 0.29.7 released | 2026-10-30 09:55:40 UTC | Security release for the Tailworm registration-pressure finding and the embedded Tailscale v1.104.4 dependency. Node SSH and Serve fixes still require Tailscale v1.104.4. |
+| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | headscale 0.29.7 security release. |
 
 Erica Windisch reports **11 findings across SSH, Serve/Funnel, an experimental connector and headscale/DERP**. This is not 11 confirmed unauthenticated Tailscale SSH vulnerabilities. The principal SSH escalation chains require **an already-authorized source, permitted target access and applicable forwarding**. Ordinary OpenSSH carried over Tailscale is distinct. This developing report is included at the owner's request, with its severity attribution visible.
 
@@ -2334,7 +2360,8 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | CISA KEV listing | 2026-10-26; time/TZ unknown | CISA added CVE-2026-109618 and CVE-2026-109619, requires forensic triage, and sets a federal civilian due date of 2026-10-29. |
 | PHP2Shell + Fragnesia chain to root (Dream) | 2026-10-23 18:14 UTC to 2026-10-24 11:35 UTC (timestamped compromises) | Dream reported 25 servers rooted (24 PAN-OS firewalls, one management server) on 2026-10-26; Unit 42 independently verified the tooling and results. |
 | Windows IIS / PHP-CGI report (Morphisec) | 2026-10-28; publication date, attack date not stated | Blocked post-exploitation on one customer server; attribution to PHP2Shell not independently verified. |
-| **Last updated** | **2026-10-30 11:01 EDT (UTC−04:00)** | Added Dream's PHP2Shell + Fragnesia root-chain details and indicators, and Morphisec's Windows IIS / PHP-CGI report. |
+| Remaining PAN-OS hotfixes released | 2026-10-28 and 2026-10-29; time/TZ unknown | Palo Alto removed the remaining ETAs; every supported branch in the matrix now has a released hotfix. |
+| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | PAN-OS PHP2Shell hotfixes released for every supported branch. |
 
 These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
@@ -2347,7 +2374,7 @@ These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
 PHP identifies **`mod_php` as the highest-risk configuration**, with demonstrated exploitation before application code runs. Application authentication therefore cannot be assumed to protect the vulnerable path.
 
-**Patch:** PHP **8.5.12, 8.4.27, 8.3.36, or 8.2.35**, or a distribution package explicitly backporting both fixes. Restart all affected workers. Older upstream branches need a verified vendor backport or migration. **PAN-OS / Panorama:** install the per-branch hotfix from [Palo Alto's advisory](https://security.paloaltonetworks.com/CVE-2026-109618), including newly released **12.2.4-h1, 12.1.7-h11, 10.2.13-h27 and 10.2.16-h12**; use the vendor's matrix for other branches rather than an earlier ETA. Until then, restrict management access to trusted internal IPs and enable Threat Prevention IDs 543004, 97622 and the related IDs the advisory lists. Palo Alto says CVE-2026-115560 does not affect PAN-OS.
+**Patch:** PHP **8.5.12, 8.4.27, 8.3.36, or 8.2.35**, or a distribution package explicitly backporting both fixes. Restart all affected workers. Older upstream branches need a verified vendor backport or migration. **PAN-OS / Panorama:** install the per-branch hotfix from [Palo Alto's advisory](https://security.paloaltonetworks.com/CVE-2026-109618). As of the 2026-10-29 update, every supported branch in that matrix has a released hotfix, including **12.2.4-h1, 12.1.10-h3, 12.1.7-h11, 12.1.4-h13, 11.2.16-h1, 11.2.13-h4, 11.2.10-h16, 11.2.7-h23, 11.2.4-h23, 11.1.16-h4, 11.1.13-h16, 11.1.10-h36, 11.1.7-h12, 11.1.6-h40, 11.1.4-h38, 10.2.18-h13, 10.2.16-h12, 10.2.13-h27, 10.2.10-h42 and 10.2.7-h39**. Until the hotfix is installed, restrict management access to trusted internal IPs and enable Threat Prevention IDs 543004, 97622 and the related IDs the advisory lists. Palo Alto says CVE-2026-115560 does not affect PAN-OS.
 
 **Exploitation status:** Amazon reported exploitation attempts from 2026-10-17, before disclosure. On 2026-10-24 a researcher documented successful RCE against PHP 8.4.26 `mod_php` honeypots. CISA’s earlier no-observed-success statement predates this evidence, and CISA added both emergency CVEs to KEV on 2026-10-26. A [public end-to-end exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC) was published after a researcher solved an authorized “Steal My Bitcoin” challenge on 2026-10-25; its author says it is tuned to an Alpine PHP 8.4.26 `cli-server` build and will not match a Debian `php-fpm` build, but adapting it lowers the bar for attackers. On 2026-10-29, Palo Alto confirmed exploitation against internet-exposed PAN-OS management interfaces and independently verified [Dream's report](https://dreamgroup.com/blog/chained-php2shell-exploit-roots-25-servers) of a PHP2Shell + [Fragnesia](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite) chain that rooted 24 PAN-OS firewalls and a management server, then attacked Active Directory. Where the Fragnesia kernel fix is missing, treat PHP2Shell compromise as potential root compromise. Morphisec separately reported blocked post-exploitation on a Windows IIS / PHP-CGI server that it attributes to PHP2Shell; that attribution is not independently verified. [Investigate exposed systems from at least 2026-10-17](details/php2shell.md#exploitation-status) and use the [PAN-OS and IIS indicators](details/php2shell.md#look-for-suspicious-execution).
 
@@ -2407,7 +2434,8 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | Palo Alto Networks advisory | 2026-10-26; updated 2026-10-27 | PAN-OS 11.2, 12.1 and 12.2 fixes/ETAs; only Brotli inspection with TLS/SSL decryption is exposed. |
 | ELLIO in-the-wild exploit attempt | 2026-10-26 15:08 UTC | Request built for official Node.js 24.22.0 x86-64; ELLIO found the attacker's chain non-working in its test. ELLIO also reproduced RCE on that x86-64 build. |
 | CISA KEV addition | 2026-10-27; time/TZ unknown | CISA added CVE-2026-111497 based on evidence of active exploitation; the federal civilian due date is 2026-11-10. |
-| **Last updated** | **2026-10-30 11:01 EDT (UTC−04:00)** | Added ELLIO's x86-64 RCE reproduction and observed in-the-wild exploit attempt with indicators. |
+| PAN-OS Brotli hotfixes released | 2026-10-29; time/TZ unknown | Palo Alto removed the remaining ETAs for 11.2.4-h23, 12.1.4-h13 and 12.1.10-h3. |
+| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | PAN-OS Brotli hotfixes are released, not ETAs. |
 
 **HTTP2Shell, Node2Shell and Brotli2Shell are names for the same vulnerability, not separate CVEs.** The flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the names, it is **not specific to HTTP/2 or even HTTP**; exposure depends on decoding attacker-controlled Brotli data, including embedded file metadata and analytical buffers.
 
@@ -2451,7 +2479,7 @@ Microsoft's [MSRC entry](https://msrc.microsoft.com/update-guide/vulnerability/C
 
 **PHP on Windows needs a separate package check:** PHP's October 21 source releases address PHP2Shell, but its [October 23 Windows rebuilds](https://www.php.net/archive/2026.php) add the fixed Brotli 1.2.1 dependency. Install **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1** and restart every SAPI and worker. Because the PHP runtime version did not change, `php -v` alone cannot distinguish a rebuilt package; verify the `-1` filename or the official download hash. This does not patch separately bundled `php-ext-brotli`, libcurl or other native decoders.
 
-**PAN-OS is conditionally affected:** Palo Alto Networks rates this **Critical (CVSS 4.0 9.2)** but says exposure requires **both** TLS/SSL decryption and Brotli inspection on the dataplane; the management interface and PAN-OS 11.1/10.2 are not affected. On 11.2.4+, check `show system setting brotli`; only `Enabled: yes` is exposed. Upgrade to the applicable fixed hotfix: **12.2.4-h1**, **12.1.4-h13 / 12.1.7-h11 / 12.1.10-h3**, or **11.2.4-h23 / 11.2.7-h23 / 11.2.10-h17 / 11.2.13-h4 / 11.2.16-h1** when released for the branch. Until then, disable Brotli inspection (`set system setting brotli-encoding disable`) and verify `Enabled: no`; this changes inspection behavior, so test policy impact. Palo Alto is not aware of malicious exploitation. See the [PAN-OS applicability and rollout detail](details/brotli.md#pan-os).
+**PAN-OS is conditionally affected:** Palo Alto Networks rates this **Critical (CVSS 4.0 9.2)** but says exposure requires **both** TLS/SSL decryption and Brotli inspection on the dataplane; the management interface and PAN-OS 11.1/10.2 are not affected. On 11.2.4+, check `show system setting brotli`; only `Enabled: yes` is exposed. As of the advisory's 2026-10-29 update, upgrade to the released hotfix for the branch: **12.2.4-h1**, **12.1.4-h13 / 12.1.7-h11 / 12.1.10-h3**, or **11.2.4-h23 / 11.2.7-h23 / 11.2.10-h17 / 11.2.13-h4 / 11.2.16-h1**. Until it is installed, disable Brotli inspection (`set system setting brotli-encoding disable`) and verify `Enabled: no`; this changes inspection behavior, so test policy impact. Palo Alto is not aware of malicious exploitation. See the [PAN-OS applicability and rollout detail](details/brotli.md#pan-os).
 
 **Envoy 1.36 and Istio 1.29 are unsupported branches**; a fix for this CVE does not restore general security support. Prefer a supported branch. See the [cross-stack guidance](https://patchtheplanet.org/brotli) for embedded clients and temporary decoding controls.
 
@@ -2512,7 +2540,8 @@ Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/an
 | Partial upstream Ruby fix | 2026-10-22; time/TZ unknown | Ruby 4.0.8 is insufficient for the complete set. |
 | Complete upstream Ruby fixes | 2026-10-23; time/TZ unknown | Ruby 4.0.9 / 3.4.12 / 3.3.13. |
 | CISA KEV addition for CVE-2026-97229 | 2026-10-29; time/TZ unknown | CISA reports active exploitation; federal due date 2026-11-01. |
-| **Last updated** | **2026-10-30 04:05 EDT (UTC−04:00)** | CISA KEV listing confirmed. |
+| GitLab eMudhra trust removal | 2026-10-29; time/TZ unknown | 19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11 and 18.11.14 remove the compromised intermediates. This does not replace the regex RCE fixes. |
+| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | GitLab 19.5.3 eMudhra certificate distrust, plus Runner and AI Gateway updates. |
 
 Both vulnerabilities involve memory corruption while compiling specially crafted regular expressions.
 
@@ -2525,7 +2554,7 @@ A compromised GitLab server can expose source code and accessible CI/CD secrets 
 
 **If you patched on October 12, patch again.** The first release does not cover the October 21 issue.
 
-**GitLab fixes:** **19.5.1, 19.4.3, 19.3.6, 19.2.9, 19.1.9, 19.0.10, or 18.11.13** for the latest RCE. Prefer a currently supported branch; the older backports are not equivalent to receiving every other security fix. Follow GitLab’s required upgrade stops and migration guidance.
+**GitLab fixes:** **19.5.1, 19.4.3, 19.3.6, 19.2.9, 19.1.9, 19.0.10, or 18.11.13** for the latest RCE. Prefer a currently supported branch; the older backports are not equivalent to receiving every other security fix. Follow GitLab’s required upgrade stops and migration guidance. The later 2026-10-29 releases (**19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11, 18.11.14**) remove trust for the compromised eMudhra intermediates; they do not replace the RCE fixes. Also update self-hosted Runner to 19.5.1 and AI Gateway to the matching fixed release, because a GitLab upgrade does not update either.
 
 GitLab.com was patched by the vendor. GitLab Dedicated customers should verify the vendor’s listed internal release status.
 
@@ -3098,9 +3127,9 @@ flowchart TD
 | **NetScaler ADC / Gateway with SAML** | Upgrade to 14.1-73.41, 13.1-64.28, 14.1-73.41 FIPS or 13.1-37.282 (FIPS/NDcPP); also apply CTX697096 fixes, preserving evidence first. [Guide](details/netscaler.md#remediation). |
 | **FortiMail** | Upgrade to 8.0.2+, 7.6.7+ or 7.4.9+ (7.2 → 7.4+); until then disable IBE or block internet access to webmail, then check Fortinet's IoCs. [Guide](details/fortimail.md#remediation). |
 | **Self-hosted Zammad** | Upgrade to 7.2.2+ (6.5.5 only as a stopgap for CVE-2026-102489; DEB/RPM installs need 7.2.2 for the root escalation), then run DIVD's log check. [Guide](details/zammad.md#remediation). |
-| **Tailscale SSH / headscale** | Review per-feature exposure; disable unnecessary SSH forwarding with the vendor's daemon setting and restart safely. Source fixes are merged; a complete fixed stable-release matrix was not established. |
+| **Tailscale SSH / headscale** | Update Tailscale to **v1.104.4 or later** and headscale to **0.29.7 or later**. The headscale release does not apply the node-side SSH and Serve fixes. A complete fix for every Tailworm finding is not established. |
 | **Microsoft Authenticator on Android** | Install **6.2606.4246 or a later supported release** in every profile; investigate and revoke exposed work-account tokens where compromise is suspected. |
-| **PHP / WordPress / Laravel / Drupal / Joomla** | For PHP2Shell, use PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport and disable session upload progress pending the follow-up fix. On Windows, separately install the **`-1`** rebuild that carries Brotli 1.2.1 and restart workers; `php -v` does not prove it. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. [PHP2Shell guide](details/php2shell.md#remediation) · [Brotli guide](details/brotli.md#remediation). |
+| **PHP / WordPress / Laravel / Drupal / Joomla** | For PHP2Shell, use PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport and disable session upload progress pending the follow-up fix. On Windows, separately install the **`-1`** rebuild that carries Brotli 1.2.1 and restart workers; `php -v` does not prove it. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. WordPress itself: update core to **7.1.4** or the fixed branch release; the upgrade-window flaw is not PHP2Shell. [PHP2Shell guide](details/php2shell.md#remediation) · [WordPress guide](details/wordpress-upgrade-window.md#remediation) · [Brotli guide](details/brotli.md#remediation). |
 | **Node.js / Bun** | Node **22.23.4 / 24.22.1 / 26.12.1**; Bun **1.4.4**. Rebuild containers and restart workers. |
 | **Python** | `Brotli` **1.2.1**, `brotlicffi` **1.2.1.0**, Pillow **13.0.0** where installed. Pillow may require a Python upgrade. |
 | **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps; update Visual Studio and PowerShell 7 to [MSRC's fixed builds](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497). [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |

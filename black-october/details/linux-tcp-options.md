@@ -4,7 +4,7 @@
 
 [Main Linux kernel summary](../black-october-2026.md#linux-kernel-ipv4-tcp-options-use-after-free) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**[CVE-2026-98432](https://www.cve.org/CVERecord?id=CVE-2026-98432) — kernel.org CVSS 3.1 9.8 Critical** is an IPv4 TCP race that can free socket options while they remain in use. kernel.org describes fixes in upstream and stable commits. Red Hat rates its product impact 8.1 High because it assesses network attack complexity as High; Red Hat and Ubuntu both list affected supported products without a released fix at this review.
+**[CVE-2026-98432](https://www.cve.org/CVERecord?id=CVE-2026-98432) — kernel.org CVSS 3.1 9.8 Critical** is an IPv4 TCP race that can free socket options while they remain in use. kernel.org describes fixes in upstream and stable commits. Red Hat's public page now also shows CVSS 3.1 9.8 (vector `AV:N/AC:L`), and labels that score preliminary and subject to review; an earlier Red Hat draft scored 8.1 High with attack complexity High. Red Hat and Ubuntu both list affected supported products without a released fix at this review. On 2026-10-27 Anthropic reported that an unreleased Claude model produced a lab proof of concept which sends packets to a Linux server exposing a multipath TCP listener and runs commands as root, without credentials. Anthropic did not publish the exploit, and neither Anthropic nor the CNA reports in-the-wild use. Go's security team says the demonstrated exploit needs an MPTCP listener but the kernel bug is not MPTCP-specific, so disabling MPTCP is a fragile stopgap, not a fix.
 
 **CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No primary source reviewed reports in-the-wild exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -49,7 +49,7 @@ The reviewed primary sources do not provide compromise indicators. Preserve kern
 ## Sources
 
 - [kernel.org CNA CVE record][cve] — vulnerability mechanics, score and fixed commit ranges.
-- [Red Hat advisory][redhat] — product-specific 8.1 High assessment and no qualifying mitigation.
+- [Red Hat advisory][redhat] — public CVSS 3.1 9.8 (preliminary), and no qualifying mitigation.
 - [Ubuntu advisory][ubuntu] — supported-release status.
 - [CISA KEV JSON feed][kev] — catalog status.
 

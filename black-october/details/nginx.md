@@ -1,6 +1,6 @@
 # NGINX: configuration-dependent memory corruption and TLS session forgery
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main NGINX summary](../black-october-2026.md#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -124,7 +124,7 @@ Sources: [K000162416][k15176], [K000162607][k93479], [K000162608][k97205], [K000
 ### Distribution packages
 
 - **Debian:** [DSA-6575-1][dsa] (2026-10-21) fixes trixie in **1.26.3-3+deb13u10**, and sid/forky has 1.30.6-2. When checked, the Debian tracker still showed **bookworm as vulnerable**. [Debian tracker][deb]
-- **Ubuntu:** CVE-2026-93479 showed "Needs evaluation", with Ubuntu priority Medium, as of the page's 2026-10-24 update. [Ubuntu][ubuntu]
+- **Ubuntu:** [USN-8955-1][usn] (published 2026-10-26) fixes CVE-2026-15176, CVE-2026-93479, CVE-2026-95101, CVE-2026-97205 and CVE-2026-97629 in **1.30.4-7ubuntu1.1** (26.10), **1.28.3-2ubuntu1.12** (26.04 LTS), **1.24.0-2ubuntu7.19** (24.04 LTS) and **1.18.0-6ubuntu14.22** (22.04 LTS). CVE-2026-15176's HTTP/3 issue is limited to 26.04 and 26.10, and CVE-2026-97629's session-ticket issue to 24.04, 26.04 and 26.10. Ubuntu 20.04 and older were still "Needs evaluation" when the tracker was checked. [Ubuntu][ubuntu]
 - For other distributions (Red Hat, SUSE, Alpine and so on), check their trackers. Their status was not reviewed here. Remember that backports can make an old version number either safe or, as Debian found for CVE-2026-93479, vulnerable.
 
 ### Temporary mitigations
@@ -176,4 +176,5 @@ F5's mitigations remove the trigger without fixing the code. Test each one, then
 [dsa]: https://lists.debian.org/debian-security-announce/2026/msg00490.html
 [deb]: https://security-tracker.debian.org/tracker/CVE-2026-93479
 [ubuntu]: https://ubuntu.com/security/CVE-2026-93479
+[usn]: https://ubuntu.com/security/notices/USN-8955-1
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

@@ -4,7 +4,7 @@
 
 [Main summary](../black-october-2026.md#linux-kernel-ipv4-tcp-syn-ack-options-use-after-free) · [Main TOC](../black-october-2026.md#table-of-contents)
 
-**[CVE-2026-98432](https://www.cve.org/CVERecord?id=CVE-2026-98432): kernel.org CNA CVSS 3.1 9.8 Critical.** A concurrent IPv4 TCP SYN-ACK path can use freed IP options, producing a remote unauthenticated use-after-free. The CNA record does not report in-the-wild exploitation.
+**[CVE-2026-98432](https://www.cve.org/CVERecord?id=CVE-2026-98432): kernel.org CNA CVSS 3.1 9.8 Critical.** A concurrent IPv4 TCP SYN-ACK path can use freed IP options, producing a remote unauthenticated use-after-free. The CNA record does not report in-the-wild exploitation. On 2026-10-27 Anthropic reported a lab proof of concept that runs commands as root against a Linux server exposing a multipath TCP listener; Anthropic did not publish the exploit. The kernel bug is not limited to multipath TCP.
 
 **CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 

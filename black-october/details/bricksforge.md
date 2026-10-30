@@ -1,6 +1,6 @@
 # Bricksforge for WordPress: exploited unauthenticated file upload to RCE
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Bricksforge summary](../black-october-2026.md#bricksforge-for-wordpress-exploited-unauthenticated-file-upload-to-rce) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@
 
 **Worst case:** remote code execution as the web server user, then web shells, site takeover, data theft and persistence. [Patchstack][ps]
 
-**Fixed in 3.1.8.10.** The vendor changelog also says 4.0.0 contains the fix, and that 4.0.1 (2026-10-08) fixed a further Pro Forms file-upload security issue affecting every site with Pro Forms active. The reviewed sources give no CVE for that second issue. [Bricksforge changelog][cl]
+**Fixed in 3.1.8.10.** The vendor changelog also says 4.0.0 contains the fix. It says 4.0.1 (2026-10-08) fixed a further Pro Forms file-upload security issue affecting every site with Pro Forms active, and that this further issue is related to CVE-2026-85097, the same upload flaw fixed earlier in 3.1.8.10 and 4.0.0. The changelog does not assign that second issue its own CVE. [Bricksforge changelog][cl]
 
 **CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Patchstack reports active exploitation attempts. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 

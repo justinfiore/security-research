@@ -4,6 +4,17 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-30 12:05 EDT (UTC−04:00) — WordPress core upgrade race; PAN-OS hotfixes; Linux TCP lab exploit and Go stopgap
+
+- **WordPress:** Update core to [7.1.4 or the fixed release for your branch](black-october/details/wordpress-upgrade-window.md#remediation). Wordfence rates an unauthenticated race during a full-package upgrade 8.1 High: attackers are already polling the predictable staging path, though the window lasts seconds and no compromise is confirmed. WordPress 4.6 and older get no fix. Confirm the update finished; a firewall plugin does not see the request.
+- **PAN-OS / Panorama:** Palo Alto has now released a PHP2Shell hotfix for [every supported branch](black-october/details/php2shell.md#timeline), including the builds that were still ETAs on October 27. Install the one for your train and keep management access restricted until it is on. The same day's Brotli advisory releases the remaining 11.2 and 12.1 hotfixes; install those where Brotli inspection is enabled.
+- **Linux kernel (CVE-2026-98432):** Red Hat's public score is now 9.8, matching kernel.org. Anthropic demonstrated remote root in a lab against a multipath TCP listener and did not publish the exploit. Go 1.24+ turns that listener on by default; `GODEBUG=multipathtcp=0` blocks that shape and [is not a kernel fix](black-october/details/linux-tcp-options.md#sources). Install a vendor kernel that names the CVE, then reboot.
+- **GitLab:** The October 29 releases (19.5.3 and the matching older branches) [drop the compromised eMudhra intermediates](black-october/details/gitlab-ruby.md#remediation). They do not replace the regex remote-code-execution fixes. Also update self-hosted Runner to 19.5.1 and AI Gateway to its fixed release; a GitLab upgrade updates neither.
+- **Linux local root (skb_zerocopy):** CloudLinux 9 and 10 now have [production kernels](black-october/details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches), the same builds as AlmaLinux. CloudLinux 7 hybrid and 8 are still beta. Reboot into the fixed kernel.
+- **headscale:** Upgrade to [0.29.7](black-october/details/tailworm.md#remediation) and keep Tailscale nodes on v1.104.4 or later. The headscale release does not apply the node SSH and Serve fixes.
+- **NGINX on Ubuntu:** Install the [USN-8955-1 packages](black-october/details/nginx.md#distribution-packages) (22.04, 24.04, 26.04 and 26.10) and reload nginx. Upstream version numbers alone do not show the backport.
+- **Drupal Commerce:** The affected 3.x range is everything before 3.3.13, [including 3.2.x and 3.3.0–3.3.12](black-october/details/drupal-commerce.md#detection), not only through 3.1.x. The advisory page is dated October 28.
+
 ## 2026-10-30 11:05 EDT (UTC−04:00) — Telegram, Edge and Mitsubishi ICONICS added; PHP2Shell, Node2Shell, PAN-OS GlobalProtect and Oracle EBS exploitation updates
 
 - **Telegram:** Update Desktop to [7.2.9+](black-october/details/telegram-clients.md#remediation), which fixes the one-click session-file theft CVE-2026-107181 (8.6 High). Also update Android to 12.10.4+, where the source no longer uses the rlottie sticker renderer behind ZDI's unpatched CVE-2026-111105 (7.0 High) and NebuSec's unscored call flaw is fixed. iOS status is unconfirmed, and old Desktop installs that may have been targeted should terminate other sessions.

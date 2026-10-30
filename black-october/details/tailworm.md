@@ -1,6 +1,6 @@
 # Tailworm: Tailscale SSH and related findings under review
 
-**Last updated:** 2026-10-28 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Tailworm summary](../black-october-2026.md#tailworm-tailscale-ssh-and-related-findings-under-review) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -37,7 +37,8 @@ The principal SSH chains claim root-level execution or privileged socket/file op
 | Further SSH hardening merged | 2026-10-25 18:31:40 UTC to 2026-10-26 14:49:12 UTC | PR **21930** (tsnet ListenSSH authorization, session queue bound), **21945** (gliderssh resource-exhaustion fixes) and **21943** (“launch sessions via the monitor”, normalizing incubator identity flags). PR **21944** was still open at the time. Source merges, not releases; mapping each PR to a numbered finding is not stated by Tailscale. [PR 21943][pr21943] [PR 21945][pr21945] [PR 21930][pr21930] [PR 21944][pr21944] |
 | Connection-level SSH policy enforcement merged | 2026-10-26 15:48:37 UTC | PR **21944** (“enforce SSH policy at the connection level”) re-evaluates authenticated connections on policy updates and at session and forwarding gates, closing connections whose grants are revoked or narrowed, including forwarding permissions. Further hardening PRs opened at 16:10 UTC, including **21959** (relay Unix-forward payloads as the bound user) and 21957/21958/21960, were not merged. Source changes, not a release; latest stable is still v1.104.2. [PR 21944][pr21944] |
 | Further upstream fixes merged | 2026-10-27; time/TZ not established | The researcher reports that **21959/21963** complete Unix-forward privilege dropping; **21966** refuses `serve --tcp` forwarding to the LocalAPI socket; and **21980** makes Serve capability handling per-request. The relay-response body bound also merged. None was in a numbered Tailscale or headscale release at the report update. [Research][research] |
-| headscale fix proposed | 2026-10-26 10:10:32 UTC | Open PR **#3586** “bound pending authentication without evicting sessions” cites Tailworm's registration-pressure finding. Not merged or released. [PR #3586][hs3586] |
+| headscale fix proposed | 2026-10-26 10:10:32 UTC | PR **#3586** “bound pending authentication without evicting sessions” cites Tailworm's registration-pressure finding. [PR #3586][hs3586] |
+| headscale 0.29.7 released | 2026-10-30 09:55:40 UTC | headscale calls this a security release for Anthropic's oss-scanner findings and the Tailworm report, and says none are critical. It includes #3586 and updates the embedded Tailscale dependency to v1.104.4. Upgrading headscale does not apply the tailscaled SSH and Serve fixes; those require Tailscale v1.104.4 or newer on the nodes. [Release][hs0297] |
 | Tailscale investigation update | 2026-10-26; time/TZ unknown | Tailscale says that most identified SSH issues concern privilege escalation and are serious, but depend on the connecting user/device's permissions, system configuration and other conditions. It has implemented fixes for most identified issues and targets a patched client release by the end of 2026-10-27, subject to testing; it will publish confirmed scope, versions and configurations with the release. [Vendor update][vendor-update] |
 | Stable fix status checked | 2026-10-27; time/TZ not established | Tailscale **1.104.2** and headscale **0.29.6** remained the latest numbered releases at the research update. No Tailworm-specific stable fix/bulletin identified; follow subsequent releases. [Research][research] [Changelog][changelog] [Bulletins][bulletins] |
 | Tailscale v1.104.4 released | 2026-10-28; time/TZ unknown | Tailscale says **v1.104.4** addresses the confirmed SSH vulnerabilities, fixes three Serve/Funnel bugs and introduces broader safeguards; four security bulletins cover confirmed findings. It calls two other Serve/Funnel behaviors intended. This does not establish a complete Tailworm finding-to-fix matrix or a headscale fix. [Vendor release][vendor-release] |
@@ -96,8 +97,9 @@ Then restart `tailscaled` through your normal service-management procedure; this
 - Tighten SSH source/target/user scope to necessary access. Check-mode reauthentication is an extra barrier, **not a repair for post-authorization escalation**. Denying root login alone is insufficient for a reported escalation from another permitted OS user.
 - If embedded SSH is unnecessary, disable it through supported settings after ensuring another access path. **The vendor does not recommend universally disabling Tailscale SSH or the entire VPN** based on this report.
 - Remove unnecessary Serve mappings to privileged sockets; restrict connector entitlements and destinations using controls effective for the actual networking mode. Review headscale/DERP exposure separately; forwarding mitigation does not cover its denial-of-service claims.
-- Update Tailscale deployments to **v1.104.4 or later**. Tailscale says this release addresses its confirmed SSH vulnerabilities, fixes three Serve/Funnel bugs and introduces broader safeguards; it characterizes two other Serve/Funnel behaviors as intended. Do not infer that every Tailworm finding or headscale issue is fixed from this release alone.
-- Track the official [investigation update][vendor-update], [vendor release][vendor-release], [bulletins][bulletins] and [release notes][changelog] for the remaining scope, including headscale PR #3586. Do not deploy an arbitrary development build as a blanket fix or call every finding resolved because a source PR merged.
+- Update Tailscale deployments to **v1.104.4 or later**. Tailscale says this release addresses its confirmed SSH vulnerabilities, fixes three Serve/Funnel bugs and introduces broader safeguards; it characterizes two other Serve/Funnel behaviors as intended. Do not infer that every Tailworm finding is fixed from this release alone.
+- Update headscale to **0.29.7 or later**. That release includes the registration-pressure fix from PR #3586 and the Tailscale v1.104.4 dependency. It does not apply the node-side SSH and Serve fixes; those still require Tailscale v1.104.4 on the nodes. headscale says none of the findings it fixed are critical.
+- Track the official [investigation update][vendor-update], [vendor release][vendor-release], [bulletins][bulletins] and [release notes][changelog] for findings the researcher still marks partial or open. Do not deploy an arbitrary development build as a blanket fix or call every finding resolved because a source PR merged.
 
 ## Verification
 
@@ -135,4 +137,5 @@ Preserve evidence and isolate affected access through a trusted control plane. I
 [changelog]: https://tailscale.com/changelog
 [docs]: https://tailscale.com/docs/features/tailscale-ssh
 [headscale]: https://github.com/juanfont/headscale/releases/tag/v0.29.6
+[hs0297]: https://github.com/juanfont/headscale/releases/tag/v0.29.7
 [lead]: https://x.com/IntCyberDigest/status/2114291878720151623
