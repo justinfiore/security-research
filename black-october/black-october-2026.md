@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of October 29, 2026**
+**As of October 30, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Synology DSM: unauthenticated file read and write](#synology-dsm-unauthenticated-file-read-and-write)
 - [WordPress: unauthenticated code execution during a core upgrade](#wordpress-unauthenticated-code-execution-during-a-core-upgrade)
 - [Progress WS_FTP Server: Critical authentication and command-injection flaws](#progress-ws_ftp-server-critical-authentication-and-command-injection-flaws)
 - [Linux kernel: IPv4 TCP options use-after-free](#linux-kernel-ipv4-tcp-options-use-after-free)
@@ -110,6 +111,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [Synology DSM](#synology-dsm-unauthenticated-file-read-and-write) to 7.4-90075, 7.3.2-86009-4, 7.2.2-72806-9, or 7.2.1-69057-12 or later, and take DSM off the internet until that build is running. Two unauthenticated Critical flaws (CVSS 9.8) were fixed on September 18; 360 reports October ransomware through them, while Synology attributes the same wave to a December 2024 flaw. A current update covers both.
 - **New this update (CISA KEV):** Update Linux hosts for [Fragnesia](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite), CVE-2026-46300. CISA reports active exploitation and a chain with PHP2Shell; install a vendor-fixed kernel, reboot into it, and investigate suspected root compromise rather than treating patching as cleanup.
 - **New this update:** Update affected Windows-based Veeam Backup & Replication and Veeam Software Appliance deployments to **13.1.2 / 13.0.3**. Also update managed Veeam Agent for Linux installations to **13.1.2**. Restrict backup-management service access to trusted administration networks while rolling out the Critical authorization-bypass fix.
 - **New this update:** Update [TeamViewer clients](#teamviewer-clients-crafted-screen-images-can-execute-code) to 15.83 or the vendor's supported fixed legacy builds; do not open untrusted session recordings. Industrial-control operators using [EPICS Base](#epics-base-network-request-handling-can-corrupt-memory) should plan a validated update to 7.0.11 and preserve network segmentation until it is deployed.
@@ -154,6 +156,31 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Synology DSM: unauthenticated file read and write
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/synology-dsm.md):** [Detection](details/synology-dsm.md#detection) · [Remediation](details/synology-dsm.md#remediation) · [Verification](details/synology-dsm.md#verification) · [Timeline](details/synology-dsm.md#timeline)
+
+**CVEs:** [CVE-2026-13639](https://www.cve.org/CVERecord?id=CVE-2026-13639), [CVE-2026-13684](https://www.cve.org/CVERecord?id=CVE-2026-13684). The same update also fixes [CVE-2026-13673](https://www.cve.org/CVERecord?id=CVE-2026-13673) (8.8 High) and [CVE-2026-6205](https://www.cve.org/CVERecord?id=CVE-2026-6205) (8.1 High).
+
+**Synology (CNA) rates CVE-2026-13639 and CVE-2026-13684 CVSS 3.1 9.8 Critical each.** NVD has no score of its own. Either flaw lets a remote unauthenticated attacker read or write arbitrary files and cause a denial of service. Synology lists no workaround. The High CVEs in the same advisory require an authenticated user.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-30). CISA's September 18 ADP assessment records Exploitation "none" for both Critical CVEs. 360 later reported ransomware it attributes to them. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Advisory and fixes | 2026-09-18 16:17:35 UTC+8 | [Synology-SA-26:13](https://www.synology.com/en-global/security/advisory/Synology_SA_26_13). |
+| 360 ransomware report | 2026-10-29; time/TZ unknown | Attributes C3RB3R encryption to the two September CVEs. |
+| Synology statement | 2026-10-29; time/TZ unknown | Attributes attacks on outdated DSM to a vulnerability patched in December 2024 ([SA-24:20](https://www.synology.com/en-global/security/advisory/Synology_SA_24_20), CVE-2024-10441). |
+| **Last updated** | **2026-10-30 16:15 EDT (UTC−04:00)** | Added from Synology's advisories and 360's report. |
+
+**Exploitation:** 360 says that since early October 2026 it has handled Synology NAS cases encrypted by C3RB3R, which it calls a Cerber variant, and that the entry was CVE-2026-13639 and CVE-2026-13684. Synology's same-day statement instead says attackers are using a vulnerability patched in December 2024. The two accounts do not name the same CVE. Updating to a current DSM build is the action both support.
+
+**Am I impacted?** Read the full DSM version under **Control Panel → Update & Restore**. Affected builds are DSM 7.4 before 7.4-90075, 7.3 before 7.3.2-86009-4, 7.2.2 before 7.2.2-72806-9, and 7.2.1 before 7.2.1-69057-12. Older than 7.2.1 is unknown for these two CVEs. Files ending in `.L0CK3D` match the ransomware 360 described; missing that extension does not clear a device.
+
+**Patch:** Upgrade to **7.4-90075**, **7.3.2-86009-4**, **7.2.2-72806-9**, or **7.2.1-69057-12** or later, then reboot and confirm the running version. Those builds are also above the December 2024 fix Synology cited. Until then, do not leave DSM or SSH reachable from the internet.
+
+Sources: [Synology-SA-26:13](https://www.synology.com/en-global/security/advisory/Synology_SA_26_13), [CVE-2026-13639](https://www.cve.org/CVERecord?id=CVE-2026-13639), [CVE-2026-13684](https://www.cve.org/CVERecord?id=CVE-2026-13684), [360 warning](https://weishi.360.cn/dnzs/13055.html), [Synology press release](https://www.synology.com/en-global/company/news/article/C3RB3R/Synology%20urges%20users%20to%20update%20DSM%20following%20ransomware%20attacks%20on%20outdated%20DSM%20versions), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## WordPress: unauthenticated code execution during a core upgrade
 
@@ -1250,10 +1277,10 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | AlmaLinux 8, 9, 10 in `almalinux-testing`. |
 | AlmaLinux production kernels | 2026-10-28; time/TZ unknown | The fix reached regular production repositories: `4.18.0-553.178.1.el8_10` (8), `5.14.0-687.60.1.el9_8` (9), and `6.12.0-211.69.1.el10_2` (10). |
 | Fix in netdev `net` tree | 2026-10-23 19:41 UTC | Commit 79dc34beb1fd, marked for stable; not in mainline. |
-| CloudLinux 7h/8 beta kernels | 2026-10-26 09:11 UTC | Beta, rolling out. |
+| CloudLinux 7h/8 production kernels | 2026-10-30; time/TZ unknown | The beta builds moved to production. |
 | Mainline/stable releases, RHEL fix | None established (as of 2026-10-26) | Newest kernel.org releases predate the fix; Red Hat has no fix. |
 | CloudLinux 9 and 10 production kernels | 2026-10-28; time/TZ unknown | Same AlmaLinux builds, shipped to CloudLinux production. |
-| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | CloudLinux 9 and 10 production kernels. |
+| **Last updated** | **2026-10-30 16:15 EDT (UTC−04:00)** | CloudLinux 7 hybrid and 8 kernels are production, not beta. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -1274,7 +1301,7 @@ for m in esp4 esp6 nlmon act_pedit; do modprobe -n -v "$m"; done
 
 A non-zero `user.max_user_namespaces` means ordinary users can take the exploit's first step. Ubuntu's `kernel.apparmor_restrict_unprivileged_userns` does not stop the public PoC. An empty `lsmod` result does not mean the modules are unavailable: they load on demand. A process that already holds network-admin rights, such as root in a privileged container, does not need user namespaces. Vulnerability scanners keyed on CVE IDs will not flag this issue. See [exposure checks](details/skb-zerocopy-lpe.md#read-only-exposure-checks) and [indicators and evidence limits](details/skb-zerocopy-lpe.md#indicators-and-evidence-limits).
 
-**Patch:** No mainline, stable or RHEL kernel contains the fix yet. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 9 and 10 ship those same AlmaLinux builds to production (`kernel-5.14.0-687.60.1.el9_8` and `kernel-6.12.0-211.69.1.el10_2`). CloudLinux 7 hybrid and 8 remain beta, and CloudLinux 8 ELS and 9 ELS are still pending. The KernelCare live patch is released for CloudLinux 10 and AlmaLinux 10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
+**Patch:** No mainline, stable or RHEL kernel contains the fix yet. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 9 and 10 ship those same AlmaLinux builds. CloudLinux 7 hybrid and 8 now have production kernels too: `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`. CloudLinux 8 ELS and 9 ELS are still pending. The KernelCare live patch is released for CloudLinux 10 and AlmaLinux 10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
 
 Sources: [ZDI report](https://lore.kernel.org/lkml/BYAPR01MB3830CECF5D0871064C59BA0280662@BYAPR01MB3830.prod.exchangelabs.com/), [fix commit](https://github.com/kernelorg-mirror/linux_kernel_git_netdev_net/commit/79dc34beb1fdb3da79753e51e15c68591a2561fe), [AlmaLinux](https://almalinux.org/blog/2026-10-23-zdi-can-33367/), [CloudLinux](https://blog.cloudlinux.com/zdi-can-33367), [TuxCare](https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/), [Sysdig](https://www.sysdig.com/blog/detecting-and-mitigating-zdi-can-33367-and-five-other-linux-flaws), [Red Hat RHSB-2026-014](https://access.redhat.com/security/vulnerabilities/RHSB-2026-014).
 
@@ -2051,11 +2078,11 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/ivanti-connect-secure.md):** [Detection](details/ivanti-connect-secure.md#detection) · [Remediation](details/ivanti-connect-secure.md#remediation) · [Verification](details/ivanti-connect-secure.md#verification) · [Timeline](details/ivanti-connect-secure.md#timeline)
 
-**CVEs:** [CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935), [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357)
+**CVEs:** [CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935), [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357), [CVE-2026-118527](https://www.cve.org/CVERecord?id=CVE-2026-118527)
 
-**[CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935) — Ivanti (CNA) CVSS 3.1: 8.6 High (the advisory labels the vector CVSS 3.0); no NVD score of its own; CISA KEV (forensic triage required)**
+**[CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935) — Ivanti (CNA) CVSS 3.1: 8.6 High (the advisory labels the vector CVSS 3.0); no NVD score of its own; CISA KEV (forensic triage required).** [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) is Ivanti CVSS 3.1 8.8 High. [CVE-2026-118527](https://www.cve.org/CVERecord?id=CVE-2026-118527) is Ivanti CVSS 3.0 4.3 Medium and is part of the same exploited chain.
 
-**CISA KEV:** Listed — added 2026-10-13, federal due date 2026-10-16. The chained root escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) is not listed (catalog 2026.10.23).
+**CISA KEV:** CVE-2026-104935 listed — added 2026-10-13, federal due date 2026-10-16. CVE-2026-111357 listed — added 2026-10-30, federal due date 2026-11-02 (forensic triage required). CVE-2026-118527 listed — added 2026-10-30, federal due date 2026-11-13 (catalog 2026.10.30).
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -2065,8 +2092,10 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Ivanti public advisory | 2026-10-13; time/TZ not shown | Discloses limited exploitation. |
 | CVE record published | 2026-10-13 15:31:07 UTC | CNA metadata. |
 | CISA KEV addition | 2026-10-13 (date only) | Due 2026-10-16. |
-| Chained privilege escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) | 2026-10-15 20:56:58 UTC | Assigned by the MITRE CNA (CVSS 3.1: 7.0); fix not confirmed in reviewed sources. |
-| **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
+| Chained privilege escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) | 2026-10-15 20:56:58 UTC | Ivanti scores it CVSS 3.1 8.8 High. The MITRE record's 7.0 is a different score; use Ivanti's. |
+| Fixes for the chained flaws | 2026-10-29; time/TZ unknown | 25.1.1.3 and 22.8R2.6 fix CVE-2026-111357 and CVE-2026-118527. 25.1.1.2 and 22.8R2.5 do not. |
+| CISA KEV additions | 2026-10-30; time/TZ unknown | CVE-2026-111357 due 2026-11-02. CVE-2026-118527 due 2026-11-13. |
+| **Last updated** | **2026-10-30 16:15 EDT (UTC−04:00)** | Both chained CVEs are now in KEV, and the October 29 fixes replace the unconfirmed-fix note. |
 
 A spoofed internal-routing header (`X-DSCGI-PATH`) sent to the public `welcome.cgi` login script reaches a protected CGI. Combined with a file-write race in `wu.cgi`, this lets an unauthenticated attacker execute commands on the Connect Secure VPN appliance.
 
@@ -2074,9 +2103,9 @@ A spoofed internal-routing header (`X-DSCGI-PATH`) sent to the public `welcome.c
 
 **Exploitation status:** Ivanti, CISA and Volexity confirm zero-day exploitation. The chain runs largely in memory and erases log entries, so Ivanti's Integrity Checker Tool **may not detect it**. Confirming compromise requires memory and network forensics.
 
-**Am I impacted?** Check each appliance's running version. Affected versions are **25.1.1.1 and prior, 25.1.2.2 and prior, and 22.8R2.4 and prior**. **22.7R2.14 and prior are not affected.** The CNA description's "before 25.1.3.0" is shorthand; 25.1.1.2 and 22.8R2.5 also fix the issue. Hunt for `welcome.cgi` requests carrying `X-DSCGI-PATH` headers and for Volexity's indicators.
+**Am I impacted?** Check each appliance's running version. For the authentication bypass, affected versions are **25.1.1.1 and prior, 25.1.2.2 and prior, and 22.8R2.4 and prior**. **22.7R2.14 and prior are not affected.** The chained flaws affect **25.1.1.2 and prior** and **22.8R2.5 and prior**, so the earlier bypass-only fixes are not enough. Hunt for `welcome.cgi` requests carrying `X-DSCGI-PATH` headers and for Volexity's indicators.
 
-**Patch:** Update to **25.1.1.2**, **25.1.3.0/25.1.3.1** (requires the ISA4500/6500/8500 platform), or **22.8R2.5**. Ivanti recommends that 22.8 customers move to 25.1, because 22.7 and 22.8 reach end of life on 2027-01-31. If compromise is suspected, follow Ivanti's recovery steps (factory reset or rebuild, then reset all passwords, certificates and API keys) and investigate Active Directory.
+**Patch:** Update 25.1.1.x to **25.1.1.3**, 22.8 to **22.8R2.6**, or the ISA4500/6500/8500 platform to **25.1.3.0/25.1.3.1**. Ivanti recommends that 22.8 customers move to 25.1, because 22.7 and 22.8 reach end of life on 2027-01-31. If compromise is suspected, follow Ivanti's recovery steps (factory reset or rebuild, then reset all passwords, certificates and API keys) and investigate Active Directory. CVE-2026-111357 requires forensic triage under KEV.
 
 Sources: [Ivanti advisory](https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-Connect-Secure-CVE-2026-104935?language=en_US), [Ivanti CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-104935), [CISA alert](https://www.cisa.gov/news-events/alerts/2026/10/13/cisa-urges-patching-newly-exploited-vulnerability-ivanti-connect-secure), [Volexity analysis](https://www.volexity.com/blog/2026/10/13/a-series-of-unauthenticated-events-chained-exploitation-of-ivanti-connect-secure-zero-days/), [CVE-2026-111357 record](https://cveawg.mitre.org/api/cve/CVE-2026-111357), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -2479,7 +2508,7 @@ Microsoft's [MSRC entry](https://msrc.microsoft.com/update-guide/vulnerability/C
 
 **PHP on Windows needs a separate package check:** PHP's October 21 source releases address PHP2Shell, but its [October 23 Windows rebuilds](https://www.php.net/archive/2026.php) add the fixed Brotli 1.2.1 dependency. Install **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1** and restart every SAPI and worker. Because the PHP runtime version did not change, `php -v` alone cannot distinguish a rebuilt package; verify the `-1` filename or the official download hash. This does not patch separately bundled `php-ext-brotli`, libcurl or other native decoders.
 
-**PAN-OS is conditionally affected:** Palo Alto Networks rates this **Critical (CVSS 4.0 9.2)** but says exposure requires **both** TLS/SSL decryption and Brotli inspection on the dataplane; the management interface and PAN-OS 11.1/10.2 are not affected. On 11.2.4+, check `show system setting brotli`; only `Enabled: yes` is exposed. As of the advisory's 2026-10-29 update, upgrade to the released hotfix for the branch: **12.2.4-h1**, **12.1.4-h13 / 12.1.7-h11 / 12.1.10-h3**, or **11.2.4-h23 / 11.2.7-h23 / 11.2.10-h17 / 11.2.13-h4 / 11.2.16-h1**. Until it is installed, disable Brotli inspection (`set system setting brotli-encoding disable`) and verify `Enabled: no`; this changes inspection behavior, so test policy impact. Palo Alto is not aware of malicious exploitation. See the [PAN-OS applicability and rollout detail](details/brotli.md#pan-os).
+**PAN-OS is conditionally affected:** Palo Alto Networks rates this **Critical (CVSS 4.0 9.2)** but says exposure requires **both** TLS/SSL decryption and Brotli inspection on the dataplane; the management interface and PAN-OS 11.1/10.2 are not affected. On 11.2.4+, check `show system setting brotli`; only `Enabled: yes` is exposed. As of the advisory's 2026-10-29 update, upgrade to the released hotfix for the branch: **12.2.4-h1**, **12.1.4-h13 / 12.1.7-h11 / 12.1.10-h3**, or **11.2.4-h23 / 11.2.7-h23 / 11.2.10-h17 / 11.2.13-h4 / 11.2.16-h1**. Until it is installed, disable Brotli inspection (`set system setting brotli-encoding disable`) and verify `Enabled: no`; this changes inspection behavior, so test policy impact. The same advisory lists **Prisma Cloud Application Security Transporter Client before 0.2.9** as affected; upgrade it to **0.2.9 or later**. The firewall hotfix does not update that client. Palo Alto is not aware of malicious exploitation. See the [PAN-OS applicability and rollout detail](details/brotli.md#pan-os).
 
 **Envoy 1.36 and Istio 1.29 are unsupported branches**; a fix for this CVE does not restore general security support. Prefer a supported branch. See the [cross-stack guidance](https://patchtheplanet.org/brotli) for embedded clients and temporary decoding controls.
 
@@ -3077,6 +3106,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Synology DSM** | Upgrade to 7.4-90075, 7.3.2-86009-4, 7.2.2-72806-9, or 7.2.1-69057-12 or later and confirm the running build. Synology lists no workaround; keep DSM and SSH off the internet until the update is on. [Guide](details/synology-dsm.md#remediation). |
 | **Mitsubishi Electric ICONICS GENESIS, GENESIS64 / ICONICS Suite, IoTWorX, MC Works64, GENESIS32, BizViz** | Update ICONICS Suite to 10.98+, GENESIS to 11.04+ and IoTWorX to 10.98+ under OT change control; MC Works64, GENESIS32 and BizViz get no fix, so apply Mitsubishi's challenge-file workaround, block remote login and DCOM from untrusted networks, and plan migration. [Guide](details/mitsubishi-iconics-genesis.md#remediation). |
 | **Microsoft Edge** | Confirm every install, including VDI images and kiosks, is on 148.0.3967.70 or later and relaunch. [Guide](details/edge-pwn2own.md#remediation). |
 | **Telegram Desktop / Android / iOS** | Update Desktop to 7.2.9+ and Android to 12.10.4+ and restart; iOS fix status is unconfirmed. [Guide](details/telegram-clients.md#remediation). |
@@ -3099,7 +3129,7 @@ flowchart TD
 | **Docker Hub accounts and organizations** | No software to install (fixed service-side). If Docker emailed you on 2026-10-02, revoke unrecognized PATs, prefer organization access tokens, and check published image digests against CI records. [Guide](details/docker-hub-ghostpat.md#remediation). |
 | **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |
 | **HPE Aruba Networking AOS-8 / AOS-10 (controllers, conductors, gateways, APs)** | Upgrade to AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, 8.13.3.1+ or 8.10.0.24+ (other branches: move to a fixed supported branch); until then confine SSH/WebUI/API to a management VLAN and UDP 8211 (PAPI) to your own APs and controllers. [Guide](details/aruba-aos.md#remediation). |
-| **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a vendor kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix (AlmaLinux 8 production 4.18.0-553.178.1.el8_10, AlmaLinux testing 5.14.0-687.59.2.el9_8 / 6.12.0-211.68.2.el10_2, CloudLinux beta, or KernelCare EL10 live patch); no mainline, stable, RHEL, Debian or Ubuntu fix yet. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
+| **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a vendor kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix (AlmaLinux production 4.18.0-553.178.1.el8_10 / 5.14.0-687.60.1.el9_8 / 6.12.0-211.69.1.el10_2, CloudLinux 7 hybrid 4.18.0-553.177.1.lve.1.el7h, CloudLinux 8 4.18.0-553.177.1.lve.1.el8, or the KernelCare EL10 live patch); no mainline, stable, RHEL, Debian or Ubuntu fix yet. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
 | **WordPress sites with Rank Math PRO** | If 3.0.123 was downloaded or updated 2026-10-15 20:02 – 2026-10-16 07:12 UTC and activated, treat the site as compromised: restore a pre-incident backup or follow the vendor's ordered cleanup, rotate every credential the site could reach, then install 3.0.124. Otherwise update to 3.0.124. Updating alone removes no persistence. [Guide](details/rankmath-pro.md#remediation). |
 | **FortiSIEM (on-premises)** | Upgrade 7.5.0 to 7.5.1+ (7.6 not affected); restrict TCP 27918 to FortiSIEM nodes; treat 7.0–7.4 as unknown (listed in the CVE record, not the advisory) and ask Fortinet; check `/opt/charting/redishb.sh` and `/opt/phoenix/bin/phLicenseTool` for unexpected changes. [Guide](details/fortisiem.md#remediation). |
 | **FortiSandbox / FortiSandbox PaaS** | Upgrade to 5.0.7+ or 4.4.10+ or move to 5.2 (PaaS 4.4 and all 4.2 units: migrate to a fixed release); until then restrict GUI access to a management network and review admin accounts and logins. [Guide](details/fortisandbox.md#remediation). |

@@ -1,6 +1,6 @@
 # Ivanti Connect Secure: authentication bypass to command execution
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Ivanti Connect Secure summary](../black-october-2026.md#ivanti-connect-secure-authentication-bypass-to-command-execution-cve-2026-104935) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -9,9 +9,9 @@
 - an authentication bypass: a request to the public `/dana-na/auth/url_default/welcome.cgi` carrying an `X-DSCGI-PATH` header is routed to a protected CGI;
 - a race-condition file write and execution in `wu.cgi`.
 
-In the wild, attackers chained it with a separate **root privilege escalation**, the `dsinvoked`/DSCache flaw. Ivanti identifies it as **[CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357)** (Ivanti CVSS 3.1: 8.8 High) and now provides fixes in 25.1.1.3 and 22.8R2.6.
+In the wild, attackers chained it with a separate **root privilege escalation**, the `dsinvoked`/DSCache flaw. Ivanti identifies it as **[CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357)** (Ivanti CVSS 3.1: 8.8 High) and provides fixes in 25.1.1.3 and 22.8R2.6. The same releases fix **[CVE-2026-118527](https://www.cve.org/CVERecord?id=CVE-2026-118527)** (Ivanti CVSS 3.0: 4.3 Medium), predictable filenames that let an authenticated attacker upload a chosen file to a known path. Ivanti says the three CVEs were chained in the wild.
 
-**CISA KEV:** Listed — added 2026-10-13, federal due date 2026-10-16. The chained root escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) is not listed (catalog 2026.10.23). [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** [CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935) listed — added 2026-10-13, federal due date 2026-10-16. [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) listed — added 2026-10-30, federal due date 2026-11-02; forensic triage required. [CVE-2026-118527](https://www.cve.org/CVERecord?id=CVE-2026-118527) listed — added 2026-10-30, federal due date 2026-11-13; forensic triage not required. Ransomware use is Unknown for all three (catalog 2026.10.30). [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -38,7 +38,8 @@ In the wild, attackers chained it with a separate **root privilege escalation**,
 | CVE record published | 2026-10-13 15:31:07 UTC | CNA metadata (reserved 2026-10-02 17:07:30 UTC). NVD's published timestamp is 2026-10-13 16:17:11 (NVD API, UTC). [CVE JSON][cve] [NVD][nvd] |
 | CISA KEV addition and CISA alert | 2026-10-13 (date only) | Due 2026-10-16; forensic triage under BOD 26-04: **Yes**; ransomware use: Unknown. CISA reports credential theft and data exfiltration. [KEV JSON][kev] [CISA alert][cisa] |
 | CVE-2026-111357 (chained privilege escalation) published | 2026-10-15 20:56:58 UTC | Later Ivanti advisory update identifies 25.1.1.2 and prior and 22.8R2.5 and prior as affected. [CVE-2026-111357 JSON][cve-pe] [Advisory][ivanti] |
-| Chained-flaw fixes released | 2026-10-29; time/TZ unknown | Ivanti released 25.1.1.3 and 22.8R2.6 for CVE-2026-111357 and CVE-2026-118527. [Advisory][ivanti] |
+| Chained-flaw fixes released | 2026-10-29; time/TZ unknown | Advisory last modified 2026-10-29 4:45:24 PM (timezone not shown). Ivanti released 25.1.1.3 and 22.8R2.6 for CVE-2026-111357 and CVE-2026-118527. [Advisory][ivanti] |
+| CISA KEV additions for the chained CVEs | 2026-10-30; time/TZ unknown | CVE-2026-111357 due 2026-11-02 (forensic triage required). CVE-2026-118527 due 2026-11-13. Catalog 2026.10.30, released 2026-10-30 17:02:45 UTC. [KEV JSON][kev] |
 
 ## Detection
 
@@ -47,14 +48,14 @@ In the wild, attackers chained it with a separate **root privilege escalation**,
 1. List every ICS appliance and VM (physical ISA, virtual, and cloud), including clustered nodes. Record each node's running version (not just staged packages) from the admin console or your asset inventory. Viewing the version is read-only. No ICS appliance was available to exercise this check for this guide.
 2. Compare with Ivanti's table:
 
-   | Code line | Affected | Resolved |
-   |---|---|---|
-   | 25.1.1.x (ISA6000/ISA8000 physical; ISA4000/6000/8000 virtual) | 25.1.1.1 and prior | **25.1.1.2** |
-   | 25.1.2.x / 25.1.3.x (ISA4500/6500/8500 platform) | 25.1.2.2 and prior | **25.1.3.0, 25.1.3.1** |
-   | 22.8 | 22.8R2.4 and prior | **22.8R2.5** |
-   | 22.7 | Not affected (22.7R2.14 and prior) | — |
+   | Code line | Affected for CVE-2026-104935 | Resolved for CVE-2026-104935 | Also required for CVE-2026-111357 and CVE-2026-118527 |
+   |---|---|---|---|
+   | 25.1.1.x (ISA6000/ISA8000 physical; ISA4000/6000/8000 virtual) | 25.1.1.1 and prior | **25.1.1.2** | **25.1.1.3** (25.1.1.2 and prior are affected) |
+   | 25.1.2.x / 25.1.3.x (ISA4500/6500/8500 platform) | 25.1.2.2 and prior | **25.1.3.0, 25.1.3.1** | Not in Ivanti's chained-flaw table. 25.1.3.0 and later do not contain the authentication bypass. |
+   | 22.8 | 22.8R2.4 and prior | **22.8R2.5** | **22.8R2.6** (22.8R2.5 and prior are affected) |
+   | 22.7 | Not affected (22.7R2.14 and prior) | — | Not affected |
 
-   **Correction to a common shorthand:** the CNA description says "before version 25.1.3.0", but that is not the only fix. **25.1.1.2** and **22.8R2.5** also resolve the issue. The 25.1.3.0 line requires the new ISA4500/6500/8500 platform or the 25.1.3.0 template. NVD's configuration encodes the same split (25.1.0.0 up to but not including 25.1.1.2; 25.1.2.0 up to but not including 25.1.3.0; 22.8R2–R2.4).
+   **Correction to a common shorthand:** the CNA description says "before version 25.1.3.0", but that is not the only fix for CVE-2026-104935. **25.1.1.2** and **22.8R2.5** also resolve that issue, and they do **not** resolve the chained flaws. Those need **25.1.1.3** or **22.8R2.6**. The 25.1.3.0 line requires the new ISA4500/6500/8500 platform or the 25.1.3.0 template. NVD's configuration encodes the same split for CVE-2026-104935 (25.1.0.0 up to but not including 25.1.1.2; 25.1.2.0 up to but not including 25.1.3.0; 22.8R2–R2.4).
 3. Note that **22.7 and 22.8 reach end of life on 2027-01-31**, according to Ivanti.
 
 ### Request and host indicators
@@ -66,8 +67,8 @@ In the wild, attackers chained it with a separate **root privilege escalation**,
 
 ## Remediation
 
-1. Update to a resolved version for your code line: **25.1.1.2**, **25.1.3.0/25.1.3.1** (new platform), or **22.8R2.5**. Ivanti recommends that 22.8 customers move to 25.1. Download from the Ivanti License System. Expect a reboot and follow the [25.x Upgrade and Migration Compatibility Guide][migrate].
-2. The chained privilege escalation (CVE-2026-111357) is fixed in **25.1.1.3** and **22.8R2.6**. Use the newer release where its code line applies; patching only CVE-2026-104935's earlier fixed versions does not resolve the chained local flaws.
+1. Update to a release that covers every flaw on that code line. For 25.1.1.x use **25.1.1.3**. For 22.8 use **22.8R2.6**, and Ivanti recommends moving those customers to 25.1. For the ISA4500/6500/8500 platform use **25.1.3.0/25.1.3.1**. Download from the Ivanti License System. Expect a reboot and follow the [25.x Upgrade and Migration Compatibility Guide][migrate].
+2. **25.1.1.2** and **22.8R2.5** fix only CVE-2026-104935. They leave CVE-2026-111357 and CVE-2026-118527 in place. CVE-2026-118527 is scored Medium (4.3) but is part of the chain Ivanti says was exploited, and CISA listed it.
 3. Ivanti and CISA list no workaround for CVE-2026-104935. If you cannot update, restrict exposure of the appliance's web interface where operationally possible and prioritize forensic review. KEV's required action includes discontinuing the product if mitigations are unavailable.
 
 ## Verification
@@ -96,6 +97,7 @@ Because the attackers extracted LDAP bind credentials and hunted for LAPS passwo
 - [CISA KEV JSON feed][kev] and [CISA alert][cisa] — KEV entry, ICT limitation, recovery steps.
 - [Volexity analysis][volexity] and [Volexity IoCs][volexity-iocs] — exploitation timeline, chain mechanics, detection guidance.
 - [CVE-2026-111357 record][cve-pe] — chained privilege escalation.
+- [CVE-2026-118527 record][cve-upload] — predictable filenames in the same chain.
 - [Rapid7 ETR (secondary)][rapid7] — resolved-version summary.
 
 [ivanti]: https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-Connect-Secure-CVE-2026-104935?language=en_US
@@ -106,6 +108,7 @@ Because the attackers extracted LDAP bind credentials and hunted for LAPS passwo
 [volexity]: https://www.volexity.com/blog/2026/10/13/a-series-of-unauthenticated-events-chained-exploitation-of-ivanti-connect-secure-zero-days/
 [volexity-iocs]: https://github.com/volexity/threat-intel/tree/main/2026/2026-10-13%20Ivanti
 [cve-pe]: https://cveawg.mitre.org/api/cve/CVE-2026-111357
+[cve-upload]: https://www.cve.org/CVERecord?id=CVE-2026-118527
 [migrate]: https://hub.ivanti.com/s/article/Ivanti-Connect-Secure-25-x-Upgrade-and-Migration-Compatibility-Guide
 [recovery]: https://forums.ivanti.com/s/article/Ivanti-Connect-Secure-22-8x-and-25x-Recovery-Steps
 [rapid7]: https://www.rapid7.com/blog/post/etr-ivanti-connect-secure-zero-day-exploited-in-the-wild-cve-2026-104935

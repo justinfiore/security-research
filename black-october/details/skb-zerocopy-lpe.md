@@ -51,6 +51,7 @@
 | Fix committed to the netdev `net` tree | 2026-10-23 19:41:58 UTC (15:41:58 EDT) | Commit `79dc34beb1fd` by Jakub Kicinski, with `Reviewed-by: Eric Dumazet` and `Cc: stable@kernel.org`. A maintainer tree, not a released kernel. [Fix commit][commit] |
 | Red Hat bulletin | 2026-10-24 18:31 (TZ not stated) | RHSB-2026-014: "Potentially Affected", Important; says upstream patches are not yet available and no CVEs are assigned. No RHEL fix. [Red Hat][rh] |
 | CloudLinux 7 hybrid and 8 beta kernels | 2026-10-26 09:11 UTC | `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`, beta and rolling out. [CloudLinux][cl] |
+| CloudLinux 7 hybrid and 8 production kernels | 2026-10-30; time/TZ unknown | The same builds moved to production. CloudLinux says all four kernel lines now have a production fix. [CloudLinux][cl] |
 | Mainline release | Linux 7.3, 2026-10-18 | Linux 7.3 includes `79dc34beb1fd`; do not infer backport status for stable or longterm vendor kernels from the mainline release. [kernel.org releases][releases] [Fix commit][commit] |
 | CVE assignment | None as of this review | CloudLinux (updated 2026-10-26) and AlmaLinux say no CVE is assigned. The kernel CNA assigns CVEs after a fix reaches a stable tree. No Debian or Ubuntu tracker entry or notice was found. [CloudLinux][cl] [Kernel CVE process][kernelcve] |
 
@@ -119,8 +120,8 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | AlmaLinux 9 | `kernel-5.14.0-687.60.1.el9_8` or later | Production repository | [AlmaLinux][alma] |
 | AlmaLinux 10 | `kernel-6.12.0-211.69.1.el10_2` or later | Production repository | [AlmaLinux][alma] |
 | AlmaLinux Kitten 10 | Next regular kernel update; no separate build | — | [AlmaLinux][alma] |
-| CloudLinux 7 hybrid | `kernel-4.18.0-553.177.1.lve.1.el7h` | Beta (`cl7h_beta`), rolling out | [CloudLinux][cl] |
-| CloudLinux 8 | `kernel-4.18.0-553.177.1.lve.1.el8` | Beta (`cloudlinux-updates-testing`), rolling out | [CloudLinux][cl] |
+| CloudLinux 7 hybrid | `kernel-4.18.0-553.177.1.lve.1.el7h` | Production as of 2026-10-30 (was beta) | [CloudLinux][cl] |
+| CloudLinux 8 | `kernel-4.18.0-553.177.1.lve.1.el8` | Production as of 2026-10-30 (was beta) | [CloudLinux][cl] |
 | CloudLinux 9 | `kernel-5.14.0-687.60.1.el9_8` or later | Production, through the AlmaLinux kernel update | [CloudLinux][cl] |
 | CloudLinux 10 | `kernel-6.12.0-211.69.1.el10_2` or later | Production, through the AlmaLinux kernel update | [CloudLinux][cl] |
 | CloudLinux 8 ELS, 9 ELS | Pending on the extended-support channel | — | [CloudLinux][cl] |
@@ -186,7 +187,7 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 - [ZDI-CAN-33367 report on LKML][report] (public report, CVSS vector, tested version 7.3-rc1 on Debian trixie, PoC source) and [ZDI upcoming advisories][zdi] (reported date, deadline, CVSS 3.0 calculator link).
 - [Eric Dumazet's reply][dumazet], [v2 patch][patch] and [netdev `net` commit `79dc34beb1fd`][commit] — fix authorship, review, stable tag and commit time.
 - [AlmaLinux, 2026-10-23][alma] — affected releases, testing kernels, `esp4`/`esp6` mitigation, cache-eviction guidance.
-- [CloudLinux, updated 2026-10-28][cl] — confirmed root, affected matrix, CloudLinux 9/10 production kernels, beta kernels, KernelCare status, user-namespace and module mitigations, CageFS test.
+- [CloudLinux, updated 2026-10-30][cl] — confirmed root, affected matrix, production kernels for CloudLinux 7 hybrid, 8, 9 and 10, KernelCare status, user-namespace and module mitigations, CageFS test.
 - [TuxCare, 2026-10-22 (modified 2026-10-23)][tux] — tested kernels, AppArmor bypass, prerequisites, KernelCare status, exploitation status.
 - [Sysdig, 2026-10-24][sysdig] — syscall sequence, detection rule, related CVEs, seccomp guidance, exploitation status.
 - [Red Hat RHSB-2026-014][rh] — Red Hat severity and status.
