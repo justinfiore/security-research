@@ -12,6 +12,13 @@ New findings, corrected impact assessments, patch releases, and detection or rem
 - **Ivanti Connect Secure:** The chained local escalation now has [Ivanti-supported fixed versions](black-october/details/ivanti-connect-secure.md#remediation): 25.1.1.3 and 22.8R2.6. Earlier CVE-2026-104935 fixes alone do not cover it.
 - **Wasmtime:** Microsoft now identifies [Azure Linux 3.0 Rust packages](black-october/details/wasmtime.md#remediation) as known affected by CVE-2026-115889 with no fix; isolate untrusted Wasm compilation until a fixed package is available.
 
+## 2026-10-30 04:05 EDT (UTC−04:00) — Five High/Critical guides added
+
+- **Drupal Commerce Core:** Update to [3.3.13 or 8.x-2.41](black-october/details/drupal-commerce.md#remediation) and audit orders for inconsistencies; Drupal reports active exploitation of the highly critical access bypass CVE-2026-118539.
+- **n8n:** Shared-workflow deployments should update to [the fixed branch release](black-october/details/n8n-credential-guard.md#remediation) for CVE-2026-118675 and review editor access to restricted credentials.
+- **Wing FTP Server and Juniper Session Smart Router:** Upgrade to [Wing FTP 8.2.6+](black-october/details/wing-ftp.md#remediation) and the [applicable Juniper fixed release](black-october/details/juniper-session-smart.md#remediation); restrict privileged administration and provisioning interfaces during rollout.
+- **Linux kernel:** Install a vendor-fixed kernel for [CVE-2026-98432](black-october/details/linux-tcp-rcu.md#remediation) and reboot. Do not infer distribution patch status from upstream version strings alone.
+
 ## 2026-10-30 04:05 EDT (UTC−04:00) — KEV confirmations and PHP2Shell exploitation update
 
 - **Cisco Secure Firewall ASA / FTD:** CISA has added [CVE-2026-76418 to KEV](black-october/details/cisco-secure-firewall-vpn.md#timeline); apply Cisco’s fixed release and prioritize the federal due-date urgency signal.

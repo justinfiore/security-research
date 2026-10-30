@@ -20,6 +20,11 @@ This report covers the major disclosures most relevant to developers and operato
 - [Jenkins: October core security fixes](#jenkins-october-core-security-fixes)
 - [Cisco Secure Firewall ASA and FTD: exploited SSL VPN denial of service](#cisco-secure-firewall-asa-and-ftd-exploited-ssl-vpn-denial-of-service)
 - [Cisco Catalyst SD-WAN: KeyDrift authentication bypass and key theft](#cisco-catalyst-sd-wan-keydrift-authentication-bypass-and-key-theft)
+- [Drupal Commerce Core: exploited access bypass](#drupal-commerce-core-exploited-access-bypass)
+- [n8n: Execute Sub-workflow credential-guard bypass](#n8n-execute-sub-workflow-credential-guard-bypass)
+- [Wing FTP Server: administrator path traversal to code execution](#wing-ftp-server-administrator-path-traversal-to-code-execution)
+- [Juniper Session Smart Router: pre-onboarding administrator access](#juniper-session-smart-router-pre-onboarding-administrator-access)
+- [Linux kernel: IPv4 TCP SYN-ACK options use-after-free](#linux-kernel-ipv4-tcp-syn-ack-options-use-after-free)
 - [Ultralytics: parse_model code injection through an untrusted model file](#ultralytics-parse_model-code-injection-through-an-untrusted-model-file)
 - [Tabularis: MCP SQLite read-only bypass through SQL injection](#tabularis-mcp-sqlite-read-only-bypass-through-sql-injection)
 - [Adobe Campaign Classic: eight Critical code-execution and authorization flaws](#adobe-campaign-classic-eight-critical-code-execution-and-authorization-flaws)
@@ -247,6 +252,66 @@ The peering-authentication bypass affects Catalyst SD-WAN Controller, Manager an
 **Patch:** move 20.9 to 20.9.8.2; 20.11–20.12 to a listed 20.12 fixed release; 20.13–20.15 to 20.15.4.2; and 20.16–20.18 to 20.18.2.1. Restrict ports 22 and 830 to known control components while upgrades proceed, then follow the [detection and recovery guide](details/cisco-sdwan-keydrift.md).
 
 Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sdwan-rpa-EHchtZk), [Cisco Talos KeyDrift report](https://blog.talosintelligence.com/uat-11473-keydrift/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Drupal Commerce Core: exploited access bypass
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/drupal-commerce.md):** [Detection](details/drupal-commerce.md#detection) · [Remediation](details/drupal-commerce.md#remediation) · [Verification](details/drupal-commerce.md#verification) · [Timeline](details/drupal-commerce.md#timeline)
+
+**CVEs:** [CVE-2026-118539](https://www.cve.org/CVERecord?id=CVE-2026-118539)
+
+**Drupal rates SA-CONTRIB-2026-254 Highly critical (21/25); active exploitation is reported.** Commerce Core can expose routes and entity fields through an access bypass that can financially affect vendors.
+
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). Drupal reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+**Patch:** upgrade Commerce Core to **3.3.13** or **8.x-2.41**, then audit orders for inconsistencies. [Guide](details/drupal-commerce.md#remediation).
+
+## n8n: Execute Sub-workflow credential-guard bypass
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/n8n-credential-guard.md):** [Detection](details/n8n-credential-guard.md#detection) · [Remediation](details/n8n-credential-guard.md#remediation) · [Verification](details/n8n-credential-guard.md#verification) · [Timeline](details/n8n-credential-guard.md#timeline)
+
+**CVEs:** [CVE-2026-118675](https://www.cve.org/CVERecord?id=CVE-2026-118675)
+
+**VulnCheck CNA CVSS 3.1 7.1 High.** Shared-workflow editors can bypass credential guards by loading URL or local-file sub-workflows.
+
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No exploitation is reported by the CNA. Absence from KEV is not evidence that exploitation has not occurred.
+
+**Patch:** update n8n to **1.123.85**, **2.43.5** or **2.44.1** for the deployed branch and restart every worker.
+
+## Wing FTP Server: administrator path traversal to code execution
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wing-ftp.md):** [Detection](details/wing-ftp.md#detection) · [Remediation](details/wing-ftp.md#remediation) · [Verification](details/wing-ftp.md#verification) · [Timeline](details/wing-ftp.md#timeline)
+
+**CVEs:** [CVE-2026-105420](https://www.cve.org/CVERecord?id=CVE-2026-105420)
+
+**CERT.PL CNA CVSS 4.0 9.4 Critical.** An administrator can escape user directory bases and execute code as the service account, potentially root on `sudo`-based installations.
+
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No exploitation is reported by the CNA. Absence from KEV is not evidence that exploitation has not occurred.
+
+**Patch:** upgrade to **8.2.6+**, restrict administration and confirm the service does not run as root. [Guide](details/wing-ftp.md#remediation).
+
+## Juniper Session Smart Router: pre-onboarding administrator access
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/juniper-session-smart.md):** [Detection](details/juniper-session-smart.md#detection) · [Remediation](details/juniper-session-smart.md#remediation) · [Verification](details/juniper-session-smart.md#verification) · [Timeline](details/juniper-session-smart.md#timeline)
+
+**CVEs:** [CVE-2026-103409](https://www.cve.org/CVERecord?id=CVE-2026-103409)
+
+**Juniper CNA CVSS 3.1 9.8 Critical.** An unauthenticated attacker can obtain administrator privileges before a Session Smart Router is onboarded to Mist/Conductor.
+
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No exploitation is reported by the Juniper CNA. Absence from KEV is not evidence that exploitation has not occurred.
+
+**Patch:** update to **7.0.5**, **7.1.7** or **7.2.3** for the deployed branch and restrict provisioning interfaces. [Guide](details/juniper-session-smart.md#remediation).
+
+## Linux kernel: IPv4 TCP SYN-ACK options use-after-free
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/linux-tcp-rcu.md):** [Detection](details/linux-tcp-rcu.md#detection) · [Remediation](details/linux-tcp-rcu.md#remediation) · [Verification](details/linux-tcp-rcu.md#verification) · [Timeline](details/linux-tcp-rcu.md#timeline)
+
+**CVEs:** [CVE-2026-98432](https://www.cve.org/CVERecord?id=CVE-2026-98432)
+
+**kernel.org CNA CVSS 3.1 9.8 Critical.** The IPv4 TCP SYN-ACK path can use freed IP options, creating a remote unauthenticated use-after-free.
+
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No exploitation is reported by the CNA. Absence from KEV is not evidence that exploitation has not occurred.
+
+**Patch:** install a vendor kernel that includes the upstream fix and reboot; upstream fixed floors include 5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.56, 7.2.10 and 7.3. [Guide](details/linux-tcp-rcu.md#remediation).
 
 ## Ultralytics: parse_model code injection through an untrusted model file
 
