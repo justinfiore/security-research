@@ -1,6 +1,6 @@
 # PHP2Shell: detection and remediation
 
-**Last updated:** 2026-10-27 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main PHP summary](../black-october-2026.md#1-php2shell-unauthenticated-execution-below-your-application) · [Patch decision guide](../black-october-2026.md#what-should-i-patch-a-stack-based-decision-guide) · [Changelog](../../CHANGELOG.md)
 
@@ -37,6 +37,7 @@
 | Public end-to-end exploit | 2026-10-25 15:47:38 UTC: a researcher solved the authorized “Steal My Bitcoin” challenge server and published the [exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC). Tuned to Alpine PHP 8.4.26 `cli-server` with four workers; author reports about 7 of 10 runs succeeding in a lab. A public PoC, not in-the-wild exploitation |
 | NVD scores | By 2026-10-26 10:10 (NVD `lastModified`; zone not stated): CVSS 3.1 9.8 (CVE-2026-109618) and 8.1 (CVE-2026-109619), status Analyzed. [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-109618) |
 | CISA KEV listing | 2026-10-26; time/TZ unknown: CISA added CVE-2026-109618 and CVE-2026-109619 to [KEV](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), requires forensic triage for both, and sets a federal civilian due date of 2026-10-29; CVE-2026-115560 is not listed |
+| Confirmed PAN-OS campaign | 2026-10-29 11:00 PDT | Palo Alto Networks confirmed PHP2Shell exploitation against internet-exposed PAN-OS management interfaces and independently verified the reported chain to root. [Unit 42][unit42] |
 | CVE-2026-115560 fix/advisory | No fixed release, advisory or severity score published as of 2026-10-26; its [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-115560) was not yet published. PHP says the full advisory will come with the next regular release |
 
 ### Exploitation status
@@ -114,3 +115,4 @@ Restrict access and preserve a snapshot/logs. Determine the PHP account's access
 - [Adel Karimi: confirmed honeypot RCE evidence, 2026-10-24](https://github.com/0x4D31/honeypot-data/blob/main/reports/php2shell/2026-10-24-confirmed-rce.md)
 - [BleepingComputer report of successful exploitation (secondary)](https://www.bleepingcomputer.com/news/security/php2shell-security-flaws-now-sucessfully-exploited-in-the-wild/)
 - [CISA KEV catalog feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json)
+- [Palo Alto Unit 42 October 29 update](https://unit42.paloaltonetworks.com/cve-2026-109618-cve-2026-109619/)

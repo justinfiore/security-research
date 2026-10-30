@@ -151,13 +151,13 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 **[CVE-2026-76418](https://www.cve.org/CVERecord?id=CVE-2026-76418) — Cisco CVSS 3.1 8.6 High; actively exploited**
 
-**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Cisco reports active exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Listed — added 2026-10-29, federal due date 2026-11-01. Cisco reports active exploitation.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Cisco advisory and fixed releases | 2026-10-28 19:15 GMT | Cisco `cisco-sa-asaftd-tunnel-dos-s6mgkb75`. |
 | Active exploitation known to Cisco | 2026-10 (exact day not established) | Cisco PSIRT statement. |
-| **Last updated** | **2026-10-29 08:03 EDT (UTC−04:00)** | Added from Cisco's primary advisory. |
+| **Last updated** | **2026-10-30 04:05 EDT (UTC−04:00)** | CISA KEV listing confirmed. |
 
 An unauthenticated attacker can reload an affected ASA or FTD appliance by reaching its SSL VPN service with a crafted request. The vulnerable path requires reachable Remote Access SSL VPN plus secondary authentication in the applicable tunnel group; a successful VPN login is not needed.
 
@@ -173,13 +173,13 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 
 **[CVE-2026-20127](https://www.cve.org/CVERecord?id=CVE-2026-20127) — Cisco CVSS 3.1 10.0 Critical; limited exploitation**
 
-**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Cisco reports limited exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Listed — added 2026-02-25, federal due date 2026-02-27. Cisco reports limited exploitation.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Cisco advisory and initial fixes | 2026-02-25 16:00 GMT | `cisco-sa-sdwan-rpa-EHchtZk`. |
 | KeyDrift report and advisory update | 2026-10-28; time/TZ not established | Talos disclosed historical UAT-11473 activity; Cisco linked it from revision 2.1. |
-| **Last updated** | **2026-10-29 08:03 EDT (UTC−04:00)** | Added Cisco's exploitation update and Talos incident evidence. |
+| **Last updated** | **2026-10-30 04:05 EDT (UTC−04:00)** | CISA KEV listing confirmed. |
 
 The peering-authentication bypass affects Catalyst SD-WAN Controller, Manager and Validator, including on-prem and Cisco-hosted deployments. Cisco Talos reports KeyDrift malware installed after exploitation to persist, collect control-plane keying material and provide backdoor capabilities.
 
@@ -2143,7 +2143,7 @@ PHP identifies **`mod_php` as the highest-risk configuration**, with demonstrate
 
 **Patch:** PHP **8.5.12, 8.4.27, 8.3.36, or 8.2.35**, or a distribution package explicitly backporting both fixes. Restart all affected workers. Older upstream branches need a verified vendor backport or migration. **PAN-OS / Panorama:** install the per-branch hotfix from [Palo Alto's advisory](https://security.paloaltonetworks.com/CVE-2026-109618), including newly released **12.2.4-h1, 12.1.7-h11, 10.2.13-h27 and 10.2.16-h12**; use the vendor's matrix for other branches rather than an earlier ETA. Until then, restrict management access to trusted internal IPs and enable Threat Prevention IDs 543004, 97622 and the related IDs the advisory lists. Palo Alto says CVE-2026-115560 does not affect PAN-OS.
 
-**Exploitation status:** Amazon reported exploitation attempts from 2026-10-17, before disclosure. On 2026-10-24 a researcher documented successful RCE against PHP 8.4.26 `mod_php` honeypots. CISA’s earlier no-observed-success statement predates this evidence, and CISA added both emergency CVEs to KEV on 2026-10-26. A [public end-to-end exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC) was published after a researcher solved an authorized “Steal My Bitcoin” challenge on 2026-10-25; its author says it is tuned to an Alpine PHP 8.4.26 `cli-server` build and will not match a Debian `php-fpm` build, but adapting it lowers the bar for attackers. Palo Alto knows of no exploitation against its products. [Investigate exposed systems from at least 2026-10-17](details/php2shell.md#exploitation-status).
+**Exploitation status:** Amazon reported exploitation attempts from 2026-10-17, before disclosure. On 2026-10-24 a researcher documented successful RCE against PHP 8.4.26 `mod_php` honeypots. CISA’s earlier no-observed-success statement predates this evidence, and CISA added both emergency CVEs to KEV on 2026-10-26. A [public end-to-end exploit](https://github.com/KillaBoi/StealMyBitcoin-PoC) was published after a researcher solved an authorized “Steal My Bitcoin” challenge on 2026-10-25; its author says it is tuned to an Alpine PHP 8.4.26 `cli-server` build and will not match a Debian `php-fpm` build, but adapting it lowers the bar for attackers. On 2026-10-29, Palo Alto confirmed exploitation against internet-exposed PAN-OS management interfaces and independently verified the reported PHP2Shell-to-root chain. [Investigate exposed systems from at least 2026-10-17](details/php2shell.md#exploitation-status).
 
 ### The October 23 follow-up matters
 
@@ -2295,7 +2295,7 @@ Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/an
 
 **[CVE-2026-97229](https://www.cve.org/CVERecord?id=CVE-2026-97229) and [CVE-2026-110264](https://www.cve.org/CVERecord?id=CVE-2026-110264) — Critical, CVSS 3.1: 10.0 each**
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers all four GitLab CVEs below; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** [CVE-2026-97229](https://www.cve.org/CVERecord?id=CVE-2026-97229) is listed — added 2026-10-29, federal due date 2026-11-01. The other tracked GitLab CVEs are not listed; CISA’s listing establishes active exploitation of CVE-2026-97229.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -2304,7 +2304,8 @@ Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/an
 | Second GitLab announcement/patches | 2026-10-21; time/TZ unknown | CVE-2026-110264 and the identity flaws. |
 | Partial upstream Ruby fix | 2026-10-22; time/TZ unknown | Ruby 4.0.8 is insufficient for the complete set. |
 | Complete upstream Ruby fixes | 2026-10-23; time/TZ unknown | Ruby 4.0.9 / 3.4.12 / 3.3.13. |
-| **Last updated** | **2026-10-26 08:36 EDT (UTC−04:00)** | Main-guide date presentation updated. |
+| CISA KEV addition for CVE-2026-97229 | 2026-10-29; time/TZ unknown | CISA reports active exploitation; federal due date 2026-11-01. |
+| **Last updated** | **2026-10-30 04:05 EDT (UTC−04:00)** | CISA KEV listing confirmed. |
 
 Both vulnerabilities involve memory corruption while compiling specially crafted regular expressions.
 

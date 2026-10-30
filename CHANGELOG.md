@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-30 04:05 EDT (UTC−04:00) — KEV confirmations and PHP2Shell exploitation update
+
+- **Cisco Secure Firewall ASA / FTD:** CISA has added [CVE-2026-76418 to KEV](black-october/details/cisco-secure-firewall-vpn.md#timeline); apply Cisco’s fixed release and prioritize the federal due-date urgency signal.
+- **GitLab:** CISA has added [CVE-2026-97229 to KEV](black-october/details/gitlab-ruby.md#timeline). Update self-managed instances to a supported patched release and review GitLab’s threat detections for historic attempts.
+- **PHP2Shell / PAN-OS:** Palo Alto now confirms exploitation against internet-exposed PAN-OS management interfaces and a chained root campaign. Apply the [branch-specific hotfixes and restrict management access](black-october/details/php2shell.md#remediation), then investigate exposed appliances.
+
 ## 2026-10-29 08:03 EDT (UTC−04:00) — Cisco exploitation updates and Ultralytics model-file code injection
 
 - **Cisco Secure Firewall ASA / FTD:** Upgrade Remote Access SSL VPN deployments to [Cisco's first fixed release for their train](black-october/details/cisco-secure-firewall-vpn.md#remediation). Cisco reports active exploitation of CVE-2026-76418, which can reload an appliance when secondary authentication is configured; use Cisco's temporary mitigation only after evaluating its VPN and security impact.

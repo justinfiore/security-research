@@ -1,12 +1,12 @@
 # Cisco Catalyst SD-WAN: KeyDrift exploitation of authentication bypass
 
-**Last updated:** 2026-10-29 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Cisco Catalyst SD-WAN summary](../black-october-2026.md#cisco-catalyst-sd-wan-keydrift-authentication-bypass-and-key-theft) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-20127](https://www.cve.org/CVERecord?id=CVE-2026-20127) — Cisco CVSS 3.1 10.0 Critical (`AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`).** Cisco Catalyst SD-WAN Controller, Manager and Validator can let an unauthenticated remote attacker bypass peering authentication and obtain an internal high-privileged non-root account. Cisco PSIRT reports limited exploitation; Cisco Talos links historical UAT-11473 activity to the flaw and documents KeyDrift malware that collects control-plane keying material and provides persistent backdoor access.
 
-**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Cisco reports limited exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — added 2026-02-25, federal due date 2026-02-27. Cisco reports limited exploitation. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -51,7 +51,7 @@ Treat a suspected affected controller as a potential fabric-level compromise. Pr
 
 - [Cisco advisory][cisco] — impact, fixed releases, detection and mitigation guidance, and limited-exploitation statement.
 - [Cisco Talos KeyDrift report][talos] — observed UAT-11473 activity, artifacts and post-compromise guidance.
-- [CISA KEV JSON feed][kev] — catalog 2026.10.28 status.
+- [CISA KEV JSON feed][kev] — listing date and federal due date.
 
 [cisco]: https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-sdwan-rpa-EHchtZk
 [talos]: https://blog.talosintelligence.com/uat-11473-keydrift/

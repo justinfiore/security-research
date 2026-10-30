@@ -1,12 +1,12 @@
 # Signal calling (RingRTC): hang-up may not end a flooded call
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Signal summary](../black-october-2026.md#signal-calling-ringrtc-hang-up-may-not-end-a-flooded-call) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-113380](https://www.cve.org/CVERecord?id=CVE-2026-113380): MITRE (CNA) CVSS 4.0 9.3 Critical (CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:N/SC:H/SI:N/SA:N/S:P). NVD has not added its own score; the record is "Awaiting Analysis". Signal has published no advisory or score of its own.** RingRTC is the open-source calling library in Signal's Android, iOS and Desktop apps. Before 2.72.0, a call peer that saturates the call's finite-state-machine (FSM) event queue "can interfere with the ability of a local hangup to tear the call (with its audio and perhaps also video track) down". [CVE record][cve] Signal's fix commit is titled "Ensure calls terminate completely in corner cases". [Fix commit][fix]
 
-**Attack conditions:** The attacker must be a participant in a call with the victim, which the CVSS vector reflects as passive user interaction (UI:P). No other privileges are needed. **Worst case:** the victim taps hang-up and believes the call has ended, but their microphone audio, and possibly camera video, keeps reaching the other participant. This is a call-teardown flaw. Neither the CVE record nor the fix describes any weakness in Signal's message or call encryption. [CVE record][cve] [Researcher notes][notes]
+**Attack conditions:** The attacker must be a participant in a call with the victim, which the CVSS vector reflects as passive user interaction (UI:P). No other privileges are needed. Signal's post-disclosure investigation says it could reproduce the flaw only in Signal for Android, while the CVE/RingRTC range remains library-wide; retain the documented iOS and Desktop updates rather than treating that qualification as a proof those clients are unaffected. **Worst case:** the victim taps hang-up and believes the call has ended, but their microphone audio, and possibly camera video, keeps reaching the other participant. This is a call-teardown flaw. Neither the CVE record nor the fix describes any weakness in Signal's message or call encryption. [CVE record][cve] [Signal follow-up][signal-follow-up] [Researcher notes][notes]
 
 **Exploitation:** No exploitation reports were found. CISA's ADP SSVC enrichment on the CVE record (2026-10-20) marks Exploitation "none", Automatable "no" and Technical Impact "total". [CVE record][cve]
 
@@ -101,6 +101,7 @@ None of these proves exploitation, and their absence proves nothing either.
 - [RingRTC fix commit][fix] and [v2.71.0...v2.72.0 comparison][compare]: fix content and dates.
 - Signal client tags and manifests: [Android v8.27.0][android], [iOS 8.30.0.1882][ios], [Desktop v8.29.0][desktop].
 - [Researcher notes][notes] (third-party explanation; their simplified pseudocode is illustrative and has not been verified against Signal's source).
+- [Signal follow-up][signal-follow-up] — Android-only reproduction qualification and rollout context.
 - [NVD][nvd]; [CISA KEV feed][kev].
 - Secondary: [SecurityWeek][sw], [The Register][reg].
 
@@ -111,6 +112,7 @@ None of these proves exploitation, and their absence proves nothing either.
 [android]: https://github.com/signalapp/Signal-Android/releases/tag/v8.27.0
 [ios]: https://github.com/signalapp/Signal-iOS/releases/tag/8.30.0.1882
 [desktop]: https://github.com/signalapp/Signal-Desktop/releases/tag/v8.29.0
+[signal-follow-up]: https://aboutsignal.com/news/signal-fixes-bug-that-could-affect-ending-calls-on-android/
 [notes]: https://github.com/Imahian/Notes/tree/main/docs/CVEs/CVE-2026-113380
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
 [sw]: https://www.securityweek.com/signal-vulnerability-lets-malicious-callers-block-hang-ups

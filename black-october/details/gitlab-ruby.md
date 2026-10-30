@@ -1,12 +1,12 @@
 # GitLab and Ruby: detection and remediation
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main GitLab/Ruby summary](../black-october-2026.md#3-gitlab-and-ruby-regex-compilation-becomes-code-execution) · [Changelog](../../CHANGELOG.md)
 
 The principal GitLab issues **[CVE-2026-97229](https://www.cve.org/CVERecord?id=CVE-2026-97229)** and **[CVE-2026-110264](https://www.cve.org/CVERecord?id=CVE-2026-110264)** are **Critical, CVSS 3.1 10.0**: attacker-controlled regex compilation can lead to unauthenticated server-side code execution under the vendor's described conditions. The same maintenance window should cover **[CVE-2026-15723](https://www.cve.org/CVERecord?id=CVE-2026-15723)** (account takeover, High 8.2) and **[CVE-2026-112212](https://www.cve.org/CVERecord?id=CVE-2026-112212)** (OAuth/OIDC cache poisoning, High 7.5). Ruby's underlying fixes also cover related GitLab-assigned CVEs; this is not a reason to count the same engine flaw twice.
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers all four GitLab CVEs in this guide; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** [CVE-2026-97229](https://www.cve.org/CVERecord?id=CVE-2026-97229) is listed — added 2026-10-29, federal due date 2026-11-01. The other tracked GitLab CVEs are not listed. CISA listing establishes active exploitation of CVE-2026-97229. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -28,6 +28,7 @@ The principal GitLab issues **[CVE-2026-97229](https://www.cve.org/CVERecord?id=
 | CVE-2026-110264 and identity-flaw announcement/patches | 2026-10-21: [GitLab 19.5.1 / 19.4.3 / 19.3.6](https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-5-1-released/); additional RCE backports listed below |
 | Partial upstream Ruby fix | 2026-10-22: Ruby 4.0.8; not sufficient for the complete set |
 | Upstream Ruby complete fix set | 2026-10-23 (source date): [Ruby 4.0.9 / 3.4.12 / 3.3.13](https://www.ruby-lang.org/en/news/2026/10/23/regexp-fixes-for-gitlab-cves/) |
+| CISA KEV addition for CVE-2026-97229 | 2026-10-29; time/TZ unknown | CISA reports reliable evidence of active exploitation; federal due date 2026-11-01. [KEV][kev] |
 
 The Ruby notice explains that 4.0.9 completes the repeat-ID overflow fix; 4.0.8 addressed a different compiled-pattern overflow. GitLab can ship a patched bundled Ruby before a corresponding upstream Ruby release. Do not infer its fix state solely from the base interpreter version.
 

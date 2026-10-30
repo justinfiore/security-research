@@ -1,12 +1,12 @@
 # Cisco Secure Firewall ASA and FTD: exploited SSL VPN denial of service
 
-**Last updated:** 2026-10-29 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Cisco Secure Firewall summary](../black-october-2026.md#cisco-secure-firewall-asa-and-ftd-exploited-ssl-vpn-denial-of-service) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-76418](https://www.cve.org/CVERecord?id=CVE-2026-76418) — Cisco CVSS 3.1 8.6 High (`AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:N/A:H`).** An unauthenticated remote attacker can send a crafted request to the Remote Access SSL VPN service and reload an affected Cisco Secure Firewall ASA or FTD device. The vulnerable path requires the SSL VPN service to be reachable and secondary authentication in the applicable tunnel group. Cisco reports active exploitation.
 
-**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Cisco reports active exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — added 2026-10-29, federal due date 2026-11-01. Cisco reports active exploitation. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -53,7 +53,7 @@ Cisco's advisory describes a device-reload outcome, not post-compromise indicato
 
 - [Cisco advisory][cisco] — score, affected configuration, fixed releases, mitigation and active-exploitation statement.
 - [Cisco CNA CVE record][cve] — CVE identity, score and publication date.
-- [CISA KEV JSON feed][kev] — catalog 2026.10.28 status.
+- [CISA KEV JSON feed][kev] — listing date and federal due date.
 
 [cisco]: https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-asaftd-tunnel-dos-s6mgkb75
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-76418

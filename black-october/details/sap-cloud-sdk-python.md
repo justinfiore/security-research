@@ -1,6 +1,6 @@
 # SAP Cloud SDK for Python: OAuth2 SSRF leaking multi-tenant client credentials
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main SAP Cloud SDK for Python summary](../black-october-2026.md#sap-cloud-sdk-for-python-oauth2-ssrf-leaking-multi-tenant-client-credentials) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -96,7 +96,7 @@ Many BTP apps do not log egress destinations or SDK debug output. Finding nothin
 
 ## Remediation
 
-1. **Upgrade `sap-cloud-sdk` to 0.45.2 or later** in every application, for example `pip install --upgrade 'sap-cloud-sdk>=0.45.2'`. Update your lock file, rebuild and redeploy. The current release on 2026-10-26 was 0.62.0 (2026-10-21). The package requires Python 3.11+. [SAP advisory][ghsa] [PyPI][pypi]
+1. **Upgrade `sap-cloud-sdk` to 0.45.2 or later** in every application, for example `pip install --upgrade 'sap-cloud-sdk>=0.45.2'`. Update your lock file, rebuild and redeploy. The current release is 0.63.1. The package requires Python 3.11+. [SAP advisory][ghsa] [PyPI][pypi]
 2. **Restart or restage every app instance** so that running processes load the new code. A Cloud Foundry `cf restage`/redeploy or a Kubernetes rollout replaces long-running workers.
 3. **Handle the new `ValueError`.** Version 0.45.2 rejects tenant values that are not a single DNS label. Catch the error in request handlers and return a client error instead of a 500. [v0.45.2 release][r0452]
 4. **Vendor workaround (if you cannot upgrade immediately):** "validate `tenant_subdomain` against a known allowlist of registered tenant subdomains before passing it to any SDK call." Apply it to every `tenant=` and `tenant_subdomain=` argument found during [reachability](#reachability) review. [SAP advisory][ghsa]

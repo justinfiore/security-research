@@ -1,6 +1,6 @@
 # FortiMail: unauthenticated file write
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main FortiMail summary](../black-october-2026.md#fortimail-unauthenticated-file-write-cve-2026-104286) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -47,7 +47,7 @@
    | 7.4 | 7.4.0 through 7.4.8 | 7.4.9 or later |
    | 7.2 | 7.2.0 through 7.2.9 | No 7.2 fix; migrate to 7.4 or later |
 
-   **Source inconsistency:** the CNA record's machine-readable `affected` list differs from the advisory and from its own description. It lists 8.0.0 only, 7.6.0–7.6.5, 7.4.0–7.4.6, and also **7.0.0–7.0.9**. Its `solutions` field names stale "upcoming" versions (8.0.1, 7.6.6, 7.4.8, 7.2.10) and unrelated FortiRecorder builds. NVD's configuration covers 7.2.0–7.4.8, 7.6.0–7.6.6, and 8.0.0–8.0.1. This guide follows the vendor advisory's table. Treat any **7.0.x** unit as **unknown, not cleared**, and ask Fortinet support.
+   **Source inconsistency:** the CNA record's machine-readable `affected` list differs from the advisory and from its own description. It lists 8.0.0 only, 7.6.0–7.6.5, 7.4.0–7.4.6, and also **7.0.0–7.0.9**. Its `solutions` field now includes an upcoming **7.2.10+**, alongside stale upcoming versions (8.0.1, 7.6.6 and 7.4.8) and unrelated FortiRecorder builds. Do not wait for 7.2.10: use the vendor-supported migration path until that train is actually released. NVD's configuration covers 7.2.0–7.4.8, 7.6.0–7.6.6, and 8.0.0–8.0.1. This guide follows the vendor advisory's table. Treat any **7.0.x** unit as **unknown, not cleared**, and ask Fortinet support.
 3. Check whether IBE is enabled: GUI **Encryption → IBE → IBE Service**, or the read-only CLI `show system encryption ibe`. Also check whether the webmail/IBE web interface is reachable from the internet. If you cannot determine either, record the unit as exposed.
 
 ### Indicators published by Fortinet
