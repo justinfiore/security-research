@@ -4,6 +4,14 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-30 08:04 EDT (UTC−04:00) — WS_FTP, Linux TCP and Jenkins Critical/High disclosures
+
+- **Progress WS_FTP Server:** Upgrade Windows servers to [2024.0.7 or 2025.0.4](black-october/details/progress-wsftp.md#remediation). Progress rates the disclosed authentication and command-injection flaws Critical (10.0 and 9.9); the newer release covers both.
+- **Linux kernel:** Track a vendor-fixed kernel for [CVE-2026-98432](black-october/details/linux-tcp-options.md#remediation) and reboot when available. kernel.org rates the IPv4 TCP race 9.8 Critical; Red Hat and Ubuntu list affected products without a released fix at this review.
+- **Jenkins:** Upgrade core controllers to [weekly 2.588 or LTS 2.580.2](black-october/details/jenkins-october.md#remediation) for the October High-severity bundle, then validate trusted job and agent workflows.
+- **Ivanti Connect Secure:** The chained local escalation now has [Ivanti-supported fixed versions](black-october/details/ivanti-connect-secure.md#remediation): 25.1.1.3 and 22.8R2.6. Earlier CVE-2026-104935 fixes alone do not cover it.
+- **Wasmtime:** Microsoft now identifies [Azure Linux 3.0 Rust packages](black-october/details/wasmtime.md#remediation) as known affected by CVE-2026-115889 with no fix; isolate untrusted Wasm compilation until a fixed package is available.
+
 ## 2026-10-30 04:05 EDT (UTC−04:00) — KEV confirmations and PHP2Shell exploitation update
 
 - **Cisco Secure Firewall ASA / FTD:** CISA has added [CVE-2026-76418 to KEV](black-october/details/cisco-secure-firewall-vpn.md#timeline); apply Cisco’s fixed release and prioritize the federal due-date urgency signal.

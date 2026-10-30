@@ -13,7 +13,7 @@
 
 **Worst case:** code execution in the host process that runs Wasmtime, outside the Wasm sandbox, with that process's privileges and data. Maintainers have reported no attacks. [THN][thn]
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). Microsoft’s October 29 VEX marks Azure Linux 3.0's listed Rust packages known affected by CVE-2026-115889 and supplies no fix. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -41,6 +41,7 @@
 | RustSec RUSTSEC-2026-0379 issued | 2026-10-20; time/TZ unknown | For CVE-2026-115893. [RustSec][rustsec] |
 | Wasmtime 50.0.0 released | 2026-10-20 16:22:46 UTC | Not in either advisory's affected ranges; its release branch received the CVE-2026-115893 backport (#14821) before release. [v50.0.0][r50] [PR #14821][pr14821] |
 | CVE records published | 2026-10-23 21:23:27 UTC (CVE-2026-115889); 21:29:33 UTC (CVE-2026-115893) | GitHub CNA. NVD published both 2026-10-23 22:16:58 (NVD API, UTC). [CNA][cve889] [CNA][cve893] [NVD][nvd889] |
+| Microsoft Azure Linux VEX | 2026-10-29; time/TZ unknown | Azure Linux 3.0's listed Rust packages are known affected by CVE-2026-115889; no fix is available. [Microsoft VEX][msrc-vex] |
 | GitHub Advisory Database | 2026-10-23 22:02:20 UTC (GHSA-897f-g5gm-fmxm reviewed) | GHSA-mghf-wjfp-p5xm returned "Not Found" from the global advisory API on 2026-10-26, so Dependabot may not alert for the aarch64 flaw. [GitHub advisory][gad889] |
 | CISA KEV | Not listed (catalog 2026.10.23, checked 2026-10-26) | [KEV][kev] |
 | Exploitation | None reported | THN (2026-10-26): "the maintainers have not reported any attacks". [THN][thn] |
@@ -97,6 +98,7 @@ uname -m
 2. **Discard and recompile precompiled modules** produced by affected versions, including caches built for aarch64 on other machines.
 3. **Restart long-running hosts** so the new engine is loaded.
 4. **No workarounds are published in the advisories.** Until fixed, stop accepting modules from untrusted parties, or isolate the compiling and executing process with OS-level sandboxing (separate user, container or VM, no secrets in the process). Those measures limit damage but do not fix the bug.
+5. For Azure Linux 3.0 packages identified by Microsoft's VEX, treat exposure as known affected and use the isolation measures above until Microsoft publishes a fixed package.
 
 ## Verification
 
@@ -117,6 +119,7 @@ uname -m
 - Releases [v36.0.19][r36], [v43.0.0][r43], [v48.0.7][r48], [v49.0.4][r49], [v50.0.0][r50]; PRs [#12613][pr12613], [#14826][pr14826], [#14821][pr14821]; [release policy][policy].
 - [GitHub Advisory Database entry for GHSA-897f-g5gm-fmxm][gad889]; [RustSec RUSTSEC-2026-0379][rustsec].
 - [CISA KEV feed][kev]: neither CVE listed.
+- [Microsoft Azure Linux VEX][msrc-vex]: Azure Linux 3.0 known-affected/no-fix status for CVE-2026-115889.
 - Secondary: [The Hacker News][thn] (version table, support status, no reported attacks).
 
 [a889]: https://github.com/bytecodealliance/wasmtime/security/advisories/GHSA-897f-g5gm-fmxm
@@ -128,6 +131,7 @@ uname -m
 [gad889]: https://github.com/advisories/GHSA-897f-g5gm-fmxm
 [rustsec]: https://rustsec.org/advisories/RUSTSEC-2026-0379.html
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+[msrc-vex]: https://msrc.microsoft.com/csaf/vex/2026/msrc_cve-2026-115889.json
 [r36]: https://github.com/bytecodealliance/wasmtime/releases/tag/v36.0.19
 [r43]: https://github.com/bytecodealliance/wasmtime/releases/tag/v43.0.0
 [r48]: https://github.com/bytecodealliance/wasmtime/releases/tag/v48.0.7

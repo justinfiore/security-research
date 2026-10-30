@@ -9,7 +9,7 @@
 - an authentication bypass: a request to the public `/dana-na/auth/url_default/welcome.cgi` carrying an `X-DSCGI-PATH` header is routed to a protected CGI;
 - a race-condition file write and execution in `wu.cgi`.
 
-In the wild, attackers chained it with a separate **root privilege escalation**, the `dsinvoked`/DSCache flaw. MITRE later assigned that flaw **[CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357)** (MITRE CNA CVSS 3.1: 7.0 High). It is **not fixed** by the CVE-2026-104935 updates, and its fix status was not established in the reviewed sources.
+In the wild, attackers chained it with a separate **root privilege escalation**, the `dsinvoked`/DSCache flaw. Ivanti identifies it as **[CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357)** (Ivanti CVSS 3.1: 8.8 High) and now provides fixes in 25.1.1.3 and 22.8R2.6.
 
 **CISA KEV:** Listed — added 2026-10-13, federal due date 2026-10-16. The chained root escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) is not listed (catalog 2026.10.23). [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -37,7 +37,8 @@ In the wild, attackers chained it with a separate **root privilege escalation**,
 | Ivanti public advisory | 2026-10-13; page shows "Created Oct 13, 2026 1:59:25 PM" with no timezone | Discloses the CVE and limited in-the-wild exploitation. Last modified 8:29:44 PM the same day (Volexity blog link added to the FAQ). Volexity says the patches were released October 13, which differs from Ivanti's own release dates for 25.1.1.2 and 22.8R2.5. [Advisory][ivanti] [Volexity][volexity] |
 | CVE record published | 2026-10-13 15:31:07 UTC | CNA metadata (reserved 2026-10-02 17:07:30 UTC). NVD's published timestamp is 2026-10-13 16:17:11 (NVD API, UTC). [CVE JSON][cve] [NVD][nvd] |
 | CISA KEV addition and CISA alert | 2026-10-13 (date only) | Due 2026-10-16; forensic triage under BOD 26-04: **Yes**; ransomware use: Unknown. CISA reports credential theft and data exfiltration. [KEV JSON][kev] [CISA alert][cisa] |
-| CVE-2026-111357 (chained privilege escalation) published | 2026-10-15 20:56:58 UTC | MITRE CNA lists 22.8R2.4 as affected and the status of other versions as unknown. Not in KEV as of the 2026-10-23 feed release. [CVE-2026-111357 JSON][cve-pe] |
+| CVE-2026-111357 (chained privilege escalation) published | 2026-10-15 20:56:58 UTC | Later Ivanti advisory update identifies 25.1.1.2 and prior and 22.8R2.5 and prior as affected. [CVE-2026-111357 JSON][cve-pe] [Advisory][ivanti] |
+| Chained-flaw fixes released | 2026-10-29; time/TZ unknown | Ivanti released 25.1.1.3 and 22.8R2.6 for CVE-2026-111357 and CVE-2026-118527. [Advisory][ivanti] |
 
 ## Detection
 
@@ -66,7 +67,7 @@ In the wild, attackers chained it with a separate **root privilege escalation**,
 ## Remediation
 
 1. Update to a resolved version for your code line: **25.1.1.2**, **25.1.3.0/25.1.3.1** (new platform), or **22.8R2.5**. Ivanti recommends that 22.8 customers move to 25.1. Download from the Ivanti License System. Expect a reboot and follow the [25.x Upgrade and Migration Compatibility Guide][migrate].
-2. The chained privilege escalation (CVE-2026-111357) has no fix confirmed in the reviewed sources. Track Ivanti's advisories, because patching CVE-2026-104935 removes the remote entry point Volexity observed but not that local flaw.
+2. The chained privilege escalation (CVE-2026-111357) is fixed in **25.1.1.3** and **22.8R2.6**. Use the newer release where its code line applies; patching only CVE-2026-104935's earlier fixed versions does not resolve the chained local flaws.
 3. Ivanti and CISA list no workaround for CVE-2026-104935. If you cannot update, restrict exposure of the appliance's web interface where operationally possible and prioritize forensic review. KEV's required action includes discontinuing the product if mitigations are unavailable.
 
 ## Verification

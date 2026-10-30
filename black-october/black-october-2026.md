@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Progress WS_FTP Server: Critical authentication and command-injection flaws](#progress-ws_ftp-server-critical-authentication-and-command-injection-flaws)
+- [Linux kernel: IPv4 TCP options use-after-free](#linux-kernel-ipv4-tcp-options-use-after-free)
+- [Jenkins: October core security fixes](#jenkins-october-core-security-fixes)
 - [Cisco Secure Firewall ASA and FTD: exploited SSL VPN denial of service](#cisco-secure-firewall-asa-and-ftd-exploited-ssl-vpn-denial-of-service)
 - [Cisco Catalyst SD-WAN: KeyDrift authentication bypass and key theft](#cisco-catalyst-sd-wan-keydrift-authentication-bypass-and-key-theft)
 - [Ultralytics: parse_model code injection through an untrusted model file](#ultralytics-parse_model-code-injection-through-an-untrusted-model-file)
@@ -142,6 +145,64 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Progress WS_FTP Server: Critical authentication and command-injection flaws
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/progress-wsftp.md):** [Detection](details/progress-wsftp.md#detection) · [Remediation](details/progress-wsftp.md#remediation) · [Verification](details/progress-wsftp.md#verification) · [Timeline](details/progress-wsftp.md#timeline)
+
+**CVEs:** [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE-2026-90868](https://www.cve.org/CVERecord?id=CVE-2026-90868)
+
+**Progress CNA rates CVE-2026-84295 CVSS 3.1 10.0 Critical and CVE-2026-90868 CVSS 3.1 9.9 Critical.** The first permits unauthenticated access to sensitive information including administrator credentials; the second permits OS command execution under certain configurations on Windows WS_FTP Server.
+
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No active exploitation is reported by the Progress CNA records. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| CVE records published | 2026-10-29; time/TZ unknown | Progress published both records. |
+| Fixes | 2026-09-03 / 2026-10-01; time/TZ unknown | 2024.0.6/2025.0.3 fix CVE-2026-84295; 2024.0.7/2025.0.4 fix CVE-2026-90868. |
+| **Last updated** | **2026-10-30 08:04 EDT (UTC−04:00)** | Added from Progress CNA records. |
+
+**Patch:** Upgrade to **2024.0.7** or **2025.0.4** or a later supported release, which covers both CVEs. Restrict administrative and transfer-service exposure while upgrading, then review Windows and WS_FTP logs for unexpected administration or command execution.
+
+Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE-2026-90868](https://www.cve.org/CVERecord?id=CVE-2026-90868), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Linux kernel: IPv4 TCP options use-after-free
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/linux-tcp-options.md):** [Detection](details/linux-tcp-options.md#detection) · [Remediation](details/linux-tcp-options.md#remediation) · [Verification](details/linux-tcp-options.md#verification) · [Timeline](details/linux-tcp-options.md#timeline)
+
+**CVEs:** [CVE-2026-98432](https://www.cve.org/CVERecord?id=CVE-2026-98432)
+
+**kernel.org rates CVE-2026-98432 CVSS 3.1 9.8 Critical; Red Hat rates its product impact 8.1 High.** The IPv4 TCP race can free socket options while they are in use during retransmitted SYN processing or request-socket migration.
+
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No primary source reviewed reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| CVE publication | 2026-10-15; time/TZ unknown | kernel.org CNA record. |
+| **Last updated** | **2026-10-30 08:04 EDT (UTC−04:00)** | Added after vendor status review. |
+
+**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. At review, Red Hat lists no supported mitigation and Ubuntu lists supported generic kernels as vulnerable with fixes in progress; restrict unnecessary untrusted TCP exposure while awaiting a vendor update.
+
+Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432), [Red Hat advisory](https://access.redhat.com/security/cve/CVE-2026-98432), [Ubuntu advisory](https://ubuntu.com/security/CVE-2026-98432), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Jenkins: October core security fixes
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/jenkins-october.md):** [Detection](details/jenkins-october.md#detection) · [Remediation](details/jenkins-october.md#remediation) · [Verification](details/jenkins-october.md#verification) · [Timeline](details/jenkins-october.md#timeline)
+
+**CVEs:** [CVE-2026-117612](https://www.cve.org/CVERecord?id=CVE-2026-117612) and related Jenkins October 28 core CVEs.
+
+**Jenkins rates the advisory's tracked core issues High.** Affected Jenkins weekly 2.587 and earlier and LTS 2.580.1 and earlier include deserialization RCE, file read/write, privilege-escalation and stored-XSS paths with differing authorization prerequisites.
+
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). Jenkins reports no active exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public advisory and fixes | 2026-10-28; time/TZ unknown | Jenkins weekly 2.588 and LTS 2.580.2 contain the fixes. |
+| **Last updated** | **2026-10-30 08:04 EDT (UTC−04:00)** | Added from Jenkins's advisory. |
+
+**Patch:** Upgrade controllers to weekly **2.588** or LTS **2.580.2**, then validate trusted build, agent and configuration workflows. Restrict configuration and agent-management permissions until every controller is updated; do not use crafted XML or artifacts to test production instances.
+
+Sources: [Jenkins advisory](https://www.jenkins.io/security/advisory/2026-10-28/), [CVE-2026-117612](https://www.cve.org/CVERecord?id=CVE-2026-117612), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Cisco Secure Firewall ASA and FTD: exploited SSL VPN denial of service
 
@@ -1245,7 +1306,7 @@ Sources: [SAP advisory GHSA-4mv3-jxxm-9cx2](https://github.com/SAP/cloud-sdk-pyt
 
 **[CVE-2026-115889](https://www.cve.org/CVERecord?id=CVE-2026-115889) and [CVE-2026-115893](https://www.cve.org/CVERecord?id=CVE-2026-115893) — GitHub CNA (Bytecode Alliance) CVSS 3.1: 9.9 Critical each; NVD has not scored them**
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). Microsoft’s October 29 VEX marks listed Azure Linux 3.0 Rust packages known affected by CVE-2026-115889 with no fix available. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1255,6 +1316,7 @@ Sources: [SAP advisory GHSA-4mv3-jxxm-9cx2](https://github.com/SAP/cloud-sdk-pyt
 | Public announcement (GHSA-mghf-wjfp-p5xm, GHSA-897f-g5gm-fmxm) | 2026-10-19 19:21:02 and 19:21:24 UTC | Repository advisory publication times. |
 | Wasmtime 50.0.0 | 2026-10-20 16:22:46 UTC | Outside both affected ranges; includes the aarch64 backport. |
 | CVE records published | 2026-10-23 21:23:27 / 21:29:33 UTC | GitHub CNA. |
+| Microsoft Azure Linux VEX | 2026-10-29; time/TZ unknown | Azure Linux 3.0 listed Rust packages are known affected by CVE-2026-115889; no fix is available. |
 | **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
 
 Both bugs are in Cranelift, Wasmtime's default compiler. **CVE-2026-115889** (any architecture): SSA value indices silently overflow when compiling a huge or crafted function, causing miscompilation and type confusion. **CVE-2026-115893** (aarch64/ARM64 only): a `br_table` with more than ~256,000 targets gets an out-of-range branch that jumps to an attacker-chosen offset.
