@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-30 20:15 EDT (UTC−04:00) — Chrome 156 follow-up; WS_FTP Web Admin flaw; Red Hat TCP filter
+
+- **Chrome:** Update desktop Chrome to [156.0.8078.79 or later](black-october/details/chrome-156.md#remediation) (Windows and Mac also list .80). The October 27 builds do not include Critical CVE-2026-76024, memory corruption in MediaStream. Google does not report exploitation. The CVE record has no CNA score; CISA's enrichment is 6.5 Medium, which is not Google's rating.
+- **Progress WS_FTP Server:** Stay on [2024.0.7 or 2025.0.4](black-october/details/progress-wsftp.md#remediation). Progress also rates CVE-2026-90867 8.1 High: improper access control in the Web Admin console, fixed in those same builds. 2024.0.6 and 2025.0.3 fix only the earlier authentication flaw. The vendor article is login-gated; the score and range are from Progress's CVE record.
+- **Linux kernel (CVE-2026-98432):** Red Hat published a temporary [nftables filter](black-october/details/linux-tcp-options.md#remediation) that drops incoming IPv4 TCP packets containing IP options. It reduces exposure and is not a kernel fix. Install a vendor kernel that names the CVE when one exists, then reboot and remove the filter.
+
 ## 2026-10-30 16:15 EDT (UTC−04:00) — Synology DSM ransomware wave; Ivanti chained flaws added to KEV
 
 - **Synology DSM:** Upgrade to [7.4-90075, 7.3.2-86009-4, 7.2.2-72806-9, or 7.2.1-69057-12 or later](black-october/details/synology-dsm.md#remediation) and keep DSM and SSH off the internet until that build is running. Synology rates two unauthenticated flaws Critical (CVSS 3.1 9.8) and lists no workaround. 360 reports October ransomware through those flaws; Synology's same-day statement instead points to a vulnerability patched in December 2024. A current build covers both, and files renamed `.L0CK3D` are the reported ransomware marker.

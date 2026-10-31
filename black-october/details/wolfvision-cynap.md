@@ -103,7 +103,7 @@ A clean review does **not** prove a device was not accessed. No indicators are p
 
 WolfVision's security page lists four more Cynap advisories alongside these two. They are not tracked as separate items here; the same firmware lines fix them, except that Cynap Pure (Next Gen) and Cynap Bridge need **v2.00d** rather than v2.00c:
 
-- [CVE-2026-70379](https://www.cve.org/CVERecord?id=CVE-2026-70379): unauthenticated access to the unencrypted vSolution Matrix RTSP stream from the same network segment. WolfVision severity **High** (CVSS 4.0 7.1; CVSS 3.1 6.5 Medium). Cynap Pro and Core Pro below v1.78a; Cynap and Cynap Core with no fix. The fix restricts stream access but does not encrypt the stream. Its CVE record was not yet published when checked on 2026-10-26. [Advisory][a379]
+- [CVE-2026-70379](https://www.cve.org/CVERecord?id=CVE-2026-70379): unauthenticated access to the unencrypted vSolution Matrix RTSP stream from the same network segment. ENISA (CNA) scores it CVSS 4.0 7.1 High and CVSS 3.1 6.5 Medium; the record was published 2026-10-26. Cynap Pro and Core Pro below v1.78a; Cynap and Cynap Core with no fix. The fix restricts stream access but does not encrypt the stream. [Advisory][a379]
 - [CVE-2026-70380](https://www.cve.org/CVERecord?id=CVE-2026-70380) (MICE service resource exhaustion), [CVE-2026-70381](https://www.cve.org/CVERecord?id=CVE-2026-70381) (unauthorized access to internal web resources) and [CVE-2026-70382](https://www.cve.org/CVERecord?id=CVE-2026-70382) (stored cross-site scripting): WolfVision severity Medium. [Security announcements][secidx]
 
 ## Verification

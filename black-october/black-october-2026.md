@@ -206,21 +206,21 @@ Sources: [WordPress 7.1.4](https://wordpress.org/news/2026/10/wordpress-7-1-4/),
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/progress-wsftp.md):** [Detection](details/progress-wsftp.md#detection) · [Remediation](details/progress-wsftp.md#remediation) · [Verification](details/progress-wsftp.md#verification) · [Timeline](details/progress-wsftp.md#timeline)
 
-**CVEs:** [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE-2026-90868](https://www.cve.org/CVERecord?id=CVE-2026-90868)
+**CVEs:** [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE-2026-90868](https://www.cve.org/CVERecord?id=CVE-2026-90868), [CVE-2026-90867](https://www.cve.org/CVERecord?id=CVE-2026-90867)
 
-**Progress CNA rates CVE-2026-84295 CVSS 3.1 10.0 Critical and CVE-2026-90868 CVSS 3.1 9.9 Critical.** The first permits unauthenticated access to sensitive information including administrator credentials; the second permits OS command execution under certain configurations on Windows WS_FTP Server.
+**Progress CNA rates CVE-2026-84295 CVSS 3.1 10.0 Critical, CVE-2026-90868 CVSS 3.1 9.9 Critical, and CVE-2026-90867 CVSS 3.1 8.1 High.** The first permits unauthenticated access to sensitive information including administrator credentials; the second permits OS command execution under certain configurations; the third is improper access control in the Web Admin console. All three affect Windows WS_FTP Server. The vendor article is login-gated; these claims are from the CNA records.
 
-**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No active exploitation is reported by the Progress CNA records. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-30). No active exploitation is reported by the Progress CNA records. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| CVE records published | 2026-10-29; time/TZ unknown | Progress published both records. |
-| Fixes | 2026-09-03 / 2026-10-01; time/TZ unknown | 2024.0.6/2025.0.3 fix CVE-2026-84295; 2024.0.7/2025.0.4 fix CVE-2026-90868. |
-| **Last updated** | **2026-10-30 08:04 EDT (UTC−04:00)** | Added from Progress CNA records. |
+| CVE records published | 2026-10-29; time/TZ unknown | Progress published the three records the same day. |
+| Fixes | 2026-09-03 / 2026-10-01; time/TZ unknown | 2024.0.6/2025.0.3 fix only CVE-2026-84295; 2024.0.7/2025.0.4 fix all three. |
+| **Last updated** | **2026-10-30 20:15 EDT (UTC−04:00)** | Added High CVE-2026-90867, fixed in the same builds. |
 
-**Patch:** Upgrade to **2024.0.7** or **2025.0.4** or a later supported release, which covers both CVEs. Restrict administrative and transfer-service exposure while upgrading, then review Windows and WS_FTP logs for unexpected administration or command execution.
+**Patch:** Upgrade to **2024.0.7** or **2025.0.4** or a later supported release, which covers all three CVEs. 2024.0.6 and 2025.0.3 do not fix CVE-2026-90868 or CVE-2026-90867. Restrict administrative and transfer-service exposure while upgrading, then review Windows and WS_FTP logs for unexpected administration or command execution.
 
-Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE-2026-90868](https://www.cve.org/CVERecord?id=CVE-2026-90868), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE-2026-90868](https://www.cve.org/CVERecord?id=CVE-2026-90868), [CVE-2026-90867](https://www.cve.org/CVERecord?id=CVE-2026-90867), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Linux kernel: IPv4 TCP options use-after-free
 
@@ -237,11 +237,12 @@ Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE
 | CVE publication | 2026-10-15; time/TZ unknown | kernel.org CNA record. |
 | Anthropic lab proof of concept | 2026-10-27; time/TZ unknown | Remote root against a multipath TCP listener. Exploit not published; not in-the-wild use. |
 | Go MPTCP stopgap | 2026-10-29; time/TZ unknown | Go says `GODEBUG=multipathtcp=0` blocks the demonstrated listener shape and is not a kernel fix. |
-| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | Red Hat public score now 9.8, plus the Anthropic lab proof of concept and Go stopgap. |
+| Red Hat mitigation bulletin | 2026-10-30 16:03 (timezone not stated) | An nftables filter drops incoming IPv4 TCP packets that contain IP options. Red Hat says it cannot fully prevent the flaw. |
+| **Last updated** | **2026-10-30 20:15 EDT (UTC−04:00)** | Added Red Hat's temporary nftables filter. |
 
-**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. At review, Red Hat lists no supported mitigation and Ubuntu lists supported generic kernels as vulnerable with fixes in progress; restrict unnecessary untrusted TCP exposure while awaiting a vendor update. Go 1.24 and later enable multipath TCP on Linux listen sockets by default. Setting `GODEBUG=multipathtcp=0`, or `godebug multipathtcp=0` in the main module, disables that default and blocks the listener shape Anthropic demonstrated, but Go says this is fragile and does not fix the kernel bug.
+**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Ubuntu still lists supported generic kernels as vulnerable with fixes in progress, and Red Hat has no released kernel fix. Until one ships, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. Go 1.24 and later enable multipath TCP on Linux listen sockets by default. Setting `GODEBUG=multipathtcp=0`, or `godebug multipathtcp=0` in the main module, disables that default and blocks the listener shape Anthropic demonstrated, but Go says this is fragile and does not fix the kernel bug.
 
-Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432), [Red Hat advisory](https://access.redhat.com/security/cve/CVE-2026-98432), [Ubuntu advisory](https://ubuntu.com/security/CVE-2026-98432), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432), [Red Hat advisory](https://access.redhat.com/security/cve/CVE-2026-98432), [Red Hat RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016), [Ubuntu advisory](https://ubuntu.com/security/CVE-2026-98432), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Jenkins: October core security fixes
 
@@ -539,20 +540,21 @@ Sources: [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-46300), [Ubuntu 
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/chrome-156.md):** [Detection](details/chrome-156.md#detection) · [Remediation](details/chrome-156.md#remediation) · [Verification](details/chrome-156.md#verification) · [Timeline](details/chrome-156.md#timeline)
 
-**CVEs:** [CVE-2026-118306](https://www.cve.org/CVERecord?id=CVE-2026-118306), [CVE-2026-118331](https://www.cve.org/CVERecord?id=CVE-2026-118331), [CVE-2026-118344](https://www.cve.org/CVERecord?id=CVE-2026-118344), [CVE-2026-118348](https://www.cve.org/CVERecord?id=CVE-2026-118348)
+**CVEs:** [CVE-2026-118306](https://www.cve.org/CVERecord?id=CVE-2026-118306), [CVE-2026-118331](https://www.cve.org/CVERecord?id=CVE-2026-118331), [CVE-2026-118344](https://www.cve.org/CVERecord?id=CVE-2026-118344), [CVE-2026-118348](https://www.cve.org/CVERecord?id=CVE-2026-118348), [CVE-2026-76024](https://www.cve.org/CVERecord?id=CVE-2026-76024)
 
-**Google rates these four Chrome 156 flaws Critical.** They affect FileSystem, FileAPI, Layout and Skia; Google restricts further details while users receive updates.
+**Google rates five Chrome 156 flaws Critical.** The October 27 release fixed four in FileSystem, FileAPI, Layout and Skia. The October 29 release adds [CVE-2026-76024](https://www.cve.org/CVERecord?id=CVE-2026-76024), memory corruption in MediaStream; Google restricts further details while users receive updates. The CVE record has no CNA numeric score. CISA's enrichment scores it CVSS 3.1 6.5 Medium, which is not Google's rating.
 
-**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-28). Google does not report active exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-30). Google does not report active exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Stable release announcement | 2026-10-27; time/TZ unknown | Google announced Chrome 156.0.8078.73 for Linux and 156.0.8078.73/.74 for Windows and macOS. |
-| **Last updated** | **2026-10-28 16:00 EDT (UTC−04:00)** | Added from Google's Chrome release post. |
+| Later Stable and Extended Stable release | 2026-10-29; time/TZ unknown | 156.0.8078.79/.80 for Windows and Mac and 156.0.8078.79 for Linux, including Critical CVE-2026-76024. |
+| **Last updated** | **2026-10-30 20:15 EDT (UTC−04:00)** | Raised the minimum build for the October 29 Critical fix. |
 
-**Patch:** Update Windows/macOS Chrome to **156.0.8078.73/.74+** and Linux Chrome to **156.0.8078.73+**, then relaunch. Use the supported update channel; Chrome 156 alone does not prove the security update is installed.
+**Patch:** Update Windows/macOS Chrome to **156.0.8078.79/.80+** and Linux Chrome to **156.0.8078.79+**, then relaunch. The October 27 builds do not include CVE-2026-76024. Use the supported update channel; Chrome 156 alone does not prove the security update is installed.
 
-Sources: [Google Chrome 156 desktop stable release](https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_0562499947.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [October 27 stable release](https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_0562499947.html), [October 29 stable release](https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_02107719452.html), [CVE-2026-76024](https://www.cve.org/CVERecord?id=CVE-2026-76024), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## TianoCore EDK II: PXE pre-boot remote code execution
 

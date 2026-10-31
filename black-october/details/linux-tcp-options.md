@@ -24,6 +24,7 @@
 | CVE publication | 2026-10-15; time/TZ unknown | kernel.org CNA record published CVE-2026-98432. [CVE record][cve] |
 | Record update | 2026-10-24; time/TZ unknown | The CNA record lists upstream and stable fixed commits. [CVE record][cve] |
 | Vendor status reviewed | 2026-10-30; time/TZ unknown | Red Hat and Ubuntu list affected products; Ubuntu shows work in progress for supported LTS kernels. [Red Hat][redhat] [Ubuntu][ubuntu] |
+| Red Hat mitigation bulletin | 2026-10-30 16:03 (timezone not stated on the page) | RHSB-2026-016 publishes an nftables filter. Red Hat says it reduces exposure and cannot fully prevent the flaw. [RHSB-2026-016][rhsb] |
 
 ## Detection
 
@@ -34,8 +35,8 @@
 ## Remediation
 
 1. Install the distributor kernel package explicitly marked as fixing CVE-2026-98432, then reboot into it. Do not build an arbitrary upstream commit into a production distribution kernel in place of a supported update.
-2. At this review, Ubuntu lists supported 22.04, 24.04, 26.04 and 26.10 generic kernels as vulnerable with fixes in progress; Red Hat lists no supported mitigation. Track vendor advisories for release status.
-3. Reduce unnecessary exposure of TCP services to untrusted networks while awaiting a supported package. This reduces opportunity but is not a proven workaround.
+2. At this review, Ubuntu lists supported 22.04, 24.04, 26.04 and 26.10 generic kernels as vulnerable with fixes in progress. Red Hat still has no released kernel fix. On 2026-10-30 it published [RHSB-2026-016][rhsb], which drops incoming IPv4 TCP packets that contain IP options (`ip protocol tcp ip hdrlength > 5`). Red Hat says this reduces exposure, can disrupt workloads that need those packets, and is not a substitute for patching. Test it before production use, and remove the table after the kernel is fixed. Red Hat's CVE JSON API still says a qualifying mitigation is not available, which disagrees with the public bulletin; follow the bulletin.
+3. Reduce unnecessary exposure of TCP services to untrusted networks while awaiting a supported package. That, and the nftables filter, reduce opportunity; neither is a fix.
 
 ## Verification
 
@@ -49,11 +50,13 @@ The reviewed primary sources do not provide compromise indicators. Preserve kern
 ## Sources
 
 - [kernel.org CNA CVE record][cve] — vulnerability mechanics, score and fixed commit ranges.
-- [Red Hat advisory][redhat] — public CVSS 3.1 9.8 (preliminary), and no qualifying mitigation.
+- [Red Hat advisory][redhat] — public CVSS 3.1 9.8 (preliminary), and a pointer to the mitigation bulletin.
+- [Red Hat RHSB-2026-016][rhsb] — nftables mitigation, published 2026-10-30 16:03, explicitly not a substitute for a kernel update.
 - [Ubuntu advisory][ubuntu] — supported-release status.
 - [CISA KEV JSON feed][kev] — catalog status.
 
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-98432
 [redhat]: https://access.redhat.com/security/cve/CVE-2026-98432
+[rhsb]: https://access.redhat.com/security/vulnerabilities/RHSB-2026-016
 [ubuntu]: https://ubuntu.com/security/CVE-2026-98432
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

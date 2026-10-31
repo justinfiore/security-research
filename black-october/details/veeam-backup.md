@@ -1,10 +1,10 @@
 # Veeam Backup & Replication and Agent for Linux: authorization bypass and local privilege escalation
 
-**Last updated:** 2026-10-28 (America/New_York)
+**Last updated:** 2026-10-30 (America/New_York)
 
 [Main Veeam summary](../black-october-2026.md#veeam-backup--replication-and-agent-for-linux-authorization-bypass-and-local-privilege-escalation) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**[CVE-2026-108142](https://www.cve.org/CVERecord?id=CVE-2026-108142) — Veeam CVSS 4.0 9.1 Critical; [CVE-2026-105477](https://www.cve.org/CVERecord?id=CVE-2026-105477) — Veeam CVSS 4.0 7.3 High.** CVE-2026-108142 allows an unauthenticated attacker to bypass authorization on the CDP Coordinator Service in affected Windows-based Veeam Backup & Replication and Veeam Software Appliance deployments. CVE-2026-105477 allows a local privilege escalation only on Veeam Agent for Linux installations managed by Backup & Replication.
+**[CVE-2026-108142](https://www.cve.org/CVERecord?id=CVE-2026-108142) — Veeam CVSS 4.0 9.1 Critical; [CVE-2026-105477](https://www.cve.org/CVERecord?id=CVE-2026-105477) — Veeam CVSS 4.0 7.3 High.** CVE-2026-108142 allows an unauthenticated attacker to bypass authorization on the CDP Coordinator Service in affected Windows-based Veeam Backup & Replication and Veeam Software Appliance deployments. CVE-2026-105477 allows a local privilege escalation only on Veeam Agent for Linux installations managed by Backup & Replication. The same bulletin also fixes [CVE-2026-108140](https://www.cve.org/CVERecord?id=CVE-2026-108140) and [CVE-2026-108141](https://www.cve.org/CVERecord?id=CVE-2026-108141), both Veeam/HackerOne CVSS 4.0 5.9 Medium: a Restore Operator who controls a NAS share can write files on the backup server through a relative path traversal. Those two are below this guide's High threshold and do not change the fixed builds.
 
 **CISA KEV:** Not listed (catalog 2026.10.27, checked 2026-10-28) for either CVE. Veeam's bulletin does not report active exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -29,7 +29,7 @@
 1. Inventory Windows-based Veeam Backup & Replication and Veeam Software Appliance deployments, including isolated backup-management hosts. For CVE-2026-108142, treat 13.1 through **13.1.1.18** and 13.0 through **13.0.2.29** as affected. Veeam states 12.x is not affected.
 2. Inventory Veeam Agent for Linux only where it is managed by a Backup & Replication instance. For CVE-2026-105477, treat 13.1 through **13.1.1.4** as affected; Veeam states 13.0.x and 6.x are not affected.
 3. Confirm the running product build through trusted management inventory or the product's supported version reporting, not merely an installer already downloaded to a host. Missing inventory or an unsupported deployment is **unknown**, not safe.
-4. Record which networks can reach Backup & Replication management services and which accounts have Restore Operator roles. The bulletin supplies no indicators of compromise and does not establish that either flaw has been exploited.
+4. Record which networks can reach Backup & Replication management services and which accounts have Restore Operator roles. The Medium path-traversal issues require a Restore Operator and an attacker-controlled NAS share; they affect 13.0 before 13.0.3 and 13.1 before 13.1.2, and Veeam states 12.x is not affected. The bulletin supplies no indicators of compromise and does not establish that any of these flaws has been exploited.
 
 ## Remediation
 
