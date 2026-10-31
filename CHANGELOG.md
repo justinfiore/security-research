@@ -4,6 +4,10 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-31 01:15 EDT (UTC−04:00) — Ubuntu Brotli packages
+
+- **Brotli on Ubuntu:** Install [USN-8956-1](black-october/details/brotli.md#remediation) and restart every process that loaded `libbrotli`. 26.10 gets `libbrotli1` 1.2.0-4ubuntu0.1, 26.04 gets 1.2.0-3ubuntu0.1, 24.04 gets 1.1.0-2ubuntu0.1, and 22.04 gets 1.0.9-2ubuntu0.1. Those version numbers are backports, not upstream 1.2.1. Ubuntu Pro covers 20.04, 18.04 and 16.04. The Arrow source fix is merged, but no fixed Arrow release exists yet.
+
 ## 2026-10-31 00:45 EDT (UTC−04:00) — SAP SDK second range; OpenShift and RHEL 6 kernels
 
 - **SAP Cloud SDK for Python:** Upgrade to [0.55.1 or later](black-october/details/sap-cloud-sdk-python.md#remediation), not only 0.45.2. SAP's CVE record now lists a second affected range, 0.53.0 through 0.55.0, for the same Critical OAuth credential leak. Restage every instance.
