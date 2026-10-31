@@ -1,6 +1,6 @@
 # Linux kernel: PwnEscape - guest-to-host escape via IPv4 checksum metadata
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-31 (America/New_York)
 
 [Main PwnEscape summary](../black-october-2026.md#linux-kernel-pwnescape---guest-to-host-escape-via-ipv4-checksum-metadata) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -67,6 +67,7 @@ The bug is in the **host kernel's IPv4 networking stack**, not in KVM. Malformed
 | Mainline 7.3 released | 2026-10-18 | 7.3 is the first mainline release with the fix. [kernel.org][kreleases] [CNA][cve] |
 | Red Hat fixed kernels | 2026-10-19 to 2026-10-24 (dates only) | RHEL 10 RHSA-2026:85321 (`kernel-6.12.0-211.67.1.el10_2`, 10-19); RHEL 9 RHSA-2026:86033 (`kernel-5.14.0-687.59.1.el9_8`, 10-20); RHEL 7 ELS RHSA-2026:88206 (10-22); RHEL 8 RHSA-2026:89083 (`kernel-4.18.0-553.178.1.el8_10`, 10-24); plus EUS/SAP streams. [Red Hat][rhapi] |
 | Red Hat real-time fixed kernels | 2026-10-22 to 2026-10-24 (dates only) | RHEL 7 ELS `kernel-rt-3.10.0-1160.167.2.rt56.1320.el7` (RHSA-2026:88204), RHEL 9.2 SAP Solutions `kernel-rt-5.14.0-284.199.1.rt14.484.el9_2` (RHSA-2026:87822), and RHEL 8 `kernel-rt-4.18.0-553.178.1.rt7.519.el8_10` (RHSA-2026:89082). General RHEL 9 `kernel-rt` remains affected. [Red Hat][rhapi] |
+| Further Red Hat fixed kernels | 2026-10-27 (date only) | RHEL 6 ELS `kernel-2.6.32-754.66.1.el6` (RHSA-2026:90933). OpenShift Container Platform RHCOS images for 4.12, 4.14, 4.16, 4.18, 4.19, 4.20, 4.21 and 4.22 (RHSA-2026:90272, 89838, 89714, 89725, 89651, 89333, 89232, 89197). OpenShift Container Platform 5 remains affected. [Red Hat][rhapi] |
 | AlmaLinux production kernels | 2026-10-23 17:16 UTC | `kernel-4.18.0-553.177.1.el8_10`, `kernel-5.14.0-687.59.1.el9_8`, `kernel-6.12.0-211.67.1.el10_2`. AlmaLinux warns that `kernel-5.14.0-687.58.1.el9_8` is newer than its testing kernel but lacks the fix. [AlmaLinux][alma] |
 | Exploitation in the wild | None reported in the reviewed sources | The researcher expects public exploits within weeks. See the KEV note above about Red Hat's wording. [pwn.ai][pwn] [Red Hat][rh] |
 | CISA KEV addition | Not listed | Catalog 2026.10.23, checked 2026-10-26. [KEV][kev] |
@@ -107,7 +108,7 @@ Upstream fixed versions (CNA): **5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113,
 
 - **No upstream stable fix is listed for other series**, including 5.4, 7.0 and 7.1. Use a distribution backport or move to a fixed series.
 - **Distribution kernels keep older base versions.** For example, RHEL 9 reports 5.14.0-*, and Ubuntu 24.04 reports 6.8.0-*. Their `uname -r` cannot be compared with upstream numbers. Status when reviewed:
-  - **Red Hat:** fixed kernels shipped for RHEL 10 (`kernel-6.12.0-211.67.1.el10_2`), RHEL 9 (`kernel-5.14.0-687.59.1.el9_8`), RHEL 8 (`kernel-4.18.0-553.178.1.el8_10`), RHEL 7 ELS (`kernel-3.10.0-1160.167.2.el7`) and listed EUS/SAP streams. Real-time fixes are now listed for RHEL 7 ELS, RHEL 9.2 SAP Solutions and RHEL 8; verify the exact advisory/build, because general RHEL 9 `kernel-rt`, RHEL 6 and OpenShift RHCOS remain affected. [Red Hat][rhapi]
+  - **Red Hat:** fixed kernels shipped for RHEL 10 (`kernel-6.12.0-211.67.1.el10_2`), RHEL 9 (`kernel-5.14.0-687.59.1.el9_8`), RHEL 8 (`kernel-4.18.0-553.178.1.el8_10`), RHEL 7 ELS (`kernel-3.10.0-1160.167.2.el7`), RHEL 6 ELS (`kernel-2.6.32-754.66.1.el6`, 2026-10-27) and listed EUS/SAP streams. Real-time fixes are listed for RHEL 7 ELS, RHEL 9.2 SAP Solutions and RHEL 8. OpenShift RHCOS images for 4.12 through 4.22 except 4.13, 4.15 and 4.17 shipped on 2026-10-27. General RHEL 9 `kernel-rt` and OpenShift Container Platform 5 remain affected. [Red Hat][rhapi]
   - **Ubuntu:** releases show "Vulnerable" or "work in progress" (page updated 2026-10-23). [Ubuntu][ubuntu]
   - **AlmaLinux:** production kernels `kernel-4.18.0-553.177.1.el8_10`, `kernel-5.14.0-687.59.1.el9_8` and `kernel-6.12.0-211.67.1.el10_2` (2026-10-23). `kernel-5.14.0-687.58.1.el9_8` does **not** contain the fix. [AlmaLinux][alma]
   - **Debian:** bookworm-security `6.1.190-1` (DLA-4841-1), bookworm `linux-6.12` `6.12.113-1~deb12u1` (DLA-4850-1), trixie-security `6.12.113-1` (DSA-6568-1). [Debian][debian]
@@ -179,7 +180,7 @@ Also review container runtime configuration for vhost devices passed into contai
 ## Remediation
 
 1. **Patch virtualization and sandbox hosts first.** Install a kernel with the fix: an upstream release from the list above, or your vendor's backport. Then **reboot into it**. Migrate or drain guests before rebooting. AlmaLinux points out that a reboot interrupts every guest on the host. [AlmaLinux][alma]
-2. **If your vendor or exact branch has not shipped a fix,** as with Ubuntu, general RHEL 9 `kernel-rt` and OpenShift RHCOS when reviewed, limit exposure until one is available:
+2. **If your vendor or exact branch has not shipped a fix,** as with Ubuntu, general RHEL 9 `kernel-rt` and OpenShift Container Platform 5 when reviewed, limit exposure until one is available:
    - Do not place untrusted tenants on unpatched hosts.
    - Prefer hosts already running a fixed kernel for untrusted workloads.
    - Restrict who can create TUN/TAP devices or packet sockets on multi-user systems.

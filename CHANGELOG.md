@@ -4,6 +4,11 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-31 00:45 EDT (UTC−04:00) — SAP SDK second range; OpenShift and RHEL 6 kernels
+
+- **SAP Cloud SDK for Python:** Upgrade to [0.55.1 or later](black-october/details/sap-cloud-sdk-python.md#remediation), not only 0.45.2. SAP's CVE record now lists a second affected range, 0.53.0 through 0.55.0, for the same Critical OAuth credential leak. Restage every instance.
+- **Linux kernel (PwnEscape):** Red Hat shipped fixes on October 27 for [RHEL 6 ELS and OpenShift RHCOS 4.12 through 4.22](black-october/details/pwnescape.md#fixed-versions-and-backports) (not 4.13, 4.15 or 4.17). Update those clusters and reboot the nodes. OpenShift Container Platform 5 and general RHEL 9 `kernel-rt` are still unfixed.
+
 ## 2026-10-31 00:15 EDT (UTC−04:00) — Gravity Forms object injection
 
 - **Gravity Forms:** Update to [3.1.3 or later](black-october/details/gravity-forms.md#remediation). Wordfence rates CVE-2026-103039 9.8 Critical: an unauthenticated visitor can store a PHP object in post meta when a form creates posts from a List field with a content template. The plugin has no gadget chain. Wordfence says WordPress supplies one if that field maps to `_wp_page_template`, and that this becomes code execution only on hosts with a readable PEAR install and `register_argc_argv` enabled. It is not in KEV, and neither Wordfence nor Patchstack reports exploitation.

@@ -1,10 +1,10 @@
 # SAP Cloud SDK for Python: OAuth2 SSRF leaking multi-tenant client credentials
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-10-31 (America/New_York)
 
 [Main SAP Cloud SDK for Python summary](../black-october-2026.md#sap-cloud-sdk-for-python-oauth2-ssrf-leaking-multi-tenant-client-credentials) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**[CVE-2026-89111](https://www.cve.org/CVERecord?id=CVE-2026-89111) (GHSA-4mv3-jxxm-9cx2): SAP CNA CVSS 3.1 10.0 Critical (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N). SAP's GitHub advisory gives the same score and vector. SAP's October 2026 Security Patch Day page also lists 10.0 Critical, but its score links to a CVSS 3.0 calculator vector ending `A:H`, which differs from the CNA record's `A:N`. NVD has not added its own score (status "Awaiting Analysis"). Not listed in CISA KEV.** The pip package `sap-cloud-sdk` (SAP Cloud SDK for Python), **before 0.45.2**, has an OAuth2 server-side request forgery (SSRF, CWE-918) flaw that affects **multi-tenant SAP Business Technology Platform (BTP) applications**. If an attacker controls the `tenant_subdomain` value, they can redirect the SDK's OAuth2 token request to a server they control and steal the client credentials. Fixed in **0.45.2**. [SAP advisory][ghsa] [CNA][cve] [SAP Patch Day][patchday]
+**[CVE-2026-89111](https://www.cve.org/CVERecord?id=CVE-2026-89111) (GHSA-4mv3-jxxm-9cx2): SAP CNA CVSS 3.1 10.0 Critical (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N). SAP's GitHub advisory gives the same score and vector. SAP's October 2026 Security Patch Day page also lists 10.0 Critical, but its score links to a CVSS 3.0 calculator vector ending `A:H`, which differs from the CNA record's `A:N`. NVD has not added its own score (status "Awaiting Analysis"). Not listed in CISA KEV.** The pip package `sap-cloud-sdk` (SAP Cloud SDK for Python) has an OAuth2 server-side request forgery (SSRF, CWE-918) flaw that affects **multi-tenant SAP Business Technology Platform (BTP) applications**. If an attacker controls the `tenant_subdomain` value, they can redirect the SDK's OAuth2 token request to a server they control and steal the client credentials. SAP's CNA record, updated 2026-10-30, lists two affected ranges: **before 0.45.2**, and **0.53.0 up to but not including 0.55.1**. The second range is fixed in **0.55.1**, whose notes say `XsuaaAuthProvider._fetch_token` again validates the tenant before substituting it into the token URL. A version at or above 0.45.2 is not safe if it is also below 0.55.1 and at or above 0.53.0. [SAP advisory][ghsa] [CNA][cve] [v0.55.1 release][r0551] [SAP Patch Day][patchday]
 
 **Affected code:** to get a subscriber-tenant token, the SDK inserts the tenant subdomain into the service binding's token URL as plain text, replacing the provider's `identityzone`. Before 0.45.2 the value was not validated. A crafted value could therefore change where the token request goes. In the Destination and DMS code, that request carries the binding's `client_id` and `client_secret`. In the LoB flow, Agent Gateway passes the tenant to the Destination service. The 0.45.2 release notes name three code paths that now validate the value as a single RFC 1123 DNS label:
 
@@ -47,7 +47,8 @@ Invalid values now raise `ValueError: Invalid tenant_subdomain: '<value>'`. [v0.
 | SAP repository advisory published | 2026-10-13 07:33:01 UTC | GHSA-4mv3-jxxm-9cx2 (GitHub API `published_at`). [SAP advisory][ghsa] |
 | BleepingComputer report | 2026-10-13 09:51 AM (timezone not stated) | Secondary coverage. [BleepingComputer][bc] |
 | CISA ADP SSVC assessment | 2026-10-14 19:14:40 UTC | Exploitation: none; Automatable: yes; Technical Impact: total. [CNA][cve] |
-| CISA KEV | Not listed (catalog 2026.10.23, checked 2026-10-26) | [KEV][kev] |
+| **v0.55.1 released (second fix)** | 2026-09-18 16:34:56 UTC | Release notes say `_fetch_token` validates `tenant_subdomain` before URL substitution. SAP's CNA record added the `>=0.53.0` and `<0.55.1` range on 2026-10-30. [v0.55.1 release][r0551] [CNA][cve] |
+| CISA KEV | Not listed (catalog 2026.10.30, checked 2026-10-31) | [KEV][kev] |
 | Exploitation | None reported in reviewed sources | [SAP advisory][ghsa] [BleepingComputer][bc] |
 
 The fix shipped about seven weeks before disclosure. Applications that track recent SDK releases may already be patched. Pinned or long-lived images may not be.
@@ -70,7 +71,7 @@ grep -rniE 'sap[-_]cloud[-_]sdk' --include='requirements*.txt' --include='pyproj
   --include='poetry.lock' --include='uv.lock' --include='Pipfile.lock' --include='*.cfg' .
 ```
 
-On a trusted host, `python3 -m pip show sap-cloud-sdk` in the application's virtual environment gives the same version. Any version **below 0.45.2** is in the affected range. Check every deployed artifact: Cloud Foundry droplets, Kyma/Kubernetes images, every app instance, and CI build caches. The GitHub global advisory lists no package, so dependency scanners that rely on it may report nothing. [Global advisory][gad]
+On a trusted host, `python3 -m pip show sap-cloud-sdk` in the application's virtual environment gives the same version. Versions **below 0.45.2**, and versions **from 0.53.0 up to but not including 0.55.1**, are in the affected ranges. 0.45.2 through 0.52.x are outside both ranges. Check every deployed artifact: Cloud Foundry droplets, Kyma/Kubernetes images, every app instance, and CI build caches. The GitHub global advisory lists no package, so dependency scanners that rely on it may report nothing. [Global advisory][gad]
 
 ### Reachability
 
@@ -96,7 +97,7 @@ Many BTP apps do not log egress destinations or SDK debug output. Finding nothin
 
 ## Remediation
 
-1. **Upgrade `sap-cloud-sdk` to 0.45.2 or later** in every application, for example `pip install --upgrade 'sap-cloud-sdk>=0.45.2'`. Update your lock file, rebuild and redeploy. PyPI's newest upload when checked on 2026-10-30 was 0.58.3 (uploaded 2026-10-09). The package requires Python 3.11+. [SAP advisory][ghsa] [PyPI][pypi]
+1. **Upgrade `sap-cloud-sdk` to 0.55.1 or later** in every application, for example `pip install --upgrade 'sap-cloud-sdk>=0.55.1'`. 0.45.2 fixes only the first range; 0.53.0 through 0.55.0 are affected again. Update your lock file, rebuild and redeploy. The package requires Python 3.11+. [CNA][cve] [v0.55.1 release][r0551] [PyPI][pypi]
 2. **Restart or restage every app instance** so that running processes load the new code. A Cloud Foundry `cf restage`/redeploy or a Kubernetes rollout replaces long-running workers.
 3. **Handle the new `ValueError`.** Version 0.45.2 rejects tenant values that are not a single DNS label. Catch the error in request handlers and return a client error instead of a 500. [v0.45.2 release][r0452]
 4. **Vendor workaround (if you cannot upgrade immediately):** "validate `tenant_subdomain` against a known allowlist of registered tenant subdomains before passing it to any SDK call." Apply it to every `tenant=` and `tenant_subdomain=` argument found during [reachability](#reachability) review. [SAP advisory][ghsa]
@@ -104,7 +105,7 @@ Many BTP apps do not log egress destinations or SDK debug output. Finding nothin
 
 ## Verification
 
-- Re-run the inventory on the **deployed** artifact (each droplet or image and each app instance) and confirm 0.45.2 or later.
+- Re-run the inventory on the **deployed** artifact (each droplet or image and each app instance) and confirm **0.55.1 or later**. A version in 0.45.2–0.52.x is outside the published ranges; move it to 0.55.1 or later anyway so a later install cannot land in 0.53.0–0.55.0.
 - Confirm the installed SDK contains the validator. This reads a file and does not import it:
 
   ```sh
@@ -144,6 +145,7 @@ If a vulnerable version handled tenant values that callers could influence, and 
 [pr]: https://github.com/SAP/cloud-sdk-python/pull/279
 [fix]: https://github.com/SAP/cloud-sdk-python/commit/fc67a8f4c01401fd4f5dd709bf898f0ec345f5d1
 [r0452]: https://github.com/SAP/cloud-sdk-python/releases/tag/v0.45.2
+[r0551]: https://github.com/SAP/cloud-sdk-python/releases/tag/v0.55.1
 [pypi]: https://pypi.org/project/sap-cloud-sdk/#history
 [destsrc]: https://github.com/SAP/cloud-sdk-python/blob/v0.45.1/src/sap_cloud_sdk/destination/_http.py
 [dmssrc]: https://github.com/SAP/cloud-sdk-python/blob/v0.45.1/src/sap_cloud_sdk/dms/_auth.py
