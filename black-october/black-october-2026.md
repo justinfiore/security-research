@@ -108,6 +108,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [TLS and code-signing trust stores: eMudhra / emSign - CA compromise](#tls-and-code-signing-trust-stores-emudhra--emsign---certificate-authority-compromise)
 - [LiteLLM: malicious release and credential theft](#litellm-malicious-release-and-credential-theft)
 - [LiteLLM Enterprise proxy: unauthenticated file read leaks the master key](#litellm-enterprise-proxy-unauthenticated-file-read-leaks-the-master-key)
+- [Northflank: environment secret exposure](#northflank-environment-secret-exposure)
 - [Railway: environment secret exposure](#railway-environment-secret-exposure)
 - [What should I patch? A stack-based decision guide](#what-should-i-patch-a-stack-based-decision-guide)
 
@@ -129,7 +130,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **Update Pillow wherever you process untrusted images**, including thumbnail workers and document pipelines.
 - **Check Ruby separately from GitLab.** The underlying regex bugs affect other applications compiling attacker-controlled patterns.
 - **Update certificate trust data and rebuild Go applications.** The eMudhra incident affects clients even if your own website uses another certificate authority.
-- **If you ran the compromised LiteLLM release or stored secrets in Railway, patching alone is insufficient.**
+- **If you ran the compromised LiteLLM release or stored secrets in Railway or Northflank, patching alone is insufficient.** Rotate Northflank secrets at each issuer; the incident is still open.
 
 Severity scores below are attributed where ratings differ. CVSS measures technical severity, not whether exploitation has been observed or whether your particular deployment is reachable.
 
@@ -1648,13 +1649,14 @@ Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/adviso
 | PSA-2026-10-12 | 2026-10-12 | Announced a release window of 2026-10-14 16:00–21:00 UTC. |
 | SA-CORE-2026-014 and core fixes | 2026-10-14 (RSS 16:10 UTC) | 11.4.10 at 16:16 UTC, 10.6.19 at 16:42 UTC, 11.3.19 at 17:10 UTC, 12.0.0-beta2 at 21:57 UTC. |
 | SA-CONTRIB-2026-218 (Entity List 3.0.10) | 2026-10-14 (RSS 17:26 UTC) | Release published 15:59 UTC. |
-| **Last updated** | **2026-10-26 10:18 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| Fortbridge lab reconstruction | 2026-10-18; time/TZ unknown | File disclosure and command execution on 11.4.9 with a synthetic writer module; fails on 11.4.10. Not in-the-wild exploitation. |
+| **Last updated** | **2026-10-31 08:30 EDT (UTC−04:00)** | Public lab reconstruction noted; Drupal's score is unchanged. |
 
 The flaw is in core's Field UI module. Drupal says core alone cannot be exploited, but "multiple serious exploit paths exist with contributed modules", and at least one of them needs no login. Custom code may also expose it. The contributed modules are not named. Entity List has its own separate RCE with the same pattern.
 
 **Worst case:** Unauthenticated code execution, with all site data readable and modifiable.
 
-**Exploitation:** Drupal rates it "Theoretical", meaning there is no public exploit. No exploitation has been reported. The PSA warned exploits could appear "within hours or days".
+**Exploitation:** Drupal still rates it "Theoretical". Fortbridge published a lab reconstruction on October 18 that reaches code execution on 11.4.9 and fails on 11.4.10. The writer module in that lab is synthetic. Fortbridge found no other public contributed module that feeds request data into the vulnerable row, besides Entity List, which is already fixed. No in-the-wild exploitation has been reported.
 
 **Am I impacted?** Drupal core 8.9.0 up to but not including 10.6.19, 11.0.0 up to 11.3.19, 11.4.0 up to 11.4.10, and 12.0.0-alpha1 up to 12.0.0-beta2 are affected. Entity List below 3.0.10 is affected separately. End-of-life branches (11.2 and older, 10.5 and older, Drupal 8 and 9) have **no fix**.
 
@@ -2126,7 +2128,7 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Chained privilege escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) | 2026-10-15 20:56:58 UTC | Ivanti scores it CVSS 3.1 8.8 High. The MITRE record's 7.0 is a different score; use Ivanti's. |
 | Fixes for the chained flaws | 2026-10-29; time/TZ unknown | 25.1.1.3 and 22.8R2.6 fix CVE-2026-111357 and CVE-2026-118527. 25.1.1.2 and 22.8R2.5 do not. |
 | CISA KEV additions | 2026-10-30; time/TZ unknown | CVE-2026-111357 due 2026-11-02. CVE-2026-118527 due 2026-11-13. |
-| **Last updated** | **2026-10-30 16:15 EDT (UTC−04:00)** | Both chained CVEs are now in KEV, and the October 29 fixes replace the unconfirmed-fix note. |
+| **Last updated** | **2026-10-31 08:30 EDT (UTC−04:00)** | Stack decision row now names 25.1.1.3 and 22.8R2.6, matching the October 29 fixes. |
 
 A spoofed internal-routing header (`X-DSCGI-PATH`) sent to the public `welcome.cgi` login script reaches a protected CGI. Combined with a file-write race in `wu.cgi`, this lets an unauthenticated attacker execute commands on the Connect Secure VPN appliance.
 
@@ -3057,15 +3059,16 @@ The corrected postmortem identifies an **exposed, unrevoked master key**, follow
 | Docker Hub containment | 2026-10-21 14:20 UTC | Affected tags removed or repointed. |
 | Corrected postmortem | 2026-10-23 21:00 UTC | Supersedes earlier entry-point theories. |
 | Vendor clarifications | 2026-10-24 UTC; time unknown | Clean-artifact and entry-point clarification. |
-| Image-signing key changed | 2026-10-24 09:34:13 UTC (1.106.3 release) | New cosign key from commit `e82a3c6`; verifying with the old key fails. Backported to 1.103.8 / 1.104.6 / 1.105.4. |
+| Image-signing key changed | 2026-10-24 09:34:13 UTC (1.106.3 release) | New cosign key from commit `e82a3c6`. Backported to 1.103.8 / 1.104.6 / 1.105.4. |
+| Previous cosign key treated as exposed | 2026-10-30; time/TZ unknown | Vendor says the private half was exposed in the token theft. An old-key signature is trustworthy only for an image published before the 1.107.0 release, and only after the digest matches. |
 | Later releases | 2026-10-25 09:32:43 UTC (1.106.4); 2026-10-27 (1.106.5) | 1.106.5 with 1.105.6, 1.104.8 and 1.103.10 backports is later than 1.106.4; no release is designated as a malware-cleanup patch. |
 | Cleanup patch | Not applicable | 1.106.2 is a clean rollback target, not host recovery. |
 | Microsoft detection content | 2026-10-23; time/TZ unknown | Defender signatures, TVM-2026-0003 and hunting queries. |
-| **Last updated** | **2026-10-28 08:01 EDT (UTC−04:00)** | Corrected the latest-release status; this does not change incident recovery requirements. |
+| **Last updated** | **2026-10-31 08:30 EDT (UTC−04:00)** | Previous cosign key treated as exposed; recovery steps are otherwise unchanged. |
 
 Microsoft publishes [Defender detections, hunting queries and file hashes](https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/) for this incident. Inspect **historical** dependency manifests, CI install logs, registry digests, and deployment records for **1.107.0** and the malicious image digests in the incident guidance. A floating tag or today's package version cannot establish what ran during the incident. On a clean analysis host, run `python3 -I -S python-package-inventory.py /mnt/snapshot/path/to/site-packages` against a read-only mounted snapshot; use the clean host's interpreter, not the snapshot's. Do not run ordinary `python`, `pip`, or the LiteLLM CLI inside a suspected infected environment. Metadata/version matches identify candidates, not trustworthy integrity; compare artifact hashes with the vendor's indicators. If a malicious artifact executed, treat reachable secrets as exposed even when logs show no obvious exfiltration.
 
-PyPI, GHCR and Docker Hub have different removal windows, and **cached artifacts remain dangerous after removal**. The vendor excludes its private enterprise release, not every public image used by an enterprise. The attacker used a signed official pipeline: signing alone did not establish trustworthy source or content. From 1.106.3 (and its backports), [verify images with the vendor's **new cosign key**](details/litellm.md#verification) from commit `e82a3c6` and update pinned keys in admission policies.
+PyPI, GHCR and Docker Hub have different removal windows, and **cached artifacts remain dangerous after removal**. The vendor excludes its private enterprise release, not every public image used by an enterprise. The attacker used a signed official pipeline: signing alone did not establish trustworthy source or content. From 1.106.3 (and its backports), [verify images with the vendor's **new cosign key**](details/litellm.md#verification) from commit `e82a3c6` and update pinned keys in admission policies. On October 30 the vendor said the private half of the previous key was exposed. Trust an old-key signature only on an image published before the 1.107.0 release, and still check the digest: the compromised images were signed with that key.
 
 **Remediation:** Isolate affected environments and preserve evidence, then rebuild from verified clean artifacts and revoke reachable secrets at their issuers from a clean system. **Do not start with ordinary Python or `pip` in the suspected environment:** startup hooks can rerun malware. **1.106.2** was identified as a clean rollback target, **not a malware cleanup patch**; recovery must also cover detached loaders, poisoned caches, host/shared-mount access and already issued sessions.
 
@@ -3091,6 +3094,39 @@ Sources: [canonical attack-chain postmortem](https://docs.litellm.ai/blog/securi
 Sources: [GHSA-w4c7-34wj-hqm8](https://github.com/BerriAI/litellm/security/advisories/GHSA-w4c7-34wj-hqm8).
 
 <a name="railway"></a>
+
+## Northflank: environment secret exposure
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/northflank.md):** [Detection](details/northflank.md#detection) · [Remediation](details/northflank.md#remediation) · [Verification](details/northflank.md#verification) · [Timeline](details/northflank.md#timeline)
+
+**CVEs:** No incident-specific identifiers established in the reviewed sources.
+
+**Platform-side secret exposure — credential abuse.** No CVSS score and no local package patch. Northflank has not published a root cause.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. This is a platform-side incident; the vendor told every customer to rotate.
+
+**Affected technology:** environment variables stored on Northflank (workload secrets, secret groups and global secrets), plus the services those secrets authorize. Postgres and MongoDB addon credentials are included. **Worst case:** use of stolen credentials, including AI API keys customers report were already used. Northflank has not said whether every customer was affected.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Wiz threat alert | 2026-10-30 11:43 UTC | Northflank's status timeline. Not proof of the attacker's first access. |
+| Public status incident | 2026-10-30 13:40 UTC | "Rotate environment variables immediately." |
+| Identified | 2026-10-30 13:58 UTC | "Assume all environment variables have been decrypted." |
+| Addon rotation enabled | 2026-10-30 15:12 UTC | Postgres and MongoDB. Users confirming AI keys were used. |
+| Unauthorized AI-key use reported | 2026-10-30 23:38 UTC | Northflank points at IP addresses in Wiz's same-day article. It does not publish its own list. |
+| Audit logs for all customers | 2026-10-31 01:04 UTC | Includes free users. The incident was still Identified. |
+| Local software patch | Not applicable | Revoke and replace credentials at each issuer. |
+| **Last updated** | **2026-10-31 08:30 EDT (UTC−04:00)** | Incident still open; no root cause published. |
+
+From a clean browser session, list projects, services, addons, secret groups and global secrets. Do not export secret values. Treat any still-valid secret stored on Northflank at or before 13:40 UTC on October 30 as in scope. Review AI-provider usage from 11:43 UTC that day until revocation. Audit logs turned on at 01:04 UTC on October 31 do not cover earlier activity.
+
+Wiz lists Northflank as one of nine AI developer platforms that disclosed an incident in October, in a pattern of hunting stored environment variables for AI access. Wiz says no single vulnerability links those incidents. Its published addresses (`23.106.46.239`, `38.246.114.118`, `104.243.32.50`, `31.57.201.201`) were used to test stolen keys; Wiz does not tie them to the platform intrusions themselves.
+
+**Remediation:** Revoke each in-scope credential at its issuer, put the replacement in the Northflank workload or secret group, and redeploy. Disable public expose on addons. Do not treat a replacement stored while the incident is still Identified as final: Northflank has not said the attacker is gone. Changing a variable in the dashboard does not change the password at the issuer.
+
+Sources: [Northflank status incident](https://status.northflank.com/cmvv0rn5a092f14rutwccodpp), [Wiz, "Black October" for AI Developer Platforms](https://www.wiz.io/blog/black-october-for-ai-developer-platforms).
+
+---
 
 ## Railway: environment secret exposure
 
@@ -3134,7 +3170,7 @@ Sources: [initial disclosure](https://blog.railway.com/p/security-disclosure-wed
 
 ```mermaid
 flowchart TD
-    A["Inventory hosts, containers, NAS apps, workers and CI"] --> B{"Compromised LiteLLM artifact,<br/>Railway secrets, or compromise indicators?"}
+    A["Inventory hosts, containers, NAS apps, workers and CI"] --> B{"Compromised LiteLLM artifact,<br/>Railway or Northflank secrets, or compromise indicators?"}
     B -->|Yes| C["Contain and investigate;<br/>rebuild affected systems and rotate secrets"]
     B -->|No| D["Continue stack checks"]
     C --> D
@@ -3202,7 +3238,7 @@ flowchart TD
 | **Cisco Secure Email Gateway** | Update Content Scanner Tools to 25.3.0.5525+ (or AsyncOS 15.5.5-014/16.5.0-780) and run Cisco's System Security log check on every cluster member. [Guide](details/cisco-seg.md#remediation). |
 | **SiteGuard Server Edition** | Download diagnostic info first, then update to Ver8.00 Update 5 (FreeBSD: Ver7.00 Update 6), apply the vendor patch, or disable the statistics feature. [Guide](details/siteguard.md#remediation). |
 | **Windows clients and servers** | Install the October 2026 cumulative update (e.g. KB5127648 for 24H2/25H2) and confirm the OS build is at or above the fixed UBR. [Guide](details/windows-shell.md#remediation). |
-| **Ivanti Connect Secure** | Update to 25.1.1.2, 25.1.3.0/25.1.3.1 or 22.8R2.5 and do memory/network forensics (the Integrity Checker may miss this chain); 22.7 is not affected. [Guide](details/ivanti-connect-secure.md#remediation). |
+| **Ivanti Connect Secure** | Update to **25.1.1.3** or **22.8R2.6** (ISA4500/6500/8500: 25.1.3.0/25.1.3.1). 25.1.1.2 and 22.8R2.5 fix only the original bypass. Do memory/network forensics (the Integrity Checker may miss this chain); 22.7 is not affected. [Guide](details/ivanti-connect-secure.md#remediation). |
 | **Atlassian Data Center** | Upgrade every node to a listed fixed version (or apply Atlassian's WAF or rewrite mitigation and cut off internet access), then rotate secrets stored in the web root such as crowd.properties. [Guide](details/atlassian-dc.md#remediation). |
 | **AhsayCBS backup servers** | Apply hotfix 10.3.4.45 (v10) or 9.15.2.70 (v7–v9) and reboot, restrict console access, check Ahsay/Huntress IOCs; rebuild if compromised. [Guide](details/ahsaycbs.md#remediation). |
 | **NetScaler ADC / Gateway with SAML** | Upgrade to 14.1-73.41, 13.1-64.28, 14.1-73.41 FIPS or 13.1-37.282 (FIPS/NDcPP); also apply CTX697096 fixes, preserving evidence first. [Guide](details/netscaler.md#remediation). |
@@ -3228,6 +3264,7 @@ flowchart TD
 | **BeyondTrust Remote Support** | Apply **BT26-05-RS** and investigate vulnerable appliances exposed during the exploitation window. |
 | **All stacks making TLS connections** | [Refresh each effective trust store](details/emudhra.md#runtime-and-application-trust-store-inventory), including embedded copies and alternate chains; rebuild Go with **1.27.3 / 1.26.10+**. Java needs the **CVE-2026-114820** follow-up; CPython `ssl` fixes are **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**; Bun **1.4.4** (rebuild compiled executables). |
 | **LiteLLM malicious artifacts** | [Isolate, rebuild and revoke reachable credentials](details/litellm.md#remediation); do not run ordinary Python startup hooks on suspected hosts. A downgrade alone is not recovery. |
+| **Northflank secrets stored on or before 2026-10-30 13:40 UTC** | [Revoke at each issuer, update the workload or secret group, and redeploy](details/northflank.md#remediation). The incident is still open, so a replacement stored before Northflank confirms containment may itself need rotation. |
 | **Railway secrets stored before October 21** | [Rotate at each issuer, update consumers and verify revocation](details/railway.md#remediation); include registry credentials and existing sessions. |
 
 **Before calling remediation finished:**

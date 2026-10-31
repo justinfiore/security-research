@@ -1,6 +1,6 @@
 # LiteLLM 1.107.0: malicious release and credential recovery
 
-**Last updated:** 2026-10-28 (America/New_York)
+**Last updated:** 2026-10-31 (America/New_York)
 
 [Back to LiteLLM summary](../black-october-2026.md#litellm) · [Changelog](../../CHANGELOG.md)
 
@@ -32,9 +32,10 @@ All times below are UTC. Publication/removal windows describe vendor registries,
 | 2026-10-21 18:20 | Vendor incident post published. Response guidance designated **1.106.2** as a clean rollback target, not a malware-removal patch. Exact first publication time of rollback advice is **unknown**. |
 | 2026-10-23 21:00 | Canonical attack-chain postmortem published; it supersedes earlier entry-point theories. |
 | 2026-10-24 | Vendor issue comment confirmed legitimacy of accessible public images, including 1.103.7, 1.104.5, 1.105.3, and 1.106.2, and reiterated the corrected entry point. |
-| 2026-10-24 09:14:52 (PyPI); 09:34:13 (GitHub release) | **1.106.3** released (with backports 1.103.8, 1.104.6, 1.105.4): Docker images and Helm charts are now signed with a **new cosign key** from commit `e82a3c6`; verification with the previous key from commit `0112e53` fails. The release also removes the eMudhra root CA from bundled certificate stores. The notes do not state the reason for the key change. |
+| 2026-10-24 09:14:52 (PyPI); 09:34:13 (GitHub release) | **1.106.3** released (with backports 1.103.8, 1.104.6, 1.105.4): Docker images and Helm charts are now signed with a **new cosign key** from commit `e82a3c6`; verification with the previous key from commit `0112e53` fails. The release also removes the eMudhra root CA from bundled certificate stores. |
 | 2026-10-25 09:32:43 (PyPI); 09:39:15 (GitHub release) | **1.106.4** released (its startup fix is also in 1.104.7 and 1.105.5): startup `ImportError` fix, and fixes for image scans flagging brotli 1.2.0, the emSign ECC Root CA - G3 and unused lockfile packages. No vendor statement designates it a malware-removal patch. |
 | 2026-10-27 | **1.106.5**, with 1.105.6, 1.104.8 and 1.103.10 backports, released. These releases contain logging/GCS changes; they are later supported releases, not newly designated malware-cleanup releases. [PyPI history][pypi] |
+| 2026-10-30 | Vendor incident post: the private half of the previous cosign key is believed exposed in the token theft. The new key's fingerprint is now on that post. Trust a signature from the old key only on an image published before the 1.107.0 release on October 21, and still check digests: the compromised 1.107.0 images also carry a valid signature from the old key. [Incident post][post] |
 
 **Corrected finding:** The initial token came from an exposed, unrevoked Agent Platform master key, not Claude Code response logs, a demonstrated gateway vulnerability, or compromised IDE extensions. Owner-level OAuth access bypassed branch protections; other stolen tokens approved the release and deleted logs. Signing by the official release pipeline did not make the attacker-selected source trustworthy.
 
@@ -72,7 +73,7 @@ Treat an affected installation with outbound access conservatively as successful
 
 ## Verification
 
-- Check deployed image digests, wheel hashes, provenance source **and** expected builder/revision against approved clean artifacts. The attack used a signed official pipeline with the lookalike source `Berri-AI/litellm`; signature verification alone would not have rejected it. For 1.106.3/1.103.8/1.104.6/1.105.4 and later, use the vendor's new `cosign.pub` from commit `e82a3c6` (published SHA-256 `e3fe3e08c44b16407fe0b37c43b4f8b603b3a0f4ee74c29e647bc022d762c2c0`, per the release notes) and update pinned keys in verification scripts and admission policies. The official pipeline signed the malicious 1.107.0 artifacts, so a pass with the signing key in use before the change is not evidence of cleanliness.
+- Check deployed image digests, wheel hashes, provenance source **and** expected builder/revision against approved clean artifacts. The attack used a signed official pipeline with the lookalike source `Berri-AI/litellm`; signature verification alone would not have rejected it. For 1.106.3/1.103.8/1.104.6/1.105.4 and later, use the vendor's new `cosign.pub` from commit `e82a3c6` (published SHA-256 `e3fe3e08c44b16407fe0b37c43b4f8b603b3a0f4ee74c29e647bc022d762c2c0`) and update pinned keys in verification scripts and admission policies. The vendor now says the private half of the previous key was exposed. Trust an old-key signature only on an image published before the 1.107.0 release on October 21, and still match the digest: the compromised 1.107.0 images also carry a valid signature from that key.
 - Re-run isolated metadata inventory on the replacement's package directories and compare complete image contents with the clean baseline. Confirm hooks/bytecode and detached loader processes are absent; missing three files alone does not rule out second-stage persistence.
 - Confirm no jobs, floating tags, saved manifests, or autoscaling templates can restore malicious artifacts. Check currently running instances, not just the desired deployment configuration.
 - Confirm replacement credentials work with least privilege and old credentials are revoked at each issuing service. Test revocation only through a safe authenticated check/provider status; do not put secrets in shell history, logs, or this report.

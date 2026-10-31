@@ -4,6 +4,13 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-31 08:30 EDT (UTC−04:00) — Northflank secrets; LiteLLM signing key; Drupal lab chain
+
+- **Northflank:** If you stored secrets there, [revoke them at each issuer and redeploy](black-october/details/northflank.md#remediation). Northflank says to assume every environment variable was decrypted after a Wiz alert on October 30, and users report their AI API keys were used. The incident is still open. There is no CVE and no software update to install. Audit logs turned on October 31 do not cover earlier activity.
+- **LiteLLM:** The vendor now says the [previous image-signing key's private half was exposed](black-october/details/litellm.md#verification). Verify 1.106.3 and later with the new key. Trust an old-key signature only on an image published before the 1.107.0 release, and still match the digest: the compromised images were signed with that key too.
+- **Drupal:** A public lab reconstruction of the Field UI flaw now exists. It uses a synthetic module, fails on 11.4.10, and is not a report of attacks. The fix is unchanged: [11.4.10, 11.3.19 or 10.6.19](black-october/details/drupal.md#remediation). Drupal's own rating is still Theoretical.
+- **Ivanti Connect Secure:** The stack decision row now matches the item. Install [25.1.1.3 or 22.8R2.6](black-october/details/ivanti-connect-secure.md#remediation). The older 25.1.1.2 and 22.8R2.5 builds fix only the original authentication bypass.
+
 ## 2026-10-31 04:15 EDT (UTC−04:00) — LiteLLM Enterprise file read; WordPress CVE; Debian TCP kernels
 
 - **LiteLLM Enterprise:** Upgrade a proxy that loads an Enterprise license to [1.106.5, or 1.105.6 / 1.104.8 / 1.103.10](black-october/details/litellm-enterprise-file-read.md#remediation). LiteLLM rates an unauthenticated file read 10.0 Critical: one request can send `/proc/self/environ`, including the master key, to an attacker URL. Open-source installs without a license are not affected. This is not the 1.107.0 malware release. No CVE is assigned.

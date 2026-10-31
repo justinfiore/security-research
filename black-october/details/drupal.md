@@ -1,6 +1,6 @@
 # Drupal core: Field UI remote code execution
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-10-31 (America/New_York)
 
 [Main Drupal summary](../black-october-2026.md#drupal-core-field-ui-remote-code-execution) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -16,7 +16,7 @@ The advisory does not name the contributed modules. [SA-CORE-2026-014][sa-core]
 
 **Worst case:** Unauthenticated code execution on the web server, which gives full read and write access to site data. The risk vector's confidentiality and integrity values are both "All".
 
-**Exploit status (Drupal's E field):** "Theoretical", meaning no public exploit code or documentation exists. The PSA warned that "exploits might be developed within hours or days". [PSA-2026-10-12][psa]
+**Exploit status (Drupal's E field):** "Theoretical", which Drupal defines as no public exploit code or documentation. The PSA warned that "exploits might be developed within hours or days". [PSA-2026-10-12][psa] Fortbridge later published a lab reconstruction (2026-10-18) that reaches file disclosure and command execution on 11.4.9 and fails on 11.4.10. The writer module in that lab is synthetic. Fortbridge says the only public contributed module that used the pattern was Entity List, already fixed, and that it found no other public module that writes request data into a `field_ui_table` row. That is public exploit research, not observed exploitation, and it does not change Drupal's score. [Fortbridge][fortbridge]
 
 | Component | Affected | Fixed | Notes |
 |---|---|---|---|
@@ -56,7 +56,7 @@ The affected range is the advisory's: `>= 8.9.0 < 10.6.19 || >= 11.0.0 < 11.3.19
 | Follow-up bug-fix releases 11.4.11, 11.3.20 and 10.6.20 | 2026-10-21 | Not security releases. Being on these versions also includes the fix. [Release history][rh-core] |
 | CVE or NVD publication | Not published as of 2026-10-26 | The CVE Services API returns "CVE_RECORD_DNE" for both IDs, and NVD returns no results. [CVE API][cve] [NVD][nvd] |
 | CISA KEV | Not listed | Catalog 2026.10.23 checked on 2026-10-26. [KEV][kev] |
-| Exploitation evidence | None found | Drupal rates the exploit status "Theoretical". |
+| Exploitation evidence | Lab reconstruction published 2026-10-18; no in-the-wild exploitation reported | Fortbridge rebuilt the chain on 11.4.9 with a synthetic writer module and says it fails on 11.4.10. Drupal's E field remains "Theoretical". [Fortbridge][fortbridge] |
 
 ## Detection
 
@@ -88,7 +88,7 @@ vendor/bin/drush sql:query "SELECT name, created, access FROM users_field_data O
 
 - Review web server access logs from **2026-10-12** onward for unusual requests to Field UI admin routes (`/admin/structure/.../fields` and display pages), especially from anonymous clients.
 - Look for new administrator accounts, changed field or display configuration, and new PHP files under `sites/*/files` or the web root.
-- Finding nothing proves nothing, because the exploit paths are not public.
+- Finding nothing proves nothing. Fortbridge's lab uses a synthetic writer module; it is not a list of indicators for a real module.
 
 ## Remediation
 
@@ -127,6 +127,7 @@ vendor/bin/drush sql:query "SELECT name, created, access FROM users_field_data O
 [sa-core]: https://www.drupal.org/sa-core-2026-014
 [sa-el]: https://www.drupal.org/sa-contrib-2026-218
 [psa]: https://www.drupal.org/psa-2026-10-12
+[fortbridge]: https://fortbridge.co.uk/research/cve-2026-108097-deep-dive-turning-a-drupal-field-ui-callback-into-rce/
 [core-rss]: https://www.drupal.org/security/rss.xml
 [contrib-rss]: https://www.drupal.org/security/contrib/rss.xml
 [psa-rss]: https://www.drupal.org/security/psa/rss.xml
