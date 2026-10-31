@@ -4,6 +4,10 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-31 00:15 EDT (UTC−04:00) — Gravity Forms object injection
+
+- **Gravity Forms:** Update to [3.1.3 or later](black-october/details/gravity-forms.md#remediation). Wordfence rates CVE-2026-103039 9.8 Critical: an unauthenticated visitor can store a PHP object in post meta when a form creates posts from a List field with a content template. The plugin has no gadget chain. Wordfence says WordPress supplies one if that field maps to `_wp_page_template`, and that this becomes code execution only on hosts with a readable PEAR install and `register_argc_argv` enabled. It is not in KEV, and neither Wordfence nor Patchstack reports exploitation.
+
 ## 2026-10-30 20:15 EDT (UTC−04:00) — Chrome 156 follow-up; WS_FTP Web Admin flaw; Red Hat TCP filter
 
 - **Chrome:** Update desktop Chrome to [156.0.8078.79 or later](black-october/details/chrome-156.md#remediation) (Windows and Mac also list .80). The October 27 builds do not include Critical CVE-2026-76024, memory corruption in MediaStream. Google does not report exploitation. The CVE record has no CNA score; CISA's enrichment is 6.5 Medium, which is not Google's rating.

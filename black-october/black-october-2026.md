@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of October 30, 2026**
+**As of October 31, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Gravity Forms: unauthenticated object injection on post creation](#gravity-forms-unauthenticated-object-injection-on-post-creation)
 - [Synology DSM: unauthenticated file read and write](#synology-dsm-unauthenticated-file-read-and-write)
 - [WordPress: unauthenticated code execution during a core upgrade](#wordpress-unauthenticated-code-execution-during-a-core-upgrade)
 - [Progress WS_FTP Server: Critical authentication and command-injection flaws](#progress-ws_ftp-server-critical-authentication-and-command-injection-flaws)
@@ -111,6 +112,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [Gravity Forms](#gravity-forms-unauthenticated-object-injection-on-post-creation) to 3.1.3 or later. Wordfence rates an unauthenticated object-injection flaw 9.8 Critical on forms that create posts from a List field with a content template. Code execution needs a separate gadget chain; Wordfence names one in WordPress itself when that field maps to `_wp_page_template`.
 - **New this update:** Update [Synology DSM](#synology-dsm-unauthenticated-file-read-and-write) to 7.4-90075, 7.3.2-86009-4, 7.2.2-72806-9, or 7.2.1-69057-12 or later, and take DSM off the internet until that build is running. Two unauthenticated Critical flaws (CVSS 9.8) were fixed on September 18; 360 reports October ransomware through them, while Synology attributes the same wave to a December 2024 flaw. A current update covers both.
 - **New this update (CISA KEV):** Update Linux hosts for [Fragnesia](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite), CVE-2026-46300. CISA reports active exploitation and a chain with PHP2Shell; install a vendor-fixed kernel, reboot into it, and investigate suspected root compromise rather than treating patching as cleanup.
 - **New this update:** Update affected Windows-based Veeam Backup & Replication and Veeam Software Appliance deployments to **13.1.2 / 13.0.3**. Also update managed Veeam Agent for Linux installations to **13.1.2**. Restrict backup-management service access to trusted administration networks while rolling out the Critical authorization-bypass fix.
@@ -156,6 +158,29 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Gravity Forms: unauthenticated object injection on post creation
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/gravity-forms.md):** [Detection](details/gravity-forms.md#detection) · [Remediation](details/gravity-forms.md#remediation) · [Verification](details/gravity-forms.md#verification) · [Timeline](details/gravity-forms.md#timeline)
+
+**CVEs:** [CVE-2026-103039](https://www.cve.org/CVERecord?id=CVE-2026-103039)
+
+**Wordfence (CNA) rates the flaw CVSS 3.1 9.8 Critical. Patchstack repeats 9.8. NVD has no score of its own.** On Gravity Forms through 3.1.2, a Post Custom Field of type List with a content template is passed to WordPress's unrestricted `maybe_unserialize()`. An unauthenticated visitor can store a PHP object in post meta. The plugin has no gadget chain. Wordfence says WordPress supplies one when the field is mapped to `_wp_page_template`, and that this becomes code execution on hosts with a readable PEAR install and `register_argc_argv` enabled.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). Wordfence and Patchstack do not report observed exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown; vendor notified 2026-09-30 13:29:24 UTC | Wordfence CNA timeline. Finders: Tin Pham (TF1T), Hao Ngo, Trong Pham. |
+| Public announcement | 2026-10-29; time/TZ unknown | Wordfence and Patchstack. CNA "Disclosed" stamp is 2026-10-29 18:29:20 UTC. |
+| CVE record published | 2026-10-30 06:47:32 UTC | Wordfence CNA. |
+| **Last updated** | **2026-10-31 00:15 EDT (UTC−04:00)** | Added from the Wordfence record, CNA record and Patchstack entry. |
+
+**Am I impacted?** Any WordPress site with Gravity Forms **3.1.2 or earlier** that has a form creating posts from a List-type Post Custom Field with a content template. On a trusted host, from the WordPress root, run `wp plugin list --name=gravityforms --fields=name,status,version --skip-plugins --skip-themes`, or read the `Version:` header in `wp-content/plugins/gravityforms/gravityforms.php`.
+
+**Patch:** Update to **3.1.3 or later**. Until then, take offline any form that creates posts from that field. Updating does not remove an object already stored in post meta.
+
+Sources: [Wordfence](https://www.wordfence.com/threat-intel/vulnerabilities/id/ec1fba15-81e5-42e3-9154-1978c3f81b26?source=cve), [CVE-2026-103039](https://www.cve.org/CVERecord?id=CVE-2026-103039), [Patchstack](https://patchstack.com/database/wordpress/plugin/gravityforms/vulnerability/wordpress-gravity-forms-plugin-3-1-2-unauthenticated-php-object-injection-vulnerability), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Synology DSM: unauthenticated file read and write
 
@@ -3132,6 +3157,7 @@ flowchart TD
 | **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |
 | **HPE Aruba Networking AOS-8 / AOS-10 (controllers, conductors, gateways, APs)** | Upgrade to AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, 8.13.3.1+ or 8.10.0.24+ (other branches: move to a fixed supported branch); until then confine SSH/WebUI/API to a management VLAN and UDP 8211 (PAPI) to your own APs and controllers. [Guide](details/aruba-aos.md#remediation). |
 | **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a vendor kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix (AlmaLinux production 4.18.0-553.178.1.el8_10 / 5.14.0-687.60.1.el9_8 / 6.12.0-211.69.1.el10_2, CloudLinux 7 hybrid 4.18.0-553.177.1.lve.1.el7h, CloudLinux 8 4.18.0-553.177.1.lve.1.el8, or the KernelCare EL10 live patch); no mainline, stable, RHEL, Debian or Ubuntu fix yet. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
+| **WordPress sites with Gravity Forms** | Update to 3.1.3 or later. Through 3.1.2, a form that creates posts from a List-type Post Custom Field with a content template can store an unauthenticated PHP object; code execution needs a separate gadget chain. [Guide](details/gravity-forms.md#remediation). |
 | **WordPress sites with Rank Math PRO** | If 3.0.123 was downloaded or updated 2026-10-15 20:02 – 2026-10-16 07:12 UTC and activated, treat the site as compromised: restore a pre-incident backup or follow the vendor's ordered cleanup, rotate every credential the site could reach, then install 3.0.124. Otherwise update to 3.0.124. Updating alone removes no persistence. [Guide](details/rankmath-pro.md#remediation). |
 | **FortiSIEM (on-premises)** | Upgrade 7.5.0 to 7.5.1+ (7.6 not affected); restrict TCP 27918 to FortiSIEM nodes; treat 7.0–7.4 as unknown (listed in the CVE record, not the advisory) and ask Fortinet; check `/opt/charting/redishb.sh` and `/opt/phoenix/bin/phLicenseTool` for unexpected changes. [Guide](details/fortisiem.md#remediation). |
 | **FortiSandbox / FortiSandbox PaaS** | Upgrade to 5.0.7+ or 4.4.10+ or move to 5.2 (PaaS 4.4 and all 4.2 units: migrate to a fixed release); until then restrict GUI access to a management network and review admin accounts and logins. [Guide](details/fortisandbox.md#remediation). |
