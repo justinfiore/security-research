@@ -16,6 +16,11 @@ This report covers the major disclosures most relevant to developers and operato
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
 - [Cursor: malicious Claude Code extension installed an SSH backdoor](#cursor-malicious-claude-code-extension-installed-an-ssh-backdoor)
+- [Opengear console servers: unauthenticated web buffer overflow](#opengear-console-servers-unauthenticated-web-buffer-overflow)
+- [LXD: client certificate chain authenticates as another trusted client](#lxd-client-certificate-chain-authenticates-as-another-trusted-client)
+- [Delinea Secret Server: second-factor login bypass and unsigned admin token](#delinea-secret-server-second-factor-login-bypass-and-unsigned-admin-token)
+- [Assent: Sign in with Apple callback overrides verified identity](#assent-sign-in-with-apple-callback-overrides-verified-identity)
+- [ServiceNow AI Platform: admin sandbox escape and stored plaintext passwords](#servicenow-ai-platform-admin-sandbox-escape-and-stored-plaintext-passwords)
 - [Gravity Forms: unauthenticated object injection on post creation](#gravity-forms-unauthenticated-object-injection-on-post-creation)
 - [Synology DSM: unauthenticated file read and write](#synology-dsm-unauthenticated-file-read-and-write)
 - [WordPress: unauthenticated code execution during a core upgrade](#wordpress-unauthenticated-code-execution-during-a-core-upgrade)
@@ -115,6 +120,11 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Opengear IM7200, CM7100, and ACM7000](#opengear-console-servers-unauthenticated-web-buffer-overflow) console servers to firmware 5.5.3. Opengear says an unauthenticated attacker who can reach the web management interface can run code (CNA score 8.4 High). The CNA text describes a crash of `index.cgi`. Other Opengear series in the notice are not affected. Until 5.5.3 is running, keep that interface off the internet.
+- **New this update:** Refresh [LXD](#lxd-client-certificate-chain-authenticates-as-another-trusted-client) to 6.10.1, 5.21.9, 5.0.11, or 4.0.15, and MicroCloud to 3.4.1 or 2.1.5. Canonical rates a mutual-TLS bypass 10.0 Critical: anyone who can reach the HTTPS API and who has another client's public certificate can authenticate as that client. Ubuntu's priority for the same CVE is Medium.
+- **New this update:** Upgrade [Delinea Secret Server](#delinea-secret-server-second-factor-login-bypass-and-unsigned-admin-token) to 12.3.1 or later. Delinea rates two flaws 8.7 High: completing only the second factor can skip the password, and an unsigned token can be answered with cloudadmin permissions. Delinea's public advisories page does not list these CVEs yet. Do not stop at 12.2.7; that build is still affected.
+- **New this update:** Upgrade [Assent](#assent-sign-in-with-apple-callback-overrides-verified-identity) to 0.3.2 or later anywhere Sign in with Apple uses it. An unsigned callback parameter can replace the verified Apple subject and email (CVSS 4.0 9.3). Until then, drop the `user` parameter before the strategy runs, and review accounts linked while an affected version was live.
+- **New this update:** Confirm [ServiceNow AI Platform](#servicenow-ai-platform-admin-sandbox-escape-and-stored-plaintext-passwords) instances are on the October 29 fixed builds. An admin can escape the Rhino sandbox and run code on the host (CVSS 4.0 9.4). A separate High flaw can store a user's plaintext password in a system table. ServiceNow reports no malicious exploitation. Hosted instances already on the listed patches need no further platform update; reset passwords that may already have been stored.
 - **New this update:** Update [Gravity Forms](#gravity-forms-unauthenticated-object-injection-on-post-creation) to 3.1.3 or later. Wordfence rates an unauthenticated object-injection flaw 9.8 Critical on forms that create posts from a List field with a content template. Code execution needs a separate gadget chain; Wordfence names one in WordPress itself when that field maps to `_wp_page_template`.
 - **New this update:** Update [Synology DSM](#synology-dsm-unauthenticated-file-read-and-write) to 7.4-90075, 7.3.2-86009-4, 7.2.2-72806-9, or 7.2.1-69057-12 or later, and take DSM off the internet until that build is running. Two unauthenticated Critical flaws (CVSS 9.8) were fixed on September 18; 360 reports October ransomware through them, while Synology attributes the same wave to a December 2024 flaw. A current update covers both.
 - **New this update (CISA KEV):** Update Linux hosts for [Fragnesia](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite), CVE-2026-46300. CISA reports active exploitation and a chain with PHP2Shell; install a vendor-fixed kernel, reboot into it, and investigate suspected root compromise rather than treating patching as cleanup.
@@ -188,6 +198,105 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 **What to do:** If the key or those startup files are present, isolate the host, then run [Cursor's remediation script](https://cursor.com/blog/claude-code-extension-security-notice) (macOS as the user, Windows as Administrator). Uninstalling the extension leaves the scripts running. Afterward install Claude Code **2.1.314 or later**, and rotate credentials that host could use from a different machine. The beacon sent environment-variable names, not values.
 
 Sources: [Cursor security notice](https://cursor.com/blog/claude-code-extension-security-notice), [Microsoft Threat Intelligence](https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/).
+
+## Opengear console servers: unauthenticated web buffer overflow
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/opengear-console.md):** [Detection](details/opengear-console.md#detection) · [Remediation](details/opengear-console.md#remediation) · [Verification](details/opengear-console.md#verification) · [Timeline](details/opengear-console.md#timeline)
+
+**CVEs:** [CVE-2026-102212](https://www.cve.org/CVERecord?id=CVE-2026-102212)
+
+**Digi / Opengear (CNA) rates the flaw CVSS 4.0 8.4 High. Opengear's notice calls it critical and says it can execute code.** NVD has no score of its own. Firmware 4.8.0 through 5.5.2 on IM7200, CM7100, and ACM7000 is affected. A crafted multipart POST crashes `index.cgi` in the CNA text; the notice says an unauthenticated attacker with access to the web management interface can run arbitrary code. Lighthouse and the OM1200, OM1300, OM2200, CM8000, and CM8100 series are not affected.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). Opengear does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Vendor notice | 2026-10-31; time/TZ unknown | First published that day. Fixed in firmware 5.5.3. |
+| CVE record published | 2026-10-31 16:01:56 UTC | Digi CNA. |
+| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | Added from Opengear's notice and the CNA record. |
+
+**Patch:** Upgrade affected appliances to firmware **5.5.3**. Until then, restrict the web management interface to trusted networks and do not expose it to the internet.
+
+Sources: [Opengear notice](https://portal.opengear.com/customerservice/s/article/CVE-2026-102212-Opengear-Console-Server-Buffer-Overflow-to-RCE), [CVE-2026-102212](https://www.cve.org/CVERecord?id=CVE-2026-102212), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## LXD: client certificate chain authenticates as another trusted client
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/lxd-mtls.md):** [Detection](details/lxd-mtls.md#detection) · [Remediation](details/lxd-mtls.md#remediation) · [Verification](details/lxd-mtls.md#verification) · [Timeline](details/lxd-mtls.md#timeline)
+
+**CVEs:** [CVE-2026-112816](https://www.cve.org/CVERecord?id=CVE-2026-112816)
+
+**Canonical (CNA) rates the flaw CVSS 4.0 10.0 Critical. Ubuntu's CVE page lists priority Medium and no CVSS score.** NVD has not scored it. The LXD HTTPS API compared every certificate in the client chain with the trust store. Only the leaf proves the client holds the key. An attacker who can reach the API, and who has another trusted client's public certificate, can authenticate as that client and, if that client was privileged, reach root on the host. MicroCloud has the same flaw: a joining member's public certificate can be intercepted and reused. No separate MicroCloud CVE is assigned.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). CISA records Exploitation "none". Canonical does not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public advisory | 2026-10-28 17:50 UTC | [Canonical Discourse](https://discourse.ubuntu.com/t/security-advisory-critical-vulnerability-found-in-canonical-lxd-and-microcloud/90557). Referred from Incus. |
+| Fixed snaps | 2026-10-29; time/TZ unknown | LXD 6.10.1, 5.21.9, 5.0.11, 4.0.15. MicroCloud 3.4.1 and 2.1.5. |
+| CVE record published | 2026-10-30 16:42:06 UTC | Canonical CNA. |
+| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | Added from Canonical's advisory and CNA record. |
+
+**Patch:** `sudo snap refresh lxd` and, where installed, `sudo snap refresh microcloud`. Confirm 6.10.1, 5.21.9, 5.0.11, or 4.0.15 for LXD, and 3.4.1 or 2.1.5 for MicroCloud. The point releases were still rolling from candidate to stable on October 28, so a refresh that does not change the version has not picked up the fix. Until then, do not expose the HTTPS API to untrusted networks. Ubuntu archive packages are marked not in this release or not affected; that does not clear a snap.
+
+Sources: [Canonical Discourse](https://discourse.ubuntu.com/t/security-advisory-critical-vulnerability-found-in-canonical-lxd-and-microcloud/90557), [CVE-2026-112816](https://www.cve.org/CVERecord?id=CVE-2026-112816), [Ubuntu CVE page](https://ubuntu.com/security/CVE-2026-112816), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Delinea Secret Server: second-factor login bypass and unsigned admin token
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/delinea-secret-server.md):** [Detection](details/delinea-secret-server.md#detection) · [Remediation](details/delinea-secret-server.md#remediation) · [Verification](details/delinea-secret-server.md#verification) · [Timeline](details/delinea-secret-server.md#timeline)
+
+**CVEs:** [CVE-2026-115829](https://www.cve.org/CVERecord?id=CVE-2026-115829), [CVE-2026-115830](https://www.cve.org/CVERecord?id=CVE-2026-115830)
+
+**Delinea (CNA) rates both flaws CVSS 4.0 8.7 High.** NVD has not scored them. Before 12.3.1, a user can skip the initial login and authenticate with only the second factor. Separately, under conditions Delinea does not list, a user can submit an unsigned JWT and receive cloudadmin permissions. The CNA's affected range is older versions through 12.2.7. The public advisories page does not name these two CVEs. It does not say whether Secret Server Cloud is included.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31) for either CVE. CISA records Exploitation "none" for both. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| CVE records published | 2026-10-30 19:46–19:47 UTC | Delinea CNA. Fixed in versions that are not earlier than 12.3.1. |
+| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | Added from the CNA records. The vendor page does not list them yet. |
+
+**Patch:** Upgrade to **12.3.1 or later**. 12.2.7 is still affected, even though it fixes older Critical issues on Delinea's advisories page (CVE-2026-19117 and CVE-2026-15640). 12.3.0 is not named; treat it as unconfirmed. Keep the management interface off untrusted networks until the new version is running.
+
+Sources: [CVE-2026-115829](https://www.cve.org/CVERecord?id=CVE-2026-115829), [CVE-2026-115830](https://www.cve.org/CVERecord?id=CVE-2026-115830), [Delinea advisories](https://delinea.com/security-advisories), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Assent: Sign in with Apple callback overrides verified identity
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/assent-apple.md):** [Detection](details/assent-apple.md#detection) · [Remediation](details/assent-apple.md#remediation) · [Verification](details/assent-apple.md#verification) · [Timeline](details/assent-apple.md#timeline)
+
+**CVEs:** [CVE-2026-117656](https://www.cve.org/CVERecord?id=CVE-2026-117656)
+
+**Erlang Ecosystem Foundation (CNA) rates the flaw CVSS 4.0 9.3 Critical.** NVD has not scored it. The GitHub advisory repeats 9.3. In Assent 0.1.25 up to but not including 0.3.2, `Assent.Strategy.Apple` merges the callback's unsigned `user` form parameter over the verified ID token. An attacker with their own Apple ID can replace `sub` and `email`. Apps that look up or link accounts by those fields then treat the attacker as the victim. Other Assent strategies are not this flaw.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). The advisory does not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public advisory and CVE | 2026-10-30 23:55:23 UTC | [GHSA-9fr5-g44g-9526](https://github.com/pow-auth/assent/security/advisories/GHSA-9fr5-g44g-9526). Fixed in 0.3.2. |
+| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | Added from the GHSA and the EEF CNA record. |
+
+**Patch:** Upgrade the Hex package `assent` to **0.3.2 or later** and redeploy. That release ignores the `user` parameter unless `include_unverified_name: true`, and even then verified claims win. Until the new build is running, delete `"user"` from the callback params before `Assent.Strategy.Apple.callback/2`. Review Apple-linked accounts created while an affected version was deployed; the upgrade does not show whether a callback was forged.
+
+Sources: [GHSA-9fr5-g44g-9526](https://github.com/pow-auth/assent/security/advisories/GHSA-9fr5-g44g-9526), [EEF CNA](https://cna.erlef.org/cves/CVE-2026-117656.html), [CVE-2026-117656](https://www.cve.org/CVERecord?id=CVE-2026-117656), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## ServiceNow AI Platform: admin sandbox escape and stored plaintext passwords
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/servicenow-ai-platform.md):** [Detection](details/servicenow-ai-platform.md#detection) · [Remediation](details/servicenow-ai-platform.md#remediation) · [Verification](details/servicenow-ai-platform.md#verification) · [Timeline](details/servicenow-ai-platform.md#timeline)
+
+**CVEs:** [CVE-2026-103093](https://www.cve.org/CVERecord?id=CVE-2026-103093), [CVE-2026-103094](https://www.cve.org/CVERecord?id=CVE-2026-103094). The same advisory also covers [CVE-2026-6877](https://www.cve.org/CVERecord?id=CVE-2026-6877), which ServiceNow scores 5.3 Medium; that Store-app issue is not this entry's flaw.
+
+**ServiceNow (CNA) rates CVE-2026-103093 CVSS 4.0 9.4 Critical and CVE-2026-103094 CVSS 4.0 7.1 High.** NVD has not scored either record. An authenticated admin can bypass Rhino sandbox restrictions and execute code on the host. Separately, a user's plaintext password can be written to a system table and read by someone who should not see it. ServiceNow's record title for the High flaw says "OAuth credentials"; the description says a plaintext password. The Medium issue lets a specific role create records across domains, and only if SR – CSM – Task Plan Templates is installed.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31) for either CVE. CISA's October 29 enrichment records Exploitation "none" for both, and ServiceNow says it found no malicious exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public advisory | 2026-10-29; time/TZ unknown | [KB3228994](https://support.servicenow.com/kb?id=kb_article_view&sysparm_article=KB3228994), version 1.0. |
+| CVE records published | 2026-10-29 18:40–18:54 UTC | ServiceNow CNA. Critical record at 18:54:22 UTC. |
+| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | Added from ServiceNow's advisory and CNA records. |
+
+**Patch:** Confirm the instance is on a fixed build for **both** flaws. For the sandbox escape: Yokohama Patch 13 Hot Fix 4a (or Hotfix 5a), Zurich Patch 10 Hot Fix 3b (or Hotfix 4b), Zurich Patch 12, Zurich Patch 13, or Australia Patch 5. The password flaw also needs Xanadu Patch 11 Hot Fix 7a on Xanadu, and earlier Australia hotfixes than Patch 5; a sandbox-only floor is not enough there. Hosted instances already on those builds need no further platform update. Reset passwords that may already have been stored, because the advisory does not say the update deletes them. Families older than the ones ServiceNow names are unknown, not unaffected. The self-hosted FAQ is login-gated.
+
+Sources: [KB3228994](https://support.servicenow.com/kb?id=kb_article_view&sysparm_article=KB3228994), [CVE-2026-103093](https://www.cve.org/CVERecord?id=CVE-2026-103093), [CVE-2026-103094](https://www.cve.org/CVERecord?id=CVE-2026-103094), [CVE-2026-6877](https://www.cve.org/CVERecord?id=CVE-2026-6877), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Gravity Forms: unauthenticated object injection on post creation
 
@@ -1665,11 +1774,11 @@ Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/adviso
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/drupal.md):** [Detection](details/drupal.md#detection) · [Remediation](details/drupal.md#remediation) · [Verification](details/drupal.md#verification) · [Timeline](details/drupal.md#timeline)
 
-**CVEs:** [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097), [CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099). Both records were not yet published when checked; the links are generated from Drupal-assigned IDs.
+**CVEs:** [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097), [CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099)
 
-**SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): Drupal Security Team Critical 19/25. No CVE record has been published yet and NVD has no entry, so there is no CNA or NVD score. A related advisory, SA-CONTRIB-2026-218 for Entity List ([CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099)), is also Critical 19/25.**
+**SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): Drupal Security Team Critical 19/25. The CVE record is now published and contains no CVSS score, so there is still no numeric CNA or NVD score. A related advisory, SA-CONTRIB-2026-218 for Entity List ([CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099)), is also Critical 19/25 and also has no CVSS score.**
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31) for either CVE. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1678,7 +1787,8 @@ Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/adviso
 | SA-CORE-2026-014 and core fixes | 2026-10-14 (RSS 16:10 UTC) | 11.4.10 at 16:16 UTC, 10.6.19 at 16:42 UTC, 11.3.19 at 17:10 UTC, 12.0.0-beta2 at 21:57 UTC. |
 | SA-CONTRIB-2026-218 (Entity List 3.0.10) | 2026-10-14 (RSS 17:26 UTC) | Release published 15:59 UTC. |
 | Fortbridge lab reconstruction | 2026-10-18; time/TZ unknown | File disclosure and command execution on 11.4.9 with a synthetic writer module; fails on 11.4.10. Not in-the-wild exploitation. |
-| **Last updated** | **2026-10-31 08:30 EDT (UTC−04:00)** | Public lab reconstruction noted; Drupal's score is unchanged. |
+| CVE records published | 2026-10-30 03:09 UTC | Drupal CNA. No CVSS score in either record. Affected bounds match the advisories. |
+| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | CVE records published; Drupal's 19/25 rating is unchanged. |
 
 The flaw is in core's Field UI module. Drupal says core alone cannot be exploited, but "multiple serious exploit paths exist with contributed modules", and at least one of them needs no login. Custom code may also expose it. The contributed modules are not named. Entity List has its own separate RCE with the same pattern.
 
@@ -2141,7 +2251,7 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 
 **CVEs:** [CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935), [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357), [CVE-2026-118527](https://www.cve.org/CVERecord?id=CVE-2026-118527)
 
-**[CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935) — Ivanti (CNA) CVSS 3.1: 8.6 High (the advisory labels the vector CVSS 3.0); no NVD score of its own; CISA KEV (forensic triage required).** [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) is Ivanti CVSS 3.1 8.8 High. [CVE-2026-118527](https://www.cve.org/CVERecord?id=CVE-2026-118527) is Ivanti CVSS 3.0 4.3 Medium and is part of the same exploited chain.
+**[CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935) — Ivanti (CNA) CVSS 3.1: 8.6 High (the advisory labels the vector CVSS 3.0); no NVD score of its own; CISA KEV (forensic triage required).** The advisory scored [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) CVSS 3.1 8.8 High. The CNA record, updated 2026-10-28, now scores it **7.0 High** and names only 22.8R2.4. [CVE-2026-118527](https://www.cve.org/CVERecord?id=CVE-2026-118527) is Ivanti CVSS 3.0 4.3 Medium and is part of the same exploited chain. The advisory page could not be re-read, so the fix stays 25.1.1.3 or 22.8R2.6.
 
 **CISA KEV:** CVE-2026-104935 listed — added 2026-10-13, federal due date 2026-10-16. CVE-2026-111357 listed — added 2026-10-30, federal due date 2026-11-02 (forensic triage required). CVE-2026-118527 listed — added 2026-10-30, federal due date 2026-11-13 (catalog 2026.10.30).
 
@@ -2153,10 +2263,10 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Ivanti public advisory | 2026-10-13; time/TZ not shown | Discloses limited exploitation. |
 | CVE record published | 2026-10-13 15:31:07 UTC | CNA metadata. |
 | CISA KEV addition | 2026-10-13 (date only) | Due 2026-10-16. |
-| Chained privilege escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) | 2026-10-15 20:56:58 UTC | Ivanti scores it CVSS 3.1 8.8 High. The MITRE record's 7.0 is a different score; use Ivanti's. |
+| Chained privilege escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) | 2026-10-15 20:56:58 UTC | The advisory scored it 8.8 High. The CNA text updated 2026-10-28 now says 7.0 High and only 22.8R2.4. |
 | Fixes for the chained flaws | 2026-10-29; time/TZ unknown | 25.1.1.3 and 22.8R2.6 fix CVE-2026-111357 and CVE-2026-118527. 25.1.1.2 and 22.8R2.5 do not. |
 | CISA KEV additions | 2026-10-30; time/TZ unknown | CVE-2026-111357 due 2026-11-02. CVE-2026-118527 due 2026-11-13. |
-| **Last updated** | **2026-10-31 08:30 EDT (UTC−04:00)** | Stack decision row now names 25.1.1.3 and 22.8R2.6, matching the October 29 fixes. |
+| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | The CNA record for the chained flaw now says 7.0 and only 22.8R2.4. The advisory fix line is unchanged. |
 
 A spoofed internal-routing header (`X-DSCGI-PATH`) sent to the public `welcome.cgi` login script reaches a protected CGI. Combined with a file-write race in `wu.cgi`, this lets an unauthenticated attacker execute commands on the Connect Secure VPN appliance.
 
@@ -2301,7 +2411,8 @@ Sources: [Citrix CTX697174](https://support.citrix.com/support-home/kbsearch/art
 | CVE record published | 2026-10-01 19:17:38 UTC | CNA metadata. |
 | CISA KEV addition | 2026-10-01 (date only) | Due 2026-10-04. Not the exploitation start date. |
 | Fixed releases / solution update | 2026-10-05; time/TZ unknown | Advisory "Solution update"; FortiMail Cloud moved to 7.6.7/8.0.2 GA that day. The release date of 7.4.9 was not established. |
-| **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
+| 7.2 and 7.0 guidance | Advisory re-read 2026-10-31; CNA updated 2026-10-28 17:10 UTC | Upgrade 7.2.0–7.2.9 to upcoming 7.2.10; migrate all 7.0 to a fixed release. 7.2.10 is not released. |
+| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | Fortinet named an upcoming 7.2.10 and a 7.0 migration. The shipped fixes are unchanged. |
 
 A path traversal with NULL-byte mishandling in FortiMail's web interface lets an unauthenticated attacker write arbitrary files on the appliance through crafted HTTP/HTTPS requests. Fortinet's workaround targets the IBE (Identity-Based Encryption) service exposed through webmail.
 
@@ -2309,9 +2420,9 @@ A path traversal with NULL-byte mishandling in FortiMail's web interface lets an
 
 **Exploitation status:** Fortinet confirms exploitation in the wild, and CISA lists the CVE in KEV. Fortinet's IoCs include two IP addresses and specific system-event and encryption-log entries (see the [detail guide](details/fortimail.md#indicators-published-by-fortinet)). Absence of these indicators does not establish that a unit is clean.
 
-**Am I impacted?** Check the firmware of each FortiMail unit (`get system status`, read-only). Fortinet lists **8.0.0–8.0.1, 7.6.0–7.6.6, 7.4.0–7.4.8 and 7.2.0–7.2.9** as affected. The CNA record's machine-readable data conflicts with this and also names 7.0.x; treat 7.0 as unknown. Units are most at risk when IBE is enabled and webmail is reachable from the internet. FortiMail Cloud customers need no action, according to Fortinet.
+**Am I impacted?** Check the firmware of each FortiMail unit (`get system status`, read-only). Fortinet lists **8.0.0–8.0.1, 7.6.0–7.6.6, 7.4.0–7.4.8, 7.2.0–7.2.9, and all 7.0** as affected. Units are most at risk when IBE is enabled and webmail is reachable from the internet. FortiMail Cloud customers need no action, according to Fortinet.
 
-**Patch:** Upgrade to **8.0.2+, 7.6.7+ or 7.4.9+**. 7.2 has no fix, so move to 7.4 or later. Until you can upgrade, disable IBE or restrict webmail to trusted networks. Patching does not remove attacker persistence. Preserve logs and hunt for the IoCs first.
+**Patch:** Upgrade to **8.0.2+, 7.6.7+ or 7.4.9+**. Fortinet now also lists **upcoming 7.2.10** for the 7.2 train; that build is not released, so move 7.2 to 7.4.9 or later instead of waiting. Migrate 7.0 to a fixed release. Until you can upgrade, disable IBE or restrict webmail to trusted networks. Patching does not remove attacker persistence. Preserve logs and hunt for the IoCs first.
 
 Sources: [Fortinet FG-IR-26-175](https://fortiguard.fortinet.com/psirt/FG-IR-26-175), [Fortinet CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-104286), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-104286), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -2630,8 +2741,9 @@ Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/an
 | Partial upstream Ruby fix | 2026-10-22; time/TZ unknown | Ruby 4.0.8 is insufficient for the complete set. |
 | Complete upstream Ruby fixes | 2026-10-23; time/TZ unknown | Ruby 4.0.9 / 3.4.12 / 3.3.13. |
 | CISA KEV addition for CVE-2026-97229 | 2026-10-29; time/TZ unknown | CISA reports active exploitation; federal due date 2026-11-01. |
+| Public exploit module | 2026-10-30 17:44 UTC | Metasploit merged a module for CVE-2026-97229. It needs a planted CI configuration, then crashes a Puma worker while compiling. |
 | GitLab eMudhra trust removal | 2026-10-29; time/TZ unknown | 19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11 and 18.11.14 remove the compromised intermediates. This does not replace the regex RCE fixes. |
-| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | GitLab 19.5.3 eMudhra certificate distrust, plus Runner and AI Gateway updates. |
+| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | A public Metasploit module for CVE-2026-97229 exists. The GitLab fixes are unchanged. |
 
 Both vulnerabilities involve memory corruption while compiling specially crafted regular expressions.
 
@@ -3220,6 +3332,11 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Opengear IM7200, CM7100, and ACM7000 console servers** | Upgrade firmware 4.8.0 through 5.5.2 to 5.5.3. Until then, do not expose the web management interface to the internet. Lighthouse and the OM/CM8000 series in the notice are not affected. [Guide](details/opengear-console.md#remediation). |
+| **Canonical LXD and MicroCloud** | Refresh LXD to 6.10.1, 5.21.9, 5.0.11, or 4.0.15, and MicroCloud to 3.4.1 or 2.1.5. Until the new snap is running, do not expose the HTTPS API to untrusted networks. [Guide](details/lxd-mtls.md#remediation). |
+| **Delinea Secret Server** | Upgrade to 12.3.1 or later. 12.2.7 is still affected by the October login bypass and unsigned-token flaws. [Guide](details/delinea-secret-server.md#remediation). |
+| **Elixir apps using Assent's Sign in with Apple strategy** | Upgrade `assent` to 0.3.2 or later and redeploy. Until then, delete the callback `user` parameter before `Assent.Strategy.Apple.callback/2`. Other Assent providers are not this flaw. [Guide](details/assent-apple.md#remediation). |
+| **ServiceNow AI Platform (hosted or self-hosted)** | Confirm the instance is on Yokohama Patch 13 Hot Fix 4a / Hotfix 5a, Zurich Patch 10 Hot Fix 3b / Hotfix 4b, Zurich Patch 12 or 13, or Australia Patch 5 for the admin sandbox escape, and on the wider floors in the guide for the plaintext-password flaw (including Xanadu Patch 11 Hot Fix 7a). Hosted instances already there need no further platform update. Reset passwords that may have been stored. [Guide](details/servicenow-ai-platform.md#remediation). |
 | **Synology DSM** | Upgrade to 7.4-90075, 7.3.2-86009-4, 7.2.2-72806-9, or 7.2.1-69057-12 or later and confirm the running build. Synology lists no workaround; keep DSM and SSH off the internet until the update is on. [Guide](details/synology-dsm.md#remediation). |
 | **Mitsubishi Electric ICONICS GENESIS, GENESIS64 / ICONICS Suite, IoTWorX, MC Works64, GENESIS32, BizViz** | Update ICONICS Suite to 10.98+, GENESIS to 11.04+ and IoTWorX to 10.98+ under OT change control; MC Works64, GENESIS32 and BizViz get no fix, so apply Mitsubishi's challenge-file workaround, block remote login and DCOM from untrusted networks, and plan migration. [Guide](details/mitsubishi-iconics-genesis.md#remediation). |
 | **Microsoft Edge** | Confirm every install, including VDI images and kiosks, is on 148.0.3967.70 or later and relaunch. [Guide](details/edge-pwn2own.md#remediation). |

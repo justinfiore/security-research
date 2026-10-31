@@ -4,7 +4,7 @@
 
 [Main Drupal summary](../black-october-2026.md#drupal-core-field-ui-remote-code-execution) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): the Drupal Security Team (the vendor) rates it Critical, 19/25 (`AC:Basic/A:None/CI:All/II:All/E:Theoretical/TD:Default`). Drupal names the CVE ID in its advisory, but as of 2026-10-26 the CVE Services API returns no record for it and NVD has no entry, so there is no CNA or NVD CVSS score. Not listed in CISA KEV (catalog 2026.10.23, checked 2026-10-26).** A related contributed-module advisory published the same day, **SA-CONTRIB-2026-218 (Entity List, [CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099))**, is also rated Critical 19/25 and has the same exploit-path pattern. [SA-CORE-2026-014][sa-core] [SA-CONTRIB-2026-218][sa-el] [KEV][kev]
+**SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): the Drupal Security Team (the vendor and CNA) rates it Critical, 19/25 (`AC:Basic/A:None/CI:All/II:All/E:Theoretical/TD:Default`).** The CVE record was published on 2026-10-30 and contains no CVSS score, so there is still no numeric CNA or NVD score. **Not listed in CISA KEV (catalog 2026.10.30, checked 2026-10-31).** A related contributed-module advisory, **SA-CONTRIB-2026-218 (Entity List, [CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099))**, is also rated Critical 19/25, was published the same day, and likewise has no CVSS score. [SA-CORE-2026-014][sa-core] [SA-CONTRIB-2026-218][sa-el] [CVE-2026-108097][cve] [KEV][kev]
 
 **What it is:** A remote code execution flaw in the core **Field UI** module (`field_ui`). Drupal says:
 
@@ -28,7 +28,7 @@ The advisory does not name the contributed modules. [SA-CORE-2026-014][sa-core]
 
 The affected range is the advisory's: `>= 8.9.0 < 10.6.19 || >= 11.0.0 < 11.3.19 || >= 11.4.0 < 11.4.10 || >= 12.0.0-alpha1 < 12.0.0-beta2`. [SA-CORE-2026-014][sa-core]
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31) for CVE-2026-108097 or CVE-2026-108099. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -54,8 +54,8 @@ The affected range is the advisory's: `>= 8.9.0 < 10.6.19 || >= 11.0.0 < 11.3.19
 | Drupal 12.0.0-beta2 released | 2026-10-14 21:57:42 UTC | Fixes the 12.x pre-release line. [Release history][rh-core] |
 | BleepingComputer coverage | 2026-10-17 | Secondary. [BleepingComputer][bc] |
 | Follow-up bug-fix releases 11.4.11, 11.3.20 and 10.6.20 | 2026-10-21 | Not security releases. Being on these versions also includes the fix. [Release history][rh-core] |
-| CVE or NVD publication | Not published as of 2026-10-26 | The CVE Services API returns "CVE_RECORD_DNE" for both IDs, and NVD returns no results. [CVE API][cve] [NVD][nvd] |
-| CISA KEV | Not listed | Catalog 2026.10.23 checked on 2026-10-26. [KEV][kev] |
+| CVE records published | 2026-10-30 03:09:50 UTC (CVE-2026-108099) and 03:09:55 UTC (CVE-2026-108097) | Drupal CNA. Neither record includes a CVSS score. Affected bounds match the advisories. [CVE-2026-108097][cve] [CVE-2026-108099][cve099] |
+| CISA KEV | Not listed | Catalog 2026.10.30 checked on 2026-10-31. [KEV][kev] |
 | Exploitation evidence | Lab reconstruction published 2026-10-18; no in-the-wild exploitation reported | Fortbridge rebuilt the chain on 11.4.9 with a synthetic writer module and says it fails on 11.4.10. Drupal's E field remains "Theoretical". [Fortbridge][fortbridge] |
 
 ## Detection
@@ -120,7 +120,7 @@ vendor/bin/drush sql:query "SELECT name, created, access FROM users_field_data O
 - [SA-CONTRIB-2026-218][sa-el]: the Entity List rating and fix.
 - [PSA-2026-10-12][psa]: release window and pre-announcement rating.
 - Drupal release-history feeds for [core][rh-core] and [Entity List][rh-el], and Drupal.org RSS for [core][core-rss], [contrib][contrib-rss] and [PSA][psa-rss] advisories: release and publication timestamps.
-- [CVE Services API][cve] and [NVD][nvd]: no published records as of 2026-10-26.
+- [CVE-2026-108097][cve] and [CVE-2026-108099][cve099]: Drupal CNA records, published 2026-10-30, no CVSS score. Affected ranges match the advisories. NVD has not added its own score.
 - [CISA KEV feed][kev] (no entry).
 - Secondary: [BleepingComputer][bc].
 
@@ -133,7 +133,7 @@ vendor/bin/drush sql:query "SELECT name, created, access FROM users_field_data O
 [psa-rss]: https://www.drupal.org/security/psa/rss.xml
 [rh-core]: https://updates.drupal.org/release-history/drupal/current
 [rh-el]: https://updates.drupal.org/release-history/entity_list/current
-[cve]: https://cveawg.mitre.org/api/cve/CVE-2026-108097
-[nvd]: https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-108097
+[cve]: https://www.cve.org/CVERecord?id=CVE-2026-108097
+[cve099]: https://www.cve.org/CVERecord?id=CVE-2026-108099
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
 [bc]: https://www.bleepingcomputer.com/news/security/drupal-patches-critical-rce-flaws-warns-exploits-may-emerge-soon/

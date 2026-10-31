@@ -1,6 +1,6 @@
 # Ivanti Connect Secure: authentication bypass to command execution
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-10-31 (America/New_York)
 
 [Main Ivanti Connect Secure summary](../black-october-2026.md#ivanti-connect-secure-authentication-bypass-to-command-execution-cve-2026-104935) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -9,7 +9,7 @@
 - an authentication bypass: a request to the public `/dana-na/auth/url_default/welcome.cgi` carrying an `X-DSCGI-PATH` header is routed to a protected CGI;
 - a race-condition file write and execution in `wu.cgi`.
 
-In the wild, attackers chained it with a separate **root privilege escalation**, the `dsinvoked`/DSCache flaw. Ivanti identifies it as **[CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357)** (Ivanti CVSS 3.1: 8.8 High) and provides fixes in 25.1.1.3 and 22.8R2.6. The same releases fix **[CVE-2026-118527](https://www.cve.org/CVERecord?id=CVE-2026-118527)** (Ivanti CVSS 3.0: 4.3 Medium), predictable filenames that let an authenticated attacker upload a chosen file to a known path. Ivanti says the three CVEs were chained in the wild.
+In the wild, attackers chained it with a separate **root privilege escalation**, the `dsinvoked`/DSCache flaw. Ivanti's advisory identifies it as **[CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357)** (the guide's earlier reading of that advisory: CVSS 3.1 8.8 High) and provides fixes in 25.1.1.3 and 22.8R2.6. The CNA record, updated 2026-10-28 and republished in the CVE feed on 2026-10-31, now says only **22.8R2.4** is affected and scores it **CVSS 3.1 7.0 High** (`AV:L/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H`). NVD still carries a broader configuration (25.1 before 25.1.1.3, and 22.8 R2 through R2.5) with the 7.0 score as secondary. The vendor advisory page could not be re-read on 2026-10-31, so this guide keeps the advisory's fix line: 25.1.1.3 or 22.8R2.6. Do not treat the narrower CNA text as permission to skip 25.1. The same releases fix **[CVE-2026-118527](https://www.cve.org/CVERecord?id=CVE-2026-118527)** (Ivanti CVSS 3.0: 4.3 Medium), predictable filenames that let an authenticated attacker upload a chosen file to a known path. Ivanti says the three CVEs were chained in the wild.
 
 **CISA KEV:** [CVE-2026-104935](https://www.cve.org/CVERecord?id=CVE-2026-104935) listed — added 2026-10-13, federal due date 2026-10-16. [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) listed — added 2026-10-30, federal due date 2026-11-02; forensic triage required. [CVE-2026-118527](https://www.cve.org/CVERecord?id=CVE-2026-118527) listed — added 2026-10-30, federal due date 2026-11-13; forensic triage not required. Ransomware use is Unknown for all three (catalog 2026.10.30). [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -40,6 +40,7 @@ In the wild, attackers chained it with a separate **root privilege escalation**,
 | CVE-2026-111357 (chained privilege escalation) published | 2026-10-15 20:56:58 UTC | Later Ivanti advisory update identifies 25.1.1.2 and prior and 22.8R2.5 and prior as affected. [CVE-2026-111357 JSON][cve-pe] [Advisory][ivanti] |
 | Chained-flaw fixes released | 2026-10-29; time/TZ unknown | Advisory last modified 2026-10-29 4:45:24 PM (timezone not shown). Ivanti released 25.1.1.3 and 22.8R2.6 for CVE-2026-111357 and CVE-2026-118527. [Advisory][ivanti] |
 | CISA KEV additions for the chained CVEs | 2026-10-30; time/TZ unknown | CVE-2026-111357 due 2026-11-02 (forensic triage required). CVE-2026-118527 due 2026-11-13. Catalog 2026.10.30, released 2026-10-30 17:02:45 UTC. [KEV JSON][kev] |
+| CNA record text diverges | CNA container 2026-10-28 16:44 UTC; record `dateUpdated` 2026-10-31 03:56 UTC | The record now names only 22.8R2.4 and CVSS 3.1 7.0. The advisory's 25.1.1.3 / 22.8R2.6 fix line is unchanged here because that page could not be re-read. [CVE-2026-111357 JSON][cve-pe] |
 
 ## Detection
 

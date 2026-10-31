@@ -1,6 +1,6 @@
 # GitLab and Ruby: detection and remediation
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-10-31 (America/New_York)
 
 [Main GitLab/Ruby summary](../black-october-2026.md#3-gitlab-and-ruby-regex-compilation-becomes-code-execution) · [Changelog](../../CHANGELOG.md)
 
@@ -29,6 +29,7 @@ The principal GitLab issues **[CVE-2026-97229](https://www.cve.org/CVERecord?id=
 | Partial upstream Ruby fix | 2026-10-22: Ruby 4.0.8; not sufficient for the complete set |
 | Upstream Ruby complete fix set | 2026-10-23 (source date): [Ruby 4.0.9 / 3.4.12 / 3.3.13](https://www.ruby-lang.org/en/news/2026/10/23/regexp-fixes-for-gitlab-cves/) |
 | CISA KEV addition for CVE-2026-97229 | 2026-10-29; time/TZ unknown | CISA reports reliable evidence of active exploitation; federal due date 2026-11-01. [KEV][kev] |
+| Public exploit module | 2026-10-30 17:44:08 UTC | Metasploit pull 22017 merged a module for CVE-2026-97229. It needs a planted CI configuration (credentials, or self-registration plus project creation), then an unauthenticated CI lint compile, and runs as the GitLab `git` account on affected CE/EE Linux amd64 images. Each attempt allocates slightly more than 2 GiB and crashes a Puma worker. [Pull 22017][msf] |
 
 The Ruby notice explains that 4.0.9 completes the repeat-ID overflow fix; 4.0.8 addressed a different compiled-pattern overflow. GitLab can ship a patched bundled Ruby before a corresponding upstream Ruby release. Do not infer its fix state solely from the base interpreter version.
 
@@ -84,3 +85,6 @@ Restrict access, preserve logs/configuration and snapshots, then investigate rep
 - [GitLab October 21 advisory, affected ranges, detections and migration notes](https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-5-1-released/)
 - [Ruby fix matrix and exposure conditions](https://www.ruby-lang.org/en/news/2026/10/23/regexp-fixes-for-gitlab-cves/)
 - [GitLab upgrade paths](https://docs.gitlab.com/update/upgrade_paths/)
+- [Metasploit pull 22017][msf], merged 2026-10-30: public module for CVE-2026-97229. Fixed versions are unchanged.
+
+[msf]: https://github.com/rapid7/metasploit-framework/pull/22017

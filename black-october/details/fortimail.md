@@ -1,6 +1,6 @@
 # FortiMail: unauthenticated file write
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-10-31 (America/New_York)
 
 [Main FortiMail summary](../black-october-2026.md#fortimail-unauthenticated-file-write-cve-2026-104286) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -32,6 +32,7 @@
 | CISA ADP SSVC assessment | 2026-10-02 03:55:37 UTC | Exploitation: active; Automatable: yes; Technical impact: total. [CVE JSON][cve] |
 | Fixed releases / solution update | 2026-10-05; time/TZ unknown | Advisory timeline: "Solution update". Fortinet says it fixed FortiMail Cloud on Oct 05 by moving all firmware to **7.6.7 GA or 8.0.2 GA**. The reviewed sources do not give the general-availability date of **7.4.9** for customer-managed units. [Advisory][fortinet] |
 | FortiMail Cloud clarification | 2026-10-07; time/TZ unknown | Advisory timeline: "FortiMail Cloud fix clarification". CNA record updated 2026-10-07 17:59:34 UTC. [Advisory][fortinet] [CVE JSON][cve] |
+| Advisory and CNA name a 7.2 fix as upcoming | Advisory page re-read 2026-10-31; CNA `dateUpdated` 2026-10-28 17:10:14 UTC | The version table now says upgrade 7.2.0–7.2.9 to **upcoming 7.2.10 or above**, and migrate **7.0 (all versions)** to a fixed release. The page's own "Updated Date" is still Oct 7, 2026. 7.2.10 is not a released build. [Advisory][fortinet] [CVE JSON][cve] |
 
 ## Detection
 
@@ -45,9 +46,10 @@
    | 8.0 | 8.0.0 through 8.0.1 | 8.0.2 or later |
    | 7.6 | 7.6.0 through 7.6.6 | 7.6.7 or later |
    | 7.4 | 7.4.0 through 7.4.8 | 7.4.9 or later |
-   | 7.2 | 7.2.0 through 7.2.9 | No 7.2 fix; migrate to 7.4 or later |
+   | 7.2 | 7.2.0 through 7.2.9 | Upcoming 7.2.10 or above; not released as of 2026-10-31. Until then, migrate to 7.4.9 or later |
+   | 7.0 | All 7.0 versions | No 7.0 fix. Migrate to a fixed release |
 
-   **Source inconsistency:** the CNA record's machine-readable `affected` list differs from the advisory and from its own description. It lists 8.0.0 only, 7.6.0–7.6.5, 7.4.0–7.4.6, and also **7.0.0–7.0.9**. Its `solutions` field now includes an upcoming **7.2.10+**, alongside stale upcoming versions (8.0.1, 7.6.6 and 7.4.8) and unrelated FortiRecorder builds. Do not wait for 7.2.10: use the vendor-supported migration path until that train is actually released. NVD's configuration covers 7.2.0–7.4.8, 7.6.0–7.6.6, and 8.0.0–8.0.1. This guide follows the vendor advisory's table. Treat any **7.0.x** unit as **unknown, not cleared**, and ask Fortinet support.
+   The advisory table and the CNA record now agree on those ranges, including upcoming 7.2.10 and a migration off 7.0. The CNA's `solutions` field still also lists stale upcoming versions (8.0.1, 7.6.6 and 7.4.8) and unrelated FortiRecorder builds; ignore those. Do not wait on 7.2.10 if you can move to 7.4.9 or later now. NVD's configuration covers 7.2.0–7.4.8, 7.6.0–7.6.6, and 8.0.0–8.0.1 and does not spell out 7.0.
 3. Check whether IBE is enabled: GUI **Encryption → IBE → IBE Service**, or the read-only CLI `show system encryption ibe`. Also check whether the webmail/IBE web interface is reachable from the internet. If you cannot determine either, record the unit as exposed.
 
 ### Indicators published by Fortinet
@@ -65,7 +67,7 @@ These indicators come from Fortinet's observed cases and are not exhaustive. A c
 
 ## Remediation
 
-1. Upgrade to **8.0.2+, 7.6.7+ or 7.4.9+**. Move units on 7.2 to a fixed 7.4 or later build, following Fortinet's upgrade path and release notes. Download firmware only from Fortinet support. Back up the configuration first and expect a reboot.
+1. Upgrade to **8.0.2+, 7.6.7+ or 7.4.9+**. Fortinet now also lists **upcoming 7.2.10 or above** for the 7.2 train and says to **migrate every 7.0 unit** to a fixed release. 7.2.10 is not available yet. Until it is, move 7.2 units to 7.4.9 or later rather than staying on an exploited branch. Download firmware only from Fortinet support. Back up the configuration first and expect a reboot.
 2. Until you can upgrade, apply Fortinet's workaround: disable IBE (GUI **Encryption → IBE → IBE Service off**, or CLI `config system encryption ibe` / `set status disable` / `end`). This **changes state** and disables encrypted-mail pickup for recipients, so plan for the business impact. Fortinet's alternatives are to restrict webmail to trusted networks or to block, at a WAF, POST requests to `/ibe` that contain `../`.
 3. FortiMail Cloud: Fortinet says no customer action is required after its 2026-10-05 update.
 4. Mitigation and patching prevent new exploitation. Neither removes files, cron jobs, accounts, or archive destinations that an attacker already added. Preserve evidence before you upgrade or reboot a suspect unit.
