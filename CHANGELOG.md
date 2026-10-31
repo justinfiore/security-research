@@ -4,6 +4,10 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-31 12:04 EDT (UTC−04:00) — Cursor marketplace SSH backdoor
+
+- **Cursor:** If a Mac or Windows machine installed Claude Code for VS Code **2.1.312 or 2.1.313** from Cursor's marketplace on October 29, [check for the `svc-telemetry` SSH key and remove the startup scripts](black-october/details/cursor-claude-code.md#remediation). Uninstalling the extension does not remove them. Cursor says the builds were live about 02:27–13:35 PT and reached at most 5,000 users; the reverse-tunnel login failed on most hosts, but the key could still be there. Install **2.1.314 or later** only after cleanup, and rotate credentials that host could use. No CVE is assigned. Anthropic and the Visual Studio Marketplace were not the source.
+
 ## 2026-10-31 08:30 EDT (UTC−04:00) — Northflank secrets; LiteLLM signing key; Drupal lab chain
 
 - **Northflank:** If you stored secrets there, [revoke them at each issuer and redeploy](black-october/details/northflank.md#remediation). Northflank says to assume every environment variable was decrypted after a Wiz alert on October 30, and users report their AI API keys were used. The incident is still open. There is no CVE and no software update to install. Audit logs turned on October 31 do not cover earlier activity.

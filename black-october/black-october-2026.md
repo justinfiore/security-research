@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Cursor: malicious Claude Code extension installed an SSH backdoor](#cursor-malicious-claude-code-extension-installed-an-ssh-backdoor)
 - [Gravity Forms: unauthenticated object injection on post creation](#gravity-forms-unauthenticated-object-injection-on-post-creation)
 - [Synology DSM: unauthenticated file read and write](#synology-dsm-unauthenticated-file-read-and-write)
 - [WordPress: unauthenticated code execution during a core upgrade](#wordpress-unauthenticated-code-execution-during-a-core-upgrade)
@@ -160,6 +161,33 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Cursor: malicious Claude Code extension installed an SSH backdoor
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cursor-claude-code.md):** [Detection](details/cursor-claude-code.md#detection) · [Remediation](details/cursor-claude-code.md#remediation) · [Verification](details/cursor-claude-code.md#verification) · [Timeline](details/cursor-claude-code.md#timeline)
+
+**CVEs:** No CVE is assigned. Cursor's notice and Microsoft's analysis describe a tampered marketplace package, not a vulnerability in Claude Code.
+
+**Supply-chain incident — a modified extension tried to plant a persistent SSH backdoor.** No CVSS score. Anthropic did not publish these builds, and Microsoft says they were never on the Visual Studio Marketplace or on npm.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. This is a completed malware distribution through Cursor's marketplace.
+
+**Affected technology:** Cursor on macOS and Windows that installed or auto-updated `Anthropic.claude-code` **2.1.312** or **2.1.313** from the Cursor marketplace. **Worst case:** an attacker-controlled SSH key on the developer machine, plus a reverse tunnel if Cursor was running as administrator. On most hosts Cursor says the tunnel login failed; the key and startup scripts could still be there.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Malicious builds available | 2026-10-29, about 02:27–13:35 PT (PDT, UTC−07:00) | `Anthropic.claude-code` 2.1.312 and 2.1.313, Windows and macOS, Cursor marketplace only. |
+| Public notice | 2026-10-29; time/TZ unknown | Cursor's notice is dated October 29 and says "today." |
+| Marketplace rebuilt; attacker server taken down | 2026-10-29, by 13:35 PT | Cursor. The server takedown does not remove keys already written. |
+| Scale and safe version | 2026-10-30; time/TZ unknown | Cursor on X: at most 5,000 users; install 2.1.314 or later. |
+| Notice updated | 2026-10-30 11:30 PT (PDT, UTC−07:00) | Both 2.1.312 and 2.1.313 confirmed; indicators expanded. |
+| **Last updated** | **2026-10-31 12:04 EDT (UTC−04:00)** | Added from Cursor's notice and Microsoft's analysis. |
+
+**Am I impacted?** A Mac or Windows machine that used Cursor on October 29 and could have updated Claude Code during that 11-hour window. As the user who ran Cursor, search `~/.ssh/authorized_keys` (Windows also `C:\ProgramData\ssh\administrators_authorized_keys`) for `svc-telemetry`. The fingerprint Cursor publishes is `SHA256:0Z6R+DF64Do2nwQic8a7kkfDLNNk4IiK+2U2Rci4htk`. Also look for `~/Library/LaunchAgents/com.apple.sysmond.plist` or a Windows scheduled task named `SysMon` whose action runs `%USERPROFILE%\.config\smt.cmd`. No key found is Cursor's own "not impacted" result for that file; it does not clear a host you cannot check.
+
+**What to do:** If the key or those startup files are present, isolate the host, then run [Cursor's remediation script](https://cursor.com/blog/claude-code-extension-security-notice) (macOS as the user, Windows as Administrator). Uninstalling the extension leaves the scripts running. Afterward install Claude Code **2.1.314 or later**, and rotate credentials that host could use from a different machine. The beacon sent environment-variable names, not values.
+
+Sources: [Cursor security notice](https://cursor.com/blog/claude-code-extension-security-notice), [Microsoft Threat Intelligence](https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/).
 
 ## Gravity Forms: unauthenticated object injection on post creation
 
@@ -3170,7 +3198,7 @@ Sources: [initial disclosure](https://blog.railway.com/p/security-disclosure-wed
 
 ```mermaid
 flowchart TD
-    A["Inventory hosts, containers, NAS apps, workers and CI"] --> B{"Compromised LiteLLM artifact,<br/>Railway or Northflank secrets, or compromise indicators?"}
+    A["Inventory hosts, containers, NAS apps, workers and CI"] --> B{"Compromised LiteLLM artifact,<br/>Railway or Northflank secrets, Cursor extension,<br/>or compromise indicators?"}
     B -->|Yes| C["Contain and investigate;<br/>rebuild affected systems and rotate secrets"]
     B -->|No| D["Continue stack checks"]
     C --> D
@@ -3264,6 +3292,7 @@ flowchart TD
 | **BeyondTrust Remote Support** | Apply **BT26-05-RS** and investigate vulnerable appliances exposed during the exploitation window. |
 | **All stacks making TLS connections** | [Refresh each effective trust store](details/emudhra.md#runtime-and-application-trust-store-inventory), including embedded copies and alternate chains; rebuild Go with **1.27.3 / 1.26.10+**. Java needs the **CVE-2026-114820** follow-up; CPython `ssl` fixes are **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**; Bun **1.4.4** (rebuild compiled executables). |
 | **LiteLLM malicious artifacts** | [Isolate, rebuild and revoke reachable credentials](details/litellm.md#remediation); do not run ordinary Python startup hooks on suspected hosts. A downgrade alone is not recovery. |
+| **Cursor on macOS or Windows that may have updated Claude Code on 2026-10-29** | Search `authorized_keys` for `svc-telemetry`. If found, isolate the host and run [Cursor's cleanup script](details/cursor-claude-code.md#remediation); uninstalling 2.1.312/2.1.313 leaves the SSH key and startup scripts. Then install 2.1.314 or later and rotate credentials that host could use. |
 | **Northflank secrets stored on or before 2026-10-30 13:40 UTC** | [Revoke at each issuer, update the workload or secret group, and redeploy](details/northflank.md#remediation). The incident is still open, so a replacement stored before Northflank confirms containment may itself need rotation. |
 | **Railway secrets stored before October 21** | [Rotate at each issuer, update consumers and verify revocation](details/railway.md#remediation); include registry credentials and existing sessions. |
 
