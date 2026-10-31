@@ -107,6 +107,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [BeyondTrust Remote Support: exploited unauthenticated file operations](#beyondtrust-remote-support-exploited-unauthenticated-file-operations)
 - [TLS and code-signing trust stores: eMudhra / emSign - CA compromise](#tls-and-code-signing-trust-stores-emudhra--emsign---certificate-authority-compromise)
 - [LiteLLM: malicious release and credential theft](#litellm-malicious-release-and-credential-theft)
+- [LiteLLM Enterprise proxy: unauthenticated file read leaks the master key](#litellm-enterprise-proxy-unauthenticated-file-read-leaks-the-master-key)
 - [Railway: environment secret exposure](#railway-environment-secret-exposure)
 - [What should I patch? A stack-based decision guide](#what-should-i-patch-a-stack-based-decision-guide)
 
@@ -211,21 +212,22 @@ Sources: [Synology-SA-26:13](https://www.synology.com/en-global/security/advisor
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-upgrade-window.md):** [Detection](details/wordpress-upgrade-window.md#detection) · [Remediation](details/wordpress-upgrade-window.md#remediation) · [Verification](details/wordpress-upgrade-window.md#verification) · [Timeline](details/wordpress-upgrade-window.md#timeline)
 
-**CVEs:** None assigned. Wordfence tracks the flaw without a CVE ID.
+**CVEs:** [CVE-2026-119977](https://www.cve.org/CVERecord?id=CVE-2026-119977)
 
-**Wordfence rates the flaw CVSS 3.1 8.1 High. WordPress publishes no score of its own.** During a full-package core upgrade, affected releases unpack the new files, including the installer, into a predictable directory under `wp-content/upgrade`. An unauthenticated attacker who requests that installer during the unpack can run PHP. Wordfence says the window lasts seconds in a lab. The other fixes in 7.1.4 mostly need a Contributor account or higher.
+**Wordfence (CNA) rates CVE-2026-119977 CVSS 3.1 8.1 High. WordPress's own advisory still says Low and "No known CVE."** During a full-package core upgrade, affected releases unpack the new files, including the installer, into a predictable directory under `wp-content/upgrade`. An unauthenticated attacker who requests that installer during the unpack can run PHP. Wordfence says the window lasts seconds in a lab. The other fixes in 7.1.4 mostly need a Contributor account or higher.
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Wordfence recorded more than 18,500 probe requests for staged `setup-config.php` paths in the first 21 hours after its firewall rule; it does not report a confirmed compromise. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). Wordfence recorded more than 18,500 probe requests for staged `setup-config.php` paths in the first 21 hours after its firewall rule; its vulnerability page later showed 57,400 blocked attacks in a rolling 24 hours. It does not report a confirmed compromise. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Public release | 2026-10-28; time/TZ unknown | WordPress 7.1.4, with backports through the 4.7 branch. |
 | Exploitation attempts | 2026-10-28 20:30 UTC onward | Wordfence's first match was nine minutes after its firewall rule. Probes, not confirmed compromise. |
-| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | Added from the WordPress release and Wordfence's write-up. |
+| CVE record published | 2026-10-31 05:33:07 UTC | Wordfence CNA. WordPress's advisory is unchanged. |
+| **Last updated** | **2026-10-31 04:15 EDT (UTC−04:00)** | CVE assigned; WordPress still rates the same flaw Low. |
 
 **Patch:** Update to **7.1.4**, or the fixed release for the installed branch (7.0.8, 6.9.11, 6.8.12, 6.7.11, 6.6.11, 6.5.14, 6.4.14, and the older branch releases through 4.7.39). Confirm the update on **Dashboard → Updates**; do not assume a background update finished. WordPress 4.6 and earlier get no fix. A firewall rule is not a substitute, because the request never loads WordPress.
 
-Sources: [WordPress 7.1.4](https://wordpress.org/news/2026/10/wordpress-7-1-4/), [version documentation](https://wordpress.org/documentation/wordpress-version/version-7-1-4/), [Wordfence](https://www.wordfence.com/blog/2026/10/wordpress-7-1-4-security-release-rce/), [Patchstack](https://patchstack.com/articles/wordpress-7-1-4-security-release).
+Sources: [WordPress 7.1.4](https://wordpress.org/news/2026/10/wordpress-7-1-4/), [version documentation](https://wordpress.org/documentation/wordpress-version/version-7-1-4/), [GHSA-4w3m-c66w-69mg](https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-4w3m-c66w-69mg), [CVE-2026-119977](https://www.cve.org/CVERecord?id=CVE-2026-119977), [Wordfence](https://www.wordfence.com/blog/2026/10/wordpress-7-1-4-security-release-rce/), [Patchstack](https://patchstack.com/articles/wordpress-7-1-4-security-release).
 
 ## Progress WS_FTP Server: Critical authentication and command-injection flaws
 
@@ -255,19 +257,20 @@ Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE
 
 **kernel.org and Red Hat's public page both rate CVE-2026-98432 CVSS 3.1 9.8 Critical.** Red Hat labels its score preliminary. The IPv4 TCP race can free socket options while they are in use during retransmitted SYN processing or request-socket migration. On 2026-10-27 Anthropic reported a lab proof of concept that runs commands as root against a server exposing a multipath TCP listener; it did not publish the exploit and does not report in-the-wild use.
 
-**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No primary source reviewed reports in-the-wild exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). No primary source reviewed reports in-the-wild exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | CVE publication | 2026-10-15; time/TZ unknown | kernel.org CNA record. |
+| Debian fixed kernels | 2026-10-16 13:39:29 UTC and 2026-10-17 15:39:22 UTC | trixie `linux` 6.12.113-1 (DSA-6568-1) and bookworm `linux` 6.1.190-1 (DLA-4841-1). |
 | Anthropic lab proof of concept | 2026-10-27; time/TZ unknown | Remote root against a multipath TCP listener. Exploit not published; not in-the-wild use. |
 | Go MPTCP stopgap | 2026-10-29; time/TZ unknown | Go says `GODEBUG=multipathtcp=0` blocks the demonstrated listener shape and is not a kernel fix. |
 | Red Hat mitigation bulletin | 2026-10-30 16:03 (timezone not stated) | An nftables filter drops incoming IPv4 TCP packets that contain IP options. Red Hat says it cannot fully prevent the flaw. |
-| **Last updated** | **2026-10-30 20:15 EDT (UTC−04:00)** | Added Red Hat's temporary nftables filter. |
+| **Last updated** | **2026-10-31 04:15 EDT (UTC−04:00)** | Debian's fixed kernels were missing from the guide. Ubuntu and Red Hat are still unfixed. |
 
-**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Ubuntu still lists supported generic kernels as vulnerable with fixes in progress, and Red Hat has no released kernel fix. Until one ships, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. Go 1.24 and later enable multipath TCP on Linux listen sockets by default. Setting `GODEBUG=multipathtcp=0`, or `godebug multipathtcp=0` in the main module, disables that default and blocks the listener shape Anthropic demonstrated, but Go says this is fragile and does not fix the kernel bug.
+**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Debian trixie is `linux` 6.12.113-1 ([DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html)); Debian 12 bookworm is `linux` 6.1.190-1 ([DLA-4841-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00035.html)), or `linux-6.12` 6.12.113-1~deb12u1 where that kernel is installed. Oracle Linux UEK is covered by [ELSA-2026-500397, 500398 and 500399](https://linux.oracle.com/cve/CVE-2026-98432.html) (2026-10-16); those errata do not update the Red Hat-compatible kernel. Ubuntu still lists supported generic kernels as vulnerable with fixes in progress, and Red Hat has no released kernel fix. Until one ships, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. Go 1.24 and later enable multipath TCP on Linux listen sockets by default. Setting `GODEBUG=multipathtcp=0`, or `godebug multipathtcp=0` in the main module, disables that default and blocks the listener shape Anthropic demonstrated, but Go says this is fragile and does not fix the kernel bug.
 
-Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432), [Red Hat advisory](https://access.redhat.com/security/cve/CVE-2026-98432), [Red Hat RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016), [Ubuntu advisory](https://ubuntu.com/security/CVE-2026-98432), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432), [Debian DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html), [Red Hat advisory](https://access.redhat.com/security/cve/CVE-2026-98432), [Red Hat RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016), [Ubuntu advisory](https://ubuntu.com/security/CVE-2026-98432), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Jenkins: October core security fixes
 
@@ -2492,7 +2495,7 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | ELLIO in-the-wild exploit attempt | 2026-10-26 15:08 UTC | Request built for official Node.js 24.22.0 x86-64; ELLIO found the attacker's chain non-working in its test. ELLIO also reproduced RCE on that x86-64 build. |
 | CISA KEV addition | 2026-10-27; time/TZ unknown | CISA added CVE-2026-111497 based on evidence of active exploitation; the federal civilian due date is 2026-11-10. |
 | PAN-OS Brotli hotfixes released | 2026-10-29; time/TZ unknown | Palo Alto removed the remaining ETAs for 11.2.4-h23, 12.1.4-h13 and 12.1.10-h3. |
-| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | PAN-OS Brotli hotfixes are released, not ETAs. |
+| **Last updated** | **2026-10-31 04:15 EDT (UTC−04:00)** | 11.2.10-h16 is PHP-only; Prisma Cloud and Strata Cloud Manager are on the vendor-remediated SaaS list. |
 
 **HTTP2Shell, Node2Shell and Brotli2Shell are names for the same vulnerability, not separate CVEs.** The flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the names, it is **not specific to HTTP/2 or even HTTP**; exposure depends on decoding attacker-controlled Brotli data, including embedded file metadata and analytical buffers.
 
@@ -2536,7 +2539,7 @@ Microsoft's [MSRC entry](https://msrc.microsoft.com/update-guide/vulnerability/C
 
 **PHP on Windows needs a separate package check:** PHP's October 21 source releases address PHP2Shell, but its [October 23 Windows rebuilds](https://www.php.net/archive/2026.php) add the fixed Brotli 1.2.1 dependency. Install **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1** and restart every SAPI and worker. Because the PHP runtime version did not change, `php -v` alone cannot distinguish a rebuilt package; verify the `-1` filename or the official download hash. This does not patch separately bundled `php-ext-brotli`, libcurl or other native decoders.
 
-**PAN-OS is conditionally affected:** Palo Alto Networks rates this **Critical (CVSS 4.0 9.2)** but says exposure requires **both** TLS/SSL decryption and Brotli inspection on the dataplane; the management interface and PAN-OS 11.1/10.2 are not affected. On 11.2.4+, check `show system setting brotli`; only `Enabled: yes` is exposed. As of the advisory's 2026-10-29 update, upgrade to the released hotfix for the branch: **12.2.4-h1**, **12.1.4-h13 / 12.1.7-h11 / 12.1.10-h3**, or **11.2.4-h23 / 11.2.7-h23 / 11.2.10-h17 / 11.2.13-h4 / 11.2.16-h1**. Until it is installed, disable Brotli inspection (`set system setting brotli-encoding disable`) and verify `Enabled: no`; this changes inspection behavior, so test policy impact. The same advisory lists **Prisma Cloud Application Security Transporter Client before 0.2.9** as affected; upgrade it to **0.2.9 or later**. The firewall hotfix does not update that client. Palo Alto is not aware of malicious exploitation. See the [PAN-OS applicability and rollout detail](details/brotli.md#pan-os).
+**PAN-OS is conditionally affected:** Palo Alto Networks rates this **Critical (CVSS 4.0 9.2)** but says exposure requires **both** TLS/SSL decryption and Brotli inspection on the dataplane; the management interface and PAN-OS 11.1/10.2 are not affected. On 11.2.4+, check `show system setting brotli`; only `Enabled: yes` is exposed. As of the advisory's 2026-10-29 update, upgrade to the released hotfix for the branch: **12.2.4-h1**, **12.1.4-h13 / 12.1.7-h11 / 12.1.10-h3**, or **11.2.4-h23 / 11.2.7-h23 / 11.2.10-h17 / 11.2.13-h4 / 11.2.16-h1**. **11.2.10-h16 fixes only PHP; it does not fix Brotli.** Until the Brotli hotfix is installed, disable Brotli inspection (`set system setting brotli-encoding disable`) and verify `Enabled: no`; this changes inspection behavior, so test policy impact. The same advisory lists **Prisma Cloud Application Security Transporter Client before 0.2.9** as affected; upgrade it to **0.2.9 or later**. The firewall hotfix does not update that client. On 2026-10-31 Palo Alto added Prisma Cloud and Strata Cloud Manager to the SaaS list it is remediating itself; that list needs no customer action. Palo Alto is not aware of malicious exploitation. See the [PAN-OS applicability and rollout detail](details/brotli.md#pan-os).
 
 **Envoy 1.36 and Istio 1.29 are unsupported branches**; a fix for this CVE does not restore general security support. Prefer a supported branch. See the [cross-stack guidance](https://patchtheplanet.org/brotli) for embedded clients and temporary decoding controls.
 
@@ -3067,6 +3070,25 @@ PyPI, GHCR and Docker Hub have different removal windows, and **cached artifacts
 **Remediation:** Isolate affected environments and preserve evidence, then rebuild from verified clean artifacts and revoke reachable secrets at their issuers from a clean system. **Do not start with ordinary Python or `pip` in the suspected environment:** startup hooks can rerun malware. **1.106.2** was identified as a clean rollback target, **not a malware cleanup patch**; recovery must also cover detached loaders, poisoned caches, host/shared-mount access and already issued sessions.
 
 Sources: [canonical attack-chain postmortem](https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain), [vendor incident response](https://docs.litellm.ai/blog/security-incident-oct-21-2026), [researcher evidence and vendor follow-up](https://github.com/BerriAI/litellm/issues/47826), [Microsoft detections and hunting queries](https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/).
+
+## LiteLLM Enterprise proxy: unauthenticated file read leaks the master key
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/litellm-enterprise-file-read.md):** [Detection](details/litellm-enterprise-file-read.md#detection) · [Remediation](details/litellm-enterprise-file-read.md#remediation) · [Verification](details/litellm-enterprise-file-read.md#verification) · [Timeline](details/litellm-enterprise-file-read.md#timeline)
+
+**CVEs:** None assigned. GitHub advisory [GHSA-w4c7-34wj-hqm8](https://github.com/BerriAI/litellm/security/advisories/GHSA-w4c7-34wj-hqm8) says "No known CVE."
+
+**LiteLLM (vendor) rates this CVSS 3.1 10.0 Critical.** An unauthenticated request to any LLM route on a proxy that has an Enterprise license loaded can make the proxy read a local file and POST it to an attacker-chosen URL. Reading `/proc/self/environ` exposes `LITELLM_MASTER_KEY` and provider keys. The vendor says some configurations then allow Python execution as root. Open-source deployments without a license are not affected. This is not the 1.107.0 malicious-release incident.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. The advisory does not report observed exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public advisory | 2026-10-27; time/TZ unknown | GHSA-w4c7-34wj-hqm8. Fixed in 1.103.10, 1.104.8, 1.105.6 and 1.106.5. |
+| **Last updated** | **2026-10-31 04:15 EDT (UTC−04:00)** | Added from the vendor advisory. |
+
+**Patch:** If the proxy runs with an Enterprise license, upgrade to **1.106.5**, or the fixed release on the branch you run (**1.105.6, 1.104.8 or 1.103.10**). Those builds are also later than the malicious 1.107.0 release; they do not clean a host that already ran 1.107.0. Until the upgrade, reject request bodies that contain `standard_callback_dynamic_params`, `gcs_path_service_account`, `callbacks`, `success_callback` or `failure_callback`, and allow the proxy's outbound traffic only to known provider endpoints. Rotate `LITELLM_MASTER_KEY` and provider keys if the proxy was reachable before the fix.
+
+Sources: [GHSA-w4c7-34wj-hqm8](https://github.com/BerriAI/litellm/security/advisories/GHSA-w4c7-34wj-hqm8).
 
 <a name="railway"></a>
 

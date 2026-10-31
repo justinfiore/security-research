@@ -1,12 +1,12 @@
 # WordPress: unauthenticated code execution during a core upgrade
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-10-31 (America/New_York)
 
 [Main WordPress summary](../black-october-2026.md#wordpress-unauthenticated-code-execution-during-a-core-upgrade) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**No CVE is assigned.** Wordfence rates the unauthenticated upgrade-window flaw **CVSS 3.1 8.1 High** (`AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`). WordPress describes it as a weakness in the upgrade process that can lead to remote code execution, without its own score. Patchstack scored the same race `AC:H` and says it would not call the race practical. WordPress 7.1.4 also fixes other issues, most of which need a Contributor account or higher; those are not this flaw.
+**[CVE-2026-119977](https://www.cve.org/CVERecord?id=CVE-2026-119977) — Wordfence (CNA) CVSS 3.1 8.1 High** (`AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`). WordPress's own advisory, [GHSA-4w3m-c66w-69mg](https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-4w3m-c66w-69mg), still says **Low** and **No known CVE**. That advisory has not been updated since 2026-10-29; Wordfence published the CVE record on 2026-10-31. Patchstack scored the same race `AC:H` and says it would not call the race practical. WordPress 7.1.4 also fixes other issues, most of which need a Contributor account or higher; those are not this flaw.
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Wordfence reports exploit attempts against the predictable staging path, not confirmed compromise. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). Wordfence reports exploit attempts against the predictable staging path, not confirmed compromise. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -25,6 +25,7 @@
 | WordPress 7.1.4 and backports | 2026-10-28; time/TZ unknown | Security release. Backports through the 4.7 branch. [Release][release] [HelpHub][helphub] |
 | Wordfence firewall rule | 2026-10-28 20:30 UTC | Premium, Care and Response customers. Free users receive it 2026-11-27. [Wordfence][wf] |
 | Exploitation attempts | From about nine minutes after the firewall rule, through the first 21 hours | Wordfence recorded more than 18,500 requests for staged `setup-config.php` paths. This is probing, not confirmed compromise. [Wordfence][wf] |
+| CVE record published | 2026-10-31 05:33:07 UTC | Wordfence CNA published [CVE-2026-119977][cve]. WordPress's advisory still says no CVE is known. |
 
 ## Detection
 
@@ -54,10 +55,14 @@ If logs show a request to a PHP file under `wp-content/upgrade` during an upgrad
 - [WordPress 7.1.4 documentation][helphub] — the race, the count of issues per branch, and that 4.6 and earlier are unsupported.
 - [Wordfence, 2026-10-29][wf] — CVSS 3.1 8.1, affected and patched versions, how the staging path works, and the probe counts.
 - [Patchstack][patchstack] — unauthenticated race, web-reachable `wp-content/upgrade`, and the same-day backports.
-- [CISA KEV JSON feed][kev] — KEV lists only CVEs; this issue has none.
+- [CVE-2026-119977][cve] — Wordfence CNA record, published 2026-10-31, CVSS 3.1 8.1 High.
+- [WordPress GHSA-4w3m-c66w-69mg][ghsa] — project advisory still marked Low, with "No known CVE", as of this review.
+- [CISA KEV JSON feed][kev] — not listed (catalog 2026.10.30).
 
 [release]: https://wordpress.org/news/2026/10/wordpress-7-1-4/
 [helphub]: https://wordpress.org/documentation/wordpress-version/version-7-1-4/
 [wf]: https://www.wordfence.com/blog/2026/10/wordpress-7-1-4-security-release-rce/
 [patchstack]: https://patchstack.com/articles/wordpress-7-1-4-security-release
+[cve]: https://www.cve.org/CVERecord?id=CVE-2026-119977
+[ghsa]: https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-4w3m-c66w-69mg
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

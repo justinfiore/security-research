@@ -4,6 +4,13 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-31 04:15 EDT (UTC−04:00) — LiteLLM Enterprise file read; WordPress CVE; Debian TCP kernels
+
+- **LiteLLM Enterprise:** Upgrade a proxy that loads an Enterprise license to [1.106.5, or 1.105.6 / 1.104.8 / 1.103.10](black-october/details/litellm-enterprise-file-read.md#remediation). LiteLLM rates an unauthenticated file read 10.0 Critical: one request can send `/proc/self/environ`, including the master key, to an attacker URL. Open-source installs without a license are not affected. This is not the 1.107.0 malware release. No CVE is assigned.
+- **WordPress:** The upgrade-window flaw is now [CVE-2026-119977](black-october/details/wordpress-upgrade-window.md#timeline). Wordfence rates it 8.1 High; WordPress's own advisory still says Low and "No known CVE." The fix is unchanged: 7.1.4 or the fixed release for your branch. Confirm the update finished. Wordfence's counts are probes, not confirmed compromises, and the CVE is not in KEV.
+- **Linux kernel (CVE-2026-98432):** Debian already shipped fixed kernels. Install [trixie `linux` 6.12.113-1 or bookworm `linux` 6.1.190-1](black-october/details/linux-tcp-options.md#remediation) and reboot. Ubuntu and Red Hat still have no kernel fix; Red Hat's nftables filter is not a substitute.
+- **PAN-OS / Brotli:** Do not stop at [11.2.10-h16](black-october/details/brotli.md#pan-os). That build fixes only PHP. Brotli needs 11.2.10-h17 or the other branch hotfix. Prisma Cloud and Strata Cloud Manager are on the SaaS list Palo Alto is fixing itself.
+
 ## 2026-10-31 01:15 EDT (UTC−04:00) — Ubuntu Brotli packages
 
 - **Brotli on Ubuntu:** Install [USN-8956-1](black-october/details/brotli.md#remediation) and restart every process that loaded `libbrotli`. 26.10 gets `libbrotli1` 1.2.0-4ubuntu0.1, 26.04 gets 1.2.0-3ubuntu0.1, 24.04 gets 1.1.0-2ubuntu0.1, and 22.04 gets 1.0.9-2ubuntu0.1. Those version numbers are backports, not upstream 1.2.1. Ubuntu Pro covers 20.04, 18.04 and 16.04. The Arrow source fix is merged, but no fixed Arrow release exists yet.
