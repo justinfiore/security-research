@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-01 00:04 EDT (UTC−04:00) — Apache MINA 3.0; Apache Thrift; Northflank RabbitMQ
+
+- **Apache MINA:** If a Java service still runs the inactive 3.0 line (`mina-core` 3.0.0-M1 or 3.0.0-M2) and decodes untrusted frames with `JavaNativeMessageDecoder`, [move it to 2.2.10](black-october/details/apache-mina.md#remediation). Apache rates [CVE-2026-118636](https://www.cve.org/CVERecord?id=CVE-2026-118636) 9.8 Critical: the decoder calls `ObjectInputStream.readObject()` with no class filter, so a gadget chain can run code in that process. Apache will not patch 3.0. The 2.x jars are outside the affected range. It is not in KEV.
+- **Apache Thrift:** Upgrade Java services to [`libthrift` 0.24.0 or later](black-october/details/apache-thrift.md#remediation) (0.25.0 is the current stable release). Apache rates [CVE-2026-120135](https://www.cve.org/CVERecord?id=CVE-2026-120135) 8.2 High: before 0.24.0, `TProtocolUtil.skip()` does not limit recursion depth, and a nested message can exhaust the process. The advisory does not claim code execution and does not name other language libraries. It is not in KEV.
+- **Northflank:** Secret rotation is now available for [RabbitMQ](black-october/details/northflank.md#remediation) as well as Postgres, MongoDB, MySQL, Redis and Minio. Use it, and still revoke each credential at its issuer. The incident is still Identified. Northflank has not said the attacker is gone, so a replacement stored now may need another rotation later. There is no CVE.
+
 ## 2026-10-31 20:11 EDT (UTC−04:00) — Amazon Linux TCP kernels; Northflank addon rotation
 
 - **Linux kernel (CVE-2026-98432):** Amazon Linux now has kernels that name this flaw. Install the package for the booted kernel and reboot: Amazon Linux 2 core [`kernel-4.14.355-287.758.amzn2`](black-october/details/linux-tcp-options.md#remediation), Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own advisories. AWS says self-managed EC2 and Lightsail instances are yours to update, and that Lambda is not exposed. Amazon scores the flaw 8.1; kernel.org and Red Hat's public page still say 9.8. Ubuntu and Red Hat still have no kernel fix. It is not in KEV.

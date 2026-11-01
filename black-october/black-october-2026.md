@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of October 31, 2026**
+**As of November 1, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Apache MINA: unsafe Java deserialization in the 3.0 codec](#apache-mina-unsafe-java-deserialization-in-the-30-codec)
+- [Apache Thrift: unbounded recursion in the Java skip path](#apache-thrift-unbounded-recursion-in-the-java-skip-path)
 - [Cursor: malicious Claude Code extension installed an SSH backdoor](#cursor-malicious-claude-code-extension-installed-an-ssh-backdoor)
 - [Opengear console servers: unauthenticated web buffer overflow](#opengear-console-servers-unauthenticated-web-buffer-overflow)
 - [LXD: client certificate chain authenticates as another trusted client](#lxd-client-certificate-chain-authenticates-as-another-trusted-client)
@@ -120,6 +122,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** If a Java service still runs [Apache MINA 3.0](#apache-mina-unsafe-java-deserialization-in-the-30-codec) (`mina-core` 3.0.0-M1 or 3.0.0-M2) and decodes frames from an untrusted peer with `JavaNativeMessageDecoder`, move it to MINA 2.2.10. Apache rates [CVE-2026-118636](https://www.cve.org/CVERecord?id=CVE-2026-118636) 9.8 Critical and will not fix the inactive 3.0 line. The 2.x jars are outside the affected range.
+- **New this update:** Upgrade Java services that speak [Apache Thrift](#apache-thrift-unbounded-recursion-in-the-java-skip-path) to `libthrift` 0.24.0 or later (0.25.0 is current). Apache rates [CVE-2026-120135](https://www.cve.org/CVERecord?id=CVE-2026-120135) 8.2 High: `TProtocolUtil.skip()` does not limit recursion depth before 0.24.0, so a nested message can exhaust the process. Other language libraries are not named.
 - **New this update:** Upgrade [Opengear IM7200, CM7100, and ACM7000](#opengear-console-servers-unauthenticated-web-buffer-overflow) console servers to firmware 5.5.3. Opengear says an unauthenticated attacker who can reach the web management interface can run code (CNA score 8.4 High). The CNA text describes a crash of `index.cgi`. Other Opengear series in the notice are not affected. Until 5.5.3 is running, keep that interface off the internet.
 - **New this update:** Refresh [LXD](#lxd-client-certificate-chain-authenticates-as-another-trusted-client) to 6.10.1, 5.21.9, 5.0.11, or 4.0.15, and MicroCloud to 3.4.1 or 2.1.5. Canonical rates a mutual-TLS bypass 10.0 Critical: anyone who can reach the HTTPS API and who has another client's public certificate can authenticate as that client. Ubuntu's priority for the same CVE is Medium.
 - **New this update:** Upgrade [Delinea Secret Server](#delinea-secret-server-second-factor-login-bypass-and-unsigned-admin-token) to 12.3.1 or later. Delinea rates two flaws 8.7 High: completing only the second factor can skip the password, and an unsigned token can be answered with cloudadmin permissions. Delinea's public advisories page does not list these CVEs yet. Do not stop at 12.2.7; that build is still affected.
@@ -171,6 +175,52 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Apache MINA: unsafe Java deserialization in the 3.0 codec
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-mina.md):** [Detection](details/apache-mina.md#detection) · [Remediation](details/apache-mina.md#remediation) · [Verification](details/apache-mina.md#verification) · [Timeline](details/apache-mina.md#timeline)
+
+**CVEs:** [CVE-2026-118636](https://www.cve.org/CVERecord?id=CVE-2026-118636)
+
+**Apache (CNA) rates the flaw CVSS 3.1 9.8 Critical. The advisory text says critical.** NVD's status is "Received" and it has not scored the CVE itself. `JavaNativeMessageDecoder` in the MINA 3.0 codec calls `ObjectInputStream.readObject()` on frame bytes with no class filter. An application that puts that decoder in front of an untrusted peer is open to gadget-chain remote code execution. Apache marks the issue unsupported when assigned: the 3.0.0 branch is inactive, and no fixed 3.0 release is planned.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01). The advisory does not mention exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private report | Unknown | Credited to Nguyen Cuong. CVE reserved 2026-10-28 17:16 UTC. |
+| Public announcement | 2026-10-31 08:01:38 +0000 | [oss-security](https://www.openwall.com/lists/oss-security/2026/10/31/3). Affected: 3.0.0 through 3.0.0-M2. |
+| CVE record published | 2026-10-31 20:17:11 UTC | Apache CNA. NVD status "Received". |
+| **Last updated** | **2026-11-01 00:04 EDT (UTC−04:00)** | Added from the Apache announcement and CNA record. |
+
+**Am I impacted?** You are if a deployed artifact resolves `org.apache.mina:mina-core` **3.0.0-M1 or 3.0.0-M2** and the application uses `JavaNativeMessageDecoder` on input from an untrusted peer. Maven Central has no `3.0.0` jar. The CNA's default status is unaffected, so 2.2.x, 2.1.x and 2.0.x are not this flaw. Check with `mvn dependency:tree -Dincludes=org.apache.mina:mina-core` or the jar inside the deployed image.
+
+**Patch:** Move to the latest **2.2.x** line. The project site lists **2.2.10** as stable (Java 8+). That move is an application change, not a drop-in jar swap: do not leave the 3.0 jar on the classpath. Rebuild, redeploy and restart. Until then, do not expose a listener that uses this decoder. Apache documents no configuration workaround.
+
+Sources: [oss-security announcement](https://www.openwall.com/lists/oss-security/2026/10/31/3), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-118636), [MINA 2.2 downloads](https://mina.apache.org/downloads-mina_2_2.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+## Apache Thrift: unbounded recursion in the Java skip path
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-thrift.md):** [Detection](details/apache-thrift.md#detection) · [Remediation](details/apache-thrift.md#remediation) · [Verification](details/apache-thrift.md#verification) · [Timeline](details/apache-thrift.md#timeline)
+
+**CVEs:** [CVE-2026-120135](https://www.cve.org/CVERecord?id=CVE-2026-120135)
+
+**Apache (CNA) rates the flaw CVSS 4.0 8.2 High (attack requirements present; availability High; confidentiality and integrity None). The advisory text says important.** NVD's status is "Received" and it has not scored the CVE itself. In `org.apache.thrift:libthrift` before 0.24.0, `TProtocolUtil.skip()` does not limit recursion depth by default. A peer that can send a structure the Java receiver skips can exhaust the process. The advisory does not claim code execution. It names the Java artifact only.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01). The advisory does not mention exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fixed artifact on Maven Central | 0.24.0: 2026-07-11 20:59 GMT; 0.25.0: 2026-10-01 00:09 GMT (file timestamps) | Download page: 0.25.0 released 2026-SEP-30. Not the disclosure date. |
+| Public announcement | 2026-10-30 23:13:23 +0000 | [oss-security](https://www.openwall.com/lists/oss-security/2026/10/31/2). Affected: before 0.24.0. |
+| CVE record published | 2026-10-31 20:33:00 UTC | Apache CNA. NVD status "Received". |
+| **Last updated** | **2026-11-01 00:04 EDT (UTC−04:00)** | Added from the Apache announcement and CNA record. |
+
+**Am I impacted?** You are if a deployed artifact resolves `org.apache.thrift:libthrift` **older than 0.24.0** and a Java server or client decodes Thrift from an untrusted peer. Check with `mvn dependency:tree -Dincludes=org.apache.thrift:libthrift` or the jar inside the deployed image. Python, Go, C++ and other Thrift libraries are not this CVE.
+
+**Patch:** Upgrade to **0.24.0 or later**. **0.25.0** is the current stable release. Rebuild, redeploy and restart, including shaded copies. The advisory gives no configuration workaround.
+
+Sources: [oss-security announcement](https://www.openwall.com/lists/oss-security/2026/10/31/2), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-120135), [Thrift download page](https://thrift.apache.org/download), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Cursor: malicious Claude Code extension installed an SSH backdoor
 
@@ -3246,7 +3296,7 @@ Sources: [GHSA-w4c7-34wj-hqm8](https://github.com/BerriAI/litellm/security/advis
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. This is a platform-side incident; the vendor told every customer to rotate.
 
-**Affected technology:** environment variables stored on Northflank (workload secrets, secret groups and global secrets), plus the services those secrets authorize. Postgres, MongoDB, MySQL, Redis and Minio addon credentials are included. **Worst case:** use of stolen credentials, including AI API keys customers report were already used. Northflank has not said whether every customer was affected.
+**Affected technology:** environment variables stored on Northflank (workload secrets, secret groups and global secrets), plus the services those secrets authorize. Postgres, MongoDB, MySQL, Redis, Minio and RabbitMQ addon credentials are included. **Worst case:** use of stolen credentials, including AI API keys customers report were already used. Northflank has not said whether every customer was affected.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -3258,14 +3308,15 @@ Sources: [GHSA-w4c7-34wj-hqm8](https://github.com/BerriAI/litellm/security/advis
 | Audit logs for all customers | 2026-10-31 01:04 UTC | Includes free users. The incident was still Identified. |
 | MySQL and Redis rotation | 2026-10-31 13:34 UTC | Available to all customers. Rotate secrets not yet rotated. |
 | Minio addon rotation | 2026-10-31 22:32 UTC | Available to all customers. The incident was still Identified. |
+| RabbitMQ addon rotation | 2026-10-31 23:31 UTC | Available to all customers. The incident was still Identified. |
 | Local software patch | Not applicable | Revoke and replace credentials at each issuer. |
-| **Last updated** | **2026-10-31 20:11 EDT (UTC−04:00)** | Addon rotation now covers MySQL, Redis and Minio. Incident still open. |
+| **Last updated** | **2026-11-01 00:04 EDT (UTC−04:00)** | Addon rotation now includes RabbitMQ. Incident still open. |
 
 From a clean browser session, list projects, services, addons, secret groups and global secrets. Do not export secret values. Treat any still-valid secret stored on Northflank at or before 13:40 UTC on October 30 as in scope. Review AI-provider usage from 11:43 UTC that day until revocation. Audit logs turned on at 01:04 UTC on October 31 do not cover earlier activity.
 
 Wiz lists Northflank as one of nine AI developer platforms that disclosed an incident in October, in a pattern of hunting stored environment variables for AI access. Wiz says no single vulnerability links those incidents. Its published addresses (`23.106.46.239`, `38.246.114.118`, `104.243.32.50`, `31.57.201.201`) were used to test stolen keys; Wiz does not tie them to the platform intrusions themselves.
 
-**Remediation:** Revoke each in-scope credential at its issuer, put the replacement in the Northflank workload or secret group, and redeploy. Use the addon rotation Northflank has now enabled for Postgres, MongoDB, MySQL, Redis and Minio, and disable public expose on addons. Do not treat a replacement stored while the incident is still Identified as final: Northflank has not said the attacker is gone. Changing a variable in the dashboard does not change the password at the issuer.
+**Remediation:** Revoke each in-scope credential at its issuer, put the replacement in the Northflank workload or secret group, and redeploy. Use the addon rotation Northflank has now enabled for Postgres, MongoDB, MySQL, Redis, Minio and RabbitMQ, and disable public expose on addons. Do not treat a replacement stored while the incident is still Identified as final: Northflank has not said the attacker is gone. Changing a variable in the dashboard does not change the password at the issuer.
 
 Sources: [Northflank status incident](https://status.northflank.com/cmvv0rn5a092f14rutwccodpp), [Wiz, "Black October" for AI Developer Platforms](https://www.wiz.io/blog/black-october-for-ai-developer-platforms).
 
@@ -3351,6 +3402,8 @@ flowchart TD
 | **WolfVision Cynap collaboration devices** | Update to v2.00c/v2.00d (Pure Next Gen, Bridge), v1.78a (Pro, Core Pro, Receiver, Pure, Pure Mini, Pure Pro) or v1.72e (Videobar), updating all Matrix stations together; restrict TCP 50915/50917/80/443 and 50930 to trusted hosts; decommission or isolate the unfixed Cynap, Cynap Core and Cynap Pure SDM. [Guide](details/wolfvision-cynap.md#remediation). |
 | **Supermicro servers, blades, switches and CMMs (BMC firmware X11–X14, H11–H14 and others)** | Update BMC firmware to the version in Supermicro's per-board table (System Lockdown off for the update); X12DGU and X13SEW-TF-OS1 are TBD and X9/X10 have no listed fix. Keep BMCs on an isolated management network, block UDP 623 elsewhere (IPv4 and IPv6), disable the IPMI LAN port where unused, disable SMCRAKP and remove unneeded IPMI accounts. [Guide](details/supermicro-bmc.md#remediation). |
 | **GitHub organizations and repositories (Actions secrets, OIDC cloud roles, self-hosted runners)** | Look for `ci-sync-` branches adding `sync-check.yml`, runs deleted right after completing and the `gheist` user agent (read-only [branch check script](gheist-branch-check.sh)). If found, rotate every secret the repository could read, revoke the pushing tokens and rebuild self-hosted runners that ran it; never approve held `sync-check` runs. Scope OIDC trust to protected branches. [Guide](details/github-gheist.md#remediation). |
+| **Apache MINA 3.0 (`mina-core` 3.0.0-M1 / 3.0.0-M2) using `JavaNativeMessageDecoder`** | Move to MINA **2.2.10** (or a later 2.2.x). Apache will not fix the inactive 3.0 line. The 2.x API is not a drop-in replacement; remove the 3.0 jar, rebuild and restart. Until then, do not expose that decoder to an untrusted peer. 2.2.x is outside this CVE. [Guide](details/apache-mina.md#remediation). |
+| **Java services using Apache Thrift (`libthrift` before 0.24.0)** | Upgrade `org.apache.thrift:libthrift` to **0.24.0+** (current stable **0.25.0**), rebuild and restart, including shaded jars. A nested structure can exhaust the process; the advisory does not claim code execution and does not name other languages. [Guide](details/apache-thrift.md#remediation). |
 | **Apache Camel with `camel-saxon` (XQuery), including Spring Boot and Quarkus apps** | Upgrade `camel-saxon` to 4.23.0, 4.22.2 or 4.18.5 (4.22.1 is still affected; 4.19–4.21 and 4.17 and older get no fix), rebuild and redeploy; until then avoid XQuery over untrusted bodies that are already a `Source`, or supply a Saxon `Configuration` that refuses DOCTYPE and external entities. [Guide](details/apache-camel-saxon.md#remediation). |
 | **Oracle WebLogic, SOA Suite, Access Manager, E-Business Suite 12.2, JD Edwards, Database 19c/23ai, MySQL 8.4/9.7/26.7 and PeopleTools 8.61–8.63** | Apply the October 2026 CPU patches from Oracle's patch availability documents (CPU360, KA923, CPU417, CPU359, CPU378, CPU418), internet-facing middleware and EBS first; until then deny T3/IIOP from untrusted networks with WebLogic connection filters and remove `/OA_HTML/AppsTCFServer` from the EBS URL firewall allowlist. On PeopleSoft, also confirm that the June CVE-2026-35273 patch is installed, not just a WAF rule. [Guide](details/oracle-cpu-october.md#remediation). |
 | **ImageMagick (CLI, PHP Imagick, Python Wand, Ruby RMagick/MiniMagick, bundled copies such as Magick.NET)** | Upgrade to 7.1.2-33+ or 6.9.13-58+ or a fixed distro package (Debian stable and RHEL 6/7 were unfixed when checked), rebuild bundling images and restart workers; until then reject untrusted files starting with `BZh` and sandbox image processing. [Guide](details/imagemagick.md#remediation). |
@@ -3414,7 +3467,7 @@ flowchart TD
 | **All stacks making TLS connections** | [Refresh each effective trust store](details/emudhra.md#runtime-and-application-trust-store-inventory), including embedded copies and alternate chains; rebuild Go with **1.27.3 / 1.26.10+**. Java needs the **CVE-2026-114820** follow-up; CPython `ssl` fixes are **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**; Bun **1.4.4** (rebuild compiled executables). |
 | **LiteLLM malicious artifacts** | [Isolate, rebuild and revoke reachable credentials](details/litellm.md#remediation); do not run ordinary Python startup hooks on suspected hosts. A downgrade alone is not recovery. |
 | **Cursor on macOS or Windows that may have updated Claude Code on 2026-10-29** | Search `authorized_keys` for `svc-telemetry`. If found, isolate the host and run [Cursor's cleanup script](details/cursor-claude-code.md#remediation); uninstalling 2.1.312/2.1.313 leaves the SSH key and startup scripts. Then install 2.1.314 or later and rotate credentials that host could use. |
-| **Northflank secrets stored on or before 2026-10-30 13:40 UTC** | [Revoke at each issuer, update the workload or secret group, and redeploy](details/northflank.md#remediation). Rotate Postgres, MongoDB, MySQL, Redis and Minio addons with the controls Northflank has enabled. The incident is still open, so a replacement stored before Northflank confirms containment may itself need rotation. |
+| **Northflank secrets stored on or before 2026-10-30 13:40 UTC** | [Revoke at each issuer, update the workload or secret group, and redeploy](details/northflank.md#remediation). Rotate Postgres, MongoDB, MySQL, Redis, Minio and RabbitMQ addons with the controls Northflank has enabled. The incident is still open, so a replacement stored before Northflank confirms containment may itself need rotation. |
 | **Railway secrets stored before October 21** | [Rotate at each issuer, update consumers and verify revocation](details/railway.md#remediation); include registry credentials and existing sessions. |
 
 **Before calling remediation finished:**
