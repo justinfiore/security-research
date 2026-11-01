@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [DebugBear: RUM script removed after a registrar DNS compromise](#debugbear-rum-script-removed-after-a-registrar-dns-compromise)
+- [AO3: possible exposure of hashed passwords](#ao3-possible-exposure-of-hashed-passwords)
 - [Apache MINA: unsafe Java deserialization in the 3.0 codec](#apache-mina-unsafe-java-deserialization-in-the-30-codec)
 - [Apache Thrift: unbounded recursion in the Java skip path](#apache-thrift-unbounded-recursion-in-the-java-skip-path)
 - [Cursor: malicious Claude Code extension installed an SSH backdoor](#cursor-malicious-claude-code-extension-installed-an-ssh-backdoor)
@@ -122,6 +124,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** If a site still embeds [DebugBear](#debugbear-rum-script-removed-after-a-registrar-dns-compromise) Real User Monitoring, remove that script. DebugBear says its DNS records were changed through its domain registrar and told every RUM customer to take the embed out. It has not withdrawn that instruction. Polymarket says a third-party script on its international site drained logged-in sessions on October 29; researchers tie that script to DebugBear's host.
+- **New this update:** If you reused an [AO3](#ao3-possible-exposure-of-hashed-passwords) password anywhere else, change it there now. The Organization for Transformative Works took the archive offline on October 29 and says it cannot rule out theft of the user database, which holds usernames, emails, IP addresses, and hashed passwords. There is no CVE and no software update. Works were not deleted.
 - **New this update:** If a Java service still runs [Apache MINA 3.0](#apache-mina-unsafe-java-deserialization-in-the-30-codec) (`mina-core` 3.0.0-M1 or 3.0.0-M2) and decodes frames from an untrusted peer with `JavaNativeMessageDecoder`, move it to MINA 2.2.10. Apache rates [CVE-2026-118636](https://www.cve.org/CVERecord?id=CVE-2026-118636) 9.8 Critical and will not fix the inactive 3.0 line. The 2.x jars are outside the affected range.
 - **New this update:** Upgrade Java services that speak [Apache Thrift](#apache-thrift-unbounded-recursion-in-the-java-skip-path) to `libthrift` 0.24.0 or later (0.25.0 is current). Apache rates [CVE-2026-120135](https://www.cve.org/CVERecord?id=CVE-2026-120135) 8.2 High: `TProtocolUtil.skip()` does not limit recursion depth before 0.24.0, so a nested message can exhaust the process. Other language libraries are not named.
 - **New this update:** Upgrade [Opengear IM7200, CM7100, and ACM7000](#opengear-console-servers-unauthenticated-web-buffer-overflow) console servers to firmware 5.5.3. Opengear says an unauthenticated attacker who can reach the web management interface can run code (CNA score 8.4 High). The CNA text describes a crash of `index.cgi`. Other Opengear series in the notice are not affected. Until 5.5.3 is running, keep that interface off the internet.
@@ -145,7 +149,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **Update Pillow wherever you process untrusted images**, including thumbnail workers and document pipelines.
 - **Check Ruby separately from GitLab.** The underlying regex bugs affect other applications compiling attacker-controlled patterns.
 - **Update certificate trust data and rebuild Go applications.** The eMudhra incident affects clients even if your own website uses another certificate authority.
-- **If you ran the compromised LiteLLM release or stored secrets in Railway or Northflank, patching alone is insufficient.** Rotate Northflank secrets at each issuer; the incident is still open.
+- **If you ran the compromised LiteLLM release, stored secrets in Railway or Northflank, reused an AO3 password, or still embed DebugBear RUM, patching alone is insufficient.** Rotate Northflank secrets at each issuer; the incident is still open. Change reused AO3 passwords on the other sites, and remove the DebugBear embed until DebugBear says it is safe.
 
 Severity scores below are attributed where ratings differ. CVSS measures technical severity, not whether exploitation has been observed or whether your particular deployment is reachable.
 
@@ -175,6 +179,66 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## DebugBear: RUM script removed after a registrar DNS compromise
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/debugbear.md):** [Detection](details/debugbear.md#detection) · [Remediation](details/debugbear.md#remediation) · [Verification](details/debugbear.md#verification) · [Timeline](details/debugbear.md#timeline)
+
+**CVEs:** No incident-specific identifiers established in the reviewed sources.
+
+**Third-party script compromise — session abuse on sites that embedded it.** No CVSS score and no local package patch. DebugBear has not published a full root cause.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. DebugBear told every RUM customer to remove the embed.
+
+**Affected technology:** websites that load DebugBear Real User Monitoring, including tag-manager copies. **Worst case:** script running as the page, which on a logged-in origin can do what that session can do. DebugBear says the attack targeted one customer's website and that it has not seen a compromise of its internal systems. Polymarket, which removed the script on October 29, says a third-party provider was compromised and logged-in sessions were drained; researchers attribute the script to DebugBear's CDN. DebugBear has not named that customer.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Polymarket build removes the script | 2026-10-29 17:59 UTC | Production build note. Researchers, not Polymarket's status text, name DebugBear. |
+| DebugBear tells customers to remove the embed | 2026-10-29 18:00 UTC | "If you use our RUM product, please remove the embed code from your website." |
+| Polymarket cancel-only | 2026-10-29 18:05 UTC | International platform. Relayer actions paused. |
+| Polymarket confirms a third-party compromise | 2026-10-29 18:37 UTC | Provider not named. Affected users to be made whole. Referred to law enforcement. |
+| Polymarket marks the incident resolved | 2026-10-29 19:05 UTC | Trading restored. Not a DebugBear all-clear. |
+| Registrar DNS compromise | 2026-10-30 23:11 UTC | DebugBear cannot receive email at its domain. Initial finding: one customer's website; internal systems not indicated compromised. Investigation continues. |
+| Embed instruction withdrawn | No | The October 30 post does not cancel the October 29 removal instruction. |
+| **Last updated** | **2026-11-01 04:01 EDT (UTC−04:00)** | New item. Remove the embed; do not put it back until DebugBear says to. |
+
+Search pages, tag managers, and cached HTML for `debugbear.com` script hosts. A tag that is gone now does not answer whether it was present on October 29. Hudson Rock's reviewed file was `cdn.debugbear.com/C7xcKKrjUnXK.js` (SHA-256 `0755e767504d8103f6c27b9e765a1026507a17c04513242adb503df7777879e5`); a match in a saved copy is an indicator, and a different response is not automatically benign.
+
+**Remediation:** Remove the embed everywhere, purge caches that still contain it, and review session actions on logged-in origins that loaded it. Do not treat Polymarket's removal as covering any other site. DebugBear said it cannot receive email at its domain while this continues.
+
+Sources: [DebugBear, October 29](https://x.com/DebugBear/status/2115866496643535293), [DebugBear, October 30](https://x.com/DebugBear/status/2116306975403250070), [SecurityWeek on the Polymarket timeline](https://www.securityweek.com/2-million-drained-from-polymarket-traders-in-new-supply-chain-attack/).
+
+---
+
+## AO3: possible exposure of hashed passwords
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ao3.md):** [Detection](details/ao3.md#detection) · [Remediation](details/ao3.md#remediation) · [Verification](details/ao3.md#verification) · [Timeline](details/ao3.md#timeline)
+
+**CVEs:** No incident-specific identifiers established in the reviewed sources.
+
+**Site-side incident — hashed passwords may have been copied.** No CVSS score and no local package patch. OTW has not said the database was stolen; it says it cannot rule that out.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. OTW told users to change passwords reused from AO3.
+
+**Affected technology:** Archive of Our Own accounts. **Worst case:** a cracked reused password works on another site. OTW says the database may include username, email address, IP address, and a hashed password. It says works, bookmarks, and kudos were not deleted, real names are not collected, and donor records are a separate system.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Archive taken down | 2026-10-29 07:13 UTC | First status text said maintenance, not a security incident. |
+| Restoration estimate | 2026-10-29 17:41 UTC | About two weeks, possibly four, with a possible degraded return. |
+| Security incident disclosed | 2026-10-30 01:27 UTC | Database theft not believed and not ruled out. Change reused passwords on other sites. |
+| Expected downtime | 2026-10-30 01:27 UTC | Minimum two weeks, possibly four. A degraded return may be taken down again. |
+| Local software patch | Not applicable | Change reused passwords. AO3 is offline, so the AO3 password itself cannot be changed until it returns. |
+| **Last updated** | **2026-11-01 04:01 EDT (UTC−04:00)** | New item. OTW has not posted a later root cause. |
+
+List every other account that used the AO3 password. There is no file on a reader's computer that shows whether the hash was copied.
+
+**Remediation:** Change those reused passwords now, and do not reuse the new ones. When AO3 returns, set a new unique password there too. OTW has not said it will force a reset. Fanlore and the OTW website are not this incident.
+
+Sources: [OTW status incident](https://www.otwstatus.org/incidents/g12jnxck9g6h), [OTW news, October 30, 2026](https://www.transformativeworks.org/update-on-ao3-downtime-october-30-2026/).
+
+---
 
 ## Apache MINA: unsafe Java deserialization in the 3.0 codec
 
@@ -455,9 +519,9 @@ Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE
 | Go MPTCP stopgap | 2026-10-29; time/TZ unknown | Go says `GODEBUG=multipathtcp=0` blocks the demonstrated listener shape and is not a kernel fix. |
 | Red Hat mitigation bulletin | 2026-10-30 16:03 (timezone not stated) | An nftables filter drops incoming IPv4 TCP packets that contain IP options. Red Hat says it cannot fully prevent the flaw. |
 | Amazon Linux kernel packages | 2026-10-30; time/TZ unknown | AWS says Amazon Linux 2 and 2023 packages are available and a reboot is required. Amazon scores the flaw 8.1, not 9.8. |
-| **Last updated** | **2026-10-31 20:11 EDT (UTC−04:00)** | Amazon Linux kernels that name this CVE are available. Ubuntu and Red Hat are still unfixed. |
+| **Last updated** | **2026-11-01 04:01 EDT (UTC−04:00)** | AWS interim steps and November 2–3 service-patch dates added. The kernel fix is unchanged. |
 
-**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Debian trixie is `linux` 6.12.113-1 ([DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html)); Debian 12 bookworm is `linux` 6.1.190-1 ([DLA-4841-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00035.html)), or `linux-6.12` 6.12.113-1~deb12u1 where that kernel is installed. Oracle Linux UEK is covered by [ELSA-2026-500397, 500398 and 500399](https://linux.oracle.com/cve/CVE-2026-98432.html) (2026-10-16); those errata do not update the Red Hat-compatible kernel. On Amazon Linux, install the package for the booted kernel and reboot: Amazon Linux 2 core `kernel-4.14.355-287.758.amzn2`, Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own [ALAS pages](https://explore.alas.aws.amazon.com/CVE-2026-98432.html). AWS says self-managed EC2 and Lightsail instances are yours to patch, and that Lambda is not exposed to this flaw. Amazon scores it CVSS 3.1 8.1. Ubuntu still lists supported generic kernels as vulnerable with fixes in progress, and Red Hat has no released kernel fix. Until one ships, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. Go 1.24 and later enable multipath TCP on Linux listen sockets by default. Setting `GODEBUG=multipathtcp=0`, or `godebug multipathtcp=0` in the main module, disables that default and blocks the listener shape Anthropic demonstrated, but Go says this is fragile and does not fix the kernel bug.
+**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Debian trixie is `linux` 6.12.113-1 ([DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html)); Debian 12 bookworm is `linux` 6.1.190-1 ([DLA-4841-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00035.html)), or `linux-6.12` 6.12.113-1~deb12u1 where that kernel is installed. Oracle Linux UEK is covered by [ELSA-2026-500397, 500398 and 500399](https://linux.oracle.com/cve/CVE-2026-98432.html) (2026-10-16); those errata do not update the Red Hat-compatible kernel. On Amazon Linux, install the package for the booted kernel and reboot: Amazon Linux 2 core `kernel-4.14.355-287.758.amzn2`, Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own [ALAS pages](https://explore.alas.aws.amazon.com/CVE-2026-98432.html). AWS says self-managed EC2 and Lightsail instances are yours to patch, and that Lambda is not exposed to this flaw. Amazon scores it CVSS 3.1 8.1. Ubuntu still lists supported generic kernels as vulnerable with fixes in progress, and Red Hat has no released kernel fix. Until one ships, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. AWS's October 31 update to [bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws/) adds the same idea as an iptables rule (`iptables -I INPUT 1 -m u32 --u32 "0>>24&0x0f=6:15" -j DROP`) and says to disable MPTCP (`net.mptcp.enabled=0`, or `GODEBUG=multipathtcp=0` for Go 1.24+) only as an interim step. Go 1.24 and later enable multipath TCP on Linux listen sockets by default; Go says disabling it is fragile and does not fix the kernel bug. The same bulletin says the RDS/Aurora OS patch and the Redshift cluster OS patch will be available 2026-11-02, and a Storage Gateway update is expected beginning 2026-11-03.
 
 Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432), [Debian DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html), [AWS bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws), [ALAS2023-2026-3365](https://alas.aws.amazon.com/AL2023/ALAS2023-2026-3365.html), [Red Hat advisory](https://access.redhat.com/security/cve/CVE-2026-98432), [Red Hat RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016), [Ubuntu advisory](https://ubuntu.com/security/CVE-2026-98432), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -530,7 +594,7 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 
 **CVEs:** [CVE-2026-118539](https://www.cve.org/CVERecord?id=CVE-2026-118539)
 
-**Drupal rates SA-CONTRIB-2026-254 Highly critical (21/25); active exploitation is reported.** Commerce Core can expose routes and entity fields through an access bypass that can financially affect vendors.
+**Drupal rates SA-CONTRIB-2026-254 Highly critical (21/25); active exploitation is reported.** CISA's enrichment scores the same CVE 6.5 Medium and records Exploitation "none". Keep Drupal's rating for the patch decision. Commerce Core can expose routes and entity fields through an access bypass that can financially affect vendors.
 
 **CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). Drupal reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
@@ -2317,7 +2381,8 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Chained privilege escalation [CVE-2026-111357](https://www.cve.org/CVERecord?id=CVE-2026-111357) | 2026-10-15 20:56:58 UTC | The advisory scored it 8.8 High. The CNA text updated 2026-10-28 now says 7.0 High and only 22.8R2.4. |
 | Fixes for the chained flaws | 2026-10-29; time/TZ unknown | 25.1.1.3 and 22.8R2.6 fix CVE-2026-111357 and CVE-2026-118527. 25.1.1.2 and 22.8R2.5 do not. |
 | CISA KEV additions | 2026-10-30; time/TZ unknown | CVE-2026-111357 due 2026-11-02. CVE-2026-118527 due 2026-11-13. |
-| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | The CNA record for the chained flaw now says 7.0 and only 22.8R2.4. The advisory fix line is unchanged. |
+| CISA affected-version update | 2026-10-30; time/TZ unknown | Alert last revised October 30. All three CVEs affect 25.1.1.2 and prior, 25.1.2.2 and prior, and 22.8R2.5 and prior. |
+| **Last updated** | **2026-11-01 04:01 EDT (UTC−04:00)** | CISA's October 30 alert includes 25.1.2.2 and prior in the chained range. The fix line is unchanged. |
 
 A spoofed internal-routing header (`X-DSCGI-PATH`) sent to the public `welcome.cgi` login script reaches a protected CGI. Combined with a file-write race in `wu.cgi`, this lets an unauthenticated attacker execute commands on the Connect Secure VPN appliance.
 
@@ -2325,7 +2390,7 @@ A spoofed internal-routing header (`X-DSCGI-PATH`) sent to the public `welcome.c
 
 **Exploitation status:** Ivanti, CISA and Volexity confirm zero-day exploitation. The chain runs largely in memory and erases log entries, so Ivanti's Integrity Checker Tool **may not detect it**. Confirming compromise requires memory and network forensics.
 
-**Am I impacted?** Check each appliance's running version. For the authentication bypass, affected versions are **25.1.1.1 and prior, 25.1.2.2 and prior, and 22.8R2.4 and prior**. **22.7R2.14 and prior are not affected.** The chained flaws affect **25.1.1.2 and prior** and **22.8R2.5 and prior**, so the earlier bypass-only fixes are not enough. Hunt for `welcome.cgi` requests carrying `X-DSCGI-PATH` headers and for Volexity's indicators.
+**Am I impacted?** Check each appliance's running version. For the authentication bypass, affected versions are **25.1.1.1 and prior, 25.1.2.2 and prior, and 22.8R2.4 and prior**. **22.7R2.14 and prior are not affected.** CISA's October 30 alert says all three CVEs affect **25.1.1.2 and prior, 25.1.2.2 and prior, and 22.8R2.5 and prior**, so the earlier bypass-only fixes are not enough on the 25.1.2 line either. Hunt for `welcome.cgi` requests carrying `X-DSCGI-PATH` headers and for Volexity's indicators.
 
 **Patch:** Update 25.1.1.x to **25.1.1.3**, 22.8 to **22.8R2.6**, or the ISA4500/6500/8500 platform to **25.1.3.0/25.1.3.1**. Ivanti recommends that 22.8 customers move to 25.1, because 22.7 and 22.8 reach end of life on 2027-01-31. If compromise is suspected, follow Ivanti's recovery steps (factory reset or rebuild, then reset all passwords, certificates and API keys) and investigate Active Directory. CVE-2026-111357 requires forensic triage under KEV.
 
@@ -3364,7 +3429,7 @@ Sources: [initial disclosure](https://blog.railway.com/p/security-disclosure-wed
 
 ```mermaid
 flowchart TD
-    A["Inventory hosts, containers, NAS apps, workers and CI"] --> B{"Compromised LiteLLM artifact,<br/>Railway or Northflank secrets, Cursor extension,<br/>or compromise indicators?"}
+    A["Inventory hosts, containers, NAS apps, workers and CI"] --> B{"Compromised LiteLLM artifact,<br/>Railway or Northflank secrets, Cursor extension,<br/>AO3 password reuse, DebugBear embed,<br/>or compromise indicators?"}
     B -->|Yes| C["Contain and investigate;<br/>rebuild affected systems and rotate secrets"]
     B -->|No| D["Continue stack checks"]
     C --> D
@@ -3467,6 +3532,8 @@ flowchart TD
 | **All stacks making TLS connections** | [Refresh each effective trust store](details/emudhra.md#runtime-and-application-trust-store-inventory), including embedded copies and alternate chains; rebuild Go with **1.27.3 / 1.26.10+**. Java needs the **CVE-2026-114820** follow-up; CPython `ssl` fixes are **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**; Bun **1.4.4** (rebuild compiled executables). |
 | **LiteLLM malicious artifacts** | [Isolate, rebuild and revoke reachable credentials](details/litellm.md#remediation); do not run ordinary Python startup hooks on suspected hosts. A downgrade alone is not recovery. |
 | **Cursor on macOS or Windows that may have updated Claude Code on 2026-10-29** | Search `authorized_keys` for `svc-telemetry`. If found, isolate the host and run [Cursor's cleanup script](details/cursor-claude-code.md#remediation); uninstalling 2.1.312/2.1.313 leaves the SSH key and startup scripts. Then install 2.1.314 or later and rotate credentials that host could use. |
+| **Sites embedding DebugBear Real User Monitoring** | Remove the embed, including tag-manager copies, and purge cached HTML that still loads it. DebugBear says its DNS records were changed at the registrar and has not withdrawn the removal instruction. Review session actions on logged-in pages that loaded it on or after October 29. [Guide](details/debugbear.md#remediation). |
+| **AO3 accounts whose password is reused elsewhere** | Change that password on the other sites now. OTW cannot rule out theft of hashed passwords and has no software update to install. Set a new unique AO3 password when the archive returns. [Guide](details/ao3.md#remediation). |
 | **Northflank secrets stored on or before 2026-10-30 13:40 UTC** | [Revoke at each issuer, update the workload or secret group, and redeploy](details/northflank.md#remediation). Rotate Postgres, MongoDB, MySQL, Redis, Minio and RabbitMQ addons with the controls Northflank has enabled. The incident is still open, so a replacement stored before Northflank confirms containment may itself need rotation. |
 | **Railway secrets stored before October 21** | [Rotate at each issuer, update consumers and verify revocation](details/railway.md#remediation); include registry credentials and existing sessions. |
 

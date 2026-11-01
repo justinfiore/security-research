@@ -1,6 +1,6 @@
 # Linux kernel: PwnEscape - guest-to-host escape via IPv4 checksum metadata
 
-**Last updated:** 2026-10-31 (America/New_York)
+**Last updated:** 2026-11-01 (America/New_York)
 
 [Main PwnEscape summary](../black-october-2026.md#linux-kernel-pwnescape---guest-to-host-escape-via-ipv4-checksum-metadata) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -21,7 +21,7 @@ The bug is in the **host kernel's IPv4 networking stack**, not in KVM. Malformed
 **Companion issue, Vghost:** [CVE-2026-74580](https://www.cve.org/CVERecord?id=CVE-2026-74580) is a separate vhost flaw with its own dates and conditions. It is covered in Vghost subsections under each heading below. [CNA][cve-vg] [NVD][nvd-vg] [KEV][kev] [Tencent][tencent]
 
 - **Severity:** kernel.org CNA CVSS 3.1 8.8 High (CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H). NVD has added no score of its own.
-- **CISA KEV:** not listed (catalog 2026.10.23, checked 2026-10-26). CISA ADP SSVC records exploitation as "none" (2026-10-16).
+- **CISA KEV:** not listed (catalog 2026.10.30, checked 2026-11-01). CISA ADP SSVC, updated 2026-10-29, records Exploitation "poc" (timestamp 2026-10-28). The earlier entry on 2026-10-16 said "none". "poc" means CISA has seen a public proof of concept; it is not a KEV listing and not a report of attacks.
 - **Mechanism:** vhost caches the IOTLB mapping behind each vring's metadata. `VHOST_SET_VRING_ADDR` and `VHOST_SET_VRING_NUM` did not reset that cache. With a device IOTLB attached, later used-ring writes and descriptor reads go through the stale translation, which gives out-of-bounds access.
 - **Impact:**
   - **Local root:** any user who can open `/dev/vhost-net` or `/dev/vhost-vsock` can become root.
@@ -87,7 +87,7 @@ The bug is in the **host kernel's IPv4 networking stack**, not in KVM. Malformed
 | oss-security disclosure | 2026-10-14 10:16:22 +08:00 | Includes mitigations and a PoC link. [oss-security][oss-vg] |
 | Red Hat fixed kernels | 2026-10-19 to 2026-10-24 (dates only) | RHEL 10 RHSA-2026:85321 (`kernel-6.12.0-211.67.1.el10_2`, 10-19); RHEL 9 RHSA-2026:86033 (`kernel-5.14.0-687.59.1.el9_8`, 10-20); RHEL 7 ELS RHSA-2026:88206 (10-22); RHEL 8 RHSA-2026:89083 (`kernel-4.18.0-553.178.1.el8_10`, 10-24); plus EUS/SAP streams. [Red Hat][rhapi] |
 | AlmaLinux production kernels | 2026-10-23 17:16 UTC | `kernel-4.18.0-553.177.1.el8_10`, `kernel-5.14.0-687.59.1.el9_8`, `kernel-6.12.0-211.67.1.el10_2`. AlmaLinux warns that `kernel-5.14.0-687.58.1.el9_8` is newer than its testing kernel but lacks the fix. [AlmaLinux][alma] |
-| Exploitation in the wild | None reported | CISA ADP SSVC "none" (2026-10-16). [CNA ADP][cve-vg] |
+| CISA ADP SSVC updated | 2026-10-29 03:57 UTC | Exploitation changed from "none" (2026-10-16) to "poc", timestamp 2026-10-28. Not in KEV. [CNA ADP][cve-vg] |
 | CISA KEV addition | Not listed | Catalog 2026.10.23, checked 2026-10-26. [KEV][kev] |
 
 ## Detection

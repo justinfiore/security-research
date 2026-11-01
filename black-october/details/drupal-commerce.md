@@ -1,10 +1,10 @@
 # Drupal Commerce Core: exploited access bypass
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-11-01 (America/New_York)
 
 [Main summary](../black-october-2026.md#drupal-commerce-core-exploited-access-bypass) · [Main TOC](../black-october-2026.md#table-of-contents)
 
-**[CVE-2026-118539](https://www.cve.org/CVERecord?id=CVE-2026-118539): Drupal rates SA-CONTRIB-2026-254 Highly critical (21/25).** Commerce Core does not sufficiently protect certain routes and entity fields, permitting an access bypass that can financially affect vendors. Drupal reports active exploitation.
+**[CVE-2026-118539](https://www.cve.org/CVERecord?id=CVE-2026-118539): Drupal rates SA-CONTRIB-2026-254 Highly critical (21/25).** Commerce Core does not sufficiently protect certain routes and entity fields, permitting an access bypass that can financially affect vendors. Drupal reports active exploitation. CISA's enrichment, added 2026-10-31, scores the same CVE 6.5 Medium (`CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N`) and records Exploitation "none". That score is not Drupal's, and it does not replace Drupal's report of active exploitation. The CVE.org HTML page can still say the record is reserved; the published record is the [CVE JSON](https://cveawg.mitre.org/api/cve/CVE-2026-118539).
 
 **CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). Drupal reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -20,7 +20,8 @@
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Public advisory and fixed releases | 2026-10-28; time/TZ unknown | Drupal SA-CONTRIB-2026-254. The advisory page is dated 2026-October-28. |
-| **Last updated** | **2026-10-30 (America/New_York)** | Added from Drupal’s advisory. |
+| CISA ADP score | 2026-10-31 03:56 UTC | CVSS 3.1 6.5 Medium. SSVC Exploitation "none" (timestamp 2026-10-30). Not Drupal's rating. [CVE JSON](https://cveawg.mitre.org/api/cve/CVE-2026-118539) |
+| **Last updated** | **2026-11-01 (America/New_York)** | CISA's score added beside Drupal's rating. The fix is unchanged. |
 
 ## Detection
 From each Drupal project root, run `composer show drupal/commerce` and compare the installed branch and version. Drupal's advisory lists affected releases as Commerce Core below 8.x-2.41 and 3.x from 3.0.0 before 3.3.13, which includes 3.2.x and 3.3.0 through 3.3.12. The advisory does not provide safe indicators beyond version and order review.

@@ -1,6 +1,6 @@
 # Ivanti Connect Secure: authentication bypass to command execution
 
-**Last updated:** 2026-10-31 (America/New_York)
+**Last updated:** 2026-11-01 (America/New_York)
 
 [Main Ivanti Connect Secure summary](../black-october-2026.md#ivanti-connect-secure-authentication-bypass-to-command-execution-cve-2026-104935) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -52,7 +52,7 @@ In the wild, attackers chained it with a separate **root privilege escalation**,
    | Code line | Affected for CVE-2026-104935 | Resolved for CVE-2026-104935 | Also required for CVE-2026-111357 and CVE-2026-118527 |
    |---|---|---|---|
    | 25.1.1.x (ISA6000/ISA8000 physical; ISA4000/6000/8000 virtual) | 25.1.1.1 and prior | **25.1.1.2** | **25.1.1.3** (25.1.1.2 and prior are affected) |
-   | 25.1.2.x / 25.1.3.x (ISA4500/6500/8500 platform) | 25.1.2.2 and prior | **25.1.3.0, 25.1.3.1** | Not in Ivanti's chained-flaw table. 25.1.3.0 and later do not contain the authentication bypass. |
+   | 25.1.2.x / 25.1.3.x (ISA4500/6500/8500 platform) | 25.1.2.2 and prior | **25.1.3.0, 25.1.3.1** | CISA's October 30 alert lists 25.1.2.2 and prior as affected by all three CVEs. The Ivanti chained-flaw table was not re-read. |
    | 22.8 | 22.8R2.4 and prior | **22.8R2.5** | **22.8R2.6** (22.8R2.5 and prior are affected) |
    | 22.7 | Not affected (22.7R2.14 and prior) | — | Not affected |
 
