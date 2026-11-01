@@ -1,6 +1,6 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-11-01 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -52,7 +52,7 @@
 | Red Hat bulletin | 2026-10-24 18:31 (TZ not stated) | RHSB-2026-014: "Potentially Affected", Important; says upstream patches are not yet available and no CVEs are assigned. No RHEL fix. [Red Hat][rh] |
 | CloudLinux 7 hybrid and 8 beta kernels | 2026-10-26 09:11 UTC | `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`, beta and rolling out. [CloudLinux][cl] |
 | CloudLinux 7 hybrid and 8 production kernels | 2026-10-30; time/TZ unknown | The same builds moved to production. CloudLinux says all four kernel lines now have a production fix. [CloudLinux][cl] |
-| Mainline release | Linux 7.3, 2026-10-18 | Linux 7.3 includes `79dc34beb1fd`; do not infer backport status for stable or longterm vendor kernels from the mainline release. [kernel.org releases][releases] [Fix commit][commit] |
+| Mainline release | Linux 7.3, 2026-10-18 | Linux 7.3 and stable 7.3.1 (2026-10-30) do **not** include `79dc34beb1fd`. The `skbuff.c` history on those tags has an older, different "shared-frag" commit. [kernel.org releases][releases] [v7.3 history][v73] |
 | CVE assignment | None as of this review | CloudLinux (updated 2026-10-26) and AlmaLinux say no CVE is assigned. The kernel CNA assigns CVEs after a fix reaches a stable tree. No Debian or Ubuntu tracker entry or notice was found. [CloudLinux][cl] [Kernel CVE process][kernelcve] |
 
 ## Detection
@@ -112,7 +112,7 @@ The existing [Linux inventory script](../linux-service-inventory.sh) checks only
 
 ### Fixed kernels and live patches
 
-The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FRAG` to the destination buffer. It is in the netdev `net` tree as `79dc34beb1fd`, marked for stable, but **not in mainline or any kernel.org release** as of 2026-10-29. Use vendor builds; do not apply maintainer-tree commits to production kernels yourself. [Fix commit][commit] [kernel.org releases][releases]
+The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FRAG` to the destination buffer. It is in the netdev `net` tree as `79dc34beb1fd`, marked for stable, but **not in Linux 7.3 (2026-10-18) or stable 7.3.1 (2026-10-30)**. Use vendor builds; do not apply maintainer-tree commits to production kernels yourself. [Fix commit][commit] [kernel.org releases][releases] [v7.3 history][v73]
 
 | Distribution / product | Fixed build or status (as of 2026-10-29) | Channel | Source |
 |---|---|---|---|
@@ -200,6 +200,7 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 [dumazet]: https://lore.kernel.org/lkml/CAL4WiipTihtytPEPj5cSY+=t9NwRwRTfUQ_efCSWPT7nQ=0K0Q@mail.gmail.com/
 [patch]: https://lore.kernel.org/all/20261022104217.1852191-1-pointerliu@126.com/
 [commit]: https://github.com/kernelorg-mirror/linux_kernel_git_netdev_net/commit/79dc34beb1fdb3da79753e51e15c68591a2561fe
+[v73]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/net/core/skbuff.c?h=v7.3
 [alma]: https://almalinux.org/blog/2026-10-23-zdi-can-33367/
 [cl]: https://blog.cloudlinux.com/zdi-can-33367
 [tux]: https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/

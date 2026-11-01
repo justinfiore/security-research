@@ -4,6 +4,14 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-01 11:15 EDT (UTC−05:00) — Beta9 worker filesystem
+
+- **Beta9:** Upgrade self-hosted worker and gateway to [0.1.756 and 0.1.776 or later](black-october/details/beta9.md#remediation). JFrog rates three flaws 9.9 Critical. An image build runs as root in the worker pod (CVE-2026-120306). The sandbox file API reads the worker, and shipped remote-node manifests bind that service account to `cluster-admin` (CVE-2026-120307). A volume identifier bind-mounts the worker filesystem (CVE-2026-120308); that one needs the gateway upgrade too. The releases are from September 15. The CVEs were published November 1, and beam-cloud filed no GitHub advisory. None is in KEV. Rotate the worker's service-account token if an unpatched worker accepted a workspace token.
+- **AhsayCBS:** On October 27 Ahsay released [v9.15.2.78 and v10.3.4.55](black-october/details/ahsaycbs.md#remediation). It calls 9.15.2.78 security hardening and 10.3.4.55 a license-key console fix. Neither replaces the CVE hotfix: v10 is still 10.3.4.45 or later, and v7–v9 are still 9.15.2.70. Both CVEs remain in KEV.
+- **Linux kernel (CVE-2026-98432):** AWS's October 31 bulletin gives the [RDS/Aurora OS patch on November 3](black-october/details/linux-tcp-options.md#remediation) and the Redshift cluster OS patch on November 2. An earlier note had both on November 2. Storage Gateway is still expected beginning November 3. Self-managed instances still need the kernel package and a reboot.
+- **Linux kernel (skb_zerocopy):** [Linux 7.3 and 7.3.1 do not contain the fix](black-october/details/skb-zerocopy-lpe.md#remediation). The commit is still only in the netdev tree. AlmaLinux and CloudLinux production builds named in the guide are unchanged. There is still no CVE.
+- **Ultralytics:** [8.4.194](black-october/details/ultralytics-parse-model.md#remediation) (October 30) stops using `eval()` in `parse_model`. Ultralytics does not say that release fixes CVE-2026-118618, and ZDI still lists it as a 0-day. Keep refusing untrusted model files. Do not treat 8.4.194 as the patch.
+
 ## 2026-11-01 08:15 EDT (UTC−04:00) — Gitea 28.3.0; NVIDIA Brev; PAN-OS PHP2Shell score
 
 - **Gitea:** Upgrade to [28.3.0 or later](black-october/details/gitea-28-3.md#remediation). Three High flaws affect 28.2.0 and earlier. A read-only user can start a workflow that receives Actions secrets and a commit token (CVE-2026-118386, CVSS 8.1). A write collaborator can replace release binaries on an archived repository (CVE-2026-116296, CVSS 8.1). A direct artifact link is stored XSS on the Gitea site (CVE-2026-113429, CVSS 8.7). 28.0.0 fixed only the older SSH bypass. None of the three is in KEV.

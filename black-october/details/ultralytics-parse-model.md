@@ -1,10 +1,10 @@
 # Ultralytics: parse_model code injection through an untrusted model file
 
-**Last updated:** 2026-10-29 (America/New_York)
+**Last updated:** 2026-11-01 (America/New_York)
 
 [Main Ultralytics summary](../black-october-2026.md#ultralytics-parse_model-code-injection-through-an-untrusted-model-file) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**[CVE-2026-118618](https://www.cve.org/CVERecord?id=CVE-2026-118618) — ZDI CVSS 3.0 7.8 High (`AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H`).** ZDI reports that Ultralytics `parse_model` does not validate a user-supplied string before executing it as Python code. Exploitation requires a user to visit a malicious page or open a malicious file; code runs with the current user's permissions. The disclosed record identifies version 8.4.65 as affected but does not establish a vendor fixed version.
+**[CVE-2026-118618](https://www.cve.org/CVERecord?id=CVE-2026-118618) — ZDI CVSS 3.0 7.8 High (`AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H`).** ZDI reports that Ultralytics `parse_model` does not validate a user-supplied string before executing it as Python code. Exploitation requires a user to visit a malicious page or open a malicious file; code runs with the current user's permissions. The disclosed record identifies version 8.4.65 as affected but does not establish a vendor fixed version. Ultralytics 8.4.194 (2026-10-30) stops using `eval()` in `parse_model` and rejects entries that are not `torch.nn.Module` classes. The release calls that safer YAML parsing. It does not say it fixes CVE-2026-118618, and ZDI-26-817 is still an unpatched 0-day on ZDI's page. Do not treat 8.4.194 as the fix.
 
 **CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). No active exploitation is reported by the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -31,6 +31,8 @@
 3. Review whether users, automated pipelines or services load model definitions or model files from untrusted sources. Loading an untrusted file is a prerequisite in ZDI's description; package presence alone does not establish reachability.
 
 ## Remediation
+
+Ultralytics 8.4.194 (released 2026-10-30) makes `parse_model` reject activations that are not supported `torch.nn` modules and reject model entries that are not `torch.nn.Module` classes. The [release notes](https://github.com/ultralytics/ultralytics/releases/tag/v8.4.194) call this safer YAML parsing. They do not mention CVE-2026-118618. ZDI still lists ZDI-26-817 as a 0-day. Upgrading to 8.4.194 is reasonable, and it is not a statement that the flaw is gone.
 
 1. Do not load model files, configurations or artifacts from untrusted sources. Require provenance review and isolated processing for externally supplied models while a vendor fixed-version statement is unavailable.
 2. Run model-conversion or inspection workloads under a dedicated low-privilege account or isolated environment, without credentials, production mounts or network paths that are not needed for the task.

@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Beta9: workspace token reaches the worker filesystem](#beta9-workspace-token-reaches-the-worker-filesystem)
 - [Gitea: Actions secret theft, archived-repo writes, and stored XSS](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss)
 - [NVIDIA Brev: customer information may have been affected](#nvidia-brev-customer-information-may-have-been-affected)
 - [DebugBear: RUM script removed after a registrar DNS compromise](#debugbear-rum-script-removed-after-a-registrar-dns-compromise)
@@ -126,6 +127,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade self-hosted [Beta9](#beta9-workspace-token-reaches-the-worker-filesystem) to worker **0.1.756 or later** and gateway **0.1.776 or later**. JFrog rates three flaws 9.9 Critical: an image build runs as root on the worker, the sandbox file API can read the worker's `cluster-admin` token, and a volume identifier bind-mounts the worker filesystem. The fixes shipped on September 15; the CVEs were published on November 1. beam-cloud has no GitHub advisory for them.
 - **New this update:** Upgrade self-hosted [Gitea](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss) to **28.3.0 or later**. Three High flaws affect 28.2.0 and earlier: a read-only user can start a workflow that receives Actions secrets (CVSS 8.1), a write collaborator can replace release files on an archived repository (CVSS 8.1), and a direct artifact link is stored XSS on the Gitea site (CVSS 8.7). 28.0.0 fixed only the older SSH bypass.
 - **New this update:** If you use [NVIDIA Brev](#nvidia-brev-customer-information-may-have-been-affected), read the email NVIDIA sent you and replace credentials it says were affected. The only public copy is a screenshot: unauthorized activity on the Brev platform from October 4 through October 20, and the recipient's information may have been affected. The image cuts off before the list of information. There is no CVE and no nvidia.com advisory.
 - **New this update:** If a site still embeds [DebugBear](#debugbear-rum-script-removed-after-a-registrar-dns-compromise) Real User Monitoring, remove that script. DebugBear says its DNS records were changed through its domain registrar and told every RUM customer to take the embed out. It has not withdrawn that instruction. Polymarket says a third-party script on its international site drained logged-in sessions on October 29; researchers tie that script to DebugBear's host.
@@ -183,6 +185,30 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Beta9: workspace token reaches the worker filesystem
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/beta9.md):** [Detection](details/beta9.md#detection) · [Remediation](details/beta9.md#remediation) · [Verification](details/beta9.md#verification) · [Timeline](details/beta9.md#timeline)
+
+**CVEs:** [CVE-2026-120306](https://www.cve.org/CVERecord?id=CVE-2026-120306), [CVE-2026-120307](https://www.cve.org/CVERecord?id=CVE-2026-120307), [CVE-2026-120308](https://www.cve.org/CVERecord?id=CVE-2026-120308)
+
+**JFrog (CNA) CVSS 3.1 9.9 Critical for each.** A workspace token is enough. One image build runs as root in the worker pod's namespaces. The sandbox file API reads and writes the worker, and the CNA says shipped remote-node manifests bind that service account to `cluster-admin`. A volume identifier bind-mounts the worker filesystem into the sandbox. NVD had not scored them when checked. This is not the [Northflank](#northflank-environment-secret-exposure) incident.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01) for CVE-2026-120306, CVE-2026-120307, or CVE-2026-120308. The CNA does not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred.
+
+**Affected technology:** self-hosted Beta9 worker before 0.1.756, and gateway before 0.1.776 for the volume flaw. **Worst case:** that tenant reads and writes the worker, including other tenants' data and a `cluster-admin` token.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix released | 2026-09-15 04:03–04:04 UTC | worker-0.1.756 and gateway-0.1.776. Pull request 1897, commit `a28bf12`. |
+| CVEs published | 2026-11-01 12:49:05–12:51:50 UTC | JFrog CNA. No GitHub security advisory was filed with the pull request. |
+| **Last updated** | **2026-11-01 11:15 EDT (UTC−05:00)** | New item. Upgrade the worker and the gateway. |
+
+**Remediation:** Upgrade the worker to **0.1.756 or later** and the gateway to **0.1.776 or later**, then restart both. The worker alone does not fix the volume check.
+
+Sources: [CVE-2026-120306](https://www.cve.org/CVERecord?id=CVE-2026-120306), [CVE-2026-120307](https://www.cve.org/CVERecord?id=CVE-2026-120307), [CVE-2026-120308](https://www.cve.org/CVERecord?id=CVE-2026-120308), [pull request 1897](https://github.com/beam-cloud/beta9/pull/1897), [worker-0.1.756](https://github.com/beam-cloud/beta9/releases/tag/worker-0.1.756).
+
+---
 
 ## Gitea: Actions secret theft, archived-repo writes, and stored XSS
 
@@ -576,9 +602,9 @@ Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE
 | Go MPTCP stopgap | 2026-10-29; time/TZ unknown | Go says `GODEBUG=multipathtcp=0` blocks the demonstrated listener shape and is not a kernel fix. |
 | Red Hat mitigation bulletin | 2026-10-30 16:03 (timezone not stated) | An nftables filter drops incoming IPv4 TCP packets that contain IP options. Red Hat says it cannot fully prevent the flaw. |
 | Amazon Linux kernel packages | 2026-10-30; time/TZ unknown | AWS says Amazon Linux 2 and 2023 packages are available and a reboot is required. Amazon scores the flaw 8.1, not 9.8. |
-| **Last updated** | **2026-11-01 04:01 EDT (UTC−04:00)** | AWS interim steps and November 2–3 service-patch dates added. The kernel fix is unchanged. |
+| **Last updated** | **2026-11-01 11:15 EDT (UTC−05:00)** | RDS/Aurora OS patch date corrected to 2026-11-03. Redshift stays 2026-11-02. |
 
-**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Debian trixie is `linux` 6.12.113-1 ([DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html)); Debian 12 bookworm is `linux` 6.1.190-1 ([DLA-4841-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00035.html)), or `linux-6.12` 6.12.113-1~deb12u1 where that kernel is installed. Oracle Linux UEK is covered by [ELSA-2026-500397, 500398 and 500399](https://linux.oracle.com/cve/CVE-2026-98432.html) (2026-10-16); those errata do not update the Red Hat-compatible kernel. On Amazon Linux, install the package for the booted kernel and reboot: Amazon Linux 2 core `kernel-4.14.355-287.758.amzn2`, Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own [ALAS pages](https://explore.alas.aws.amazon.com/CVE-2026-98432.html). AWS says self-managed EC2 and Lightsail instances are yours to patch, and that Lambda is not exposed to this flaw. Amazon scores it CVSS 3.1 8.1. Ubuntu still lists supported generic kernels as vulnerable with fixes in progress, and Red Hat has no released kernel fix. Until one ships, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. AWS's October 31 update to [bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws/) adds the same idea as an iptables rule (`iptables -I INPUT 1 -m u32 --u32 "0>>24&0x0f=6:15" -j DROP`) and says to disable MPTCP (`net.mptcp.enabled=0`, or `GODEBUG=multipathtcp=0` for Go 1.24+) only as an interim step. Go 1.24 and later enable multipath TCP on Linux listen sockets by default; Go says disabling it is fragile and does not fix the kernel bug. The same bulletin says the RDS/Aurora OS patch and the Redshift cluster OS patch will be available 2026-11-02, and a Storage Gateway update is expected beginning 2026-11-03.
+**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Debian trixie is `linux` 6.12.113-1 ([DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html)); Debian 12 bookworm is `linux` 6.1.190-1 ([DLA-4841-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00035.html)), or `linux-6.12` 6.12.113-1~deb12u1 where that kernel is installed. Oracle Linux UEK is covered by [ELSA-2026-500397, 500398 and 500399](https://linux.oracle.com/cve/CVE-2026-98432.html) (2026-10-16); those errata do not update the Red Hat-compatible kernel. On Amazon Linux, install the package for the booted kernel and reboot: Amazon Linux 2 core `kernel-4.14.355-287.758.amzn2`, Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own [ALAS pages](https://explore.alas.aws.amazon.com/CVE-2026-98432.html). AWS says self-managed EC2 and Lightsail instances are yours to patch, and that Lambda is not exposed to this flaw. Amazon scores it CVSS 3.1 8.1. Ubuntu still lists supported generic kernels as vulnerable with fixes in progress, and Red Hat has no released kernel fix. Until one ships, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. AWS's October 31 update to [bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws/) adds the same idea as an iptables rule (`iptables -I INPUT 1 -m u32 --u32 "0>>24&0x0f=6:15" -j DROP`) and says to disable MPTCP (`net.mptcp.enabled=0`, or `GODEBUG=multipathtcp=0` for Go 1.24+) only as an interim step. Go 1.24 and later enable multipath TCP on Linux listen sockets by default; Go says disabling it is fragile and does not fix the kernel bug. The same bulletin says the Redshift cluster OS patch will be available 2026-11-02, the RDS/Aurora OS patch will be available 2026-11-03, and a Storage Gateway update is expected beginning 2026-11-03.
 
 Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432), [Debian DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html), [AWS bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws), [ALAS2023-2026-3365](https://alas.aws.amazon.com/AL2023/ALAS2023-2026-3365.html), [Red Hat advisory](https://access.redhat.com/security/cve/CVE-2026-98432), [Red Hat RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016), [Ubuntu advisory](https://ubuntu.com/security/CVE-2026-98432), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -719,11 +745,12 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 |---|---|---|
 | Report to vendor | 2026-06-18; time/TZ unknown | ZDI says it reported the issue through the vendor's GitHub account. |
 | Public disclosure | 2026-10-28; time/TZ unknown | ZDI-26-817 / ZDI-CAN-30121. |
-| **Last updated** | **2026-10-29 08:03 EDT (UTC−04:00)** | Added from ZDI and CNA records. |
+| Ultralytics 8.4.194 | 2026-10-30 18:54 UTC | Removes `eval()` from `parse_model`. Not stated as a fix for this CVE. |
+| **Last updated** | **2026-11-01 11:15 EDT (UTC−05:00)** | 8.4.194 noted. Still no vendor fixed version. |
 
-Ultralytics `parse_model` can execute attacker-supplied Python code when a user visits a malicious page or opens a malicious model file. ZDI identifies 8.4.65 as affected and does not establish a fixed version.
+Ultralytics `parse_model` can execute attacker-supplied Python code when a user visits a malicious page or opens a malicious model file. ZDI identifies 8.4.65 as affected and does not establish a fixed version. Ultralytics 8.4.194 (2026-10-30) removes `eval()` from that function and does not claim to fix this CVE.
 
-**Remediate:** do not load untrusted model files; isolate externally supplied model processing without credentials or production mounts, and wait for an official fixed-version statement rather than assuming a later release is safe. See the [detailed guide](details/ultralytics-parse-model.md#remediation).
+**Remediate:** do not load untrusted model files; isolate externally supplied model processing without credentials or production mounts, and wait for an official fixed-version statement rather than assuming 8.4.194 is safe. See the [detailed guide](details/ultralytics-parse-model.md#remediation).
 
 Sources: [ZDI-26-817](https://zerodayinitiative.com/advisories/ZDI-CAN-30121/), [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-118618), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -1616,11 +1643,11 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | KernelCare live patch (EL10) | 2026-10-23 14:59 UTC | AlmaLinux, CloudLinux, RHEL, Oracle Linux, Rocky Linux 10; EL9/EL8 pending. |
 | AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | AlmaLinux 8, 9, 10 in `almalinux-testing`. |
 | AlmaLinux production kernels | 2026-10-28; time/TZ unknown | The fix reached regular production repositories: `4.18.0-553.178.1.el8_10` (8), `5.14.0-687.60.1.el9_8` (9), and `6.12.0-211.69.1.el10_2` (10). |
-| Fix in netdev `net` tree | 2026-10-23 19:41 UTC | Commit 79dc34beb1fd, marked for stable; not in mainline. |
+| Fix in netdev `net` tree | 2026-10-23 19:41 UTC | Commit 79dc34beb1fd, marked for stable. Not in Linux 7.3 or 7.3.1. |
 | CloudLinux 7h/8 production kernels | 2026-10-30; time/TZ unknown | The beta builds moved to production. |
-| Mainline/stable releases, RHEL fix | None established (as of 2026-10-26) | Newest kernel.org releases predate the fix; Red Hat has no fix. |
+| Linux 7.3 and 7.3.1 | 2026-10-18 and 2026-10-30 | Neither tag contains `79dc34beb1fd`. Red Hat still has no fix. |
 | CloudLinux 9 and 10 production kernels | 2026-10-28; time/TZ unknown | Same AlmaLinux builds, shipped to CloudLinux production. |
-| **Last updated** | **2026-10-30 16:15 EDT (UTC−04:00)** | CloudLinux 7 hybrid and 8 kernels are production, not beta. |
+| **Last updated** | **2026-11-01 11:15 EDT (UTC−05:00)** | Linux 7.3 and 7.3.1 do not contain the fix. Vendor builds are unchanged. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -1641,7 +1668,7 @@ for m in esp4 esp6 nlmon act_pedit; do modprobe -n -v "$m"; done
 
 A non-zero `user.max_user_namespaces` means ordinary users can take the exploit's first step. Ubuntu's `kernel.apparmor_restrict_unprivileged_userns` does not stop the public PoC. An empty `lsmod` result does not mean the modules are unavailable: they load on demand. A process that already holds network-admin rights, such as root in a privileged container, does not need user namespaces. Vulnerability scanners keyed on CVE IDs will not flag this issue. See [exposure checks](details/skb-zerocopy-lpe.md#read-only-exposure-checks) and [indicators and evidence limits](details/skb-zerocopy-lpe.md#indicators-and-evidence-limits).
 
-**Patch:** No mainline, stable or RHEL kernel contains the fix yet. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 9 and 10 ship those same AlmaLinux builds. CloudLinux 7 hybrid and 8 now have production kernels too: `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`. CloudLinux 8 ELS and 9 ELS are still pending. The KernelCare live patch is released for CloudLinux 10 and AlmaLinux 10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
+**Patch:** No RHEL kernel contains the fix yet, and Linux 7.3 / 7.3.1 do not either. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 9 and 10 ship those same AlmaLinux builds. CloudLinux 7 hybrid and 8 now have production kernels too: `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`. CloudLinux 8 ELS and 9 ELS are still pending. The KernelCare live patch is released for CloudLinux 10 and AlmaLinux 10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
 
 Sources: [ZDI report](https://lore.kernel.org/lkml/BYAPR01MB3830CECF5D0871064C59BA0280662@BYAPR01MB3830.prod.exchangelabs.com/), [fix commit](https://github.com/kernelorg-mirror/linux_kernel_git_netdev_net/commit/79dc34beb1fdb3da79753e51e15c68591a2561fe), [AlmaLinux](https://almalinux.org/blog/2026-10-23-zdi-can-33367/), [CloudLinux](https://blog.cloudlinux.com/zdi-can-33367), [TuxCare](https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/), [Sysdig](https://www.sysdig.com/blog/detecting-and-mitigating-zdi-can-33367-and-five-other-linux-flaws), [Red Hat RHSB-2026-014](https://access.redhat.com/security/vulnerabilities/RHSB-2026-014).
 
@@ -2516,7 +2543,8 @@ Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026
 | v7–v9 hotfix 9.15.2.70 | 2026-10-12; time/TZ unknown | v7/v8 first upgrade to 9.15.0.0. |
 | CISA KEV addition | 2026-10-14; time/TZ unknown | Federal due date 2026-10-17. |
 | CVE records corrected | 2026-10-26 14:31 UTC | Affected range now "up to 9.15.2.69/10.3.4.44"; fixed 9.15.2.70 / 10.3.4.45. |
-| **Last updated** | **2026-10-26 12:30 EDT (UTC−04:00)** | NVD now displays VulDB's updated CVSS 4.0 scores. |
+| Later hardening builds | 2026-10-27; time/TZ unknown | v9.15.2.78 and v10.3.4.55. Ahsay does not say they replace the CVE fix. |
+| **Last updated** | **2026-11-01 11:15 EDT (UTC−05:00)** | October 27 hardening builds noted. The CVE fix versions are unchanged. |
 
 AhsayCBS is a backup server used mainly by MSPs. Attackers chain the two flaws: an authentication bypass in `checkSysPwd`, then OS command injection via `/rps/api/json/UpdateReceivers.do`. Together they give unauthenticated remote code execution (SYSTEM on the Windows hosts Huntress investigated).
 
@@ -2526,7 +2554,7 @@ AhsayCBS is a backup server used mainly by MSPs. Attackers chain the two flaws: 
 
 **Am I impacted?** VulDB corrected the CVE records on 2026-10-26: affected is now **up to 9.15.2.69 / 10.3.4.44**, replacing the earlier wrong "up to 10.3.2; 10.3.4 unaffected" range (scanners using the old record may miss 10.3.4 builds). Huntress showed 10.3.4 is affected, and Ahsay says the earlier 10.3.4.0 and 9.15.2.59 patches did not fully fix the flaws. Treat any v7–v10 server without the hotfix as affected, especially if its console is reachable from the internet. Check for the [Ahsay and Huntress IOCs](details/ahsaycbs.md#indicators-to-check-read-only).
 
-**Patch:** v10: apply hotfix **10.3.4.45** or later. v7–v9: apply **9.15.2.70** (v7/v8 first upgrade to 9.15.0.0). Reboot after either. Ahsay says these fully address both CVEs. A later hardening hotfix (Oct 22) and v10.3.6 are additional hardening. If the server shows indicators, rebuild it as Ahsay describes rather than patching in place.
+**Patch:** v10: apply hotfix **10.3.4.45** or later. v7–v9: apply **9.15.2.70** (v7/v8 first upgrade to 9.15.0.0). Reboot after either. Ahsay says these fully address both CVEs. Later builds are additional hardening, not a new CVE fix: v9.15.2.78 (Oct 27) and v10.3.4.55 (Oct 27, a license-key console fix). If the server shows indicators, rebuild it as Ahsay describes rather than patching in place.
 
 Sources: [Ahsay status and IOCs](https://www.ahsay.com/en/company/announcements/ahsaycbs-vulnerability-status-update), [Ahsay hotfix alert](https://www.ahsay.com/en/company/announcements/patch-cve-105133-105134-update), [VulDB CNA record 105133](https://cveawg.mitre.org/api/cve/CVE-2026-105133), [VulDB CNA record 105134](https://cveawg.mitre.org/api/cve/CVE-2026-105134), [Huntress research](https://www.huntress.com/blog/ahsaycbs-flaws-exploit), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -3509,6 +3537,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Self-hosted Beta9 (beam-cloud) gateway and worker** | Upgrade the worker to 0.1.756 or later and the gateway to 0.1.776 or later, then restart both. A workspace token can otherwise read the worker through an image build, the sandbox file API, or a volume path. [Guide](details/beta9.md#remediation). |
 | **Opengear IM7200, CM7100, and ACM7000 console servers** | Upgrade firmware 4.8.0 through 5.5.2 to 5.5.3. Until then, do not expose the web management interface to the internet. Lighthouse and the OM/CM8000 series in the notice are not affected. [Guide](details/opengear-console.md#remediation). |
 | **Canonical LXD and MicroCloud** | Refresh LXD to 6.10.1, 5.21.9, 5.0.11, or 4.0.15, and MicroCloud to 3.4.1 or 2.1.5. Until the new snap is running, do not expose the HTTPS API to untrusted networks. [Guide](details/lxd-mtls.md#remediation). |
 | **Delinea Secret Server** | Upgrade to 12.3.1 or later. 12.2.7 is still affected by the October login bypass and unsigned-token flaws. [Guide](details/delinea-secret-server.md#remediation). |
