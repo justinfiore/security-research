@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Prefab UI: Pyodide sandbox reaches the host](#prefab-ui-pyodide-sandbox-reaches-the-host)
 - [Beta9: workspace token reaches the worker filesystem](#beta9-workspace-token-reaches-the-worker-filesystem)
 - [Gitea: Actions secret theft, archived-repo writes, and stored XSS](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss)
 - [NVIDIA Brev: customer information may have been affected](#nvidia-brev-customer-information-may-have-been-affected)
@@ -127,6 +128,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Prefab UI](#prefab-ui-pyodide-sandbox-reaches-the-host) (`prefab-ui`) to **0.21.0 or later** wherever Generative UI runs untrusted Python. JFrog rates [CVE-2026-120338](https://www.cve.org/CVERecord?id=CVE-2026-120338) 10.0 Critical when the FastMCP server has no authentication, and 9.9 when the caller is an authenticated tool user: the Pyodide sandbox can read and write files as the server OS user. The fix shipped on October 26; the CVE was published on November 1. Until the new build is running, do not register `GenerativeUI` where an untrusted client can reach it. It is not in KEV.
 - **New this update:** Upgrade self-hosted [Beta9](#beta9-workspace-token-reaches-the-worker-filesystem) to worker **0.1.756 or later** and gateway **0.1.776 or later**. JFrog rates three flaws 9.9 Critical: an image build runs as root on the worker, the sandbox file API can read the worker's `cluster-admin` token, and a volume identifier bind-mounts the worker filesystem. The fixes shipped on September 15; the CVEs were published on November 1. beam-cloud has no GitHub advisory for them.
 - **New this update:** Upgrade self-hosted [Gitea](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss) to **28.3.0 or later**. Three High flaws affect 28.2.0 and earlier: a read-only user can start a workflow that receives Actions secrets (CVSS 8.1), a write collaborator can replace release files on an archived repository (CVSS 8.1), and a direct artifact link is stored XSS on the Gitea site (CVSS 8.7). 28.0.0 fixed only the older SSH bypass.
 - **New this update:** If you use [NVIDIA Brev](#nvidia-brev-customer-information-may-have-been-affected), read the email NVIDIA sent you and replace credentials it says were affected. The only public copy is a screenshot: unauthorized activity on the Brev platform from October 4 through October 20, and the recipient's information may have been affected. The image cuts off before the list of information. There is no CVE and no nvidia.com advisory.
@@ -170,7 +172,7 @@ Interpret results in three steps: **is the component present; does its exact bui
 | File | Purpose | Requirements |
 |---|---|---|
 | [stack-inventory.sh](stack-inventory.sh) | PHP settings, Node/Bun/Ruby versions, GitLab information, Nextcloud app list, or Go binary build metadata | POSIX shell and the selected product's tool |
-| [python-package-inventory.py](python-package-inventory.py) | Brotli, brotlicffi, Pillow, olefile, LiteLLM and SAP Cloud SDK for Python (`sap-cloud-sdk`) package metadata without importing them | Trusted Python 3.8+; no third-party dependencies |
+| [python-package-inventory.py](python-package-inventory.py) | Brotli, brotlicffi, Pillow, olefile, LiteLLM, SAP Cloud SDK for Python (`sap-cloud-sdk`) and Prefab UI (`prefab-ui`) package metadata without importing them | Trusted Python 3.8+; no third-party dependencies |
 | [linux-service-inventory.sh](linux-service-inventory.sh) | KSMBD presence, SMB/Plex listeners, and visible RDMA devices | Linux; `ss` for listener inspection |
 | [check_brotli.py](check_brotli.py) | Response-header compression inventory; **not a vulnerability verdict**. [Usage and limits](details/brotli.md#response-header-inventory-script) | Python 3.9+; standard library; authorized HTTP(S) GET requests |
 | [rankmath-ioc-check.sh](rankmath-ioc-check.sh) | Offline Rank Math PRO 3.0.123 incident indicators in a WordPress copy (fake core file, installed PRO version, vendor-named strings, `.cache`/`.htaccess` patterns) and in operator-supplied SQL/crontab exports (option names, `wpsupport_`/`@wp-mail.net` admins, `#ms6v46`). Exit 0 is **not** proof of a clean site. [Usage and limits](details/rankmath-pro.md#offline-indicator-script) | POSIX shell, `find`, `grep`, `sed`; read access only; does not run PHP, WordPress or WP-CLI |
@@ -185,6 +187,32 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Prefab UI: Pyodide sandbox reaches the host
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/prefab-ui.md):** [Detection](details/prefab-ui.md#detection) · [Remediation](details/prefab-ui.md#remediation) · [Verification](details/prefab-ui.md#verification) · [Timeline](details/prefab-ui.md#timeline)
+
+**CVEs:** [CVE-2026-120338](https://www.cve.org/CVERecord?id=CVE-2026-120338)
+
+**JFrog (CNA) CVSS 3.1 10.0 Critical** when a FastMCP server registers `GenerativeUI`, has Deno installed, and has no authentication. The same bug with an authenticated tool caller is **9.9 Critical**. Affected releases are prefab-ui **0.14.0 through 0.20.2**. The sandbox is documented as isolation for untrusted Python, including UI written by a model, but that Python can call `Deno.readTextFileSync` and `Deno.writeTextFileSync` on the host. NVD had not scored it when checked.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01). The CNA does not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred.
+
+**Affected technology:** the `prefab-ui` package, 0.14.0 before 0.21.0, when Generative UI actually runs. **Worst case:** the caller reads and writes files as the server OS user, including planting a `.pth` file that later Python processes import.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Sandbox added | 2026-03-24 17:21 UTC | Deno starts with unrestricted read, write, and network permission. |
+| First affected release | 2026-03-27 02:36 UTC | prefab-ui 0.14.0 on PyPI. |
+| Fix released | 2026-10-26 19:00 UTC | prefab-ui 0.21.0. The release notes do not name this CVE. 0.21.1 followed the same day. |
+| CVE published | 2026-11-01 15:24:54 UTC | JFrog CNA. PrefectHQ's GitHub advisory was still unpublished (HTTP 404). |
+| **Last updated** | **2026-11-01 15:12 EST (UTC−05:00)** | New item. Upgrade to 0.21.0 or later. |
+
+**Remediation:** Upgrade `prefab-ui` to **0.21.0 or later** and restart the server. Until then, do not register `GenerativeUI` where an untrusted client can reach it.
+
+Sources: [CVE-2026-120338](https://www.cve.org/CVERecord?id=CVE-2026-120338), [JFrog JFSA-2026-001699278](https://research.jfrog.com/vulnerabilities/prefab-ui-is-vulnerable-to-remote-code-execution-via-a-pyodide-js-bridge-to-deno-cve-2026-120338-jfsa-2026-001699278), [v0.21.0](https://github.com/PrefectHQ/prefab/releases/tag/v0.21.0).
+
+---
 
 ## Beta9: workspace token reaches the worker filesystem
 
@@ -1647,7 +1675,8 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | CloudLinux 7h/8 production kernels | 2026-10-30; time/TZ unknown | The beta builds moved to production. |
 | Linux 7.3 and 7.3.1 | 2026-10-18 and 2026-10-30 | Neither tag contains `79dc34beb1fd`. Red Hat still has no fix. |
 | CloudLinux 9 and 10 production kernels | 2026-10-28; time/TZ unknown | Same AlmaLinux builds, shipped to CloudLinux production. |
-| **Last updated** | **2026-11-01 11:15 EDT (UTC−05:00)** | Linux 7.3 and 7.3.1 do not contain the fix. Vendor builds are unchanged. |
+| Linux 7.2.15 | 2026-11-01 12:44 +0100 | Stable 7.2.15 backports the fix as `d7d6ff98d5d1`. 7.3 and 7.3.1 still do not. |
+| **Last updated** | **2026-11-01 15:12 EST (UTC−05:00)** | Linux 7.2.15 contains the fix. 7.3 and 7.3.1 still do not. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -1668,7 +1697,7 @@ for m in esp4 esp6 nlmon act_pedit; do modprobe -n -v "$m"; done
 
 A non-zero `user.max_user_namespaces` means ordinary users can take the exploit's first step. Ubuntu's `kernel.apparmor_restrict_unprivileged_userns` does not stop the public PoC. An empty `lsmod` result does not mean the modules are unavailable: they load on demand. A process that already holds network-admin rights, such as root in a privileged container, does not need user namespaces. Vulnerability scanners keyed on CVE IDs will not flag this issue. See [exposure checks](details/skb-zerocopy-lpe.md#read-only-exposure-checks) and [indicators and evidence limits](details/skb-zerocopy-lpe.md#indicators-and-evidence-limits).
 
-**Patch:** No RHEL kernel contains the fix yet, and Linux 7.3 / 7.3.1 do not either. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 9 and 10 ship those same AlmaLinux builds. CloudLinux 7 hybrid and 8 now have production kernels too: `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`. CloudLinux 8 ELS and 9 ELS are still pending. The KernelCare live patch is released for CloudLinux 10 and AlmaLinux 10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
+**Patch:** No RHEL kernel contains the fix yet, and Linux 7.3 / 7.3.1 do not either. Stable **Linux 7.2.15** does. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 9 and 10 ship those same AlmaLinux builds. CloudLinux 7 hybrid and 8 now have production kernels too: `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`. CloudLinux 8 ELS and 9 ELS are still pending. The KernelCare live patch is released for CloudLinux 10 and AlmaLinux 10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
 
 Sources: [ZDI report](https://lore.kernel.org/lkml/BYAPR01MB3830CECF5D0871064C59BA0280662@BYAPR01MB3830.prod.exchangelabs.com/), [fix commit](https://github.com/kernelorg-mirror/linux_kernel_git_netdev_net/commit/79dc34beb1fdb3da79753e51e15c68591a2561fe), [AlmaLinux](https://almalinux.org/blog/2026-10-23-zdi-can-33367/), [CloudLinux](https://blog.cloudlinux.com/zdi-can-33367), [TuxCare](https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/), [Sysdig](https://www.sysdig.com/blog/detecting-and-mitigating-zdi-can-33367-and-five-other-linux-flaws), [Red Hat RHSB-2026-014](https://access.redhat.com/security/vulnerabilities/RHSB-2026-014).
 
@@ -2945,7 +2974,8 @@ Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/an
 | CISA KEV addition for CVE-2026-97229 | 2026-10-29; time/TZ unknown | CISA reports active exploitation; federal due date 2026-11-01. |
 | Public exploit module | 2026-10-30 17:44 UTC | Metasploit merged a module for CVE-2026-97229. It needs a planted CI configuration, then crashes a Puma worker while compiling. |
 | GitLab eMudhra trust removal | 2026-10-29; time/TZ unknown | 19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11 and 18.11.14 remove the compromised intermediates. This does not replace the regex RCE fixes. |
-| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | A public Metasploit module for CVE-2026-97229 exists. The GitLab fixes are unchanged. |
+| Alpine Linux rebuild | 2026-10-28; time/TZ unknown | Alpine rebuilt gitlab.alpinelinux.org after October 20–21 attempts against 19.3.4. It found no tampering of aports, packages, or the October 21 releases, and could not rule code execution out. Its custom image stayed vulnerable after the move to 19.3.6 because that image used stock Ruby. |
+| **Last updated** | **2026-11-01 15:12 EST (UTC−05:00)** | Alpine's rebuild shows a custom GitLab image can miss the Ruby patch. The GitLab version numbers are unchanged. |
 
 Both vulnerabilities involve memory corruption while compiling specially crafted regular expressions.
 
@@ -2961,6 +2991,8 @@ A compromised GitLab server can expose source code and accessible CI/CD secrets 
 **GitLab fixes:** **19.5.1, 19.4.3, 19.3.6, 19.2.9, 19.1.9, 19.0.10, or 18.11.13** for the latest RCE. Prefer a currently supported branch; the older backports are not equivalent to receiving every other security fix. Follow GitLab’s required upgrade stops and migration guidance. The later 2026-10-29 releases (**19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11, 18.11.14**) remove trust for the compromised eMudhra intermediates; they do not replace the RCE fixes. Also update self-hosted Runner to 19.5.1 and AI Gateway to the matching fixed release, because a GitLab upgrade does not update either.
 
 GitLab.com was patched by the vendor. GitLab Dedicated customers should verify the vendor’s listed internal release status.
+
+**A custom image can miss the fix.** Alpine Linux says its gitlab.alpinelinux.org instance, still on 19.3.4, was attacked on October 20 and 21. Upgrading that image to 19.3.6 on October 22 did not fix it: the fix is a Ruby patch that GitLab applies only in its own packages, and Alpine's image used stock Ruby. Alpine rebuilt the instance, reset passwords, and replaced GitLab's secret keys. It found no tampering of aports, packages, or the October 21 releases, and it says it cannot rule code execution out. If you build GitLab with your own Ruby, install Ruby **3.3.13, 3.4.12, or 4.0.9** as well. Anyone who reused a gitlab.alpinelinux.org password elsewhere should change it there. [Alpine's account](https://alpinelinux.org/posts/GitLab-security-incident-CVE-2026-97229.html).
 
 ### Related GitLab identity vulnerabilities
 
@@ -3537,6 +3569,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Prefab UI (`prefab-ui`) with Generative UI** | Upgrade to 0.21.0 or later and restart. Versions 0.14.0 through 0.20.2 let caller-supplied Python read and write the host when Deno is installed. Until then, do not register `GenerativeUI` for untrusted clients. [Guide](details/prefab-ui.md#remediation). |
 | **Self-hosted Beta9 (beam-cloud) gateway and worker** | Upgrade the worker to 0.1.756 or later and the gateway to 0.1.776 or later, then restart both. A workspace token can otherwise read the worker through an image build, the sandbox file API, or a volume path. [Guide](details/beta9.md#remediation). |
 | **Opengear IM7200, CM7100, and ACM7000 console servers** | Upgrade firmware 4.8.0 through 5.5.2 to 5.5.3. Until then, do not expose the web management interface to the internet. Lighthouse and the OM/CM8000 series in the notice are not affected. [Guide](details/opengear-console.md#remediation). |
 | **Canonical LXD and MicroCloud** | Refresh LXD to 6.10.1, 5.21.9, 5.0.11, or 4.0.15, and MicroCloud to 3.4.1 or 2.1.5. Until the new snap is running, do not expose the HTTPS API to untrusted networks. [Guide](details/lxd-mtls.md#remediation). |
@@ -3568,7 +3601,7 @@ flowchart TD
 | **Docker Hub accounts and organizations** | No software to install (fixed service-side). If Docker emailed you on 2026-10-02, revoke unrecognized PATs, prefer organization access tokens, and check published image digests against CI records. [Guide](details/docker-hub-ghostpat.md#remediation). |
 | **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |
 | **HPE Aruba Networking AOS-8 / AOS-10 (controllers, conductors, gateways, APs)** | Upgrade to AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, 8.13.3.1+ or 8.10.0.24+ (other branches: move to a fixed supported branch); until then confine SSH/WebUI/API to a management VLAN and UDP 8211 (PAPI) to your own APs and controllers. [Guide](details/aruba-aos.md#remediation). |
-| **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a vendor kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix (AlmaLinux production 4.18.0-553.178.1.el8_10 / 5.14.0-687.60.1.el9_8 / 6.12.0-211.69.1.el10_2, CloudLinux 7 hybrid 4.18.0-553.177.1.lve.1.el7h, CloudLinux 8 4.18.0-553.177.1.lve.1.el8, or the KernelCare EL10 live patch); no mainline, stable, RHEL, Debian or Ubuntu fix yet. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
+| **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix: stable **7.2.15**, AlmaLinux production 4.18.0-553.178.1.el8_10 / 5.14.0-687.60.1.el9_8 / 6.12.0-211.69.1.el10_2, CloudLinux 7 hybrid 4.18.0-553.177.1.lve.1.el7h, CloudLinux 8 4.18.0-553.177.1.lve.1.el8, or the KernelCare EL10 live patch. Linux 7.3 and 7.3.1, RHEL, Debian and Ubuntu still have no fix. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
 | **WordPress sites with Gravity Forms** | Update to 3.1.3 or later. Through 3.1.2, a form that creates posts from a List-type Post Custom Field with a content template can store an unauthenticated PHP object; code execution needs a separate gadget chain. [Guide](details/gravity-forms.md#remediation). |
 | **WordPress sites with Rank Math PRO** | If 3.0.123 was downloaded or updated 2026-10-15 20:02 – 2026-10-16 07:12 UTC and activated, treat the site as compromised: restore a pre-incident backup or follow the vendor's ordered cleanup, rotate every credential the site could reach, then install 3.0.124. Otherwise update to 3.0.124. Updating alone removes no persistence. [Guide](details/rankmath-pro.md#remediation). |
 | **FortiSIEM (on-premises)** | Upgrade 7.5.0 to 7.5.1+ (7.6 not affected); restrict TCP 27918 to FortiSIEM nodes; treat 7.0–7.4 as unknown (listed in the CVE record, not the advisory) and ask Fortinet; check `/opt/charting/redishb.sh` and `/opt/phoenix/bin/phLicenseTool` for unexpected changes. [Guide](details/fortisiem.md#remediation). |
@@ -3609,7 +3642,7 @@ flowchart TD
 | **FFmpeg / libjxl media workers** | Verify the loaded/bundled Brotli fix with your supplier; the libjxl source merge does not patch existing FFmpeg artifacts. Until verified, pause affected untrusted JPEG XL/metadata processing. [Guide](details/brotli.md#remediation). |
 | **ClickHouse** | Require a supplier build containing fixed Brotli; listed source backports are not verified released packages. Until patched, reject Brotli HTTP bodies before decoding and pause untrusted `.br`/Parquet ingestion. [Guide](details/brotli.md#inventory-by-language-and-deployment). |
 | **Arrow / pyarrow** | Inspect Arrow's own bundled/system Brotli; updating Python `Brotli` alone is insufficient. No fixed wheel is established here: use a verified patched build or pause affected untrusted file/buffer processing. [Guide](details/brotli.md#inventory-by-language-and-deployment). |
-| **GitLab** | Latest supported patch release covering October 21; **19.3.6 / 19.4.3 / 19.5.1** also cover the identity flaws above. |
+| **GitLab** | Latest supported patch release covering October 21; **19.3.6 / 19.4.3 / 19.5.1** also cover the identity flaws above. If the image uses your own Ruby rather than GitLab's packages, also install Ruby **3.3.13 / 3.4.12 / 4.0.9**: Alpine's 19.3.6 image stayed vulnerable until it did. [Guide](details/gitlab-ruby.md#remediation). |
 | **Other Ruby applications** | Ruby **3.3.13 / 3.4.12 / 4.0.9**, especially where users supply regex patterns. |
 | **Plex** | Media Server **1.43.3.10861 or later**; investigate previously exposed vulnerable servers. |
 | **Nextcloud + built-in CODE** | `richdocumentscode` **26.4.303+**, or remove it. **Patch PHP separately.** |

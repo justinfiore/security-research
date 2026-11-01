@@ -1,6 +1,6 @@
 # GitLab and Ruby: detection and remediation
 
-**Last updated:** 2026-10-31 (America/New_York)
+**Last updated:** 2026-11-01 (America/New_York)
 
 [Main GitLab/Ruby summary](../black-october-2026.md#3-gitlab-and-ruby-regex-compilation-becomes-code-execution) · [Changelog](../../CHANGELOG.md)
 
@@ -30,6 +30,7 @@ The principal GitLab issues **[CVE-2026-97229](https://www.cve.org/CVERecord?id=
 | Upstream Ruby complete fix set | 2026-10-23 (source date): [Ruby 4.0.9 / 3.4.12 / 3.3.13](https://www.ruby-lang.org/en/news/2026/10/23/regexp-fixes-for-gitlab-cves/) |
 | CISA KEV addition for CVE-2026-97229 | 2026-10-29; time/TZ unknown | CISA reports reliable evidence of active exploitation; federal due date 2026-11-01. [KEV][kev] |
 | Public exploit module | 2026-10-30 17:44:08 UTC | Metasploit pull 22017 merged a module for CVE-2026-97229. It needs a planted CI configuration (credentials, or self-registration plus project creation), then an unauthenticated CI lint compile, and runs as the GitLab `git` account on affected CE/EE Linux amd64 images. Each attempt allocates slightly more than 2 GiB and crashes a Puma worker. [Pull 22017][msf] |
+| Alpine Linux incident | 2026-10-20 through 2026-10-28 | A new account sent crafted CI configurations at gitlab.alpinelinux.org, then on 19.3.4, on October 20 and 21. Workers crashed 8 times; 4 attempts got partway through and failed at the next step. Alpine found no evidence the attacker ran code, and no tampering of aports, packages, or the October 21 releases (3.21.9, 3.22.7, 3.23.7, 3.24.3). Signing keys are not stored on that server. It rebuilt the instance on October 28, reset every password, and replaced GitLab's secret keys. GitLab reopened October 29 on 19.3.7. [Alpine post][alpine] |
 
 The Ruby notice explains that 4.0.9 completes the repeat-ID overflow fix; 4.0.8 addressed a different compiled-pattern overflow. GitLab can ship a patched bundled Ruby before a corresponding upstream Ruby release. Do not infer its fix state solely from the base interpreter version.
 
@@ -66,7 +67,8 @@ Review authentication/audit logs for unexpected LDAP account linking, session ac
 2. Prefer **19.3.6 / 19.4.3 / 19.5.1 or a later supported patch** covering the RCE and identity issues. Older listed backports address the RCE but are not a substitute for all supported-branch fixes. GitLab's 2026-10-29 patch (**19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11, 18.11.14**) removes trust for the compromised eMudhra intermediate certificates (CVE-2026-111943). It does not replace the regex-RCE fixes. Upgrading GitLab does not update GitLab Runner or a self-hosted AI Gateway: update Runner to 19.5.1 and AI Gateway to 18.11.8, 19.0.13, 19.1.9, 19.2.5, 19.3.3, 19.4.3 or 19.5.3.
 3. Follow package/source/Helm-specific upgrade instructions for every node. GitLab warns that the releases include migrations: single-node installations may require downtime; multi-node operators must follow the documented zero-downtime order. Do not revert binaries over an upgraded database without a supported restore plan.
 4. For non-GitLab Ruby apps, install **3.3.13 / 3.4.12 / 4.0.9** or later supported releases, rebuild images and restart app/worker processes. The Ruby advisory recommends avoiding compilation of untrusted patterns if an update cannot be applied. `Regexp.timeout` and pattern-length limits are not reliable mitigations.
-5. If GitLab cannot be patched promptly, restrict untrusted access while arranging the vendor-supported update. Disabling a single CI screen is not proof that every vulnerable compilation path is blocked. Treat SAML/LDAP configuration changes as an availability-sensitive temporary control, not a blanket RCE fix.
+5. **A GitLab version number is not enough when you supply the Ruby.** Alpine's move from 19.3.4 to 19.3.6 on October 22 left CVE-2026-97229 in place: the fix is a patch GitLab applies only inside its own packages, and Alpine's image used stock Ruby. The `alpinelinux/gitlab:19.3.6` image published on October 27 contains Ruby 3.3.13; any 19.3.6 image pulled before that date, and every older tag, does not. If you build GitLab from source or in your own container, install Ruby 3.3.13, 3.4.12, or 4.0.9 or later and rebuild the image. [Alpine's account][alpine].
+6. If GitLab cannot be patched promptly, restrict untrusted access while arranging the vendor-supported update. Disabling a single CI screen is not proof that every vulnerable compilation path is blocked. Treat SAML/LDAP configuration changes as an availability-sensitive temporary control, not a blanket RCE fix.
 
 ## Verification
 
@@ -86,5 +88,7 @@ Restrict access, preserve logs/configuration and snapshots, then investigate rep
 - [Ruby fix matrix and exposure conditions](https://www.ruby-lang.org/en/news/2026/10/23/regexp-fixes-for-gitlab-cves/)
 - [GitLab upgrade paths](https://docs.gitlab.com/update/upgrade_paths/)
 - [Metasploit pull 22017][msf], merged 2026-10-30: public module for CVE-2026-97229. Fixed versions are unchanged.
+- [Alpine Linux, GitLab security incident][alpine], posted 2026-10-28 and updated 2026-10-30: attempted exploitation of CVE-2026-97229, a custom image that stayed vulnerable on 19.3.6, and the rebuild. Alpine says it found no tampering of packages or releases and cannot rule code execution out.
 
 [msf]: https://github.com/rapid7/metasploit-framework/pull/22017
+[alpine]: https://alpinelinux.org/posts/GitLab-security-incident-CVE-2026-97229.html
