@@ -31,6 +31,8 @@ Times below are UTC, taken from Northflank's status page. The page does not say 
 | 2026-10-30 19:28 | Investigation still ongoing, with no further confirmed findings. Guidance unchanged: assume all environment variables are compromised and rotate secrets in workloads, secret groups and global secrets. [Status][status] |
 | 2026-10-30 23:38 | Users reported unauthorized use of AI API keys supplied to the platform. Northflank said the reports may match the pattern in Wiz's same-day article and pointed at that article's IP addresses. It did not publish its own indicator list. [Status][status] [Wiz][wiz] |
 | 2026-10-31 01:04 | Audit logs enabled for all customers, including free users. The incident remained Identified, not resolved. [Status][status] |
+| 2026-10-31 13:34 | Secret rotation for MySQL and Redis enabled for all customers. Northflank again said to rotate all secrets that had not been rotated. [Status][status] |
+| 2026-10-31 22:32 | Secret rotation for Minio addons enabled for all customers. The incident remained Identified. [Status][status] |
 | 2026-10-30 | Wiz listed Northflank as the ninth AI developer platform to disclose an incident in October, alongside Railway and others. Wiz says the incidents share a pattern of hunting stored environment variables for AI access, and that there is no single vulnerability linking them. [Wiz][wiz] |
 
 **Evidence limits:** Northflank has not said how variables were decrypted, whether every customer was affected, how long exposure lasted, or whether Bring Your Own Cloud deployments are included. "Assume decrypted" is the vendor's instruction, not a published per-customer finding. Wiz's IP table is for testing stolen keys and resale; Wiz says it does not have evidence that those addresses carried out the platform compromises themselves.
@@ -47,7 +49,7 @@ Times below are UTC, taken from Northflank's status page. The page does not say 
 
 1. Revoke each in-scope credential at its **issuing provider**, then create a replacement. Editing the value in Northflank does not revoke the old key.
 2. Update the replacement in the workload, secret group or global secret that held it, then redeploy or restart every consumer so the new value is what is running.
-3. For Postgres and MongoDB addons, use the secret rotation Northflank enabled on 2026-10-30, and disable public expose where it was turned on. Changing a connection string without rotating the database user leaves the old password valid.
+3. Use Northflank's addon secret rotation and disable public expose where it was turned on. Postgres and MongoDB rotation has been available since 2026-10-30 15:12 UTC; MySQL and Redis since 2026-10-31 13:34 UTC; Minio since 2026-10-31 22:32 UTC. Changing a connection string without rotating the database or object-store credential leaves the old secret valid.
 4. Do not place a replacement secret on Northflank and treat the incident as finished while the status page still says Identified. Northflank has not said the attacker is gone. If a replacement was stored before containment is confirmed, plan to rotate it again once Northflank says the incident is resolved.
 5. There is no Northflank software version to install. Platform patches on the status timeline are Northflank's, not a customer release.
 

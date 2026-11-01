@@ -4,6 +4,11 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-10-31 20:11 EDT (UTC−04:00) — Amazon Linux TCP kernels; Northflank addon rotation
+
+- **Linux kernel (CVE-2026-98432):** Amazon Linux now has kernels that name this flaw. Install the package for the booted kernel and reboot: Amazon Linux 2 core [`kernel-4.14.355-287.758.amzn2`](black-october/details/linux-tcp-options.md#remediation), Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own advisories. AWS says self-managed EC2 and Lightsail instances are yours to update, and that Lambda is not exposed. Amazon scores the flaw 8.1; kernel.org and Red Hat's public page still say 9.8. Ubuntu and Red Hat still have no kernel fix. It is not in KEV.
+- **Northflank:** Secret rotation is now available for [MySQL, Redis, and Minio](black-october/details/northflank.md#remediation) as well as Postgres and MongoDB. Use it, and still revoke each credential at its issuer. The incident is still Identified. Northflank has not said the attacker is gone, so a replacement stored now may need another rotation later. There is no CVE.
+
 ## 2026-10-31 16:05 EDT (UTC−04:00) — Opengear console servers; LXD; Secret Server; Assent; ServiceNow
 
 - **Opengear:** Upgrade [IM7200, CM7100, and ACM7000](black-october/details/opengear-console.md#remediation) firmware 4.8.0 through 5.5.2 to 5.5.3. Opengear says an unauthenticated attacker who can reach the web management interface can run code. The CNA scores CVE-2026-102212 8.4 High and describes a crash of `index.cgi`. Other series in the notice are not affected. Until 5.5.3 is running, keep that interface off the internet. It is not in KEV.
