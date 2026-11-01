@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Gitea: Actions secret theft, archived-repo writes, and stored XSS](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss)
+- [NVIDIA Brev: customer information may have been affected](#nvidia-brev-customer-information-may-have-been-affected)
 - [DebugBear: RUM script removed after a registrar DNS compromise](#debugbear-rum-script-removed-after-a-registrar-dns-compromise)
 - [AO3: possible exposure of hashed passwords](#ao3-possible-exposure-of-hashed-passwords)
 - [Apache MINA: unsafe Java deserialization in the 3.0 codec](#apache-mina-unsafe-java-deserialization-in-the-30-codec)
@@ -124,6 +126,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade self-hosted [Gitea](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss) to **28.3.0 or later**. Three High flaws affect 28.2.0 and earlier: a read-only user can start a workflow that receives Actions secrets (CVSS 8.1), a write collaborator can replace release files on an archived repository (CVSS 8.1), and a direct artifact link is stored XSS on the Gitea site (CVSS 8.7). 28.0.0 fixed only the older SSH bypass.
+- **New this update:** If you use [NVIDIA Brev](#nvidia-brev-customer-information-may-have-been-affected), read the email NVIDIA sent you and replace credentials it says were affected. The only public copy is a screenshot: unauthorized activity on the Brev platform from October 4 through October 20, and the recipient's information may have been affected. The image cuts off before the list of information. There is no CVE and no nvidia.com advisory.
 - **New this update:** If a site still embeds [DebugBear](#debugbear-rum-script-removed-after-a-registrar-dns-compromise) Real User Monitoring, remove that script. DebugBear says its DNS records were changed through its domain registrar and told every RUM customer to take the embed out. It has not withdrawn that instruction. Polymarket says a third-party script on its international site drained logged-in sessions on October 29; researchers tie that script to DebugBear's host.
 - **New this update:** If you reused an [AO3](#ao3-possible-exposure-of-hashed-passwords) password anywhere else, change it there now. The Organization for Transformative Works took the archive offline on October 29 and says it cannot rule out theft of the user database, which holds usernames, emails, IP addresses, and hashed passwords. There is no CVE and no software update. Works were not deleted.
 - **New this update:** If a Java service still runs [Apache MINA 3.0](#apache-mina-unsafe-java-deserialization-in-the-30-codec) (`mina-core` 3.0.0-M1 or 3.0.0-M2) and decodes frames from an untrusted peer with `JavaNativeMessageDecoder`, move it to MINA 2.2.10. Apache rates [CVE-2026-118636](https://www.cve.org/CVERecord?id=CVE-2026-118636) 9.8 Critical and will not fix the inactive 3.0 line. The 2.x jars are outside the affected range.
@@ -149,7 +153,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **Update Pillow wherever you process untrusted images**, including thumbnail workers and document pipelines.
 - **Check Ruby separately from GitLab.** The underlying regex bugs affect other applications compiling attacker-controlled patterns.
 - **Update certificate trust data and rebuild Go applications.** The eMudhra incident affects clients even if your own website uses another certificate authority.
-- **If you ran the compromised LiteLLM release, stored secrets in Railway or Northflank, reused an AO3 password, or still embed DebugBear RUM, patching alone is insufficient.** Rotate Northflank secrets at each issuer; the incident is still open. Change reused AO3 passwords on the other sites, and remove the DebugBear embed until DebugBear says it is safe.
+- **If you ran the compromised LiteLLM release, stored secrets in Railway or Northflank, use NVIDIA Brev, reused an AO3 password, or still embed DebugBear RUM, patching alone is insufficient.** Rotate Northflank secrets at each issuer; the incident is still open. For Brev, follow the email NVIDIA sent you: the public screenshot does not list the affected information. Change reused AO3 passwords on the other sites, and remove the DebugBear embed until DebugBear says it is safe.
 
 Severity scores below are attributed where ratings differ. CVSS measures technical severity, not whether exploitation has been observed or whether your particular deployment is reachable.
 
@@ -179,6 +183,59 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Gitea: Actions secret theft, archived-repo writes, and stored XSS
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/gitea-28-3.md):** [Detection](details/gitea-28-3.md#detection) · [Remediation](details/gitea-28-3.md#remediation) · [Verification](details/gitea-28-3.md#verification) · [Timeline](details/gitea-28-3.md#timeline)
+
+**CVEs:** [CVE-2026-118386](https://www.cve.org/CVERecord?id=CVE-2026-118386), [CVE-2026-116296](https://www.cve.org/CVERecord?id=CVE-2026-116296), [CVE-2026-113429](https://www.cve.org/CVERecord?id=CVE-2026-113429)
+
+**Three High flaws fixed only in 28.3.0.** GitHub's advisories score them CVSS 3.1 8.1, 8.1, and 8.7. NVD had not scored them when checked. This is not the [built-in SSH bypass](#gitea-built-in-ssh-server-authentication-bypass); 28.0.0 already fixed that, and 28.0.0 through 28.2.0 are still inside these ranges.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01). No exploitation report was found. Absence from KEV is not evidence that exploitation has not occurred.
+
+**Affected technology:** self-hosted Gitea through 28.2.0. **Worst case:** a read-only user starts a workflow that receives Actions secrets and a commit token; a write collaborator replaces release binaries on an archived repository; a victim who opens a direct artifact link runs JavaScript as themselves, which the advisory says is instance control for an admin.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Advisories published | 2026-11-01 09:42 UTC | All three say patched in 28.3.0. |
+| Gitea 28.3.0 tagged | 2026-11-01 09:55 UTC | First release that includes the fixes. |
+| **Last updated** | **2026-11-01 08:15 EDT (UTC−04:00)** | New item. Upgrade past 28.2.0. |
+
+**Remediation:** Upgrade to **28.3.0 or later** and restart. A read-only account is enough for the Actions flaw when a runner and one same-repository pull request exist. Disabling forks does not remove it.
+
+Sources: [CVE-2026-118386](https://github.com/go-gitea/gitea/security/advisories/GHSA-32h8-5xqg-h466), [CVE-2026-116296](https://github.com/go-gitea/gitea/security/advisories/GHSA-6h2f-c8jm-84hc), [CVE-2026-113429](https://github.com/go-gitea/gitea/security/advisories/GHSA-9v6p-xpcp-7488), [v28.3.0](https://github.com/go-gitea/gitea/releases/tag/v28.3.0).
+
+---
+
+## NVIDIA Brev: customer information may have been affected
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/nvidia-brev.md):** [Detection](details/nvidia-brev.md#detection) · [Remediation](details/nvidia-brev.md#remediation) · [Verification](details/nvidia-brev.md#verification) · [Timeline](details/nvidia-brev.md#timeline)
+
+**CVEs:** No incident-specific identifiers established in the reviewed sources.
+
+**Platform-side incident — customer information may have been copied.** No CVSS score and no local package patch. NVIDIA has not published a public advisory.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. NVIDIA emailed Brev customers.
+
+**Affected technology:** NVIDIA Brev accounts and the GPU VMs those accounts manage. **Worst case:** use of whatever the email says was potentially affected. The only public copy is a screenshot that cuts off before that list. The visible text says unauthorized activity affected the Brev platform from October 4 through October 20, 2026, and that the recipient's information from the Brev network may have been affected.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Unauthorized activity window | 2026-10-04 through 2026-10-20 | Named in the customer email. Not proof of the attacker's first or last access. |
+| Email screenshot posted | 2026-10-30 20:08 UTC | Kevin Beaumont. The image ends at "the following information was potentially". |
+| Public NVIDIA advisory | None found | nvidia.com has no matching notice. The email is the source. |
+| SSH keys named in the email | Not established | Secondhand posts say the notice names VM SSH keys. That sentence is not in the posted image. |
+| Local software patch | Not applicable | Replace credentials Brev held. There is no package to upgrade. |
+| **Last updated** | **2026-11-01 08:15 EDT (UTC−04:00)** | New item. The data list in the email is not public. |
+
+Read the full email NVIDIA sent you; the public screenshot does not include the section that names the information. Until that list is known, replace the SSH key pair Brev provisioned for your VMs, remove the old public key from `authorized_keys`, and revoke Brev API keys that existed during October 4–20. Do not print private key material. `~/.brev/brev.pem` is the local key path in Brev's own documentation, not a line from the email.
+
+**Remediation:** Follow the actions in the email you received. The posted image does not show them. Replacing a local key file without removing the old public key leaves the old key valid. Wiz's October 30 list of nine AI developer platforms does not include Brev, and rotating Northflank or Railway secrets does not cover a Brev VM.
+
+Sources: [Kevin Beaumont, October 30, 2026](https://cyberplace.social/@GossiTheDog/117532608839043336).
+
+---
 
 ## DebugBear: RUM script removed after a registrar DNS compromise
 
@@ -2106,7 +2163,7 @@ Gitea's **built-in Go SSH server** looked up the presented key with SQL `LIKE`, 
 
 Check `gitea --version`, `START_SSH_SERVER` and `DB_TYPE` in `app.ini`, and the image tag.
 
-**Patch:** Upgrade to **28.0.0 or later**; no 1.27.x fix exists. Read the 28.0 breaking changes first (Git 2.25+, new egress proxy). Until you upgrade, disable the built-in server and use OpenSSH, or disable SSH. Review pushes and workflow changes made over SSH during the exposure window.
+**Patch:** Upgrade to **28.3.0 or later**. 28.0.0 fixes this SSH bypass, and no 1.27.x fix exists, but 28.0.0 through 28.2.0 are affected by three High flaws fixed only in [28.3.0](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss). Read the 28.0 breaking changes first (Git 2.25+, new egress proxy). Until you upgrade, disable the built-in server and use OpenSSH, or disable SSH. Review pushes and workflow changes made over SSH during the exposure window.
 
 Sources: [Gitea advisory GHSA-8pwg-hcgm-54cp](https://github.com/go-gitea/gitea/security/advisories/GHSA-8pwg-hcgm-54cp), [Gitea CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-103059), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-103059), [Gitea 28.0.0 release](https://blog.gitea.com/release-of-28.0.0/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -2678,7 +2735,8 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | PHP2Shell + Fragnesia chain to root (Dream) | 2026-10-23 18:14 UTC to 2026-10-24 11:35 UTC (timestamped compromises) | Dream reported 25 servers rooted (24 PAN-OS firewalls, one management server) on 2026-10-26; Unit 42 independently verified the tooling and results. |
 | Windows IIS / PHP-CGI report (Morphisec) | 2026-10-28; publication date, attack date not stated | Blocked post-exploitation on one customer server; attribution to PHP2Shell not independently verified. |
 | Remaining PAN-OS hotfixes released | 2026-10-28 and 2026-10-29; time/TZ unknown | Palo Alto removed the remaining ETAs; every supported branch in the matrix now has a released hotfix. |
-| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | PAN-OS PHP2Shell hotfixes released for every supported branch. |
+| PAN-OS severity raised | 2026-10-27; time/TZ unknown | Palo Alto's changelog: "Severity Updated to Critical and Urgency updated as Highest." The page now shows CVSS-B 9.2 (CVSS-B 7.7 and CVSS-BT 5.2 Medium behind a jump box). The hotfix list did not change. |
+| **Last updated** | **2026-11-01 08:15 EDT (UTC−04:00)** | PAN-OS PHP2Shell score corrected to Critical, CVSS-B 9.2. |
 
 These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
@@ -3429,7 +3487,7 @@ Sources: [initial disclosure](https://blog.railway.com/p/security-disclosure-wed
 
 ```mermaid
 flowchart TD
-    A["Inventory hosts, containers, NAS apps, workers and CI"] --> B{"Compromised LiteLLM artifact,<br/>Railway or Northflank secrets, Cursor extension,<br/>AO3 password reuse, DebugBear embed,<br/>or compromise indicators?"}
+    A["Inventory hosts, containers, NAS apps, workers and CI"] --> B{"Compromised LiteLLM artifact,<br/>Railway, Northflank or Brev credentials, Cursor extension,<br/>AO3 password reuse, DebugBear embed,<br/>or compromise indicators?"}
     B -->|Yes| C["Contain and investigate;<br/>rebuild affected systems and rotate secrets"]
     B -->|No| D["Continue stack checks"]
     C --> D
@@ -3497,7 +3555,7 @@ flowchart TD
 | **Amazon Linux and other Linux hosts accepting untrusted IPv4 TCP** | Install the kernel package that names CVE-2026-98432 and reboot. Amazon Linux 2 core is `kernel-4.14.355-287.758.amzn2`; Amazon Linux 2023 is `kernel-6.1.189-236.400.amzn2023` or `kernel6.12-6.12.113-138.209.amzn2023`, depending on the booted kernel. Debian already has fixed packages. Ubuntu and Red Hat do not. [Guide](details/linux-tcp-options.md#remediation). |
 | **Linux VM and sandbox hosts** | Boot a kernel with the CVE-2026-99999 fix (5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.57, 7.2.11, 7.3 or a vendor backport such as RHEL 9 `5.14.0-687.59.1.el9_8`, RHEL 8 `4.18.0-553.178.1.el8_10`, RHEL 10 `6.12.0-211.67.1.el10_2`) plus the CVE-2026-74580 vhost fix; remove world access to /dev/vhost-*. [Guide](details/pwnescape.md#remediation). |
 | **WordPress sites with Bricksforge** | Update to 3.1.8.10+ (prefer current 4.0.x), or deactivate the plugin or block its form_submit endpoint; then hunt for PHP files under wp-content/uploads, especially bricksforge/tmp and login_admin_*.php. [Guide](details/bricksforge.md#remediation). |
-| **Gitea with the built-in SSH server** | Upgrade to 28.0.0+ (the release after 1.27.3), or switch to OpenSSH or disable SSH until upgraded. [Guide](details/gitea.md#remediation). |
+| **Gitea** | Upgrade to **28.3.0 or later**. 28.0.0 fixes only the built-in SSH bypass; 28.0.0 through 28.2.0 are still affected by the November 1 Actions, archived-repository, and stored-XSS flaws. Until then, switch the built-in SSH server to OpenSSH or disable SSH if you have not installed 28.0.0. [28.3.0 guide](details/gitea-28-3.md#remediation) · [SSH guide](details/gitea.md#remediation). |
 | **Langflow** | Upgrade to 1.10.3+ (1.9.0 is not enough), set LANGFLOW_AUTO_LOGIN=false with a strong superuser password, and keep it off the internet. [Guide](details/langflow.md#remediation). |
 | **Arista VeloCloud Orchestrator (on-prem)** | Upgrade to 5.2.3.18, 6.1.3.10 or 6.4.2.12 (or later on the same train), restrict UI access, block 74.82.197.86 and 38.54.50.151, and preserve logs; hosted VCO is already patched by Arista. [Guide](details/velocloud.md#remediation). |
 | **Siemens Software Center on Windows** | Update Siemens Software Center to V4.0.9.8+, block the Siemens IOCs, and hunt for SiemensSoftwareCenter.exe under AppData\Local\Programs on PCs that never installed it. [Guide](details/siemens-software-center.md#remediation). |
@@ -3534,6 +3592,7 @@ flowchart TD
 | **Cursor on macOS or Windows that may have updated Claude Code on 2026-10-29** | Search `authorized_keys` for `svc-telemetry`. If found, isolate the host and run [Cursor's cleanup script](details/cursor-claude-code.md#remediation); uninstalling 2.1.312/2.1.313 leaves the SSH key and startup scripts. Then install 2.1.314 or later and rotate credentials that host could use. |
 | **Sites embedding DebugBear Real User Monitoring** | Remove the embed, including tag-manager copies, and purge cached HTML that still loads it. DebugBear says its DNS records were changed at the registrar and has not withdrawn the removal instruction. Review session actions on logged-in pages that loaded it on or after October 29. [Guide](details/debugbear.md#remediation). |
 | **AO3 accounts whose password is reused elsewhere** | Change that password on the other sites now. OTW cannot rule out theft of hashed passwords and has no software update to install. Set a new unique AO3 password when the archive returns. [Guide](details/ao3.md#remediation). |
+| **NVIDIA Brev accounts** | Read the customer email. The public screenshot says unauthorized activity ran October 4 through October 20 and that your Brev information may have been affected; it cuts off before naming that information. Until you have the full email, replace the SSH key Brev provisioned, remove the old public key, and revoke API keys from that window. [Guide](details/nvidia-brev.md#remediation). |
 | **Northflank secrets stored on or before 2026-10-30 13:40 UTC** | [Revoke at each issuer, update the workload or secret group, and redeploy](details/northflank.md#remediation). Rotate Postgres, MongoDB, MySQL, Redis, Minio and RabbitMQ addons with the controls Northflank has enabled. The incident is still open, so a replacement stored before Northflank confirms containment may itself need rotation. |
 | **Railway secrets stored before October 21** | [Rotate at each issuer, update consumers and verify revocation](details/railway.md#remediation); include registry credentials and existing sessions. |
 

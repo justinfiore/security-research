@@ -1,6 +1,6 @@
 # Gitea: built-in SSH server authentication bypass
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-01 (America/New_York)
 
 [Main Gitea summary](../black-october-2026.md#gitea-built-in-ssh-server-authentication-bypass) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -100,7 +100,7 @@ No matches does not establish that the instance is clean.
 
 ## Remediation
 
-1. **Upgrade to Gitea 28.0.0 or later.** Prefer the current 28.x release, since 28.1.0 and 28.2.0 have shipped. Back up first, then replace the binary or container and restart. [Blog][blog]
+1. **Upgrade to Gitea 28.3.0 or later.** 28.0.0 fixes this SSH bypass. 28.1.0 and 28.2.0 do not fix three High flaws published on 2026-11-01; those need [28.3.0](gitea-28-3.md#remediation). Back up first, then replace the binary or container and restart. [Blog][blog]
    - 28.0.0 contains **breaking changes**: Git 2.25 or newer is required, Git network operations go through a new egress proxy (review allow and block lists before upgrading), self-registration is off by default, and `[server] DOMAIN` is ignored. Read the release notes before upgrading production. [Blog][blog]
    - **Rollback caution:** downgrading to 1.27.x reintroduces the flaw, and the database may not support a downgrade.
 2. **If you cannot upgrade immediately,** remove the affected configuration. Gitea has published no workaround; these options follow from the advisory's "not affected" list:

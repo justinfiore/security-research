@@ -1,10 +1,10 @@
 # PHP2Shell: detection and remediation
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-11-01 (America/New_York)
 
 [Main PHP summary](../black-october-2026.md#1-php2shell-unauthenticated-execution-below-your-application) · [Patch decision guide](../black-october-2026.md#what-should-i-patch-a-stack-based-decision-guide) · [Changelog](../../CHANGELOG.md)
 
-**[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) / [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619): PHP (GitHub advisories) Critical, CVSS 4.0 9.2 each. NVD CVSS 3.1: 9.8 Critical for CVE-2026-109618 (`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`) and 8.1 High for CVE-2026-109619 (`AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`). Palo Alto Networks rates the PAN-OS impact CVSS-B 8.7 High (7.1 when management access is limited to a jump box).** Memory corruption during request initialization/cleanup can lead to unauthenticated RCE. This guide also covers the distinct, conditional upload-progress issue **[CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560)**, whose full advisory/score was not yet available in the sources reviewed.
+**[CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) / [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619): PHP (GitHub advisories) Critical, CVSS 4.0 9.2 each. NVD CVSS 3.1: 9.8 Critical for CVE-2026-109618 (`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`) and 8.1 High for CVE-2026-109619 (`AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`). Palo Alto Networks rates the PAN-OS impact Critical, CVSS-B 9.2 (CVSS-B 7.7, CVSS-BT 5.2 Medium, when management access is limited to a jump box), urgency Highest. Its October 27 changelog is the raise from the earlier CVSS-B 8.7 High (7.1 on a jump box).** Memory corruption during request initialization/cleanup can lead to unauthenticated RCE. This guide also covers the distinct, conditional upload-progress issue **[CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560)**, whose full advisory/score was not yet available in the sources reviewed.
 
 **CISA KEV:** Listed — added 2026-10-26, federal due date 2026-10-29 for both [CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619). CISA flags forensic triage as required for both. [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560) is not listed. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
