@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-02 04:01 EST (UTC−05:00) — Debian forky ImageMagick; Linux 7.2.15 KSMBD; Linux 7.4-rc1
+
+- **ImageMagick:** On Debian forky, install [`8:7.1.2.34+dfsg1-1` or later](black-october/details/imagemagick.md#remediation). That package fixes [CVE-2026-116149](https://www.cve.org/CVERecord?id=CVE-2026-116149). Debian 12 was already fixed. Debian trixie still has no fix, and Ubuntu lists the CVE with no package. Other systems still need 7.1.2-33 or 6.9.13-58. It is not in KEV.
+- **Linux KSMBD:** [Linux 7.2.15](black-october/details/ksmbd.md#timeline) contains only the protocol-dispatch fix (ZDI-CAN-33774). It does not contain the SMB Direct fix (ZDI-CAN-33549), and that line is end of life. Linux 7.3.1 still has neither. Do not boot 7.4-rc1 to get both. There is still no CVE.
+- **Linux kernel (skb_zerocopy):** The local-root fix is also in the [Linux 7.4-rc1 tag](black-october/details/skb-zerocopy-lpe.md#timeline) (November 1, 21:26 UTC). That is a release candidate, not a kernel to deploy. Linux 7.3 and 7.3.1 still do not contain it. Linux 7.2.15 does, and that line is end of life. RHEL, Debian, and Ubuntu still have no kernel for it. There is still no CVE.
+
 ## 2026-11-01 23:09 EST (UTC−05:00) — Apache Wicket; Presenton desktop; Debian ImageMagick
 
 - **ImageMagick:** On Debian 12, install [`8:6.9.11.60+dfsg-1.6+deb12u15` or later](black-october/details/imagemagick.md#remediation) (DLA-4875-1, October 31). That package fixes [CVE-2026-116149](https://www.cve.org/CVERecord?id=CVE-2026-116149). Debian trixie and forky still had no fix when checked. Other systems still need 7.1.2-33 or 6.9.13-58, or their own vendor package. It is not in KEV.

@@ -1415,7 +1415,7 @@ Sources: [Oracle CPU October 2026](https://www.oracle.com/security-alerts/cpuoct
 
 **ImageMagick maintainers (GHSA) and VulnCheck (CNA) CVSS 3.1 8.1 High (AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:H); VulnCheck CVSS 4.0 7.2 High; Red Hat Important, CVSS 3.1 7.8 (local, user interaction; draft); NVD has not scored it**
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-02). Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1425,8 +1425,9 @@ Sources: [Oracle CPU October 2026](https://www.oracle.com/security-alerts/cpuoct
 | GHSA-pwpf-8799-94cj (public announcement) | 2026-10-10 14:00 UTC | Severity High. |
 | CVE record published | 2026-10-25 13:19 UTC | VulnCheck as CNA. |
 | CISA ADP SSVC | 2026-10-29 19:53 UTC | Exploitation none, Automatable no, Technical Impact partial; not a CVSS score or KEV listing. |
-| Debian 12 bookworm fix | 2026-10-31 23:24 +0100 | DLA-4875-1, `8:6.9.11.60+dfsg-1.6+deb12u15`. trixie and forky still had no fix when checked. |
-| **Last updated** | **2026-11-01 23:09 EST (UTC−05:00)** | Debian 12 now has a fixed package. |
+| Debian 12 bookworm fix | 2026-10-31 23:24 +0100 | DLA-4875-1, `8:6.9.11.60+dfsg-1.6+deb12u15`. |
+| Debian forky and sid package | Tracker read 2026-11-02 | `8:7.1.2.34+dfsg1-1` is fixed. Trixie is still vulnerable. Ubuntu lists the CVE with no fixed package. |
+| **Last updated** | **2026-11-02 04:01 EST (UTC−05:00)** | Debian forky now has a fixed package. Trixie still does not. |
 
 ImageMagick transparently decompresses any input file that starts with the bzip2 signature `BZh` when built with the bzlib delegate. A crafted bzip2-compressed image overwrites stack memory during that decoding. Any service that runs ImageMagick on untrusted files is exposed: uploads, thumbnails, fetched images and document conversion, including through PHP Imagick, Python Wand, Ruby RMagick/MiniMagick and bundled copies such as Magick.NET.
 
@@ -1434,11 +1435,11 @@ ImageMagick transparently decompresses any input file that starts with the bzip2
 
 **Exploitation:** None reported, and no public proof of concept was found.
 
-**Am I impacted?** You are if any host, container or bundled copy runs ImageMagick 7 **before 7.1.2-33** or ImageMagick 6 **before 6.9.13-58** on untrusted input. `magick -version` (or `convert -version`) is read-only and shows the version and whether `bzlib` is among the built-in delegates. Distribution packages differ: Debian 12 bookworm is fixed in `8:6.9.11.60+dfsg-1.6+deb12u15`; trixie and forky were still vulnerable when checked, Red Hat listed RHEL 6 and 7 as affected, and Ubuntu had no record.
+**Am I impacted?** You are if any host, container or bundled copy runs ImageMagick 7 **before 7.1.2-33** or ImageMagick 6 **before 6.9.13-58** on untrusted input. `magick -version` (or `convert -version`) is read-only and shows the version and whether `bzlib` is among the built-in delegates. Distribution packages differ: Debian 12 bookworm is fixed in `8:6.9.11.60+dfsg-1.6+deb12u15`, and Debian forky and sid are fixed in `8:7.1.2.34+dfsg1-1`. Trixie is still vulnerable. Red Hat listed RHEL 6 and 7 as affected. Ubuntu's record (last updated 2026-10-28) is priority Medium and "Needs evaluation" on every listed release, with no fixed package.
 
-**Patch:** Upgrade to **7.1.2-33+** or **6.9.13-58+** (the later 7.1.2-34 / 6.9.13-59 releases also contain this fix and add only Low-severity fixes). On Debian 12, install `8:6.9.11.60+dfsg-1.6+deb12u15` or later. Rebuild images that bundle ImageMagick and restart PHP-FPM, app servers and workers. Until then, reject untrusted files that start with `BZh` before ImageMagick reads them and sandbox image workers. This is this guide's suggestion, not vendor guidance.
+**Patch:** Upgrade to **7.1.2-33+** or **6.9.13-58+** (the later 7.1.2-34 / 6.9.13-59 releases also contain this fix and add only Low-severity fixes). On Debian 12, install `8:6.9.11.60+dfsg-1.6+deb12u15` or later. On Debian forky, install `8:7.1.2.34+dfsg1-1` or later. Rebuild images that bundle ImageMagick and restart PHP-FPM, app servers and workers. Until then, reject untrusted files that start with `BZh` before ImageMagick reads them and sandbox image workers. This is this guide's suggestion, not vendor guidance.
 
-Sources: [GHSA-pwpf-8799-94cj](https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-pwpf-8799-94cj), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-116149), [fix commit](https://github.com/ImageMagick/ImageMagick/commit/cf40ce974c3f780b7f6913bcff7bec27087c9104), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-116149), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-116149), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [GHSA-pwpf-8799-94cj](https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-pwpf-8799-94cj), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-116149), [fix commit](https://github.com/ImageMagick/ImageMagick/commit/cf40ce974c3f780b7f6913bcff7bec27087c9104), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-116149), [Ubuntu CVE page](https://ubuntu.com/security/CVE-2026-116149), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-116149), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## Electrum Bitcoin wallet: malicious server swaps broadcast transactions so a fee bump pays the attacker
 
@@ -1750,8 +1751,9 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | CloudLinux 7h/8 production kernels | 2026-10-30; time/TZ unknown | The beta builds moved to production. |
 | Linux 7.3 and 7.3.1 | 2026-10-18 and 2026-10-30 | Neither tag contains `79dc34beb1fd`. Red Hat still has no fix. |
 | CloudLinux 9 and 10 production kernels | 2026-10-28; time/TZ unknown | Same AlmaLinux builds, shipped to CloudLinux production. |
-| Linux 7.2.15 | 2026-11-01 12:44 +0100 | Stable 7.2.15 backports the fix as `d7d6ff98d5d1`. 7.3 and 7.3.1 still do not. |
-| **Last updated** | **2026-11-01 15:12 EST (UTC−05:00)** | Linux 7.2.15 contains the fix. 7.3 and 7.3.1 still do not. |
+| Linux 7.2.15 | 2026-11-01 12:44 +0100 | Stable 7.2.15 backports the fix as `d7d6ff98d5d1`. That line is EOL. 7.3 and 7.3.1 still do not. |
+| Linux 7.4-rc1 | 2026-11-01 21:26:31 UTC | The tag's `skb_zerocopy()` copies the shared-frag marker. A release candidate, not a kernel to deploy. |
+| **Last updated** | **2026-11-02 04:01 EST (UTC−05:00)** | 7.4-rc1 contains the fix. 7.3 and 7.3.1 still do not. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -1772,7 +1774,7 @@ for m in esp4 esp6 nlmon act_pedit; do modprobe -n -v "$m"; done
 
 A non-zero `user.max_user_namespaces` means ordinary users can take the exploit's first step. Ubuntu's `kernel.apparmor_restrict_unprivileged_userns` does not stop the public PoC. An empty `lsmod` result does not mean the modules are unavailable: they load on demand. A process that already holds network-admin rights, such as root in a privileged container, does not need user namespaces. Vulnerability scanners keyed on CVE IDs will not flag this issue. See [exposure checks](details/skb-zerocopy-lpe.md#read-only-exposure-checks) and [indicators and evidence limits](details/skb-zerocopy-lpe.md#indicators-and-evidence-limits).
 
-**Patch:** No RHEL kernel contains the fix yet, and Linux 7.3 / 7.3.1 do not either. Stable **Linux 7.2.15** does. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 9 and 10 ship those same AlmaLinux builds. CloudLinux 7 hybrid and 8 now have production kernels too: `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`. CloudLinux 8 ELS and 9 ELS are still pending. The KernelCare live patch is released for CloudLinux 10 and AlmaLinux 10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
+**Patch:** No RHEL kernel contains the fix yet, and Linux 7.3 / 7.3.1 do not either. Stable **Linux 7.2.15** does, and that line is EOL. **Linux 7.4-rc1** also contains the fix; do not deploy a release candidate to get it. AlmaLinux production builds are `kernel-4.18.0-553.178.1.el8_10` (8), `kernel-5.14.0-687.60.1.el9_8` (9), and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 9 and 10 ship those same AlmaLinux builds. CloudLinux 7 hybrid and 8 now have production kernels too: `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`. CloudLinux 8 ELS and 9 ELS are still pending. The KernelCare live patch is released for CloudLinux 10 and AlmaLinux 10. Reboot into the fixed kernel. No Debian or Ubuntu fix was found. See the [fixed-build table](details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches).
 
 Sources: [ZDI report](https://lore.kernel.org/lkml/BYAPR01MB3830CECF5D0871064C59BA0280662@BYAPR01MB3830.prod.exchangelabs.com/), [fix commit](https://github.com/kernelorg-mirror/linux_kernel_git_netdev_net/commit/79dc34beb1fdb3da79753e51e15c68591a2561fe), [AlmaLinux](https://almalinux.org/blog/2026-10-23-zdi-can-33367/), [CloudLinux](https://blog.cloudlinux.com/zdi-can-33367), [TuxCare](https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/), [Sysdig](https://www.sysdig.com/blog/detecting-and-mitigating-zdi-can-33367-and-five-other-linux-flaws), [Red Hat RHSB-2026-014](https://access.redhat.com/security/vulnerabilities/RHSB-2026-014).
 
@@ -3264,9 +3266,10 @@ Sources: [vendor advisory](https://github.com/CollaboraOnline/online/security/ad
 | Dispatch fix in mainline Git | 2026-10-26 01:47 UTC | Commit 68f410faedaf merged for 7.4-rc1. |
 | SMB Direct fix committed | 2026-10-26 10:15 UTC | Commit 7193241a49c9, marked for stable. |
 | Both fixes in a tag | 2026-11-01 21:26:31 UTC | Linux 7.4-rc1 contains both commits. Not a stable release. |
+| Dispatch fix in Linux 7.2.15 | 2026-11-01 | Stable backport `aaf8a64a3fbf` of the ZDI-CAN-33774 fix only. Linux 7.2 is EOL. The SMB Direct fix is not in 7.2.15. |
 | Red Hat bulletin RHSB-2026-014 | 2026-10-24 18:31; TZ not stated | Supported RHEL is not affected: the module is not built or the features are not enabled. |
-| Stable and distribution fixes | None established (as of 2026-11-01) | 7.3.1 (2026-10-30) does not contain the SMB Direct fix. No CVE yet. |
-| **Last updated** | **2026-11-01 19:15 EST (UTC−05:00)** | Both fixes are in the 7.4-rc1 tag. Do not deploy that tag as the fix. |
+| SMB Direct and distribution fixes | None established (as of 2026-11-02) | 7.3.1 (2026-10-30) and 7.2.15 do not contain the SMB Direct fix. No CVE yet. |
+| **Last updated** | **2026-11-02 04:01 EST (UTC−05:00)** | 7.2.15 has the dispatch fix only. Do not deploy 7.4-rc1. |
 
 These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinary Samba installations or all Linux machines are vulnerable.
 
@@ -3275,7 +3278,7 @@ These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinar
 | **ZDI-CAN-33774** | Protocol-dispatch race reachable before authentication; stronger write paths involve share access. | Kernel memory corruption, potentially **RCE**. |
 | **ZDI-CAN-33549** | SMB Direct with an RDMA-capable interface and a writable share. | Integer underflow leading to kernel buffer corruption and potentially **RCE**. |
 
-Public demonstrations establish disclosure/crashes, **not successful RCE**. Linux **7.4-rc1** (tagged 2026-11-01 21:26:31 UTC) contains both fix commits. It is a release candidate, not a stable kernel, and no distribution or NAS package containing either fix was established. **Do not deploy 7.4-rc1 to get the fix.** Software RXE can supply RDMA even without a physical RDMA card. See [prerequisites and fix tracking](details/ksmbd.md#evaluate-the-two-prerequisites-independently).
+Public demonstrations establish disclosure/crashes, **not successful RCE**. Linux **7.4-rc1** (tagged 2026-11-01 21:26:31 UTC) contains both fix commits. It is a release candidate, not a stable kernel. Stable **Linux 7.2.15** backports only the dispatch fix (ZDI-CAN-33774), and that line is EOL. The SMB Direct fix is not in 7.2.15 or 7.3.1, and no distribution or NAS package containing either fix was established. **Do not deploy 7.4-rc1 to get the fix.** Software RXE can supply RDMA even without a physical RDMA card. See [prerequisites and fix tracking](details/ksmbd.md#evaluate-the-two-prerequisites-independently).
 
 **Distribution applicability:** Red Hat says no supported RHEL version is affected because the module is not built or the vulnerable features are not enabled. TuxCare reports AlmaLinux and CloudLinux 9/10 do not build KSMBD, while Debian and Ubuntu build it as opt-in (it runs only after `ksmbd-tools` is installed and the service started). Sysdig reports Ubuntu builds SMB Direct support and Debian does not. Custom and NAS kernels still need a vendor statement.
 

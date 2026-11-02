@@ -1,6 +1,6 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-11-01 (America/New_York)
+**Last updated:** 2026-11-02 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -53,7 +53,8 @@
 | CloudLinux 7 hybrid and 8 beta kernels | 2026-10-26 09:11 UTC | `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`, beta and rolling out. [CloudLinux][cl] |
 | CloudLinux 7 hybrid and 8 production kernels | 2026-10-30; time/TZ unknown | The same builds moved to production. CloudLinux says all four kernel lines now have a production fix. [CloudLinux][cl] |
 | Mainline release | Linux 7.3, 2026-10-18 | Linux 7.3 and stable 7.3.1 (2026-10-30) do **not** include `79dc34beb1fd`. The `skbuff.c` history on those tags has an older, different "shared-frag" commit. [kernel.org releases][releases] [v7.3 history][v73] |
-| Stable backport | 2026-11-01 12:44:45 +0100 | Linux **7.2.15** includes the fix as commit `d7d6ff98d5d1`, which is `79dc34beb1fd` upstream. Linux 7.3 and 7.3.1 still do not. No other stable branch released that day carries it. [ChangeLog-7.2.15][cl7215] |
+| Stable backport | 2026-11-01 12:44:45 +0100 | Linux **7.2.15** includes the fix as commit `d7d6ff98d5d1`, which is `79dc34beb1fd` upstream. Linux 7.2 is marked EOL. Linux 7.3 and 7.3.1 still do not. No other stable branch released that day carries it. [ChangeLog-7.2.15][cl7215] |
+| Linux 7.4-rc1 | Tagged 2026-11-01 21:26:31 UTC | `skb_zerocopy()` on tag `v7.4-rc1` copies `SKBFL_SHARED_FRAG`. A release candidate, not a stable kernel. [v7.4-rc1 skbuff.c][v74] |
 | CVE assignment | None as of this review | CloudLinux (updated 2026-10-26) and AlmaLinux say no CVE is assigned. The kernel CNA assigns CVEs after a fix reaches a stable tree. No Debian or Ubuntu tracker entry or notice was found. [CloudLinux][cl] [Kernel CVE process][kernelcve] |
 
 ## Detection
@@ -113,7 +114,7 @@ The existing [Linux inventory script](../linux-service-inventory.sh) checks only
 
 ### Fixed kernels and live patches
 
-The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FRAG` to the destination buffer. It is in the netdev `net` tree as `79dc34beb1fd`, and stable **Linux 7.2.15** (2026-11-01) backports it as `d7d6ff98d5d1`. **Linux 7.3 (2026-10-18) and stable 7.3.1 (2026-10-30) still do not.** A 7.3 kernel is not fixed by moving to 7.3.1. Use a vendor build, or 7.2.15 if that is the line you run; do not apply maintainer-tree commits to production kernels yourself. [Fix commit][commit] [kernel.org releases][releases] [v7.3 history][v73] [ChangeLog-7.2.15][cl7215]
+The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FRAG` to the destination buffer. It is in the netdev `net` tree as `79dc34beb1fd`, stable **Linux 7.2.15** (2026-11-01) backports it as `d7d6ff98d5d1`, and **Linux 7.4-rc1** (tagged 2026-11-01 21:26:31 UTC) contains the same line in `skb_zerocopy()`. **Linux 7.3 (2026-10-18) and stable 7.3.1 (2026-10-30) still do not.** A 7.3 kernel is not fixed by moving to 7.3.1, and 7.4-rc1 is a release candidate, not a kernel to deploy. Use a vendor build, or 7.2.15 if that is the line you run; do not apply maintainer-tree commits to production kernels yourself. [Fix commit][commit] [kernel.org releases][releases] [v7.3 history][v73] [ChangeLog-7.2.15][cl7215] [v7.4-rc1 skbuff.c][v74]
 
 | Distribution / product | Fixed build or status (as of 2026-10-29) | Channel | Source |
 |---|---|---|---|
@@ -128,7 +129,8 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | CloudLinux 8 ELS, 9 ELS | Pending on the extended-support channel | — | [CloudLinux][cl] |
 | TuxCare ELS AlmaLinux 9.2 ESU | `kernel-5.14.0-284.1101.el9_2.tuxcare.11.els17` lists the fix | OSV-imported TuxCare data (unconfirmed on TuxCare's site) | [OSV][osv] |
 | KernelCare live patch | Released for CloudLinux 10 and AlmaLinux 10 on 2026-10-23; CloudLinux 9 in review; CloudLinux 8 in progress; Debian/Ubuntu not started | KernelCare production feed (not yet ePortal, per TuxCare) | [TuxCare][tux] [CloudLinux][cl] |
-| Linux stable 7.2 | **7.2.15** (commit `d7d6ff98d5d1`, upstream `79dc34beb1fd`) | kernel.org, 2026-11-01 | [ChangeLog-7.2.15][cl7215] |
+| Linux stable 7.2 | **7.2.15** (commit `d7d6ff98d5d1`, upstream `79dc34beb1fd`) | kernel.org, 2026-11-01. This line is EOL. | [ChangeLog-7.2.15][cl7215] |
+| Linux 7.4-rc1 | The marker copy is in `skb_zerocopy()` on tag `v7.4-rc1` | kernel.org, tagged 2026-11-01 21:26:31 UTC. A release candidate, not a stable release. | [v7.4-rc1 skbuff.c][v74] |
 | Linux 7.3 / 7.3.1 | Not included | kernel.org | [kernel.org releases][releases] |
 | RHEL | No fix; "Potentially Affected", Important | — | [Red Hat][rh] |
 | Debian, Ubuntu | No advisory, tracker entry or fixed kernel found | — | — |
@@ -212,6 +214,7 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 [osv]: https://osv.dev/vulnerability/CLSA-2026-1792751700
 [thn]: https://thehackernews.com/2026/10/two-cvss-90-linux-ksmbd-rce-flaws.html
 [cl7215]: https://cdn.kernel.org/pub/linux/kernel/v7.x/ChangeLog-7.2.15
+[v74]: https://raw.githubusercontent.com/torvalds/linux/v7.4-rc1/net/core/skbuff.c
 [releases]: https://www.kernel.org/releases.json
 [kernelcve]: https://docs.kernel.org/process/cve.html
 [almarepo]: https://repo.almalinux.org/almalinux/8/BaseOS/x86_64/os/Packages/
