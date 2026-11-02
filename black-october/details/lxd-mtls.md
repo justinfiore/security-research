@@ -1,6 +1,6 @@
 # LXD: client certificate chain authenticates as another trusted client
 
-**Last updated:** 2026-10-31 (America/New_York)
+**Last updated:** 2026-11-01 (America/New_York)
 
 [Main LXD summary](../black-october-2026.md#lxd-client-certificate-chain-authenticates-as-another-trusted-client) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,7 @@ The same flaw affects MicroCloud, where an attacker can intercept a joining memb
 
 The CNA's affected ranges are LXD **4.0.14 before 4.0.15**, **5.0.10 before 5.0.11**, **5.21.8 before 5.21.9**, and **6.9.0 before 6.10.1**. The description text says "6.9 before 6.10.1". Builds outside those ranges are the CNA's default status, unaffected. The API has to be reachable by the attacker; a listener bound only to a trusted network is not the same as a fix.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). Canonical does not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01). Canonical does not report exploitation in the wild. On 2026-11-01 a public lab reproduction showed the chain check on an isolated LXD 3.20 container. That is not an attack on a customer cluster. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -30,6 +30,7 @@ The CNA's affected ranges are LXD **4.0.14 before 4.0.15**, **5.0.10 before 5.0.
 | Report | Date not published | Canonical says the Incus project referred the issue and it was confirmed in LXD. Credit: Stéphane Graber. [Discourse][discourse] |
 | Public advisory | 2026-10-28 17:50 UTC | Discourse post time. [Discourse][discourse] |
 | Fixed snaps | 2026-10-29; time/TZ unknown | LXD 6.10.1, 5.21.9, 5.0.11, 4.0.15; MicroCloud 3.4.1 and 2.1.5. Point releases were still rolling from candidate to stable when the advisory was posted. [Discourse][discourse] |
+| Public lab reproduction | 2026-11-01 20:47 UTC | Repository created. Author says it is an independent reproduction on an isolated LXD 3.20 container, not the original discovery, and not a customer incident. [Lab notes][lab] |
 | CVE record published | 2026-10-30 16:42:06 UTC | Canonical CNA, CVSS 4.0 10.0. [CVE][cve] |
 
 ## Detection
@@ -72,3 +73,4 @@ If the HTTPS API was reachable on an affected version, preserve LXD's logs and t
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-112816
 [ubuntu]: https://ubuntu.com/security/CVE-2026-112816
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+[lab]: https://github.com/MrNarsus/cve-2026-112816-poc

@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Delinea Privilege Manager: Windows agent remote code execution](#delinea-privilege-manager-windows-agent-remote-code-execution)
 - [Prefab UI: Pyodide sandbox reaches the host](#prefab-ui-pyodide-sandbox-reaches-the-host)
 - [Beta9: workspace token reaches the worker filesystem](#beta9-workspace-token-reaches-the-worker-filesystem)
 - [Gitea: Actions secret theft, archived-repo writes, and stored XSS](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss)
@@ -128,9 +129,10 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Install the [Delinea Privilege Manager](#delinea-privilege-manager-windows-agent-remote-code-execution) Windows Core agent **13.0.2064 or newer**, or **12.0.5804 or newer** on the 12 line. Delinea rates [CVE-2026-92744](https://www.cve.org/CVERecord?id=CVE-2026-92744) 8.7 High: an unauthenticated attacker can run code as LocalSystem on the workstation. Until that build is installed, block inbound TCP 5593. This is not the Secret Server upgrade.
 - **New this update:** Upgrade [Prefab UI](#prefab-ui-pyodide-sandbox-reaches-the-host) (`prefab-ui`) to **0.21.0 or later** wherever Generative UI runs untrusted Python. JFrog rates [CVE-2026-120338](https://www.cve.org/CVERecord?id=CVE-2026-120338) 10.0 Critical when the FastMCP server has no authentication, and 9.9 when the caller is an authenticated tool user: the Pyodide sandbox can read and write files as the server OS user. The fix shipped on October 26; the CVE was published on November 1. Until the new build is running, do not register `GenerativeUI` where an untrusted client can reach it. It is not in KEV.
 - **New this update:** Upgrade self-hosted [Beta9](#beta9-workspace-token-reaches-the-worker-filesystem) to worker **0.1.756 or later** and gateway **0.1.776 or later**. JFrog rates three flaws 9.9 Critical: an image build runs as root on the worker, the sandbox file API can read the worker's `cluster-admin` token, and a volume identifier bind-mounts the worker filesystem. The fixes shipped on September 15; the CVEs were published on November 1. beam-cloud has no GitHub advisory for them.
-- **New this update:** Upgrade self-hosted [Gitea](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss) to **28.3.0 or later**. Three High flaws affect 28.2.0 and earlier: a read-only user can start a workflow that receives Actions secrets (CVSS 8.1), a write collaborator can replace release files on an archived repository (CVSS 8.1), and a direct artifact link is stored XSS on the Gitea site (CVSS 8.7). 28.0.0 fixed only the older SSH bypass.
+- **New this update:** Upgrade self-hosted [Gitea](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss) to **28.3.0 or later**. Three High flaws affect 28.2.0 and earlier: a read-only user can start a workflow that receives Actions secrets (CVSS 8.1), a write collaborator can replace release files on an archived repository (CVSS 8.1), and a direct artifact link is stored XSS on the Gitea site (CVSS 8.7). The same release also fixes seven Medium flaws (one unscored, the rest 4.3 to 6.5). 28.0.0 fixed only the older SSH bypass.
 - **New this update:** If you use [NVIDIA Brev](#nvidia-brev-customer-information-may-have-been-affected), read the email NVIDIA sent you and replace credentials it says were affected. The only public copy is a screenshot: unauthorized activity on the Brev platform from October 4 through October 20, and the recipient's information may have been affected. The image cuts off before the list of information. There is no CVE and no nvidia.com advisory.
 - **New this update:** If a site still embeds [DebugBear](#debugbear-rum-script-removed-after-a-registrar-dns-compromise) Real User Monitoring, remove that script. DebugBear says its DNS records were changed through its domain registrar and told every RUM customer to take the embed out. It has not withdrawn that instruction. Polymarket says a third-party script on its international site drained logged-in sessions on October 29; researchers tie that script to DebugBear's host.
 - **New this update:** If you reused an [AO3](#ao3-possible-exposure-of-hashed-passwords) password anywhere else, change it there now. The Organization for Transformative Works took the archive offline on October 29 and says it cannot rule out theft of the user database, which holds usernames, emails, IP addresses, and hashed passwords. There is no CVE and no software update. Works were not deleted.
@@ -138,7 +140,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade Java services that speak [Apache Thrift](#apache-thrift-unbounded-recursion-in-the-java-skip-path) to `libthrift` 0.24.0 or later (0.25.0 is current). Apache rates [CVE-2026-120135](https://www.cve.org/CVERecord?id=CVE-2026-120135) 8.2 High: `TProtocolUtil.skip()` does not limit recursion depth before 0.24.0, so a nested message can exhaust the process. Other language libraries are not named.
 - **New this update:** Upgrade [Opengear IM7200, CM7100, and ACM7000](#opengear-console-servers-unauthenticated-web-buffer-overflow) console servers to firmware 5.5.3. Opengear says an unauthenticated attacker who can reach the web management interface can run code (CNA score 8.4 High). The CNA text describes a crash of `index.cgi`. Other Opengear series in the notice are not affected. Until 5.5.3 is running, keep that interface off the internet.
 - **New this update:** Refresh [LXD](#lxd-client-certificate-chain-authenticates-as-another-trusted-client) to 6.10.1, 5.21.9, 5.0.11, or 4.0.15, and MicroCloud to 3.4.1 or 2.1.5. Canonical rates a mutual-TLS bypass 10.0 Critical: anyone who can reach the HTTPS API and who has another client's public certificate can authenticate as that client. Ubuntu's priority for the same CVE is Medium.
-- **New this update:** Upgrade [Delinea Secret Server](#delinea-secret-server-second-factor-login-bypass-and-unsigned-admin-token) to 12.3.1 or later. Delinea rates two flaws 8.7 High: completing only the second factor can skip the password, and an unsigned token can be answered with cloudadmin permissions. Delinea's public advisories page does not list these CVEs yet. Do not stop at 12.2.7; that build is still affected.
+- **New this update:** Upgrade [Delinea Secret Server](#delinea-secret-server-second-factor-login-bypass-and-unsigned-admin-token) on-prem and cloud to 12.3.1 or later. Delinea now lists both editions through 12.2.7. It rates two flaws 8.7 High: completing only the second factor can skip the password, and an unsigned token can be answered with cloudadmin permissions. A third flaw in the same upgrade, CVE-2026-115828, is 5.1 and is not the reason to rush. Do not stop at 12.2.7.
 - **New this update:** Upgrade [Assent](#assent-sign-in-with-apple-callback-overrides-verified-identity) to 0.3.2 or later anywhere Sign in with Apple uses it. An unsigned callback parameter can replace the verified Apple subject and email (CVSS 4.0 9.3). Until then, drop the `user` parameter before the strategy runs, and review accounts linked while an affected version was live.
 - **New this update:** Confirm [ServiceNow AI Platform](#servicenow-ai-platform-admin-sandbox-escape-and-stored-plaintext-passwords) instances are on the October 29 fixed builds. An admin can escape the Rhino sandbox and run code on the host (CVSS 4.0 9.4). A separate High flaw can store a user's plaintext password in a system table. ServiceNow reports no malicious exploitation. Hosted instances already on the listed patches need no further platform update; reset passwords that may already have been stored.
 - **New this update:** Update [Gravity Forms](#gravity-forms-unauthenticated-object-injection-on-post-creation) to 3.1.3 or later. Wordfence rates an unauthenticated object-injection flaw 9.8 Critical on forms that create posts from a List field with a content template. Code execution needs a separate gadget chain; Wordfence names one in WordPress itself when that field maps to `_wp_page_template`.
@@ -187,6 +189,28 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Delinea Privilege Manager: Windows agent remote code execution
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/privilege-manager.md):** [Detection](details/privilege-manager.md#detection) · [Remediation](details/privilege-manager.md#remediation) · [Verification](details/privilege-manager.md#verification) · [Timeline](details/privilege-manager.md#timeline)
+
+**CVEs:** [CVE-2026-92744](https://www.cve.org/CVERecord?id=CVE-2026-92744)
+
+**Delinea (CNA) rates the flaw CVSS 4.0 8.7 High.** NVD has not scored it. Under conditions Delinea does not list, the Privilege Manager Windows agent lets a remote unauthenticated attacker run code as LocalSystem. Affected builds are 10.1.0 through 12.0.5796 and 13.0.0 through 13.0.1058, on-prem and cloud. This is not the [Secret Server](#delinea-secret-server-second-factor-login-bypass-and-unsigned-admin-token) upgrade.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01). Delinea does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| CVE published | 2026-10-29; time/TZ unknown | Delinea CNA. Windows agent only. |
+| Vendor advisory | Published date October 29, 2026 | Fix in Windows Core agent 13.0.2064 and 12.0.5804. |
+| **Last updated** | **2026-11-01 19:15 EST (UTC−05:00)** | New item. Block TCP 5593 until the new agent is installed. |
+
+**Patch:** Install Windows Core agent **13.0.2064 or newer** on the 13 line, or **12.0.5804 or newer** when the installed agent is 12.0.5796 or older. Until then, block inbound TCP 5593. Delinea says Cloud loses no function from that block. On-premises, a full block makes agents pull updates on their schedule; restricting the port to the Privilege Manager web server keeps the push path.
+
+Sources: [CVE-2026-92744](https://www.cve.org/CVERecord?id=CVE-2026-92744), [Delinea advisories](https://delinea.com/security-advisories), [12.0.5 release notes](https://docs.delinea.com/online-help/privilege-manager/release-notes/12.0.5-combined.htm), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+
+---
 
 ## Prefab UI: Pyodide sandbox reaches the host
 
@@ -244,7 +268,7 @@ Sources: [CVE-2026-120306](https://www.cve.org/CVERecord?id=CVE-2026-120306), [C
 
 **CVEs:** [CVE-2026-118386](https://www.cve.org/CVERecord?id=CVE-2026-118386), [CVE-2026-116296](https://www.cve.org/CVERecord?id=CVE-2026-116296), [CVE-2026-113429](https://www.cve.org/CVERecord?id=CVE-2026-113429)
 
-**Three High flaws fixed only in 28.3.0.** GitHub's advisories score them CVSS 3.1 8.1, 8.1, and 8.7. NVD had not scored them when checked. This is not the [built-in SSH bypass](#gitea-built-in-ssh-server-authentication-bypass); 28.0.0 already fixed that, and 28.0.0 through 28.2.0 are still inside these ranges.
+**Three High flaws fixed only in 28.3.0.** GitHub's advisories score them CVSS 3.1 8.1, 8.1, and 8.7. NVD had not scored them when checked. The same release also fixes seven Medium flaws (one unscored, the rest 4.3 to 6.5) that are not the reason to rush. This is not the [built-in SSH bypass](#gitea-built-in-ssh-server-authentication-bypass); 28.0.0 already fixed that, and 28.0.0 through 28.2.0 are still inside these ranges.
 
 **CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01). No exploitation report was found. Absence from KEV is not evidence that exploitation has not occurred.
 
@@ -254,7 +278,7 @@ Sources: [CVE-2026-120306](https://www.cve.org/CVERecord?id=CVE-2026-120306), [C
 |---|---|---|
 | Advisories published | 2026-11-01 09:42 UTC | All three say patched in 28.3.0. |
 | Gitea 28.3.0 tagged | 2026-11-01 09:55 UTC | First release that includes the fixes. |
-| **Last updated** | **2026-11-01 08:15 EDT (UTC−04:00)** | New item. Upgrade past 28.2.0. |
+| **Last updated** | **2026-11-01 19:15 EST (UTC−05:00)** | Same release also fixes seven Medium flaws. Upgrade past 28.2.0. |
 
 **Remediation:** Upgrade to **28.3.0 or later** and restart. A read-only account is enough for the Actions flaw when a runner and one same-repository pull request exist. Disabling forks does not remove it.
 
@@ -459,7 +483,8 @@ Sources: [Opengear notice](https://portal.opengear.com/customerservice/s/article
 | Public advisory | 2026-10-28 17:50 UTC | [Canonical Discourse](https://discourse.ubuntu.com/t/security-advisory-critical-vulnerability-found-in-canonical-lxd-and-microcloud/90557). Referred from Incus. |
 | Fixed snaps | 2026-10-29; time/TZ unknown | LXD 6.10.1, 5.21.9, 5.0.11, 4.0.15. MicroCloud 3.4.1 and 2.1.5. |
 | CVE record published | 2026-10-30 16:42:06 UTC | Canonical CNA. |
-| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | Added from Canonical's advisory and CNA record. |
+| Public lab reproduction | 2026-11-01 20:47 UTC | Isolated LXD 3.20 container. Not a customer incident. |
+| **Last updated** | **2026-11-01 19:15 EST (UTC−05:00)** | A public lab reproduction exists. Refresh the snap; do not treat the lab as an incident. |
 
 **Patch:** `sudo snap refresh lxd` and, where installed, `sudo snap refresh microcloud`. Confirm 6.10.1, 5.21.9, 5.0.11, or 4.0.15 for LXD, and 3.4.1 or 2.1.5 for MicroCloud. The point releases were still rolling from candidate to stable on October 28, so a refresh that does not change the version has not picked up the fix. Until then, do not expose the HTTPS API to untrusted networks. Ubuntu archive packages are marked not in this release or not affected; that does not clear a snap.
 
@@ -471,16 +496,17 @@ Sources: [Canonical Discourse](https://discourse.ubuntu.com/t/security-advisory-
 
 **CVEs:** [CVE-2026-115829](https://www.cve.org/CVERecord?id=CVE-2026-115829), [CVE-2026-115830](https://www.cve.org/CVERecord?id=CVE-2026-115830)
 
-**Delinea (CNA) rates both flaws CVSS 4.0 8.7 High.** NVD has not scored them. Before 12.3.1, a user can skip the initial login and authenticate with only the second factor. Separately, under conditions Delinea does not list, a user can submit an unsigned JWT and receive cloudadmin permissions. The CNA's affected range is older versions through 12.2.7. The public advisories page does not name these two CVEs. It does not say whether Secret Server Cloud is included.
+**Delinea (CNA) rates both flaws CVSS 4.0 8.7 High.** NVD has not scored them. Before 12.3.1, a user can skip the initial login and authenticate with only the second factor. Separately, under conditions Delinea does not list, a user can submit an unsigned JWT and receive cloudadmin permissions. Delinea's advisories page now names both, for **on-prem and cloud**, through **12.2.7**, fixed in **12.3.1**. The same page lists [CVE-2026-115828](https://www.cve.org/CVERecord?id=CVE-2026-115828) at CVSS 4.0 5.1 (a FIDO2 PIN or biometric check that was not always required). That score is below this collection's High line; the 12.3.1 upgrade covers it anyway.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31) for either CVE. CISA records Exploitation "none" for both. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01) for either High CVE. CISA records Exploitation "none" for both. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | CVE records published | 2026-10-30 19:46–19:47 UTC | Delinea CNA. Fixed in versions that are not earlier than 12.3.1. |
-| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | Added from the CNA records. The vendor page does not list them yet. |
+| Vendor page lists both editions | Checked 2026-11-01 | On-prem and cloud, through 12.2.7. |
+| **Last updated** | **2026-11-01 19:15 EST (UTC−05:00)** | Cloud is in scope. Upgrade on-prem and cloud. |
 
-**Patch:** Upgrade to **12.3.1 or later**. 12.2.7 is still affected, even though it fixes older Critical issues on Delinea's advisories page (CVE-2026-19117 and CVE-2026-15640). 12.3.0 is not named; treat it as unconfirmed. Keep the management interface off untrusted networks until the new version is running.
+**Patch:** Upgrade on-prem and cloud to **12.3.1 or later**. 12.2.7 is still affected, even though it fixes older Critical issues on the same page (CVE-2026-19117 and CVE-2026-15640). 12.3.0 is not named; treat it as unconfirmed. Keep the management interface off untrusted networks until the new version is running. The Privilege Manager agent is a [separate install](#delinea-privilege-manager-windows-agent-remote-code-execution).
 
 Sources: [CVE-2026-115829](https://www.cve.org/CVERecord?id=CVE-2026-115829), [CVE-2026-115830](https://www.cve.org/CVERecord?id=CVE-2026-115830), [Delinea advisories](https://delinea.com/security-advisories), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -630,9 +656,9 @@ Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE
 | Go MPTCP stopgap | 2026-10-29; time/TZ unknown | Go says `GODEBUG=multipathtcp=0` blocks the demonstrated listener shape and is not a kernel fix. |
 | Red Hat mitigation bulletin | 2026-10-30 16:03 (timezone not stated) | An nftables filter drops incoming IPv4 TCP packets that contain IP options. Red Hat says it cannot fully prevent the flaw. |
 | Amazon Linux kernel packages | 2026-10-30; time/TZ unknown | AWS says Amazon Linux 2 and 2023 packages are available and a reboot is required. Amazon scores the flaw 8.1, not 9.8. |
-| **Last updated** | **2026-11-01 11:15 EDT (UTC−05:00)** | RDS/Aurora OS patch date corrected to 2026-11-03. Redshift stays 2026-11-02. |
+| **Last updated** | **2026-11-01 19:15 EST (UTC−05:00)** | New Fargate tasks after 17:00 UTC use a patched platform. Running tasks do not. |
 
-**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Debian trixie is `linux` 6.12.113-1 ([DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html)); Debian 12 bookworm is `linux` 6.1.190-1 ([DLA-4841-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00035.html)), or `linux-6.12` 6.12.113-1~deb12u1 where that kernel is installed. Oracle Linux UEK is covered by [ELSA-2026-500397, 500398 and 500399](https://linux.oracle.com/cve/CVE-2026-98432.html) (2026-10-16); those errata do not update the Red Hat-compatible kernel. On Amazon Linux, install the package for the booted kernel and reboot: Amazon Linux 2 core `kernel-4.14.355-287.758.amzn2`, Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own [ALAS pages](https://explore.alas.aws.amazon.com/CVE-2026-98432.html). AWS says self-managed EC2 and Lightsail instances are yours to patch, and that Lambda is not exposed to this flaw. Amazon scores it CVSS 3.1 8.1. Ubuntu still lists supported generic kernels as vulnerable with fixes in progress, and Red Hat has no released kernel fix. Until one ships, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. AWS's October 31 update to [bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws/) adds the same idea as an iptables rule (`iptables -I INPUT 1 -m u32 --u32 "0>>24&0x0f=6:15" -j DROP`) and says to disable MPTCP (`net.mptcp.enabled=0`, or `GODEBUG=multipathtcp=0` for Go 1.24+) only as an interim step. Go 1.24 and later enable multipath TCP on Linux listen sockets by default; Go says disabling it is fragile and does not fix the kernel bug. The same bulletin says the Redshift cluster OS patch will be available 2026-11-02, the RDS/Aurora OS patch will be available 2026-11-03, and a Storage Gateway update is expected beginning 2026-11-03.
+**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Debian trixie is `linux` 6.12.113-1 ([DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html)); Debian 12 bookworm is `linux` 6.1.190-1 ([DLA-4841-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00035.html)), or `linux-6.12` 6.12.113-1~deb12u1 where that kernel is installed. Oracle Linux UEK is covered by [ELSA-2026-500397, 500398 and 500399](https://linux.oracle.com/cve/CVE-2026-98432.html) (2026-10-16); those errata do not update the Red Hat-compatible kernel. On Amazon Linux, install the package for the booted kernel and reboot: Amazon Linux 2 core `kernel-4.14.355-287.758.amzn2`, Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own [ALAS pages](https://explore.alas.aws.amazon.com/CVE-2026-98432.html). AWS says self-managed EC2 and Lightsail instances are yours to patch, and that Lambda is not exposed to this flaw. Amazon scores it CVSS 3.1 8.1. Ubuntu still lists supported generic kernels as vulnerable with fixes in progress, and Red Hat has no released kernel fix. Until one ships, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. AWS's October 31 update to [bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws/) adds the same idea as an iptables rule (`iptables -I INPUT 1 -m u32 --u32 "0>>24&0x0f=6:15" -j DROP`) and says to disable MPTCP (`net.mptcp.enabled=0`, or `GODEBUG=multipathtcp=0` for Go 1.24+) only as an interim step. Go 1.24 and later enable multipath TCP on Linux listen sockets by default; Go says disabling it is fragile and does not fix the kernel bug. The same bulletin says the Redshift cluster OS patch will be available 2026-11-02, the RDS/Aurora OS patch will be available 2026-11-03, and a Storage Gateway update is expected beginning 2026-11-03. AWS's November 1 update says new Fargate tasks launched after 2026-11-01 17:00 UTC use a patched platform; tasks already running do not, until they are replaced.
 
 Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432), [Debian DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html), [AWS bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws), [ALAS2023-2026-3365](https://alas.aws.amazon.com/AL2023/ALAS2023-2026-3365.html), [Red Hat advisory](https://access.redhat.com/security/cve/CVE-2026-98432), [Red Hat RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016), [Ubuntu advisory](https://ubuntu.com/security/CVE-2026-98432), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -3186,11 +3212,12 @@ Sources: [vendor advisory](https://github.com/CollaboraOnline/online/security/ad
 | Dispatch fix queued | 2026-10-21; time/TZ unknown | Maintainer branch; not a released distribution patch. |
 | SMB Direct patch posted | 2026-10-23 10:36 UTC | Concrete patch sent to the mailing list. |
 | SMB Direct patch reviewed | 2026-10-23 11:02 UTC | Positive review; not proof of delivery to your kernel. |
-| Dispatch fix in mainline Git | 2026-10-26 01:47 UTC | Commit 68f410faedaf merged for 7.4-rc1; not yet in a tagged kernel. |
-| SMB Direct fix committed | 2026-10-26 10:15 UTC | Maintainer branch (ksmbd-for-next), marked for stable; not yet in mainline. |
+| Dispatch fix in mainline Git | 2026-10-26 01:47 UTC | Commit 68f410faedaf merged for 7.4-rc1. |
+| SMB Direct fix committed | 2026-10-26 10:15 UTC | Commit 7193241a49c9, marked for stable. |
+| Both fixes in a tag | 2026-11-01 21:26:31 UTC | Linux 7.4-rc1 contains both commits. Not a stable release. |
 | Red Hat bulletin RHSB-2026-014 | 2026-10-24 18:31; TZ not stated | Supported RHEL is not affected: the module is not built or the features are not enabled. |
-| Released kernel/NAS fixes | None established (as of 2026-10-26) | Newest kernel.org releases predate both fixes; no CVE yet. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Distribution applicability statements added. |
+| Stable and distribution fixes | None established (as of 2026-11-01) | 7.3.1 (2026-10-30) does not contain the SMB Direct fix. No CVE yet. |
+| **Last updated** | **2026-11-01 19:15 EST (UTC−05:00)** | Both fixes are in the 7.4-rc1 tag. Do not deploy that tag as the fix. |
 
 These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinary Samba installations or all Linux machines are vulnerable.
 
@@ -3199,7 +3226,7 @@ These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinar
 | **ZDI-CAN-33774** | Protocol-dispatch race reachable before authentication; stronger write paths involve share access. | Kernel memory corruption, potentially **RCE**. |
 | **ZDI-CAN-33549** | SMB Direct with an RDMA-capable interface and a writable share. | Integer underflow leading to kernel buffer corruption and potentially **RCE**. |
 
-Public demonstrations establish disclosure/crashes, **not successful RCE**. As of October 26, the dispatch-race fix is in mainline Git for 7.4-rc1 and the SMB Direct fix is in the maintainer branch marked for stable backport, but no released mainline, stable, distribution or NAS kernel containing either fix, and no CVE, was established; **a committed fix is not the same as a deployed distribution update**. Software RXE can supply RDMA even without a physical RDMA card. See [prerequisites and fix tracking](details/ksmbd.md#evaluate-the-two-prerequisites-independently).
+Public demonstrations establish disclosure/crashes, **not successful RCE**. Linux **7.4-rc1** (tagged 2026-11-01 21:26:31 UTC) contains both fix commits. It is a release candidate, not a stable kernel, and no distribution or NAS package containing either fix was established. **Do not deploy 7.4-rc1 to get the fix.** Software RXE can supply RDMA even without a physical RDMA card. See [prerequisites and fix tracking](details/ksmbd.md#evaluate-the-two-prerequisites-independently).
 
 **Distribution applicability:** Red Hat says no supported RHEL version is affected because the module is not built or the vulnerable features are not enabled. TuxCare reports AlmaLinux and CloudLinux 9/10 do not build KSMBD, while Debian and Ubuntu build it as opt-in (it runs only after `ksmbd-tools` is installed and the service started). Sysdig reports Ubuntu builds SMB Direct support and Debian does not. Custom and NAS kernels still need a vendor statement.
 
@@ -3573,7 +3600,8 @@ flowchart TD
 | **Self-hosted Beta9 (beam-cloud) gateway and worker** | Upgrade the worker to 0.1.756 or later and the gateway to 0.1.776 or later, then restart both. A workspace token can otherwise read the worker through an image build, the sandbox file API, or a volume path. [Guide](details/beta9.md#remediation). |
 | **Opengear IM7200, CM7100, and ACM7000 console servers** | Upgrade firmware 4.8.0 through 5.5.2 to 5.5.3. Until then, do not expose the web management interface to the internet. Lighthouse and the OM/CM8000 series in the notice are not affected. [Guide](details/opengear-console.md#remediation). |
 | **Canonical LXD and MicroCloud** | Refresh LXD to 6.10.1, 5.21.9, 5.0.11, or 4.0.15, and MicroCloud to 3.4.1 or 2.1.5. Until the new snap is running, do not expose the HTTPS API to untrusted networks. [Guide](details/lxd-mtls.md#remediation). |
-| **Delinea Secret Server** | Upgrade to 12.3.1 or later. 12.2.7 is still affected by the October login bypass and unsigned-token flaws. [Guide](details/delinea-secret-server.md#remediation). |
+| **Delinea Secret Server, on-prem and cloud** | Upgrade to 12.3.1 or later. 12.2.7 is still affected by the October login bypass and unsigned-token flaws. [Guide](details/delinea-secret-server.md#remediation). |
+| **Delinea Privilege Manager Windows agent** | Install Windows Core agent 13.0.2064 or newer, or 12.0.5804 or newer on the 12 line. Until then, block inbound TCP 5593. [Guide](details/privilege-manager.md#remediation). |
 | **Elixir apps using Assent's Sign in with Apple strategy** | Upgrade `assent` to 0.3.2 or later and redeploy. Until then, delete the callback `user` parameter before `Assent.Strategy.Apple.callback/2`. Other Assent providers are not this flaw. [Guide](details/assent-apple.md#remediation). |
 | **ServiceNow AI Platform (hosted or self-hosted)** | Confirm the instance is on Yokohama Patch 13 Hot Fix 4a / Hotfix 5a, Zurich Patch 10 Hot Fix 3b / Hotfix 4b, Zurich Patch 12 or 13, or Australia Patch 5 for the admin sandbox escape, and on the wider floors in the guide for the plaintext-password flaw (including Xanadu Patch 11 Hot Fix 7a). Hosted instances already there need no further platform update. Reset passwords that may have been stored. [Guide](details/servicenow-ai-platform.md#remediation). |
 | **Synology DSM** | Upgrade to 7.4-90075, 7.3.2-86009-4, 7.2.2-72806-9, or 7.2.1-69057-12 or later and confirm the running build. Synology lists no workaround; keep DSM and SSH off the internet until the update is on. [Guide](details/synology-dsm.md#remediation). |
