@@ -1,6 +1,6 @@
 # Linux kernel: IPv4 TCP SYN-ACK options use-after-free
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-11-02 (America/New_York)
 
 [Main summary](../black-october-2026.md#linux-kernel-ipv4-tcp-syn-ack-options-use-after-free) · [Main TOC](../black-october-2026.md#table-of-contents)
 
@@ -21,7 +21,8 @@
 |---|---|---|
 | Public CVE publication | 2026-10-15; time/TZ unknown | kernel.org CNA record. |
 | Upstream mainline fix | 2026-10-05 16:21:57 -0700 | Commit `e3f33b0a1d89` changes the IPv4 destructors to defer freeing through RCU. |
-| **Last updated** | **2026-10-30 (America/New_York)** | Added from the CNA record and upstream fix. |
+| Red Hat fixed kernels | 2026-11-01; time/TZ unknown | RHEL 8, 9 and 10. Package versions are in the [main item](../black-october-2026.md#linux-kernel-ipv4-tcp-options-use-after-free). |
+| **Last updated** | **2026-11-02 (America/New_York)** | Red Hat released fixed kernels. This is the same CVE as the main item. |
 
 ## Detection
 Record every running kernel with `uname -r` and match its vendor package against the vendor’s advisory. The upstream fixed floors are 5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.56, 7.2.10 and 7.3. A distribution backport may use another version string, so an upstream comparison alone is not a verdict.
@@ -29,7 +30,7 @@ Record every running kernel with `uname -r` and match its vendor package against
 This is a network-reachable IPv4 TCP flaw. Inventory internet-facing and untrusted-network listeners first. Missing package or backport information means **unknown**, not fixed. Do not run proof-of-concept traffic against production.
 
 ## Remediation
-Install the vendor kernel package that explicitly fixes CVE-2026-98432, reboot into it, and remove older vulnerable kernels according to normal operational policy. Where a vendor package is unavailable, restrict untrusted network access to affected services as a temporary exposure reduction; do not cherry-pick upstream patches into production kernels.
+Install the vendor kernel package that explicitly fixes CVE-2026-98432, reboot into it, and remove older vulnerable kernels according to normal operational policy. This is the same flaw as [IPv4 TCP options use-after-free](../black-october-2026.md#linux-kernel-ipv4-tcp-options-use-after-free); use that item's package list, including the RHEL 8, 9 and 10 kernels Red Hat released on 2026-11-01. Where a vendor package is unavailable, restrict untrusted network access to affected services as a temporary exposure reduction; do not cherry-pick upstream patches into production kernels.
 
 ## Verification
 After the reboot, confirm `uname -r` and the installed package against the vendor tracker, then perform normal approved service checks. Do not use exploit traffic as a verification control.

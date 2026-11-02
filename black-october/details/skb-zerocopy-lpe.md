@@ -132,7 +132,8 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | Linux stable 7.2 | **7.2.15** (commit `d7d6ff98d5d1`, upstream `79dc34beb1fd`) | kernel.org, 2026-11-01. This line is EOL. | [ChangeLog-7.2.15][cl7215] |
 | Linux 7.4-rc1 | The marker copy is in `skb_zerocopy()` on tag `v7.4-rc1` | kernel.org, tagged 2026-11-01 21:26:31 UTC. A release candidate, not a stable release. | [v7.4-rc1 skbuff.c][v74] |
 | Linux 7.3 / 7.3.1 | Not included | kernel.org | [kernel.org releases][releases] |
-| RHEL | No fix; "Potentially Affected", Important | — | [Red Hat][rh] |
+| RHEL 9 | `kernel-5.14.0-687.64.1.el9_8` (the errata also ships `kernel-rt` at the same version) | [RHSA-2026:93412][rhsa9], issued 2026-11-01. The fixes list names ZDI-CAN-33367 with no CVE id. | [RHSA-2026:93412][rhsa9] |
+| RHEL 8, RHEL 10 | No errata names ZDI-CAN-33367 | The November 1 RHEL 8 and RHEL 10 kernel errata fix CVE-2026-98432 and do not list this bug. | [RHSA-2026:93414][rhsa8] |
 | Debian, Ubuntu | No advisory, tracker entry or fixed kernel found | — | — |
 
 - Install the fixed kernel and **reboot into it**. AlmaLinux's original testing builds are superseded by regular production updates; disable `almalinux-testing` again if it was enabled for this issue (`dnf config-manager --disable almalinux-testing`). [AlmaLinux][alma]
@@ -196,6 +197,7 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 - [TuxCare, 2026-10-22 (modified 2026-10-23)][tux] — tested kernels, AppArmor bypass, prerequisites, KernelCare status, exploitation status.
 - [Sysdig, 2026-10-24][sysdig] — syscall sequence, detection rule, related CVEs, seccomp guidance, exploitation status.
 - [Red Hat RHSB-2026-014][rh] — Red Hat severity and status.
+- [RHSA-2026:93412][rhsa9] — RHEL 9 kernel issued 2026-11-01. Its fixes list names ZDI-CAN-33367 with an empty CVE field.
 - [OSV CLSA-2026-1792751700][osv] — TuxCare ELS AlmaLinux 9.2 ESU kernel.
 - [The Hacker News, updated 2026-10-26][thn] — secondary summary; no new primary facts.
 - [kernel.org releases][releases] and [kernel CVE process][kernelcve] — release and CVE status.
@@ -211,6 +213,8 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 [tux]: https://tuxcare.com/blog/zdi-ksmbd-bugs-cve/
 [sysdig]: https://www.sysdig.com/blog/detecting-and-mitigating-zdi-can-33367-and-five-other-linux-flaws
 [rh]: https://access.redhat.com/security/vulnerabilities/RHSB-2026-014
+[rhsa9]: https://access.redhat.com/errata/RHSA-2026:93412
+[rhsa8]: https://access.redhat.com/errata/RHSA-2026:93414
 [osv]: https://osv.dev/vulnerability/CLSA-2026-1792751700
 [thn]: https://thehackernews.com/2026/10/two-cvss-90-linux-ksmbd-rce-flaws.html
 [cl7215]: https://cdn.kernel.org/pub/linux/kernel/v7.x/ChangeLog-7.2.15

@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-02 08:15 EST (UTC−05:00) — Red Hat kernels for the TCP race and the local root bug
+
+- **Linux kernel (CVE-2026-98432):** Red Hat released fixed kernels on November 1. Install the one for your release and reboot: RHEL 8 [`kernel-4.18.0-553.182.1.el8_10`](black-october/details/linux-tcp-options.md#remediation) (real-time `kernel-rt-4.18.0-553.182.1.rt7.523.el8_10`), RHEL 9 `kernel-5.14.0-687.64.1.el9_8`, or RHEL 10 `kernel-6.12.0-211.72.1.el10_2`. RHEL 9 real-time and OpenShift RHCOS are not in those errata. Ubuntu still has no kernel. AlmaLinux and Rocky Linux had not published these builds when checked. It is not in KEV.
+- **Linux kernel (skb_zerocopy):** The RHEL 9 kernel above also names the [local-root bug](black-october/details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches), ZDI-CAN-33367, which still has no CVE. The same day's RHEL 8 and RHEL 10 errata do not. Linux 7.3 and 7.3.1 still do not contain it. Reboot into the RHEL 9 kernel if that is the line you run.
+- **Northflank:** The incident is now [Monitoring](black-october/details/northflank.md#timeline). Northflank says the attacker was gone within an hour of the October 30 alert, that workload data was not accessed, and that forward-deployed and dedicated control planes were not affected. It still says to rotate every secret, and it has not published a root cause. A secret stored before that window may already have been read.
+
 ## 2026-11-02 04:01 EST (UTC−05:00) — Debian forky ImageMagick; Linux 7.2.15 KSMBD; Linux 7.4-rc1
 
 - **ImageMagick:** On Debian forky, install [`8:7.1.2.34+dfsg1-1` or later](black-october/details/imagemagick.md#remediation). That package fixes [CVE-2026-116149](https://www.cve.org/CVERecord?id=CVE-2026-116149). Debian 12 was already fixed. Debian trixie still has no fix, and Ubuntu lists the CVE with no package. Other systems still need 7.1.2-33 or 6.9.13-58. It is not in KEV.

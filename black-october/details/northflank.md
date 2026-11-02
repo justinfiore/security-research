@@ -1,10 +1,10 @@
 # Northflank: environment variables treated as decrypted
 
-**Last updated:** 2026-11-01 (America/New_York)
+**Last updated:** 2026-11-02 (America/New_York)
 
 [Back to Northflank summary](../black-october-2026.md#northflank-environment-secret-exposure) · [Changelog](../../CHANGELOG.md)
 
-Northflank told every customer to assume environment variables stored on the platform were decrypted and to rotate them. Users then reported unauthorized use of AI API keys they had supplied to the platform. **This is a platform-side secret exposure, not a local package vulnerability.** There is no CVE, no CVSS score, and no customer-side software patch. Northflank has not published a root cause, a count of affected customers, or a statement that the attacker is gone.
+Northflank told every customer to assume environment variables stored on the platform were decrypted and to rotate them. Users then reported unauthorized use of AI API keys they had supplied to the platform. **This is a platform-side secret exposure, not a local package vulnerability.** There is no CVE, no CVSS score, and no customer-side software patch. Northflank has not published a root cause or a count of affected customers. On 2026-11-02 it said the attacker was gone within an hour of the first alert.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. This is a platform-side incident; the vendor's status page is the instruction to rotate. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -34,9 +34,10 @@ Times below are UTC, taken from Northflank's status page. The page does not say 
 | 2026-10-31 13:34 | Secret rotation for MySQL and Redis enabled for all customers. Northflank again said to rotate all secrets that had not been rotated. [Status][status] |
 | 2026-10-31 22:32 | Secret rotation for Minio addons enabled for all customers. The incident remained Identified. [Status][status] |
 | 2026-10-31 23:31 | Secret rotation for RabbitMQ addons enabled for all customers. Northflank again said to rotate all secrets that had not been rotated. The incident remained Identified. [Status][status] |
+| 2026-11-02 11:09 | Status moved to Monitoring. Northflank says the attack vector was contained within an hour of the first alert and that its investigation shows no sign the attacker remained after the attack. Running workloads were unaffected, and it has seen no sign that workload data was accessed. Customers on forward-deployed or dedicated control planes are unaffected. It still says to rotate every secret, and it has not published a root cause. Independent forensic auditors were still reviewing it. Separately, Northflank says it patched CVE-2026-98432 across its fleet, including BYOC clusters it still manages; a BYOC cluster no longer connected to Northflank is the customer's to patch. [Status][status] |
 | 2026-10-30 | Wiz listed Northflank as the ninth AI developer platform to disclose an incident in October, alongside Railway and others. Wiz says the incidents share a pattern of hunting stored environment variables for AI access, and that there is no single vulnerability linking them. [Wiz][wiz] |
 
-**Evidence limits:** Northflank has not said how variables were decrypted, whether every customer was affected, how long exposure lasted, or whether Bring Your Own Cloud deployments are included. "Assume decrypted" is the vendor's instruction, not a published per-customer finding. Wiz's IP table is for testing stolen keys and resale; Wiz says it does not have evidence that those addresses carried out the platform compromises themselves.
+**Evidence limits:** Northflank has not said how variables were decrypted, whether every shared-control-plane customer was affected, or how long exposure lasted. On 2026-11-02 it said forward-deployed and dedicated control planes were unaffected, and that it patched CVE-2026-98432 on BYOC clusters it still manages. That kernel patch is separate from the secret exposure. "Assume decrypted" is the vendor's instruction, not a published per-customer finding. Wiz's IP table is for testing stolen keys and resale; Wiz says it does not have evidence that those addresses carried out the platform compromises themselves.
 
 ## Detection
 
@@ -51,7 +52,7 @@ Times below are UTC, taken from Northflank's status page. The page does not say 
 1. Revoke each in-scope credential at its **issuing provider**, then create a replacement. Editing the value in Northflank does not revoke the old key.
 2. Update the replacement in the workload, secret group or global secret that held it, then redeploy or restart every consumer so the new value is what is running.
 3. Use Northflank's addon secret rotation and disable public expose where it was turned on. Postgres and MongoDB rotation has been available since 2026-10-30 15:12 UTC; MySQL and Redis since 2026-10-31 13:34 UTC; Minio since 2026-10-31 22:32 UTC; RabbitMQ since 2026-10-31 23:31 UTC. Changing a connection string without rotating the database, broker or object-store credential leaves the old secret valid.
-4. Do not place a replacement secret on Northflank and treat the incident as finished while the status page still says Identified. Northflank has not said the attacker is gone. If a replacement was stored before containment is confirmed, plan to rotate it again once Northflank says the incident is resolved.
+4. On 2026-11-02 Northflank moved the incident to Monitoring and said the attacker was gone within an hour of the 11:43 UTC alert on October 30. It has not closed the incident or published a root cause. A replacement stored after that containment window does not need a second rotation on Northflank's current statement. One stored before it does. The instruction to rotate every secret is unchanged.
 5. There is no Northflank software version to install. Platform patches on the status timeline are Northflank's, not a customer release.
 
 ## Verification
