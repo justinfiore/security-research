@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-02 15:56 EST (UTC−05:00) — BTCPay Server hot wallets; Incus 7.6.0; AlmaLinux kernels
+
+- **BTCPay Server:** If a server was still on [2.4.1 or earlier on 1 November](black-october/details/btcpay-server.md#remediation), take it offline and move it to a new machine with a new wallet. BTCPay says attackers used another method against the vulnerability fixed in 2.4.2 and stole Bitcoin and Litecoin from hot wallets. Updating that server in place does not remove access an attacker may already have. Servers already on 2.4.2 or later that day are outside the impact BTCPay reports. No CVE is assigned. It is not in KEV.
+- **Incus:** Upgrade Incus servers to [7.6.0 or later](black-october/details/incus.md#remediation). The project rates eight flaws Critical, and none has a CVE. One, scored 10.0, lets anyone who can reach the HTTPS API authenticate as a trusted client. The other seven need a restricted or low-privileged client and include host root through a malicious image, backup, or project. Refreshing the LXD snap does not update Incus. The LXD CVE for the certificate-chain bug is not in KEV.
+- **Linux kernel (CVE-2026-98432):** On AlmaLinux 8, 9, and 10, install the [production kernel](black-october/details/linux-tcp-options.md#remediation) and reboot: `kernel-4.18.0-553.182.1.el8_10`, `kernel-5.14.0-687.64.1.el9_8`, or `kernel-6.12.0-211.72.1.el10_2`. AlmaLinux says you no longer need the testing repository. Rocky Linux still has no errata. It is not in KEV.
+
 ## 2026-11-02 12:30 EST (UTC−05:00) — Langflow 1.13.0
 
 - **Langflow:** Upgrade to [1.13.0 or later](black-october/details/langflow-ibm.md#remediation). IBM rates two flaws 9.8 Critical on 1.0.0 through 1.12.8. One lets a remote attacker bypass login. The other lets them run code with no account. A third, 8.8 High, needs a low-privileged account. 1.10.3 fixed only the older MCP stdio flaws, and 1.12.8 is still affected. IBM lists no workaround. Set the superuser password before upgrading, because 1.13.0 turns auto-login off and will not start without one. None of these CVEs is in KEV.
