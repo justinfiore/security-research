@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Apache Wicket: upload limits and script injection](#apache-wicket-upload-limits-and-script-injection)
+- [Presenton: desktop app leaves the local API unauthenticated](#presenton-desktop-app-leaves-the-local-api-unauthenticated)
 - [Delinea Privilege Manager: Windows agent remote code execution](#delinea-privilege-manager-windows-agent-remote-code-execution)
 - [Prefab UI: Pyodide sandbox reaches the host](#prefab-ui-pyodide-sandbox-reaches-the-host)
 - [Beta9: workspace token reaches the worker filesystem](#beta9-workspace-token-reaches-the-worker-filesystem)
@@ -189,6 +191,52 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## Apache Wicket: upload limits and script injection
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-wicket.md):** [Detection](details/apache-wicket.md#detection) · [Remediation](details/apache-wicket.md#remediation) · [Verification](details/apache-wicket.md#verification) · [Timeline](details/apache-wicket.md#timeline)
+
+**CVEs:** [CVE-2026-84170](https://www.cve.org/CVERecord?id=CVE-2026-84170), [CVE-2026-83594](https://www.cve.org/CVERecord?id=CVE-2026-83594), [CVE-2026-95863](https://www.cve.org/CVERecord?id=CVE-2026-95863), [CVE-2026-111089](https://www.cve.org/CVERecord?id=CVE-2026-111089), [CVE-2026-82956](https://www.cve.org/CVERecord?id=CVE-2026-82956), [CVE-2026-84231](https://www.cve.org/CVERecord?id=CVE-2026-84231), [CVE-2026-83559](https://www.cve.org/CVERecord?id=CVE-2026-83559), [CVE-2026-83539](https://www.cve.org/CVERecord?id=CVE-2026-83539), [CVE-2026-82840](https://www.cve.org/CVERecord?id=CVE-2026-82840)
+
+**Apache (CNA) rates all eight CVSS 4.0 High, 7.2 to 8.3.** NVD has not scored them. The two 8.3 flaws are in `FileUploadToResourceField`: one ignores a configured upload limit (9.14.0–9.24.0 and 10.0.0–10.9.1), and one allocates a size the client asserts (through 10.11.0). Neither is in 8.x, and neither is the ordinary `FileUploadField` path. The rest write untrusted text into generated JavaScript, or renew the session id only on the first sign-in. Ranges differ. [CVE-2026-84231](https://www.cve.org/CVERecord?id=CVE-2026-84231) is 8.x only. [CVE-2026-82840](https://www.cve.org/CVERecord?id=CVE-2026-82840) starts at 8.18.0, 9.23.0, and 10.9.0.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-02). Apache does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Advisories | 2026-11-01, from 22:05 UTC | announce@wicket.apache.org. Eight High flaws. |
+| Fixed releases | 2026-11-01; tag time not on the advisory pages | 8.20.0, 9.25.0, and 10.12.0. |
+| **Last updated** | **2026-11-01 23:09 EST (UTC−05:00)** | New item. Upgrade the whole line. |
+
+**Patch:** Upgrade `wicket-core`, `wicket-extensions`, and `wicket-auth-roles` together to **10.12.0, 9.25.0, or 8.20.0 or later**, then redeploy. 7.x gets no fix. Until then, the session-fixation advisory says to renew the session id on every successful authentication. There is no workaround listed for the upload flaws.
+
+Sources: [CVE-2026-84170](https://lists.apache.org/thread.html/bw3hn5cch3q7yrsl05m8mvmgyx4m98y7), [CVE-2026-83594](https://lists.apache.org/thread.html/h5lxspxg746pzjd437n3n7mq5t3sfbcb), [CVE-2026-82840](https://lists.apache.org/thread.html/q812kjb74x2pt6956w0pcmkc4wwj95l9), [detailed guide](details/apache-wicket.md).
+
+---
+
+## Presenton: desktop app leaves the local API unauthenticated
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/presenton.md):** [Detection](details/presenton.md#detection) · [Remediation](details/presenton.md#remediation) · [Verification](details/presenton.md#verification) · [Timeline](details/presenton.md#timeline)
+
+**CVEs:** [CVE-2026-120191](https://www.cve.org/CVERecord?id=CVE-2026-120191)
+
+**VulDB (CNA) rates it CVSS 3.1 7.3 High.** The same record's CVSS 4.0 base score is 6.9 Medium. Presenton does not publish a score, and NVD has not scored it. The desktop app through 0.9.11-beta starts with authentication off, so another program on that computer, including a page in the browser, can call the local API. Docker and self-hosted installs keep authentication on unless `DISABLE_AUTH` is set. The listeners are on `127.0.0.1`. VulDB's network score does not mean the service is on the internet.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-02). VulDB calls the public write-up a proof of concept. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public report | 2026-10-05; time/TZ unknown | GitHub issue 972. The reporter's Critical label is not Presenton's. |
+| Fix merged | 2026-10-12 12:00 UTC | Pull request 980 adds a per-launch desktop credential. |
+| Fixed release | 2026-10-26 14:56 UTC | v0.9.12-beta. The notes do not name this CVE. |
+| CVE published | 2026-11-01 01:00 UTC | VulDB CNA. 0.9.11-beta affected; 0.9.12-beta not. |
+| **Last updated** | **2026-11-01 23:09 EST (UTC−05:00)** | New item. Upgrade the desktop app. |
+
+**Patch:** Install desktop **0.9.12-beta or later** and relaunch. Until then, quit the desktop app before opening untrusted pages. Do not set `DISABLE_AUTH` on a server install. If the old desktop app was running while browsing, revoke the API keys stored in it.
+
+Sources: [CVE-2026-120191](https://www.cve.org/CVERecord?id=CVE-2026-120191), [VulDB VDB-429530](https://vuldb.com/vuln/429530), [issue 972](https://github.com/presenton/presenton/issues/972), [v0.9.12-beta](https://github.com/presenton/presenton/releases/tag/v0.9.12-beta).
+
+---
 
 ## Delinea Privilege Manager: Windows agent remote code execution
 
@@ -1377,7 +1425,8 @@ Sources: [Oracle CPU October 2026](https://www.oracle.com/security-alerts/cpuoct
 | GHSA-pwpf-8799-94cj (public announcement) | 2026-10-10 14:00 UTC | Severity High. |
 | CVE record published | 2026-10-25 13:19 UTC | VulnCheck as CNA. |
 | CISA ADP SSVC | 2026-10-29 19:53 UTC | Exploitation none, Automatable no, Technical Impact partial; not a CVSS score or KEV listing. |
-| **Last updated** | **2026-10-30 11:01 EDT (UTC−04:00)** | Confirmed 7.1.2-34 / 6.9.13-59 do not change the fixed versions; added CISA SSVC. |
+| Debian 12 bookworm fix | 2026-10-31 23:24 +0100 | DLA-4875-1, `8:6.9.11.60+dfsg-1.6+deb12u15`. trixie and forky still had no fix when checked. |
+| **Last updated** | **2026-11-01 23:09 EST (UTC−05:00)** | Debian 12 now has a fixed package. |
 
 ImageMagick transparently decompresses any input file that starts with the bzip2 signature `BZh` when built with the bzlib delegate. A crafted bzip2-compressed image overwrites stack memory during that decoding. Any service that runs ImageMagick on untrusted files is exposed: uploads, thumbnails, fetched images and document conversion, including through PHP Imagick, Python Wand, Ruby RMagick/MiniMagick and bundled copies such as Magick.NET.
 
@@ -1385,9 +1434,9 @@ ImageMagick transparently decompresses any input file that starts with the bzip2
 
 **Exploitation:** None reported, and no public proof of concept was found.
 
-**Am I impacted?** You are if any host, container or bundled copy runs ImageMagick 7 **before 7.1.2-33** or ImageMagick 6 **before 6.9.13-58** on untrusted input. `magick -version` (or `convert -version`) is read-only and shows the version and whether `bzlib` is among the built-in delegates. Distribution packages differ: when checked, Debian had fixed only unstable (bookworm, trixie and forky vulnerable), Red Hat listed RHEL 6 and 7 as affected, and Ubuntu had no record.
+**Am I impacted?** You are if any host, container or bundled copy runs ImageMagick 7 **before 7.1.2-33** or ImageMagick 6 **before 6.9.13-58** on untrusted input. `magick -version` (or `convert -version`) is read-only and shows the version and whether `bzlib` is among the built-in delegates. Distribution packages differ: Debian 12 bookworm is fixed in `8:6.9.11.60+dfsg-1.6+deb12u15`; trixie and forky were still vulnerable when checked, Red Hat listed RHEL 6 and 7 as affected, and Ubuntu had no record.
 
-**Patch:** Upgrade to **7.1.2-33+** or **6.9.13-58+** (the later 7.1.2-34 / 6.9.13-59 releases also contain this fix and add only Low-severity fixes), or a fixed distribution package once available. Rebuild images that bundle ImageMagick and restart PHP-FPM, app servers and workers. Until then, reject untrusted files that start with `BZh` before ImageMagick reads them and sandbox image workers. This is this guide's suggestion, not vendor guidance.
+**Patch:** Upgrade to **7.1.2-33+** or **6.9.13-58+** (the later 7.1.2-34 / 6.9.13-59 releases also contain this fix and add only Low-severity fixes). On Debian 12, install `8:6.9.11.60+dfsg-1.6+deb12u15` or later. Rebuild images that bundle ImageMagick and restart PHP-FPM, app servers and workers. Until then, reject untrusted files that start with `BZh` before ImageMagick reads them and sandbox image workers. This is this guide's suggestion, not vendor guidance.
 
 Sources: [GHSA-pwpf-8799-94cj](https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-pwpf-8799-94cj), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-116149), [fix commit](https://github.com/ImageMagick/ImageMagick/commit/cf40ce974c3f780b7f6913bcff7bec27087c9104), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-116149), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-116149), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -3596,6 +3645,8 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Apache Wicket (`wicket-core`, `wicket-extensions`, `wicket-auth-roles`)** | Upgrade the whole line to 10.12.0, 9.25.0, or 8.20.0 or later and redeploy. Eight flaws rated High by Apache, including an upload resource that ignores a configured size limit. Ranges differ by CVE; 7.x gets no fix. [Guide](details/apache-wicket.md#remediation). |
+| **Presenton desktop app (Windows, macOS, Linux)** | Upgrade to 0.9.12-beta or later and relaunch. Through 0.9.11-beta the desktop app leaves its local API unauthenticated. Docker and self-hosted installs are not this default. If the old app ran while browsing, revoke stored provider API keys. [Guide](details/presenton.md#remediation). |
 | **Prefab UI (`prefab-ui`) with Generative UI** | Upgrade to 0.21.0 or later and restart. Versions 0.14.0 through 0.20.2 let caller-supplied Python read and write the host when Deno is installed. Until then, do not register `GenerativeUI` for untrusted clients. [Guide](details/prefab-ui.md#remediation). |
 | **Self-hosted Beta9 (beam-cloud) gateway and worker** | Upgrade the worker to 0.1.756 or later and the gateway to 0.1.776 or later, then restart both. A workspace token can otherwise read the worker through an image build, the sandbox file API, or a volume path. [Guide](details/beta9.md#remediation). |
 | **Opengear IM7200, CM7100, and ACM7000 console servers** | Upgrade firmware 4.8.0 through 5.5.2 to 5.5.3. Until then, do not expose the web management interface to the internet. Lighthouse and the OM/CM8000 series in the notice are not affected. [Guide](details/opengear-console.md#remediation). |
@@ -3619,7 +3670,7 @@ flowchart TD
 | **Java services using Apache Thrift (`libthrift` before 0.24.0)** | Upgrade `org.apache.thrift:libthrift` to **0.24.0+** (current stable **0.25.0**), rebuild and restart, including shaded jars. A nested structure can exhaust the process; the advisory does not claim code execution and does not name other languages. [Guide](details/apache-thrift.md#remediation). |
 | **Apache Camel with `camel-saxon` (XQuery), including Spring Boot and Quarkus apps** | Upgrade `camel-saxon` to 4.23.0, 4.22.2 or 4.18.5 (4.22.1 is still affected; 4.19–4.21 and 4.17 and older get no fix), rebuild and redeploy; until then avoid XQuery over untrusted bodies that are already a `Source`, or supply a Saxon `Configuration` that refuses DOCTYPE and external entities. [Guide](details/apache-camel-saxon.md#remediation). |
 | **Oracle WebLogic, SOA Suite, Access Manager, E-Business Suite 12.2, JD Edwards, Database 19c/23ai, MySQL 8.4/9.7/26.7 and PeopleTools 8.61–8.63** | Apply the October 2026 CPU patches from Oracle's patch availability documents (CPU360, KA923, CPU417, CPU359, CPU378, CPU418), internet-facing middleware and EBS first; until then deny T3/IIOP from untrusted networks with WebLogic connection filters and remove `/OA_HTML/AppsTCFServer` from the EBS URL firewall allowlist. On PeopleSoft, also confirm that the June CVE-2026-35273 patch is installed, not just a WAF rule. [Guide](details/oracle-cpu-october.md#remediation). |
-| **ImageMagick (CLI, PHP Imagick, Python Wand, Ruby RMagick/MiniMagick, bundled copies such as Magick.NET)** | Upgrade to 7.1.2-33+ or 6.9.13-58+ or a fixed distro package (Debian stable and RHEL 6/7 were unfixed when checked), rebuild bundling images and restart workers; until then reject untrusted files starting with `BZh` and sandbox image processing. [Guide](details/imagemagick.md#remediation). |
+| **ImageMagick (CLI, PHP Imagick, Python Wand, Ruby RMagick/MiniMagick, bundled copies such as Magick.NET)** | Upgrade to 7.1.2-33+ or 6.9.13-58+ or a fixed distro package (Debian 12: `8:6.9.11.60+dfsg-1.6+deb12u15`; trixie, forky, and RHEL 6/7 were unfixed when checked), rebuild bundling images and restart workers; until then reject untrusted files starting with `BZh` and sandbox image processing. [Guide](details/imagemagick.md#remediation). |
 | **Electrum Bitcoin wallet (desktop and Android)** | Upgrade to 4.8.3 (verify signatures), check output address and amount before signing any fee bump, and prefer a server you run. [Guide](details/electrum.md#remediation). |
 | **Fortinet FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator** | Upgrade FortiOS to 8.0.2/7.6.8/7.4.13/7.2.14, FortiManager and FortiAnalyzer to 8.0.2/7.6.8/7.4.12 (move 7.2 to 7.4.12+ because FG-IR-26-178 has no 7.2 fix), FortiMail to 8.0.2/7.6.7/7.4.9 (7.2 to 7.4+) and FortiAuthenticator to 8.0.4/6.6.11; until then restrict admin interfaces to trusted IPs. [Guide](details/fortinet-october.md#remediation). |
 | **Signal (Android, iOS, Desktop) and RingRTC embedders** | Update to Android 8.27.0+, iOS 8.30.0+ or Desktop 8.29.0+ (RingRTC 2.72.0+) and restart the app; until then avoid calls with untrusted contacts. [Guide](details/signal.md#remediation). |

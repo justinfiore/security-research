@@ -1,6 +1,6 @@
 # ImageMagick: stack buffer overflow when reading bzip2-compressed images
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-11-01 (America/New_York)
 
 [Main ImageMagick summary](../black-october-2026.md#imagemagick-stack-buffer-overflow-when-reading-bzip2-compressed-images) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -59,7 +59,7 @@ Checked 2026-10-26; recheck before relying on it.
 
 | Distribution | Status | Source |
 |---|---|---|
-| Debian | **Fixed only in unstable (sid)** from `8:7.1.2.33+dfsg1-1`. bookworm (`6.9.11.60` series), trixie (`7.1.1.43` series) and forky (`7.1.2.31`) are listed as **vulnerable**. | [Debian tracker][debian] |
+| Debian | **Bookworm (Debian 12 LTS)** is fixed in `8:6.9.11.60+dfsg-1.6+deb12u15` ([DLA-4875-1][dla], October 31, 2026). **Unstable (sid)** is fixed from `8:7.1.2.33+dfsg1-1`. trixie (`7.1.1.43` series) and forky (`7.1.2.31`) were still listed as vulnerable when the tracker was read on 2026-11-02. | [Debian tracker][debian] |
 | Red Hat | Important; ImageMagick on **RHEL 6 and RHEL 7** listed as "Affected". No other RHEL products are listed in the CVE data. | [Red Hat][redhat] |
 | Ubuntu | **Not established**: Ubuntu's CVE API returned no record for this CVE when checked. | — |
 | Others (Alpine, Fedora, SUSE, Homebrew, EPEL) | Not checked for this guide. | — |
@@ -74,7 +74,7 @@ No crash or no `BZh` file found does **not** prove the flaw was not triggered: w
 
 ## Remediation
 
-1. Upgrade to **ImageMagick 7.1.2-33 or later**, or **6.9.13-58 or later** for ImageMagick 6. The newest upstream releases when checked on 2026-10-30, **7.1.2-34** and **6.9.13-59** (2026-10-14), also contain this fix; they do not raise the minimum for this CVE, but 7.1.2-34 also fixes two Low ImageMagick 7 issues. Where you use distribution packages, install the vendor's fixed package once available. At the time of checking, Debian stable and Red Hat had no fixed package. [GHSA][ghsa] [Debian tracker][debian] [Red Hat][redhat]
+1. Upgrade to **ImageMagick 7.1.2-33 or later**, or **6.9.13-58 or later** for ImageMagick 6. The newest upstream releases when checked on 2026-10-30, **7.1.2-34** and **6.9.13-59** (2026-10-14), also contain this fix; they do not raise the minimum for this CVE, but 7.1.2-34 also fixes two Low ImageMagick 7 issues. On Debian 12, install `8:6.9.11.60+dfsg-1.6+deb12u15` or later ([DLA-4875-1][dla]). Debian trixie and forky, and Red Hat, still had no fixed package when checked on 2026-11-02. [GHSA][ghsa] [Debian tracker][debian] [Red Hat][redhat]
 2. Rebuild container images and products that bundle ImageMagick, then **restart** every long-running process that loaded the old library (PHP-FPM pools, application servers, queue workers). An updated package does not replace a library already mapped into a running process.
 3. **Interim measures (not vendor-validated for this CVE):** until you can upgrade, reject untrusted input files whose first three bytes are `BZh` before they reach ImageMagick, or decompress bzip2 yourself in a separate, sandboxed step. Run image processing as an unprivileged user in a sandbox or container with no secrets and limited network access. Keep a restrictive `policy.xml` that disables coders you do not need. That reduces general attack surface, but this guide has not confirmed that any policy setting blocks this bzip2 path. These measures are this guide's inference, not ImageMagick guidance.
 
@@ -116,5 +116,6 @@ No crash or no `BZh` file found does **not** prove the flaw was not triggered: w
 [ghsa-morph]: https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-x48p-6655-8qgv
 [ghsa-tiff]: https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-g5j8-ff59-wp88
 [debian]: https://security-tracker.debian.org/tracker/CVE-2026-116149
+[dla]: https://lists.debian.org/debian-lts-announce/2026/10/msg00068.html
 [redhat]: https://access.redhat.com/security/cve/CVE-2026-116149
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
