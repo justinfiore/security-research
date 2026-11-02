@@ -4,6 +4,11 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-02 12:30 EST (UTC−05:00) — Langflow 1.13.0
+
+- **Langflow:** Upgrade to [1.13.0 or later](black-october/details/langflow-ibm.md#remediation). IBM rates two flaws 9.8 Critical on 1.0.0 through 1.12.8. One lets a remote attacker bypass login. The other lets them run code with no account. A third, 8.8 High, needs a low-privileged account. 1.10.3 fixed only the older MCP stdio flaws, and 1.12.8 is still affected. IBM lists no workaround. Set the superuser password before upgrading, because 1.13.0 turns auto-login off and will not start without one. None of these CVEs is in KEV.
+- **Linux kernel (CVE-2026-98432):** AWS's November 1 bulletin now names more services. Move [EKS nodes on the AL2023 AMI](black-october/details/linux-tcp-options.md#remediation) to v20261031. Auto Mode is expected worldwide by November 6, and AWS says it replaces those nodes. DMS applies the kernel by November 2 in the weekly maintenance window. GameLift managed fleets still have no fix. AWS expects those AMIs by November 4 and says not to recreate fleets until the bulletin confirms them. It is not in KEV.
+
 ## 2026-11-02 08:15 EST (UTC−05:00) — Red Hat kernels for the TCP race and the local root bug
 
 - **Linux kernel (CVE-2026-98432):** Red Hat released fixed kernels on November 1. Install the one for your release and reboot: RHEL 8 [`kernel-4.18.0-553.182.1.el8_10`](black-october/details/linux-tcp-options.md#remediation) (real-time `kernel-rt-4.18.0-553.182.1.rt7.523.el8_10`), RHEL 9 `kernel-5.14.0-687.64.1.el9_8`, or RHEL 10 `kernel-6.12.0-211.72.1.el10_2`. RHEL 9 real-time and OpenShift RHCOS are not in those errata. Ubuntu still has no kernel. AlmaLinux and Rocky Linux had not published these builds when checked. It is not in KEV.

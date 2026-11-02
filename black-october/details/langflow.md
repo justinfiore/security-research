@@ -1,6 +1,6 @@
 # Langflow: authenticated RCE via MCP stdio server configuration
 
-**Last updated:** 2026-10-27 (America/New_York)
+**Last updated:** 2026-11-02 (America/New_York)
 
 [Main Langflow summary](../black-october-2026.md#langflow-authenticated-rce-via-mcp-stdio-server-configuration) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -130,7 +130,7 @@ grep -n -E '/api/v1/auto_login|/api/v2/mcp/servers|146\.70\.211\.112|192\.255\.2
 
 ## Remediation
 
-1. **Upgrade to Langflow 1.10.3 or later**, with matching `langflow-base` 0.10.3+ and `lfx` 1.10.3+. Prefer the current release. **1.9.0 is not enough**: it fixes only CVE-2026-105740's REST route. [GHSA-w794][ghsa97]
+1. **Upgrade to Langflow 1.13.0 or later**, with matching `langflow-base` and `lfx`. **1.10.3 fixes these two CVEs and does not fix the October 28 IBM flaws**, which IBM rates 9.8 on 1.0.0 through 1.12.8. **1.9.0 is not enough** even for this pair: it fixes only CVE-2026-105740's REST route. [GHSA-w794][ghsa97] [IBM bulletin](langflow-ibm.md#remediation)
 2. **Turn off auto-login:** set `LANGFLOW_AUTO_LOGIN=false` and a strong, unique `LANGFLOW_SUPERUSER_PASSWORD`. Never use `langflow`. Remove any explicit `LANGFLOW_AUTO_LOGIN=true` override.
    - 1.13 makes `false` the default and refuses to start without a password. **Prepare the existing account before upgrading**, following the Langflow migration steps, so you keep access to flows.
    - Disabling auto-login does not revoke sessions or API keys already issued.
