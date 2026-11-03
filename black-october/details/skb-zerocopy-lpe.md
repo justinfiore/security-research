@@ -1,8 +1,8 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-03 (America/New_York)
 
-[Main guide](../black-october-2026.md#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main guide](../black-october-2026.md#linux-kernel-skbzerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **ZDI-CAN-33367 (no CVE assigned): ZDI, the reporter, rates it CVSS 3.0 7.8 High (AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H). Red Hat lists it as "Potentially Affected" with severity Important (RHSB-2026-014). ZDI is reporting through Trend Micro's disclosure program, not as the kernel's CNA; no CNA or NVD score exists because no CVE exists.** [ZDI report][report] [ZDI upcoming][zdi] [Red Hat][rh]
 
@@ -133,7 +133,10 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | Linux 7.4-rc1 | The marker copy is in `skb_zerocopy()` on tag `v7.4-rc1` | kernel.org, tagged 2026-11-01 21:26:31 UTC. A release candidate, not a stable release. | [v7.4-rc1 skbuff.c][v74] |
 | Linux 7.3 / 7.3.1 | Not included | kernel.org | [kernel.org releases][releases] |
 | RHEL 9 | `kernel-5.14.0-687.64.1.el9_8` (the errata also ships `kernel-rt` at the same version) | [RHSA-2026:93412][rhsa9], issued 2026-11-01. The fixes list names ZDI-CAN-33367 with no CVE id. | [RHSA-2026:93412][rhsa9] |
-| RHEL 8, RHEL 10 | No errata names ZDI-CAN-33367 | The November 1 RHEL 8 and RHEL 10 kernel errata fix CVE-2026-98432 and do not list this bug. | [RHSA-2026:93414][rhsa8] |
+| RHEL 8 | `kernel-4.18.0-553.181.1.el8_10`; real-time `kernel-rt-4.18.0-553.181.1.rt7.522.el8_10` | [RHSA-2026:93436][rhsa8z] and [RHSA-2026:93437][rhsa8rt], issued 2026-11-02. Both name ZDI-CAN-33367 with an empty CVE field. These are not the November 1 TCP kernels. | [RHSA-2026:93436][rhsa8z] |
+| RHEL 10 | No errata names ZDI-CAN-33367 | The November 1 RHEL 10 kernel errata fixes CVE-2026-98432 and does not list this bug. | [RHSA-2026:93413][rhsa10] |
+| Oracle Linux 8 | `kernel-4.18.0-553.182.1.el8_10` | [ELSA-2026-93414][elsa8], 2026-11-02. The 4.18.0-553.181.1 changelog line is the marker copy; the same build fixes CVE-2026-98432. | [ELSA-2026-93414][elsa8] |
+| Oracle Linux 10 | Not in the package that fixes CVE-2026-98432 | [ELSA-2026-93413][elsa10] names CVE-2026-98432 and does not list the `skb_zerocopy()` change. | [ELSA-2026-93413][elsa10] |
 | Debian, Ubuntu | No advisory, tracker entry or fixed kernel found | — | — |
 
 - Install the fixed kernel and **reboot into it**. AlmaLinux's original testing builds are superseded by regular production updates; disable `almalinux-testing` again if it was enabled for this issue (`dnf config-manager --disable almalinux-testing`). [AlmaLinux][alma]
@@ -198,6 +201,8 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 - [Sysdig, 2026-10-24][sysdig] — syscall sequence, detection rule, related CVEs, seccomp guidance, exploitation status.
 - [Red Hat RHSB-2026-014][rh] — Red Hat severity and status.
 - [RHSA-2026:93412][rhsa9] — RHEL 9 kernel issued 2026-11-01. Its fixes list names ZDI-CAN-33367 with an empty CVE field.
+- [RHSA-2026:93436][rhsa8z] — RHEL 8 kernel issued 2026-11-02, `kernel-4.18.0-553.181.1.el8_10`. The fixes list names ZDI-CAN-33367 (bug 2559835) and leaves the CVE field empty. It does not list CVE-2026-98432.
+- [RHSA-2026:93437][rhsa8rt] — RHEL 8 real-time kernel issued 2026-11-02, `kernel-rt-4.18.0-553.181.1.rt7.522.el8_10`. Same empty-CVE ZDI-CAN-33367 bullet.
 - [OSV CLSA-2026-1792751700][osv] — TuxCare ELS AlmaLinux 9.2 ESU kernel.
 - [The Hacker News, updated 2026-10-26][thn] — secondary summary; no new primary facts.
 - [kernel.org releases][releases] and [kernel CVE process][kernelcve] — release and CVE status.
@@ -215,6 +220,11 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 [rh]: https://access.redhat.com/security/vulnerabilities/RHSB-2026-014
 [rhsa9]: https://access.redhat.com/errata/RHSA-2026:93412
 [rhsa8]: https://access.redhat.com/errata/RHSA-2026:93414
+[rhsa8z]: https://access.redhat.com/errata/RHSA-2026:93436
+[rhsa8rt]: https://access.redhat.com/errata/RHSA-2026:93437
+[rhsa10]: https://access.redhat.com/errata/RHSA-2026:93413
+[elsa8]: https://linux.oracle.com/errata/ELSA-2026-93414.html
+[elsa10]: https://linux.oracle.com/errata/ELSA-2026-93413.html
 [osv]: https://osv.dev/vulnerability/CLSA-2026-1792751700
 [thn]: https://thehackernews.com/2026/10/two-cvss-90-linux-ksmbd-rce-flaws.html
 [cl7215]: https://cdn.kernel.org/pub/linux/kernel/v7.x/ChangeLog-7.2.15
