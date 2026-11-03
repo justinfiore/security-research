@@ -1,6 +1,6 @@
 # AhsayCBS: authentication bypass and command injection chain
 
-**Last updated:** 2026-11-01 (America/New_York)
+**Last updated:** 2026-11-02 (America/New_York)
 
 [Main AhsayCBS summary](../black-october-2026.md#ahsaycbs-authentication-bypass-and-command-injection-chain-cve-2026-105133-and-cve-2026-105134) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -40,6 +40,7 @@ Attackers **chain the two flaws**. CVE-2026-105133 bypasses authentication throu
 | Ahsay partner statement | 2026-10-21 (date only) | Promises further v9/v10 safeguards. [Ahsay message][ahsay-msg] |
 | Security-hardening hotfix | 2026-10-22 (date only) | The announcement names it both "v10.3.5.54 hotfix" and "v10.3.4.54 official hotfix". It says v10.3.6 is "scheduled for next week" and a v9 hardening hotfix is expected "early next week". [Ahsay hardening][ahsay-harden] |
 | Later hardening builds | 2026-10-27 (date only) | Ahsay released v9.15.2.78 as "significant security hardening" and v10.3.4.55 for a license-key update in the web console. It does not say either replaces 9.15.2.70 or 10.3.4.45 as the CVE fix. v9.17.0 was "scheduled within the next two weeks" and was not verified as released. [Ahsay Oct 27][ahsay-oct27] |
+| v10.3.6 released | 2026-11-02 (date only) | The release Ahsay had scheduled for the week after October 22. Its notes include "Ahsay Security Patchset for CVE-2026-105133 and CVE-2026-105134", disabling the JSP engine, disabling remote API access by default, and removing access tokens. Ahsay does not say this replaces 10.3.4.45 as the CVE boundary. [Ahsay v10.3.6][ahsay-1036] [v10.3.6 notes][rel1036] |
 
 ## Detection
 
@@ -74,7 +75,7 @@ Finding no indicators does not prove the server is clean. Huntress warns that at
 ## Remediation
 
 1. **v10:** apply the **AhsayCBS 10.3.4.45** hotfix or later (partner portal login required) and **reboot the server**, as Ahsay instructs. **v7, v8, v9:** v8 and v7 must first upgrade to **9.15.0.0**; then apply **9.15.2.70** and reboot. Ahsay states these hotfixes "fully address" both CVEs. This review could not access the partner-only download pages to inspect the builds.
-2. After the CVE hotfix, consider the later hardening builds: v9.15.2.78 (2026-10-27) and the v10 build Ahsay named both 10.3.5.54 and 10.3.4.54 (2026-10-22), then v10.3.4.55 (2026-10-27, described as a license-key console fix). Ahsay presents these as additional hardening, not as a replacement for 9.15.2.70 or 10.3.4.45.
+2. After the CVE hotfix, move a v10 server to **v10.3.6** (released 2026-11-02). Its notes include a patchset for both CVEs, disabling the JSP engine, disabling remote API access by default, and removing access tokens. Ahsay does not say 10.3.6 replaces 10.3.4.45 as the version that first fixes the CVEs. The earlier hardening builds remain v9.15.2.78 (2026-10-27) and the v10 build Ahsay named both 10.3.5.54 and 10.3.4.54 (2026-10-22), then v10.3.4.55 (2026-10-27, a license-key console fix). No v9 equivalent of 10.3.6 was found.
 3. Do **not** rely on 10.3.4.0 or 9.15.2.59. Ahsay says neither fully fixed the CVEs.
 4. Whatever the patch status, restrict web console and API access to trusted IPs or a VPN, as Huntress recommends. If the replication-receiver function is unused, block external access to `/rps/` paths at a reverse proxy or firewall. That is a defensive network control; Ahsay has not documented it as a supported workaround.
 5. If the server shows any indicator, follow **Compromise response** instead of only patching it in place.
@@ -117,5 +118,7 @@ Before rebuilding, preserve disk and memory evidence, logs and the webshell file
 [ahsay-harden]: https://www.ahsay.com/en/company/announcements/release-103454
 [ahsay-oct27]: https://www.ahsay.com/en/company/announcements/release-915278-103455
 [relnotes]: https://www.ahsay.com/en/support/help-centre/release-notes/cbs/v10.3.4
+[ahsay-1036]: https://www.ahsay.com/en/company/announcements/release-1036
+[rel1036]: https://www.ahsay.com/en/support/help-centre/release-notes/cbs/v10.3.6
 [huntress]: https://www.huntress.com/blog/ahsaycbs-flaws-exploit
 [sigma]: https://github.com/huntresslabs/threat-intel/tree/main/2026/2026-10/AhsayCBS_XMRig_Miner

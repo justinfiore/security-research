@@ -1,6 +1,6 @@
 # Railway: exposed environment secrets and recovery
 
-**Last updated:** 2026-10-29 (America/New_York)
+**Last updated:** 2026-11-02 (America/New_York)
 
 [Back to Railway summary](../black-october-2026.md#railway) · [Changelog](../../CHANGELOG.md)
 
@@ -38,6 +38,7 @@ Times below are UTC. The October 22 report is preliminary; the initial October 2
 | 2026-10-23 18:57:54 | Railway completed notifications to higher-risk workspaces. This does not establish that every other workspace is unaffected. |
 | 2026-10-24 | Railway clarified that OpenAI and Anthropic may have revoked replacement keys created after the incident because its later batch could not be filtered by creation date. The notice does not establish compromise of those replacement keys. |
 | 2026-10-28 15:27 | Railway's recovery status still reported recovery in monitoring: new signups remained paused while it prioritized reliability for existing customers, with daily updates planned until normal operations are restored. The preliminary report's “resolved for existing users” statement does not mean all recovery work was complete. [Official status](https://status.railway.com/incident/O1VGXWU5) |
+| 2026-11-02 19:19 UTC | Railway resolved the recovery incident. New customers can sign up again. A new account needs a paid Hobby or Pro plan before it can deploy; free trial deployments stay unavailable. No final forensic report was posted with this update. [Official status](https://status.railway.com/incident/O1VGXWU5) |
 | As of 2026-10-26 | Final forensic report, full exploit details, definitive source-code-access findings, and precise affected-variable list were **not available in the reviewed sources**. |
 
 **Evidence limits:** Railway estimates at most **1.85% of workspaces (about 100,000)** had some environment variables potentially compromised. This is the vendor's preliminary estimate, not an independently verified count or the number of every precautionary revocation. Its report says individual Railway accounts were not logged into, but does not rule out source-code access. Claims about AI-assisted attacks and motive are preliminary vendor assessments, not necessary premises for recovery.

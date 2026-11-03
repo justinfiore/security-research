@@ -1,18 +1,22 @@
 # Gitea 28.3.0: Actions secret theft, archived-repo writes, and stored XSS
 
-**Last updated:** 2026-11-01 (America/New_York)
+**Last updated:** 2026-11-02 (America/New_York)
 
 [Back to Gitea 28.3.0 summary](../black-october-2026.md#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss) · [Changelog](../../CHANGELOG.md)
 
-Gitea 28.3.0, released 2026-11-01, fixes three High flaws that affect **28.2.0 and earlier**. They are not the built-in SSH authentication bypass ([CVE-2026-103059](https://www.cve.org/CVERecord?id=CVE-2026-103059)), which 28.0.0 already fixed. A host that stopped at 28.0.0, 28.1.0, or 28.2.0 is still exposed to these three. The same tag also fixes seven Medium flaws. They are not a second upgrade.
+Gitea 28.3.0, released 2026-11-01, fixes seven High flaws that affect **28.2.0 and earlier**. They are not the built-in SSH authentication bypass ([CVE-2026-103059](https://www.cve.org/CVERecord?id=CVE-2026-103059)), which 28.0.0 already fixed. A host that stopped at 28.0.0, 28.1.0, or 28.2.0 is still exposed to all seven. The same tag also fixes more Medium flaws. They are not a second upgrade. The GitHub release notes do not list them. The [28.3.0 blog post](https://blog.gitea.com/release-of-28.3.0) does.
 
 | CVE | Score | Who can do it | Result |
 | --- | --- | --- | --- |
 | [CVE-2026-118386](https://www.cve.org/CVERecord?id=CVE-2026-118386) | GitHub advisory CVSS 3.1 **8.1 High**. No CNA score in the record checked. | A user with **read** access, a runner, and one same-repository pull request. | Their workflow runs as the repository's own: no approval, the repository's and owner's Actions secrets, and a `GITEA_TOKEN` that can commit. |
 | [CVE-2026-116296](https://www.cve.org/CVERecord?id=CVE-2026-116296) | GitHub advisory CVSS 3.1 **8.1 High**. | A user with ordinary **write** access to an **archived** repository. | Replace release binaries at the same tag and URL, delete releases, and edit milestones and labels. The archived-repository guard is missing on those routes. |
 | [CVE-2026-113429](https://www.cve.org/CVERecord?id=CVE-2026-113429) | GitHub advisory CVSS 3.1 **8.7 High**. | A user who can run one Actions job. The download URL needs only Actions read, so it is anonymous on a public repository. | Stored XSS on the Gitea origin. The victim must open the direct artifact URL. Chromium renders `video/mp4,text/html` as HTML after Gitea drops the sandbox CSP. |
+| [CVE-2026-120263](https://www.cve.org/CVERecord?id=CVE-2026-120263) | GitHub advisory **High**. No numeric score on the advisory. | Anyone who can sign in through a configured OAuth2 provider, and only when `ACCOUNT_LINKING = auto`. The default is `login`, which is not this bug. | The link-account form takes a user name the attacker types and signs them in as that account, including an administrator, without the password. The link stays after logout. |
+| [CVE-2026-117635](https://www.cve.org/CVERecord?id=CVE-2026-117635) | GitHub advisory CVSS 3.1 **8.1 High**. | A **public-only** token that belongs to a site administrator. | The admin API ignores that restriction: list every user's email, create private organizations and runner tokens, and create a new administrator. Revoking the token does not remove that new account. |
+| [CVE-2026-119441](https://www.cve.org/CVERecord?id=CVE-2026-119441) | GitHub advisory CVSS 3.1 **8.1 High**. | A **public-only** token of an organization owner. The route exists from 1.27.0. | `DELETE /api/v1/orgs/{org}/repos` deletes every repository in the organization, including private ones. The deletion runs in the background and cannot be cancelled. |
+| [CVE-2026-117685](https://www.cve.org/CVERecord?id=CVE-2026-117685) | GitHub advisory CVSS 3.1 **7.1 High**. | A **public-only** package token whose owner can already read a private package. | Mount a private OCI blob into a public package, then download it from the public URL. |
 
-The same 28.3.0 tag also fixes seven Medium flaws, all patched in 28.3.0, published 2026-11-01 09:42 UTC. They do not change the upgrade. GitHub labels each Medium. Where the advisory has a CVSS 3.1 number, it is below:
+The same 28.3.0 tag also fixes more Medium flaws, all patched in 28.3.0. They do not change the upgrade. The [blog post](https://blog.gitea.com/release-of-28.3.0) lists them; the GitHub release notes do not. GitHub labels each Medium. The seven already checked, published 2026-11-01 09:42 UTC, are below. The blog names others in the same release, including [CVE-2026-116289](https://www.cve.org/CVERecord?id=CVE-2026-116289) and [CVE-2026-117649](https://www.cve.org/CVERecord?id=CVE-2026-117649). Those were not scored separately here:
 
 | CVE | Score | What it does |
 | --- | --- | --- |
@@ -24,9 +28,9 @@ The same 28.3.0 tag also fixes seven Medium flaws, all patched in 28.3.0, publis
 | [CVE-2026-118504](https://www.cve.org/CVERecord?id=CVE-2026-118504) | 6.5 | The API issue-archive restriction can be bypassed. |
 | [CVE-2026-114199](https://www.cve.org/CVERecord?id=CVE-2026-114199) | 4.3 | A contribution heatmap leaks private-repository counts to a public-only token. |
 
-The v28.3.0 release notes do not list these seven. The numbers are GitHub's CVSS 3.1 scores. CVE-2026-116474's advisory has no vector.
+The numbers are GitHub's CVSS 3.1 scores. CVE-2026-116474's advisory has no vector. The same binaries are built with Go 1.27.3, so outgoing certificate checks no longer trust the eMudhra intermediates ([CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943)). That is the [certificate-authority incident](emudhra.md), not a new Gitea flaw.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01) for CVE-2026-118386, CVE-2026-116296, or CVE-2026-113429. No exploitation report was found. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-02) for any CVE in this release. No exploitation report was found. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -41,7 +45,8 @@ The v28.3.0 release notes do not list these seven. The numbers are GitHub's CVSS
 
 | Date | Event and evidence |
 | --- | --- |
-| 2026-11-01 09:42 UTC | GitHub publishes the three advisories. Each says patched in **28.3.0**. [CVE-2026-118386][a1], [CVE-2026-116296][a2], [CVE-2026-113429][a3] |
+| 2026-11-01 09:42 UTC | GitHub publishes the first three advisories. Each says patched in **28.3.0**. [CVE-2026-118386][a1], [CVE-2026-116296][a2], [CVE-2026-113429][a3] |
+| 2026-11-01; time/TZ unknown | The [28.3.0 blog post][blog] lists four more High advisories in the same tag: [CVE-2026-120263](https://github.com/go-gitea/gitea/security/advisories/GHSA-8p3x-w464-4g6v), [CVE-2026-117635](https://github.com/go-gitea/gitea/security/advisories/GHSA-37xv-m4w7-j2fh), [CVE-2026-119441](https://github.com/go-gitea/gitea/security/advisories/GHSA-jh8p-x4ch-389q), and [CVE-2026-117685](https://github.com/go-gitea/gitea/security/advisories/GHSA-8g99-g36h-5p2w). |
 | 2026-11-01 09:55 UTC | Gitea tags **v28.3.0**. [Release][rel] |
 | Customer action | Upgrade. 28.2.0 is inside every affected range. |
 
@@ -79,8 +84,14 @@ The v28.3.0 release notes do not list these seven. The numbers are GitHub's CVSS
 - [GHSA-6h2f-c8jm-84hc / CVE-2026-116296](https://github.com/go-gitea/gitea/security/advisories/GHSA-6h2f-c8jm-84hc)
 - [GHSA-9v6p-xpcp-7488 / CVE-2026-113429](https://github.com/go-gitea/gitea/security/advisories/GHSA-9v6p-xpcp-7488)
 - [Gitea v28.3.0](https://github.com/go-gitea/gitea/releases/tag/v28.3.0)
+- [Gitea 28.3.0 blog post](https://blog.gitea.com/release-of-28.3.0), which lists the High flaws the GitHub release notes omit
+- [GHSA-8p3x-w464-4g6v / CVE-2026-120263](https://github.com/go-gitea/gitea/security/advisories/GHSA-8p3x-w464-4g6v)
+- [GHSA-37xv-m4w7-j2fh / CVE-2026-117635](https://github.com/go-gitea/gitea/security/advisories/GHSA-37xv-m4w7-j2fh)
+- [GHSA-jh8p-x4ch-389q / CVE-2026-119441](https://github.com/go-gitea/gitea/security/advisories/GHSA-jh8p-x4ch-389q)
+- [GHSA-8g99-g36h-5p2w / CVE-2026-117685](https://github.com/go-gitea/gitea/security/advisories/GHSA-8g99-g36h-5p2w)
 
 [a1]: https://github.com/go-gitea/gitea/security/advisories/GHSA-32h8-5xqg-h466
 [a2]: https://github.com/go-gitea/gitea/security/advisories/GHSA-6h2f-c8jm-84hc
 [a3]: https://github.com/go-gitea/gitea/security/advisories/GHSA-9v6p-xpcp-7488
 [rel]: https://github.com/go-gitea/gitea/releases/tag/v28.3.0
+[blog]: https://blog.gitea.com/release-of-28.3.0
