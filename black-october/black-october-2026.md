@@ -323,7 +323,7 @@ Sources: [SSA-834709](https://cert-portal.siemens.com/productcert/html/ssa-83470
 
 **CVEs:** [CVE-2026-120830](https://www.cve.org/CVERecord?id=CVE-2026-120830)
 
-**Red Hat (CNA) rates the flaw CVSS 3.1 7.4 High. NVD has not scored it.** The vector is adjacent network, not the public internet. `icmp_forward_error()` trusted the IP header's length when copying the quoted packet and could read past the buffer. Those bytes return to the guest inside the ICMP error. Red Hat lists RHEL 8, 9, and 10, and OpenShift 4 and 5, with no workaround and no fixed package yet. Upstream **libslirp 4.9.7** (2026-10-30) is the fix. Debian and Ubuntu had not shipped it when checked.
+**Red Hat (CNA) rates the flaw CVSS 3.1 7.4 High. NVD has not scored it.** The vector is adjacent network, not the public internet. `icmp_forward_error()` trusted the IP header's length when copying the quoted packet and could read past the buffer. Those bytes return to the guest inside the ICMP error. Red Hat lists RHEL 8, 9, and 10, and OpenShift 4 and 5, with no workaround and no fixed package yet. Upstream **libslirp 4.9.7** (2026-10-30) is the fix. Debian's tracker now lists the CVE and still has no fixed package: bookworm, trixie, forky, and sid are vulnerable. Ubuntu had not shipped it when checked. Red Hat's bug is still open.
 
 **CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Red Hat does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
@@ -545,7 +545,7 @@ Sources: [November advisory](https://blog.btcpayserver.org/btcpay-server-securit
 
 **Am I impacted?** You are if `incus version` on the server is below 7.6.0. The certificate-chain bug needs a reachable HTTPS listener. The other Critical bugs need a client that can create instances, images, backups, or networks, including a restricted project. A client-only install is not the server.
 
-**Patch:** Upgrade the Incus server to **7.6.0 or later** and restart the daemon. Until then, do not expose the HTTPS listener to untrusted networks, and do not import untrusted images or backups. Incus publishes no configuration switch for the chain comparison. Monthly feature releases are supported only until the next one; the 7.6 announcement does not say the 7.0 LTS line has these fixes.
+**Patch:** Upgrade the Incus server to **7.6.0 or later** and restart the daemon. Until then, do not expose the HTTPS listener to untrusted networks, and do not import untrusted images or backups. Incus publishes no configuration switch for the chain comparison. Monthly feature releases are supported only until the next one; the 7.6 announcement does not say the 7.0 LTS line has these fixes. Debian trixie [DSA-6604-1](https://www.debian.org/security/2026/dsa-6604) (2026-11-02) is `incus 6.0.4-2+deb13u12` and has no CVE. Debian says it fixes the certificate-chain bypass and seven other advisories from this release, and leaves two Critical advisories unfixed. That package is not 7.6.0.
 
 Sources: [Incus 7.6 announcement](https://discuss.linuxcontainers.org/t/incus-7-6-has-been-released/27462), [7.6.0 release](https://github.com/lxc/incus/releases/tag/v7.6.0), [GHSA-xg75-xf37-cph9](https://github.com/lxc/incus/security/advisories/GHSA-xg75-xf37-cph9).
 
