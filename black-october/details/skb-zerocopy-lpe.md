@@ -134,6 +134,8 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | Linux 7.3 / 7.3.1 | Not included | kernel.org | [kernel.org releases][releases] |
 | RHEL 9 | `kernel-5.14.0-687.64.1.el9_8` (the errata also ships `kernel-rt` at the same version) | [RHSA-2026:93412][rhsa9], issued 2026-11-01. The fixes list names ZDI-CAN-33367 with no CVE id. | [RHSA-2026:93412][rhsa9] |
 | RHEL 8 | `kernel-4.18.0-553.181.1.el8_10`; real-time `kernel-rt-4.18.0-553.181.1.rt7.522.el8_10` | [RHSA-2026:93436][rhsa8z] and [RHSA-2026:93437][rhsa8rt], issued 2026-11-02. Both name ZDI-CAN-33367 with an empty CVE field. These are not the November 1 TCP kernels. | [RHSA-2026:93436][rhsa8z] |
+| RHEL 8.8 | `kernel-4.18.0-477.178.1.el8_8` | [RHSA-2026:94303][rhsa88], issued 2026-11-03, rated Critical. RHEL 8.8 SAP Solutions, Telecommunications Update Service, and Extended Life Cycle Long Life. Names CVE-2026-98432 and ZDI-CAN-33367. Not the 8.10 kernel above. | [RHSA-2026:94303][rhsa88] |
+| Rocky Linux 9 | `kernel-5.14.0-687.64.1.el9_8` | [RLSA-2026:93412][rlsa9], issued 2026-11-03. The description names ZDI-CAN-33367. The same errata also ships `kernel-rt` at that version. | [RLSA-2026:93412][rlsa9] |
 | RHEL 10 | No errata names ZDI-CAN-33367 | The November 1 RHEL 10 kernel errata fixes CVE-2026-98432 and does not list this bug. | [RHSA-2026:93413][rhsa10] |
 | Oracle Linux 8 | `kernel-4.18.0-553.182.1.el8_10` | [ELSA-2026-93414][elsa8], 2026-11-02. The 4.18.0-553.181.1 changelog line is the marker copy; the same build fixes CVE-2026-98432. | [ELSA-2026-93414][elsa8] |
 | Oracle Linux 10 | Not in the package that fixes CVE-2026-98432 | [ELSA-2026-93413][elsa10] names CVE-2026-98432 and does not list the `skb_zerocopy()` change. | [ELSA-2026-93413][elsa10] |
@@ -221,6 +223,8 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 [rhsa9]: https://access.redhat.com/errata/RHSA-2026:93412
 [rhsa8]: https://access.redhat.com/errata/RHSA-2026:93414
 [rhsa8z]: https://access.redhat.com/errata/RHSA-2026:93436
+[rhsa88]: https://access.redhat.com/errata/RHSA-2026:94303
+[rlsa9]: https://errata.rockylinux.org/RLSA-2026:93412
 [rhsa8rt]: https://access.redhat.com/errata/RHSA-2026:93437
 [rhsa10]: https://access.redhat.com/errata/RHSA-2026:93413
 [elsa8]: https://linux.oracle.com/errata/ELSA-2026-93414.html
