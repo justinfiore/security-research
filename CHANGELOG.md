@@ -4,6 +4,10 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-03 07:20 EST (UTC−05:00) — CryptoPayment Gateway
+
+- **CryptoPayment Gateway:** Delete the WordPress plugin. There is no patched version. WPScan rates [CVE-2026-81648](https://www.cve.org/CVERecord?id=CVE-2026-81648) 10.0 Critical: on 1.2.1 through 1.2.2, anyone can read the stored wallet key and delete a file such as `wp-config.php`. WordPress.org closed the plugin on August 28. [Move funds to a new wallet](black-october/details/cryptopayment-gateway.md#remediation) from a device that did not run the site, and restore `wp-config.php` from a copy you trust if it is missing. Defused Cyber reported exploitation attempts on November 2, not a confirmed theft. It is not in KEV.
+
 ## 2026-11-03 04:10 EST (UTC−05:00) — Siemens IoT2050; RHEL 8 local root; Oracle Linux TCP kernels
 
 - **Siemens SIMATIC IoT2050:** Update Industrial OS to [V4.3.4.1 or later](black-october/details/siemens-iot2050.md#remediation) where Node-RED is installed. Siemens rates [CVE-2026-58115](https://www.cve.org/CVERecord?id=CVE-2026-58115) 10.0 Critical. The Node-RED editor has no login, so anyone who can reach it can run a command. Siemens shipped the fix on August 11. VulnCheck says its honeypots received complete exploit requests from October 30 through November 1. That is not a report of a compromised device, and it is not in KEV. Until the new image is running, uninstall Node-RED or turn on `adminAuth` and keep the editor off the internet.

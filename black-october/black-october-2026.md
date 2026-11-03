@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [CryptoPayment Gateway: unauthenticated settings and file deletion](#cryptopayment-gateway-unauthenticated-settings-and-file-deletion)
 - [Siemens SIMATIC IoT2050: unauthenticated Node-RED command execution](#siemens-simatic-iot2050-unauthenticated-node-red-command-execution)
 - [libslirp: ICMP error quoting reads past the packet](#libslirp-icmp-error-quoting-reads-past-the-packet)
 - [s2Member: PayPal item name runs as PHP](#s2member-paypal-item-name-runs-as-php)
@@ -144,6 +145,7 @@ This report covers the major disclosures most relevant to developers and operato
 ## The short version
 
 - **New this update:** Update [libslirp](#libslirp-icmp-error-quoting-reads-past-the-packet) to **4.9.7 or later** wherever QEMU or rootless Podman does user-mode networking for an untrusted guest. Red Hat rates [CVE-2026-120830](https://www.cve.org/CVERecord?id=CVE-2026-120830) 7.4 High: a truncated packet makes the ICMP error quoter read past the heap and return those bytes to the guest. The vector is adjacent, not internet-facing. Red Hat has no errata yet and no workaround. It is not in KEV.
+- **New this update:** Remove [CryptoPayment Gateway](#cryptopayment-gateway-unauthenticated-settings-and-file-deletion). WPScan rates [CVE-2026-81648](https://www.cve.org/CVERecord?id=CVE-2026-81648) 10.0 Critical: versions 1.2.1 through 1.2.2 let anyone read the stored wallet key and delete a file such as `wp-config.php`. There is no patched release. WordPress.org closed the plugin on August 28. Defused Cyber reported exploitation attempts on November 2, not a confirmed theft. Move funds to a new wallet. It is not in KEV.
 - **New this update:** Update [s2Member](#s2member-paypal-item-name-runs-as-php) to **261017 or later**. Wordfence rates [CVE-2026-86596](https://www.cve.org/CVERecord?id=CVE-2026-86596) 9.8 Critical: through 260927, a PayPal `item_name` is written into an email template that then runs as PHP. The page title says no account is required. The description says the sender needs a custom-level account. Wordfence names 261001 as the fix. The template rewrite this guide found is in 261017, and the vendor changelog does not name the flaw. It is not in KEV.
 - **New this update:** Update [Ultra Addons for Contact Form 7](#ultra-addons-for-contact-form-7-unauthenticated-file-deletion) to **3.5.55 or later**. Wordfence rates [CVE-2026-102435](https://www.cve.org/CVERecord?id=CVE-2026-102435) 9.8 Critical: with the PDF Generator add-on on, an unauthenticated visitor can delete a file such as `wp-config.php`. Turn the add-on off until the new version is running. It is not in KEV.
 - **New this update:** Rebuild [kaniko](#kaniko-azure-token-sent-to-a-lookalike-registry) from **1.25.20 or later** anywhere a build can obtain an Azure identity. Chainguard rates [CVE-2026-105769](https://www.cve.org/CVERecord?id=CVE-2026-105769) 9.3 Critical: a `FROM` line whose host merely contains `.azurecr.io` receives the build's Entra ID token. Chainguard publishes no image for this fix. A token that already left stays valid until it expires. It is not in KEV.
@@ -214,6 +216,30 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## CryptoPayment Gateway: unauthenticated settings and file deletion
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cryptopayment-gateway.md):** [Detection](details/cryptopayment-gateway.md#detection) · [Remediation](details/cryptopayment-gateway.md#remediation) · [Verification](details/cryptopayment-gateway.md#verification) · [Timeline](details/cryptopayment-gateway.md#timeline)
+
+**CVEs:** [CVE-2026-81648](https://www.cve.org/CVERecord?id=CVE-2026-81648)
+
+**WPScan (CNA) rates the flaw CVSS 3.1 10.0 Critical. NVD has not scored it.** Versions 1.2.1 through 1.2.2, which is the latest, do not check authorization on `vendor/cryptd/ajax.php`. An unauthenticated caller can read and overwrite the payment settings and delete an arbitrary file. The wallet key comes back encrypted from the settings call and in cleartext from the same router's decrypt function. WPScan lists no fix. WordPress.org closed the plugin on 2026-08-28 for a security issue; that page does not say the closure is this CVE. A closed directory listing does not remove a copy that is already installed.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Defused Cyber reported exploitation attempts on 2026-11-02, not a confirmed compromise. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| WPScan published | 2026-09-10; time/TZ unknown | No known fix. CVSS 3.1 10.0. |
+| CVE record | 2026-09-13; time/TZ unknown | WPScan CNA. NVD has not scored it. |
+| Plugin closed | 2026-08-28; time/TZ unknown | WordPress.org, reason "Security Issue." |
+| Exploitation attempts | 2026-11-02 18:37 UTC | Defused Cyber. No confirmed compromise in the post. |
+| **Last updated** | **2026-11-03 07:20 EST (UTC−05:00)** | New item. Remove the plugin. There is no update. |
+
+**Patch:** **No patch.** Deactivate and delete the plugin, and do not reinstall 1.2.2 from a saved copy. Move funds to a new wallet from a device that did not run the site. If `wp-config.php` is missing, restore it from a copy you trust and rotate the database password.
+
+Sources: [WPScan](https://wpscan.com/vulnerability/9b1490a0-1381-4d22-8086-f75aade4e898/), [CVE-2026-81648](https://www.cve.org/CVERecord?id=CVE-2026-81648), [WordPress.org plugin page](https://wordpress.org/plugins/cryptopayment-gateway/), [Defused Cyber](https://x.com/DefusedCyber/status/2117325160608870613), [detailed guide](details/cryptopayment-gateway.md).
+
+---
 
 ## Siemens SIMATIC IoT2050: unauthenticated Node-RED command execution
 
@@ -4030,7 +4056,7 @@ flowchart TD
 | **Self-hosted Zammad** | Upgrade to 7.2.2+ (6.5.5 only as a stopgap for CVE-2026-102489; DEB/RPM installs need 7.2.2 for the root escalation), then run DIVD's log check. [Guide](details/zammad.md#remediation). |
 | **Tailscale SSH / headscale** | Update Tailscale to **v1.104.4 or later** and headscale to **0.29.7 or later**. The headscale release does not apply the node-side SSH and Serve fixes. A complete fix for every Tailworm finding is not established. |
 | **Microsoft Authenticator on Android** | Install **6.2606.4246 or a later supported release** in every profile; investigate and revoke exposed work-account tokens where compromise is suspected. |
-| **PHP / WordPress / Laravel / Drupal / Joomla** | For PHP2Shell, use PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport and disable session upload progress pending the follow-up fix. On Windows, separately install the **`-1`** rebuild that carries Brotli 1.2.1 and restart workers; `php -v` does not prove it. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. WordPress itself: update core to **7.1.4** or the fixed branch release; the upgrade-window flaw is not PHP2Shell. [PHP2Shell guide](details/php2shell.md#remediation) · [WordPress guide](details/wordpress-upgrade-window.md#remediation) · [Brotli guide](details/brotli.md#remediation). |
+| **PHP / WordPress / Laravel / Drupal / Joomla** | For PHP2Shell, use PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport and disable session upload progress pending the follow-up fix. On Windows, separately install the **`-1`** rebuild that carries Brotli 1.2.1 and restart workers; `php -v` does not prove it. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. WordPress itself: update core to **7.1.4** or the fixed branch release; the upgrade-window flaw is not PHP2Shell. CryptoPayment Gateway has no fix: delete it and move funds to a new wallet. [PHP2Shell guide](details/php2shell.md#remediation) · [WordPress guide](details/wordpress-upgrade-window.md#remediation) · [CryptoPayment Gateway guide](details/cryptopayment-gateway.md#remediation) · [Brotli guide](details/brotli.md#remediation). |
 | **Node.js / Bun** | Node **22.23.4 / 24.22.1 / 26.12.1**; Bun **1.4.4**. Rebuild containers and restart workers. |
 | **Python** | `Brotli` **1.2.1**, `brotlicffi` **1.2.1.0**, Pillow **13.0.0** where installed. Pillow may require a Python upgrade. |
 | **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps; update Visual Studio and PowerShell 7 to [MSRC's fixed builds](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497). [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |
