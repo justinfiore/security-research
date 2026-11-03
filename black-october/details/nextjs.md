@@ -1,16 +1,23 @@
 # Next.js: unauthenticated RCE in use cache and Image Optimization
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-03 (America/New_York)
 
-[Main Next.js summary](../black-october-2026.md#nextjs-unauthenticated-rce-in-use-cache-and-image-optimization) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+[Main Next.js summary](../black-october-2026.md#nextjs-unauthenticated-rce-then-november-cache-disclosure) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**Two Critical unauthenticated remote code execution (RCE) advisories, both fixed in Next.js 16.4.1 (and the second also in 15.5.28), published 2026-10-14. Vercel rates each Critical, CVSS 4.0 9.5, in its GitHub repository advisories. The Image Optimization issue maps to the librsvg flaw [CVE-2026-96889](https://www.cve.org/CVERecord?id=CVE-2026-96889), which Red Hat (the CVE's CNA) scores lower: CVSS 3.1 7.8 High, with a local attack vector. NVD has added no score of its own. Not listed in CISA KEV (catalog 2026.10.23, checked 2026-10-26).** [GHSA-673q][ghsa-cache] [GHSA-2464][ghsa-img] [Next.js blog][blog] [CNA][cve-img] [KEV][kev]
+**Two Critical unauthenticated remote code execution (RCE) advisories, fixed in Next.js 16.4.1 and, for the second, also in 15.5.28, published 2026-10-14. Vercel rates each Critical, CVSS 4.0 9.5. The Image Optimization issue maps to the librsvg flaw [CVE-2026-96889](https://www.cve.org/CVERecord?id=CVE-2026-96889), which Red Hat (the CVE's CNA) scores CVSS 3.1 7.8 High, with a local attack vector. NVD has added no score of its own. A later release, 16.4.5 and 15.5.29 on 2026-11-03, fixes seven more issues. GitHub rates every one Medium, CVSS 4.0 6.0–6.9. The blog calls the first of them High. None of these CVEs is listed in CISA KEV (catalog 2026.10.30, checked 2026-11-03).** [GHSA-673q][ghsa-cache] [GHSA-2464][ghsa-img] [November blog][blog-nov] [KEV][kev]
 
 | Issue | Component | Vercel rating | Affected `next` | Fixed `next` | Workaround |
 |---|---|---|---|---|---|
 | **GHSA-673q-mjm6-r5xr** (no CVE) | App Router with Cache Components; a `use cache` function that returns multiple typed arrays | Critical, CVSS 4.0 9.5 (`AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:N`) | 16.0.0 through 16.4.0 | **16.4.1** | None |
 | **GHSA-2464-fhr4-w9xw** / CVE-2026-96889 | Image Optimization API decoding SVG through `sharp` → bundled librsvg, on **glibc-based Linux** | Critical, CVSS 4.0 9.5 (`AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`) | 10.0.0 through 15.5.27; 16.0.0 through 16.4.0 | **15.5.28**, **16.4.1** | `sharp` ≥ **0.35.5** |
 | GHSA-p3m5-59mp-jv5r / [CVE-2026-94482](https://www.cve.org/CVERecord?id=CVE-2026-94482) (same release, DoS) | App Router with at least one Server Action | High, CVSS 4.0 8.2 | 13.0.0 through 15.5.27; 16.0.0 through 16.4.0 | **15.5.28**, **16.4.1** | None |
+| [GHSA-mfr8-8qww-v76h][ghsa-mfr8] / [CVE-2026-119790](https://www.cve.org/CVERecord?id=CVE-2026-119790) | Cache Components; the same public `use cache` function called directly and through `unstable_cache`, reading a root param | GitHub Medium, CVSS 4.0 6.3. The [November blog][blog-nov] calls this one High and names no score | `>= 16.3.0`. The advisory lists no patched version | **16.4.5** (blog and npm). Not 16.4.1 | Do not call `use cache` from `unstable_cache`. The advisory says that nesting already throws outside the race |
+| [GHSA-vc7v-qv4w-wrv8][ghsa-vc7v] / [CVE-2026-119351](https://www.cve.org/CVERecord?id=CVE-2026-119351) | Nested public `use cache`; the inner function reads a root param and returns a pending promise | GitHub Medium, CVSS 4.0 6.3 | `>= 16.2.0`. Advisory patched version: 16.4.2 | **16.4.2** per the advisory; the November blog ships 16.4.5 | None stated |
+| [GHSA-vvgp-ww4w-46vf][ghsa-vvgp] / [CVE-2026-119350](https://www.cve.org/CVERecord?id=CVE-2026-119350) | Self-hosted `next start`, Cache Components, Partial Prefetching off, a specific dynamic route | GitHub Medium, CVSS 4.0 6.3 | `>= 16.4.0`. The advisory lists no patched version | **16.4.5** (blog). The advisory says upgrade, and names `partialPrefetching: true` | `partialPrefetching: true` |
+| [GHSA-rhh4-g77r-r9qj][ghsa-rhh4] / [CVE-2026-119349](https://www.cve.org/CVERecord?id=CVE-2026-119349) | `use cache` with binary arguments that distinguish users | GitHub Medium, CVSS 4.0 6.3 | `>= 16.0.0, <= 16.4.2`. No patched version listed | **16.4.5** (blog). 16.4.3 and 16.4.4 are not named | None stated |
+| [GHSA-pc58-hwjq-p385][ghsa-pc58] / [CVE-2026-119348](https://www.cve.org/CVERecord?id=CVE-2026-119348) | Self-hosted route that returns a fetched `Response` unchanged, behind an HTTP/1.1 proxy that queues pipelined requests | GitHub Medium, CVSS 4.0 6.3 | `< 16.0.0` and `>= 16.0.0`. No patched version on either row | **16.4.5** and **15.5.29** (blog). The advisory does not say older lines are fixed | None stated |
+| [GHSA-7qx7-33qx-rqx2][ghsa-7qx7] / [CVE-2026-119347](https://www.cve.org/CVERecord?id=CVE-2026-119347) | Self-hosted `/_next/image` with SVG disabled (the default) and an SVG-capable native backend | GitHub Medium, CVSS 4.0 6.9 | 15.0.0 through 15.5.28; 16.0.0 through 16.4.2 | **15.5.29**, **16.4.5** (blog). The advisory lists no patched version | None stated. This is not the October librsvg RCE |
+| [GHSA-f3mh-rxg3-f5g2][ghsa-f3mh] / [CVE-2026-119346](https://www.cve.org/CVERecord?id=CVE-2026-119346) | Edge route that sets a cookie with `NextResponse.cookies.set()`, plus same-origin JavaScript | GitHub Medium, CVSS 4.0 6.0 | 15.0.0 through 15.5.28; 16.0.0 through 16.4.2 | **15.5.29**, **16.4.5** (blog). The advisory lists no patched version | Do not set sensitive cookies that way on Edge routes |
 
 **Worst case:** An unauthenticated attacker runs code in the Next.js server process. That gives access to whatever the process can reach, such as environment secrets, database credentials and internal services.
 
@@ -22,7 +29,11 @@
 
 **Vercel-hosted vs self-hosted:** The reviewed Vercel and Next.js sources (advisories, blog post and Vercel changelog) do **not** say whether deployments hosted on Vercel are protected. Do not assume they are. Upgrade the `next` dependency and redeploy wherever you deploy.
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**November 3 release.** Next.js published [v16.4.5 and v15.5.29][blog-nov] on 2026-11-03 and seven repository advisories the same evening (18:39 UTC). The October 27 advance notice said seven medium issues. The published blog calls [GHSA-mfr8][ghsa-mfr8] High and the other six Medium. Every GitHub advisory is Medium, and none has a CVSS 3 score. The highest CVSS 4.0 score is 6.9. None reaches the High band of 7.0. Treat the blog's "High" as Vercel's label for that one issue, not as a second score.
+
+The November issues disclose or substitute cached content, or let an SVG past a disabled setting. None of them is remote code execution. Several advisories omit `patched_versions`. Where the blog names 16.4.5 or 15.5.29 and the advisory does not, both are recorded above. [GHSA-vc7v][ghsa-vc7v] is the exception: it names 16.4.2, which shipped October 15, before this release. The blog still tells 16.x users to install 16.4.5.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03) for the October or November CVEs. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -48,12 +59,14 @@
 | sharp advisory GHSA-wq5f-xc86-pv6w | 2026-10-06 13:43:57 UTC | High, CVSS 4.0 8.9 (sharp maintainers). [sharp GHSA][sharp-ghsa] |
 | Advance notice of an out-of-band release | 2026-10-08 | Announced "two Critical and one High" for 2026-10-14, with no details. [Pre-announcement][pre] |
 | `next` 15.5.28 and 16.4.1 published to npm | 2026-10-14 17:36:08 UTC and 17:43:55 UTC | Patch availability per branch. No fix is listed for lines older than 15.5. [npm registry][npm-next] |
-| Next.js 16.4.4 | 2026-11-02 16:41 UTC | Bug-fix backport. The release note says it is not the November security release, which Next.js said would be published the next day and would address seven medium vulnerabilities. Those advisories were not published when checked. [16.4.4][rel1644] |
+| Next.js 16.4.4 | 2026-11-02 16:41 UTC | Bug-fix backport. The release note says it is not the November security release. [16.4.4][rel1644] |
+| `next` 16.4.5 and 15.5.29 on npm | 2026-11-03 18:01:54 UTC and 18:36:52 UTC | Versions named in the November blog. [npm registry][npm-next] |
+| **November advisories published** | **2026-11-03 18:39:36–18:39:54 UTC** | Seven GHSA records. GitHub severity Medium on all seven. The blog, published the same day, calls GHSA-mfr8 High. [November blog][blog-nov] |
 | React RSC advisories GHSA-xqc2-xf4c-x3h3 and GHSA-h3gv-c5rc-p453 | 2026-10-14 17:08 UTC | Upstream fixes in 19.0.9, 19.1.10, 19.2.9 and 19.3.1. [React GHSA-xqc2][react-rce] |
 | **Public announcement:** Next.js advisories published | **2026-10-14 17:46:48 UTC** (GHSA-2464), 17:47:07 UTC (GHSA-673q), 17:47:43 UTC (GHSA-p3m5) | Repository advisories, with the blog post the same day. [GHSA-2464][ghsa-img] [GHSA-673q][ghsa-cache] [Next.js blog][blog] |
 | GitHub Advisory Database (reviewed) entries | 2026-10-22 15:50–16:42 UTC | Needed for `npm audit` and SCA tools. CSA reported on 2026-10-15 that the advisories were missing from npm's feed. [GitHub DB][ghdb-img] [CSA note][csa] |
 | CVE-2026-94482 (DoS) published | 2026-10-22 15:22:10 UTC | GitHub CNA, CVSS 4.0 8.2. [CVE-2026-94482 record][cve-dos] |
-| CISA KEV | Not listed | Checked catalog 2026.10.23 on 2026-10-26. [KEV][kev] |
+| CISA KEV | Not listed | Checked catalog 2026.10.30 on 2026-11-03. [KEV][kev] |
 | Exploitation evidence | None found | CSA found no public exploitation reports as of 2026-10-15. Absence from KEV does not prove there has been no exploitation. [CSA note][csa] |
 
 **Source discrepancies:** The repository advisory GHSA-2464 shows the 16.x range as "> 16.0.0", while the reviewed GitHub Advisory Database entry says ">= 16.0.0". Treat 16.0.0 as affected. GHSA-673q has no CVE. The global GitHub Advisory Database entry for GHSA-2464 does not list the CVE-2026-96889 alias, so CVE-only scanners may miss it.
@@ -95,6 +108,7 @@ grep -rln --exclude-dir=node_modules --exclude-dir=.next -e "'use server'" -e '"
 - A 16.x App Router app with Cache Components is in scope for GHSA-673q, even if no function obviously returns typed arrays.
 - A self-hosted app on glibc Linux with `sharp` below 0.35.5 is in scope for GHSA-2464. `dangerouslyAllowSVG: true` makes SVG reachable. Its absence lowers the likelihood, but the vendor does not say it removes the risk.
 - An app with `images.unoptimized: true` everywhere does not run the optimizer. Confirm this, rather than assuming it.
+- November cache issues need Cache Components, `unstable_cache` around `use cache`, binary `use cache` arguments, or the shell-cache route shape in [GHSA-vvgp][ghsa-vvgp]. An app with none of those is outside those four. The Edge cookie header and the SVG-classification bypass have their own conditions in the table above.
 
 ### Logs and indicators
 
@@ -109,20 +123,21 @@ Finding nothing does not prove the server was not exploited. Memory-corruption e
 
 ## Remediation
 
-1. **Upgrade `next`** to **16.4.1** (16.x) or **15.5.28** (15.x), then reinstall so that `sharp` resolves to 0.35.5 or later. 16.4.1 requires `^0.35.5`, and 15.5.28 allows `^0.34.3 || ^0.35.5`. On 15.x, **check that the resolved `sharp` is 0.35.5 or later** and do not assume it. [npm registry][npm-next]
-2. Lines **older than 15.5** have no listed fix: move to a supported line. [Next.js blog][blog]
+1. **Upgrade `next`** to **16.4.5** (16.x) or **15.5.29** (15.x), then reinstall so that `sharp` resolves to 0.35.5 or later. 16.4.1 and 15.5.28 fix the October RCE and DoS issues only. 16.4.1 requires `^0.35.5`, and 15.5.28 allows `^0.34.3 || ^0.35.5`. On 15.x, **check that the resolved `sharp` is 0.35.5 or later** and do not assume it. [npm registry][npm-next] [November blog][blog-nov]
+2. Lines **older than 15.5** have no listed fix for the October issues. The response-framing advisory lists `< 16.0.0` with no patched version, so do not treat a pre-15.5 line as fixed for that one either. [Next.js blog][blog] [GHSA-pc58][ghsa-pc58]
 3. **Rebuild and redeploy** every image, serverless bundle and standalone output (`.next/standalone` carries its own `node_modules`). Restart long-running Node processes.
 4. **If you cannot upgrade immediately:**
    - For the SVG issue, pin `sharp` to 0.35.5 or later, or block SVG decoding in code you control with `sharp.block({ operation: ["VipsForeignLoadSvg"] })`, which sharp documents. [sharp GHSA][sharp-ghsa] Also set `dangerouslyAllowSVG` to `false` unless you need it.
    - There is **no workaround** for the `use cache` RCE or the Server Actions DoS. [GHSA-673q][ghsa-cache] [GHSA-p3m5][ghsa-dos]
+   - For the November shell-cache issue only, set `partialPrefetching: true`. That does not fix the other November issues. [GHSA-vvgp][ghsa-vvgp]
 5. If you use React Server Components outside Next.js, upgrade `react-server-dom-*` to 19.0.9, 19.1.10, 19.2.9 or 19.3.1. [React GHSA-xqc2][react-rce]
 6. Running `node` as a Position Independent Executable makes the librsvg flaw harder to exploit. sharp warns that the "official" Node.js binaries are not built that way. This hardening does not fix the flaw. [sharp GHSA][sharp-ghsa]
 
-**Rollback caution:** Rolling back to a pre-16.4.1 or pre-15.5.28 build brings the vulnerabilities back. Keep the old artifacts out of deployment pipelines.
+**Rollback caution:** Rolling back below 16.4.5 or 15.5.29 brings the November issues back. Rolling back below 16.4.1 or 15.5.28 also brings the October RCE and DoS issues back. Keep the old artifacts out of deployment pipelines.
 
 ## Verification
 
-- In each **running** container or host, re-run the read-only `package.json` checks above. Confirm `next` is 16.4.1+ or 15.5.28+ and `sharp` is 0.35.5+.
+- In each **running** container or host, re-run the read-only `package.json` checks above. Confirm `next` is 16.4.5+ or 15.5.29+ and `sharp` is 0.35.5+. 16.4.1 and 15.5.28 are not enough for the November issues.
 - Confirm the lockfile and the deployed artifact agree. A patched lockfile with a stale image is a common gap.
 - Benign functional check: load a normal page and an optimized raster image (for example a PNG through `/_next/image`) on an instance you own, and confirm both work. **Do not** send crafted SVGs or RSC payloads.
 
@@ -135,7 +150,7 @@ Finding nothing does not prove the server was not exploited. Memory-corruption e
 ## Sources
 
 - [GHSA-673q-mjm6-r5xr][ghsa-cache], [GHSA-2464-fhr4-w9xw][ghsa-img] and [GHSA-p3m5-59mp-jv5r][ghsa-dos] (Vercel repository advisories): scores, ranges, fixes and workarounds.
-- [Next.js security update, 2026-10-14][blog] and [advance notice, 2026-10-08][pre].
+- [Next.js security update, 2026-10-14][blog], [advance notice, 2026-10-08][pre], [November 3 security release][blog-nov], and the seven November advisories: [GHSA-mfr8][ghsa-mfr8], [GHSA-vc7v][ghsa-vc7v], [GHSA-vvgp][ghsa-vvgp], [GHSA-rhh4][ghsa-rhh4], [GHSA-pc58][ghsa-pc58], [GHSA-7qx7][ghsa-7qx7], [GHSA-f3mh][ghsa-f3mh].
 - [CVE-2026-96889 record (Red Hat CNA)][cve-img], [CVE-2026-94482 record][cve-dos], [NVD CVE-2026-96889][nvd-img].
 - [React GHSA-xqc2-xf4c-x3h3][react-rce], [sharp GHSA-wq5f-xc86-pv6w][sharp-ghsa], [sharp-libvips 1.3.4][libvips].
 - [GitHub Advisory Database entry][ghdb-img], [npm registry: next][npm-next], [npm registry: sharp][npm-sharp], [Next.js Image docs][img-docs].
@@ -147,7 +162,15 @@ Finding nothing does not prove the server was not exploited. Memory-corruption e
 [ghsa-dos]: https://github.com/vercel/next.js/security/advisories/GHSA-p3m5-59mp-jv5r
 [ghdb-img]: https://github.com/advisories/GHSA-2464-fhr4-w9xw
 [blog]: https://nextjs.org/blog/nextjs-security-update-october-14-2026
+[blog-nov]: https://nextjs.org/blog/november-2026-security-release
 [pre]: https://nextjs.org/blog/upcoming-nextjs-security-update-october-2026
+[ghsa-mfr8]: https://github.com/vercel/next.js/security/advisories/GHSA-mfr8-8qww-v76h
+[ghsa-vc7v]: https://github.com/vercel/next.js/security/advisories/GHSA-vc7v-qv4w-wrv8
+[ghsa-vvgp]: https://github.com/vercel/next.js/security/advisories/GHSA-vvgp-ww4w-46vf
+[ghsa-rhh4]: https://github.com/vercel/next.js/security/advisories/GHSA-rhh4-g77r-r9qj
+[ghsa-pc58]: https://github.com/vercel/next.js/security/advisories/GHSA-pc58-hwjq-p385
+[ghsa-7qx7]: https://github.com/vercel/next.js/security/advisories/GHSA-7qx7-33qx-rqx2
+[ghsa-f3mh]: https://github.com/vercel/next.js/security/advisories/GHSA-f3mh-rxg3-f5g2
 [cve-img]: https://cveawg.mitre.org/api/cve/CVE-2026-96889
 [cve-dos]: https://cveawg.mitre.org/api/cve/CVE-2026-94482
 [nvd-img]: https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-96889

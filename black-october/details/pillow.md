@@ -1,12 +1,14 @@
 # Pillow: detection and remediation
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-03 (America/New_York)
 
 [Main Pillow summary](../black-october-2026.md#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution) · [Changelog](../../CHANGELOG.md)
 
 Pillow **13.0.0** fixes multiple independent native-memory, argument-injection and resource-exhaustion problems. An image-processing service can be exposed through uploaded files, fetched images, queued thumbnails or document conversions. The five highlighted issues below have different prerequisites; do not treat one format filter as a complete fix. Severity disagreements in the [main table](../black-october-2026.md#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution) remain attributed rather than flattened into a single score.
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Covers all five CVEs in this guide; no exploitation reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Covers the five CVEs in this guide. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
+On 2026-11-02 Pillow published [GHSA-wqgw-9xfh-qf2g](https://github.com/python-pillow/Pillow/security/advisories/GHSA-wqgw-9xfh-qf2g), a memory denial of service in TIFF and EXIF IFD parsing. GitHub rates it Moderate and assigns no CVE and no CVSS score. Affected is Pillow through 12.3.0. The patched version is 13.0.0, the same release as the five issues above. It does not change the upgrade. It is not one of those five.
 
 ## Table of contents
 
@@ -88,3 +90,4 @@ Isolate affected workers and snapshot evidence. Map accessible storage, cloud/AP
 - [EPS filename advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-w889-685w-c8fh)
 - [TIFF encoder advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-332p-7hrc-92wf)
 - [Lossless JPEG advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-8g5g-8vmr-9782)
+- [TIFF and EXIF IFD memory DoS](https://github.com/python-pillow/Pillow/security/advisories/GHSA-wqgw-9xfh-qf2g) (2026-11-02, Moderate, no CVE; fixed in the same 13.0.0)
