@@ -1,6 +1,6 @@
 # Next.js: unauthenticated RCE in use cache and Image Optimization
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-02 (America/New_York)
 
 [Main Next.js summary](../black-october-2026.md#nextjs-unauthenticated-rce-in-use-cache-and-image-optimization) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -48,6 +48,7 @@
 | sharp advisory GHSA-wq5f-xc86-pv6w | 2026-10-06 13:43:57 UTC | High, CVSS 4.0 8.9 (sharp maintainers). [sharp GHSA][sharp-ghsa] |
 | Advance notice of an out-of-band release | 2026-10-08 | Announced "two Critical and one High" for 2026-10-14, with no details. [Pre-announcement][pre] |
 | `next` 15.5.28 and 16.4.1 published to npm | 2026-10-14 17:36:08 UTC and 17:43:55 UTC | Patch availability per branch. No fix is listed for lines older than 15.5. [npm registry][npm-next] |
+| Next.js 16.4.4 | 2026-11-02 16:41 UTC | Bug-fix backport. The release note says it is not the November security release, which Next.js said would be published the next day and would address seven medium vulnerabilities. Those advisories were not published when checked. [16.4.4][rel1644] |
 | React RSC advisories GHSA-xqc2-xf4c-x3h3 and GHSA-h3gv-c5rc-p453 | 2026-10-14 17:08 UTC | Upstream fixes in 19.0.9, 19.1.10, 19.2.9 and 19.3.1. [React GHSA-xqc2][react-rce] |
 | **Public announcement:** Next.js advisories published | **2026-10-14 17:46:48 UTC** (GHSA-2464), 17:47:07 UTC (GHSA-673q), 17:47:43 UTC (GHSA-p3m5) | Repository advisories, with the blog post the same day. [GHSA-2464][ghsa-img] [GHSA-673q][ghsa-cache] [Next.js blog][blog] |
 | GitHub Advisory Database (reviewed) entries | 2026-10-22 15:50–16:42 UTC | Needed for `npm audit` and SCA tools. CSA reported on 2026-10-15 that the advisories were missing from npm's feed. [GitHub DB][ghdb-img] [CSA note][csa] |
@@ -154,6 +155,7 @@ Finding nothing does not prove the server was not exploited. Memory-corruption e
 [sharp-ghsa]: https://github.com/advisories/GHSA-wq5f-xc86-pv6w
 [libvips]: https://github.com/lovell/sharp-libvips/releases/tag/v1.3.4
 [npm-next]: https://www.npmjs.com/package/next?activeTab=versions
+[rel1644]: https://github.com/vercel/next.js/releases/tag/v16.4.4
 [npm-sharp]: https://www.npmjs.com/package/sharp?activeTab=versions
 [img-docs]: https://nextjs.org/docs/app/api-reference/components/image#dangerouslyallowsvg
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

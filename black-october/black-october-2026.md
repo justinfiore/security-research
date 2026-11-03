@@ -15,6 +15,13 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [libslirp: ICMP error quoting reads past the packet](#libslirp-icmp-error-quoting-reads-past-the-packet)
+- [s2Member: PayPal item name runs as PHP](#s2member-paypal-item-name-runs-as-php)
+- [Ultra Addons for Contact Form 7: unauthenticated file deletion](#ultra-addons-for-contact-form-7-unauthenticated-file-deletion)
+- [kaniko: Azure token sent to a lookalike registry](#kaniko-azure-token-sent-to-a-lookalike-registry)
+- [Fastify HTTP proxy: a route parameter rewrites the upstream path](#fastify-http-proxy-a-route-parameter-rewrites-the-upstream-path)
+- [Grafana Mimir: Alertmanager configuration reads local files](#grafana-mimir-alertmanager-configuration-reads-local-files)
+- [Rancher: Fleet gives an ordinary user cluster-admin](#rancher-fleet-gives-an-ordinary-user-cluster-admin)
 - [BookIt: unauthenticated SQL injection on the public booking endpoint](#bookit-unauthenticated-sql-injection-on-the-public-booking-endpoint)
 - [BTCPay Server: hot-wallet thefts on 2.4.1 and earlier](#btcpay-server-hot-wallet-thefts-on-241-and-earlier)
 - [Incus: certificate-chain authentication bypass and restricted-project host root](#incus-certificate-chain-authentication-bypass-and-restricted-project-host-root)
@@ -135,6 +142,13 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [libslirp](#libslirp-icmp-error-quoting-reads-past-the-packet) to **4.9.7 or later** wherever QEMU or rootless Podman does user-mode networking for an untrusted guest. Red Hat rates [CVE-2026-120830](https://www.cve.org/CVERecord?id=CVE-2026-120830) 7.4 High: a truncated packet makes the ICMP error quoter read past the heap and return those bytes to the guest. The vector is adjacent, not internet-facing. Red Hat has no errata yet and no workaround. It is not in KEV.
+- **New this update:** Update [s2Member](#s2member-paypal-item-name-runs-as-php) to **261017 or later**. Wordfence rates [CVE-2026-86596](https://www.cve.org/CVERecord?id=CVE-2026-86596) 9.8 Critical: through 260927, a PayPal `item_name` is written into an email template that then runs as PHP. The page title says no account is required. The description says the sender needs a custom-level account. Wordfence names 261001 as the fix. The template rewrite this guide found is in 261017, and the vendor changelog does not name the flaw. It is not in KEV.
+- **New this update:** Update [Ultra Addons for Contact Form 7](#ultra-addons-for-contact-form-7-unauthenticated-file-deletion) to **3.5.55 or later**. Wordfence rates [CVE-2026-102435](https://www.cve.org/CVERecord?id=CVE-2026-102435) 9.8 Critical: with the PDF Generator add-on on, an unauthenticated visitor can delete a file such as `wp-config.php`. Turn the add-on off until the new version is running. It is not in KEV.
+- **New this update:** Rebuild [kaniko](#kaniko-azure-token-sent-to-a-lookalike-registry) from **1.25.20 or later** anywhere a build can obtain an Azure identity. Chainguard rates [CVE-2026-105769](https://www.cve.org/CVERecord?id=CVE-2026-105769) 9.3 Critical: a `FROM` line whose host merely contains `.azurecr.io` receives the build's Entra ID token. Chainguard publishes no image for this fix. A token that already left stays valid until it expires. It is not in KEV.
+- **New this update:** Upgrade `@fastify/http-proxy` to **11.6.6 or later** where a route parameter is part of `prefix` and `rewritePrefix`. OpenJS rates [CVE-2026-120213](https://www.cve.org/CVERecord?id=CVE-2026-120213) 9.1 Critical: an encoded slash in the parameter changes the upstream path. A proxy with a fixed prefix is outside this flaw. There is no workaround. It is not in KEV.
+- **New this update:** Upgrade [Grafana Mimir](#grafana-mimir-alertmanager-configuration-reads-local-files) to **3.1.7 or 3.2.2 or later**, and Grafana Enterprise Metrics to **2.17.20 or later**. Grafana rates [CVE-2026-81938](https://www.cve.org/CVERecord?id=CVE-2026-81938) 7.7 High: a tenant who can upload Alertmanager configuration can read a file the process can read. GEM 2.11 through 2.16 have no fix. It is not in KEV.
+- **New this update:** Upgrade [Rancher](#rancher-fleet-gives-an-ordinary-user-cluster-admin) to **2.15.3, 2.14.7, 2.13.11, 2.12.15, or 2.11.19**. SUSE rates [CVE-2026-94290](https://www.cve.org/CVERecord?id=CVE-2026-94290) 9.1 Critical: a default user can point Fleet at the management cluster's admin kubeconfig and gain cluster-admin. The same releases stop the meta proxy from sending the caller's Rancher credential to a cloud provider. Fleet is on by default. Neither CVE is in KEV.
 - **New this update:** Update the [BookIt](#bookit-unauthenticated-sql-injection-on-the-public-booking-endpoint) WordPress plugin to **2.6.0.7 or later**. Patchstack rates [CVE-2026-62048](https://www.cve.org/CVERecord?id=CVE-2026-62048) 9.3 Critical: through 2.6.0.6, the public booking endpoint accepts an unauthenticated SQL injection. The vendor changelog does not name the query. It is not in KEV.
 - **New this update:** If a [BTCPay Server](#btcpay-server-hot-wallet-thefts-on-241-and-earlier) was still on **2.4.1 or earlier** on 1 November, take it offline and move to a new machine with a new wallet. BTCPay says attackers used another method against the vulnerability fixed in 2.4.2 and stole Bitcoin and Litecoin from hot wallets. Updating that old server in place does not remove access an attacker may already have. Servers already on 2.4.2 or later that day are outside the impact BTCPay reports. No CVE is assigned.
 - **New this update:** Upgrade [Incus](#incus-certificate-chain-authentication-bypass-and-restricted-project-host-root) servers to **7.6.0 or later**. The project rates eight flaws Critical, with no CVE. One, CVSS 3.1 10.0, is the certificate-chain bypass also fixed in [LXD](#lxd-client-certificate-chain-authenticates-as-another-trusted-client): anyone who can reach the HTTPS API can authenticate as a trusted client. The other seven need a low-privileged or restricted client and include host root through a malicious image, backup, or project. Refreshing the LXD snap does not update Incus.
@@ -199,6 +213,165 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+## libslirp: ICMP error quoting reads past the packet
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/libslirp.md):** [Detection](details/libslirp.md#detection) · [Remediation](details/libslirp.md#remediation) · [Verification](details/libslirp.md#verification) · [Timeline](details/libslirp.md#timeline)
+
+**CVEs:** [CVE-2026-120830](https://www.cve.org/CVERecord?id=CVE-2026-120830)
+
+**Red Hat (CNA) rates the flaw CVSS 3.1 7.4 High. NVD has not scored it.** The vector is adjacent network, not the public internet. `icmp_forward_error()` trusted the IP header's length when copying the quoted packet and could read past the buffer. Those bytes return to the guest inside the ICMP error. Red Hat lists RHEL 8, 9, and 10, and OpenShift 4 and 5, with no workaround and no fixed package yet. Upstream **libslirp 4.9.7** (2026-10-30) is the fix. Debian and Ubuntu had not shipped it when checked.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Red Hat does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| libslirp 4.9.7 | 2026-10-30 02:22 +0100 | Changelog names the ICMP heap read. |
+| CVE record | 2026-11-03; time/TZ unknown | Red Hat CNA, CVSS 3.1 7.4. No fixed Red Hat build named. |
+| **Last updated** | **2026-11-02 23:10 EST (UTC−05:00)** | New item. 4.9.7 is the upstream fix. |
+
+**Patch:** Install **libslirp 4.9.7 or later**, or a distribution package whose changelog names CVE-2026-120830, and restart the QEMU or Podman processes that loaded the library. A version number alone is not proof on a distribution that backports.
+
+Sources: [CVE-2026-120830](https://www.cve.org/CVERecord?id=CVE-2026-120830), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-120830), [changelog](https://gitlab.freedesktop.org/slirp/libslirp/-/blob/master/CHANGELOG.md), [detailed guide](details/libslirp.md).
+
+---
+
+## s2Member: PayPal item name runs as PHP
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/s2member.md):** [Detection](details/s2member.md#detection) · [Remediation](details/s2member.md#remediation) · [Verification](details/s2member.md#verification) · [Timeline](details/s2member.md#timeline)
+
+**CVEs:** [CVE-2026-86596](https://www.cve.org/CVERecord?id=CVE-2026-86596)
+
+**Wordfence (CNA) rates the flaw CVSS 3.1 9.8 Critical. NVD has not scored it.** The Wordfence title says unauthenticated. The description says a signed-in user with custom-level access or higher. Through s2Member 260927, `item_name` is copied into an email template. `strip_php_tags_deep()` only removes a literal `<?`, and a later cleanup of leftover `%%...%%` placeholders puts `<?php` back together. That template then runs. Wordfence says 261001 is fixed. Tag 261017, current on WordPress.org, is the release whose template fill this guide read: it fills the original template once and escapes the value. The function Wordfence names is unchanged in 261001 and 261017. The vendor changelog does not mention the CVE.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Wordfence does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Template fill rewritten | 2026-10-17; time/TZ unknown | Tag 261017. The vendor changelog does not name this flaw. |
+| Wordfence published | 2026-11-02; time/TZ unknown | CVSS 3.1 9.8. Names 261001 as the patched version. |
+| CVE record | 2026-11-02 21:30 UTC | Wordfence CNA. |
+| **Last updated** | **2026-11-02 23:10 EST (UTC−05:00)** | New item. Update to 261017. |
+
+**Patch:** Update to **261017 or later**. Read the version header in `s2member.php`. Do not rely on the changelog. Updating does not show whether a template already ran.
+
+Sources: [Wordfence](https://www.wordfence.com/threat-intel/vulnerabilities/id/bbe64cd3-c5ca-4867-90de-4784510a1126?source=cve), [CVE-2026-86596](https://www.cve.org/CVERecord?id=CVE-2026-86596), [tag 261017](https://plugins.svn.wordpress.org/s2member/tags/261017/src/includes/classes/utils-strings.inc.php), [detailed guide](details/s2member.md).
+
+---
+
+## Ultra Addons for Contact Form 7: unauthenticated file deletion
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ultra-addons-cf7.md):** [Detection](details/ultra-addons-cf7.md#detection) · [Remediation](details/ultra-addons-cf7.md#remediation) · [Verification](details/ultra-addons-cf7.md#verification) · [Timeline](details/ultra-addons-cf7.md#timeline)
+
+**CVEs:** [CVE-2026-102435](https://www.cve.org/CVERecord?id=CVE-2026-102435)
+
+**Wordfence (CNA) rates the flaw CVSS 3.1 9.8 Critical. NVD has not scored it.** Through 3.5.54, with the PDF Generator add-on active and a form set to generate a PDF, an unauthenticated visitor can delete an arbitrary file. Wordfence names `wp-config.php` as a path from deletion to code execution. The fix Wordfence names is 3.5.55. WordPress.org's current release is 3.5.57.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Wordfence does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Plugin 3.5.57 | 2026-11-01; time/TZ unknown | Changelog mentions PDF filename sanitization. It does not name the CVE. |
+| Wordfence published | 2026-11-02; time/TZ unknown | CVSS 3.1 9.8. Patched in 3.5.55. |
+| CVE record | 2026-11-02 20:17 UTC | Wordfence CNA. NVD published timestamp. |
+| **Last updated** | **2026-11-02 23:10 EST (UTC−05:00)** | New item. Turn off PDF Generator until you update. |
+
+**Patch:** Update to **3.5.55 or later**. Until then, turn off the PDF Generator add-on. A deleted `wp-config.php` is not restored by the update.
+
+Sources: [Wordfence](https://www.wordfence.com/threat-intel/vulnerabilities/id/187777a4-3438-489c-ad3b-7e16753189d6?source=cve), [CVE-2026-102435](https://www.cve.org/CVERecord?id=CVE-2026-102435), [plugin readme](https://plugins.svn.wordpress.org/ultimate-addons-for-contact-form-7/trunk/readme.txt), [detailed guide](details/ultra-addons-cf7.md).
+
+---
+
+## kaniko: Azure token sent to a lookalike registry
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/kaniko.md):** [Detection](details/kaniko.md#detection) · [Remediation](details/kaniko.md#remediation) · [Verification](details/kaniko.md#verification) · [Timeline](details/kaniko.md#timeline)
+
+**CVEs:** [CVE-2026-105769](https://www.cve.org/CVERecord?id=CVE-2026-105769)
+
+**Chainguard (CNA) rates the flaw CVSS 3.1 9.3 Critical. NVD has not scored it.** kaniko before 1.25.20 treats any registry host containing `.azurecr.io` (or `.azurecr.cn`, `.azurecr.de`, `.azurecr.us`) as Azure Container Registry and sends the build's Entra ID token there. A `FROM` line is enough. The build does not need a `RUN` and does not need to push. This is the Chainguard fork. Chainguard publishes no image for the fix. The original Google repository is archived, and the upstream credential helper has no fixed release.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). The advisory does not report in-the-wild use. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| v1.25.20 | 2026-10-27 19:05 UTC | Patched helper. No binary or image is published. |
+| Advisory | 2026-11-02 16:32 UTC | GHSA-5q7h-w9jf-cx97. Critical 9.3. |
+| CVE record | 2026-11-02 17:17 UTC | Chainguard CNA. |
+| **Last updated** | **2026-11-02 23:10 EST (UTC−05:00)** | New item. Rebuild from 1.25.20. |
+
+**Patch:** Rebuild the executor, the warmer, and `docker-credential-acr-env` from **v1.25.20 or later**. If you cannot, remove Azure credentials from the build environment and block the instance metadata address. A token that already left stays valid until it expires. Rotating the identity does not revoke it.
+
+Sources: [GHSA-5q7h-w9jf-cx97](https://github.com/chainguard-forks/kaniko/security/advisories/GHSA-5q7h-w9jf-cx97), [CVE-2026-105769](https://www.cve.org/CVERecord?id=CVE-2026-105769), [v1.25.20](https://github.com/chainguard-forks/kaniko/releases/tag/v1.25.20), [detailed guide](details/kaniko.md).
+
+---
+
+## Fastify HTTP proxy: a route parameter rewrites the upstream path
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/fastify-http-proxy.md):** [Detection](details/fastify-http-proxy.md#detection) · [Remediation](details/fastify-http-proxy.md#remediation) · [Verification](details/fastify-http-proxy.md#verification) · [Timeline](details/fastify-http-proxy.md#timeline)
+
+**CVEs:** [CVE-2026-120213](https://www.cve.org/CVERecord?id=CVE-2026-120213)
+
+**OpenJS (CNA) rates the flaw CVSS 3.1 9.1 Critical. NVD has not scored it.** `@fastify/http-proxy` 9.0.0 through 11.6.5 decodes a route parameter and substitutes it into `rewritePrefix` without encoding it again. An encoded `/` together with `#` or `?` becomes a real separator, and the suffix the prefix was meant to enforce is dropped. The advisory's example forwards `/tenants/admin%2fmaster-keys%23/public-avatar` as `GET /admin/master-keys`. A proxy that does not use a parameterized `prefix` with `rewritePrefix` is outside this flaw. There is no workaround.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). The advisory does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Advisory | 2026-11-02 08:55 UTC | GHSA-h3vp-4jfr-v364. Critical 9.1. Fixed in 11.6.6. |
+| CVE record | 2026-11-02 11:17 UTC | OpenJS CNA. |
+| **Last updated** | **2026-11-02 23:10 EST (UTC−05:00)** | New item. Upgrade to 11.6.6. |
+
+**Patch:** Upgrade `@fastify/http-proxy` to **11.6.6 or later** and restart. Check nested dependencies, not only your direct dependency.
+
+Sources: [GHSA-h3vp-4jfr-v364](https://github.com/fastify/fastify-http-proxy/security/advisories/GHSA-h3vp-4jfr-v364), [CVE-2026-120213](https://www.cve.org/CVERecord?id=CVE-2026-120213), [detailed guide](details/fastify-http-proxy.md).
+
+---
+
+## Grafana Mimir: Alertmanager configuration reads local files
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/grafana-mimir.md):** [Detection](details/grafana-mimir.md#detection) · [Remediation](details/grafana-mimir.md#remediation) · [Verification](details/grafana-mimir.md#verification) · [Timeline](details/grafana-mimir.md#timeline)
+
+**CVEs:** [CVE-2026-81938](https://www.cve.org/CVERecord?id=CVE-2026-81938)
+
+**Grafana (CNA) rates the flaw CVSS 3.1 7.7 High. NVD has not scored it.** Mimir's Alertmanager blocks tenant receiver configuration that names local files, except two HTTP client settings: `http_headers.<name>.files` and `basic_auth.username_file`. A tenant who can upload that configuration can point either at a file the process can read. The file's contents go into a header when a notification is sent. Grafana Enterprise Metrics is affected. GEM 2.11 through 2.16 will not be fixed. Grafana's own advisory page returned "can't find this page" when checked. These claims are from the CNA record and the release notes.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). The record does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Mimir 3.1.7 | 2026-10-06 20:59 UTC | Release notes name CVE-2026-81938. |
+| Mimir 3.2.2 | 2026-10-07 17:35 UTC | Same fix on the 3.2 line. |
+| CVE record | 2026-11-02 18:23 UTC | Grafana CNA. The record's public date is 2026-09-27. |
+| **Last updated** | **2026-11-02 23:10 EST (UTC−05:00)** | New item. GEM 2.11–2.16 have no fix. |
+
+**Patch:** Upgrade Mimir to **3.1.7 or later** on the 3.1 line, or **3.2.2 or later** on the 3.2 line. Upgrade GEM to **2.17.20 or later**.
+
+Sources: [CVE-2026-81938](https://www.cve.org/CVERecord?id=CVE-2026-81938), [Mimir 3.2.2](https://github.com/grafana/mimir/releases/tag/mimir-3.2.2), [Mimir 3.1.7](https://github.com/grafana/mimir/releases/tag/mimir-3.1.7), [detailed guide](details/grafana-mimir.md).
+
+---
+
+## Rancher: Fleet gives an ordinary user cluster-admin
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/rancher-fleet.md):** [Detection](details/rancher-fleet.md#detection) · [Remediation](details/rancher-fleet.md#remediation) · [Verification](details/rancher-fleet.md#verification) · [Timeline](details/rancher-fleet.md#timeline)
+
+**CVEs:** [CVE-2026-94290](https://www.cve.org/CVERecord?id=CVE-2026-94290), [CVE-2026-88811](https://www.cve.org/CVERecord?id=CVE-2026-88811)
+
+**SUSE (CNA) rates both CVSS 3.1 9.1 Critical. NVD has not scored them.** The Fleet advisory's own CVSS 4.0 score for CVE-2026-94290 is 9.4. The Rancher advisory labels CVE-2026-88811 High and scores it CVSS 4.0 8.8. Fleet's agent controller did not restrict which kubeconfig secret a Fleet cluster could reference. A user with only the default `user` role can point a Fleet cluster at the management cluster's admin kubeconfig. The controller then runs that user's content as cluster-admin. Fleet is on by default. Separately, the meta proxy forwarded the caller's Rancher session or API token to a cloud provider during ordinary provisioning lookups. That needs no attacker action for the credential to leave.
+
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Neither advisory reports in-the-wild use. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fleet tags | 2026-10-23 11:15 UTC | v0.16.3, v0.15.8, v0.14.12, v0.13.17. |
+| Rancher tags | 2026-10-29 13:53–15:51 UTC | v2.15.3, v2.14.7, v2.13.11, v2.12.15, v2.11.19. |
+| Advisories | 2026-10-29 17:26 UTC | Both GitHub advisories. CVE records reached NVD on 2026-11-02. |
+| **Last updated** | **2026-11-02 23:10 EST (UTC−05:00)** | New item. Upgrade Rancher and Fleet together. |
+
+**Patch:** Upgrade Rancher to **2.15.3, 2.14.7, 2.13.11, 2.12.15, or 2.11.19**, which ship the patched Fleet. Afterward, label a kubeconfig secret in another namespace with `fleet.cattle.io/kubeconfig-referenceable-from` or that cluster stops being imported. Rotate Rancher API tokens that were used against the meta proxy, and invalidate sessions. Downstream cluster credentials live on the management cluster.
+
+Sources: [Fleet advisory](https://github.com/rancher/fleet/security/advisories/GHSA-qfmw-gw96-ffcr), [Rancher advisory](https://github.com/rancher/rancher/security/advisories/GHSA-x82x-2qj6-5rm2), [CVE-2026-94290](https://www.cve.org/CVERecord?id=CVE-2026-94290), [detailed guide](details/rancher-fleet.md).
+
+---
 
 ## BookIt: unauthenticated SQL injection on the public booking endpoint
 
@@ -710,14 +883,14 @@ Sources: [KB3228994](https://support.servicenow.com/kb?id=kb_article_view&syspar
 
 **Wordfence (CNA) rates the flaw CVSS 3.1 9.8 Critical. Patchstack repeats 9.8. NVD has no score of its own.** On Gravity Forms through 3.1.2, a Post Custom Field of type List with a content template is passed to WordPress's unrestricted `maybe_unserialize()`. An unauthenticated visitor can store a PHP object in post meta. The plugin has no gadget chain. Wordfence says WordPress supplies one when the field is mapped to `_wp_page_template`, and that this becomes code execution on hosts with a readable PEAR install and `register_argc_argv` enabled.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). Wordfence and Patchstack do not report observed exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Wordfence does not report observed exploitation. Patchstack's page text still says the flaw is "expected to become exploited," while the same page's data marks it exploited and shows a badge reading "Known to be exploited! (KEV)." That badge is not a CISA listing, and the page names no incident. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Private discovery/report | Unknown; vendor notified 2026-09-30 13:29:24 UTC | Wordfence CNA timeline. Finders: Tin Pham (TF1T), Hao Ngo, Trong Pham. |
 | Public announcement | 2026-10-29; time/TZ unknown | Wordfence and Patchstack. CNA "Disclosed" stamp is 2026-10-29 18:29:20 UTC. |
 | CVE record published | 2026-10-30 06:47:32 UTC | Wordfence CNA. |
-| **Last updated** | **2026-10-31 00:15 EDT (UTC−04:00)** | Added from the Wordfence record, CNA record and Patchstack entry. |
+| **Last updated** | **2026-11-02 23:10 EST (UTC−05:00)** | Patchstack's page now shows an exploited badge that CISA's catalog does not. |
 
 **Am I impacted?** Any WordPress site with Gravity Forms **3.1.2 or earlier** that has a form creating posts from a List-type Post Custom Field with a content template. On a trusted host, from the WordPress root, run `wp plugin list --name=gravityforms --fields=name,status,version --skip-plugins --skip-themes`, or read the `Version:` header in `wp-content/plugins/gravityforms/gravityforms.php`.
 
@@ -811,9 +984,9 @@ Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE
 | Amazon Linux kernel packages | 2026-10-30; time/TZ unknown | AWS says Amazon Linux 2 and 2023 packages are available and a reboot is required. Amazon scores the flaw 8.1, not 9.8. |
 | Red Hat fixed kernels | 2026-11-01; time/TZ unknown | RHEL 8, 9 and 10, plus RHEL 8 real-time. RHEL 9 real-time and OpenShift RHCOS are not in those errata. |
 | NVIDIA on RHEL 10 kernel | 2026-11-02; time/TZ unknown | RHSA-2026:93775 names `kernel-6.12.0-265.31.el10nv` for ARM 64. The November 1 `el10_2` kernel does not replace it. |
-| **Last updated** | **2026-11-02 19:01 EST (UTC−05:00)** | Added the NVIDIA-on-RHEL-10 kernel. Rocky Linux still has no errata. |
+| **Last updated** | **2026-11-02 23:10 EST (UTC−05:00)** | Ubuntu 22.04, 24.04, and 26.04 builds are in -proposed, not the normal update. 26.10 is fixed. |
 
-**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Debian trixie is `linux` 6.12.113-1 ([DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html)); Debian 12 bookworm is `linux` 6.1.190-1 ([DLA-4841-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00035.html)), or `linux-6.12` 6.12.113-1~deb12u1 where that kernel is installed. Oracle Linux UEK is covered by [ELSA-2026-500397, 500398 and 500399](https://linux.oracle.com/cve/CVE-2026-98432.html) (2026-10-16); those errata do not update the Red Hat-compatible kernel. On Amazon Linux, install the package for the booted kernel and reboot: Amazon Linux 2 core `kernel-4.14.355-287.758.amzn2`, Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own [ALAS pages](https://explore.alas.aws.amazon.com/CVE-2026-98432.html). AWS says self-managed EC2 and Lightsail instances are yours to patch, and that Lambda is not exposed to this flaw. Amazon scores it CVSS 3.1 8.1. Ubuntu still lists supported generic kernels as vulnerable with fixes in progress. On 2026-11-01 Red Hat released [RHEL 8 `kernel-4.18.0-553.182.1.el8_10`](https://access.redhat.com/errata/RHSA-2026:93414) (and real-time `kernel-rt-4.18.0-553.182.1.rt7.523.el8_10`), [RHEL 9 `kernel-5.14.0-687.64.1.el9_8`](https://access.redhat.com/errata/RHSA-2026:93412), and [RHEL 10 `kernel-6.12.0-211.72.1.el10_2`](https://access.redhat.com/errata/RHSA-2026:93413). On 2026-11-02 Red Hat released a separate kernel for NVIDIA on RHEL 10, [`kernel-6.12.0-265.31.el10nv`](https://access.redhat.com/errata/RHSA-2026:93775), for ARM 64. The `el10_2` package does not replace it. Install the one for your release and reboot. RHEL 9 real-time and OpenShift RHCOS are still listed as affected with no fix. On 2026-11-02 [AlmaLinux said](https://almalinux.org/blog/2026-10-30-cve-2026-98432/) the same three version floors are in its production repositories for AlmaLinux 8, 9, and 10. Rocky Linux 8.10, 9.8, and 10.2 still had no errata when checked. Until a fixed kernel is installed, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. AWS's October 31 update to [bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws/) adds the same idea as an iptables rule (`iptables -I INPUT 1 -m u32 --u32 "0>>24&0x0f=6:15" -j DROP`) and says to disable MPTCP (`net.mptcp.enabled=0`, or `GODEBUG=multipathtcp=0` for Go 1.24+) only as an interim step. Go 1.24 and later enable multipath TCP on Linux listen sockets by default; Go says disabling it is fragile and does not fix the kernel bug. The same bulletin says the Redshift cluster OS patch will be available 2026-11-02, the RDS/Aurora OS patch will be available 2026-11-03, and a Storage Gateway update is expected beginning 2026-11-03. AWS's November 1 update says new Fargate tasks launched after 2026-11-01 17:00 UTC use a patched platform; tasks already running do not, until they are replaced. EKS-optimized AL2023 nodes should move to AMI v20261031. Auto Mode AMIs are expected worldwide by 2026-11-06, and AWS says Auto Mode replaces those nodes. AWS DMS will apply the kernel by 2026-11-02 during the weekly maintenance window. GameLift managed fleets still have no fix; AWS expects the AMIs by 2026-11-04 and says not to recreate fleets until the bulletin confirms them.
+**Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Debian trixie is `linux` 6.12.113-1 ([DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html)); Debian 12 bookworm is `linux` 6.1.190-1 ([DLA-4841-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00035.html)), or `linux-6.12` 6.12.113-1~deb12u1 where that kernel is installed. Oracle Linux UEK is covered by [ELSA-2026-500397, 500398 and 500399](https://linux.oracle.com/cve/CVE-2026-98432.html) (2026-10-16); those errata do not update the Red Hat-compatible kernel. On Amazon Linux, install the package for the booted kernel and reboot: Amazon Linux 2 core `kernel-4.14.355-287.758.amzn2`, Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own [ALAS pages](https://explore.alas.aws.amazon.com/CVE-2026-98432.html). AWS says self-managed EC2 and Lightsail instances are yours to patch, and that Lambda is not exposed to this flaw. Amazon scores it CVSS 3.1 8.1. On 2026-11-01 Red Hat released [RHEL 8 `kernel-4.18.0-553.182.1.el8_10`](https://access.redhat.com/errata/RHSA-2026:93414) (and real-time `kernel-rt-4.18.0-553.182.1.rt7.523.el8_10`), [RHEL 9 `kernel-5.14.0-687.64.1.el9_8`](https://access.redhat.com/errata/RHSA-2026:93412), and [RHEL 10 `kernel-6.12.0-211.72.1.el10_2`](https://access.redhat.com/errata/RHSA-2026:93413). On 2026-11-02 Red Hat released a separate kernel for NVIDIA on RHEL 10, [`kernel-6.12.0-265.31.el10nv`](https://access.redhat.com/errata/RHSA-2026:93775), for ARM 64. The `el10_2` package does not replace it. Install the one for your release and reboot. The same day Ubuntu put fixes in the **-proposed** pocket, which a normal upgrade does not install: 22.04 `5.15.0-203.213`, 24.04 `6.8.0-149.149`, and 26.04 `7.0.0-43.43`. Ubuntu 26.10 is fixed in `7.3.0-10.10`. Ubuntu said the updates pocket follows after testing. RHEL 9 real-time and OpenShift RHCOS are still listed as affected with no fix. On 2026-11-02 [AlmaLinux said](https://almalinux.org/blog/2026-10-30-cve-2026-98432/) the same three version floors are in its production repositories for AlmaLinux 8, 9, and 10. Rocky Linux 8.10, 9.8, and 10.2 still had no errata when checked. Until a fixed kernel is installed, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. AWS's October 31 update to [bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws/) adds the same idea as an iptables rule (`iptables -I INPUT 1 -m u32 --u32 "0>>24&0x0f=6:15" -j DROP`) and says to disable MPTCP (`net.mptcp.enabled=0`, or `GODEBUG=multipathtcp=0` for Go 1.24+) only as an interim step. Go 1.24 and later enable multipath TCP on Linux listen sockets by default; Go says disabling it is fragile and does not fix the kernel bug. The same bulletin says the Redshift cluster OS patch will be available 2026-11-02, the RDS/Aurora OS patch will be available 2026-11-03, and a Storage Gateway update is expected beginning 2026-11-03. AWS's November 1 update says new Fargate tasks launched after 2026-11-01 17:00 UTC use a patched platform; tasks already running do not, until they are replaced. EKS-optimized AL2023 nodes should move to AMI v20261031. Auto Mode AMIs are expected worldwide by 2026-11-06, and AWS says Auto Mode replaces those nodes. AWS DMS will apply the kernel by 2026-11-02 during the weekly maintenance window. GameLift managed fleets still have no fix; AWS expects the AMIs by 2026-11-04 and says not to recreate fleets until the bulletin confirms them.
 
 Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432), [Debian DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html), [AWS bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws), [ALAS2023-2026-3365](https://alas.aws.amazon.com/AL2023/ALAS2023-2026-3365.html), [Red Hat advisory](https://access.redhat.com/security/cve/CVE-2026-98432), [Red Hat RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016), [Ubuntu advisory](https://ubuntu.com/security/CVE-2026-98432), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -936,9 +1109,9 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 
 **kernel.org CNA CVSS 3.1 9.8 Critical.** The IPv4 TCP SYN-ACK path can use freed IP options, creating a remote unauthenticated use-after-free. On 2026-10-27 Anthropic reported a lab proof of concept for remote root against a multipath TCP listener; it is not in-the-wild exploitation, and the bug is not limited to multipath TCP.
 
-**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No in-the-wild exploitation is reported by the CNA. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). No in-the-wild exploitation is reported by the CNA. Absence from KEV is not evidence that exploitation has not occurred.
 
-**Patch:** this is the same flaw as [IPv4 TCP options use-after-free](#linux-kernel-ipv4-tcp-options-use-after-free). Install that item's vendor kernel, including the RHEL builds released 2026-11-01, and reboot. [Guide](details/linux-tcp-rcu.md#remediation).
+**Patch:** this is the same flaw as [IPv4 TCP options use-after-free](#linux-kernel-ipv4-tcp-options-use-after-free). Install that item's vendor kernel and reboot. Ubuntu 26.10 has a normal update. Ubuntu 22.04, 24.04, and 26.04 builds are in `-proposed` only. [Guide](details/linux-tcp-rcu.md#remediation).
 
 ## Ultralytics: parse_model code injection through an untrusted model file
 
@@ -3810,7 +3983,7 @@ flowchart TD
 | **Drupal** | Update core to 11.4.10, 11.3.19 or 10.6.19 (or later) and Entity List to 3.0.10; until then uninstall `field_ui`; EOL branches get no fix. [Guide](details/drupal.md#remediation). |
 | **NGINX Open Source / NGINX Plus / F5 NGINX products** | Upgrade to 1.30.6 or 1.31.7+ (Plus 37.0.5.1 or 37.1.0.1; distro packages per vendor tracker) and restart; check `nginx -T` for alias+rewrite+$request_filename, regex map captures, aio+SSI and shared session cache without ticket keys. [Guide](details/nginx.md#remediation). |
 | **curl / libcurl (system, containers, bundled copies)** | Upgrade to curl 8.23.0 or a vendor-fixed package (e.g. Debian 8.14.1-2+deb13u7), rebuild images and binaries that bundle libcurl, restart; stopgap: force HTTP/1.1 for uploads. [Guide](details/curl.md#remediation). |
-| **Amazon Linux and other Linux hosts accepting untrusted IPv4 TCP** | Install the kernel package that names CVE-2026-98432 and reboot. Amazon Linux 2 core is `kernel-4.14.355-287.758.amzn2`; Amazon Linux 2023 is `kernel-6.1.189-236.400.amzn2023` or `kernel6.12-6.12.113-138.209.amzn2023`, depending on the booted kernel. Debian already has fixed packages. Red Hat's November 1 kernels are RHEL 8 `kernel-4.18.0-553.182.1.el8_10`, RHEL 9 `kernel-5.14.0-687.64.1.el9_8`, and RHEL 10 `kernel-6.12.0-211.72.1.el10_2`. NVIDIA on RHEL 10 ARM uses `kernel-6.12.0-265.31.el10nv` instead. Ubuntu still does not. [Guide](details/linux-tcp-options.md#remediation). |
+| **Amazon Linux and other Linux hosts accepting untrusted IPv4 TCP** | Install the kernel package that names CVE-2026-98432 and reboot. Amazon Linux 2 core is `kernel-4.14.355-287.758.amzn2`; Amazon Linux 2023 is `kernel-6.1.189-236.400.amzn2023` or `kernel6.12-6.12.113-138.209.amzn2023`, depending on the booted kernel. Debian already has fixed packages. Red Hat's November 1 kernels are RHEL 8 `kernel-4.18.0-553.182.1.el8_10`, RHEL 9 `kernel-5.14.0-687.64.1.el9_8`, and RHEL 10 `kernel-6.12.0-211.72.1.el10_2`. NVIDIA on RHEL 10 ARM uses `kernel-6.12.0-265.31.el10nv` instead. Ubuntu 26.10 is fixed in `7.3.0-10.10`. Ubuntu 22.04, 24.04, and 26.04 builds are in `-proposed` only. [Guide](details/linux-tcp-options.md#remediation). |
 | **Linux VM and sandbox hosts** | Boot a kernel with the CVE-2026-99999 fix (5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.57, 7.2.11, 7.3 or a vendor backport such as RHEL 9 `5.14.0-687.59.1.el9_8`, RHEL 8 `4.18.0-553.178.1.el8_10`, RHEL 10 `6.12.0-211.67.1.el10_2`) plus the CVE-2026-74580 vhost fix; remove world access to /dev/vhost-*. [Guide](details/pwnescape.md#remediation). |
 | **WordPress sites with Bricksforge** | Update to 3.1.8.10+ (prefer current 4.0.x), or deactivate the plugin or block its form_submit endpoint; then hunt for PHP files under wp-content/uploads, especially bricksforge/tmp and login_admin_*.php. [Guide](details/bricksforge.md#remediation). |
 | **Gitea** | Upgrade to **28.3.0 or later**. 28.0.0 fixes only the built-in SSH bypass; 28.0.0 through 28.2.0 are still affected by the November 1 Actions, archived-repository, and stored-XSS flaws. Until then, switch the built-in SSH server to OpenSSH or disable SSH if you have not installed 28.0.0. [28.3.0 guide](details/gitea-28-3.md#remediation) · [SSH guide](details/gitea.md#remediation). |

@@ -1,6 +1,6 @@
 # Presenton: desktop app leaves the local API unauthenticated
 
-**Last updated:** 2026-11-01 (America/New_York)
+**Last updated:** 2026-11-02 (America/New_York)
 
 [Main Presenton summary](../black-october-2026.md#presenton-desktop-app-leaves-the-local-api-unauthenticated) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -54,6 +54,7 @@ If an affected desktop app was running while the user browsed untrusted pages, t
 ## Sources
 
 - [CVE-2026-120191][cve] — VulDB CNA scores, affected and unaffected versions, and the patch commit.
+- [CVE-2026-120192](https://www.cve.org/CVERecord?id=CVE-2026-120192) — VulDB, published 2026-11-01. A separate information-disclosure record in the desktop authentication middleware, same versions, fixed in the same 0.9.12-beta commit. VulDB scores it CVSS 4.0 6.9 and CVSS 3.1 5.3, both below this collection's High line. It does not change the upgrade.
 - [VulDB VDB-429530][vuldb] — same CNA entry; proof-of-concept status; upgrade recommendation.
 - [Presenton issue 972][issue] — reporter's description of the desktop default. The Critical label there is the reporter's, not Presenton's.
 - [Pull request 980][pr] — project description of the desktop credential check.

@@ -1,6 +1,6 @@
 # Gravity Forms: unauthenticated object injection on post creation
 
-**Last updated:** 2026-10-31 (America/New_York)
+**Last updated:** 2026-11-02 (America/New_York)
 
 [Main Gravity Forms summary](../black-october-2026.md#gravity-forms-unauthenticated-object-injection-on-post-creation) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,7 @@
 
 **Fixed in 3.1.3.** Wordfence and Patchstack both name 3.1.3 as the patched version. Gravity Forms' own docs site is linked from the CVE record and does not publish this advisory. [Wordfence][wf] [Patchstack][ps]
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). Wordfence and Patchstack do not report observed exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Wordfence does not report observed exploitation. On 2026-11-03 Patchstack's page text still said the flaw is "expected to become exploited," while the same page's data had `is_exploited` true and a badge reading "Known to be exploited! (KEV)." The page names no incident. That badge is not a CISA listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -77,7 +77,7 @@ If a vulnerable form was reachable and a gadget chain was present on the host, t
 ## Sources
 
 - [Wordfence vulnerability record][wf] and [CVE record (Wordfence CNA)][cve]: description, CVSS 3.1 9.8, affected range through 3.1.2, patched version 3.1.3, vendor-notification and disclosure times, researchers.
-- [Patchstack database entry][ps]: CVSS 9.8, patched in 3.1.3, published 29 Oct 2026. Patchstack says the issue is "expected to become exploited"; that is not a report of observed exploitation.
+- [Patchstack database entry][ps]: CVSS 9.8, patched in 3.1.3, published 29 Oct 2026. The visible text still says the issue is "expected to become exploited." The same page's data marks `is_exploited` true and shows a badge reading "Known to be exploited! (KEV)." It names no incident, victim, or date. CISA's catalog does not list this CVE. Those two Patchstack statements disagree, and neither is a CISA listing.
 - [NVD][nvd]; [CISA KEV feed][kev] (not listed, catalog 2026.10.30).
 - [Gravity Forms documentation][docs], linked from the CVE record. It does not publish this advisory.
 
