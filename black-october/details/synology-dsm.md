@@ -8,7 +8,7 @@
 
 CVE-2026-13639 is insufficient entropy in DSM login logic. CVE-2026-13684 is improper output encoding in DSM's SCGI component. Synology says either one lets a remote unauthenticated attacker read or write arbitrary files and cause a denial of service. Versions of DSM before 7.2.1 are marked unknown in the CNA records, not confirmed unaffected. Synology lists no workaround.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-30) for either Critical CVE, the other SA-26:13 CVEs, or the related 2024 flaw [CVE-2024-10441](https://www.cve.org/CVERecord?id=CVE-2024-10441). CISA's ADP assessment of 2026-09-18 records Exploitation "none" for both Critical CVEs. 360 later reported ransomware cases that it attributes to those two CVEs; that report is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.03, checked 2026-11-04) for either Critical CVE, the other SA-26:13 CVEs, or the related 2024 flaw [CVE-2024-10441](https://www.cve.org/CVERecord?id=CVE-2024-10441). CISA's ADP assessment of 2026-09-18 records Exploitation "none" for both Critical CVEs. 360 later reported ransomware cases that it attributes to those two CVEs; that report is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -66,7 +66,7 @@ If files are encrypted, or if a device below either fixed floor was reachable fr
 - [CVE-2026-13639][cve13639] and [CVE-2026-13684][cve13684] — Synology CNA records and CISA ADP exploitation status.
 - [360 warning (2026-10-29)][q360] — C3RB3R cases attributed to the two September CVEs.
 - [Synology press release (2026-10-29)][press] and [Synology-SA-24:20][sa2420] — Synology's attribution to the December 2024 vulnerability and its fixed builds.
-- [CISA KEV JSON feed][kev] — catalog 2026.10.30; none of these CVEs are listed.
+- [CISA KEV JSON feed][kev] — catalog 2026.11.03, checked 2026-11-04; none of these CVEs are listed. Rechecked after renewed C3RB3R reporting on November 2–3; Synology's October 29 statement and 360's attribution are unchanged, and the fixed builds above are not.
 
 [sa2613]: https://www.synology.com/en-global/security/advisory/Synology_SA_26_13
 [sa2420]: https://www.synology.com/en-global/security/advisory/Synology_SA_24_20

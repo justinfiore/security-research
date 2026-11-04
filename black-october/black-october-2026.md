@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [WSO2 API Manager: a self-registered user reaches the System REST APIs](#wso2-api-manager-a-self-registered-user-reaches-the-system-rest-apis)
 - [Barracuda: configuration restore without a login, and a root command](#barracuda-configuration-restore-without-a-login-and-a-root-command)
 - [cPGuard: malicious update collected server credentials](#cpguard-malicious-update-collected-server-credentials)
 - [CryptoPayment Gateway: unauthenticated settings and file deletion](#cryptopayment-gateway-unauthenticated-settings-and-file-deletion)
@@ -147,6 +148,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** If [WSO2 API Manager](#wso2-api-manager-a-self-registered-user-reaches-the-system-rest-apis) uses Identity Server as its Resident Key Manager and the two share a database, update both products to the latest U2 and install IS connector `wso2is.key.manager.core` **1.8.8 or later**. WSO2 rates [CVE-2026-4052](https://www.cve.org/CVERecord?id=CVE-2026-4052) 9.8 Critical: a self-registered user can call the System REST APIs. API Manager 4.1.0 through 4.6.0 and API Control Plane 4.5.0 and 4.6.0 are the named versions. The API Manager 4.6 setup page still links connector 1.7.17, which the CVE record says is affected. The advisory page is dated June 18; the CVE record was published November 3. It is not in KEV.
 - **New this update:** Update [ACF Extended and ACF Extended PRO](#acf-extended-unauthenticated-code-execution-and-account-takeover) to **0.9.2.8 or later**. WPScan scores [CVE-2026-94267](https://www.cve.org/CVERecord?id=CVE-2026-94267) 9.0 Critical and Wordfence scores it 9.8: a public form can overwrite the posts that store the plugin's own fields, and that overwrite runs code. PRO through 0.9.2.6 has a second Critical flaw, fixed in 0.9.2.7 and not in 0.9.2.6. The free plugin through 0.9.2.5 has an older one. 0.9.2.7 is not the current fix. None of these CVEs is in KEV.
 - **New this update:** Update [libslirp](#libslirp-icmp-error-quoting-reads-past-the-packet) to **4.9.7 or later** wherever QEMU or rootless Podman does user-mode networking for an untrusted guest. Red Hat rates [CVE-2026-120830](https://www.cve.org/CVERecord?id=CVE-2026-120830) 7.4 High: a truncated packet makes the ICMP error quoter read past the heap and return those bytes to the guest. The vector is adjacent, not internet-facing. Red Hat has no errata yet and no workaround. It is not in KEV.
 - **New this update:** Remove [CryptoPayment Gateway](#cryptopayment-gateway-unauthenticated-settings-and-file-deletion). WPScan rates [CVE-2026-81648](https://www.cve.org/CVERecord?id=CVE-2026-81648) 10.0 Critical: versions 1.2.1 through 1.2.2 let anyone read the stored wallet key and delete a file such as `wp-config.php`. There is no patched release. WordPress.org closed the plugin on August 28. Defused Cyber reported exploitation attempts on November 2, not a confirmed theft. Move funds to a new wallet. It is not in KEV.
@@ -164,7 +166,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade [Prefab UI](#prefab-ui-pyodide-sandbox-reaches-the-host) (`prefab-ui`) to **0.21.0 or later** wherever Generative UI runs untrusted Python. JFrog rates [CVE-2026-120338](https://www.cve.org/CVERecord?id=CVE-2026-120338) 10.0 Critical when the FastMCP server has no authentication, and 9.9 when the caller is an authenticated tool user: the Pyodide sandbox can read and write files as the server OS user. The fix shipped on October 26; the CVE was published on November 1. Until the new build is running, do not register `GenerativeUI` where an untrusted client can reach it. It is not in KEV.
 - **New this update:** Upgrade self-hosted [Beta9](#beta9-workspace-token-reaches-the-worker-filesystem) to worker **0.1.756 or later** and gateway **0.1.776 or later**. JFrog rates three flaws 9.9 Critical: an image build runs as root on the worker, the sandbox file API can read the worker's `cluster-admin` token, and a volume identifier bind-mounts the worker filesystem. The fixes shipped on September 15; the CVEs were published on November 1. beam-cloud has no GitHub advisory for them.
 - **New this update:** Upgrade self-hosted [Gitea](#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss) to **28.3.0 or later**. Seven High flaws affect 28.2.0 and earlier. A read-only user can start a workflow that receives Actions secrets (CVSS 8.1). A write collaborator can replace release files on an archived repository (CVSS 8.1). A direct artifact link is stored XSS on the Gitea site (CVSS 8.7). With `ACCOUNT_LINKING = auto`, which is not the default, an OAuth2 sign-in can take over an existing account. A site administrator's public-only token can create another administrator (CVSS 8.1), and an organization owner's public-only token can delete every repository in that organization (CVSS 8.1). A public-only package token can copy a private container blob into a public package (CVSS 7.1). 28.0.0 fixed only the older SSH bypass.
-- **New this update:** If a server runs [cPGuard](#cpguard-malicious-update-collected-server-credentials), update it to 5.88.25 or later. Builds 5.88.12 through 5.88.19 were a malicious update. The script copied password hashes, root SSH files, and database configuration. Updating removes the backdoor and does not expire what was copied.
+- **New this update:** If a server runs [cPGuard](#cpguard-malicious-update-collected-server-credentials), update it to 5.88.26 or later. 5.88.25 leaves the scheduled task behind. Builds 5.88.12 through 5.88.19, installed 02:08–03:20 UTC on November 2, were a malicious update. OPSSHIELD now says about 2,950 servers ran it. Updating removes the backdoor and does not expire what was copied.
 - **New this update:** If you use [NVIDIA Brev](#nvidia-brev-customer-information-may-have-been-affected), read the email NVIDIA sent you and replace credentials it says were affected. The only public copy is a screenshot: unauthorized activity on the Brev platform from October 4 through October 20, and the recipient's information may have been affected. The image cuts off before the list of information. There is no CVE and no nvidia.com advisory.
 - **New this update:** If a site still embeds [DebugBear](#debugbear-rum-script-removed-after-a-registrar-dns-compromise) Real User Monitoring, remove that script. DebugBear says its DNS records were changed through its domain registrar and told every RUM customer to take the embed out. It has not withdrawn that instruction. Polymarket says a third-party script on its international site drained logged-in sessions on October 29; researchers tie that script to DebugBear's host.
 - **New this update:** If you reused an [AO3](#ao3-possible-exposure-of-hashed-passwords) password anywhere else, change it there now. The Organization for Transformative Works took the archive offline on October 29 and says it cannot rule out theft of the user database, which holds usernames, emails, IP addresses, and hashed passwords. There is no CVE and no software update. Works were not deleted.
@@ -191,7 +193,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **Update Pillow wherever you process untrusted images**, including thumbnail workers and document pipelines.
 - **Check Ruby separately from GitLab.** The underlying regex bugs affect other applications compiling attacker-controlled patterns.
 - **Update certificate trust data and rebuild Go applications.** The eMudhra incident affects clients even if your own website uses another certificate authority.
-- **If you ran the compromised LiteLLM release, stored secrets in Railway or Northflank, ran BTCPay Server 2.4.1 or earlier on 1 November, installed cPGuard 5.88.12 through 5.88.19, use NVIDIA Brev, reused an AO3 password, or still embed DebugBear RUM, patching alone is insufficient.** A cPGuard server in that range needs its passwords, tokens, and root SSH keys replaced, not only the 5.88.25 update. A BTCPay server in that range needs a new machine and a new wallet, not an in-place update. Rotate Northflank secrets at each issuer. Northflank now says the attacker left within an hour, and it still says to rotate. For Brev, follow the email NVIDIA sent you: the public screenshot does not list the affected information. Change reused AO3 passwords on the other sites, and remove the DebugBear embed until DebugBear says it is safe.
+- **If you ran the compromised LiteLLM release, stored secrets in Railway or Northflank, ran BTCPay Server 2.4.1 or earlier on 1 November, installed cPGuard 5.88.12 through 5.88.19, use NVIDIA Brev, reused an AO3 password, or still embed DebugBear RUM, patching alone is insufficient.** A cPGuard server in that range needs its passwords, tokens, and root SSH keys replaced, not only the 5.88.26 update. A BTCPay server in that range needs a new machine and a new wallet, not an in-place update. Rotate Northflank secrets at each issuer. Northflank now says the attacker left within an hour, and it still says to rotate. For Brev, follow the email NVIDIA sent you: the public screenshot does not list the affected information. Change reused AO3 passwords on the other sites, and remove the DebugBear embed until DebugBear says it is safe.
 
 Severity scores below are attributed where ratings differ. CVSS measures technical severity, not whether exploitation has been observed or whether your particular deployment is reachable.
 
@@ -224,6 +226,28 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## WSO2 API Manager: a self-registered user reaches the System REST APIs
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wso2-api-manager.md):** [Detection](details/wso2-api-manager.md#detection) · [Remediation](details/wso2-api-manager.md#remediation) · [Verification](details/wso2-api-manager.md#verification) · [Timeline](details/wso2-api-manager.md#timeline)
+
+**CVEs:** [CVE-2026-4052](https://www.cve.org/CVERecord?id=CVE-2026-4052)
+
+**WSO2 (CNA) rates the flaw CVSS 3.1 9.8 Critical. NVD has not scored it.** It applies only where Identity Server is the Resident Key Manager and shares a database with API Manager. A self-registered user gets a token from the Identity Server token endpoint and calls API Manager's System REST APIs. WSO2 says that can become full administrative account takeover. The named versions are API Manager 4.1.0, 4.2.0, 4.3.0, 4.4.0, 4.5.0, and 4.6.0, and API Control Plane 4.5.0 and 4.6.0. The CVE record says connector `wso2is.key.manager.core` before 1.8.8 is affected. WSO2's advisory does not print a fixed API Manager version; it says to install the latest U2 update of each product and the latest connector. The API Manager 4.6.0 setup page still tells the reader to install connector 1.7.17.
+
+**CISA KEV:** Not listed (catalog 2026.11.03, checked 2026-11-04). Neither WSO2 nor the CVE record reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Advisory page | 2026-06-18; time/TZ unknown | WSO2-2026-5212. The rendered page leaves the CVE ID blank. |
+| CVE record | 2026-11-03 08:17:15 UTC | WSO2 CNA. CVSS 3.1 9.8. Connector fixed line is 1.8.8. |
+| **Last updated** | **2026-11-03 23:55 EST (UTC−05:00)** | New item. Same flaw as the June advisory; the CVE record is what was published on November 3. |
+
+**Patch:** Where the shared-database Resident Key Manager configuration is in use, update Identity Server and API Manager (or API Control Plane) to the latest U2 for the installed line, and replace the connector jars on Identity Server with `wso2is.key.manager.core` **1.8.8 or later** (1.8.9 is published). Restart Identity Server. Do not install the 1.7.17 connector the 4.6.0 setup page still links. A deployment that does not share that database is outside this CVE. Replacing the connector does not revoke a token already issued.
+
+Sources: [WSO2-2026-5212](https://security.docs.wso2.com/en/latest/security-announcements/security-advisories/2026/WSO2-2026-5212/), [CVE-2026-4052](https://www.cve.org/CVERecord?id=CVE-2026-4052), [detailed guide](details/wso2-api-manager.md).
+
+---
+
 ## Barracuda: configuration restore without a login, and a root command
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/barracuda.md):** [Detection](details/barracuda.md#detection) · [Remediation](details/barracuda.md#remediation) · [Verification](details/barracuda.md#verification) · [Timeline](details/barracuda.md#timeline)
@@ -252,23 +276,23 @@ Sources: [Barracuda advisory](https://trust.barracuda.com/security/pre-authentic
 
 **CVEs:** No incident-specific identifier is established in the reviewed sources.
 
-**Vendor update-channel compromise — credentials copied off the server.** No CVSS score. The fix removes the backdoor. It does not expire what was copied.
+**Vendor update-channel compromise — credentials copied off the server.** No CVSS score. 5.88.26 removes the backdoor and the scheduled task. It does not expire what was copied.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. OPSSHIELD published the notice itself.
 
-**Affected technology:** Linux servers running cPGuard, including cPanel, DirectAdmin, Plesk, and standalone installs. **Worst case:** use of a database password, cloud token, or SSH key the script copied, and a backdoor shell left on the host. Versions **5.88.12 through 5.88.19** are the affected updates. OPSSHIELD says the attacker reached its update CDN at 02:06 UTC on 2026-11-02 with compromised credentials. The script uploaded `/etc/shadow`, root database configuration, root shell history, and root SSH files to OPSSHIELD's licensing server. A preliminary estimate says the attacker retrieved 32 of those files. That is not a count of every server that installed the update.
+**Affected technology:** Linux servers running cPGuard, including cPanel, DirectAdmin, Plesk, and standalone installs. **Worst case:** use of a database password, cloud token, or SSH key the script copied, and a backdoor shell left on the host. Versions **5.88.12 through 5.88.19**, installed **02:08–03:20 UTC on 2026-11-02**, are the affected updates. OPSSHIELD's November 3 disclosure says the attacker registered as a customer, gained command execution on the billing server on November 1, and uploaded the fake update with a stolen key. About **2,950** servers ran it. The script copied `/etc/shadow`, root database configuration, root shell history, root SSH files, and, on a small number of servers, `/root/.s3cfg`. About **7,900** billing-portal accounts were also copied, including bcrypt password hashes. The earlier 32-file figure is superseded.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| CDN access | 2026-11-02 02:06 UTC | Compromised credentials. How they were obtained is still open. |
-| Affected updates | 2026-11-02; end time not stated | 5.88.12 through 5.88.19. Not every server checks for updates in that window. |
-| Corrective release and notice | 2026-11-03 03:19 IST (UTC+05:30) | Advisory last updated then. 5.88.25 removes the known backdoor and staged files. |
-| Retrieval estimate | 2026-11-03 02:42 IST (UTC+05:30) | 32 files, preliminary. |
-| **Last updated** | **2026-11-03 11:20 EST (UTC−05:00)** | New item. Update, then rotate credentials if an affected build was installed. |
+| Billing server | 2026-11-01 22:58 UTC | Command execution. The request that did it is not in the logs. |
+| Fake update | 2026-11-02 02:08–03:20 UTC | 5.88.12 through 5.88.19. About 2,950 servers. |
+| First cleanup | 2026-11-03 03:19 IST (UTC+05:30) | 5.88.25 removes the backdoor. It does not remove `/etc/cron.d/i93677`. |
+| Disclosure | 2026-11-03; time/TZ unknown | 5.88.26, the server count, and about 7,900 billing accounts. |
+| **Last updated** | **2026-11-03 23:55 EST (UTC−05:00)** | Cleanup is 5.88.26, not 5.88.25. The 32-file estimate is replaced. |
 
-**Patch:** Run `cpgcli update --start` and confirm **5.88.25 or later**. If the install log shows 5.88.12–5.88.19, or the log is missing, reset local passwords, rotate database and cloud secrets, and replace root SSH keys. A server already on 5.88.25 can still have installed an affected build earlier. OPSSHIELD is not recommending a routine operating-system reinstall.
+**Patch:** Run `cpgcli update --start` and confirm **5.88.26 or later**, then check that `/etc/cron.d/i93677` and `/var/tmp/.i93677/` are gone. If the server was online in the window above, the install log shows 5.88.12–5.88.19, or the log is missing, reset local passwords, rotate database and cloud secrets, and replace root SSH keys. Reset the manage.opsshield.com password as well; those hashes were copied. A server already on 5.88.26 can still have installed an affected build earlier. OPSSHIELD is not recommending a routine operating-system reinstall.
 
-Sources: [OPSSHIELD advisory](https://opsshield.com/notice/cpguard-update-channel-compromise.html), [detailed guide](details/cpguard.md).
+Sources: [OPSSHIELD advisory](https://opsshield.com/notice/cpguard-update-channel-compromise.html), [November 3 disclosure](https://opsshield.com/notice/security-incident-disclosure-servermanage.html), [detailed guide](details/cpguard.md).
 
 ---
 
@@ -1011,7 +1035,7 @@ Sources: [Wordfence](https://www.wordfence.com/threat-intel/vulnerabilities/id/e
 
 **Synology (CNA) rates CVE-2026-13639 and CVE-2026-13684 CVSS 3.1 9.8 Critical each.** NVD has no score of its own. Either flaw lets a remote unauthenticated attacker read or write arbitrary files and cause a denial of service. Synology lists no workaround. The High CVEs in the same advisory require an authenticated user.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-30). CISA's September 18 ADP assessment records Exploitation "none" for both Critical CVEs. 360 later reported ransomware it attributes to them. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.03, checked 2026-11-04). CISA's September 18 ADP assessment records Exploitation "none" for both Critical CVEs. 360 later reported ransomware it attributes to them. November 2–3 reporting repeats the same disagreement and names no new CVE. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -4080,6 +4104,8 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **cPGuard, any server online 02:08–03:20 UTC on 2026-11-02** | Update to 5.88.26 or later and confirm `/etc/cron.d/i93677` is gone. 5.88.25 is not enough. Reset local passwords, replace root SSH keys, rotate database and cloud secrets, and reset the manage.opsshield.com password. [Guide](details/cpguard.md#remediation). |
+| **WSO2 API Manager with Identity Server as Resident Key Manager and a shared database** | Update API Manager (4.1.0–4.6.0) or API Control Plane (4.5.0, 4.6.0) and Identity Server to the latest U2, and install connector `wso2is.key.manager.core` 1.8.8 or later. The 4.6 setup page still links 1.7.17, which the CVE record says is affected. A deployment that does not share that database is outside this flaw. [Guide](details/wso2-api-manager.md#remediation). |
 | **Siemens SIMATIC IoT2050 Advanced with Node-RED, Industrial OS before V4.3.4.1** | Update to V4.3.4.1 or later. Until then, uninstall Node-RED or require `adminAuth` and keep the editor off the internet. VulnCheck recorded honeypot exploit attempts on October 30; that is not a report of a compromised device, and the CVE is not in CISA KEV. [Guide](details/siemens-iot2050.md#remediation). |
 | **BTCPay Server on 2.4.1 or earlier on 1 November** | Take it offline. Sweep hot-wallet funds to a new seed on a trusted device, install the latest release on a new virtual machine, and do not restore the old server onto it. Revoke hosting, SSH, API, and Lightning credentials from a trusted device. A server already on 2.4.2 or later that day is outside the impact BTCPay reports. [Guide](details/btcpay-server.md#remediation). |
 | **Incus server below 7.6.0** | Upgrade to 7.6.0 or later and restart the daemon. Until then, do not expose the HTTPS API to untrusted networks and do not import untrusted images or backups. A [LXD](details/lxd-mtls.md#remediation) snap refresh does not update Incus. [Guide](details/incus.md#remediation). |
