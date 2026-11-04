@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-04 12:10 EST (UTC−05:00) — Debian APT; RHEL 8.6 kernel; Ivanti
+
+- **Debian APT:** Upgrade `apt` before the rest of the system. Ubuntu rates [CVE-2026-109518](https://www.cve.org/CVERecord?id=CVE-2026-109518) 7.7 High: an on-path attacker can replace a package after verification, and the substitute installs as root. Debian 13 is fixed in [`apt` 3.0.4](black-october/details/debian-apt.md#remediation). Debian 12 is fixed in 2.6.2. Ubuntu listed no fixed package. It is not in KEV.
+- **Linux kernel:** On RHEL 8.6 Advanced Mission Critical or Extended Update Support Long-Life, install [`kernel-4.18.0-372.227.1.el8_6`](black-october/details/linux-tcp-options.md#remediation) and reboot. That build names the TCP flaw and the local-root bug. It has no real-time package, and it does not replace the 8.8 or 8.10 kernels. Neither bug is in KEV.
+- **Ivanti Connect Secure:** The [fix is unchanged](black-october/details/ivanti-connect-secure.md#remediation): 25.1.1.3 or 22.8R2.6, and 25.1.3.0 or later on the ISA4500/6500/8500. The advisory, re-read today, still scores the privilege-escalation flaw 8.8. The CNA record says 7.0 and names only 22.8R2.4. Ivanti's chained-flaw table does not list 25.1.2. CISA's October 30 alert still does. All three CVEs are in KEV.
+
 ## 2026-11-04 08:20 EST (UTC−05:00) — ASUS routers; Langflow; SUSE kernel; WSO2
 
 - **ASUS routers:** Install the current firmware for [that model](black-october/details/asus-routers.md#remediation) and reboot. ASUS rates [CVE-2026-84730](https://www.cve.org/CVERecord?id=CVE-2026-84730) 8.7 High: on the 3.0.0.4_386, 3.0.0.4_388, and 3.0.0.6_102 series, anyone on the LAN can run commands as root through AiCloud by sending a crafted device name. A second flaw, 7.2, can crash the router from the same network. ASUS prints no firmware build number. Turn AiCloud off until the new firmware is running, and turn off USB and printer sharing you do not use. Neither CVE is in KEV.
