@@ -4,6 +4,14 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-04 16:01 EST (UTC−05:00) — Rails; Airbyte; Puppet
+
+- **Rails:** Upgrade to [8.0.5.2 or 8.1.4.1](black-october/details/rails.md#remediation) and restart. Rails rates the Active Storage ImageMagick issue 9.8 Critical, and no CVE is assigned. An unauthenticated upload can write files, and can read secrets when attachments use the Disk service. The same gems fix four more High issues. Rails 7 and older get no fix. If the Disk service was in use, change `secret_key_base`. It is not in KEV.
+- **Airbyte:** Upgrade self-managed deployments to [2.2.0 or later](black-october/details/airbyte.md#remediation). Airbyte rates the Connector Builder flaw 9.9 Critical, and no CVE is assigned. JPCERT/CC says exploitation is confirmed and scores it 8.8. Take a database backup first. The upgrade cannot be rolled back. Airbyte 1.x gets no fix. Airbyte Cloud needs no action.
+- **Puppet:** Upgrade Puppet Enterprise to [2023.8.13, 2025.12.1, or 2026.0.1](black-october/details/puppet.md#remediation) and restart Puppet Server. Perforce rates [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731) 9.4 Critical: a signed agent certificate can run code on the server. A second flaw, 9.0, lets a colliding certificate name impersonate another node. OpenVox published a proof of concept. An agent-only upgrade does not fix the server. Neither CVE is in KEV.
+- **Debian APT:** On sid, install [`apt` 3.3.6 or later](black-october/details/debian-apt.md#remediation). forky is still on 3.3.5, which is vulnerable. Debian 13 and 12 are unchanged (3.0.4 and 2.6.2). Ubuntu's public page still lists no fixed package.
+- **ClickHouse:** Install [26.10.3.7, 26.9.27.3, 26.8.36.3, or 26.3.62.3](black-october/details/brotli.md#inventory-by-language-and-deployment) from the package site, on the line you run, and restart. Those builds are one past the Brotli backports. GitHub releases do not list them yet. It is in KEV.
+
 ## 2026-11-04 12:10 EST (UTC−05:00) — Debian APT; RHEL 8.6 kernel; Ivanti
 
 - **Debian APT:** Upgrade `apt` before the rest of the system. Ubuntu rates [CVE-2026-109518](https://www.cve.org/CVERecord?id=CVE-2026-109518) 7.7 High: an on-path attacker can replace a package after verification, and the substitute installs as root. Debian 13 is fixed in [`apt` 3.0.4](black-october/details/debian-apt.md#remediation). Debian 12 is fixed in 2.6.2. Ubuntu listed no fixed package. It is not in KEV.

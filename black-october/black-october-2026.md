@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Rails: Active Storage file write and read](#rails-active-storage-file-write-and-read)
+- [Airbyte: Connector Builder runs attacker-chosen code](#airbyte-connector-builder-runs-attacker-chosen-code)
+- [Puppet: report deserialization runs code on the server](#puppet-report-deserialization-runs-code-on-the-server)
 - [Debian APT: a resumed download can install a different package as root](#debian-apt-a-resumed-download-can-install-a-different-package-as-root)
 - [ASUS routers: AiCloud root command from the LAN](#asus-routers-aicloud-root-command-from-the-lan)
 - [Quest Foglight: unauthenticated remote code execution](#quest-foglight-unauthenticated-remote-code-execution)
@@ -154,6 +157,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Rails](#rails-active-storage-file-write-and-read) to **8.0.5.2 or 8.1.4.1**. Rails rates the Active Storage ImageMagick issue 9.8 Critical, and no CVE is assigned. An unauthenticated upload can write files, and can read secrets when attachments use the Disk service. The same gems fix four more High issues. Rails 7 and older get no fix. It is not in KEV.
+- **New this update:** Upgrade self-managed [Airbyte](#airbyte-connector-builder-runs-attacker-chosen-code) to **2.2.0 or later**. Airbyte rates the Connector Builder flaw 9.9 Critical, and no CVE is assigned. JPCERT/CC says exploitation is confirmed and scores it 8.8. Airbyte 1.x gets no fix. Airbyte Cloud needs no action. The 2.2 upgrade cannot be rolled back.
+- **New this update:** Upgrade [Puppet](#puppet-report-deserialization-runs-code-on-the-server) Enterprise to **2023.8.13, 2025.12.1, or 2026.0.1**, and restart Puppet Server. Perforce rates [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731) 9.4 Critical: a signed agent certificate can run code on the server. A second flaw, 9.0, lets a colliding certificate name impersonate another node. OpenVox published a proof of concept. Neither CVE is in KEV.
 - **New this update:** Upgrade `apt` on [Debian](#debian-apt-a-resumed-download-can-install-a-different-package-as-root) before the rest of the system. Ubuntu rates [CVE-2026-109518](https://www.cve.org/CVERecord?id=CVE-2026-109518) 7.7 High: an on-path attacker can replace a package after verification, and the substitute installs as root. Debian 13 is fixed in `apt` **3.0.4**. Debian 12 is fixed in **2.6.2**. Ubuntu listed no fixed package. It is not in KEV.
 - **New this update:** Update [ASUS routers](#asus-routers-aicloud-root-command-from-the-lan) on the 3.0.0.4_386, 3.0.0.4_388, and 3.0.0.6_102 firmware to the current build for that model. ASUS rates [CVE-2026-84730](https://www.cve.org/CVERecord?id=CVE-2026-84730) 8.7 High: from the LAN, with no login, a crafted device name runs commands as root through AiCloud. A second flaw, 7.2, is a nearby denial of service. ASUS prints no firmware build number. Turn AiCloud off until the update is installed. Neither CVE is in KEV.
 - **New this update:** Upgrade [Quest Foglight for Databases](#quest-foglight-unauthenticated-remote-code-execution) to **8.3 or later**. ZDI rates three flaws 9.8 Critical, and none needs a login: a deserialization bug, a missing authentication check, and a caller-supplied file path. ZDI says each runs as SYSTEM. Thirteen more flaws in the same release need a login or code already on the host. The CVE records name 8.2.0 and do not name 8.3. None is in KEV.
@@ -238,6 +244,74 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Rails: Active Storage file write and read
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/rails.md):** [Detection](details/rails.md#detection) · [Remediation](details/rails.md#remediation) · [Verification](details/rails.md#verification) · [Timeline](details/rails.md#timeline)
+
+**CVEs:** No CVE is assigned. Rails tracks the issues as GitHub advisories.
+
+**Rails rates GHSA-f3w6-w445-fwh9 CVSS 3.0 9.8 Critical.** An application that processes attachments with ImageMagick may let an unauthenticated attacker write arbitrary files. When attachments use the Disk service, the same issue can read files the process can read, including `secret_key_base`. Rails says that can become remote code execution. The same gems, 8.0.5.2 and 8.1.4.1, fix four more High issues and no CVE is assigned to any of them: an upload filename that selects an FFmpeg or ImageMagick decoder (8.8), `Parameters#each_key` bypassing mass-assignment protection (7.5), `safe_constantize` compiling an Action Cable channel name (7.5), and, on Rails 8.1 only, a client-supplied `Forwarded` header replacing `request.remote_ip` (7.4).
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Rails does not report exploitation.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public announcement | 2026-11-04 02:58:37 UTC | oss-security, 21:58:37 −0500 on November 3. The blog post is dated November 4. |
+| Fixed gems | 2026-11-04; time/TZ unknown | 8.0.5.2 and 8.1.4.1. Rails 7 and older are unsupported. 8.0 security support ends 2026-11-07. |
+| **Last updated** | **2026-11-04 16:01 EST (UTC−05:00)** | New item. Upgrade the gems and restart. |
+
+**Patch:** Upgrade to Rails **8.0.5.2 or later** on the 8.0 line, or **8.1.4.1 or later** on the 8.1 line, and restart every process. An application on `:mini_magick` also needs **mini_magick 5.1 or later**. Rails 7 and older get no backport. Copying the ImageMagick policy covers the 9.8 issue only. If the Disk service was in use, change `secret_key_base` and the other secrets the process could read.
+
+Sources: [Rails blog](https://rubyonrails.org/2026/11/4/Rails-8.0.5.2-and-8.1.4.1-have-been-released), [GHSA-f3w6-w445-fwh9](https://github.com/rails/rails/security/advisories/GHSA-f3w6-w445-fwh9), [oss-security](https://www.openwall.com/lists/oss-security/2026/11/04/2), [detailed guide](details/rails.md).
+
+---
+
+## Airbyte: Connector Builder runs attacker-chosen code
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/airbyte.md):** [Detection](details/airbyte.md#detection) · [Remediation](details/airbyte.md#remediation) · [Verification](details/airbyte.md#verification) · [Timeline](details/airbyte.md#timeline)
+
+**CVEs:** No CVE is assigned. Airbyte tracks the issue as GHSA-g35w-6r6v-h4r7. JVN#12040144 leaves the CVE field empty.
+
+**Airbyte rates GHSA-g35w-6r6v-h4r7 CVSS 3.1 9.9 Critical. JPCERT/CC scores the same flaw CVSS 3.0 8.8 and CVSS 4.0 8.7, and labels it Critical.** Before 2.2.0, a Connector Builder manifest can name a Python class that is already installed, and the server loads it. That runs a command in the Connector Builder or Manifest Server container even when unsafe code is disabled. On 2.x the caller needs a Reader role or higher. On 1.x with the legacy Helm chart, anyone who can reach the Connector Builder service can call it. JPCERT/CC says exploitation in the wild is confirmed. Airbyte's advisory, published October 17, does not say that.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. JPCERT/CC's note is the exploitation claim. It does not name an attacker or a count.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Airbyte 2.2.0 | 2026-08-10; time/TZ unknown | Ships manifest-server 7.23.7. The upgrade drops tables 2.1.x needs. |
+| GitHub advisory | 2026-10-17; time/TZ unknown | CVSS 3.1 9.9. No CVE. Cloud needs no action. 1.x gets no fix. |
+| JVN#12040144 | 2026-11-04; time/TZ unknown | Says exploitation is confirmed. Scores 8.8 and 8.7, not 9.9. |
+| **Last updated** | **2026-11-04 16:01 EST (UTC−05:00)** | New item. Upgrade self-managed deployments. |
+
+**Patch:** Upgrade self-managed Airbyte to **2.2.0 or later** and confirm manifest-server **7.23.7**. Take a database backup first. The migration cannot be rolled back. Airbyte 1.x has no fix. Airbyte Cloud needs no action. Until a 2.x deployment is upgraded, only the Airbyte server should reach the Manifest Server.
+
+Sources: [GHSA-g35w-6r6v-h4r7](https://github.com/airbytehq/airbyte/security/advisories/GHSA-g35w-6r6v-h4r7), [Airbyte 2.2](https://docs.airbyte.com/release_notes/self-managed/v-2.2), [JVN#12040144](https://jvn.jp/en/jp/JVN12040144/), [detailed guide](details/airbyte.md).
+
+---
+
+## Puppet: report deserialization runs code on the server
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/puppet.md):** [Detection](details/puppet.md#detection) · [Remediation](details/puppet.md#remediation) · [Verification](details/puppet.md#verification) · [Timeline](details/puppet.md#timeline)
+
+**CVEs:** [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731), [CVE-2026-115732](https://www.cve.org/CVERecord?id=CVE-2026-115732)
+
+**Perforce (CNA) rates CVE-2026-115731 CVSS 4.0 9.4 Critical and CVE-2026-115732 CVSS 4.0 9.0 Critical.** NVD has not scored either. The 9.4 flaw is in report processing: any client with a CA-signed agent certificate can run code on the Puppet Server as the service user. Where the CA autosigns without a strong check, an attacker can obtain that certificate without already having one. OpenVox published a report body that runs a shell command, and says code execution as `puppet` can read the CA signing key. The 9.0 flaw lets a certificate whose name extends or shortens an authorized hostname act as that host. On Puppet Enterprise that can reach certificate-authority administration.
+
+**CISA KEV:** Not listed (catalog 2026.11.03, checked 2026-11-04). Neither Perforce nor OpenVox reports exploitation in the wild. A public proof of concept is not the same as observed exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| CVE records published | 2026-11-03; time/TZ unknown | Both Perforce CNA records. |
+| OpenVox advisory | 2026-11-03; time/TZ unknown | Includes the report JSON. Server 8.18.0 / 9.2.0. |
+| Puppet Core 9.1.3 | November 2026; day/time unknown | Release notes last published 2026-10-30 name both CVEs. |
+| **Last updated** | **2026-11-04 16:01 EST (UTC−05:00)** | New item. Upgrade the server and restart it. |
+
+**Patch:** Upgrade Puppet Enterprise to **2023.8.13, 2025.12.1, or 2026.0.1**, or Puppet Core to **8.22.2 or 9.1.3**, and restart Puppet Server. OpenVox Server is **8.18.0 or 9.2.0**, and OpenVox Agent is **8.32.0 or 9.3.0**. An agent-only upgrade does not fix the server. Until then, do not autosign certificate requests without a check you already trust. That does not protect a server that already trusts a certificate.
+
+Sources: [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731), [CVE-2026-115732](https://www.cve.org/CVERecord?id=CVE-2026-115732), [OpenVox GHSA-ffr6-rwpm-p5wq](https://github.com/OpenVoxProject/openvox/security/advisories/GHSA-ffr6-rwpm-p5wq), [Puppet Core 9.1.3](https://help.puppet.com/core/current/Content/PuppetCore/PuppetReleaseNotes/release_notes_puppet_x-9-1-3.htm), [detailed guide](details/puppet.md).
+
+---
+
 ## Debian APT: a resumed download can install a different package as root
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/debian-apt.md):** [Detection](details/debian-apt.md#detection) · [Remediation](details/debian-apt.md#remediation) · [Verification](details/debian-apt.md#verification) · [Timeline](details/debian-apt.md#timeline)
@@ -253,9 +327,10 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 | Debian 13 fix | 2026-11-04 12:07:32 UTC | DSA-6607-1. trixie `apt` 3.0.4. The same update fixes several out-of-bounds issues with no CVE. |
 | Debian 12 fix | 2026-11-04; time/TZ unknown | Tracker: bookworm security `apt` 2.6.2, DLA-4880-1. The announcement page did not return the advisory text. |
 | Ubuntu | 2026-11-04; time/TZ unknown | CVSS 4.0 7.7. Every listed release is still Vulnerable. |
-| **Last updated** | **2026-11-04 12:10 EST (UTC−05:00)** | New item. Upgrade `apt` before other packages. |
+| sid fixed | Tracker read 2026-11-04 | sid is 3.3.6. forky is still 3.3.5. |
+| **Last updated** | **2026-11-04 16:01 EST (UTC−05:00)** | sid is fixed. Ubuntu's page still lists no package. |
 
-**Patch:** On Debian 13, install `apt` **3.0.4 or later**. On Debian 12, install `apt` **2.6.2 or later**. Upgrade `apt` first. forky and sid still showed 3.3.5 as vulnerable; the tracker names 3.3.6 as the unstable fix. Ubuntu had no fixed package. A container and a build host each need their own upgrade.
+**Patch:** On Debian 13, install `apt` **3.0.4 or later**. On Debian 12, install `apt` **2.6.2 or later**. On sid, install `apt` **3.3.6 or later**. forky is still on 3.3.5 and that version is vulnerable. Upgrade `apt` first. Ubuntu's public page still lists every release as Vulnerable. The maintainer says Ubuntu packages are being released; the notice URL returned HTTP 404, so those version numbers are not an installed package. A container and a build host each need their own upgrade.
 
 Sources: [DSA-6607-1](https://lists.debian.org/debian-security-announce/2026/msg00526.html), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-109518), [Ubuntu CVE-2026-109518](https://ubuntu.com/security/CVE-2026-109518), [detailed guide](details/debian-apt.md).
 
@@ -3535,7 +3610,7 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | JFrog downstream research | 2026-10-25; time/TZ unknown | FFmpeg/libjxl pointer corruption/crash, ClickHouse crash, Arrow/pyarrow loop and .NET native crash. |
 | Debian system `brotli` fixes | 2026-10-23 19:09–21:09 UTC | DLA-4855-1 (bookworm `1.0.9-2+deb12u1`), DSA-6582-1 (trixie `1.1.0-2+deb13u1`). |
 | Amazon Linux 2023 fix | 2026-10-24; time/TZ unknown | ALAS2023-2026-3334, `1.1.0-1.amzn2023.0.2` backport. |
-| ClickHouse backports merged | 2026-10-25 14:10 to 2026-10-26 09:02 UTC | All four branches (26.10, 26.9, 26.8, 26.3); no release containing them yet. |
+| ClickHouse packages | Page read 2026-11-04 | packages.clickhouse.com lists 26.10.3.7, 26.9.27.3, 26.8.36.3, and 26.3.62.3. GitHub releases do not yet name them. |
 | Downstream fix-status check | 2026-10-26 | libjxl and ClickHouse source fixes merged; published fixed artifacts unconfirmed. Arrow dependency-update PR approved but still open. |
 | Apache Arrow 26.0.1 | 2026-11-03 08:52 UTC | Bundled, vcpkg, and R Windows builds use Brotli 1.2.1. Older wheels still do not. |
 | MSRC advisory | 2026-10-25 14:00 UTC | Critical (CVSS 3.1 8.1); fixed .NET SDKs, Visual Studio and PowerShell builds. |
@@ -3543,7 +3618,7 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | ELLIO in-the-wild exploit attempt | 2026-10-26 15:08 UTC | Request built for official Node.js 24.22.0 x86-64; ELLIO found the attacker's chain non-working in its test. ELLIO also reproduced RCE on that x86-64 build. |
 | CISA KEV addition | 2026-10-27; time/TZ unknown | CISA added CVE-2026-111497 based on evidence of active exploitation; the federal civilian due date is 2026-11-10. |
 | PAN-OS Brotli hotfixes released | 2026-10-29; time/TZ unknown | Palo Alto removed the remaining ETAs for 11.2.4-h23, 12.1.4-h13 and 12.1.10-h3. |
-| **Last updated** | **2026-11-03 15:12 EST (UTC−05:00)** | Apache Arrow 26.0.1 uses Brotli 1.2.1 for the bundled builds. |
+| **Last updated** | **2026-11-04 16:01 EST (UTC−05:00)** | ClickHouse package builds are on the package site. Arrow 26.0.1 is unchanged. |
 
 **HTTP2Shell, Node2Shell and Brotli2Shell are names for the same vulnerability, not separate CVEs.** The flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the names, it is **not specific to HTTP/2 or even HTTP**; exposure depends on decoding attacker-controlled Brotli data, including embedded file metadata and analytical buffers.
 
@@ -3579,7 +3654,7 @@ The important exposure distinction:
 | Official PHP Windows packages | **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1**; the `-1` package suffix, not `php -v`, identifies the rebuilt Brotli dependency |
 | Ruby `brotli` gem | **0.9.1+**; **0.9.0 is not fixed** |
 
-**Fixed downstream artifacts not yet established:** [libjxl PR #5062](https://github.com/libjxl/libjxl/pull/5062) and [ClickHouse PR #127419](https://github.com/ClickHouse/ClickHouse/pull/127419) merge Brotli 1.2.1, but a source merge or listed backport number is not proof of a published package. [Apache Arrow 26.0.1](https://arrow.apache.org/release/26.0.1.html) (2026-11-03) uses Brotli 1.2.1 for the bundled, vcpkg, and R Windows builds. A package built from 26.0.0 or earlier does not. Require supplier evidence that the deployed build includes fixed Brotli; otherwise pause affected untrusted processing or reject it before decoding. See [per-product inventory and release qualifications](details/brotli.md#inventory-by-language-and-deployment).
+**ClickHouse packages are on the package site.** [packages.clickhouse.com](https://packages.clickhouse.com/) lists **26.10.3.7**, **26.9.27.3**, **26.8.36.3**, and **26.3.62.3**, one build past the merged backports. GitHub releases still top out at 26.10.2.103, and the 26.10.3.7 security changelog does not name this CVE, so confirm the installed build rather than the GitHub release list. [libjxl PR #5062](https://github.com/libjxl/libjxl/pull/5062) is still a source merge, not a published libjxl package. [Apache Arrow 26.0.1](https://arrow.apache.org/release/26.0.1.html) (2026-11-03) uses Brotli 1.2.1 for the bundled, vcpkg, and R Windows builds. A package built from 26.0.0 or earlier does not. See [per-product inventory and release qualifications](details/brotli.md#inventory-by-language-and-deployment).
 
 **Detection tools:** Use the [JFrog contextual scanner and Trail of Bits Brotli Checker guidance](details/brotli.md#official-researcher-detection-tools) for supported source/binary inspection. Matches identify candidate usage or code copies, not confirmed exploitation; empty results do not prove safety. Neither tool was run for this report.
 
@@ -4338,10 +4413,13 @@ flowchart TD
 | **Linux system `libbrotli` packages** | Debian bookworm `1.0.9-2+deb12u1` / trixie `1.1.0-2+deb13u1`; Amazon Linux 2023 `1.1.0-1.amzn2023.0.2`; Ubuntu USN-8956-1 (`libbrotli1` 1.2.0-4ubuntu0.1 on 26.10, 1.2.0-3ubuntu0.1 on 26.04, 1.1.0-2ubuntu0.1 on 24.04, 1.0.9-2ubuntu0.1 on 22.04). Backports keep old version strings; restart processes that load the library. [Guide](details/brotli.md#remediation). |
 | **Java / Scala / PHP / Ruby native Brotli** | Brotli4j **1.24.0** including native artifacts; PHP extension **0.21.1**; official Windows PHP packages **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1**; Ruby gem **0.9.1+**. Patch separate libcurl/native copies too. |
 | **FFmpeg / libjxl media workers** | Verify the loaded/bundled Brotli fix with your supplier; the libjxl source merge does not patch existing FFmpeg artifacts. Until verified, pause affected untrusted JPEG XL/metadata processing. [Guide](details/brotli.md#remediation). |
-| **ClickHouse** | Require a supplier build containing fixed Brotli; listed source backports are not verified released packages. Until patched, reject Brotli HTTP bodies before decoding and pause untrusted `.br`/Parquet ingestion. [Guide](details/brotli.md#inventory-by-language-and-deployment). |
+| **ClickHouse** | Install **26.10.3.7, 26.9.27.3, 26.8.36.3, or 26.3.62.3** from packages.clickhouse.com, on the line you run, and restart. GitHub releases do not yet list those builds. Until the new build is running, reject Brotli HTTP bodies before decoding and pause untrusted `.br`/Parquet ingestion. [Guide](details/brotli.md#inventory-by-language-and-deployment). |
 | **Arrow / pyarrow** | Inspect Arrow's own bundled/system Brotli; updating Python `Brotli` alone is insufficient. Apache Arrow 26.0.1 (2026-11-03) uses Brotli 1.2.1 for the bundled builds. An older wheel does not. [Guide](details/brotli.md#inventory-by-language-and-deployment). |
 | **GitLab** | Latest supported patch release covering October 21; **19.3.6 / 19.4.3 / 19.5.1** also cover the identity flaws above. If the image uses your own Ruby rather than GitLab's packages, also install Ruby **3.3.13 / 3.4.12 / 4.0.9**: Alpine's 19.3.6 image stayed vulnerable until it did. [Guide](details/gitlab-ruby.md#remediation). |
 | **Other Ruby applications** | Ruby **3.3.13 / 3.4.12 / 4.0.9**, especially where users supply regex patterns. |
+| **Rails 8.0 and 8.1** | Upgrade to 8.0.5.2 or 8.1.4.1 and restart. Rails 7 and older get no fix for the Active Storage file write. On `:mini_magick`, also install mini_magick 5.1 or later. If the Disk service was in use, rotate `secret_key_base`. [Guide](details/rails.md#remediation). |
+| **Self-managed Airbyte** | Upgrade to 2.2.0 or later (manifest-server 7.23.7) after a database backup. The migration cannot roll back. 1.x has no fix. Airbyte Cloud needs no action. [Guide](details/airbyte.md#remediation). |
+| **Puppet Enterprise, Puppet Core, and OpenVox** | Upgrade Puppet Enterprise to 2023.8.13, 2025.12.1, or 2026.0.1, or Puppet Core to 8.22.2 or 9.1.3, and restart Puppet Server. OpenVox Server is 8.18.0 or 9.2.0. An agent-only upgrade does not fix the server. Until then, do not autosign without a check you trust. [Guide](details/puppet.md#remediation). |
 | **Plex** | Media Server **1.43.3.10861 or later**; investigate previously exposed vulnerable servers. |
 | **Nextcloud + built-in CODE** | `richdocumentscode` **26.4.303+**, or remove it. **Patch PHP separately.** |
 | **KSMBD / Broadcom Wi-Fi** | Obtain an exact vendor fix status; restrict or disable the affected service, or replace unsupported hardware. |
