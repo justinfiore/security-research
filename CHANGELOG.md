@@ -4,6 +4,13 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-04 08:20 EST (UTC−05:00) — ASUS routers; Langflow; SUSE kernel; WSO2
+
+- **ASUS routers:** Install the current firmware for [that model](black-october/details/asus-routers.md#remediation) and reboot. ASUS rates [CVE-2026-84730](https://www.cve.org/CVERecord?id=CVE-2026-84730) 8.7 High: on the 3.0.0.4_386, 3.0.0.4_388, and 3.0.0.6_102 series, anyone on the LAN can run commands as root through AiCloud by sending a crafted device name. A second flaw, 7.2, can crash the router from the same network. ASUS prints no firmware build number. Turn AiCloud off until the new firmware is running, and turn off USB and printer sharing you do not use. Neither CVE is in KEV.
+- **Langflow:** Upgrade to [1.13.1 or later](black-october/details/langflow-ibm.md#remediation), not 1.13.0. IBM's bulletin still names only 1.13.0 for the two 9.8 flaws. The November 4 release adds later security fixes, and 1.12.9 backports them for people who stay on 1.12. IBM has not said 1.12.9 is fixed. Set the superuser password before the upgrade.
+- **Linux kernel (CVE-2026-98432):** On SUSE Linux Enterprise Server 15 SP7, install [`kernel-default` 6.4.0-150700.53.90.1 or later](black-october/details/linux-tcp-options.md#remediation) and reboot. SUSE's tracker now marks that package Released. The real-time kernel on 15 SP7 is still In progress, so this package does not cover it. It is not in KEV.
+- **WSO2 API Manager:** The June advisory page now shows [CVE-2026-4052](black-october/details/wso2-api-manager.md#timeline). The fix is unchanged: latest U2 of Identity Server and API Manager, and connector `wso2is.key.manager.core` 1.8.8 or later. The page still does not print 1.8.8.
+
 ## 2026-11-04 04:00 EST (UTC−05:00) — Foglight; SonicWall GMS; Zyxel; kernels
 
 - **Quest Foglight:** Upgrade Foglight for Databases to [8.3 or later](black-october/details/foglight.md#remediation). ZDI rates three flaws 9.8 Critical, and none needs a login. ZDI says each runs as SYSTEM. Thirteen more flaws in the same release need a login or code already on the host. The CVE records name 8.2.0 and do not name 8.3. No Quest advisory was found. None is in KEV.

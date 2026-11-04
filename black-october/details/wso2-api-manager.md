@@ -1,6 +1,6 @@
 # WSO2 API Manager: a self-registered user reaches the System REST APIs
 
-**Last updated:** 2026-11-03 (America/New_York)
+**Last updated:** 2026-11-04 (America/New_York)
 
 [Back to WSO2 API Manager summary](../black-october-2026.md#wso2-api-manager-a-self-registered-user-reaches-the-system-rest-apis) · [Changelog](../../CHANGELOG.md)
 
@@ -21,11 +21,12 @@
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| Advisory page | 2026-06-18; time/TZ unknown | WSO2-2026-5212, version 1.0. Git commit message: "Add public announcement June 2026." The rendered page leaves the CVE ID blank. [Advisory][adv] [Commit][commit] |
+| Advisory page | 2026-06-18; time/TZ unknown | WSO2-2026-5212, version 1.0. Git commit message: "Add public announcement June 2026." [Advisory][adv] [Commit][commit] |
+| Advisory page names the CVE | 2026-11-04 03:37:07 UTC | Commit `e0c2564670` filled the empty CVE link. The rendered page now titles itself WSO2-2026-5212/CVE-2026-4052 and lists `CVE IDs: CVE-2026-4052`. The fix steps still say "latest U2" and "latest connector" and still do not print 1.8.8. |
 | CVE record published | 2026-11-03 08:17:15 UTC | WSO2 CNA. CVSS 3.1 9.8. Names API Manager 4.1.0–4.6.0, API Control Plane 4.5.0 and 4.6.0, and connector `wso2is.key.manager.core` before 1.8.8. [Record][cve] [NVD][nvd] |
 | Connector 1.8.8 on Maven Central | 2026-04-13 07:02:14 UTC | `org.wso2.km.ext.wso2is:wso2is.key.manager.core` 1.8.8. 1.8.9 was published 2026-06-02 05:41:17 UTC. The 2.1.x line is a different artifact series (2.1.6 on 2026-06-04). [Maven][maven] |
 | Setup page still links 1.7.17 | checked 2026-11-04 | The API Manager 4.6.0 Resident Key Manager page tells the reader to install `wso2is-extensions-1.7.17`, including `wso2is.key.manager.core-1.7.17.jar`. The CVE record says that jar is affected. [4.6.0 setup][setup46] |
-| **Last updated** | **2026-11-03 (America/New_York)** | New item. The June advisory and the November CVE record are the same flaw. |
+| **Last updated** | **2026-11-04 (America/New_York)** | The advisory page now shows the CVE ID. The fix steps are unchanged. |
 
 ## Detection
 
@@ -60,7 +61,7 @@
 
 ## Sources
 
-- [WSO2-2026-5212][adv] — Critical, CVSS 3.1 9.8. Page dated 2026-06-18. Names API Manager 4.1.0–4.6.0 and API Control Plane 4.5.0 and 4.6.0. The fix steps say "latest U2" and "latest connector" and do not print 1.8.8. The rendered page leaves the CVE ID blank.
+- [WSO2-2026-5212][adv] — Critical, CVSS 3.1 9.8. Page dated 2026-06-18. Names API Manager 4.1.0–4.6.0 and API Control Plane 4.5.0 and 4.6.0. The fix steps say "latest U2" and "latest connector" and do not print 1.8.8. As of 2026-11-04 the rendered page shows CVE-2026-4052.
 - [Git commit 59defef][commit] — "Add public announcement June 2026," 2026-06-18.
 - [CVE-2026-4052][cve] — published 2026-11-03 08:17:15 UTC. Connector `org.wso2.km.ext.wso2is:wso2is.key.manager.core` before 1.8.8.
 - [NVD CVE-2026-4052][nvd] — received 2026-11-03. NVD has not added its own score.

@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [ASUS routers: AiCloud root command from the LAN](#asus-routers-aicloud-root-command-from-the-lan)
 - [Quest Foglight: unauthenticated remote code execution](#quest-foglight-unauthenticated-remote-code-execution)
 - [SonicWall GMS: unauthenticated file read, no patch](#sonicwall-gms-unauthenticated-file-read-no-patch)
 - [Zyxel GS1900: unauthenticated command execution from the LAN](#zyxel-gs1900-unauthenticated-command-execution-from-the-lan)
@@ -152,6 +153,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [ASUS routers](#asus-routers-aicloud-root-command-from-the-lan) on the 3.0.0.4_386, 3.0.0.4_388, and 3.0.0.6_102 firmware to the current build for that model. ASUS rates [CVE-2026-84730](https://www.cve.org/CVERecord?id=CVE-2026-84730) 8.7 High: from the LAN, with no login, a crafted device name runs commands as root through AiCloud. A second flaw, 7.2, is a nearby denial of service. ASUS prints no firmware build number. Turn AiCloud off until the update is installed. Neither CVE is in KEV.
 - **New this update:** Upgrade [Quest Foglight for Databases](#quest-foglight-unauthenticated-remote-code-execution) to **8.3 or later**. ZDI rates three flaws 9.8 Critical, and none needs a login: a deserialization bug, a missing authentication check, and a caller-supplied file path. ZDI says each runs as SYSTEM. Thirteen more flaws in the same release need a login or code already on the host. The CVE records name 8.2.0 and do not name 8.3. None is in KEV.
 - **New this update:** Retire [SonicWall GMS](#sonicwall-gms-unauthenticated-file-read-no-patch). SonicWall rates [CVE-2026-109593](https://www.cve.org/CVERecord?id=CVE-2026-109593) 9.1 Critical: on 9.5.2 and earlier, anyone who can reach GMS may read internal files. A second flaw, 6.8, needs a login and can change the database. GMS is end of life. There is no patch. Move to Network Security Manager and power GMS off. Neither CVE is in KEV.
 - **New this update:** Install the November 3 build on [Zyxel GS1900 switches](#zyxel-gs1900-unauthenticated-command-execution-from-the-lan). Zyxel rates [CVE-2026-107441](https://www.cve.org/CVERecord?id=CVE-2026-107441) 8.8 High: from the LAN, with no login, an attacker can run commands. Ten models are affected through the previous 2.90 build. The fix is the same train with `.3`, such as GS1900-24E `2.90(AAHK.3)C0`. It is not in KEV.
@@ -169,7 +171,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Update the [BookIt](#bookit-unauthenticated-sql-injection-on-the-public-booking-endpoint) WordPress plugin to **2.6.0.7 or later**. Patchstack rates [CVE-2026-62048](https://www.cve.org/CVERecord?id=CVE-2026-62048) 9.3 Critical: through 2.6.0.6, the public booking endpoint accepts an unauthenticated SQL injection. The vendor changelog does not name the query. It is not in KEV.
 - **New this update:** If a [BTCPay Server](#btcpay-server-hot-wallet-thefts-on-241-and-earlier) was still on **2.4.1 or earlier** on 1 November, take it offline and move to a new machine with a new wallet. BTCPay says attackers used another method against the vulnerability fixed in 2.4.2 and stole Bitcoin and Litecoin from hot wallets. Updating that old server in place does not remove access an attacker may already have. Servers already on 2.4.2 or later that day are outside the impact BTCPay reports. No CVE is assigned.
 - **New this update:** Upgrade [Incus](#incus-certificate-chain-authentication-bypass-and-restricted-project-host-root) servers to **7.6.0 or later**. The project rates eight flaws Critical, with no CVE. One, CVSS 3.1 10.0, is the certificate-chain bypass also fixed in [LXD](#lxd-client-certificate-chain-authenticates-as-another-trusted-client): anyone who can reach the HTTPS API can authenticate as a trusted client. The other seven need a low-privileged or restricted client and include host root through a malicious image, backup, or project. Refreshing the LXD snap does not update Incus.
-- **New this update:** Upgrade [Langflow](#langflow-unauthenticated-login-bypass-and-code-execution) to **1.13.0 or later**. IBM rates two flaws 9.8 Critical on 1.0.0 through 1.12.8: a remote attacker with no account can bypass login, and the same range lets them run code. 1.10.3 fixed only the older MCP stdio flaws. 1.12.8 is still affected. IBM lists no workaround. Neither CVE is in KEV.
+- **New this update:** Upgrade [Langflow](#langflow-unauthenticated-login-bypass-and-code-execution) to **1.13.1 or later**. IBM rates two flaws 9.8 Critical on 1.0.0 through 1.12.8 and names only 1.13.0 as fixed. 1.13.1, released November 4, adds later security fixes, and 1.12.9 backports those fixes for the 1.12 line. IBM has not said 1.12.9 is fixed. 1.10.3 fixed only the older MCP stdio flaws. Neither CVE is in KEV.
 - **New this update:** Install the [Delinea Privilege Manager](#delinea-privilege-manager-windows-agent-remote-code-execution) Windows Core agent **13.0.2064 or newer**, or **12.0.5804 or newer** on the 12 line. Delinea rates [CVE-2026-92744](https://www.cve.org/CVERecord?id=CVE-2026-92744) 8.7 High: an unauthenticated attacker can run code as LocalSystem on the workstation. Until that build is installed, block inbound TCP 5593. This is not the Secret Server upgrade.
 - **New this update:** Upgrade [Prefab UI](#prefab-ui-pyodide-sandbox-reaches-the-host) (`prefab-ui`) to **0.21.0 or later** wherever Generative UI runs untrusted Python. JFrog rates [CVE-2026-120338](https://www.cve.org/CVERecord?id=CVE-2026-120338) 10.0 Critical when the FastMCP server has no authentication, and 9.9 when the caller is an authenticated tool user: the Pyodide sandbox can read and write files as the server OS user. The fix shipped on October 26; the CVE was published on November 1. Until the new build is running, do not register `GenerativeUI` where an untrusted client can reach it. It is not in KEV.
 - **New this update:** Upgrade self-hosted [Beta9](#beta9-workspace-token-reaches-the-worker-filesystem) to worker **0.1.756 or later** and gateway **0.1.776 or later**. JFrog rates three flaws 9.9 Critical: an image build runs as root on the worker, the sandbox file API can read the worker's `cluster-admin` token, and a volume identifier bind-mounts the worker filesystem. The fixes shipped on September 15; the CVEs were published on November 1. beam-cloud has no GitHub advisory for them.
@@ -231,6 +233,28 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## ASUS routers: AiCloud root command from the LAN
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/asus-routers.md):** [Detection](details/asus-routers.md#detection) · [Remediation](details/asus-routers.md#remediation) · [Verification](details/asus-routers.md#verification) · [Timeline](details/asus-routers.md#timeline)
+
+**CVEs:** [CVE-2026-84730](https://www.cve.org/CVERecord?id=CVE-2026-84730), [CVE-2026-84729](https://www.cve.org/CVERecord?id=CVE-2026-84729)
+
+**ASUS (CNA) rates CVE-2026-84730 CVSS 4.0 8.7 High and CVE-2026-84729 CVSS 4.0 7.2 High.** NVD has not scored either. The 8.7 flaw is a stack overflow in AiCloud: an unauthenticated attacker on the LAN runs commands as root through a crafted device name. The 7.2 flaw is an out-of-bounds write in a network service and can crash the router. Both need adjacent access, not an internet path. The records name ASUSWRT 3.0.0.4_386, 3.0.0.4_388, and 3.0.0.6_102. Neither bulletin prints a firmware build number.
+
+**CISA KEV:** Not listed (catalog 2026.11.03, checked 2026-11-04) for either CVE. ASUS does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| CVE records | 2026-11-04 02:02:52 UTC | ASUS CNA. Both reserved 2026-09-02. |
+| Bulletins | 2026-11-04 03:00 UTC and 09:35 UTC | Denial of service, then AiCloud. No build number. |
+| **Last updated** | **2026-11-04 08:20 EST (UTC−05:00)** | New item. |
+
+**Patch:** Install the current firmware for that model from the ASUS support page and reboot. Until it is running, turn AiCloud off, and turn off USB sharing and printer sharing you do not use. Keep WAN administration off. A firmware file from a different model is not the fix. The update does not undo a setting an attacker already changed.
+
+Sources: [ASUS security advisory](https://www.asus.com/security-advisory), [CVE-2026-84730](https://www.cve.org/CVERecord?id=CVE-2026-84730), [detailed guide](details/asus-routers.md).
 
 ---
 
@@ -334,9 +358,10 @@ Sources: [Zyxel advisory](https://www.zyxel.com/global/en/support/security-advis
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| Advisory page | 2026-06-18; time/TZ unknown | WSO2-2026-5212. The rendered page leaves the CVE ID blank. |
+| Advisory page | 2026-06-18; time/TZ unknown | WSO2-2026-5212. |
 | CVE record | 2026-11-03 08:17:15 UTC | WSO2 CNA. CVSS 3.1 9.8. Connector fixed line is 1.8.8. |
-| **Last updated** | **2026-11-03 23:55 EST (UTC−05:00)** | New item. Same flaw as the June advisory; the CVE record is what was published on November 3. |
+| Advisory shows the CVE | 2026-11-04 03:37:07 UTC | The rendered page now lists CVE-2026-4052. The fix steps still do not print 1.8.8. |
+| **Last updated** | **2026-11-04 08:20 EST (UTC−05:00)** | The June page and the November record now name the same CVE. |
 
 **Patch:** Where the shared-database Resident Key Manager configuration is in use, update Identity Server and API Manager (or API Control Plane) to the latest U2 for the installed line, and replace the connector jars on Identity Server with `wso2is.key.manager.core` **1.8.8 or later** (1.8.9 is published). Restart Identity Server. Do not install the 1.7.17 connector the 4.6.0 setup page still links. A deployment that does not share that database is outside this CVE. Replacing the connector does not revoke a token already issued.
 
@@ -686,10 +711,11 @@ Sources: [Incus 7.6 announcement](https://discuss.linuxcontainers.org/t/incus-7-
 | Langflow 1.13.0 | 2026-10-22 21:20 UTC | The only version IBM names as fixed. Release notes do not name these CVEs. |
 | Langflow 1.12.8 | 2026-10-22 17:08 UTC | Same day, earlier. IBM lists it as still affected. |
 | IBM bulletin | 2026-10-28; modified 2026-10-29; time/TZ unknown | [Bulletin 7294467](https://www.ibm.com/support/pages/node/7294467). The October 29 edit clarified the install steps. The fix is still 1.13.0. No workaround. |
+| Langflow 1.12.9 and 1.13.1 | 2026-11-04 01:39:07 UTC and 03:14:15 UTC | 1.12.9's notes say it backports the 1.13.1 fixes. Neither note names these CVEs. IBM's bulletin does not mention either release. |
 | CVE records | 2026-10-29; time unknown | IBM CNA. |
-| **Last updated** | **2026-11-02 12:30 EST (UTC−05:00)** | New item. 1.10.3 does not cover these CVEs. |
+| **Last updated** | **2026-11-04 08:20 EST (UTC−05:00)** | Current release is 1.13.1. IBM still names only 1.13.0. |
 
-**Patch:** Upgrade `langflow`, `langflow-base`, and `lfx` together to **1.13.0 or later** and restart. Set the superuser password first: 1.13.0 turns auto-login off and will not start without one. IBM lists no workaround, and turning auto-login off on an older release is not a documented fix. The same upgrade also covers the older MCP stdio flaws.
+**Patch:** Upgrade `langflow`, `langflow-base`, and `lfx` together to **1.13.1 or later** and restart. 1.13.0 is the only version IBM names, and 1.13.1 adds later security fixes. Stay off 1.12.9 unless you cannot leave the 1.12 line: that tag backports the 1.13.1 fixes, and IBM has not said it is fixed. Set the superuser password first: 1.13.0 turns auto-login off and will not start without one. IBM lists no workaround, and turning auto-login off on an older release is not a documented fix. The same upgrade also covers the older MCP stdio flaws.
 
 Sources: [IBM bulletin](https://www.ibm.com/support/pages/node/7294467), [CVE-2026-93680](https://www.cve.org/CVERecord?id=CVE-2026-93680), [CVE-2026-110186](https://www.cve.org/CVERecord?id=CVE-2026-110186), [Langflow 1.13.0](https://github.com/langflow-ai/langflow/releases/tag/v1.13.0), [detailed guide](details/langflow-ibm.md).
 
@@ -2876,7 +2902,7 @@ Any Langflow user, including a non-admin, can save an MCP server with the **stdi
 
 **Am I impacted?** Check the installed `langflow`, `langflow-base` and `lfx` versions in every environment and container. Any version **below 1.10.3** is affected. Exposure is highest when auto-login is on, the superuser password is weak or the legacy `langflow`, untrusted users have accounts, or the instance is reachable from the internet. Do not open the MCP Servers page on an unpatched instance to check for stored commands, because loading it re-runs them.
 
-**Patch:** Upgrade to **1.13.0 or later**. 1.10.3 fixes these two CVEs and does not fix the [October 28 IBM flaws](#langflow-unauthenticated-login-bypass-and-code-execution), which IBM rates 9.8 on every release through 1.12.8. Set `LANGFLOW_AUTO_LOGIN=false` with a strong `LANGFLOW_SUPERUSER_PASSWORD` before upgrading: 1.13 turns auto-login off by default and will not start without a password. Restrict network access and accounts. If the instance was exposed, review MCP server configurations after upgrading, and rotate secrets, keys and sessions.
+**Patch:** Upgrade to **1.13.1 or later**. 1.10.3 fixes these two CVEs and does not fix the [October 28 IBM flaws](#langflow-unauthenticated-login-bypass-and-code-execution), which IBM rates 9.8 on every release through 1.12.8. 1.13.1 is the current release; 1.12.9 backports its fixes and IBM has not said that tag is fixed. Set `LANGFLOW_AUTO_LOGIN=false` with a strong `LANGFLOW_SUPERUSER_PASSWORD` before upgrading: 1.13 turns auto-login off by default and will not start without a password. Restrict network access and accounts. If the instance was exposed, review MCP server configurations after upgrading, and rotate secrets, keys and sessions.
 
 Sources: [GHSA-7w94-79vh-5mr2](https://github.com/langflow-ai/langflow/security/advisories/GHSA-7w94-79vh-5mr2), [GHSA-w794-rj3p-xv45](https://github.com/langflow-ai/langflow/security/advisories/GHSA-w794-rj3p-xv45), [GitHub CNA record 105740](https://cveawg.mitre.org/api/cve/CVE-2026-105740), [GitHub CNA record 105697](https://cveawg.mitre.org/api/cve/CVE-2026-105697), [Previdian telemetry](https://previdian.com/CVE-2026-105740), [The Hacker News (secondary)](https://thehackernews.com/2026/10/langflows-critical-authenticated-rce.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -4202,6 +4228,7 @@ flowchart TD
 |---|---|
 | **Quest Foglight for Databases below 8.3** | Upgrade to 8.3 or later. Three flaws rated 9.8 need no login and run as SYSTEM. Keeping the service off untrusted networks is not a fix. [Guide](details/foglight.md#remediation). |
 | **SonicWall GMS 9.5.2 and earlier (Virtual Appliance or Windows)** | Power it off. There is no patch and no workaround. Move firewall management to Network Security Manager. Taking GMS offline does not expire a credential already copied. [Guide](details/sonicwall-gms.md#remediation). |
+| **ASUS routers on ASUSWRT 3.0.0.4_386, 3.0.0.4_388, or 3.0.0.6_102** | Install the current firmware for that model and reboot. ASUS prints no build number. Until then, turn AiCloud off. The LAN flaw runs commands as root with no login. [Guide](details/asus-routers.md#remediation). |
 | **Zyxel GS1900 switches (eight, ten, sixteen, twenty-four, and forty-eight port models in the advisory)** | Install that model's November 3 build. The fix stays on 2.90 and ends in `.3`, such as GS1900-24E `2.90(AAHK.3)C0`. A build from a different model is not the fix. [Guide](details/zyxel-gs1900.md#remediation). |
 | **Zyxel access points, FWA7, and USG LITE 60AX running the affected firmware** | Install the build the advisory names for that model. WAC500H has no public build; request the hotfix. USG LITE 60AX moves to V2.40(ACIP.0)C0 by cloud update, so confirm the running string. A Nebula-managed access point is not exempt. [Guide](details/zyxel-aps.md#remediation). |
 | **cPGuard, any server online 02:08–03:20 UTC on 2026-11-02** | Update to 5.88.26 or later and confirm `/etc/cron.d/i93677` is gone. 5.88.25 is not enough. Reset local passwords, replace root SSH keys, rotate database and cloud secrets, and reset the manage.opsshield.com password. [Guide](details/cpguard.md#remediation). |
@@ -4262,7 +4289,7 @@ flowchart TD
 | **Linux VM and sandbox hosts** | Boot a kernel with the CVE-2026-99999 fix (5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.57, 7.2.11, 7.3 or a vendor backport such as RHEL 9 `5.14.0-687.59.1.el9_8`, RHEL 8 `4.18.0-553.178.1.el8_10`, RHEL 10 `6.12.0-211.67.1.el10_2`) plus the CVE-2026-74580 vhost fix; remove world access to /dev/vhost-*. [Guide](details/pwnescape.md#remediation). |
 | **WordPress sites with Bricksforge** | Update to 3.1.8.10+ (prefer current 4.0.x), or deactivate the plugin or block its form_submit endpoint; then hunt for PHP files under wp-content/uploads, especially bricksforge/tmp and login_admin_*.php. [Guide](details/bricksforge.md#remediation). |
 | **Gitea** | Upgrade to **28.3.0 or later**. 28.0.0 fixes only the built-in SSH bypass; 28.0.0 through 28.2.0 are still affected by the November 1 Actions, archived-repository, and stored-XSS flaws. Until then, switch the built-in SSH server to OpenSSH or disable SSH if you have not installed 28.0.0. [28.3.0 guide](details/gitea-28-3.md#remediation) · [SSH guide](details/gitea.md#remediation). |
-| **Langflow** | Upgrade to **1.13.0 or later**. 1.10.3 fixes only the MCP stdio flaws. IBM's October 28 bulletin rates a login bypass and unauthenticated code execution 9.8 on 1.0.0 through 1.12.8, with no workaround. Set the superuser password before upgrading. [1.13.0 guide](details/langflow-ibm.md#remediation) · [MCP stdio guide](details/langflow.md#remediation). |
+| **Langflow** | Upgrade to **1.13.1 or later**. 1.10.3 fixes only the MCP stdio flaws. IBM's October 28 bulletin rates a login bypass and unauthenticated code execution 9.8 on 1.0.0 through 1.12.8 and names only 1.13.0. 1.12.9 backports the November 4 fixes; IBM has not called it fixed. Set the superuser password before upgrading. [Guide](details/langflow-ibm.md#remediation) · [MCP stdio guide](details/langflow.md#remediation). |
 | **Arista VeloCloud Orchestrator (on-prem)** | Upgrade to 5.2.3.20, 6.1.3.12 or 6.4.2.14 (or later on the same train). Those builds fix the SQL injection and the Brotli flaw. The earlier SQL-injection builds, 5.2.3.18, 6.1.3.10 and 6.4.2.12, do not fix Brotli. Restrict UI access, block 74.82.197.86 and 38.54.50.151, and preserve logs. Hosted VCO's SQL-injection fix was already applied by Arista; the Brotli advisory does not say the same for hosted. [Guide](details/velocloud.md#remediation). |
 | **Barracuda appliances** | Apply the named patch: ESG BNSF-40425 or BNSF-40430, ADC and WAF BNADC-16586, Message Archiver BNMA-32468, WAF Control Center BNWF-60060, Web Security Gateway BNYF-24789. Email Security Gateway before 9.4.0.030 can have its configuration replaced without a login, despite Barracuda's "authentication required" line. Keep the admin interface off the internet. [Guide](details/barracuda.md#remediation). |
 | **Siemens Software Center on Windows** | Update Siemens Software Center to V4.0.9.8+, block the Siemens IOCs, and hunt for SiemensSoftwareCenter.exe under AppData\Local\Programs on PCs that never installed it. [Guide](details/siemens-software-center.md#remediation). |
