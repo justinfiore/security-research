@@ -4,7 +4,7 @@
 
 [Main Langflow IBM summary](../black-october-2026.md#langflow-unauthenticated-login-bypass-and-code-execution) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-IBM's October 28, 2026 bulletin covers a different set of flaws from the [MCP stdio pair](langflow.md) already fixed in 1.10.3. IBM rates two of them **CVSS 3.1 9.8 Critical** and one **8.8 High**. The affected range is Langflow OSS **1.0.0 through 1.12.8**. The only fix IBM names is **1.13.0**. NVD has not published its own scores. IBM lists no workaround.
+IBM's October 28, 2026 bulletin, modified October 29, covers a different set of flaws from the [MCP stdio pair](langflow.md) already fixed in 1.10.3. IBM rates two of them **CVSS 3.1 9.8 Critical** and one **8.8 High**. The affected range is Langflow OSS **1.0.0 through 1.12.8**. The only fix IBM names is **1.13.0**. NVD has not published its own scores. IBM lists no workaround.
 
 **CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-02). IBM does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -38,7 +38,7 @@ IBM does not say whether turning auto-login off removes the two 9.8 flaws. Do no
 | Private discovery | Unknown | The bulletin does not name a reporter or a private-report date. |
 | Langflow 1.13.0 released | 2026-10-22 21:20 UTC | GitHub tag `v1.13.0`. The release notes do not name these CVEs. Official packages default `LANGFLOW_AUTO_LOGIN` to false. [Release][rel113] |
 | Langflow 1.12.8 released | 2026-10-22 17:08 UTC | Same day, earlier. IBM lists it as the last affected release. [Release][rel1128] |
-| IBM bulletin | 2026-10-28; time/TZ unknown | Initial publication. Modified date on the page is 28 October 2026. [Bulletin][ibm] |
+| IBM bulletin | 2026-10-28; time/TZ unknown | Initial publication. The page's modified date is now 29 October 2026. IBM says that edit clarified the fixed version and installation steps. The affected range and the fix, 1.13.0, did not change. [Bulletin][ibm] |
 | CVE records published | 2026-10-29; time unknown | IBM CNA. Records updated the same day. [CVE-2026-93680][cve-93680] |
 
 ## Detection
@@ -66,7 +66,7 @@ If an untrusted client could reach a build through 1.12.8, treat the process acc
 
 ## Sources
 
-- [IBM bulletin 7294467][ibm] — 1.0.0 through 1.12.8, fix 1.13.0, no workaround. Initial publication 28 October 2026.
+- [IBM bulletin 7294467][ibm] — 1.0.0 through 1.12.8, fix 1.13.0, no workaround. Initial publication 28 October 2026. Modified 29 October 2026; that edit did not change the versions.
 - [CVE-2026-93680][cve-93680] — IBM CNA, CVSS 3.1 9.8, no account.
 - [CVE-2026-110186][cve-110186] — IBM CNA, CVSS 3.1 9.8, no account.
 - [CVE-2026-110193][cve-110193] — IBM CNA, CVSS 3.1 8.8, low-privileged account.

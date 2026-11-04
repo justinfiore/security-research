@@ -1,12 +1,12 @@
 # WordPress: unauthenticated code execution during a core upgrade
 
-**Last updated:** 2026-10-31 (America/New_York)
+**Last updated:** 2026-11-03 (America/New_York)
 
 [Main WordPress summary](../black-october-2026.md#wordpress-unauthenticated-code-execution-during-a-core-upgrade) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-119977](https://www.cve.org/CVERecord?id=CVE-2026-119977) — Wordfence (CNA) CVSS 3.1 8.1 High** (`AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`). WordPress's own advisory, [GHSA-4w3m-c66w-69mg](https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-4w3m-c66w-69mg), still says **Low** and **No known CVE**. That advisory has not been updated since 2026-10-29; Wordfence published the CVE record on 2026-10-31. Patchstack scored the same race `AC:H` and says it would not call the race practical. WordPress 7.1.4 also fixes other issues, most of which need a Contributor account or higher; those are not this flaw.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). Wordfence reports exploit attempts against the predictable staging path, not confirmed compromise. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — added 2026-11-03, federal due date 2026-11-06. CISA's listing establishes in-the-wild exploitation. Wordfence's published counts are probes, not a confirmed compromise, and the KEV entry does not name a victim. `knownRansomwareCampaignUse` is Unknown. Forensic triage is required. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -26,6 +26,7 @@
 | Wordfence firewall rule | 2026-10-28 20:30 UTC | Premium, Care and Response customers. Free users receive it 2026-11-27. [Wordfence][wf] |
 | Exploitation attempts | From about nine minutes after the firewall rule, through the first 21 hours | Wordfence recorded more than 18,500 requests for staged `setup-config.php` paths. This is probing, not confirmed compromise. [Wordfence][wf] |
 | CVE record published | 2026-10-31 05:33:07 UTC | Wordfence CNA published [CVE-2026-119977][cve]. WordPress's advisory still says no CVE is known. |
+| Added to CISA KEV | 2026-11-03; time/TZ unknown | Federal due date 2026-11-06. The catalog note cites the WordPress release and Wordfence's vulnerability page. `knownRansomwareCampaignUse` is Unknown, and forensic triage is required. [KEV][kev] |
 
 ## Detection
 
@@ -57,7 +58,7 @@ If logs show a request to a PHP file under `wp-content/upgrade` during an upgrad
 - [Patchstack][patchstack] — unauthenticated race, web-reachable `wp-content/upgrade`, and the same-day backports.
 - [CVE-2026-119977][cve] — Wordfence CNA record, published 2026-10-31, CVSS 3.1 8.1 High.
 - [WordPress GHSA-4w3m-c66w-69mg][ghsa] — project advisory still marked Low, with "No known CVE", as of this review.
-- [CISA KEV JSON feed][kev] — not listed (catalog 2026.10.30).
+- [CISA KEV JSON feed][kev] — catalog 2026.11.03. Listed 2026-11-03, due 2026-11-06.
 
 [release]: https://wordpress.org/news/2026/10/wordpress-7-1-4/
 [helphub]: https://wordpress.org/documentation/wordpress-version/version-7-1-4/
