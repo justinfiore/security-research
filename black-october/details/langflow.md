@@ -1,6 +1,6 @@
 # Langflow: authenticated RCE via MCP stdio server configuration
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-04 (America/New_York)
 
 [Main Langflow summary](../black-october-2026.md#langflow-authenticated-rce-via-mcp-stdio-server-configuration) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -17,12 +17,12 @@
 
 **Worst case:** OS command execution as the Langflow process user. That gives full server compromise, theft of environment secrets (LLM and API keys, database credentials, `LANGFLOW_SECRET_KEY`), access to the internal network and cloud metadata, and a persistent backdoor stored in MCP server settings that ordinary flow review does not show. [GHSA-7w94][ghsa40]
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Five other Langflow CVEs are in KEV (added between 2025-05-05 and 2026-07-21), so Langflow is a repeat target. [What KEV means](../black-october-2026.md#what-cisa-kev-means). [KEV][kev] Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-04). Five other Langflow CVEs are in KEV (added between 2025-05-05 and 2026-07-21), so Langflow is a repeat target. [What KEV means](../black-october-2026.md#what-cisa-kev-means). [KEV][kev] Absence from KEV is not evidence that exploitation has not occurred.
 
 **Exploitation evidence comes from one third party only.** Previdian, a honeypot-sensor vendor, reports exploitation attempts it attributes to CVE-2026-105740:
 
 - First observed **2026-09-19 03:14 UTC**.
-- **4,924 attempts from 34 IPs in 17 countries**, all seen by **one sensor**, as of its 2026-10-27 page.
+- **7,341 attempts from 52 IPs in 24 countries**, all seen by **one sensor**, as of its page on 2026-11-04. Last observed 2026-11-02. The 2026-10-27 page had 4,924 attempts, 34 IPs, and 17 countries.
 - The sequence included a version check, an `auto_login` attempt (disabled in the honeypot), a **login with a common username and password**, and then the MCP server endpoint.
 
 Previdian says these are attempts, not proof of success. Neither Langflow advisory reports exploitation. CISA's SSVC entry lists 105740 as "poc" and 105697 as "none". [Previdian][prev] [The Hacker News (secondary)][thn] [CNA ADP][cve40]
@@ -56,7 +56,7 @@ Previdian says these are attempts, not proof of success. Neither Langflow adviso
 | Previdian records in-the-wild attempts; activity ramps up | 2026-10-11 (record 17:42 UTC) | 333 attempts that day, according to The Hacker News. [Previdian][prev] [THN][thn] |
 | The Hacker News report | 2026-10-15 | 1,423 attempts from 27 IPs, later updated to 1,706 attempts from 28 IPs. These figures are superseded by Previdian's live counts. [THN][thn] |
 | Langflow 1.13.0 released | 2026-10-22 21:20:30 UTC | Official packages and images now default to `LANGFLOW_AUTO_LOGIN=false`, a breaking change. [Releases][releases] [Langflow auth docs][auth] |
-| Previdian live count | As of 2026-10-27 | 4,924 attempts, 34 IPs, 17 countries, one sensor. [Previdian][prev] |
+| Previdian live count | Page read 2026-11-04; last observed 2026-11-02 | 7,341 attempts, 52 IPs, 24 countries, one sensor. The 2026-10-27 page had 4,924, 34, and 17. [Previdian][prev] |
 | CISA KEV addition | Not listed | Catalog 2026.10.23, checked 2026-10-26. [KEV][kev] |
 
 ## Detection

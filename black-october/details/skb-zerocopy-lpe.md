@@ -136,6 +136,7 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | RHEL 8 | `kernel-4.18.0-553.181.1.el8_10`; real-time `kernel-rt-4.18.0-553.181.1.rt7.522.el8_10` | [RHSA-2026:93436][rhsa8z] and [RHSA-2026:93437][rhsa8rt], issued 2026-11-02. Both name ZDI-CAN-33367 with an empty CVE field. These are not the November 1 TCP kernels. | [RHSA-2026:93436][rhsa8z] |
 | RHEL 8.8 | `kernel-4.18.0-477.178.1.el8_8` | [RHSA-2026:94303][rhsa88], issued 2026-11-03, rated Critical. RHEL 8.8 SAP Solutions, Telecommunications Update Service, and Extended Life Cycle Long Life. Names CVE-2026-98432 and ZDI-CAN-33367. Not the 8.10 kernel above. | [RHSA-2026:94303][rhsa88] |
 | RHEL 8.6 | `kernel-4.18.0-372.227.1.el8_6` | [RHSA-2026:94996][rhsa86], issued 2026-11-04, rated Critical. RHEL 8.6 Advanced Mission Critical Update Support and Extended Update Support Long-Life Add-On. Names CVE-2026-98432 and ZDI-CAN-33367 (empty CVE field). No `kernel-rt` package. Not the 8.8 or 8.10 kernels. | [RHSA-2026:94996][rhsa86] |
+| RHEL 8.4 | `kernel-4.18.0-305.217.1.el8_4` | [RHSA-2026:94596][rhsa84z], issued 2026-11-03, rated Important. RHEL 8.4 Advanced Mission Critical Update Support and Extended Update Support Long-Life Add-On. Names ZDI-CAN-33367 with an empty CVE field. Does not name CVE-2026-98432. No `kernel-rt` package. The same day's `kernel-4.18.0-305.218.1.el8_4` names the TCP flaw and not this bug. Neither replaces the 8.8 or 8.10 kernels. | [RHSA-2026:94596][rhsa84z] |
 | Rocky Linux 9 | `kernel-5.14.0-687.64.1.el9_8` | [RLSA-2026:93412][rlsa9], issued 2026-11-03. The description names ZDI-CAN-33367. The same errata also ships `kernel-rt` at that version. | [RLSA-2026:93412][rlsa9] |
 | RHEL 9.4 | `kernel-5.14.0-427.161.1.el9_4` and `kernel-rt-5.14.0-427.161.1.el9_4` | [RHSA-2026:94109][rhsa94], issued 2026-11-02, for 9.4 Update Services for SAP Solutions. Names ZDI-CAN-33367 with an empty CVE field, and CVE-2026-98432. Not the 9.8 kernel above. | [RHSA-2026:94109][rhsa94] |
 | RHEL 9.6 | `kernel-5.14.0-570.154.1.el9_6` and `kernel-rt-5.14.0-570.154.1.el9_6` | [RHSA-2026:94438][rhsa96], issued 2026-11-03, for 9.6 Extended Update Support. Names ZDI-CAN-33367 with an empty CVE field, and CVE-2026-98432. | [RHSA-2026:94438][rhsa96] |
@@ -231,6 +232,7 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 [rhsa8z]: https://access.redhat.com/errata/RHSA-2026:93436
 [rhsa88]: https://access.redhat.com/errata/RHSA-2026:94303
 [rhsa86]: https://access.redhat.com/errata/RHSA-2026:94996
+[rhsa84z]: https://access.redhat.com/errata/RHSA-2026:94596
 [rlsa9]: https://errata.rockylinux.org/RLSA-2026:93412
 [rhsa8rt]: https://access.redhat.com/errata/RHSA-2026:93437
 [rhsa10]: https://access.redhat.com/errata/RHSA-2026:93413

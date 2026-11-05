@@ -4,6 +4,13 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-04 20:05 EST (UTC−05:00) — Xen; Ubuntu APT; RHEL 8.4 kernel
+
+- **Xen:** Install the [fixed hypervisor](black-october/details/xen.md#remediation) and reboot the host. SUSE rates [CVE-2026-102703](https://www.cve.org/CVERecord?id=CVE-2026-102703) and [CVE-2026-102704](https://www.cve.org/CVERecord?id=CVE-2026-102704) CVSS 4.0 8.4. A guest can read and write other guests' memory, including Dom0. Xen 4.6 and later are affected, and there is no mitigation. SUSE Linux Enterprise 15 SP7 is `xen` 4.20.4_08-150700.3.52.1. Debian 13 is 4.20.4+63-g7abfd2bce2-0+deb13u1. Debian 12 is 4.17.7+13-g2445b30a44-0+deb12u1. XCP-ng 8.3 is xen-4.17.7-4.2.xcpng8.3. Qubes OS 4.3 is dom0 Xen 4.19.6-3. Xen 4.6 through 4.16 get no patch. A guest reboot does not load the new hypervisor. Neither CVE is in KEV.
+- **Debian APT:** On Ubuntu, install the [USN-8996-1 package](black-october/details/debian-apt.md#remediation): 26.10 `apt` 3.3.3ubuntu0.1, 26.04 3.2.1ubuntu0.1, 24.04 2.8.4ubuntu0.1, 22.04 2.4.15ubuntu0.1. Upgrade `apt` before other packages. Ubuntu 20.04 and older get the fix only with Ubuntu Pro. The earlier note that Ubuntu listed no package is no longer true. It is not in KEV.
+- **Linux kernel:** On RHEL 8.4 Advanced Mission Critical or Extended Update Support Long-Life, the local-root bug and the TCP flaw are different kernels. Install [`kernel-4.18.0-305.217.1.el8_4`](black-october/details/skb-zerocopy-lpe.md#fixed-kernels-and-live-patches) for the local-root bug. That build does not name the TCP flaw. `kernel-4.18.0-305.218.1.el8_4` names the TCP flaw and not the local-root bug. Neither replaces the 8.8 or 8.10 kernels. Neither bug is in KEV.
+- **Langflow:** Previdian's single sensor now counts [7,341 attempts](black-october/details/langflow.md#timeline) against the MCP stdio flaw, from 52 addresses, last seen November 2. The October 27 count was 4,924. These are attempts, not confirmed compromises. The fix is still 1.13.1 or later. It is not in KEV.
+
 ## 2026-11-04 16:01 EST (UTC−05:00) — Rails; Airbyte; Puppet
 
 - **Rails:** Upgrade to [8.0.5.2 or 8.1.4.1](black-october/details/rails.md#remediation) and restart. Rails rates the Active Storage ImageMagick issue 9.8 Critical, and no CVE is assigned. An unauthenticated upload can write files, and can read secrets when attachments use the Disk service. The same gems fix four more High issues. Rails 7 and older get no fix. If the Disk service was in use, change `secret_key_base`. It is not in KEV.

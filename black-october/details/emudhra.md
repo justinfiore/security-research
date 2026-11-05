@@ -1,6 +1,6 @@
 # eMudhra / emSign: compromised intermediate CA keys
 
-**Last updated:** 2026-10-31 (America/New_York)
+**Last updated:** 2026-11-04 (America/New_York)
 
 [Back to eMudhra summary](../black-october-2026.md#emudhra--emsign) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,7 @@ Eight P-384 intermediate CA keys were trivially recoverable: **six TLS and two c
 
 **October 26 update:** do not reuse an early "fixed Java" table. Oracle's October 24 **[CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820)** alert lists the earlier emergency builds as affected and requires a further root-removal update. CPython has now also released **3.15.2 / 3.14.10 / 3.13.18 / 3.12.16 / 3.11.18**, blocking the compromised keys in `ssl` (**[CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557)**). See the [runtime inventory](#runtime-and-application-trust-store-inventory) and [verification limits](#verification).
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). The CA compromise itself has no CVE; the related Go [CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943), Java [CVE-2026-91403](https://www.cve.org/CVERecord?id=CVE-2026-91403) and [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820), and Python [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557) fixes are not listed. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-04). The CA compromise itself has no CVE; the related Go [CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943), Java [CVE-2026-91403](https://www.cve.org/CVERecord?id=CVE-2026-91403) and [CVE-2026-114820](https://www.cve.org/CVERecord?id=CVE-2026-114820), and Python [CVE-2026-115557](https://www.cve.org/CVERecord?id=CVE-2026-115557) fixes are not listed. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -69,6 +69,7 @@ Times below are UTC where specified; release dates without times follow the publ
 | 2026-10-28 | eMudhra Update 6 says about 30,800 affected G3 certificates belong to one U.S. client ecosystem, G1 remains active, and Sectigo replacement certificates are available. This vendor statement does not establish universal client protection. [eMudhra Update 6][emudhra-update-6] |
 | 2026-10-29 (Apple article date) | Apple's updated support article names **curl, git, python3, ruby, perl and openssl** shipped with macOS or the Xcode Command Line Tools as checking `/etc/ssl/cert.pem`. For chains to a root in that file, these tools do not check Apple's block or revocation, so they can still accept the affected certificates until a **future macOS software update** replaces the file. No macOS release with that change appeared on Apple's security releases page when checked on 2026-10-30. [Apple][apple-149555] [Apple security releases][apple-releases] |
 | 2026-10-30; time/TZ not stated | eMudhra Update 7 announces **KPMG** as its independent external reviewer, fulfilling the October 21 commitment that an independent entity would examine the incident. The update gives no scope beyond "bring clarity on the incident" and addressing issues arising from it, and no completion date. The root-cause analysis eMudhra promised through CCADB is a separate deliverable and was not yet published in the statement. This changes no client-side remediation. [eMudhra Update 7][emudhra-update-6] |
+| 2026-11-02 15:54:58 UTC | Bugzilla comment 73. eMudhra says it has appointed KPMG and will need until 2026-11-09 to share the full incident report. The public statement's Update 7 is unchanged and still gives no completion date. This changes no client-side remediation. [Bugzilla comment 73](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449#c73) |
 
 **Corrections and limits:** The current eMudhra statement now says notification October 17 and revocation October 18; older October 18/19 dates were challenged in Bugzilla comment 35. The precise correction time is not published. Its shorthand “eight TLS” must not replace Mozilla's six-TLS/two-code-signing inventory. The wrap/unwrap explanation remains preliminary, not proof of an HSM hardware defect.
 
