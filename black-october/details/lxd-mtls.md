@@ -1,6 +1,6 @@
 # LXD: client certificate chain authenticates as another trusted client
 
-**Last updated:** 2026-11-01 (America/New_York)
+**Last updated:** 2026-11-04 (America/New_York)
 
 [Main LXD summary](../black-october-2026.md#lxd-client-certificate-chain-authenticates-as-another-trusted-client) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,7 @@ The LXD HTTPS API's mutual-TLS check compared every certificate in the client ch
 
 The same flaw affects MicroCloud, where an attacker can intercept a joining member's public TLS certificate and then authenticate as that member. MicroCloud's fixed snaps are 3.4.1 and 2.1.5. No separate CVE is assigned for MicroCloud in the sources read.
 
-The CNA's affected ranges are LXD **4.0.14 before 4.0.15**, **5.0.10 before 5.0.11**, **5.21.8 before 5.21.9**, and **6.9.0 before 6.10.1**. The description text says "6.9 before 6.10.1". Builds outside those ranges are the CNA's default status, unaffected. The API has to be reachable by the attacker; a listener bound only to a trusted network is not the same as a fix.
+The CNA's affected ranges are LXD **4.0.14 before 4.0.15**, **5.0.10 before 5.0.11**, **5.21.8 before 5.21.9**, and **6.9.0 before 6.10.1**. The description text says "6.9 before 6.10.1". Canonical's GitHub advisory, published 2026-11-04, lists patched versions as **4.0.15, 5.0.11, 5.21.9, 6.10.0, and 6.10.1**, so 6.10.0 is a fix even though the CNA text stops at 6.10.1. That advisory also rates the flaw CVSS 3.1 10.0. Builds outside the CNA ranges are the CNA's default status, unaffected. The API has to be reachable by the attacker; a listener bound only to a trusted network is not the same as a fix.
 
 **CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01). Canonical does not report exploitation in the wild. On 2026-11-01 a public lab reproduction showed the chain check on an isolated LXD 3.20 container. That is not an attack on a customer cluster. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -30,12 +30,13 @@ The CNA's affected ranges are LXD **4.0.14 before 4.0.15**, **5.0.10 before 5.0.
 | Report | Date not published | Canonical says the Incus project referred the issue and it was confirmed in LXD. Credit: Stéphane Graber. [Discourse][discourse] |
 | Public advisory | 2026-10-28 17:50 UTC | Discourse post time. [Discourse][discourse] |
 | Fixed snaps | 2026-10-29; time/TZ unknown | LXD 6.10.1, 5.21.9, 5.0.11, 4.0.15; MicroCloud 3.4.1 and 2.1.5. Point releases were still rolling from candidate to stable when the advisory was posted. [Discourse][discourse] |
+| GitHub advisory | 2026-11-04; time/TZ unknown | Lists 6.10.0 as patched, with 6.10.1. CVSS 3.1 10.0. [GHSA][ghsa] |
 | Public lab reproduction | 2026-11-01 20:47 UTC | Repository created. Author says it is an independent reproduction on an isolated LXD 3.20 container, not the original discovery, and not a customer incident. [Lab notes][lab] |
 | CVE record published | 2026-10-30 16:42:06 UTC | Canonical CNA, CVSS 4.0 10.0. [CVE][cve] |
 
 ## Detection
 
-1. On each LXD host, `snap list lxd` (or the package version, if not a snap). Affected snaps are 4.0.14, 5.0.10, 5.21.8, and 6.9.x before 6.10.1. Fixed floors are 4.0.15, 5.0.11, 5.21.9, and 6.10.1.
+1. On each LXD host, `snap list lxd` (or the package version, if not a snap). Affected snaps are 4.0.14, 5.0.10, 5.21.8, and 6.9.x before 6.10.0. Fixed floors are 4.0.15, 5.0.11, 5.21.9, and 6.10.0. 6.10.1 remains a fix. The CNA text says "before 6.10.1"; the GitHub advisory lists 6.10.0 as patched.
 2. For MicroCloud, `snap list microcloud`. Fixed floors are 3.4.1 on the 3/stable channel and 2.1.5 on the 2/stable channel.
 3. The flaw is reachable only if the attacker can open the HTTPS API. Check which address the LXD listener is bound to. A public listener is exposed; a listener you cannot confirm is unknown, not safe.
 4. Ubuntu's archive packages for this CVE are marked "not in release" or "not affected" on the releases Ubuntu lists. That does not clear a snap installed from the LXD channels above.
@@ -68,9 +69,11 @@ If the HTTPS API was reachable on an affected version, preserve LXD's logs and t
 - [CVE-2026-112816][cve] — Canonical CNA, published 2026-10-30 16:42:06 UTC, CVSS 4.0 10.0 Critical, affected ranges. CISA ADP Exploitation "none".
 - [Ubuntu CVE page][ubuntu] — priority Medium; archive packages not in release or not affected. No second CVSS score.
 - [CISA KEV JSON feed][kev] — not listed (catalog 2026.10.30).
+- [GHSA-99jp-jwmc-65p4][ghsa] — published 2026-11-04. Patched versions include 6.10.0. CVSS 3.1 10.0.
 
 [discourse]: https://discourse.ubuntu.com/t/security-advisory-critical-vulnerability-found-in-canonical-lxd-and-microcloud/90557
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-112816
 [ubuntu]: https://ubuntu.com/security/CVE-2026-112816
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+[ghsa]: https://github.com/canonical/lxd/security/advisories/GHSA-99jp-jwmc-65p4
 [lab]: https://github.com/MrNarsus/cve-2026-112816-poc

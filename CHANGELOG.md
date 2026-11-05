@@ -4,6 +4,13 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-04 23:55 EST (UTC−05:00) — Cisco UCS Central; Siemens IoT2050; AWS TCP dates; LXD 6.10.0
+
+- **Cisco UCS Central:** Upgrade to [2.1(2c) or later](black-october/details/cisco-ucs-central.md#remediation). Cisco rates [CVE-2026-76506](https://www.cve.org/CVERecord?id=CVE-2026-76506) 7.6 High. A user account on the web management interface can run commands, write files, and read sensitive information. Releases 2.0 and earlier have no fix on that train. There is no workaround. This is not UCS Manager and not a server CIMC. It is not in KEV.
+- **Siemens SIMATIC IoT2050:** SSA-834709 V1.1 now covers [Basic, M.2, and SM](black-october/details/siemens-iot2050.md#remediation) as well as Advanced, each before Industrial OS V4.3.4-1 with Node-RED installed. V1.0 named only Advanced and wrote the fix as V4.3.4.1. Update those models too. CISA's August page still names only Advanced. It is not in KEV.
+- **Linux kernel (CVE-2026-98432):** AWS's November 4 bulletin says [Elastic Beanstalk](black-october/details/linux-tcp-options.md#remediation) released the Amazon Linux 2023 platforms that day (AMI 2023.12.20261102). The RDS/Aurora OS patch is now November 6, not November 3. AWS says all Redshift customers have been mitigated. It is not in KEV.
+- **LXD:** [6.10.0 is a fix](black-october/details/lxd-mtls.md#remediation), not only 6.10.1. Canonical's GitHub advisory, published November 4, lists 6.10.0 among the patched versions and also rates the flaw CVSS 3.1 10.0. The CNA text still says "before 6.10.1". A host already on 6.10.0 does not need another snap for this flaw. It is not in KEV.
+
 ## 2026-11-04 20:05 EST (UTC−05:00) — Xen; Ubuntu APT; RHEL 8.4 kernel
 
 - **Xen:** Install the [fixed hypervisor](black-october/details/xen.md#remediation) and reboot the host. SUSE rates [CVE-2026-102703](https://www.cve.org/CVERecord?id=CVE-2026-102703) and [CVE-2026-102704](https://www.cve.org/CVERecord?id=CVE-2026-102704) CVSS 4.0 8.4. A guest can read and write other guests' memory, including Dom0. Xen 4.6 and later are affected, and there is no mitigation. SUSE Linux Enterprise 15 SP7 is `xen` 4.20.4_08-150700.3.52.1. Debian 13 is 4.20.4+63-g7abfd2bce2-0+deb13u1. Debian 12 is 4.17.7+13-g2445b30a44-0+deb12u1. XCP-ng 8.3 is xen-4.17.7-4.2.xcpng8.3. Qubes OS 4.3 is dom0 Xen 4.19.6-3. Xen 4.6 through 4.16 get no patch. A guest reboot does not load the new hypervisor. Neither CVE is in KEV.
