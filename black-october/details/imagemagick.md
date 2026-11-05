@@ -1,6 +1,6 @@
 # ImageMagick: stack buffer overflow when reading bzip2-compressed images
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-05 (America/New_York)
 
 [Main ImageMagick summary](../black-october-2026.md#imagemagick-stack-buffer-overflow-when-reading-bzip2-compressed-images) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,7 @@
 
 **Worst case:** crashes or stack memory corruption in the process that decodes the image (CVE description: "overwrite stack memory during decoding, causing crashes or memory corruption"). The maintainers' and VulnCheck's vectors rate integrity and availability High; Red Hat's also rates confidentiality High. No source reviewed demonstrates code execution. Treat a stack overwrite in an internet-facing image pipeline as potentially more than a denial of service. [CNA][cve] [Red Hat][redhat]
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-02). No exploitation or public proof of concept was reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). No exploitation or public proof of concept was reported in the reviewed sources. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means)
 
 ## Table of contents
 
@@ -38,8 +38,9 @@
 | CVE reserved and published | Reserved 2026-10-25 12:22:53 UTC; published 2026-10-25 13:19:58 UTC | VulnCheck as CNA; the record's `datePublic` is 2026-10-10. NVD lists it as published 2026-10-25 14:16:53 (NVD API, UTC). NVD's status was "Awaiting Analysis" on 2026-10-26 and "Undergoing Analysis" when checked on 2026-10-30, still with no NVD score. [CVE JSON][cve] [NVD][nvd] |
 | Red Hat assessment | Public date 2026-10-25 13:19:58 UTC (as recorded by Red Hat) | Important, CVSS 3.1 7.8 (draft); Bugzilla 2560428. [Red Hat][redhat] |
 | CISA ADP SSVC enrichment | 2026-10-29 19:53:08 UTC | The CISA ADP container in the CVE record gives SSVC 2.0.3 values: Exploitation **none**, Automatable **no**, Technical Impact **partial**. This is CISA's decision-support input, not a CVSS score or KEV listing. [CVE JSON][cve] |
-| CISA KEV | Not listed as of catalog 2026.10.30 (checked 2026-11-02) | [KEV JSON][kev] |
-| Debian forky and sid package | Tracker read 2026-11-02 | `8:7.1.2.34+dfsg1-1` is fixed for forky and sid. trixie and trixie-security stay vulnerable. [Debian tracker][debian] |
+| CISA KEV | Not listed as of catalog 2026.11.04 (checked 2026-11-05) | [KEV JSON][kev] |
+| Debian forky and sid package | Tracker read 2026-11-02 | `8:7.1.2.34+dfsg1-1` is fixed for forky and sid. [Debian tracker][debian] |
+| Debian 13 trixie fix | 2026-11-04 21:44:32 UTC | [DSA-6611-1][dsa6611]. `8:7.1.1.43+dfsg1-1+deb13u14`. The advisory lists CVE-2026-116149 among the fixed issues. |
 | Ubuntu tracker record | Last updated 2026-10-28 | Priority Medium. Every listed release, including 26.10, 26.04, 24.04, and 22.04, is "Needs evaluation." No fixed package. [Ubuntu][ubuntu] |
 
 ## Detection
@@ -61,7 +62,7 @@ Checked 2026-10-26; recheck before relying on it.
 
 | Distribution | Status | Source |
 |---|---|---|
-| Debian | **Bookworm (Debian 12 LTS)** is fixed in `8:6.9.11.60+dfsg-1.6+deb12u15` ([DLA-4875-1][dla], October 31, 2026). **Forky and unstable (sid)** are fixed in `8:7.1.2.34+dfsg1-1` (tracker read 2026-11-02; unstable's first fix was `8:7.1.2.33+dfsg1-1`). **Trixie** stays vulnerable: `8:7.1.1.43+dfsg1-1+deb13u12`, and trixie-security `deb13u13`. | [Debian tracker][debian] |
+| Debian | **Bookworm (Debian 12 LTS)** is fixed in `8:6.9.11.60+dfsg-1.6+deb12u15` ([DLA-4875-1][dla], October 31, 2026). **Trixie (Debian 13)** is fixed in `8:7.1.1.43+dfsg1-1+deb13u14` ([DSA-6611-1][dsa6611], November 4, 2026). **Forky and unstable (sid)** are fixed in `8:7.1.2.34+dfsg1-1` (tracker read 2026-11-02; unstable's first fix was `8:7.1.2.33+dfsg1-1`). | [Debian tracker][debian] |
 | Red Hat | Important; ImageMagick on **RHEL 6 and RHEL 7** listed as "Affected". No other RHEL products are listed in the CVE data. | [Red Hat][redhat] |
 | Ubuntu | Priority **Medium**. Every listed release, including 26.10, 26.04 LTS, 24.04 LTS, and 22.04 LTS, is "Needs evaluation." No fixed package and no USN (page last updated 2026-10-28). | [Ubuntu][ubuntu] |
 | Others (Alpine, Fedora, SUSE, Homebrew, EPEL) | Not checked for this guide. | — |
@@ -76,7 +77,7 @@ No crash or no `BZh` file found does **not** prove the flaw was not triggered: w
 
 ## Remediation
 
-1. Upgrade to **ImageMagick 7.1.2-33 or later**, or **6.9.13-58 or later** for ImageMagick 6. The newest upstream releases when checked on 2026-10-30, **7.1.2-34** and **6.9.13-59** (2026-10-14), also contain this fix; they do not raise the minimum for this CVE, but 7.1.2-34 also fixes two Low ImageMagick 7 issues. On Debian 12, install `8:6.9.11.60+dfsg-1.6+deb12u15` or later ([DLA-4875-1][dla]). On Debian forky, install `8:7.1.2.34+dfsg1-1` or later. Debian trixie and Red Hat still had no fixed package when the tracker was read on 2026-11-02. Ubuntu lists the CVE but has no fixed package. [GHSA][ghsa] [Debian tracker][debian] [Red Hat][redhat] [Ubuntu][ubuntu]
+1. Upgrade to **ImageMagick 7.1.2-33 or later**, or **6.9.13-58 or later** for ImageMagick 6. The newest upstream releases when checked on 2026-10-30, **7.1.2-34** and **6.9.13-59** (2026-10-14), also contain this fix; they do not raise the minimum for this CVE, but 7.1.2-34 also fixes two Low ImageMagick 7 issues. On Debian 12, install `8:6.9.11.60+dfsg-1.6+deb12u15` or later ([DLA-4875-1][dla]). On Debian 13, install `8:7.1.1.43+dfsg1-1+deb13u14` or later ([DSA-6611-1][dsa6611]). On Debian forky, install `8:7.1.2.34+dfsg1-1` or later. Red Hat still had no fixed package when its page was read on 2026-11-05. Ubuntu lists the CVE but has no fixed package. [GHSA][ghsa] [Debian tracker][debian] [Red Hat][redhat] [Ubuntu][ubuntu]
 2. Rebuild container images and products that bundle ImageMagick, then **restart** every long-running process that loaded the old library (PHP-FPM pools, application servers, queue workers). An updated package does not replace a library already mapped into a running process.
 3. **Interim measures (not vendor-validated for this CVE):** until you can upgrade, reject untrusted input files whose first three bytes are `BZh` before they reach ImageMagick, or decompress bzip2 yourself in a separate, sandboxed step. Run image processing as an unprivileged user in a sandbox or container with no secrets and limited network access. Keep a restrictive `policy.xml` that disables coders you do not need. That reduces general attack surface, but this guide has not confirmed that any policy setting blocks this bzip2 path. These measures are this guide's inference, not ImageMagick guidance.
 
@@ -102,7 +103,8 @@ No crash or no `BZh` file found does **not** prove the flaw was not triggered: w
 - Releases: [7.1.2-33][rel7], [6.9.13-58][rel6]; later releases [7.1.2-34][rel7-34] and [6.9.13-59][rel6-59] with their Low advisories [GHSA-x48p-6655-8qgv][ghsa-morph] and [GHSA-g5j8-ff59-wp88][ghsa-tiff].
 - [CISA ADP SSVC in the CVE record][cve] — Exploitation none, Automatable no, Technical Impact partial (2026-10-29).
 - [Debian security tracker][debian] and [Red Hat CVE data][redhat] — distribution status and Red Hat's rating.
-- [CISA KEV JSON feed][kev] — not listed (catalog 2026.10.30, checked 2026-11-02).
+- [DSA-6611-1][dsa6611] — November 4, 2026, 21:44:32 UTC. Debian 13 trixie `imagemagick` `8:7.1.1.43+dfsg1-1+deb13u14`. The advisory lists CVE-2026-116149.
+- [CISA KEV JSON feed][kev] — not listed (catalog 2026.11.04, checked 2026-11-05).
 - [Ubuntu CVE page][ubuntu] — priority Medium, every listed release "Needs evaluation" (page last updated 2026-10-28).
 
 [ghsa]: https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-pwpf-8799-94cj
@@ -120,6 +122,7 @@ No crash or no `BZh` file found does **not** prove the flaw was not triggered: w
 [ghsa-tiff]: https://github.com/ImageMagick/ImageMagick/security/advisories/GHSA-g5j8-ff59-wp88
 [debian]: https://security-tracker.debian.org/tracker/CVE-2026-116149
 [dla]: https://lists.debian.org/debian-lts-announce/2026/10/msg00068.html
+[dsa6611]: https://www.debian.org/security/2026/dsa-6611
 [redhat]: https://access.redhat.com/security/cve/CVE-2026-116149
 [ubuntu]: https://ubuntu.com/security/CVE-2026-116149
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

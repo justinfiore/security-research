@@ -1,6 +1,6 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-11-04 (America/New_York)
+**Last updated:** 2026-11-05 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skbzerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -47,7 +47,8 @@
 | KernelCare live patch released for EL10 | 2026-10-23 14:59 UTC | Production feed for AlmaLinux, CloudLinux, RHEL, Oracle Linux and Rocky Linux 10, built from the upstream fix candidate and verified against the public PoC. EL9 in review, EL8 in progress, Debian/Ubuntu not started. [CloudLinux][cl] [TuxCare][tux] |
 | AlmaLinux testing kernels | 2026-10-23; time/TZ unknown | `kernel-4.18.0-553.177.2.el8_10`, `kernel-5.14.0-687.59.2.el9_8`, `kernel-6.12.0-211.68.2.el10_2` in `almalinux-testing`, backported ahead of RHEL. Not yet in production repositories at the time. [AlmaLinux][alma] |
 | AlmaLinux production kernels | 2026-10-28; time/TZ unknown | The fix reached regular production repositories for AlmaLinux 8 (`kernel-4.18.0-553.178.1.el8_10`), 9 (`kernel-5.14.0-687.60.1.el9_8`), and 10 (`kernel-6.12.0-211.69.1.el10_2`). [AlmaLinux][alma] |
-| CloudLinux 9 and 10 production kernels | 2026-10-28; time/TZ unknown | CloudLinux ships the same AlmaLinux builds: `kernel-5.14.0-687.60.1.el9_8` (9) and `kernel-6.12.0-211.69.1.el10_2` (10). CloudLinux 8 ELS and 9 ELS remain pending. [CloudLinux][cl] |
+| CloudLinux 9 and 10 production kernels | 2026-10-28; time/TZ unknown | CloudLinux ships the same AlmaLinux builds: `kernel-5.14.0-687.60.1.el9_8` (9) and `kernel-6.12.0-211.69.1.el10_2` (10). [CloudLinux][cl] |
+| CloudLinux 8 ELS and 9 ELS production kernels | 2026-11-05 10:40 UTC | `kernel-lts-5.14.0-284.1101.el8.tuxcare.11.els17` and `kernel-lts-5.14.0-284.1101.el9.tuxcare.11.els17`. CloudLinux 8 ELS has no live-patch stream, so the reboot is the only fix there. The CloudLinux 9 ELS live patch is still in preparation. [CloudLinux][cl] |
 | Fix committed to the netdev `net` tree | 2026-10-23 19:41:58 UTC (15:41:58 EDT) | Commit `79dc34beb1fd` by Jakub Kicinski, with `Reviewed-by: Eric Dumazet` and `Cc: stable@kernel.org`. A maintainer tree, not a released kernel. [Fix commit][commit] |
 | Red Hat bulletin | 2026-10-24 18:31 (TZ not stated) | RHSB-2026-014: "Potentially Affected", Important; says upstream patches are not yet available and no CVEs are assigned. No RHEL fix. [Red Hat][rh] |
 | CloudLinux 7 hybrid and 8 beta kernels | 2026-10-26 09:11 UTC | `kernel-4.18.0-553.177.1.lve.1.el7h` and `kernel-4.18.0-553.177.1.lve.1.el8`, beta and rolling out. [CloudLinux][cl] |
@@ -126,9 +127,10 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | CloudLinux 8 | `kernel-4.18.0-553.177.1.lve.1.el8` | Production as of 2026-10-30 (was beta) | [CloudLinux][cl] |
 | CloudLinux 9 | `kernel-5.14.0-687.60.1.el9_8` or later | Production, through the AlmaLinux kernel update | [CloudLinux][cl] |
 | CloudLinux 10 | `kernel-6.12.0-211.69.1.el10_2` or later | Production, through the AlmaLinux kernel update | [CloudLinux][cl] |
-| CloudLinux 8 ELS, 9 ELS | Pending on the extended-support channel | — | [CloudLinux][cl] |
+| CloudLinux 8 ELS | `kernel-lts-5.14.0-284.1101.el8.tuxcare.11.els17` or later | Production as of 2026-11-05. No live patch on this line. | [CloudLinux][cl] |
+| CloudLinux 9 ELS | `kernel-lts-5.14.0-284.1101.el9.tuxcare.11.els17` or later | Production as of 2026-11-05. The live patch is still in preparation. | [CloudLinux][cl] |
 | TuxCare ELS AlmaLinux 9.2 ESU | `kernel-5.14.0-284.1101.el9_2.tuxcare.11.els17` lists the fix | OSV-imported TuxCare data (unconfirmed on TuxCare's site) | [OSV][osv] |
-| KernelCare live patch | Released for CloudLinux 10 and AlmaLinux 10 on 2026-10-23; CloudLinux 9 in review; CloudLinux 8 in progress; Debian/Ubuntu not started | KernelCare production feed (not yet ePortal, per TuxCare) | [TuxCare][tux] [CloudLinux][cl] |
+| KernelCare live patch | CloudLinux 10 and AlmaLinux 10 since 2026-10-23; CloudLinux 9 since 2026-10-26; CloudLinux 7 hybrid and 8 since 2026-10-29; CloudLinux for Ubuntu 22.04 since 2026-11-02. CloudLinux 9 ELS is still in preparation. CloudLinux 8 ELS has no live-patch stream. | KernelCare production feed | [CloudLinux][cl] |
 | Linux stable 7.2 | **7.2.15** (commit `d7d6ff98d5d1`, upstream `79dc34beb1fd`) | kernel.org, 2026-11-01. This line is EOL. | [ChangeLog-7.2.15][cl7215] |
 | Linux 7.4-rc1 | The marker copy is in `skb_zerocopy()` on tag `v7.4-rc1` | kernel.org, tagged 2026-11-01 21:26:31 UTC. A release candidate, not a stable release. | [v7.4-rc1 skbuff.c][v74] |
 | Linux 7.3 / 7.3.1 | Not included | kernel.org | [kernel.org releases][releases] |

@@ -6,9 +6,9 @@
 
 Vulnerability Info Site: [sshhole.com](https://sshhole.com/)
 
-OpenSSH calls the workaround in 10.6p2 a **critical** security fix. No CVE is assigned, and no vendor or CNA has published a numeric CVSS score. On Linux built with musl, when sshd checks passwords itself instead of through PAM, an account whose password field is `*` accepts any password of 257 to 1024 bytes. The attacker needs the account name, a reachable SSH port, and at least one other local account with a `$5$` or `$6$` password hash. Alpine's `openssh-server` package is built without PAM, and password logins are on by default. glibc Linux, OpenBSD, and Dropbear are not affected.
+OpenSSH calls the workaround in 10.6p2 a **critical** security fix. **MITRE rates [CVE-2026-123158](https://www.cve.org/CVERecord?id=CVE-2026-123158) CVSS 3.1 8.1 High** (`AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`), published 2026-11-05 15:46:26 UTC. OpenSSH's release notes and Alpine's advisory still say no CVE was assigned. On Linux built with musl, when sshd checks passwords itself instead of through PAM, an account whose password field is `*` accepts any password of 257 to 1024 bytes. The attacker needs the account name, a reachable SSH port, and at least one other local account with a `$5$` or `$6$` password hash. Alpine's `openssh-server` package is built without PAM, and password logins are on by default. glibc Linux, OpenBSD, and Dropbear are not affected. The record says the password is "between 256 and 1024 characters" and that every version before 10.6p2 is affected. OpenSSH and Alpine say 257 to 1024 bytes, and the Alpine backports fix older version numbers.
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. OpenSSH and The Hacker News report no attacks using the flaw. Absence of a CVE is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). OpenSSH and The Hacker News report no attacks using the flaw. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -28,7 +28,8 @@ OpenSSH calls the workaround in 10.6p2 a **critical** security fix. No CVE is as
 | Alpine packages | 2026-11-05; time/TZ unknown | [Advisory][alpine] and [point releases][alpine-rel] 3.21.10, 3.22.8, 3.23.8, 3.24.4. Backports through 3.16. |
 | musl advisory | 2026-11-05 10:07 EST (UTC−05:00) | Rich Felker: OpenSSH before 10.6p2 on musl, with `UsePAM=no` and `PasswordAuthentication=yes`. |
 | OpenWrt package | 2026-11-05 14:26 UTC | [openwrt/packages#31158][openwrt] merged into the 25.12 branch: `openssh` 10.6_p2. OpenWrt's default SSH server is Dropbear, which is not affected. |
-| **Last updated** | **2026-11-05 (America/New_York)** | New item. No CVE. |
+| CVE record | 2026-11-05 15:46:26 UTC | MITRE, [CVE-2026-123158][cve], CVSS 3.1 8.1. Updated 17:18:17 UTC the same day. OpenSSH's notes still do not name it. |
+| **Last updated** | **2026-11-05 (America/New_York)** | CVE assigned. The fix is unchanged. |
 
 ## Detection
 
@@ -86,8 +87,9 @@ The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems t
 - [Özgün Kültekin, sshhole.com][sshhole] — the conditions, the 257-to-1024-byte password, and the named musl systems (Alpine, OpenWrt, Buildroot, Yocto). glibc, PAM, Dropbear, and OpenBSD are not affected.
 - [Rich Felker, musl list][musl] — 2026-11-05 10:07 EST. OpenSSH before 10.6p2 on musl, `UsePAM=no` and `PasswordAuthentication=yes`. Dropbear is not affected. He does not treat it as a musl bug.
 - [openwrt/packages#31158][openwrt] — merged 2026-11-05 into the 25.12 branch. `openssh` 10.6_p2. This is the optional OpenSSH package, not Dropbear.
-- [The Hacker News][thn] — 2026-11-05. Reports that no attacks using the flaw have been reported, and that no CVE had been assigned that day.
-- [CISA KEV JSON feed][kev] — not applicable; no CVE is assigned (catalog 2026.11.04, checked 2026-11-05).
+- [The Hacker News][thn] — 2026-11-05. Reports that no attacks using the flaw have been reported, and that no CVE had been assigned that day. MITRE published the CVE later the same day.
+- [CVE-2026-123158][cve] — MITRE, published 2026-11-05 15:46:26 UTC. CVSS 3.1 8.1 High. Affected from 0 before 10.6p2 on Linux. The description says 256 to 1024 characters; OpenSSH and Alpine say 257 to 1024 bytes.
+- [CISA KEV JSON feed][kev] — not listed (catalog 2026.11.04, checked 2026-11-05).
 
 [rel]: https://www.openssh.com/txt/release-10.6p2
 [miller]: https://hachyderm.io/@damienmiller/117563026759098135
@@ -97,4 +99,5 @@ The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems t
 [musl]: https://www.openwall.com/lists/musl/2026/11/05/4
 [openwrt]: https://github.com/openwrt/packages/pull/31158
 [thn]: https://thehackernews.com/2026/11/openssh-issues-emergency-fix-for-flaw.html
+[cve]: https://www.cve.org/CVERecord?id=CVE-2026-123158
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
