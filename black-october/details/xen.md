@@ -1,6 +1,6 @@
 # Xen: a guest can read and write other guests' memory
 
-**Last updated:** 2026-11-04 (America/New_York)
+**Last updated:** 2026-11-05 (America/New_York)
 
 [Main Xen summary](../black-october-2026.md#xen-a-guest-can-read-and-write-other-guests-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -29,7 +29,7 @@
 | Qubes OS | 2026-11-03; time/TZ unknown | QSB-121. Qubes 4.3 dom0 Xen packages 4.19.6-3, first in security-testing. Restart dom0. [QSB-121][qubes] |
 | Citrix XenServer | 2026-11-03; time/TZ unknown | CTX697256, created 12:31 and last modified 12:34. The page does not state a timezone. Updates pushed to Early Access and Normal for 8.4 and 9. The bulletin names CVE-2026-102703 and not CVE-2026-102704. [CTX697256][citrix] |
 | Debian 12 | 2026-11-04 21:39:04 UTC | DLA-4881-1, mailed 22:39:04 +0100. `xen` 4.17.7+13-g2445b30a44-0+deb12u1. The advisory also fixes older Xen issues. [DLA-4881-1][dla] |
-| Debian 13 and sid | date not established | The security tracker lists trixie-security `4.20.4+63-g7abfd2bce2-0+deb13u1` and sid `4.20.4+63-g7abfd2bce2-1` as fixed, and names DSA-6610-1 for trixie. That DSA was not in the public announce archive when this guide was written. forky `4.20.4+39-gf1e1321c87-1` is still vulnerable. [Debian tracker][tracker] |
+| Debian 13 | 2026-11-04; time/TZ unknown | [DSA-6610-1][dsa] fixes trixie at `xen` `4.20.4+63-g7abfd2bce2-0+deb13u1` for both CVEs. sid `4.20.4+63-g7abfd2bce2-1` is also fixed. forky `4.20.4+39-gf1e1321c87-1` is still vulnerable. [Debian tracker][tracker] |
 
 ## What the two flaws are
 
@@ -137,3 +137,4 @@ If a guest was untrusted and the host stayed unpatched after 2026-11-03 12:00 UT
 [citrix]: https://support.citrix.com/support-home/kbsearch/article?articleNumber=CTX697256&articleURL=XenServer_Security_Update_for_Multiple_Issues
 [dla]: https://lists.debian.org/debian-lts-announce/2026/debian-lts-announce-202611/msg00006.html
 [tracker]: https://security-tracker.debian.org/tracker/CVE-2026-102703
+[dsa]: https://www.debian.org/security/dsa-6610-1

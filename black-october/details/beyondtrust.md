@@ -1,10 +1,10 @@
 # BeyondTrust BT26-05: patch appliances and investigate brokered access
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-05 (America/New_York)
 
-[Main guide](../black-october-2026.md#10-beyondtrust-remote-support-an-already-exploited-appliance-vulnerability) · [Changelog](../../CHANGELOG.md)
+[Main guide](../black-october-2026.md#beyondtrust-remote-support-exploited-unauthenticated-file-operations) · [Changelog](../../CHANGELOG.md)
 
-**[CVE-2026-102764](https://www.cve.org/CVERecord?id=CVE-2026-102764):** improper origin validation in Remote Support internal messaging permits unauthenticated file operations. **Remote Support ≤26.2.3** is affected; **BT26-05-RS** covers versions **24.3.1–26.2.3**. Observed root compromise and lateral movement are attack-chain outcomes, not merely the initial file-operation primitive. [Advisory][advisory] [Mandiant][mandiant]
+**[CVE-2026-102764](https://www.cve.org/CVERecord?id=CVE-2026-102764):** improper origin validation in Remote Support internal messaging permits unauthenticated file operations. **Remote Support ≤26.2.3** is affected. **BT26-05-RS** covers **24.3.1–26.2.3**. On 2026-11-04 BeyondTrust added a second fixed line: **Remote Support 26.3.1 and greater**. The affected ceiling did not move. Observed root compromise and lateral movement are attack-chain outcomes, not merely the initial file-operation primitive. [Advisory][advisory] [Mandiant][mandiant]
 
 **CISA KEV:** Listed — added 2026-10-16, federal due date 2026-10-19. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -68,8 +68,8 @@ Mandiant recommends treating internet-reachable, vulnerable appliances from the 
 
 ### Patch-first for unconfirmed incidents; preserve and isolate suspected compromise
 
-1. For self-hosted RS **24.3.1–26.2.3**, apply **BT26-05-RS** through `/appliance`, or confirm automatic installation actually completed. If unavailable, open a BeyondTrust support case citing BT26-05. [Advisory][advisory]
-2. Below **24.3.1**, follow the supported upgrade path to a patchable release, then apply the hotfix. Do not reconnect an upgraded but still-unpatched intermediate version. [Mandiant][mandiant]
+1. For self-hosted RS **24.3.1–26.2.3**, apply **BT26-05-RS** through `/appliance`, or upgrade to **Remote Support 26.3.1 or greater**. BeyondTrust added 26.3.1 to the fixed-versions table on 2026-11-04. Confirm automatic installation actually completed. If neither path is available, open a BeyondTrust support case citing BT26-05. [Advisory][advisory]
+2. Below **24.3.1**, follow the supported upgrade path to a patchable release, then apply the hotfix or move to 26.3.1 or greater. Do not reconnect an upgraded but still-unpatched intermediate version. [Mandiant][mandiant]
 3. The public customer-portal notice says vulnerable versions were withdrawn and **25.1.7** retained as an upgrade stepping stone. That is **not a safe final version without the patch**; consult support for the supported path. [Portal notice][portal]
 4. For newer base releases, obtain explicit vendor confirmation of inclusion rather than assuming this historical patch-package range defines every later release’s state.
 5. Apply the separate precautionary PRA patch immediately where relevant. SaaS operators need no local appliance installation, but should complete credential/configuration review according to exposure. [Response][response] [Mandiant][mandiant]
@@ -84,7 +84,7 @@ Mandiant recommends treating internet-reachable, vulnerable appliances from the 
 
 ## Verification
 
-- Record installed BT26-05 patch evidence for every active and failover appliance, or vendor confirmation that a later supported build includes the fix.
+- Record installed BT26-05 patch evidence for every active and failover appliance, or a running version of **26.3.1 or greater**. A base version of 26.2.3 or earlier, without the patch, is not fixed.
 - Confirm the upgraded appliance restarted/redeployed as required and no recovery/failover path reintroduces an unpatched image. Verify the base version alone is not being used as the closure criterion.
 - Test a normal authorized representative session, required Jump connectivity and approved integrations after containment decisions; do not use an exploit probe to prove the patch.
 - Generate a benign administrative/audit event and confirm timely receipt in the off-box SIEM; alert on forwarding gaps and retain alerts closed by automated triage for hunting. [Response][response]
