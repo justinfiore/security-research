@@ -1,6 +1,6 @@
 # cPGuard: malicious update collected server credentials
 
-**Last updated:** 2026-11-03 (America/New_York)
+**Last updated:** 2026-11-05 (America/New_York)
 
 [Main cPGuard summary](../black-october-2026.md#cpguard-malicious-update-collected-server-credentials) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -30,7 +30,7 @@ Times below are as the advisory states them. The log timestamps in the examples 
 | Fake update installed | 2026-11-02 02:08–03:20 UTC | Versions 5.88.12–5.88.19, running as root. About 2,950 customer servers. [Disclosure][disc] |
 | First corrective release | On or before 2026-11-03 03:19 IST (UTC+05:30) | 5.88.25 removes the known backdoor and staged files. It does not remove the scheduled task. [Advisory][adv] |
 | Clean-up release | 2026-11-02; time not stated | 5.88.26 removes the backdoor. A later update removes `/etc/cron.d/i93677`. [Disclosure][disc] |
-| Incident disclosure | 2026-11-03; time/TZ unknown | Replaces the 32-file estimate with the counts below. [Disclosure][disc] |
+| Incident disclosure | 2026-11-03; time/TZ unknown | Replaces the 32-file estimate with the counts below. OPSSHIELD also says it has started re-issuing every cPGuard license key pair, because the attacker holds copies. [Disclosure][disc] |
 
 ## Detection
 
@@ -64,6 +64,7 @@ One operator posted access times of 02:16:01 on `/root/.ssh/authorized_keys`, `i
 4. Rotate database passwords, S3 access keys, DigitalOcean tokens, and any secret in root's shell history. Replace SSH private keys that were under `/root/.ssh`, and remove the old public keys from every host that trusts them.
 5. Install the later update that removes OPSSHIELD support-access keys. That step is additional. It is not a substitute for the rotations above.
 6. OPSSHIELD is not recommending a routine reinstall of the operating system. It says a rebuild may be appropriate if you find further signs of compromise or cannot establish integrity, and that this assessment is provisional.
+7. OPSSHIELD says it has started re-issuing every cPGuard license private/public key, so the copies the attacker holds stop working. That is a vendor-side step. The disclosure does not say a customer must install a new license file, and it does not say the old key stops working on a date. A server that still checks in after the re-issue is the confirmation that its license was replaced.
 
 ## Verification
 

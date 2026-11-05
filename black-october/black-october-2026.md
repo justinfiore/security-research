@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [OpenSSH: password login on musl accepts any long password](#openssh-password-login-on-musl-accepts-any-long-password)
+- [Better Auth: the Expo plugin signs a value it did not issue](#better-auth-the-expo-plugin-signs-a-value-it-did-not-issue)
 - [SHIRASAGI: authenticated command injection in open-data harvest](#shirasagi-authenticated-command-injection-in-open-data-harvest)
 - [Mistral Vibe: a repository Git setting runs a program before the trust prompt](#mistral-vibe-a-repository-git-setting-runs-a-program-before-the-trust-prompt)
 - [OPNsense: Google Cloud DNS command injection in the ACME client](#opnsense-google-cloud-dns-command-injection-in-the-acme-client)
@@ -163,6 +165,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** If a server loads the [Better Auth Expo plugin](#better-auth-the-expo-plugin-signs-a-value-it-did-not-issue), upgrade `@better-auth/expo` and `better-auth` to **1.7.16** (or **1.8.0-beta.5** on the beta line) and rotate the application secret. GitHub rates it 9.1 Critical: the plugin signs a caller-supplied value, and someone who knows a user's email can change that email. It is not in KEV.
+- **New this update:** On [Alpine and other musl Linux](#openssh-password-login-on-musl-accepts-any-long-password), upgrade OpenSSH and restart `sshd`. OpenSSH rates the workaround in **10.6p2** critical, and no CVE is assigned. Where sshd checks passwords itself, an account with no password accepts any password of 257 to 1024 bytes, if some other account has a password. glibc Linux, OpenBSD, and Dropbear are not affected. If you cannot update yet, set `PasswordAuthentication no` and restart `sshd`. The upgrade does not replace a daemon that is still running.
 - **New this update:** Upgrade [SHIRASAGI](#shirasagi-authenticated-command-injection-in-open-data-harvest) to **v1.21.1**. JPCERT/CC rates [CVE-2026-118869](https://www.cve.org/CVERecord?id=CVE-2026-118869) 8.8 High: in v1.19.0 through v1.21.0, a logged-in user who can edit an open-data harvest URL can run a command. v1.18.2 and earlier are not affected. It is not in KEV.
 - **New this update:** Upgrade [Mistral Vibe](#mistral-vibe-a-repository-git-setting-runs-a-program-before-the-trust-prompt) to **3.0.3 or later**. VulnCheck rates [CVE-2026-122135](https://www.cve.org/CVERecord?id=CVE-2026-122135) CVSS 4.0 8.6 High: opening a repository can run a program named by that repository's Git config before Vibe asks you to trust the folder. 3.0.3 shipped on October 26. The CVE record is November 4. Two older High flaws in the same tool are fixed in 2.25.7 and 2.25.5. None is in KEV.
 - **New this update:** On [OPNsense](#opnsense-google-cloud-dns-command-injection-in-the-acme-client), stop using Google Cloud DNS validation in the ACME Client plugin until the firmware page offers **os-acme-client 4.18**. MITRE rates [CVE-2026-123025](https://www.cve.org/CVERecord?id=CVE-2026-123025) CVSS 4.0 9.4 Critical: through 4.17, a logged-in user who can renew certificates can run commands as root. The fix is merged in git. The 26.7 package repository still publishes 4.17. It is not in KEV.
@@ -253,6 +257,53 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Better Auth: the Expo plugin signs a value it did not issue
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/better-auth-expo.md):** [Detection](details/better-auth-expo.md#detection) · [Remediation](details/better-auth-expo.md#remediation) · [Verification](details/better-auth-expo.md#verification) · [Timeline](details/better-auth-expo.md#timeline)
+
+**CVEs:** [CVE-2026-121802](https://www.cve.org/CVERecord?id=CVE-2026-121802)
+
+**GitHub rates GHSA-4wq4-2ppv-q3hg CVSS 3.1 9.1 Critical, and MITRE publishes the same vector.** A server that registers `expo()` from `@better-auth/expo` 1.4.0-beta.6 or later has a public endpoint that signs a caller-supplied `state` with the application secret. Someone who knows a user's email address can sign in as that user and change the email, with no action from the user. The GitHub advisory, published November 3, says no CVE is known. MITRE published [CVE-2026-121802](https://www.cve.org/CVERecord?id=CVE-2026-121802) on November 4 and says every version before 1.7.16 is affected, which is wider than the advisory's range. The same endpoint can also redirect a visitor to any external HTTPS site.
+
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). The advisory does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| GitHub advisory and fix | 2026-11-03; time/TZ unknown | GHSA-4wq4-2ppv-q3hg. Patched in 1.7.16 and 1.8.0-beta.5. |
+| CVE record | 2026-11-04; time/TZ unknown | CVE-2026-121802, MITRE, CVSS 3.1 9.1. Affected range in the record is 0 before 1.7.16. |
+| **Last updated** | **2026-11-05 11:30 EST (UTC−05:00)** | New item. |
+
+**Patch:** Upgrade both `@better-auth/expo` and `better-auth` to **1.7.16**, or to **1.8.0-beta.5** on the beta line, and rotate the application secret if the endpoint was reachable. Signatures made before the fix stay valid until the secret changes. A server that does not register `expo()` is outside the flaw. Removing the plugin is the workaround when you do not use Expo social sign-in.
+
+Sources: [GHSA-4wq4-2ppv-q3hg](https://github.com/better-auth/better-auth/security/advisories/GHSA-4wq4-2ppv-q3hg), [CVE-2026-121802](https://www.cve.org/CVERecord?id=CVE-2026-121802), [detailed guide](details/better-auth-expo.md).
+
+---
+
+## OpenSSH: password login on musl accepts any long password
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/openssh-musl.md):** [Detection](details/openssh-musl.md#detection) · [Remediation](details/openssh-musl.md#remediation) · [Verification](details/openssh-musl.md#verification) · [Timeline](details/openssh-musl.md#timeline)
+
+Vulnerability Info Site: [sshhole.com](https://sshhole.com/)
+
+**CVEs:** No CVE is assigned. OpenSSH 10.6p2 and the Alpine advisory both say so.
+
+**OpenSSH calls the 10.6p2 workaround critical.** No vendor or CNA has published a numeric score. On Linux built with musl, when sshd checks passwords itself instead of through PAM, an account whose password field is `*` accepts any password of 257 to 1024 bytes. The attacker needs that account's name and one other local account with a `$5$` or `$6$` password hash. It takes one connection. Alpine's `openssh-server` is built without PAM, and password logins are the default. glibc Linux, OpenBSD, and Dropbear are not affected. A build that includes PAM but sets `UsePAM no` is affected.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. The Hacker News, citing the project, reports no attacks using the flaw. Absence of a CVE is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public announcement and fix | 2026-11-05 09:03 UTC | Portable OpenSSH 10.6p2. Damien Miller says the project learned of the bug the day before. |
+| Alpine packages | 2026-11-05; time/TZ unknown | Point releases 3.21.10, 3.22.8, 3.23.8, and 3.24.4. Fixed packages back to 3.16. |
+| OpenWrt package | 2026-11-05 14:26 UTC | `openssh` 10.6_p2 merged into the 25.12 branch. The default SSH server, Dropbear, is not affected. |
+| **Last updated** | **2026-11-05 11:30 EST (UTC−05:00)** | New item. No CVE. |
+
+**Patch:** Upgrade and restart `sshd`. The new package does not replace a daemon that is still running. On Alpine edge the package is **10.6_p2-r0**; 3.24 is **10.3_p1-r2**, 3.23 is **10.2_p1-r1**, 3.22 is **10.0_p1-r11**, and 3.21 is **9.9_p2-r1**, with backports through 3.16. A source build takes **10.6p2**. OpenWrt's optional OpenSSH package on the 25.12 branch is **10.6_p2**. If you cannot update yet, set `PasswordAuthentication no` and restart `sshd`; confirm a key login first. On Alpine's tiny-cloud images from 3.18.11 through 3.24.3, the `alpine` user has passwordless `doas`, so a password login there is root once any other account has a password hash.
+
+Sources: [OpenSSH 10.6p2](https://www.openssh.com/txt/release-10.6p2), [Alpine advisory](https://alpinelinux.org/posts/2026-11-05-openssh-password-authentication-bypass/), [sshhole.com](https://sshhole.com/), [detailed guide](details/openssh-musl.md).
 
 ---
 
@@ -653,10 +704,10 @@ Sources: [Barracuda advisory](https://trust.barracuda.com/security/pre-authentic
 | Billing server | 2026-11-01 22:58 UTC | Command execution. The request that did it is not in the logs. |
 | Fake update | 2026-11-02 02:08–03:20 UTC | 5.88.12 through 5.88.19. About 2,950 servers. |
 | First cleanup | 2026-11-03 03:19 IST (UTC+05:30) | 5.88.25 removes the backdoor. It does not remove `/etc/cron.d/i93677`. |
-| Disclosure | 2026-11-03; time/TZ unknown | 5.88.26, the server count, and about 7,900 billing accounts. |
-| **Last updated** | **2026-11-03 23:55 EST (UTC−05:00)** | Cleanup is 5.88.26, not 5.88.25. The 32-file estimate is replaced. |
+| Disclosure | 2026-11-03; time/TZ unknown | 5.88.26, the server count, and about 7,900 billing accounts. OPSSHIELD has started re-issuing every cPGuard license key pair. |
+| **Last updated** | **2026-11-05 11:30 EST (UTC−05:00)** | The disclosure already said the license keys are being re-issued. |
 
-**Patch:** Run `cpgcli update --start` and confirm **5.88.26 or later**, then check that `/etc/cron.d/i93677` and `/var/tmp/.i93677/` are gone. If the server was online in the window above, the install log shows 5.88.12–5.88.19, or the log is missing, reset local passwords, rotate database and cloud secrets, and replace root SSH keys. Reset the manage.opsshield.com password as well; those hashes were copied. A server already on 5.88.26 can still have installed an affected build earlier. OPSSHIELD is not recommending a routine operating-system reinstall.
+**Patch:** Run `cpgcli update --start` and confirm **5.88.26 or later**, then check that `/etc/cron.d/i93677` and `/var/tmp/.i93677/` are gone. If the server was online in the window above, the install log shows 5.88.12–5.88.19, or the log is missing, reset local passwords, rotate database and cloud secrets, and replace root SSH keys. Reset the manage.opsshield.com password as well; those hashes were copied. OPSSHIELD has started re-issuing every cPGuard license key pair, because the attacker holds copies. The notice does not say you install a new license file yourself. A server already on 5.88.26 can still have installed an affected build earlier. OPSSHIELD is not recommending a routine operating-system reinstall.
 
 Sources: [OPSSHIELD advisory](https://opsshield.com/notice/cpguard-update-channel-compromise.html), [November 3 disclosure](https://opsshield.com/notice/security-incident-disclosure-servermanage.html), [detailed guide](details/cpguard.md).
 
@@ -1019,19 +1070,20 @@ Sources: [CVE-2026-120191](https://www.cve.org/CVERecord?id=CVE-2026-120191), [V
 
 **CVEs:** [CVE-2026-92744](https://www.cve.org/CVERecord?id=CVE-2026-92744)
 
-**Delinea (CNA) rates the flaw CVSS 4.0 8.7 High.** NVD has not scored it. Under conditions Delinea does not list, the Privilege Manager Windows agent lets a remote unauthenticated attacker run code as LocalSystem. Affected builds are 10.1.0 through 12.0.5796 and 13.0.0 through 13.0.1058, on-prem and cloud. This is not the [Secret Server](#delinea-secret-server-second-factor-login-bypass-and-unsigned-admin-token) upgrade.
+**Delinea (CNA) rates the flaw CVSS 4.0 8.7 High.** NVD has not scored it. The Privilege Manager Windows agent lets a remote unauthenticated attacker run code as LocalSystem. Affected builds are 10.1.0 through 12.0.5796 and 13.0.0 through 13.0.1058, on-prem and cloud. The reporter's November 5 write-up says the certificate check on the TCP 5593 callback has an empty body, so a caller-generated certificate is accepted, and one callback runs PowerShell as `NT AUTHORITY\SYSTEM`. Their proof was on the same machine, and they rate that case 7.8. This is not the [Secret Server](#delinea-secret-server-second-factor-login-bypass-and-unsigned-admin-token) upgrade.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01). Delinea does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). Delinea does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | CVE published | 2026-10-29; time/TZ unknown | Delinea CNA. Windows agent only. |
 | Vendor advisory | Published date October 29, 2026 | Fix in Windows Core agent 13.0.2064 and 12.0.5804. |
-| **Last updated** | **2026-11-01 19:15 EST (UTC−05:00)** | New item. Block TCP 5593 until the new agent is installed. |
+| Reporter write-up | 2026-11-05; time/TZ unknown | Empty certificate validator on TCP 5593. Proof was local. Fixed builds unchanged. |
+| **Last updated** | **2026-11-05 11:30 EST (UTC−05:00)** | The condition Delinea left unnamed is now public. The fix is the same agent build. |
 
 **Patch:** Install Windows Core agent **13.0.2064 or newer** on the 13 line, or **12.0.5804 or newer** when the installed agent is 12.0.5796 or older. Until then, block inbound TCP 5593. Delinea says Cloud loses no function from that block. On-premises, a full block makes agents pull updates on their schedule; restricting the port to the Privilege Manager web server keeps the push path.
 
-Sources: [CVE-2026-92744](https://www.cve.org/CVERecord?id=CVE-2026-92744), [Delinea advisories](https://delinea.com/security-advisories), [12.0.5 release notes](https://docs.delinea.com/online-help/privilege-manager/release-notes/12.0.5-combined.htm), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
+Sources: [CVE-2026-92744](https://www.cve.org/CVERecord?id=CVE-2026-92744), [Delinea advisories](https://delinea.com/security-advisories), [reporter write-up](https://github.com/isukasanuj/CVE-2026-92744), [detailed guide](details/privilege-manager.md).
 
 ---
 
@@ -4477,6 +4529,8 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Better Auth with the Expo plugin** | Upgrade `@better-auth/expo` and `better-auth` to 1.7.16, or 1.8.0-beta.5 on the beta line, and rotate the application secret. The plugin signs a caller-supplied value, and someone who knows an email address can change that account's email. A server that does not register `expo()` is outside this flaw. [Guide](details/better-auth-expo.md#remediation). |
+| **Alpine or other musl Linux running OpenSSH without PAM** | Upgrade `openssh` and restart `sshd`. On Alpine, edge is 10.6_p2-r0, 3.24 is 10.3_p1-r2, 3.23 is 10.2_p1-r1, 3.22 is 10.0_p1-r11, and 3.21 is 9.9_p2-r1. A source build takes OpenSSH 10.6p2. Until then, set `PasswordAuthentication no`. glibc Linux, OpenBSD, and Dropbear are outside this flaw. [Guide](details/openssh-musl.md#remediation). |
 | **SHIRASAGI v1.19.0 through v1.21.0** | Upgrade to v1.21.1. A logged-in user who can edit an open-data harvest URL can run a command. v1.18.2 and earlier are outside this flaw. A jump from v1.14.2 or earlier crosses the v1.15.0 incompatibility. [Guide](details/shirasagi.md#remediation). |
 | **Mistral Vibe before 3.0.3** | Upgrade to 3.0.3 or later. Opening a repository can run a program named in that repository's Git config before the trust prompt. Builds before 2.25.7 are also inside two older High flaws. [Guide](details/mistral-vibe.md#remediation). |
 | **OPNsense with os-acme-client through 4.17** | Do not install a package that is not published. On 2026-11-05 the 26.7 repository is still 4.17, including the devel package. Stop using Google Cloud DNS validation until the firmware page offers 4.18. A logged-in certificate manager can run commands as root through that module. [Guide](details/opnsense-acme-client.md#remediation). |
