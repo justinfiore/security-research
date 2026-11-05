@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 4, 2026**
+**As of November 5, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [SHIRASAGI: authenticated command injection in open-data harvest](#shirasagi-authenticated-command-injection-in-open-data-harvest)
+- [Mistral Vibe: a repository Git setting runs a program before the trust prompt](#mistral-vibe-a-repository-git-setting-runs-a-program-before-the-trust-prompt)
+- [OPNsense: Google Cloud DNS command injection in the ACME client](#opnsense-google-cloud-dns-command-injection-in-the-acme-client)
 - [Cisco UCS Central: authenticated path traversal to commands and files](#cisco-ucs-central-authenticated-path-traversal-to-commands-and-files)
 - [Xen: a guest can read and write other guests' memory](#xen-a-guest-can-read-and-write-other-guests-memory)
 - [Rails: Active Storage file write and read](#rails-active-storage-file-write-and-read)
@@ -160,6 +163,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [SHIRASAGI](#shirasagi-authenticated-command-injection-in-open-data-harvest) to **v1.21.1**. JPCERT/CC rates [CVE-2026-118869](https://www.cve.org/CVERecord?id=CVE-2026-118869) 8.8 High: in v1.19.0 through v1.21.0, a logged-in user who can edit an open-data harvest URL can run a command. v1.18.2 and earlier are not affected. It is not in KEV.
+- **New this update:** Upgrade [Mistral Vibe](#mistral-vibe-a-repository-git-setting-runs-a-program-before-the-trust-prompt) to **3.0.3 or later**. VulnCheck rates [CVE-2026-122135](https://www.cve.org/CVERecord?id=CVE-2026-122135) CVSS 4.0 8.6 High: opening a repository can run a program named by that repository's Git config before Vibe asks you to trust the folder. 3.0.3 shipped on October 26. The CVE record is November 4. Two older High flaws in the same tool are fixed in 2.25.7 and 2.25.5. None is in KEV.
+- **New this update:** On [OPNsense](#opnsense-google-cloud-dns-command-injection-in-the-acme-client), stop using Google Cloud DNS validation in the ACME Client plugin until the firmware page offers **os-acme-client 4.18**. MITRE rates [CVE-2026-123025](https://www.cve.org/CVERecord?id=CVE-2026-123025) CVSS 4.0 9.4 Critical: through 4.17, a logged-in user who can renew certificates can run commands as root. The fix is merged in git. The 26.7 package repository still publishes 4.17. It is not in KEV.
 - **New this update:** Upgrade [Cisco UCS Central](#cisco-ucs-central-authenticated-path-traversal-to-commands-and-files) to **2.1(2c) or later**. Cisco rates [CVE-2026-76506](https://www.cve.org/CVERecord?id=CVE-2026-76506) 7.6 High: a user account on the web management interface can run commands, write files, and read sensitive information. Releases 2.0 and earlier have no fix on that train. There is no workaround. It is not in KEV.
 - **New this update:** Reboot [Xen](#xen-a-guest-can-read-and-write-other-guests-memory) hosts onto a build with the XSA-523 patches. SUSE rates both flaws CVSS 4.0 8.4: a guest can read and write other guests' memory, including Dom0. Xen 4.6 and later are affected, and Xen says there is no mitigation. Xen 4.6 through 4.16 get no patch. It is not in KEV.
 - **New this update:** Upgrade [Rails](#rails-active-storage-file-write-and-read) to **8.0.5.2 or 8.1.4.1**. Rails rates the Active Storage ImageMagick issue 9.8 Critical, and no CVE is assigned. An unauthenticated upload can write files, and can read secrets when attachments use the Disk service. The same gems fix four more High issues. Rails 7 and older get no fix. It is not in KEV.
@@ -428,6 +434,73 @@ Sources: [ASUS security advisory](https://www.asus.com/security-advisory), [CVE-
 **Patch:** Upgrade Foglight for Databases to **8.3 or later**. ZDI gives no workaround. Until that version is running, do not expose the service to a network you do not trust. The upgrade does not remove code an attacker already ran.
 
 Sources: [ZDI-26-851](https://www.zerodayinitiative.com/advisories/ZDI-26-851/), [CVE-2026-92190](https://www.cve.org/CVERecord?id=CVE-2026-92190), [detailed guide](details/foglight.md).
+
+---
+
+## SHIRASAGI: authenticated command injection in open-data harvest
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/shirasagi.md):** [Detection](details/shirasagi.md#detection) · [Remediation](details/shirasagi.md#remediation) · [Verification](details/shirasagi.md#verification) · [Timeline](details/shirasagi.md#timeline)
+
+**CVEs:** [CVE-2026-118869](https://www.cve.org/CVERecord?id=CVE-2026-118869). [CVE-2026-117679](https://www.cve.org/CVERecord?id=CVE-2026-117679) is the same release's cross-site scripting flaw, scored 5.4, and is not this issue.
+
+**JPCERT/CC rates CVE-2026-118869 CVSS 3.0 8.8 High (CVSS 4.0 8.7).** SHIRASAGI v1.19.0 through v1.21.0 lets a logged-in user who can manage open-data harvests put a shell command in the harvest import URL. The project says v1.18.2 and earlier do not have the vulnerable harvest implementation. The fix is **v1.21.1**. NVD has not scored it.
+
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). JVN does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| JVN#55454512 | 2026-11-05; time/TZ unknown | Fixed version v1.21.1. |
+| **Last updated** | **2026-11-05 07:30 EST (UTC−05:00)** | New item. |
+
+**Patch:** Upgrade to **v1.21.1**. The project also lists commit `98eca875` for this flaw. Moving from v1.14.2 or earlier crosses the incompatibility in the v1.15.0 release notes. The upgrade does not undo a command that already ran.
+
+Sources: [JVN#55454512](https://jvn.jp/en/jp/JVN55454512/), [project page](https://www.ss-proj.org/support/1743.html), [detailed guide](details/shirasagi.md).
+
+---
+
+## Mistral Vibe: a repository Git setting runs a program before the trust prompt
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/mistral-vibe.md):** [Detection](details/mistral-vibe.md#detection) · [Remediation](details/mistral-vibe.md#remediation) · [Verification](details/mistral-vibe.md#verification) · [Timeline](details/mistral-vibe.md#timeline)
+
+**CVEs:** [CVE-2026-122135](https://www.cve.org/CVERecord?id=CVE-2026-122135), [CVE-2026-122134](https://www.cve.org/CVERecord?id=CVE-2026-122134), [CVE-2026-122133](https://www.cve.org/CVERecord?id=CVE-2026-122133)
+
+**VulnCheck rates all three CVSS 4.0 8.6 High (CVSS 3.1 8.8).** [CVE-2026-122135](https://www.cve.org/CVERecord?id=CVE-2026-122135), before 3.0.3, runs a program named by the repository's `gpg.program` when Vibe collects project context, before the trust prompt. The repository also sets `log.showSignature` and contains a signed commit. [CVE-2026-122134](https://www.cve.org/CVERecord?id=CVE-2026-122134), before 2.25.7, runs a Git clean or process filter the repository configured. [CVE-2026-122133](https://www.cve.org/CVERecord?id=CVE-2026-122133), before 2.25.5 and only on Windows, runs a `git.exe` placed in the repository root. Each needs the user to open the repository. NVD has not scored them.
+
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05) for any of the three. VulnCheck does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| 2.25.7 | 2026-09-22 | VulnCheck says CVE-2026-122134 is fixed before this version. The changelog does not name the CVE. |
+| 3.0.3 changelog | 2026-10-26 | "Automatic project context no longer runs repository-configured Git signature verification programs." The changelog does not name CVE-2026-122135. |
+| CVE records | 2026-11-04 20:36 UTC | VulnCheck. |
+| **Last updated** | **2026-11-05 07:30 EST (UTC−05:00)** | New item. 3.0.3 is the floor, and it predates the CVE record. |
+
+**Patch:** Upgrade to **3.0.3 or later**. That build is after the September fixes as well. Not opening a repository you did not write avoids the condition and is not a fix. The upgrade does not undo a program that already ran.
+
+Sources: [CVE-2026-122135](https://www.cve.org/CVERecord?id=CVE-2026-122135), [3.0.3 changelog](https://github.com/mistralai/mistral-vibe/blob/v3.0.3/CHANGELOG.md?plain=1#L113), [detailed guide](details/mistral-vibe.md).
+
+---
+
+## OPNsense: Google Cloud DNS command injection in the ACME client
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/opnsense-acme-client.md):** [Detection](details/opnsense-acme-client.md#detection) · [Remediation](details/opnsense-acme-client.md#remediation) · [Verification](details/opnsense-acme-client.md#verification) · [Timeline](details/opnsense-acme-client.md#timeline)
+
+**CVEs:** [CVE-2026-123025](https://www.cve.org/CVERecord?id=CVE-2026-123025)
+
+**MITRE rates CVE-2026-123025 CVSS 4.0 9.4 Critical.** In `os-acme-client` through 4.17, the Google Cloud DNS validation module places the account and project strings into a shell command. A remote user who can already issue or renew certificates through the WebGUI or API can run commands as root. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`. NVD has not scored it. OPNsense core, and a plugin that never uses Google Cloud DNS, are outside the path the record describes. The record still calls every plugin version through 4.17 affected.
+
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). The CVE record does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix merged | 2026-11-03 22:21:57 UTC | Pull 5873. Plugin changelog says 4.18 fixes the Google Cloud DNS command injection. |
+| CVE record | 2026-11-05; clock time not printed on the record page read | MITRE. No fixed version in the record. |
+| Package check | 2026-11-05 | 26.7 repository: `os-acme-client` 4.17 and the devel package 4.17. 26.1: 4.16. No 4.18 package. |
+| **Last updated** | **2026-11-05 07:30 EST (UTC−05:00)** | New item. The installable package is still 4.17. |
+
+**Patch:** There is no installable 4.18 package yet. The maintainer said on 2026-11-03 that 4.18 waits on the next OPNsense release and that they will not publish a GHSA. Until System → Firmware → Plugins shows **os-acme-client 4.18 or later**, stop using Google Cloud DNS validation. Installing a copy built from git is not the firmware update, and this guide does not ask you to do that. Removing the challenge does not undo a command that already ran.
+
+Sources: [CVE-2026-123025](https://www.cve.org/CVERecord?id=CVE-2026-123025), [pull 5873](https://github.com/opnsense/plugins/pull/5873), [26.7 packages](https://pkg.opnsense.org/FreeBSD:15:amd64/26.7/latest/All/), [detailed guide](details/opnsense-acme-client.md).
 
 ---
 
@@ -1398,7 +1471,7 @@ Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE
 
 **kernel.org and Red Hat's public page both rate CVE-2026-98432 CVSS 3.1 9.8 Critical.** Red Hat labels its score preliminary. The IPv4 TCP race can free socket options while they are in use during retransmitted SYN processing or request-socket migration. On 2026-10-27 Anthropic reported a lab proof of concept that runs commands as root against a server exposing a multipath TCP listener; it did not publish the exploit and does not report in-the-wild use.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). No primary source reviewed reports in-the-wild exploitation. Arista says it is not aware of exploitation in customer networks. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). Marcus Hutchins reported on 2026-11-03 that, as of November 2, residential proxies and VPNs were opening MPTCP connections to port 443 with no HTTP data, and that he strongly suspects that scanning is for this flaw. He also says no public remote-code-execution exploit is known, and that public proofs of concept are denial of service. That is scanning, not a confirmed compromise, and not a KEV listing. Arista says it is not aware of exploitation in customer networks. AWS's November 4 bulletin says it has no evidence the issue has been leveraged. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1416,7 +1489,8 @@ Sources: [CVE-2026-84295](https://www.cve.org/CVERecord?id=CVE-2026-84295), [CVE
 | Later Oracle UEK builds | 2026-11-02; time/TZ unknown | ELSA-2026-500572, 500573 and 500574. Newer than the October 16 UEK errata. |
 | AWS GameLift AMIs released | Bulletin updated 2026-11-03 14:15 PM PST (UTC−08:00) | Container fleets after 2026-11-02 21:06 UTC, and managed EC2 fleets after 2026-11-03 01:55 UTC, use them. |
 | AWS bulletin | 2026-11-04 15:25 PM PST (UTC−08:00) | Beanstalk AL2023 platforms released. RDS/Aurora OS patch is November 6. Redshift is mitigated. |
-| **Last updated** | **2026-11-05 03:03 EST (UTC−05:00)** | Ubuntu 26.10 is still work in progress, including `7.3.0-10.10`. |
+| Suspected scanning | Posted 2026-11-03 06:44 UTC | Hutchins: MPTCP scans of port 443 as of November 2, with no HTTP data. He says no public RCE exploit is known. His October 30 reachability count is about 2.1 million MPTCP listeners on 443, patched and unpatched together. |
+| **Last updated** | **2026-11-05 07:30 EST (UTC−05:00)** | Suspected scanning added. Ubuntu 26.10 is still work in progress, including `7.3.0-10.10`. |
 
 **Patch:** Install a distribution kernel package explicitly marked as fixing this CVE and reboot. Debian trixie is `linux` 6.12.113-1 ([DSA-6568-1](https://lists.debian.org/debian-security-announce/2026/msg00482.html)); Debian 12 bookworm is `linux` 6.1.190-1 ([DLA-4841-1](https://lists.debian.org/debian-lts-announce/2026/10/msg00035.html)), or `linux-6.12` 6.12.113-1~deb12u1 where that kernel is installed. Oracle Linux UEK is covered by [ELSA-2026-500397, 500398 and 500399](https://linux.oracle.com/cve/CVE-2026-98432.html) (2026-10-16). On 2026-11-02 Oracle also shipped [ELSA-2026-500572](https://linux.oracle.com/errata/ELSA-2026-500572.html) (`kernel-uek-6.12.0-208.112.5` on Oracle Linux 9 and 10), [ELSA-2026-500573](https://linux.oracle.com/errata/ELSA-2026-500573.html) (`kernel-uek-5.4.17-2136.361.4` on Oracle Linux 7 and 8), and [ELSA-2026-500574](https://linux.oracle.com/errata/ELSA-2026-500574.html) (`kernel-uek-5.15.0-326.222.4` on Oracle Linux 8 and 9). Install the one that matches the booted UEK. On 2026-11-02 Oracle also shipped the Red Hat-compatible kernel for Oracle Linux 8 ([ELSA-2026-93414](https://linux.oracle.com/errata/ELSA-2026-93414.html), `kernel-4.18.0-553.182.1.el8_10`), Oracle Linux 9 ([ELSA-2026-93412](https://linux.oracle.com/errata/ELSA-2026-93412.html), `kernel-5.14.0-687.64.1.el9_8`), and Oracle Linux 10 ([ELSA-2026-93413](https://linux.oracle.com/errata/ELSA-2026-93413.html), `kernel-6.12.0-211.72.1.el10_2`). The Oracle Linux 8 and Oracle Linux 10 packages both contain the local-root fix. The Oracle Linux 10 changelog has the marker copy at 6.12.0-211.71.1 and does not name ZDI-CAN-33367. On 2026-11-04 Red Hat shipped RHEL 8.6 `kernel-4.18.0-372.227.1.el8_6` ([RHSA-2026:94996](https://access.redhat.com/errata/RHSA-2026:94996)) for Advanced Mission Critical and Extended Update Support Long-Life. It names this CVE and the local-root bug, and it has no `kernel-rt` package. It does not replace the 8.8 or 8.10 kernels. On 2026-11-03 Red Hat also shipped RHEL 8.4 `kernel-4.18.0-305.218.1.el8_4` ([RHSA-2026:94623](https://access.redhat.com/errata/RHSA-2026:94623)), which names this CVE and not the local-root bug. The same channel's `kernel-4.18.0-305.217.1.el8_4` ([RHSA-2026:94596](https://access.redhat.com/errata/RHSA-2026:94596)) names the local-root bug and not this CVE. Neither is both fixes. The same day Red Hat shipped RHEL 9.2 real-time `kernel-rt-5.14.0-284.202.1.rt14.487.el9_2` ([RHSA-2026:94558](https://access.redhat.com/errata/RHSA-2026:94558)), which names both. That real-time build is the 9.2 SAP and extended-life channel, not general RHEL 9 `kernel-rt`. On Amazon Linux, install the package for the booted kernel and reboot: Amazon Linux 2 core `kernel-4.14.355-287.758.amzn2`, Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` (releasever `2023.12.20261102`), or `kernel6.12-6.12.113-138.209.amzn2023`. Other Amazon Linux kernel flavors have their own [ALAS pages](https://explore.alas.aws.amazon.com/CVE-2026-98432.html). AWS says self-managed EC2 and Lightsail instances are yours to patch, and that Lambda is not exposed to this flaw. Amazon scores it CVSS 3.1 8.1. On 2026-11-01 Red Hat released [RHEL 8 `kernel-4.18.0-553.182.1.el8_10`](https://access.redhat.com/errata/RHSA-2026:93414) (and real-time `kernel-rt-4.18.0-553.182.1.rt7.523.el8_10`), [RHEL 9 `kernel-5.14.0-687.64.1.el9_8`](https://access.redhat.com/errata/RHSA-2026:93412), and [RHEL 10 `kernel-6.12.0-211.72.1.el10_2`](https://access.redhat.com/errata/RHSA-2026:93413). On 2026-11-02 Red Hat released a separate kernel for NVIDIA on RHEL 10, [`kernel-6.12.0-265.31.el10nv`](https://access.redhat.com/errata/RHSA-2026:93775), for ARM 64. The `el10_2` package does not replace it. Install the one for your release and reboot. The same day Ubuntu put fixes in the **-proposed** pocket, which a normal upgrade does not install: 22.04 `5.15.0-203.213`, 24.04 `6.8.0-149.149`, and 26.04 `7.0.0-43.43`. Ubuntu's November 2 blog said 26.10 was fixed in `7.3.0-10.10`. On 2026-11-04 the [CVE tracker](https://ubuntu.com/security/CVE-2026-98432) lists that build, and the three `-proposed` builds, as vulnerable and still in progress. A normal upgrade does not install any of them. RHEL 9 real-time and OpenShift RHCOS are still listed as affected with no fix. On 2026-11-02 [AlmaLinux said](https://almalinux.org/blog/2026-10-30-cve-2026-98432/) the same three version floors are in its production repositories for AlmaLinux 8, 9, and 10. On 2026-11-03 Rocky Linux published the same builds: [RLSA-2026:93414](https://errata.rockylinux.org/RLSA-2026:93414) (`kernel-4.18.0-553.182.1.el8_10`), [RLSA-2026:93412](https://errata.rockylinux.org/RLSA-2026:93412) (`kernel-5.14.0-687.64.1.el9_8`, which also names the local-root bug), and [RLSA-2026:93413](https://errata.rockylinux.org/RLSA-2026:93413) (`kernel-6.12.0-211.72.1.el10_2`). The Rocky Linux 8 and 10 errata do not name the local-root bug. The same day Red Hat shipped RHEL 8.8 `kernel-4.18.0-477.178.1.el8_8` ([RHSA-2026:94303](https://access.redhat.com/errata/RHSA-2026:94303)), which names both, and RHEL 9.4 `kernel-5.14.0-427.161.1.el9_4` ([RHSA-2026:94109](https://access.redhat.com/errata/RHSA-2026:94109)), including `kernel-rt` on that stream. On 2026-11-03 the same CVE is also in RHEL 9.6 `kernel-5.14.0-570.154.1.el9_6` ([RHSA-2026:94438](https://access.redhat.com/errata/RHSA-2026:94438)), RHEL 9.2 `kernel-5.14.0-284.202.1.el9_2` ([RHSA-2026:94477](https://access.redhat.com/errata/RHSA-2026:94477)), and RHEL 10.0 `kernel-6.12.0-55.117.1.el10_0` ([RHSA-2026:94508](https://access.redhat.com/errata/RHSA-2026:94508)). Those are EUS or SAP channels. General RHEL 9 `kernel-rt` is still not that package. Until a fixed kernel is installed, Red Hat's [RHSB-2026-016](https://access.redhat.com/security/vulnerabilities/RHSB-2026-016) filter (`ip protocol tcp ip hdrlength > 5`) reduces exposure and is not a substitute for the update. AWS's October 31 update to [bulletin 2026-160-AWS](https://aws.amazon.com/security/security-bulletins/2026-160-aws/) adds the same idea as an iptables rule (`iptables -I INPUT 1 -m u32 --u32 "0>>24&0x0f=6:15" -j DROP`) and says to disable MPTCP (`net.mptcp.enabled=0`, or `GODEBUG=multipathtcp=0` for Go 1.24+) only as an interim step. Go 1.24 and later enable multipath TCP on Linux listen sockets by default; Go says disabling it is fragile and does not fix the kernel bug. The same bulletin says the Redshift cluster OS patch will be available 2026-11-02, the RDS/Aurora OS patch will be available 2026-11-03, and a Storage Gateway update is expected beginning 2026-11-03. AWS's November 1 update says new Fargate tasks launched after 2026-11-01 17:00 UTC use a patched platform; tasks already running do not, until they are replaced. EKS-optimized AL2023 nodes should move to AMI v20261031. EKS Auto Mode AMIs shipped on 2026-10-31, and AWS says Auto Mode replaces those nodes. Amazon MQ brokers created after 2026-11-02 12:16 UTC use the patched host image; existing brokers get it at the next maintenance window, and a reboot does not. AWS DMS will apply the kernel by 2026-11-02 during the weekly maintenance window. AWS's November 3 update says GameLift has released the AMIs: container fleets created after 2026-11-02 21:06 UTC, and managed EC2 fleets created after 2026-11-03 01:55 UTC, use them. AWS's November 4 update says Elastic Beanstalk released the Amazon Linux 2023 platforms on 2026-11-04 (AMI 2023.12.20261102), the RDS/Aurora OS patch will be available 2026-11-06, and all Redshift customers have been mitigated. The earlier dates were 2026-11-04 expected, 2026-11-03, and 2026-11-02. On 2026-11-02 [Arista Security Advisory 0203](https://www.arista.com/en/support/advisories-notices/security-advisory/25023-security-advisory-0203) said Wi-Fi access points on Linux kernel 6.6 are exposed in OpenConfig mode, and NDR through 5.4.11 is exposed by default. Arista has no fixed release and no hotfix. It says it is not aware of exploitation in customer networks. EOS-based switches are not exposed because MPTCP is off, even where the IPv4 code is present. NDR will turn MPTCP off on platforms that are not air-gapped; air-gapped NDR needs Arista support. That is the same interim step, not a kernel fix.
 
@@ -4403,6 +4477,9 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **SHIRASAGI v1.19.0 through v1.21.0** | Upgrade to v1.21.1. A logged-in user who can edit an open-data harvest URL can run a command. v1.18.2 and earlier are outside this flaw. A jump from v1.14.2 or earlier crosses the v1.15.0 incompatibility. [Guide](details/shirasagi.md#remediation). |
+| **Mistral Vibe before 3.0.3** | Upgrade to 3.0.3 or later. Opening a repository can run a program named in that repository's Git config before the trust prompt. Builds before 2.25.7 are also inside two older High flaws. [Guide](details/mistral-vibe.md#remediation). |
+| **OPNsense with os-acme-client through 4.17** | Do not install a package that is not published. On 2026-11-05 the 26.7 repository is still 4.17, including the devel package. Stop using Google Cloud DNS validation until the firmware page offers 4.18. A logged-in certificate manager can run commands as root through that module. [Guide](details/opnsense-acme-client.md#remediation). |
 | **Cisco UCS Central** | Upgrade to 2.1(2c) or later. A user account on the web management interface can run commands and write files. Releases 2.0 and earlier have no fix on that train. There is no workaround. This is not UCS Manager and not a server CIMC. [Guide](details/cisco-ucs-central.md#remediation). |
 | **Debian or Ubuntu with `apt` below the fixed floor** | On Debian 13 install `apt` 3.0.4 or later; on Debian 12 install 2.6.2 or later. On Ubuntu, USN-8996-1 is 3.3.3ubuntu0.1 (26.10), 3.2.1ubuntu0.1 (26.04), 2.8.4ubuntu0.1 (24.04), or 2.4.15ubuntu0.1 (22.04). Upgrade `apt` before other packages. Ubuntu 20.04 and older need Ubuntu Pro. [Guide](details/debian-apt.md#remediation). |
 | **Quest Foglight for Databases below 8.3** | Upgrade to 8.3 or later. Three flaws rated 9.8 need no login and run as SYSTEM. Keeping the service off untrusted networks is not a fix. [Guide](details/foglight.md#remediation). |

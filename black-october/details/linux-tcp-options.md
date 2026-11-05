@@ -6,7 +6,7 @@
 
 **[CVE-2026-98432](https://www.cve.org/CVERecord?id=CVE-2026-98432) — kernel.org CVSS 3.1 9.8 Critical** is an IPv4 TCP race that can free socket options while they remain in use. kernel.org describes fixes in upstream and stable commits. Red Hat's public page now also shows CVSS 3.1 9.8 (vector `AV:N/AC:L`), and labels that score preliminary and subject to review; an earlier Red Hat draft scored 8.1 High with attack complexity High. On 2026-11-01 Red Hat released fixed kernels for RHEL 8, 9 and 10. Ubuntu still lists supported products without a released fix. On 2026-10-27 Anthropic reported that an unreleased Claude model produced a lab proof of concept which sends packets to a Linux server exposing a multipath TCP listener and runs commands as root, without credentials. Anthropic did not publish the exploit, and neither Anthropic nor the CNA reports in-the-wild use. Go's security team says the demonstrated exploit needs an MPTCP listener but the kernel bug is not MPTCP-specific, so disabling MPTCP is a fragile stopgap, not a fix.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). No primary source reviewed reports in-the-wild exploitation. Arista says it is not aware of exploitation in customer networks. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). On 2026-11-03 Marcus Hutchins wrote that, as of 2026-11-02, residential proxies and RU-based VPNs were scanning port 443 with MPTCP and sending no HTTP data, and that he strongly suspects the scanning is for this flaw. He says there is no known public remote-code-execution exploit, and that the public proofs of concept are denial of service. He also says his own October 30 scan reached about 2,102,043 servers on port 443 over MPTCP, and about 762,774 that completed TLS, and that neither count separates patched kernels from unpatched ones. That is a researcher's scan report, not a confirmed compromise and not a KEV listing. Arista says it is not aware of exploitation in customer networks. AWS's November 4 bulletin says it has no evidence the issue has been leveraged. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -31,15 +31,17 @@
 | Amazon Linux kernel packages | 2026-10-30; time/TZ unknown | [AWS bulletin 2026-160-AWS][aws] says Amazon Linux 2 and Amazon Linux 2023 kernel packages are available and that a reboot is required. Amazon scores the flaw CVSS 3.1 8.1 (attack complexity High), not kernel.org's 9.8. The ALAS pages name `kernel-4.14.355-287.758.amzn2` ([ALAS2-2026-4065][alas2]), Amazon Linux 2023 `kernel-6.1.189-236.400.amzn2023` ([ALAS2023-2026-3365][alas2023]), and `kernel6.12-6.12.113-138.209.amzn2023` ([ALAS2023-2026-3335][alas612]). Extra kernel flavors have their own advisories; install the one for the booted kernel. |
 | AlmaLinux production kernels | 2026-11-02; time/TZ unknown | AlmaLinux's post says the fix left the testing repository. Production floors match the November 1 RHEL builds: `kernel-4.18.0-553.182.1.el8_10`, `kernel-5.14.0-687.64.1.el9_8`, `kernel-6.12.0-211.72.1.el10_2`. [AlmaLinux][alma] |
 | Arista Security Advisory 0203 | 2026-11-02; time/TZ unknown | Wi-Fi access points on kernel 6.6 in OpenConfig mode, and NDR through 5.4.11, have MPTCP enabled. No fixed release. [Advisory 0203][arista0203] |
+| Suspected internet scanning | Posted 2026-11-03 06:44 UTC | Hutchins says that as of November 2, residential proxies and RU-based VPNs opened MPTCP connections to port 443 and sent no HTTP data. He strongly suspects that is scanning for this flaw. He says no public RCE exploit is known. [Post][hutchins] |
 | Later Oracle UEK builds | 2026-11-02; time/TZ unknown | ELSA-2026-500572, 500573 and 500574 name this CVE. They are newer builds than the October 16 UEK errata. [ELSA-2026-500572][elsa572] |
 | AWS GameLift AMIs | Bulletin updated 2026-11-03 14:15 PM PST (UTC−08:00) | Container fleets created after 2026-11-02 21:06 UTC, and managed EC2 fleets created after 2026-11-03 01:55 UTC, use the updated AMIs. [AWS][aws] |
 | Ubuntu tracker | 2026-11-04 17:57:44 UTC | `linux` on 26.10, 26.04, 24.04, and 22.04 is "Vulnerable, work in progress," including 26.10 `7.3.0-10.10`. The November 2 blog had called 26.10 fixed. [Ubuntu][ubuntu] |
 
 ## Detection
 
-1. Inventory running Linux kernels and IPv4-facing TCP services; record the distributor package build rather than inferring status from the upstream version alone.
-2. Check the distributor advisory for the exact installed kernel. The CNA record identifies affected ranges by commits, but distributors can backport fixes without changing the upstream version string.
-3. Prioritize systems accepting untrusted IPv4 TCP connections. The CNA record describes races around retransmitted SYN processing and request-socket migration; package presence alone does not establish exploitation.
+1. `ss -Mlnp` lists sockets that are using MPTCP. Hutchins gives `sudo ss -Mlnp`. A listener there is the shape his suspected scanners are looking for. It is not proof the kernel is unpatched, and an empty list is not proof the IPv4 TCP bug is absent. He says `net.mptcp.enabled=0` does not change sockets that are already bound, so the process has to be restarted before `ss` is meaningful. Go 1.24 and later, including Caddy, bind MPTCP when the kernel allows it.
+2. Inventory running Linux kernels and IPv4-facing TCP services; record the distributor package build rather than inferring status from the upstream version alone.
+3. Check the distributor advisory for the exact installed kernel. The CNA record identifies affected ranges by commits, but distributors can backport fixes without changing the upstream version string.
+4. Prioritize systems accepting untrusted IPv4 TCP connections. The CNA record describes races around retransmitted SYN processing and request-socket migration; package presence alone does not establish exploitation.
 
 ## Remediation
 
@@ -58,6 +60,7 @@ The reviewed primary sources do not provide compromise indicators. Preserve kern
 
 ## Sources
 
+- [Marcus Hutchins, 2026-11-03][hutchins] — suspected MPTCP scanning of port 443 as of November 2, no public RCE exploit, and `ss -Mlnp` for listeners. His reachability counts do not separate patched kernels.
 - [kernel.org CNA CVE record][cve] — vulnerability mechanics, score and fixed commit ranges.
 - [Red Hat advisory][redhat] — public CVSS 3.1 9.8 (preliminary), and a pointer to the mitigation bulletin.
 - [RHSA-2026:93414][rhsa8], [RHSA-2026:93415][rhsart], [RHSA-2026:93412][rhsa9] and [RHSA-2026:93413][rhsa10] — RHEL 8, 8 real-time, 9 and 10 kernels issued 2026-11-01. Each names CVE-2026-98432.
@@ -107,3 +110,4 @@ The reviewed primary sources do not provide compromise indicators. Preserve kern
 [alas612]: https://alas.aws.amazon.com/AL2023/ALAS2023-2026-3335.html
 [alas-cve]: https://explore.alas.aws.amazon.com/CVE-2026-98432.html
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+[hutchins]: https://infosec.exchange/@malwaretech/117551155941056123
