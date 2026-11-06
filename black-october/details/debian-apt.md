@@ -1,6 +1,6 @@
 # Debian APT: a resumed download can install a different package as root
 
-**Last updated:** 2026-11-05 (America/New_York)
+**Last updated:** 2026-11-06 (America/New_York)
 
 [Main APT summary](../black-october-2026.md#debian-apt-a-resumed-download-can-install-a-different-package-as-root) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -23,7 +23,7 @@
 |---|---|---|
 | Private discovery | Unknown | Debian credits Max Justicz. [DSA-6607-1][dsa] |
 | Debian 13 fix | 2026-11-04 12:07:32 UTC | DSA-6607-1. trixie `apt` 3.0.4. The same update addresses several out-of-bounds access issues and does not assign them CVEs. [DSA-6607-1][dsa] |
-| Debian 12 fix | 2026-11-04; time/TZ unknown | Tracker: bookworm security `apt` 2.6.2, origin DLA-4880-1. The announcement page did not return the advisory text when checked. [Tracker][tracker] |
+| Debian 12 fix | 2026-11-04 12:46:36 UTC | [DLA-4880-1][dla-announce]. bookworm `apt` 2.6.2. The same update addresses several out-of-bounds access issues and names no CVE for them. [Tracker][tracker] |
 | Ubuntu score | 2026-11-04; time/TZ unknown | CVSS 4.0 7.7 High. [Ubuntu][ubuntu] |
 | Maintainer branch list | 2026-11-04 12:00:16 UTC | Julian Andres Klode names the stable-branch fixes, including 2.2.5, 2.4.15, 2.6.2, 2.8.4, 3.0.4, and 3.2.1, and says Ubuntu and Ubuntu Pro packages are being released. [deity][deity] |
 | forky now fixed | Tracker read 2026-11-05 | forky and sid are both 3.3.6 fixed. On 2026-11-04 forky was still 3.3.5. [Tracker][tracker] |
@@ -108,7 +108,7 @@ The advisory describes replacement of a package after verification. It does not 
 - [DSA-6607-1][dsa] — 2026-11-04 12:07:32 UTC. trixie `apt` 3.0.4. Credits Max Justicz. Also addresses several out-of-bounds access issues, with no separate CVE.
 - [Debian security tracker][tracker] — bookworm 2.6.2 fixed (DLA-4880-1); trixie 3.0.4 fixed; forky and sid 3.3.6 fixed. Read 2026-11-05.
 - [APT-2026-11-01][deity] — Julian Andres Klode, 2026-11-04 13:00:16 +0100. Names the stable-branch fixes and says Ubuntu and Ubuntu Pro packages are being released. USN-8996-1 is that release.
-- [DLA-4880-1 tracker entry][dla] — bookworm `apt` 2.6.2. The LTS announcement URL did not return the advisory text when checked.
+- [DLA-4880-1][dla-announce] — 2026-11-04 12:46:36 UTC. bookworm `apt` 2.6.2. The announcement also says the update addresses several out-of-bounds access issues, and it names no CVE for those.
 - [Ubuntu CVE-2026-109518][ubuntu] — CVSS 4.0 7.7 High, priority High, published 2026-11-04. States the retries and redirect conditions. Fixed versions are in [USN-8996-1][usn], 4 November 2026.
 - [CVE-2026-109518][cve] — the identifier both vendors use.
 - [CISA KEV JSON feed][kev] — catalog 2026.11.04, not listed.
@@ -116,6 +116,7 @@ The advisory describes replacement of a package after verification. It does not 
 [dsa]: https://lists.debian.org/debian-security-announce/2026/msg00526.html
 [tracker]: https://security-tracker.debian.org/tracker/CVE-2026-109518
 [dla]: https://security-tracker.debian.org/tracker/DLA-4880-1
+[dla-announce]: https://lists.debian.org/debian-lts-announce/2026/11/msg00004.html
 [ubuntu]: https://ubuntu.com/security/CVE-2026-109518
 [usn]: https://ubuntu.com/security/notices/USN-8996-1
 [deity]: https://lists.debian.org/deity/2026/11/msg00005.html
