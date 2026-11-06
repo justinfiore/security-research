@@ -1,6 +1,6 @@
 # Pillow: detection and remediation
 
-**Last updated:** 2026-11-03 (America/New_York)
+**Last updated:** 2026-11-06 (America/New_York)
 
 [Main Pillow summary](../black-october-2026.md#4-pillow-untrusted-images-reach-native-memory-corruption-and-command-execution) · [Changelog](../../CHANGELOG.md)
 
@@ -9,6 +9,8 @@ Pillow **13.0.0** fixes multiple independent native-memory, argument-injection a
 **CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Covers the five CVEs in this guide. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 On 2026-11-02 Pillow published [GHSA-wqgw-9xfh-qf2g](https://github.com/python-pillow/Pillow/security/advisories/GHSA-wqgw-9xfh-qf2g), a memory denial of service in TIFF and EXIF IFD parsing. GitHub rates it Moderate and assigns no CVE and no CVSS score. Affected is Pillow through 12.3.0. The patched version is 13.0.0, the same release as the five issues above. It does not change the upgrade. It is not one of those five.
+
+On 2026-11-05 GitHub published [CVE-2026-112902](https://www.cve.org/CVERecord?id=CVE-2026-112902) for [GHSA-xvh5-g6gv-559v](https://github.com/python-pillow/Pillow/security/advisories/GHSA-xvh5-g6gv-559v). GitHub rates it CVSS 4.0 8.3 High: through 12.3.0, saving attacker-controlled TIFF metadata can copy process memory into the file or crash the process. The fix is 13.0.0, the same release. The advisory page still says no CVE is known.
 
 ## Table of contents
 
@@ -91,3 +93,4 @@ Isolate affected workers and snapshot evidence. Map accessible storage, cloud/AP
 - [TIFF encoder advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-332p-7hrc-92wf)
 - [Lossless JPEG advisory](https://github.com/python-pillow/Pillow/security/advisories/GHSA-8g5g-8vmr-9782)
 - [TIFF and EXIF IFD memory DoS](https://github.com/python-pillow/Pillow/security/advisories/GHSA-wqgw-9xfh-qf2g) (2026-11-02, Moderate, no CVE; fixed in the same 13.0.0)
+- [CVE-2026-112902](https://www.cve.org/CVERecord?id=CVE-2026-112902) (GitHub CNA, published 2026-11-05, CVSS 4.0 8.3 High; the advisory page still says no CVE is known; fixed in 13.0.0)

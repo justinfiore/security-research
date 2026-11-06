@@ -1,6 +1,6 @@
 # Apache MINA: unsafe Java deserialization in the 3.0 codec
 
-**Last updated:** 2026-11-01 (America/New_York)
+**Last updated:** 2026-11-06 (America/New_York)
 
 [Main Apache MINA summary](../black-october-2026.md#apache-mina-unsafe-java-deserialization-in-the-30-codec) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -89,7 +89,7 @@ A serialization filter (`jdk.serialFilter` / `ObjectInputFilter`) is a general J
 
 - [oss-security announcement, 2026-10-31 08:01:38 +0000][oss] — severity critical, CVSS 3.1 9.8, affected versions, unsupported-when-assigned, recommendation to use 2.2.x, credit.
 - [Apache announce@ thread][announce] — same text.
-- [Apache CNA record][cve] — CVSS 3.1 9.8 vector, CWE-502, Maven package and version range, publication metadata. No CISA ADP SSVC block.
+- [Apache CNA record][cve] — CVSS 3.1 9.8 vector, CWE-502, Maven package and version range, publication metadata. CISA ADP SSVC, added 2026-11-06T13:45:59Z, says Exploitation none, Automatable yes, Technical Impact total. That is not a KEV listing.
 - [NVD][nvd] — status "Received"; displays Apache's 9.8 as the available CVSS 3.1 metric and has not scored it itself.
 - [Apache MINA download page][downloads] — lists Mina 2.2.10 as stable (Java 8+). Does not mention this CVE.
 - [Maven Central `mina-core` 2.2.10][mvn-2210] and [3.0.0-M2][mvn-m2] — artifact timestamps. 3.0.0 returns HTTP 404.

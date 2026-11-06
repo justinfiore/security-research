@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Craft CMS: unauthenticated SQL injection to an administrator](#craft-cms-unauthenticated-sql-injection-to-an-administrator)
+- [Jumis: the SQL Server administrator password is computed from the server name](#jumis-the-sql-server-administrator-password-is-computed-from-the-server-name)
 - [Kubeflow Pipelines: shared upload skips authorization](#kubeflow-pipelines-shared-upload-skips-authorization)
 - [Kyverno: a namespace tenant can change the cluster](#kyverno-a-namespace-tenant-can-change-the-cluster)
 - [YOOtheme Pro: unauthenticated file write through the image handler](#yootheme-pro-unauthenticated-file-write-through-the-image-handler)
@@ -171,6 +173,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [Craft CMS](#craft-cms-unauthenticated-sql-injection-to-an-administrator) to **5.11.2 or later**, or **4.18.9 or later** on the 4.x line. Craft rates the unauthenticated SQL injection High. VulnCheck rates the same flaw, [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488), CVSS 4.0 9.3 and CVSS 3.1 9.8 Critical: before those releases, anyone can read and write the database and set the administrator flag. The same releases fix five more High flaws that still have no CVE, including control-panel paths to command execution. The fixes shipped on September 17. The CVE record is November 6. Craft's advisory still says no CVE is known. It is not in KEV.
+- **New this update:** Update [Jumis](#jumis-the-sql-server-administrator-password-is-computed-from-the-server-name) for Windows to **TJ7.0.141.36 or later**. ENISA rates [CVE-2026-59105](https://www.cve.org/CVERecord?id=CVE-2026-59105) CVSS 3.1 9.8 Critical: the application computes its SQL Server administrator password from the server name, so anyone who can reach that server can read every accounting database on it. The finder says the on-premise install also enables `xp_cmdshell`. The vendor's public site does not mention the CVE. It is not in KEV.
 - **New this update:** Upgrade [Kubeflow Pipelines](#kubeflow-pipelines-shared-upload-skips-authorization) to **2.18.0 or later**. GitHub rates [CVE-2026-77596](https://www.cve.org/CVERecord?id=CVE-2026-77596) CVSS 3.1 9.6 Critical: in a multi-user install, a pipeline upload with no namespace skips the permission check, so a tenant can replace a shared pipeline. An unpinned recurring run can then execute that version in another tenant's namespace. The fix shipped on October 28. The CVE record is November 5. Setting `REQUIRE_NAMESPACE_FOR_PIPELINES=true` rejects the empty namespace until you upgrade, and it also blocks shared pipelines you still use. The upgrade does not delete a version already uploaded. It is not in KEV.
 - **New this update:** Update [Windows Paint](#windows-paint-remote-code-execution) to **11.2609.401.0 or later** through the Microsoft Store. Microsoft rates [CVE-2026-83844](https://www.cve.org/CVERecord?id=CVE-2026-83844) CVSS 3.1 8.1 High and Important: an unauthenticated attacker can execute code by sending a crafted packet, with no user interaction. The CVE record still says 11.2605.91.0. Microsoft's current product row says the fix is 11.2609.401.0. Microsoft says exploitation is less likely and that it has not been exploited. It is not in KEV.
 - **New this update:** Upgrade [Kyverno](#kyverno-a-namespace-tenant-can-change-the-cluster) to **1.19.2 or later**. VulnCheck rates seven flaws Critical, published November 5: a tenant who can create a namespaced policy can make Kyverno's own controllers read or write other namespaces, and one flaw lets a moved image tag pass a signature check. The same release also fixes fourteen more flaws VulnCheck rates High, published the same day. 1.19.1 is still affected. No 1.18 or 1.17 patch was published. None is in KEV.
@@ -178,7 +182,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** On [Sophos UTM](#sophos-utm-unauthenticated-root-command-through-the-email-proxy), install the manual RPM from KBA-000049692, or move off the product. Sophos rates [CVE-2026-118633](https://www.cve.org/CVERecord?id=CVE-2026-118633) CVSS 4.0 9.2 Critical: with email scanning on, a remote sender can run a command as root after repeating the attempt for a few minutes. UTM is end of life. Version 9.724 without that RPM is still affected. Sophos Firewall is not this flaw. It is not in KEV.
 - **New this update:** Upgrade [SEPPmail](#seppmail-unauthenticated-command-execution-and-file-deletion) Secure Email Gateway to **15.1.1 or later**. NCSC.ch rates two flaws CVSS 4.0 9.2 Critical: before 15.1.1, a remote sender can run a command as root through an address-replacement rule, and can make Large File Transfer read or delete a file. The same release fixes an 8.7 upload exhaustion flaw and an 8.3 GINA account takeover. The vendor's revision history swaps the scores on the two GINA CVEs. None is in KEV.
 - **New this update:** If a server loads the [Better Auth Expo plugin](#better-auth-the-expo-plugin-signs-a-value-it-did-not-issue), upgrade `@better-auth/expo` and `better-auth` to **1.7.16** (or **1.8.0-beta.5** on the beta line) and rotate the application secret. GitHub rates it 9.1 Critical: the plugin signs a caller-supplied value, and someone who knows a user's email can change that email. It is not in KEV.
-- **New this update:** On [Alpine and other musl Linux](#openssh-password-login-on-musl-accepts-any-long-password), upgrade OpenSSH and restart `sshd`, then look for a password login on an account that has none. MITRE rates it [CVE-2026-123158](https://www.cve.org/CVERecord?id=CVE-2026-123158) CVSS 3.1 8.1 High. Previdian says a honeypot accepted a root login on November 6. Its public page counts 4 attempts and does not call them successful. Where sshd checks passwords itself, an account with no password accepts any password of 257 to 1024 bytes, if some other account has a password. glibc Linux, OpenBSD, and Dropbear are not affected. If you cannot update yet, set `PasswordAuthentication no` and restart `sshd`. The upgrade does not replace a daemon that is still running, and it does not remove a key a login already wrote. It is not in KEV.
+- **New this update:** On [Alpine and other musl Linux](#openssh-password-login-on-musl-accepts-any-long-password), upgrade OpenSSH and restart `sshd`, then look for a password login on an account that has none. MITRE rates it [CVE-2026-123158](https://www.cve.org/CVERecord?id=CVE-2026-123158) CVSS 3.1 8.1 High. Previdian says a honeypot accepted a root login on November 6. Its public page, reread the same day, counts 7 attempts from 4 addresses and does not call them successful. Where sshd checks passwords itself, an account with no password accepts any password of 257 to 1024 bytes, if some other account has a password. glibc Linux, OpenBSD, and Dropbear are not affected. If you cannot update yet, set `PasswordAuthentication no` and restart `sshd`. The upgrade does not replace a daemon that is still running, and it does not remove a key a login already wrote. It is not in KEV.
 - **New this update:** Upgrade [SHIRASAGI](#shirasagi-authenticated-command-injection-in-open-data-harvest) to **v1.21.1**. JPCERT/CC rates [CVE-2026-118869](https://www.cve.org/CVERecord?id=CVE-2026-118869) 8.8 High: in v1.19.0 through v1.21.0, a logged-in user who can edit an open-data harvest URL can run a command. v1.18.2 and earlier are not affected. It is not in KEV.
 - **New this update:** Upgrade [Mistral Vibe](#mistral-vibe-a-repository-git-setting-runs-a-program-before-the-trust-prompt) to **3.0.3 or later**. VulnCheck rates [CVE-2026-122135](https://www.cve.org/CVERecord?id=CVE-2026-122135) CVSS 4.0 8.6 High: opening a repository can run a program named by that repository's Git config before Vibe asks you to trust the folder. 3.0.3 shipped on October 26. The CVE record is November 4. Two older High flaws in the same tool are fixed in 2.25.7 and 2.25.5. None is in KEV.
 - **New this update:** On [OPNsense](#opnsense-google-cloud-dns-command-injection-in-the-acme-client), stop using Google Cloud DNS validation in the ACME Client plugin until the firmware page offers **os-acme-client 4.18**. MITRE rates [CVE-2026-123025](https://www.cve.org/CVERecord?id=CVE-2026-123025) CVSS 4.0 9.4 Critical: through 4.17, a logged-in user who can renew certificates can run commands as root. The fix is merged in git. The 26.7 package repository still publishes 4.17. It is not in KEV.
@@ -269,6 +273,52 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Craft CMS: unauthenticated SQL injection to an administrator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/craft-cms.md):** [Detection](details/craft-cms.md#detection) · [Remediation](details/craft-cms.md#remediation) · [Verification](details/craft-cms.md#verification) · [Timeline](details/craft-cms.md#timeline)
+
+**CVEs:** [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488)
+
+**VulnCheck rates [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical. Craft rates the same flaw High and its advisory still says no CVE is known.** NVD has not scored it. Before 5.11.2 and 4.18.9, the element-search `attribute` parameter is concatenated into SQL, and emulated prepares run stacked statements. Craft says an unauthenticated caller can set the admin flag on user ID 1 and overwrite any password hash. The same releases fix five more High flaws that still have no CVE. Two of those, a signed-template oracle and a sandboxed `getOwners()` call, are 5.x only and reach command execution as the PHP worker. Craft 3 is outside the ranges.
+
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Neither Craft nor VulnCheck reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Patch available | 2026-09-17 18:45:32 UTC (5.11.2); 2026-09-17 18:41:07 UTC (4.18.9) | The notes say high-severity and do not name a CVE. |
+| Public announcement | 2026-10-22 22:52:11 UTC | GHSA-qcvp-ggx3-97r6. Craft rates it High. |
+| CVE record | 2026-11-06; time/TZ unknown | VulnCheck CNA. Craft's advisory is unchanged. |
+| **Last updated** | **2026-11-06 15:20 EST (UTC−05:00)** | New item. Update to 5.11.2 or 4.18.9. |
+
+**Patch:** Update `craftcms/cms` to **5.11.2 or later**, or **4.18.9 or later** on 4.x. There is no workaround for the unauthenticated injection. The update does not unset an admin flag already written, and it does not restore a `CRAFT_SECURITY_KEY` a control-panel flaw already replaced.
+
+Sources: [GHSA-qcvp-ggx3-97r6](https://github.com/craftcms/cms/security/advisories/GHSA-qcvp-ggx3-97r6), [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488), [5.11.2](https://github.com/craftcms/cms/releases/tag/5.11.2), [detailed guide](details/craft-cms.md).
+
+---
+
+## Jumis: the SQL Server administrator password is computed from the server name
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/jumis.md):** [Detection](details/jumis.md#detection) · [Remediation](details/jumis.md#remediation) · [Verification](details/jumis.md#verification) · [Timeline](details/jumis.md#timeline)
+
+**CVEs:** [CVE-2026-59105](https://www.cve.org/CVERecord?id=CVE-2026-59105)
+
+**ENISA rates [CVE-2026-59105](https://www.cve.org/CVERecord?id=CVE-2026-59105) CVSS 3.1 9.8 Critical and CVSS 4.0 9.3 Critical.** The finder, OffSeq, publishes the same 9.8. NVD has not scored it. Jumis (formerly Tildes Jumis) for Windows, before TJ7.0.141.36, creates a SQL Server login in the `sysadmin` role and computes its password from the server name plus constants in the client. Anyone who can reach that SQL Server can authenticate. The CNA says the on-premise server installation enables `xp_cmdshell`, so the login can run commands on the database host. OffSeq is withholding the constants. The vendor's public site does not mention the CVE. Jumis Finance, the cloud product, is not the application this record names.
+
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). OffSeq does not report exploitation of a customer system. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private report | 2026-06-25; time/TZ unknown | OffSeq to CERT.LV. The vendor confirmed it by 2026-07-30. |
+| Patch available | By 2026-10-09; time/TZ unknown | OffSeq says TJ7.0.141.36, the July 2026 release. The publication day is not stated. |
+| Public announcement | 2026-11-06; time/TZ unknown | ENISA CVE record. OffSeq's write-up is the same disclosure. |
+| **Last updated** | **2026-11-06 15:20 EST (UTC−05:00)** | New item. Update to TJ7.0.141.36 or later. |
+
+**Patch:** Update Jumis to **TJ7.0.141.36 or later**. Until then, allow only the Jumis hosts to reach the SQL Server. Changing the password by hand does not survive the application recomputing it. After the upgrade, confirm the login is no longer `sysadmin`. The update does not undo rows already changed.
+
+Sources: [CVE-2026-59105](https://www.cve.org/CVERecord?id=CVE-2026-59105), [OffSeq](https://offseq.com/en/research/jumis-cve-2026-59105/), [Jumis Pro](https://www.mansjumis.lv/), [detailed guide](details/jumis.md).
 
 ---
 
@@ -420,7 +470,7 @@ Vulnerability Info Site: [sshhole.com](https://sshhole.com/)
 
 **MITRE rates CVE-2026-123158 CVSS 3.1 8.1 High. OpenSSH calls the 10.6p2 workaround critical and still names no CVE.** On Linux built with musl, when sshd checks passwords itself instead of through PAM, an account whose password field is `*` accepts any password of 257 to 1024 bytes. The attacker needs that account's name and one other local account with a `$5$` or `$6$` password hash. It takes one connection. Alpine's `openssh-server` is built without PAM, and password logins are the default. glibc Linux, OpenBSD, and Dropbear are not affected. A build that includes PAM but sets `UsePAM no` is affected. The record says "between 256 and 1024 characters"; OpenSSH and Alpine say 257 to 1024 bytes. The record's affected range is every version before 10.6p2, which is wider than the distribution backports.
 
-**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Previdian told The Hacker News that a honeypot running Alpine and OpenSSH accepted a root login on November 6, less than nine hours after the CVE record. The public Previdian page counts 4 attempts and says an attempt is not a successful login. That is a honeypot, not a customer system. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Previdian told The Hacker News that a honeypot running Alpine and OpenSSH accepted a root login on November 6, less than nine hours after the CVE record. The public Previdian page, reread the same day, counts 7 attempts from 4 addresses and says an attempt is not a successful login. That is a honeypot, not a customer system. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1400,7 +1450,8 @@ Sources: [OTW status incident](https://www.otwstatus.org/incidents/g12jnxck9g6h)
 | Private report | Unknown | Credited to Nguyen Cuong. CVE reserved 2026-10-28 17:16 UTC. |
 | Public announcement | 2026-10-31 08:01:38 +0000 | [oss-security](https://www.openwall.com/lists/oss-security/2026/10/31/3). Affected: 3.0.0 through 3.0.0-M2. |
 | CVE record published | 2026-10-31 20:17:11 UTC | Apache CNA. NVD status "Received". |
-| **Last updated** | **2026-11-01 00:04 EDT (UTC−04:00)** | Added from the Apache announcement and CNA record. |
+| CISA ADP SSVC | 2026-11-06 13:45:59 UTC | Exploitation none, Automatable yes, Technical Impact total. Not a KEV listing. |
+| **Last updated** | **2026-11-06 15:20 EST (UTC−05:00)** | SSVC added. The move to MINA 2.2.10 is unchanged. |
 
 **Am I impacted?** You are if a deployed artifact resolves `org.apache.mina:mina-core` **3.0.0-M1 or 3.0.0-M2** and the application uses `JavaNativeMessageDecoder` on input from an untrusted peer. Maven Central has no `3.0.0` jar. The CNA's default status is unaffected, so 2.2.x, 2.1.x and 2.0.x are not this flaw. Check with `mvn dependency:tree -Dincludes=org.apache.mina:mina-core` or the jar inside the deployed image.
 
@@ -1625,11 +1676,12 @@ Sources: [Synology-SA-26:13](https://www.synology.com/en-global/security/advisor
 | Exploitation attempts | 2026-10-28 20:30 UTC onward | Wordfence's first match was nine minutes after its firewall rule. Probes, not confirmed compromise. |
 | CVE record published | 2026-10-31 05:33:07 UTC | Wordfence CNA. WordPress's advisory is unchanged. |
 | Added to CISA KEV | 2026-11-03; time/TZ unknown | Federal due date 2026-11-06. Forensic triage required. |
-| **Last updated** | **2026-11-03 19:04 EST (UTC−05:00)** | CISA listed CVE-2026-119977. The fix is unchanged. |
+| Wordfence probe update | 2026-11-05; time/TZ unknown | More than 240,000 blocked requests, peaking on October 30. Wordfence says these are probes, not confirmed compromises, and names ten source addresses. |
+| **Last updated** | **2026-11-06 15:20 EST (UTC−05:00)** | Probe count and a pre-update block. The fix is unchanged. |
 
-**Patch:** Update to **7.1.4**, or the fixed release for the installed branch (7.0.8, 6.9.11, 6.8.12, 6.7.11, 6.6.11, 6.5.14, 6.4.14, and the older branch releases through 4.7.39). Confirm the update on **Dashboard → Updates**; do not assume a background update finished. WordPress 4.6 and earlier get no fix. A firewall rule is not a substitute, because the request never loads WordPress.
+**Patch:** Update to **7.1.4**, or the fixed release for the installed branch (7.0.8, 6.9.11, 6.8.12, 6.7.11, 6.6.11, 6.5.14, 6.4.14, and the older branch releases through 4.7.39). The update itself still runs the vulnerable unpack once. Before you start it, block PHP under `/wp-content/upgrade/` at the web server. Confirm the update on **Dashboard → Updates**; do not assume a background update finished. WordPress 4.6 and earlier get no fix. A plugin firewall is not a substitute, because the request never loads WordPress.
 
-Sources: [WordPress 7.1.4](https://wordpress.org/news/2026/10/wordpress-7-1-4/), [version documentation](https://wordpress.org/documentation/wordpress-version/version-7-1-4/), [GHSA-4w3m-c66w-69mg](https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-4w3m-c66w-69mg), [CVE-2026-119977](https://www.cve.org/CVERecord?id=CVE-2026-119977), [Wordfence](https://www.wordfence.com/blog/2026/10/wordpress-7-1-4-security-release-rce/), [Patchstack](https://patchstack.com/articles/wordpress-7-1-4-security-release).
+Sources: [WordPress 7.1.4](https://wordpress.org/news/2026/10/wordpress-7-1-4/), [version documentation](https://wordpress.org/documentation/wordpress-version/version-7-1-4/), [GHSA-4w3m-c66w-69mg](https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-4w3m-c66w-69mg), [CVE-2026-119977](https://www.cve.org/CVERecord?id=CVE-2026-119977), [Wordfence, November 5](https://www.wordfence.com/blog/2026/11/attackers-actively-probing-for-upgrade-window-rce-vulnerability-in-wordpress-core/), [Patchstack](https://patchstack.com/articles/wordpress-7-1-4-security-release).
 
 ## Progress WS_FTP Server: Critical authentication and command-injection flaws
 
@@ -4216,7 +4268,8 @@ Sources: [Pillow release notes](https://pillow.readthedocs.io/en/stable/releasen
 | Exploitation attempts reported | From 2026-10-17; time/TZ unknown | One day after the public proof of concept. |
 | Vendor confirms active exploitation | 2026-10-19 20:17 UTC | Plex: “actively and widely exploited.” |
 | CISA KEV addition (all four) | 2026-10-20; date only | Due 2026-10-23 for -96654/-96656 and 2026-11-03 for -96652/-96655; forensic triage required for -96656. |
-| **Last updated** | **2026-10-26 09:27 EDT (UTC−04:00)** | Vendor-confirmed exploitation, CISA KEV addition and per-CVE ratings. |
+| QNAP customer reports | 2026-11-06; time/TZ unknown | Some NAS users report Plex appears compromised. QTS and QuTS hero are not the flaw. |
+| **Last updated** | **2026-11-06 15:20 EST (UTC−05:00)** | QNAP reports. The fix is still 1.43.3.10861 or later. |
 
 The chain combines:
 
@@ -4227,7 +4280,7 @@ The chain combines:
 
 **Worst case:** **Unauthenticated RCE** on Plex Media Server, exposing whatever media, mounts, credentials, and network access its service account holds.
 
-**Exploitation status:** Plex confirmed on 2026-10-19 that the chain is being actively and widely exploited, including miners and Linux proxy/backdoor payloads. CISA added all four CVEs to KEV on 2026-10-20. Plex says any server below 1.43.3.10861 that was reachable from the internet may be compromised; see [vendor indicators](details/plex2shell.md#detection).
+**Exploitation status:** Plex confirmed on 2026-10-19 that the chain is being actively and widely exploited, including miners and Linux proxy/backdoor payloads. CISA added all four CVEs to KEV on 2026-10-20. On November 6, QNAP said it has reports from some users that Plex Media Server on their NAS appears to have been compromised, and that QTS and QuTS hero are not themselves the flaw. Plex says any server below 1.43.3.10861 that was reachable from the internet may be compromised; see [vendor indicators](details/plex2shell.md#detection).
 
 **Patch:** **Plex Media Server 1.43.3.10861 or later**; use the latest supported release. Check NAS-packaged installations and containers, which may lag upstream. Remove unnecessary public exposure on port 32400.
 
@@ -4753,6 +4806,8 @@ flowchart TD
 | **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |
 | **HPE Aruba Networking AOS-8 / AOS-10 (controllers, conductors, gateways, APs)** | Upgrade to AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, 8.13.3.1+ or 8.10.0.24+ (other branches: move to a fixed supported branch); until then confine SSH/WebUI/API to a management VLAN and UDP 8211 (PAPI) to your own APs and controllers. [Guide](details/aruba-aos.md#remediation). |
 | **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix: stable **7.2.15**, RHEL 9 `kernel-5.14.0-687.64.1.el9_8`, Rocky Linux 9 the same version, RHEL 8 `kernel-4.18.0-553.181.1.el8_10` (not the November 1 TCP kernel), RHEL 8.8 `kernel-4.18.0-477.178.1.el8_8`, RHEL 8.6 Advanced Mission Critical `kernel-4.18.0-372.227.1.el8_6`, RHEL 8.4 Advanced Mission Critical `kernel-4.18.0-305.217.1.el8_4` (not `305.218.1`, which fixes the TCP flaw and not this bug), Oracle Linux 8 `kernel-4.18.0-553.182.1.el8_10`, Oracle Linux 10 `kernel-6.12.0-211.72.1.el10_2` (the changelog has the fix and does not name ZDI-CAN-33367), RHEL 9.2 real-time `kernel-rt-5.14.0-284.202.1.rt14.487.el9_2`, AlmaLinux production 4.18.0-553.178.1.el8_10 / 5.14.0-687.60.1.el9_8 / 6.12.0-211.69.1.el10_2, CloudLinux 7 hybrid 4.18.0-553.177.1.lve.1.el7h, CloudLinux 8 4.18.0-553.177.1.lve.1.el8, or the KernelCare EL10 live patch. Linux 7.3 and 7.3.1, the main RHEL 10 line, Rocky Linux 8 and 10, Debian and Ubuntu still have no build that names this bug. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
+| **Craft CMS below 5.11.2 or 4.18.9** | Update `craftcms/cms` to 5.11.2 or later, or 4.18.9 or later on 4.x. Before those releases, an unauthenticated SQL injection can set the administrator flag, and five more High flaws in the same releases still have no CVE. Craft 3 is outside the named ranges. [Guide](details/craft-cms.md#remediation). |
+| **Jumis for Windows before TJ7.0.141.36** | Update to TJ7.0.141.36 or later, then confirm the Jumis SQL login is no longer `sysadmin`. Until then, allow only the Jumis hosts to reach that SQL Server. Jumis Finance is not this application. [Guide](details/jumis.md#remediation). |
 | **WordPress sites with BookIt** | Update to 2.6.0.7 or later. Through 2.6.0.6, the public booking endpoint accepts an unauthenticated SQL injection. Deactivate the plugin until you can update. [Guide](details/bookit.md#remediation). |
 | **WordPress sites with Gravity Forms** | Update to 3.1.3 or later. Through 3.1.2, a form that creates posts from a List-type Post Custom Field with a content template can store an unauthenticated PHP object; code execution needs a separate gadget chain. [Guide](details/gravity-forms.md#remediation). |
 | **WordPress sites with Rank Math PRO** | If 3.0.123 was downloaded or updated 2026-10-15 20:02 – 2026-10-16 07:12 UTC and activated, treat the site as compromised: restore a pre-incident backup or follow the vendor's ordered cleanup, rotate every credential the site could reach, then install 3.0.124. Otherwise update to 3.0.124. Updating alone removes no persistence. [Guide](details/rankmath-pro.md#remediation). |
@@ -4786,7 +4841,7 @@ flowchart TD
 | **Self-hosted Zammad** | Upgrade to 7.2.2+ (6.5.5 only as a stopgap for CVE-2026-102489; DEB/RPM installs need 7.2.2 for the root escalation), then run DIVD's log check. [Guide](details/zammad.md#remediation). |
 | **Tailscale SSH / headscale** | Update Tailscale to **v1.104.4 or later** and headscale to **0.29.7 or later**. The headscale release does not apply the node-side SSH and Serve fixes. A complete fix for every Tailworm finding is not established. |
 | **Microsoft Authenticator on Android** | Install **6.2606.4246 or a later supported release** in every profile; investigate and revoke exposed work-account tokens where compromise is suspected. |
-| **PHP / WordPress / Laravel / Drupal / Joomla** | For PHP2Shell, use PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport and disable session upload progress pending the follow-up fix. On Windows, separately install the **`-1`** rebuild that carries Brotli 1.2.1 and restart workers; `php -v` does not prove it. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. WordPress itself: update core to **7.1.4** or the fixed branch release; the upgrade-window flaw is not PHP2Shell, and CISA now lists it. ACF Extended and ACF Extended PRO: update both to **0.9.2.8**. YOOtheme Pro: update to **5.0.53** on WordPress and Joomla, then look for planted PHP under the uploads directory. CryptoPayment Gateway has no fix: delete it and move funds to a new wallet. [PHP2Shell guide](details/php2shell.md#remediation) · [WordPress guide](details/wordpress-upgrade-window.md#remediation) · [ACF Extended guide](details/acf-extended.md#remediation) · [CryptoPayment Gateway guide](details/cryptopayment-gateway.md#remediation) · [Brotli guide](details/brotli.md#remediation). |
+| **PHP / WordPress / Laravel / Drupal / Joomla** | For PHP2Shell, use PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport and disable session upload progress pending the follow-up fix. On Windows, separately install the **`-1`** rebuild that carries Brotli 1.2.1 and restart workers; `php -v` does not prove it. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. WordPress itself: update core to **7.1.4** or the fixed branch release, and block PHP under `/wp-content/upgrade/` before that update; the upgrade-window flaw is not PHP2Shell, and CISA lists it. ACF Extended and ACF Extended PRO: update both to **0.9.2.8**. YOOtheme Pro: update to **5.0.53** on WordPress and Joomla, then look for planted PHP under the uploads directory. CryptoPayment Gateway has no fix: delete it and move funds to a new wallet. [PHP2Shell guide](details/php2shell.md#remediation) · [WordPress guide](details/wordpress-upgrade-window.md#remediation) · [ACF Extended guide](details/acf-extended.md#remediation) · [CryptoPayment Gateway guide](details/cryptopayment-gateway.md#remediation) · [Brotli guide](details/brotli.md#remediation). |
 | **Node.js / Bun** | Node **22.23.4 / 24.22.1 / 26.12.1**; Bun **1.4.4**. Rebuild containers and restart workers. |
 | **Python** | `Brotli` **1.2.1**, `brotlicffi` **1.2.1.0**, Pillow **13.0.0** where installed. Pillow may require a Python upgrade. |
 | **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps; update Visual Studio and PowerShell 7 to [MSRC's fixed builds](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497). [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |

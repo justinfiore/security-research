@@ -79,7 +79,7 @@ The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems t
 - Alpine says to look in `/var/log/messages` for sshd lines reading `Accepted password for` an account that has no password (`alpine`, `root`, or a key-only user). Review `doas` use and accounts, authorized keys, and files you cannot account for.
 - If that line is present, or you cannot rule a login out, treat the machine as compromised. The upgrade does not remove a key an attacker wrote.
 - On a tiny-cloud image, a login as `alpine` can become root through passwordless `doas`. Replacing the image is the clean outcome when that login cannot be ruled out.
-- Previdian says one honeypot running Alpine and OpenSSH accepted a login and then ran `id`, `uname`, and `hostname` in a non-interactive session. That is a honeypot, not a customer system. The source address Help Net Security and The Hacker News quote is `89.116.89.18`. Previdian's public page does not print that address, and its counts do not match the interview: the page says 4 attempts from 3 addresses, while the interview says 8 attempts from that one address. A log line from that address is a lead. It is not, by itself, this flaw.
+- Previdian says one honeypot running Alpine and OpenSSH accepted a login and then ran `id`, `uname`, and `hostname` in a non-interactive session. That is a honeypot, not a customer system. The source address Help Net Security and The Hacker News quote is `89.116.89.18`. Previdian's public page does not print that address, and its counts do not match the interview: the page, read again on 2026-11-06, says 7 attempts from 4 addresses in CH, IR, JP, and SG, while the interview says 8 attempts from that one address. The same page still says an attempt is not a successful login. A log line from that address is a lead. It is not, by itself, this flaw.
 
 ## Sources
 
@@ -93,7 +93,7 @@ The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems t
 - [The Hacker News][thn] — 2026-11-05. Reports that no attacks using the flaw have been reported, and that no CVE had been assigned that day. MITRE published the CVE later the same day.
 - [Help Net Security][hns] — 2026-11-06. Ryan Dewhurst of Previdian: the first attempt arrived less than nine hours after the CVE record, and a honeypot running Alpine and OpenSSH accepted a login as root. Eight attempts, all from `89.116.89.18`. The commands were `id`, `uname`, and `hostname`.
 - [The Hacker News, exploitation][thn2] — 2026-11-06. The same Dewhurst statement. It is not a CISA KEV listing.
-- [Previdian CVE-2026-123158][prev] — read 2026-11-06. The public page says 4 attempts, 3 addresses, and 1 sensor, first and last observed 2026-11-06, and that an attempt on the page is not a successful login. It does not print the source address. That count disagrees with the interview. Not in CISA KEV.
+- [Previdian CVE-2026-123158][prev] — reread 2026-11-06. The public page says 7 attempts, 4 addresses, and 2 sensors, first and last observed 2026-11-06, in CH, IR, JP, and SG, and that an attempt on the page is not a successful login. It does not print the source address. That count disagrees with the interview. Not in CISA KEV.
 - [CVE-2026-123158][cve] — MITRE, published 2026-11-05 15:46:26 UTC. CVSS 3.1 8.1 High. Affected from 0 before 10.6p2 on Linux. The description says 256 to 1024 characters; OpenSSH and Alpine say 257 to 1024 bytes.
 - [CISA KEV JSON feed][kev] — not listed (catalog 2026.11.04, checked 2026-11-06).
 

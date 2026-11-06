@@ -1,6 +1,6 @@
 # Plex2Shell: detection and recovery for Plex Media Server
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-06 (America/New_York)
 
 [Main guide](../black-october-2026.md#5-plex2shell-a-home-server-compromise-chain-is-being-exploited) · [Changelog](../../CHANGELOG.md)
 
@@ -39,6 +39,7 @@
 | Exploitation attempts reported from | 2026-10-17 | October 19 reporting says one day after disclosure; not proof that this was the first-ever attack. [Reporting][reporting] |
 | Vendor confirms active exploitation | 2026-10-19 20:17 UTC | Plex says the flaws are “actively and widely exploited” against unpatched internet-facing servers, publishes CVE mapping and compromise indicators. [Vendor notice][vendor] |
 | CISA KEV addition, all four | 2026-10-20 (date only) | Added “based on evidence of active exploitation.” Due dates differ: **CVE-2026-96654 and -96656: 2026-10-23**; **CVE-2026-96652 and -96655: 2026-11-03**. BOD 26-04 forensic triage required: Yes for -96656 only. Known ransomware use: Unknown. KEV addition is not the exploitation start date. [KEV][kev], [CISA alert][kevalert] |
+| QNAP customer reports | 2026-11-06; time/TZ unknown | QNAP says some users report that Plex Media Server on their NAS appears compromised, and that QTS and QuTS hero are not the flaw. The fix in App Center is still 1.43.3.10861. [QNAP][qnap] |
 
 **KEV required action (identical for all four entries)** [KEV][kev]:
 
@@ -114,6 +115,7 @@ The following are **recommended investigation steps**, derived from the chain, n
 - [Plex release announcements][releases] — beta versus public availability and newer releases; no per-CVE fix-date breakdown.
 - [October 19 exploitation reporting][reporting] — patch target and reported campaign artifacts, with attribution limitations.
 - [Plex security notice and October 19 exploitation update][vendor] — CVE mapping, active-exploitation statement, compromise indicators and recovery steps.
+- [QNAP security notice, November 6, 2026][qnap] — reports from some NAS users that Plex appears compromised; QNAP operating systems are not the flaw; update in App Center and, if Plex was reachable from the internet, follow QNAP's clean-reinstall FAQ.
 - [CISA KEV catalog feed][kev] and [October 20 KEV alert][kevalert] — date added, due dates, required action and forensic-triage flags.
 - [CVE-2026-96652 record][cve96652] (and the corresponding records for [-96654][cve96654], [-96655][cve96655], [-96656][cve96656]) and [CISA advisory VA-26-266-01][csaf] — CNA scores, affected range and publication dates.
 
@@ -128,3 +130,4 @@ The following are **recommended investigation steps**, derived from the chain, n
 [csaf]: https://raw.githubusercontent.com/cisagov/CSAF/develop/csaf_files/IT/white/2026/va-26-266-01.json
 [releases]: https://forums.plex.tv/t/plex-media-server/30447/712
 [reporting]: https://thehackernews.com/2026/10/hackers-exploit-plex2shell-flaws-to.html
+[qnap]: https://www.qnap.com/en/security-news/2026/qnap-security-notice-plex-media-server-vulnerabilities-plex2shell-update-to-1-43-3-10861-or-later-immediately
