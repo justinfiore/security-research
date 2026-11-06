@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 5, 2026**
+**As of November 6, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Kyverno: a namespace tenant can change the cluster](#kyverno-a-namespace-tenant-can-change-the-cluster)
 - [YOOtheme Pro: unauthenticated file write through the image handler](#yootheme-pro-unauthenticated-file-write-through-the-image-handler)
 - [Sophos UTM: unauthenticated root command through the email proxy](#sophos-utm-unauthenticated-root-command-through-the-email-proxy)
 - [SEPPmail: unauthenticated command execution and file deletion](#seppmail-unauthenticated-command-execution-and-file-deletion)
@@ -168,6 +169,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Kyverno](#kyverno-a-namespace-tenant-can-change-the-cluster) to **1.19.2 or later**. VulnCheck rates seven flaws Critical, published November 5: a tenant who can create a namespaced policy can make Kyverno's own controllers read or write other namespaces, and one flaw lets a moved image tag pass a signature check. 1.19.1 is still affected. No 1.18 or 1.17 patch was published. None is in KEV.
 - **New this update:** Update [YOOtheme Pro](#yootheme-pro-unauthenticated-file-write-through-the-image-handler) to **5.0.53 or later** on WordPress and Joomla. The Joomla! Project rates [CVE-2026-102785](https://www.cve.org/CVERecord?id=CVE-2026-102785) CVSS 4.0 10.0 Critical: before 5.0.53, anyone who can see a signed image URL can reuse that signature and write a PHP file. Wordfence scores the WordPress theme 9.8. Unit 42 says webshells were written two days after the October 21 patch. Updating does not delete a file already written. It is not in KEV.
 - **New this update:** On [Sophos UTM](#sophos-utm-unauthenticated-root-command-through-the-email-proxy), install the manual RPM from KBA-000049692, or move off the product. Sophos rates [CVE-2026-118633](https://www.cve.org/CVERecord?id=CVE-2026-118633) CVSS 4.0 9.2 Critical: with email scanning on, a remote sender can run a command as root after repeating the attempt for a few minutes. UTM is end of life. Version 9.724 without that RPM is still affected. Sophos Firewall is not this flaw. It is not in KEV.
 - **New this update:** Upgrade [SEPPmail](#seppmail-unauthenticated-command-execution-and-file-deletion) Secure Email Gateway to **15.1.1 or later**. NCSC.ch rates two flaws CVSS 4.0 9.2 Critical: before 15.1.1, a remote sender can run a command as root through an address-replacement rule, and can make Large File Transfer read or delete a file. The same release fixes an 8.7 upload exhaustion flaw and an 8.3 GINA account takeover. The vendor's revision history swaps the scores on the two GINA CVEs. None is in KEV.
@@ -263,6 +265,29 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Kyverno: a namespace tenant can change the cluster
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/kyverno.md):** [Detection](details/kyverno.md#detection) · [Remediation](details/kyverno.md#remediation) · [Verification](details/kyverno.md#verification) · [Timeline](details/kyverno.md#timeline)
+
+**CVEs:** [CVE-2026-122302](https://www.cve.org/CVERecord?id=CVE-2026-122302), [CVE-2026-122303](https://www.cve.org/CVERecord?id=CVE-2026-122303), [CVE-2026-122304](https://www.cve.org/CVERecord?id=CVE-2026-122304), [CVE-2026-122310](https://www.cve.org/CVERecord?id=CVE-2026-122310), [CVE-2026-122311](https://www.cve.org/CVERecord?id=CVE-2026-122311), [CVE-2026-122313](https://www.cve.org/CVERecord?id=CVE-2026-122313), [CVE-2026-122321](https://www.cve.org/CVERecord?id=CVE-2026-122321)
+
+**VulnCheck rates six flaws CVSS 3.1 9.8 or 9.9 Critical and one 9.1 Critical.** The 9.1 flaw, [CVE-2026-122321](https://www.cve.org/CVERecord?id=CVE-2026-122321), is CVSS 4.0 8.5 High on the same record. NVD has not scored them. GitHub rates the generate-rule flaw High and names no CVE for it. A tenant who can create a namespaced policy can make Kyverno's controllers act outside that namespace: generate resources, overwrite objects, read Secrets, edit another tenant's RoleBinding, or call the Kubernetes API as the controller. [CVE-2026-122310](https://www.cve.org/CVERecord?id=CVE-2026-122310) affects only 1.19.1. [CVE-2026-122321](https://www.cve.org/CVERecord?id=CVE-2026-122321) lets a moved image tag pass a cached signature check on 1.18.0 through 1.19.1.
+
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). Neither VulnCheck nor Kyverno reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix released | 2026-10-20 23:50:19 UTC | Kyverno 1.19.2. The notes count 24 GitHub advisories. |
+| GitHub advisories | 2026-10-21; time unknown | The vendor published them. Several still say no CVE is known. |
+| Public announcement | 2026-11-05 02:25 UTC | VulnCheck published the seven CVE records. |
+| **Last updated** | **2026-11-05 23:30 EST (UTC−05:00)** | New item. Upgrade to 1.19.2 or later. |
+
+**Patch:** Upgrade Kyverno to **1.19.2 or later** and roll the controllers. The Helm chart is 3.9.2. No 1.18 or 1.17 patch was published. A cluster where only cluster admins can create namespaced policies is outside the condition the records describe. The upgrade does not revert an object a controller already wrote.
+
+Sources: [Kyverno v1.19.2](https://github.com/kyverno/kyverno/releases/tag/v1.19.2), [CVE-2026-122313](https://www.cve.org/CVERecord?id=CVE-2026-122313), [detailed guide](details/kyverno.md).
 
 ---
 
@@ -1102,15 +1127,16 @@ Sources: [IBM bulletin](https://www.ibm.com/support/pages/node/7294467), [CVE-20
 
 **Apache (CNA) rates all eight CVSS 4.0 High, 7.2 to 8.3.** NVD has not scored them. The two 8.3 flaws are in `FileUploadToResourceField`: one ignores a configured upload limit (9.14.0–9.24.0 and 10.0.0–10.9.1), and one allocates a size the client asserts (through 10.11.0). Neither is in 8.x, and neither is the ordinary `FileUploadField` path. The rest write untrusted text into generated JavaScript, or renew the session id only on the first sign-in. Ranges differ. [CVE-2026-84231](https://www.cve.org/CVERecord?id=CVE-2026-84231) is 8.x only. [CVE-2026-82840](https://www.cve.org/CVERecord?id=CVE-2026-82840) starts at 8.18.0, 9.23.0, and 10.9.0.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-02). Apache does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). Apache does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Advisories | 2026-11-01, from 22:05 UTC | announce@wicket.apache.org. Eight High flaws. |
 | Fixed releases | 2026-11-01; tag time not on the advisory pages | 8.20.0, 9.25.0, and 10.12.0. |
-| **Last updated** | **2026-11-01 23:09 EST (UTC−05:00)** | New item. Upgrade the whole line. |
+| 8.x and 9.x end of life | 2026-11-01 21:48 UTC | The PMC says 8.20.0 and 9.25.0 are the last releases of those lines. Plan a move to Wicket 10 (LTS) or 11. |
+| **Last updated** | **2026-11-05 23:30 EST (UTC−05:00)** | 8.x and 9.x are now end of life. |
 
-**Patch:** Upgrade `wicket-core`, `wicket-extensions`, and `wicket-auth-roles` together to **10.12.0, 9.25.0, or 8.20.0 or later**, then redeploy. 7.x gets no fix. Until then, the session-fixation advisory says to renew the session id on every successful authentication. There is no workaround listed for the upload flaws.
+**Patch:** Upgrade `wicket-core`, `wicket-extensions`, and `wicket-auth-roles` together to **10.12.0 or later**, **9.25.0**, or **8.20.0**, then redeploy. 9.25.0 and 8.20.0 fix the flaws and get no further release. The PMC says both lines are end of life, so plan a move to Wicket 10 (LTS) or Wicket 11. 7.x gets no fix. Until then, the session-fixation advisory says to renew the session id on every successful authentication. There is no workaround listed for the upload flaws.
 
 Sources: [CVE-2026-84170](https://lists.apache.org/thread.html/bw3hn5cch3q7yrsl05m8mvmgyx4m98y7), [CVE-2026-83594](https://lists.apache.org/thread.html/h5lxspxg746pzjd437n3n7mq5t3sfbcb), [CVE-2026-82840](https://lists.apache.org/thread.html/q812kjb74x2pt6956w0pcmkc4wwj95l9), [detailed guide](details/apache-wicket.md).
 
@@ -1316,7 +1342,8 @@ Sources: [DebugBear, October 29](https://x.com/DebugBear/status/2115866496643535
 | Security incident disclosed | 2026-10-30 01:27 UTC | Database theft not believed and not ruled out. Change reused passwords on other sites. |
 | Expected downtime | 2026-10-30 01:27 UTC | Minimum two weeks, possibly four. A degraded return may be taken down again. |
 | Local software patch | Not applicable | Change reused passwords. AO3 is offline, so the AO3 password itself cannot be changed until it returns. |
-| **Last updated** | **2026-11-01 04:01 EDT (UTC−04:00)** | New item. OTW has not posted a later root cause. |
+| Status update | 2026-11-06 00:00 UTC | Queued notification emails from before the outage were released and are genuine. OTW is working so in-progress drafts are not deleted. The restoration estimate is unchanged. |
+| **Last updated** | **2026-11-05 23:30 EST (UTC−05:00)** | New status update. No change to the password finding. |
 
 List every other account that used the AO3 password. There is no file on a reader's computer that shows whether the hash was copied.
 
@@ -4423,11 +4450,12 @@ Eight intermediate CA private keys were trivially recoverable because of defecti
 | Apple command-line tool gap | 2026-10-29; time/TZ unknown | Apple says macOS curl, git, python3, ruby, perl and openssl use `/etc/ssl/cert.pem` without Apple's block and can still accept the certificates until a future macOS update. |
 | eMudhra Update 7 | 2026-10-30; time/TZ unknown | eMudhra names KPMG as independent external reviewer; no scope detail or completion date. The promised root-cause analysis is not yet published. No change to client remediation. |
 | eMudhra report date | 2026-11-02 15:54:58 UTC | Bugzilla comment 73 says the full incident report needs until 2026-11-09. The public statement is unchanged. No change to client remediation. |
-| **Last updated** | **2026-11-04 20:05 EST (UTC−05:00)** | eMudhra named November 9 for the incident report. |
+| G1 distrust dates | 2026-11-05; time/TZ unknown | eMudhra Update 8. Chrome and Firefox stop trusting `emSign Root CA - G1` certificates issued after November 16. Apple removes G1 on November 30, which ends trust for every G1 certificate. |
+| **Last updated** | **2026-11-05 23:30 EST (UTC−05:00)** | Root programs set the G1 cutoff. |
 
 Inventory client trust stores as well as your server certificates: operating-system stores, browsers, Java truststores, Python/application CA bundles, containers, and embedded clients can update independently. Match certificate fingerprints/serials and affected issuer chains against the incident record; a name containing “emSign” is not a precise affected-certificate test. Inspect Go build versions with `sh stack-inventory.sh go /path/to/deployed-binary` and compare with the fixed branches above. Updating the installed Go compiler does not repair existing binaries. For third-party appliances or opaque applications, obtain the vendor's trust-update status. A successful TLS connection is not proof that fraudulent chains are rejected.
 
-The affected keys comprise **six TLS and two code-signing intermediates**, plus cross-signs. Include certificates affected by resulting root distrust, not just compromised issuers. Firefox Android needs **158.0.2 or later** for the follow-up. **CA revocation is not proof that a client enforces the block**; test the effective verifier. Microsoft reports its out-of-band Windows update removes seven affected certificates and Edge received a Certificate Trust List update, but that does not cover Linux, custom or bundled trust stores. eMudhra's October 28 Update 6 says G1 remains active and Sectigo replacements are available; its promised full root-cause review remains incomplete.
+The affected keys comprise **six TLS and two code-signing intermediates**, plus cross-signs. Include certificates affected by resulting root distrust, not just compromised issuers. Firefox Android needs **158.0.2 or later** for the follow-up. **CA revocation is not proof that a client enforces the block**; test the effective verifier. Microsoft reports its out-of-band Windows update removes seven affected certificates and Edge received a Certificate Trust List update, but that does not cover Linux, custom or bundled trust stores. eMudhra's November 5 Update 8 says Chrome and Firefox stop trusting new `emSign Root CA - G1` certificates after November 16, and Apple removes G1 on November 30. Certificates issued before November 16 stay trusted in Chrome and Firefox. Its promised full root-cause review remains incomplete.
 
 **Remediation:** Update each independently managed trust store and replace certificates chaining through distrusted issuers. Rebuild/redeploy Go binaries with **1.27.3 / 1.26.10 or later supported fixes**; updating only the installed compiler leaves old binaries untouched. Review historical certificate and connection evidence when impersonation is suspected; trust updates cannot undo disclosed credentials or data.
 
@@ -4608,6 +4636,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Kyverno before 1.19.2** | Upgrade to 1.19.2 or later and roll the controllers. A tenant who can create a namespaced policy can otherwise make Kyverno's controllers read or write other namespaces. 1.19.1 is still affected. No 1.18 or 1.17 patch was published. [Guide](details/kyverno.md#remediation). |
 | **YOOtheme Pro 5.0.0 through 5.0.52 (WordPress or Joomla)** | Update to 5.0.53 or later, then look for `wp-content/uploads/yt` plus seven hex characters `.php` and for `wp-content/uploads/ALFA_DATA/`. The update does not delete a webshell already written. [Guide](details/yootheme-pro.md#remediation). |
 | **Sophos UTM used as an SMTP gateway with email scanning** | Update to 9.724 and install the manual RPM in KBA-000049692, then confirm the hash of `/usr/bin/cssd`. 9.724 alone is not the fix. UTM is end of life; Sophos Firewall is the replacement and is not this flaw. [Guide](details/sophos-utm.md#remediation). |
 | **SEPPmail Secure Email Gateway before 15.1.1** | Upgrade to 15.1.1 or later. A remote sender can run a command as root when a replacement rule uses text from the message, and can make Large File Transfer read or delete a file. The vendor changelog swaps the scores on the two GINA flaws; use the CNA scores. [Guide](details/seppmail.md#remediation). |
@@ -4629,7 +4658,7 @@ flowchart TD
 | **Siemens SIMATIC IoT2050 (Advanced, Basic, M.2, or SM) with Node-RED, Industrial OS before V4.3.4-1** | Update to V4.3.4-1 or later. SSA-834709 V1.1 added Basic, M.2, and SM on 2026-11-04. V1.0 wrote the same release as V4.3.4.1 and named only Advanced. Until then, uninstall Node-RED or require `adminAuth` and keep the editor off the internet. VulnCheck recorded honeypot exploit attempts on October 30; that is not a report of a compromised device, and the CVE is not in CISA KEV. [Guide](details/siemens-iot2050.md#remediation). |
 | **BTCPay Server on 2.4.1 or earlier on 1 November** | Take it offline. Sweep hot-wallet funds to a new seed on a trusted device, install the latest release on a new virtual machine, and do not restore the old server onto it. Revoke hosting, SSH, API, and Lightning credentials from a trusted device. A server already on 2.4.2 or later that day is outside the impact BTCPay reports. [Guide](details/btcpay-server.md#remediation). |
 | **Incus server below 7.6.0** | Upgrade to 7.6.0 or later and restart the daemon. Until then, do not expose the HTTPS API to untrusted networks and do not import untrusted images or backups. A [LXD](details/lxd-mtls.md#remediation) snap refresh does not update Incus. [Guide](details/incus.md#remediation). |
-| **Apache Wicket (`wicket-core`, `wicket-extensions`, `wicket-auth-roles`)** | Upgrade the whole line to 10.12.0, 9.25.0, or 8.20.0 or later and redeploy. Eight flaws rated High by Apache, including an upload resource that ignores a configured size limit. Ranges differ by CVE; 7.x gets no fix. [Guide](details/apache-wicket.md#remediation). |
+| **Apache Wicket (`wicket-core`, `wicket-extensions`, `wicket-auth-roles`)** | Upgrade the whole line to 10.12.0 or later, 9.25.0, or 8.20.0 and redeploy. 8.20.0 and 9.25.0 are the last releases of those lines; plan a move to Wicket 10 (LTS) or 11. Eight flaws rated High by Apache. 7.x gets no fix. [Guide](details/apache-wicket.md#remediation). |
 | **Presenton desktop app (Windows, macOS, Linux)** | Upgrade to 0.9.12-beta or later and relaunch. Through 0.9.11-beta the desktop app leaves its local API unauthenticated. Docker and self-hosted installs are not this default. If the old app ran while browsing, revoke stored provider API keys. [Guide](details/presenton.md#remediation). |
 | **Prefab UI (`prefab-ui`) with Generative UI** | Upgrade to 0.21.0 or later and restart. Versions 0.14.0 through 0.20.2 let caller-supplied Python read and write the host when Deno is installed. Until then, do not register `GenerativeUI` for untrusted clients. [Guide](details/prefab-ui.md#remediation). |
 | **Self-hosted Beta9 (beam-cloud) gateway and worker** | Upgrade the worker to 0.1.756 or later and the gateway to 0.1.776 or later, then restart both. A workspace token can otherwise read the worker through an image build, the sandbox file API, or a volume path. [Guide](details/beta9.md#remediation). |

@@ -1,6 +1,6 @@
 # eMudhra / emSign: compromised intermediate CA keys
 
-**Last updated:** 2026-11-04 (America/New_York)
+**Last updated:** 2026-11-05 (America/New_York)
 
 [Back to eMudhra summary](../black-october-2026.md#emudhra--emsign) · [Changelog](../../CHANGELOG.md)
 
@@ -70,6 +70,9 @@ Times below are UTC where specified; release dates without times follow the publ
 | 2026-10-29 (Apple article date) | Apple's updated support article names **curl, git, python3, ruby, perl and openssl** shipped with macOS or the Xcode Command Line Tools as checking `/etc/ssl/cert.pem`. For chains to a root in that file, these tools do not check Apple's block or revocation, so they can still accept the affected certificates until a **future macOS software update** replaces the file. No macOS release with that change appeared on Apple's security releases page when checked on 2026-10-30. [Apple][apple-149555] [Apple security releases][apple-releases] |
 | 2026-10-30; time/TZ not stated | eMudhra Update 7 announces **KPMG** as its independent external reviewer, fulfilling the October 21 commitment that an independent entity would examine the incident. The update gives no scope beyond "bring clarity on the incident" and addressing issues arising from it, and no completion date. The root-cause analysis eMudhra promised through CCADB is a separate deliverable and was not yet published in the statement. This changes no client-side remediation. [eMudhra Update 7][emudhra-update-6] |
 | 2026-11-02 15:54:58 UTC | Bugzilla comment 73. eMudhra says it has appointed KPMG and will need until 2026-11-09 to share the full incident report. The public statement's Update 7 is unchanged and still gives no completion date. This changes no client-side remediation. [Bugzilla comment 73](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449#c73) |
+| 2026-11-05; time/TZ not stated | eMudhra Update 8. Chrome and Firefox set an SCT cutoff of November 16, 2026 for certificates chaining to `emSign Root CA - G1`: certificates issued before that date stay trusted, and later ones do not. Apple will remove G1 on November 30, 2026, after which every G1-chained certificate stops being trusted on Apple platforms. eMudhra says the US customer migration is still in progress. [eMudhra Update 8][emudhra-update-6] |
+| 2026-11-05, resolved 2026-11-06 | Mozilla bug 2089115, RESOLVED FIXED. NSS removes the email (S/MIME) trust bit for `emSign Root CA - G1` and sets the TLS server distrust-after date to 2026-11-16 23:59:59 UTC. Certificates issued on or before the cutoff can still validate. The change is in the NSS source; this is not a Firefox release date. [Bug 2089115][bug-2089115] |
+| 2026-11 (post date not printed) | Chrome Root Program. TLS certificates chaining to `emSign Root CA - G1` whose earliest SCT is after 2026-11-16 23:59:59 UTC will not be trusted by default in Chrome 153 and higher, aimed at the Chrome 158 Stable release on 2026-11-17. Earlier SCTs are unaffected. An enterprise that explicitly trusts the root overrides the cutoff. [CCADB][chrome-g1] |
 
 **Corrections and limits:** The current eMudhra statement now says notification October 17 and revocation October 18; older October 18/19 dates were challenged in Bugzilla comment 35. The precise correction time is not published. Its shorthand “eight TLS” must not replace Mozilla's six-TLS/two-code-signing inventory. The wrap/unwrap explanation remains preliminary, not proof of an HSM hardware defect.
 
@@ -246,7 +249,8 @@ In particular, catching every Java `SSLException` (or Ruby SSL error/.NET authen
 - [Mozilla incident record, including eMudhra and Sectigo responses](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449): exact identities, discovery, revocations, open questions, and separately attributed community findings.
 - [Mozilla security post, including Android correction](https://blog.mozilla.org/security/2026/10/20/protecting-firefox-users-following-the-compromise-of-emudhra-intermediate-certificates/).
 - [Go security announcement](https://groups.google.com/g/golang-announce/c/66pojueaQek) and [Go release history](https://go.dev/doc/devel/release): mitigation scope and release dates.
-- [eMudhra statement, updated October 30 (Update 7: KPMG named as independent external reviewer)](https://emudhra.com/en/post/certificate-security-incident) and [October 22 TLS-business exit announcement](https://emudhra.com/en/press-release/emudhra-to-exit-global-ssl-tls-certificate-business).
+- [eMudhra statement, Update 8 on November 5 (G1 phase-out dates)](https://emudhra.com/en/post/certificate-security-incident) and [October 22 TLS-business exit announcement](https://emudhra.com/en/press-release/emudhra-to-exit-global-ssl-tls-certificate-business).
+- [Mozilla bug 2089115][bug-2089115] — G1 email-trust removal and TLS distrust-after 2026-11-16 23:59:59 UTC, RESOLVED FIXED. [Chrome Root Program CCADB post][chrome-g1] — G1 SCT cutoff of the same instant, aimed at Chrome 158 Stable on 2026-11-17.
 - [Microsoft response](https://www.microsoft.com/en-us/msrc/blog/2026/10/microsoft-response-to-compromised-emudhra-certificate-authority-keys) and [eMudhra Update 6](https://emudhra.com/en/post/certificate-security-incident) — Windows/Edge response and eMudhra's 2026-10-28 replacement/status update.
 - [Google Chrome/Android response](https://blog.google/security/protecting-chrome-and-android-users-from-compromised-emudhra-intermediate-ca-certificates/) and [Apple support guidance](https://support.apple.com/en-us/149555): delivery dates, CT scope, planned Chrome root removal, and Apple's separate command-line bundle gap (Apple article dated 2026-10-29 names curl, git, python3, ruby, perl and openssl). [Apple security releases][apple-releases]: no macOS release delivering the `/etc/ssl/cert.pem` change listed as of 2026-10-30. [curl CA extract](https://curl.se/docs/caextract.html): 2026-10-20 Mozilla-derived bundle.
 - [Cisco cisco-sa-emudhra-info-ScS22A1r][cisco-sa] (Informational, interim, version 1.5, 2026-10-30 21:52 GMT): affected, under-investigation and not-affected Cisco products, remediation links and fix target dates.
@@ -261,3 +265,5 @@ Consequential version and remediation claims above were refreshed against public
 [cisco-sa]: https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-emudhra-info-ScS22A1r
 [apple-149555]: https://support.apple.com/en-us/149555
 [apple-releases]: https://support.apple.com/en-us/100100
+[bug-2089115]: https://bugzilla.mozilla.org/show_bug.cgi?id=2089115
+[chrome-g1]: https://groups.google.com/a/ccadb.org/g/public/c/DU8p98nyQWc/m/R33zS9UIBgAJ

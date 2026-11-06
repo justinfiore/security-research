@@ -1,12 +1,12 @@
 # Apache Wicket: November 2026 upload and script-injection fixes
 
-**Last updated:** 2026-11-01 (America/New_York)
+**Last updated:** 2026-11-05 (America/New_York)
 
 [Main Wicket summary](../black-october-2026.md#apache-wicket-upload-limits-and-script-injection) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-Apache rates eight flaws in the November 1, 2026 release **CVSS 4.0 High**, from 7.2 to 8.3. NVD has not published its own scores. The fixes are **8.20.0, 9.25.0, and 10.12.0**. The affected range is not the same for every CVE. Two upload flaws exist only on 9.14.0+ and 10.x. One script-injection flaw is 8.x only.
+Apache rates eight flaws in the November 1, 2026 release **CVSS 4.0 High**, from 7.2 to 8.3. NVD has not published its own scores. The fixes are **8.20.0, 9.25.0, and 10.12.0**. The Wicket PMC's summary of the same day says 8.20.0 and 9.25.0 are the final releases of the 8.x and 9.x lines, which are now end of life, and asks those users to plan a move to Wicket 10 (LTS) or Wicket 11. That summary counts 19 advisories, not only the nine High issues below. The affected range is not the same for every CVE. Two upload flaws exist only on 9.14.0+ and 10.x. One script-injection flaw is 8.x only.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-02). The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -41,18 +41,19 @@ Apache labels [CVE-2026-84170](https://www.cve.org/CVERecord?id=CVE-2026-84170),
 | Private discovery | Unknown | The advisories credit Emond Papegaaij and Pedro Santos as finders. They do not give a private-report date. |
 | Public advisories | 2026-11-01, from 22:05 UTC | Eight messages on announce@wicket.apache.org. [Upload-limit advisory][cve-84170-mail] |
 | Fixed releases | 2026-11-01; exact tag time not established on the advisory pages | 8.20.0, 9.25.0, and 10.12.0. |
+| 8.x and 9.x end of life | 2026-11-01 21:48 UTC | The PMC's summary says 8.20.0 and 9.25.0 are the last releases of those lines. Plan a move to Wicket 10 (LTS) or 11. [PMC summary][pmc] |
 
 ## Detection
 
 1. Inventory `org.apache.wicket:wicket-core`, `wicket-extensions`, and `wicket-auth-roles` from the build, not from a running page title. A shaded jar can hide the version.
-2. Map the running line to the table above. An application on 10.12.0, 9.25.0, or 8.20.0 is on the fixed release. An application on 7.x or older is out of support; Apache's instruction for the script-injection flaws is to move to a supported line.
+2. Map the running line to the table above. An application on 10.12.0, 9.25.0, or 8.20.0 has the fixes. 8.20.0 and 9.25.0 are also the last releases of those lines. An application on 7.x or older is out of support; Apache's instruction for the script-injection flaws is to move to a supported line.
 3. The upload flaws matter only where the application mounts `FileUploadToResourceField`. The window-name flaw matters only where the application adds `AjaxNewWindowNotifyingBehavior`. The 8.x-only link flaw matters only where `ExternalLink` is bound to a non-anchor tag. Absence of those uses is a deployment fact, not something this guide can see.
 4. Apache did not publish compromise indicators. A vulnerable jar is exposure.
 
 ## Remediation
 
-1. Upgrade every Wicket module on a line together: **10.12.0 or later**, **9.25.0 or later**, or **8.20.0 or later**. Rebuild and redeploy. Do not upgrade `wicket-core` and leave `wicket-extensions` or `wicket-auth-roles` behind.
-2. On 7.x or older, move to one of those lines. There is no 7.x fix.
+1. Upgrade every Wicket module on a line together: **10.12.0 or later**, **9.25.0**, or **8.20.0**. Rebuild and redeploy. Do not upgrade `wicket-core` and leave `wicket-extensions` or `wicket-auth-roles` behind. 9.25.0 and 8.20.0 fix the flaws and get no further release: the PMC says both lines are end of life, so plan a move to Wicket 10 (LTS) or Wicket 11. Wicket 11's version number is not in that post.
+2. On 7.x or older, move to a supported line. There is no 7.x fix.
 3. Until the new build is running, renew the session id from application code on every successful authentication, at the end of `authenticate(String, String)`. Use the call named in the [advisory][cve-82840-mail]; the public copy of that page drops the method name. The advisories give no workaround for the upload or script-injection flaws.
 4. Do not probe a production app with oversized uploads or quote-bearing component ids.
 
@@ -77,7 +78,8 @@ If an untrusted client could reach `FileUploadToResourceField` on an affected bu
 - [CVE-2026-83559 advisory][cve-83559-mail] — escapeQuotes, 7.4.
 - [CVE-2026-83539 advisory][cve-83539-mail] — SmartLinkLabel, 7.4, CSP note for 9.x and 10.x.
 - [CVE-2026-82840 advisory][cve-82840-mail] — session id renewed only on first sign-in, 7.2, narrow ranges.
-- [CISA KEV JSON feed][kev] — catalog 2026.10.30 status.
+- [Wicket PMC summary, oss-security, 2026-11-01 21:48 UTC][pmc] — 19 advisories that day. 8.20.0 and 9.25.0 are the final 8.x and 9.x releases. Move to Wicket 10 (LTS) or Wicket 11.
+- [CISA KEV JSON feed][kev] — catalog 2026.11.04, checked 2026-11-05. None of these CVEs is listed.
 
 [cve-84170-mail]: https://lists.apache.org/thread.html/bw3hn5cch3q7yrsl05m8mvmgyx4m98y7
 [cve-83594-mail]: https://lists.apache.org/thread.html/h5lxspxg746pzjd437n3n7mq5t3sfbcb
@@ -88,4 +90,5 @@ If an untrusted client could reach `FileUploadToResourceField` on an affected bu
 [cve-83559-mail]: https://lists.apache.org/thread.html/77kc85ztkxdpp7wg7cv61c4539j9s1g3
 [cve-83539-mail]: https://lists.apache.org/thread.html/xqdymd8g178sc112lmqbp53zlss53cwz
 [cve-82840-mail]: https://lists.apache.org/thread.html/q812kjb74x2pt6956w0pcmkc4wwj95l9
+[pmc]: https://openwall.com/lists/oss-security/2026/11/01/4
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
