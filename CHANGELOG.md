@@ -4,6 +4,10 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-06 12:15 EST (UTC−05:00) — OpenSSH
+
+- **OpenSSH:** The [upgrade](black-october/details/openssh-musl.md#remediation) is still 10.6p2, or Alpine's backport, and a restart of `sshd`. Previdian says a honeypot running Alpine and OpenSSH accepted a root login on November 6, less than nine hours after [CVE-2026-123158](https://www.cve.org/CVERecord?id=CVE-2026-123158) was published. The commands were `id`, `uname`, and `hostname`. Previdian's public page counts 4 attempts and says an attempt is not a successful login; the interview says 8 attempts from `89.116.89.18`. That is a honeypot, not a customer system, and it is not in KEV. If the SSH port was reachable, look for `Accepted password for` on an account that has no password. The upgrade does not remove a key that login already wrote.
+
 ## 2026-11-06 08:30 EST (UTC−05:00) — Kubeflow Pipelines; Windows Paint; Delinea; Kyverno; Northflank; BTCPay Server
 
 - **Kubeflow Pipelines:** Upgrade the API server to [2.18.0 or later](black-october/details/kubeflow-pipelines.md#remediation). GitHub rates [CVE-2026-77596](https://www.cve.org/CVERecord?id=CVE-2026-77596) CVSS 3.1 9.6 Critical: before 2.18.0, a multi-user pipeline upload with no namespace skips the permission check. A tenant can replace a shared pipeline, and an unpinned recurring run can execute that version in another tenant's namespace. The fix shipped on October 28. The CVE record is November 5. Until you upgrade, `REQUIRE_NAMESPACE_FOR_PIPELINES=true` rejects that upload, and it also rejects shared pipelines you still use. The upgrade does not delete a version already uploaded. It is not in KEV.

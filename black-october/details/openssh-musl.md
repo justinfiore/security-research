@@ -1,6 +1,6 @@
 # OpenSSH: password login on musl accepts any long password
 
-**Last updated:** 2026-11-05 (America/New_York)
+**Last updated:** 2026-11-06 (America/New_York)
 
 [Back to OpenSSH summary](../black-october-2026.md#openssh-password-login-on-musl-accepts-any-long-password) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@ Vulnerability Info Site: [sshhole.com](https://sshhole.com/)
 
 OpenSSH calls the workaround in 10.6p2 a **critical** security fix. **MITRE rates [CVE-2026-123158](https://www.cve.org/CVERecord?id=CVE-2026-123158) CVSS 3.1 8.1 High** (`AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`), published 2026-11-05 15:46:26 UTC. OpenSSH's release notes and Alpine's advisory still say no CVE was assigned. On Linux built with musl, when sshd checks passwords itself instead of through PAM, an account whose password field is `*` accepts any password of 257 to 1024 bytes. The attacker needs the account name, a reachable SSH port, and at least one other local account with a `$5$` or `$6$` password hash. Alpine's `openssh-server` package is built without PAM, and password logins are on by default. glibc Linux, OpenBSD, and Dropbear are not affected. The record says the password is "between 256 and 1024 characters" and that every version before 10.6p2 is affected. OpenSSH and Alpine say 257 to 1024 bytes, and the Alpine backports fix older version numbers.
 
-**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). OpenSSH and The Hacker News report no attacks using the flaw. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Previdian reports honeypot logins, not a compromised customer system. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -30,7 +30,8 @@ OpenSSH calls the workaround in 10.6p2 a **critical** security fix. **MITRE rate
 | OpenWrt package | 2026-11-05 14:26 UTC | [openwrt/packages#31158][openwrt] merged into the 25.12 branch: `openssh` 10.6_p2. OpenWrt's default SSH server is Dropbear, which is not affected. |
 | CVE record | 2026-11-05 15:46:26 UTC | MITRE, [CVE-2026-123158][cve], CVSS 3.1 8.1. Updated 17:18:17 UTC the same day. OpenSSH's notes still do not name it. |
 | CISA ADP | 2026-11-06 04:56:35 UTC | SSVC Exploitation `poc`. That is a proof-of-concept label, not a report of attacks and not a KEV listing. The description, the score, and the range are unchanged. |
-| **Last updated** | **2026-11-05 (America/New_York)** | CVE assigned. The fix is unchanged. |
+| Honeypot logins | 2026-11-06; clock time not on the page | Previdian. First attempt less than nine hours after the CVE record. Not a KEV listing. [Help Net Security][hns] [Previdian][prev] |
+| **Last updated** | **2026-11-06 (America/New_York)** | Honeypot logins reported. The fix is unchanged. |
 
 ## Detection
 
@@ -78,6 +79,7 @@ The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems t
 - Alpine says to look in `/var/log/messages` for sshd lines reading `Accepted password for` an account that has no password (`alpine`, `root`, or a key-only user). Review `doas` use and accounts, authorized keys, and files you cannot account for.
 - If that line is present, or you cannot rule a login out, treat the machine as compromised. The upgrade does not remove a key an attacker wrote.
 - On a tiny-cloud image, a login as `alpine` can become root through passwordless `doas`. Replacing the image is the clean outcome when that login cannot be ruled out.
+- Previdian says one honeypot running Alpine and OpenSSH accepted a login and then ran `id`, `uname`, and `hostname` in a non-interactive session. That is a honeypot, not a customer system. The source address Help Net Security and The Hacker News quote is `89.116.89.18`. Previdian's public page does not print that address, and its counts do not match the interview: the page says 4 attempts from 3 addresses, while the interview says 8 attempts from that one address. A log line from that address is a lead. It is not, by itself, this flaw.
 
 ## Sources
 
@@ -89,8 +91,11 @@ The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems t
 - [Rich Felker, musl list][musl] — 2026-11-05 10:07 EST. OpenSSH before 10.6p2 on musl, `UsePAM=no` and `PasswordAuthentication=yes`. Dropbear is not affected. He does not treat it as a musl bug.
 - [openwrt/packages#31158][openwrt] — merged 2026-11-05 into the 25.12 branch. `openssh` 10.6_p2. This is the optional OpenSSH package, not Dropbear.
 - [The Hacker News][thn] — 2026-11-05. Reports that no attacks using the flaw have been reported, and that no CVE had been assigned that day. MITRE published the CVE later the same day.
+- [Help Net Security][hns] — 2026-11-06. Ryan Dewhurst of Previdian: the first attempt arrived less than nine hours after the CVE record, and a honeypot running Alpine and OpenSSH accepted a login as root. Eight attempts, all from `89.116.89.18`. The commands were `id`, `uname`, and `hostname`.
+- [The Hacker News, exploitation][thn2] — 2026-11-06. The same Dewhurst statement. It is not a CISA KEV listing.
+- [Previdian CVE-2026-123158][prev] — read 2026-11-06. The public page says 4 attempts, 3 addresses, and 1 sensor, first and last observed 2026-11-06, and that an attempt on the page is not a successful login. It does not print the source address. That count disagrees with the interview. Not in CISA KEV.
 - [CVE-2026-123158][cve] — MITRE, published 2026-11-05 15:46:26 UTC. CVSS 3.1 8.1 High. Affected from 0 before 10.6p2 on Linux. The description says 256 to 1024 characters; OpenSSH and Alpine say 257 to 1024 bytes.
-- [CISA KEV JSON feed][kev] — not listed (catalog 2026.11.04, checked 2026-11-05).
+- [CISA KEV JSON feed][kev] — not listed (catalog 2026.11.04, checked 2026-11-06).
 
 [rel]: https://www.openssh.com/txt/release-10.6p2
 [miller]: https://hachyderm.io/@damienmiller/117563026759098135
@@ -100,5 +105,8 @@ The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems t
 [musl]: https://www.openwall.com/lists/musl/2026/11/05/4
 [openwrt]: https://github.com/openwrt/packages/pull/31158
 [thn]: https://thehackernews.com/2026/11/openssh-issues-emergency-fix-for-flaw.html
+[thn2]: https://thehackernews.com/2026/11/hackers-exploited-openssh-sshole-flaw.html
+[hns]: https://www.helpnetsecurity.com/2026/11/06/openssh-sshole-cve-2026-123158-exploitation
+[prev]: https://previdian.com/CVE-2026-123158
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-123158
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
