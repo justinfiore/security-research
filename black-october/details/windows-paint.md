@@ -4,7 +4,7 @@
 
 [Back to Paint summary](../black-october-2026.md#windows-paint-remote-code-execution) · [Changelog](../../CHANGELOG.md)
 
-**Microsoft (CNA) rates [CVE-2026-83844](https://www.cve.org/CVERecord?id=CVE-2026-83844) CVSS 3.1 8.1 High and Important.** The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C`. The temporal score is 7.1, because Microsoft rates exploit code unproven and an official fix available. NVD has not scored it. An out-of-bounds read (CWE-125) in Windows Paint lets an unauthorized attacker execute code over a network. Microsoft's FAQ says the attacker sends a specially crafted packet to an affected service, and that no authentication and no user interaction are required. Attack complexity is High: Microsoft says a successful attack is not guaranteed and needs a deep understanding of the system, and that it depends on the environment and on other security measures. Paint 11.0.0.0 before 11.2605.91.0 is affected. This is the Microsoft Store app. It is not the [.NET Framework](dotnet-framework.md) App Control bypass and not the [Windows Shell](windows-shell.md) Mark of the Web bypass.
+**Microsoft (CNA) rates [CVE-2026-83844](https://www.cve.org/CVERecord?id=CVE-2026-83844) CVSS 3.1 8.1 High and Important.** The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C`. The temporal score is 7.1, because Microsoft rates exploit code unproven and an official fix available. NVD has not scored it. An out-of-bounds read (CWE-125) in Windows Paint lets an unauthorized attacker execute code over a network. Microsoft's FAQ says the attacker sends a specially crafted packet to an affected service, and that no authentication and no user interaction are required. Attack complexity is High: Microsoft says a successful attack is not guaranteed and needs a deep understanding of the system, and that it depends on the environment and on other security measures. The CVE record says Paint 11.0.0.0 before 11.2605.91.0 is affected. Microsoft's current Security Update Guide product row and its CSAF file say the affected range is below **11.2609.401.0**, and that 11.2609.401.0 is the vendor fix. The CSAF is still version 1, dated 2026-10-13, with no revision note for the new build. This is the Microsoft Store app. It is not the [.NET Framework](dotnet-framework.md) App Control bypass and not the [Windows Shell](windows-shell.md) Mark of the Web bypass.
 
 **CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Microsoft says the flaw was not publicly disclosed and not exploited, and rates exploitation less likely. CISA-ADP records Exploitation none, Automatable no, and Technical Impact total. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -23,7 +23,8 @@
 |---|---|---|
 | CVE reserved | 2026-08-31 23:09:05 UTC | Microsoft. Not a public disclosure date. |
 | Public announcement and fix | 2026-10-13 14:00 UTC | MSRC entry version 1.0. The CVE record's `datePublic` is the same instant. The record was published at 18:59:53 UTC the same day. |
-| Fixed Paint | 2026-10-13; time/TZ unknown | 11.2605.91.0. The record's range is 11.0.0.0 before that build. |
+| Fixed Paint, CVE record | 2026-10-13; time/TZ unknown | 11.2605.91.0. The record's range is 11.0.0.0 before that build. The record was last updated 2026-10-31 and still says this. |
+| Fixed Paint, Security Update Guide | Date of the build change not stated | The product row and the CSAF now say affected is below 11.2609.401.0, and the fix is 11.2609.401.0. The CSAF revision history is still only version 1 on 2026-10-13. [CSAF][csaf] |
 | CISA-ADP | 2026-10-13 20:24:59 UTC | Exploitation none. Automatable no. Technical Impact total. |
 | Record updated | 2026-10-31 18:03:23 UTC | Microsoft CNA. The description and the fixed version are unchanged. |
 | **Last updated** | **2026-11-06 (America/New_York)** | New item. |
@@ -36,31 +37,33 @@
    Get-AppxPackage -Name Microsoft.Paint | Select-Object Name, Version
    ```
 
-   Affected is version **11.0.0.0 up to but not including 11.2605.91.0**. A machine with no `Microsoft.Paint` package is outside this flaw. A version string that does not start with `11.` is not in the range the CVE record names; record it as unknown rather than safe.
+   The CVE record says affected is **11.0.0.0 up to but not including 11.2605.91.0**. Microsoft's current product row says affected is **below 11.2609.401.0**. Treat anything below 11.2609.401.0 as still affected. A machine with no `Microsoft.Paint` package is outside this flaw. A version string that does not start with `11.` is not in the range either source names; record it as unknown rather than safe.
 2. Microsoft describes the attack as a crafted packet to an affected service, with no user opening a file. The advisory does not name the port, the protocol, or a log line. Absence of a crash in the Paint process is not evidence the packet was not sent.
 3. This check does not cover the October cumulative update or the .NET Framework update. Those are different flaws.
 
 ## Remediation
 
-1. Update Microsoft Paint to **11.2605.91.0 or later** through the Microsoft Store. MSRC lists one product row, Microsoft Paint, with no Windows build number and no knowledge-base article. Installing the October cumulative update is not this fix.
+1. Update Microsoft Paint to **11.2609.401.0 or later** through the Microsoft Store. Microsoft's current product row names that build as the fix. The CVE record still says 11.2605.91.0, which is lower, so a machine on 11.2605.91.0 is inside the range the product row now calls affected. MSRC lists one product row, Microsoft Paint, with no Windows build number and no knowledge-base article. Installing the October cumulative update is not this fix.
 2. Microsoft publishes no workaround. Uninstalling Paint removes the package; that is a removal, not the patch, and a later Store install can bring an old build back if the Store is not current.
 3. The update does not show whether a packet already executed code.
 
 ## Verification
 
-- `Get-AppxPackage -Name Microsoft.Paint` reports **11.2605.91.0 or later** for the user who runs Paint. Check each Windows profile that has its own Store apps. A version reported for one user does not prove another user's package.
+- `Get-AppxPackage -Name Microsoft.Paint` reports **11.2609.401.0 or later** for the user who runs Paint. Check each Windows profile that has its own Store apps. A version reported for one user does not prove another user's package. 11.2605.91.0 matches the CVE record and not the current product row.
 - A host with the package absent stays absent after the check. Do not install Paint in order to patch it.
 
 ## Compromise response
 
-Microsoft says the flaw has not been exploited and that no public exploit code exists. If a host shows code execution you cannot account for and Paint was below 11.2605.91.0, treat that as a lead, not as proof this CVE was used. Preserve the process list and network connections from a clean system, then update Paint. The update does not remove a payload that already ran.
+Microsoft says the flaw has not been exploited and that no public exploit code exists. If a host shows code execution you cannot account for and Paint was below 11.2609.401.0, treat that as a lead, not as proof this CVE was used. Preserve the process list and network connections from a clean system, then update Paint. The update does not remove a payload that already ran.
 
 ## Sources
 
 - [MSRC CVE-2026-83844][msrc] — released 2026-10-13, revision 1.0 the same day. Important, CVSS 3.1 base 8.1, temporal 7.1. CWE-125. Not publicly disclosed, not exploited, exploitation less likely. The FAQ says a crafted packet, no authentication, and no user interaction, and that attack complexity is high.
 - [CVE-2026-83844][cve] — Microsoft CNA. Published 2026-10-13 18:59:53 UTC, `datePublic` 2026-10-13 14:00 UTC, updated 2026-10-31. Affected from 11.0.0.0 before 11.2605.91.0. CISA-ADP on 2026-10-13 20:24:59 UTC: Exploitation none.
+- [CSAF for CVE-2026-83844][csaf] — product tree says affected is below 11.2609.401.0 and the vendor fix is 11.2609.401.0. Document tracking is still version 1, current release date 2026-10-13. Read 2026-11-06.
 - [CISA KEV JSON feed][kev] — not listed (catalog 2026.11.04, checked 2026-11-06).
 
 [msrc]: https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-83844
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-83844
+[csaf]: https://msrc.microsoft.com/csaf/advisories/2026/msrc_cve-2026-83844.json
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

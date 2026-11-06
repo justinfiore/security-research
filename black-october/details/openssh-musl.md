@@ -29,6 +29,7 @@ OpenSSH calls the workaround in 10.6p2 a **critical** security fix. **MITRE rate
 | musl advisory | 2026-11-05 10:07 EST (UTC−05:00) | Rich Felker: OpenSSH before 10.6p2 on musl, with `UsePAM=no` and `PasswordAuthentication=yes`. |
 | OpenWrt package | 2026-11-05 14:26 UTC | [openwrt/packages#31158][openwrt] merged into the 25.12 branch: `openssh` 10.6_p2. OpenWrt's default SSH server is Dropbear, which is not affected. |
 | CVE record | 2026-11-05 15:46:26 UTC | MITRE, [CVE-2026-123158][cve], CVSS 3.1 8.1. Updated 17:18:17 UTC the same day. OpenSSH's notes still do not name it. |
+| CISA ADP | 2026-11-06 04:56:35 UTC | SSVC Exploitation `poc`. That is a proof-of-concept label, not a report of attacks and not a KEV listing. The description, the score, and the range are unchanged. |
 | **Last updated** | **2026-11-05 (America/New_York)** | CVE assigned. The fix is unchanged. |
 
 ## Detection

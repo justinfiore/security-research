@@ -1,6 +1,6 @@
 # Kyverno: a namespace tenant can change the cluster
 
-**Last updated:** 2026-11-05 (America/New_York)
+**Last updated:** 2026-11-06 (America/New_York)
 
 [Back to Kyverno summary](../black-october-2026.md#kyverno-a-namespace-tenant-can-change-the-cluster) · [Changelog](../../CHANGELOG.md)
 
@@ -34,7 +34,26 @@ A tenant who can create a namespaced Kyverno policy can make Kyverno's own contr
 
 The CNA's lower bound and the GitHub advisory's lower bound do not always match. [GHSA-jcw5-3wcg-fqx5][ghsa-jcw5] says the confirmed lower bound is 1.18.0 and that reachability on 1.17.x was not proven. The CVE record says 1.17.0. [GHSA-4pqm-wqq6-h9q2][ghsa-4pqm] says through 1.19.0; the CVE record says before 1.19.2. Trust the wider range for patching: 1.19.2 is the only patched release the vendor names.
 
-The same 1.19.2 release fixes 17 more advisories the vendor rates High or Critical. Those have no CVE records yet. The release notes list them. [Release][rel]
+The same 1.19.2 release fixes more advisories. VulnCheck published fourteen more CVE records for them on 2026-11-05, all High on CVSS 4.0. GitHub's pages for the same fixes still say no CVE is known. The fix is still only 1.19.2. No 1.17 or 1.18 patch was published. [Release][rel]
+
+| CVE | VulnCheck score | Affected | What it takes |
+|---|---|---|---|
+| [CVE-2026-122305](https://www.cve.org/CVERecord?id=CVE-2026-122305) | CVSS 4.0 8.3, CVSS 3.1 7.7, both High | before 1.19.2 | A self-referential variable substitution hangs the admission webhook. |
+| [CVE-2026-122306](https://www.cve.org/CVERecord?id=CVE-2026-122306) | CVSS 4.0 8.3, CVSS 3.1 7.7, both High | before 1.19.2 | A namespaced policy author submits a wildcard that burns admission-controller CPU. |
+| [CVE-2026-122307](https://www.cve.org/CVERecord?id=CVE-2026-122307) | CVSS 4.0 8.3, CVSS 3.1 7.7, both High | before 1.19.2 | The admission-policy generator folds a PolicyException into a generated policy and the check is skipped. |
+| [CVE-2026-122308](https://www.cve.org/CVERecord?id=CVE-2026-122308) | CVSS 4.0 8.4, CVSS 3.1 8.5, both High | before 1.19.2 | A user who can create or update a resource triggers a generate policy and spoofs a label. |
+| [CVE-2026-122309](https://www.cve.org/CVERecord?id=CVE-2026-122309) | CVSS 4.0 8.2 High, CVSS 3.1 6.2 Medium | before 1.19.2 | A namespaced CEL policy is evaluated with no cost limit. |
+| [CVE-2026-122312](https://www.cve.org/CVERecord?id=CVE-2026-122312) | CVSS 4.0 8.3, CVSS 3.1 7.7, both High | 1.19.1 before 1.19.2 | An APICall path hides `..` behind `?`. 1.19.1 only. |
+| [CVE-2026-122314](https://www.cve.org/CVERecord?id=CVE-2026-122314) | CVSS 4.0 8.7, CVSS 3.1 7.5, both High | before 1.19.2 | A shallow variable substitution panics the policy engine. |
+| [CVE-2026-122315](https://www.cve.org/CVERecord?id=CVE-2026-122315) | CVSS 4.0 8.7, CVSS 3.1 7.5, both High | before 1.19.2 | A crafted image attestation panics the policy engine. The record says no authentication. |
+| [CVE-2026-122316](https://www.cve.org/CVERecord?id=CVE-2026-122316) | CVSS 4.0 8.4, CVSS 3.1 8.5, both High | 1.17.0 before 1.19.2 | A namespaced mutate-existing rule writes outside its namespace. |
+| [CVE-2026-122318](https://www.cve.org/CVERecord?id=CVE-2026-122318) | CVSS 4.0 7.2, CVSS 3.1 7.7, both High | before 1.19.2 | verifyImages skips the subject check when the signing certificate has no Subject Alternative Name. |
+| [CVE-2026-122319](https://www.cve.org/CVERecord?id=CVE-2026-122319) | CVSS 4.0 8.7, CVSS 3.1 7.5, both High | before 1.19.2 | An In or NotIn operator panics the policy engine. |
+| [CVE-2026-122320](https://www.cve.org/CVERecord?id=CVE-2026-122320) | CVSS 4.0 8.3, CVSS 3.1 7.7, both High | before 1.19.2 | A namespaced generate.clone reads a resource in another namespace. |
+| [CVE-2026-122322](https://www.cve.org/CVERecord?id=CVE-2026-122322) | CVSS 4.0 8.7, CVSS 3.1 7.5, both High | 1.11.0 before 1.19.2 | A compressed Notary attestation expands without a limit. |
+| [CVE-2026-122323](https://www.cve.org/CVERecord?id=CVE-2026-122323) | CVSS 4.0 8.7, CVSS 3.1 7.5, both High | 1.11.0 before 1.19.2 | A compressed Notary signature expands without a limit. |
+
+CVE-2026-122317 is not a Kyverno record. The seven Critical records above this table are unchanged. NVD has not scored any of these.
 
 ## Timeline
 

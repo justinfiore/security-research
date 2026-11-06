@@ -1,6 +1,6 @@
 # Northflank: environment variables treated as decrypted
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-06 (America/New_York)
 
 [Back to Northflank summary](../black-october-2026.md#northflank-environment-secret-exposure) · [Changelog](../../CHANGELOG.md)
 
@@ -19,10 +19,11 @@ Northflank told every customer to assume environment variables stored on the pla
 
 ## Timeline
 
-Times below are UTC, taken from Northflank's status page. The page does not say when unauthorized access began, only when Northflank started responding.
+Times below are UTC, taken from Northflank's status page. On November 6 Northflank named the first known decryption. It still has not said how the decryption was done.
 
 | Date | Event and evidence |
 | --- | --- |
+| 2026-10-30 02:39–03:08 | First known decryption of secrets, named in the November 6 update. [Status][status] |
 | 2026-10-30 11:43 | Wiz sent a threat alert. Northflank engineers reviewed it at 11:44. [Status][status] |
 | 2026-10-30 12:02; 12:50; 13:05 | Northflank deployed an initial network-policy patch, then additional patches. At 13:00 it requested Wiz CIRT support. These are containment steps, not a published root cause. [Status][status] |
 | 2026-10-30 13:40 | Public status incident opened: "Rotate environment variables immediately." [Status][status] |
@@ -34,16 +35,17 @@ Times below are UTC, taken from Northflank's status page. The page does not say 
 | 2026-10-31 13:34 | Secret rotation for MySQL and Redis enabled for all customers. Northflank again said to rotate all secrets that had not been rotated. [Status][status] |
 | 2026-10-31 22:32 | Secret rotation for Minio addons enabled for all customers. The incident remained Identified. [Status][status] |
 | 2026-10-31 23:31 | Secret rotation for RabbitMQ addons enabled for all customers. Northflank again said to rotate all secrets that had not been rotated. The incident remained Identified. [Status][status] |
+| 2026-11-06 10:09 | Northflank says the first known decryption was 02:39–03:08 UTC on October 30, that the exploit was patched within 60 minutes of the 11:43 alert, and that customers were notified within two hours. Workloads and workload data still show no access. No root cause. [Status][status] |
 | 2026-11-02 11:09 | Status moved to Monitoring. Northflank says the attack vector was contained within an hour of the first alert and that its investigation shows no sign the attacker remained after the attack. Running workloads were unaffected, and it has seen no sign that workload data was accessed. Customers on forward-deployed or dedicated control planes are unaffected. It still says to rotate every secret, and it has not published a root cause. Independent forensic auditors were still reviewing it. Separately, Northflank says it patched CVE-2026-98432 across its fleet, including BYOC clusters it still manages; a BYOC cluster no longer connected to Northflank is the customer's to patch. [Status][status] |
 | 2026-10-30 | Wiz listed Northflank as the ninth AI developer platform to disclose an incident in October, alongside Railway and others. Wiz says the incidents share a pattern of hunting stored environment variables for AI access, and that there is no single vulnerability linking them. [Wiz][wiz] |
 
-**Evidence limits:** Northflank has not said how variables were decrypted, whether every shared-control-plane customer was affected, or how long exposure lasted. On 2026-11-02 it said forward-deployed and dedicated control planes were unaffected, and that it patched CVE-2026-98432 on BYOC clusters it still manages. That kernel patch is separate from the secret exposure. "Assume decrypted" is the vendor's instruction, not a published per-customer finding. Wiz's IP table is for testing stolen keys and resale; Wiz says it does not have evidence that those addresses carried out the platform compromises themselves.
+**Evidence limits:** Northflank has not said how variables were decrypted or whether every shared-control-plane customer was affected. The November 6 update gives the first known decryption as a window, not a duration of access. On 2026-11-02 it said forward-deployed and dedicated control planes were unaffected, and that it patched CVE-2026-98432 on BYOC clusters it still manages. That kernel patch is separate from the secret exposure. "Assume decrypted" is the vendor's instruction, not a published per-customer finding. Wiz's IP table is for testing stolen keys and resale; Wiz says it does not have evidence that those addresses carried out the platform compromises themselves.
 
 ## Detection
 
 1. From a clean browser session, list every Northflank project, service, addon, secret group and global secret. Include preview environments and secrets reused outside Northflank. Record **names and nonsecret identifiers** only. Do not export or print values.
 2. Treat any still-valid secret that was stored on Northflank on or before 2026-10-30 13:40 UTC as in scope. If you cannot tell whether a secret was present then, include it.
-3. Review AI-provider usage and billing from at least 2026-10-30 11:43 UTC until each key is revoked. Unexpected inference spend is what Northflank's users reported. Absence of a billing spike does not prove a key was not read.
+3. Review AI-provider usage and billing from at least **2026-10-30 02:39 UTC** until each key is revoked. Northflank's November 6 update says the first known decryption was 02:39–03:08 UTC, about nine hours before the 11:43 alert. Unexpected inference spend is what Northflank's users reported. Absence of a billing spike does not prove a key was not read.
 4. Wiz published addresses used to **test** stolen keys (not proven to be the Northflank intrusion itself): `23.106.46.239`, `38.246.114.118`, `104.243.32.50` and `31.57.201.201`. Search provider logs for those, and for the hosting pools Wiz names (PEG TECH, Alibaba US, Scloud, Sharktech, Level 3). A match is a lead, not proof this incident used that address.
 5. Northflank enabled audit logs for every customer at 2026-10-31 01:04 UTC. Logs from before that time may not exist. A gap is **unknown**, not clean. There is no local package check that can rule this out.
 

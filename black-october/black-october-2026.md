@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Kubeflow Pipelines: shared upload skips authorization](#kubeflow-pipelines-shared-upload-skips-authorization)
 - [Kyverno: a namespace tenant can change the cluster](#kyverno-a-namespace-tenant-can-change-the-cluster)
 - [YOOtheme Pro: unauthenticated file write through the image handler](#yootheme-pro-unauthenticated-file-write-through-the-image-handler)
 - [Sophos UTM: unauthenticated root command through the email proxy](#sophos-utm-unauthenticated-root-command-through-the-email-proxy)
@@ -170,8 +171,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
-- **New this update:** Update [Windows Paint](#windows-paint-remote-code-execution) to **11.2605.91.0 or later** through the Microsoft Store. Microsoft rates [CVE-2026-83844](https://www.cve.org/CVERecord?id=CVE-2026-83844) CVSS 3.1 8.1 High and Important: an unauthenticated attacker can execute code by sending a crafted packet, with no user interaction. Paint 11.0.0.0 before 11.2605.91.0 is affected. Microsoft says exploitation is less likely and that it has not been exploited. It is not in KEV.
-- **New this update:** Upgrade [Kyverno](#kyverno-a-namespace-tenant-can-change-the-cluster) to **1.19.2 or later**. VulnCheck rates seven flaws Critical, published November 5: a tenant who can create a namespaced policy can make Kyverno's own controllers read or write other namespaces, and one flaw lets a moved image tag pass a signature check. 1.19.1 is still affected. No 1.18 or 1.17 patch was published. None is in KEV.
+- **New this update:** Upgrade [Kubeflow Pipelines](#kubeflow-pipelines-shared-upload-skips-authorization) to **2.18.0 or later**. GitHub rates [CVE-2026-77596](https://www.cve.org/CVERecord?id=CVE-2026-77596) CVSS 3.1 9.6 Critical: in a multi-user install, a pipeline upload with no namespace skips the permission check, so a tenant can replace a shared pipeline. An unpinned recurring run can then execute that version in another tenant's namespace. The fix shipped on October 28. The CVE record is November 5. Setting `REQUIRE_NAMESPACE_FOR_PIPELINES=true` rejects the empty namespace until you upgrade, and it also blocks shared pipelines you still use. The upgrade does not delete a version already uploaded. It is not in KEV.
+- **New this update:** Update [Windows Paint](#windows-paint-remote-code-execution) to **11.2609.401.0 or later** through the Microsoft Store. Microsoft rates [CVE-2026-83844](https://www.cve.org/CVERecord?id=CVE-2026-83844) CVSS 3.1 8.1 High and Important: an unauthenticated attacker can execute code by sending a crafted packet, with no user interaction. The CVE record still says 11.2605.91.0. Microsoft's current product row says the fix is 11.2609.401.0. Microsoft says exploitation is less likely and that it has not been exploited. It is not in KEV.
+- **New this update:** Upgrade [Kyverno](#kyverno-a-namespace-tenant-can-change-the-cluster) to **1.19.2 or later**. VulnCheck rates seven flaws Critical, published November 5: a tenant who can create a namespaced policy can make Kyverno's own controllers read or write other namespaces, and one flaw lets a moved image tag pass a signature check. The same release also fixes fourteen more flaws VulnCheck rates High, published the same day. 1.19.1 is still affected. No 1.18 or 1.17 patch was published. None is in KEV.
 - **New this update:** Update [YOOtheme Pro](#yootheme-pro-unauthenticated-file-write-through-the-image-handler) to **5.0.53 or later** on WordPress and Joomla. The Joomla! Project rates [CVE-2026-102785](https://www.cve.org/CVERecord?id=CVE-2026-102785) CVSS 4.0 10.0 Critical: before 5.0.53, anyone who can see a signed image URL can reuse that signature and write a PHP file. Wordfence scores the WordPress theme 9.8. Unit 42 says webshells were written two days after the October 21 patch. Updating does not delete a file already written. It is not in KEV.
 - **New this update:** On [Sophos UTM](#sophos-utm-unauthenticated-root-command-through-the-email-proxy), install the manual RPM from KBA-000049692, or move off the product. Sophos rates [CVE-2026-118633](https://www.cve.org/CVERecord?id=CVE-2026-118633) CVSS 4.0 9.2 Critical: with email scanning on, a remote sender can run a command as root after repeating the attempt for a few minutes. UTM is end of life. Version 9.724 without that RPM is still affected. Sophos Firewall is not this flaw. It is not in KEV.
 - **New this update:** Upgrade [SEPPmail](#seppmail-unauthenticated-command-execution-and-file-deletion) Secure Email Gateway to **15.1.1 or later**. NCSC.ch rates two flaws CVSS 4.0 9.2 Critical: before 15.1.1, a remote sender can run a command as root through an address-replacement rule, and can make Large File Transfer read or delete a file. The same release fixes an 8.7 upload exhaustion flaw and an 8.3 GINA account takeover. The vendor's revision history swaps the scores on the two GINA CVEs. None is in KEV.
@@ -203,7 +205,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade [Grafana Mimir](#grafana-mimir-alertmanager-configuration-reads-local-files) to **3.1.7 or 3.2.2 or later**, and Grafana Enterprise Metrics to **2.17.20 or later**. Grafana rates [CVE-2026-81938](https://www.cve.org/CVERecord?id=CVE-2026-81938) 7.7 High: a tenant who can upload Alertmanager configuration can read a file the process can read. GEM 2.11 through 2.16 have no fix. It is not in KEV.
 - **New this update:** Upgrade [Rancher](#rancher-fleet-gives-an-ordinary-user-cluster-admin) to **2.15.3, 2.14.7, 2.13.11, 2.12.15, or 2.11.19**. SUSE rates [CVE-2026-94290](https://www.cve.org/CVERecord?id=CVE-2026-94290) 9.1 Critical: a default user can point Fleet at the management cluster's admin kubeconfig and gain cluster-admin. The same releases stop the meta proxy from sending the caller's Rancher credential to a cloud provider. Fleet is on by default. Neither CVE is in KEV.
 - **New this update:** Update the [BookIt](#bookit-unauthenticated-sql-injection-on-the-public-booking-endpoint) WordPress plugin to **2.6.0.7 or later**. Patchstack rates [CVE-2026-62048](https://www.cve.org/CVERecord?id=CVE-2026-62048) 9.3 Critical: through 2.6.0.6, the public booking endpoint accepts an unauthenticated SQL injection. The vendor changelog does not name the query. It is not in KEV.
-- **New this update:** If a [BTCPay Server](#btcpay-server-hot-wallet-thefts-on-241-and-earlier) was still on **2.4.1 or earlier** on 1 November, take it offline and move to a new machine with a new wallet. BTCPay says attackers used another method against the vulnerability fixed in 2.4.2 and stole Bitcoin and Litecoin from hot wallets. Updating that old server in place does not remove access an attacker may already have. Servers already on 2.4.2 or later that day are outside the impact BTCPay reports. No CVE is assigned.
+- **New this update:** If a [BTCPay Server](#btcpay-server-hot-wallet-thefts-on-241-and-earlier) was still on **2.4.1 or earlier** on 1 November, take it offline and move to a new machine with a new wallet. BTCPay says attackers used another method against the vulnerability fixed in 2.4.2 and stole Bitcoin and Litecoin from hot wallets. Updating that old server in place does not remove access an attacker may already have. Servers already on 2.4.2 or later that day are outside the impact BTCPay reports. The August LND flaw now has [CVE-2026-119757](https://www.cve.org/CVERecord?id=CVE-2026-119757). The November hot-wallet thefts still have none.
 - **New this update:** Upgrade [Incus](#incus-certificate-chain-authentication-bypass-and-restricted-project-host-root) servers to **7.6.0 or later**. The project rates eight flaws Critical, with no CVE. One, CVSS 3.1 10.0, is the certificate-chain bypass also fixed in [LXD](#lxd-client-certificate-chain-authenticates-as-another-trusted-client): anyone who can reach the HTTPS API can authenticate as a trusted client. The other seven need a low-privileged or restricted client and include host root through a malicious image, backup, or project. Refreshing the LXD snap does not update Incus.
 - **New this update:** Upgrade [Langflow](#langflow-unauthenticated-login-bypass-and-code-execution) to **1.13.1 or later**. IBM rates two flaws 9.8 Critical on 1.0.0 through 1.12.8 and names only 1.13.0 as fixed. 1.13.1, released November 4, adds later security fixes, and 1.12.9 backports those fixes for the 1.12 line. IBM has not said 1.12.9 is fixed. 1.10.3 fixed only the older MCP stdio flaws. Neither CVE is in KEV.
 - **New this update:** Install the [Delinea Privilege Manager](#delinea-privilege-manager-windows-agent-remote-code-execution) Windows Core agent **13.0.2064 or newer**, or **12.0.5804 or newer** on the 12 line. Delinea rates [CVE-2026-92744](https://www.cve.org/CVERecord?id=CVE-2026-92744) 8.7 High: an unauthenticated attacker can run code as LocalSystem on the workstation. Until that build is installed, block inbound TCP 5593. This is not the Secret Server upgrade.
@@ -270,13 +272,37 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Kubeflow Pipelines: shared upload skips authorization
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/kubeflow-pipelines.md):** [Detection](details/kubeflow-pipelines.md#detection) · [Remediation](details/kubeflow-pipelines.md#remediation) · [Verification](details/kubeflow-pipelines.md#verification) · [Timeline](details/kubeflow-pipelines.md#timeline)
+
+**CVEs:** [CVE-2026-77596](https://www.cve.org/CVERecord?id=CVE-2026-77596)
+
+**GitHub (CNA) rates the flaw CVSS 3.1 9.6 Critical. NVD has not scored it.** Before 2.18.0, the multi-user API server returns without a permission check when a pipeline upload names no namespace. An empty namespace is a shared pipeline, and it is the default. A low-privilege tenant can create a shared pipeline or add a version to one. An unpinned recurring run that follows the latest version then runs that version in another tenant's namespace, as that run's service account. A pinned run does not. The advisory says the upload was reproduced and the scheduled path was read from source, not run end to end. With no authenticating proxy, the same upload works with no identity at all. The score is for the authenticated tenant.
+
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). The advisory does not report in-the-wild use. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix merged | 2026-09-09; time/TZ unknown | Pull request 14352. |
+| 2.18.0 | 2026-10-28 01:31:46 UTC | First fixed release. The notes do not name the CVE. |
+| Advisory | 2026-10-28; time/TZ unknown | GHSA-rjr3-43j3-4q8g. Critical 9.6. Affected through 2.17.3. |
+| CVE record | 2026-11-05; time/TZ unknown | GitHub CNA. Affected before 2.18.0. |
+| **Last updated** | **2026-11-06 08:30 EST (UTC−05:00)** | New item. Upgrade to 2.18.0 or later. |
+
+**Patch:** Upgrade the API server to **2.18.0 or later**. A shared upload then needs pipeline-create permission in the system namespace. Do not grant that to every tenant. Until then, `REQUIRE_NAMESPACE_FOR_PIPELINES=true` rejects an empty namespace, and it rejects shared pipelines you still want. The upgrade does not delete a version already uploaded. Pin recurring runs to a version you have read.
+
+Sources: [GHSA-rjr3-43j3-4q8g](https://github.com/kubeflow/pipelines/security/advisories/GHSA-rjr3-43j3-4q8g), [CVE-2026-77596](https://www.cve.org/CVERecord?id=CVE-2026-77596), [2.18.0](https://github.com/kubeflow/pipelines/releases/tag/2.18.0), [detailed guide](details/kubeflow-pipelines.md).
+
+---
+
 ## Kyverno: a namespace tenant can change the cluster
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/kyverno.md):** [Detection](details/kyverno.md#detection) · [Remediation](details/kyverno.md#remediation) · [Verification](details/kyverno.md#verification) · [Timeline](details/kyverno.md#timeline)
 
-**CVEs:** [CVE-2026-122302](https://www.cve.org/CVERecord?id=CVE-2026-122302), [CVE-2026-122303](https://www.cve.org/CVERecord?id=CVE-2026-122303), [CVE-2026-122304](https://www.cve.org/CVERecord?id=CVE-2026-122304), [CVE-2026-122310](https://www.cve.org/CVERecord?id=CVE-2026-122310), [CVE-2026-122311](https://www.cve.org/CVERecord?id=CVE-2026-122311), [CVE-2026-122313](https://www.cve.org/CVERecord?id=CVE-2026-122313), [CVE-2026-122321](https://www.cve.org/CVERecord?id=CVE-2026-122321)
+**CVEs:** [CVE-2026-122302](https://www.cve.org/CVERecord?id=CVE-2026-122302), [CVE-2026-122303](https://www.cve.org/CVERecord?id=CVE-2026-122303), [CVE-2026-122304](https://www.cve.org/CVERecord?id=CVE-2026-122304), [CVE-2026-122305](https://www.cve.org/CVERecord?id=CVE-2026-122305), [CVE-2026-122306](https://www.cve.org/CVERecord?id=CVE-2026-122306), [CVE-2026-122307](https://www.cve.org/CVERecord?id=CVE-2026-122307), [CVE-2026-122308](https://www.cve.org/CVERecord?id=CVE-2026-122308), [CVE-2026-122309](https://www.cve.org/CVERecord?id=CVE-2026-122309), [CVE-2026-122310](https://www.cve.org/CVERecord?id=CVE-2026-122310), [CVE-2026-122311](https://www.cve.org/CVERecord?id=CVE-2026-122311), [CVE-2026-122312](https://www.cve.org/CVERecord?id=CVE-2026-122312), [CVE-2026-122313](https://www.cve.org/CVERecord?id=CVE-2026-122313), [CVE-2026-122314](https://www.cve.org/CVERecord?id=CVE-2026-122314), [CVE-2026-122315](https://www.cve.org/CVERecord?id=CVE-2026-122315), [CVE-2026-122316](https://www.cve.org/CVERecord?id=CVE-2026-122316), [CVE-2026-122318](https://www.cve.org/CVERecord?id=CVE-2026-122318), [CVE-2026-122319](https://www.cve.org/CVERecord?id=CVE-2026-122319), [CVE-2026-122320](https://www.cve.org/CVERecord?id=CVE-2026-122320), [CVE-2026-122321](https://www.cve.org/CVERecord?id=CVE-2026-122321), [CVE-2026-122322](https://www.cve.org/CVERecord?id=CVE-2026-122322), [CVE-2026-122323](https://www.cve.org/CVERecord?id=CVE-2026-122323)
 
-**VulnCheck rates six flaws CVSS 3.1 9.8 or 9.9 Critical and one 9.1 Critical.** The 9.1 flaw, [CVE-2026-122321](https://www.cve.org/CVERecord?id=CVE-2026-122321), is CVSS 4.0 8.5 High on the same record. NVD has not scored them. GitHub rates the generate-rule flaw High and names no CVE for it. A tenant who can create a namespaced policy can make Kyverno's controllers act outside that namespace: generate resources, overwrite objects, read Secrets, edit another tenant's RoleBinding, or call the Kubernetes API as the controller. [CVE-2026-122310](https://www.cve.org/CVERecord?id=CVE-2026-122310) affects only 1.19.1. [CVE-2026-122321](https://www.cve.org/CVERecord?id=CVE-2026-122321) lets a moved image tag pass a cached signature check on 1.18.0 through 1.19.1.
+**VulnCheck rates six flaws CVSS 3.1 9.8 or 9.9 Critical and one 9.1 Critical.** The 9.1 flaw, [CVE-2026-122321](https://www.cve.org/CVERecord?id=CVE-2026-122321), is CVSS 4.0 8.5 High on the same record. NVD has not scored them. GitHub rates the generate-rule flaw High and names no CVE for it. A tenant who can create a namespaced policy can make Kyverno's controllers act outside that namespace: generate resources, overwrite objects, read Secrets, edit another tenant's RoleBinding, or call the Kubernetes API as the controller. [CVE-2026-122310](https://www.cve.org/CVERecord?id=CVE-2026-122310) affects only 1.19.1. [CVE-2026-122321](https://www.cve.org/CVERecord?id=CVE-2026-122321) lets a moved image tag pass a cached signature check on 1.18.0 through 1.19.1. The same November 5 publication adds fourteen more records, all High on CVSS 4.0, for the same 1.19.2 release. GitHub's pages for those still say no CVE is known.
 
 **CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). Neither VulnCheck nor Kyverno reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
@@ -285,7 +311,8 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 | Fix released | 2026-10-20 23:50:19 UTC | Kyverno 1.19.2. The notes count 24 GitHub advisories. |
 | GitHub advisories | 2026-10-21; time unknown | The vendor published them. Several still say no CVE is known. |
 | Public announcement | 2026-11-05 02:25 UTC | VulnCheck published the seven CVE records. |
-| **Last updated** | **2026-11-05 23:30 EST (UTC−05:00)** | New item. Upgrade to 1.19.2 or later. |
+| Fourteen more CVEs | 2026-11-05 02:25 UTC | VulnCheck. High on CVSS 4.0. Same fix, 1.19.2. GitHub's pages still say no CVE is known. |
+| **Last updated** | **2026-11-06 08:30 EST (UTC−05:00)** | Fourteen High CVEs added. The fix is still 1.19.2. |
 
 **Patch:** Upgrade Kyverno to **1.19.2 or later** and roll the controllers. The Helm chart is 3.9.2. No 1.18 or 1.17 patch was published. A cluster where only cluster admins can create namespaced policies is outside the condition the records describe. The upgrade does not revert an object a controller already wrote.
 
@@ -1054,11 +1081,11 @@ Sources: [Patchstack](https://patchstack.com/database/wordpress/plugin/bookit/vu
 
 Vulnerability Info Site: [blog.btcpayserver.org](https://blog.btcpayserver.org/btcpay-server-security-incident-2-4-1-and-earlier/)
 
-**CVEs:** No CVE is assigned in the reviewed sources.
+**CVEs:** [CVE-2026-119757](https://www.cve.org/CVERecord?id=CVE-2026-119757)
 
-**BTCPay calls the vulnerability critical and confirms thefts. It publishes no CVSS score.** Attacks reported on 1 November targeted servers running 2.4.1 (released 23 July 2026) or earlier. BTCPay says the attackers used a different method to exploit the vulnerability fixed in 2.4.2 (7 August 2026). The August advisory described an unauthenticated read of LND `.macaroon` files and said BTCPay's own on-chain wallets were not affected by the attacks reviewed then. The November advisory says hot wallets, whose spending keys sit on the server, were stolen. Wallets whose keys stay off the server, including hardware wallets, were not.
+**BTCPay calls the vulnerability critical and confirms thefts. It publishes no CVSS score.** Attacks reported on 1 November targeted servers running 2.4.1 (released 23 July 2026) or earlier. BTCPay says the attackers used a different method to exploit the vulnerability fixed in 2.4.2 (7 August 2026). The August advisory described an unauthenticated read of LND `.macaroon` files and said BTCPay's own on-chain wallets were not affected by the attacks reviewed then. VulnCheck assigned [CVE-2026-119757](https://www.cve.org/CVERecord?id=CVE-2026-119757) to that August flaw on November 5 and rates it CVSS 4.0 9.3 and CVSS 3.1 9.8 Critical. BTCPay's own page, last updated November 2, still names no CVE. The November advisory says hot wallets, whose spending keys sit on the server, were stolen. Wallets whose keys stay off the server, including hardware wallets, were not. The November record does not say the hot-wallet thefts are CVE-2026-119757.
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. BTCPay confirms thefts on 2.4.1 and earlier.
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). BTCPay confirms thefts on 2.4.1 and earlier. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1067,7 +1094,8 @@ Vulnerability Info Site: [blog.btcpayserver.org](https://blog.btcpayserver.org/b
 | Wallet drain in the reports | 2026-11-01 13:46 UTC | When exploitation of this method began is not established. |
 | Public shutdown warning | 2026-11-01 22:25 UTC | `./btcpay-down.sh` while the investigation continued. |
 | Affected range named | 2026-11-02; time unknown | 2.4.1 and earlier. No credible drain reports for servers on 2.4.7. |
-| **Last updated** | **2026-11-02 15:56 EST (UTC−05:00)** | New item. Rebuild a server that was on 2.4.1 or earlier. |
+| CVE record | 2026-11-05; time/TZ unknown | CVE-2026-119757, VulnCheck. The August LND macaroon flaw, not a new fix. BTCPay's page still names no CVE. |
+| **Last updated** | **2026-11-06 08:30 EST (UTC−05:00)** | The August flaw now has a CVE. The rebuild instruction is unchanged. |
 
 **Am I impacted?** You are if the admin footer showed **2.4.1 or earlier** on 1 November, including a server you updated only after the warning. A server already on 2.4.2 or later that day is outside the impact BTCPay reports for these attacks. An unchanged balance does not rule out access an attacker already gained.
 
@@ -1476,19 +1504,20 @@ Sources: [Canonical Discourse](https://discourse.ubuntu.com/t/security-advisory-
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/delinea-secret-server.md):** [Detection](details/delinea-secret-server.md#detection) · [Remediation](details/delinea-secret-server.md#remediation) · [Verification](details/delinea-secret-server.md#verification) · [Timeline](details/delinea-secret-server.md#timeline)
 
-**CVEs:** [CVE-2026-115829](https://www.cve.org/CVERecord?id=CVE-2026-115829), [CVE-2026-115830](https://www.cve.org/CVERecord?id=CVE-2026-115830)
+**CVEs:** [CVE-2026-115829](https://www.cve.org/CVERecord?id=CVE-2026-115829), [CVE-2026-115828](https://www.cve.org/CVERecord?id=CVE-2026-115828), [CVE-2026-115830](https://www.cve.org/CVERecord?id=CVE-2026-115830)
 
-**Delinea (CNA) rates both flaws CVSS 4.0 8.7 High.** NVD has not scored them. Before 12.3.1, a user can skip the initial login and authenticate with only the second factor. Separately, under conditions Delinea does not list, a user can submit an unsigned JWT and receive cloudadmin permissions. Delinea's advisories page now names both, for **on-prem and cloud**, through **12.2.7**, fixed in **12.3.1**. The same page lists [CVE-2026-115828](https://www.cve.org/CVERecord?id=CVE-2026-115828) at CVSS 4.0 5.1 (a FIDO2 PIN or biometric check that was not always required). That score is below this collection's High line; the 12.3.1 upgrade covers it anyway.
+**Delinea (CNA) now rates CVE-2026-115829 CVSS 4.0 9.9 Critical and CVE-2026-115828 CVSS 4.0 9.4 Critical.** CVE-2026-115830 stays 8.7 High. NVD has not scored them. The November 5 records say an unauthenticated user can generate a two-factor PIN for any on-prem account and then finish only the second factor. The FIDO2 PIN or biometric check is not always required. Separately, under conditions Delinea does not list, a user can submit an unsigned JWT and receive cloudadmin permissions. The product line is now **on-prem only**, through **12.2.7**, fixed in **12.3.1**. The October 30 text said on-prem and cloud, and scored the PIN flaw 8.7 and the FIDO2 flaw 5.1.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-01) for either High CVE. CISA records Exploitation "none" for both. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06) for any of the three. CISA records Exploitation "none" for the two October records. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | CVE records published | 2026-10-30 19:46–19:47 UTC | Delinea CNA. Fixed in versions that are not earlier than 12.3.1. |
 | Vendor page lists both editions | Checked 2026-11-01 | On-prem and cloud, through 12.2.7. |
-| **Last updated** | **2026-11-01 19:15 EST (UTC−05:00)** | Cloud is in scope. Upgrade on-prem and cloud. |
+| Records republished | 2026-11-05 17:58–17:59 UTC | 9.9 and 9.4, and the product line is on-prem only. |
+| **Last updated** | **2026-11-06 08:30 EST (UTC−05:00)** | The PIN bypass is now Critical and needs no login. Cloud is no longer named. |
 
-**Patch:** Upgrade on-prem and cloud to **12.3.1 or later**. 12.2.7 is still affected, even though it fixes older Critical issues on the same page (CVE-2026-19117 and CVE-2026-15640). 12.3.0 is not named; treat it as unconfirmed. Keep the management interface off untrusted networks until the new version is running. The Privilege Manager agent is a [separate install](#delinea-privilege-manager-windows-agent-remote-code-execution).
+**Patch:** Upgrade on-prem Secret Server to **12.3.1 or later**. 12.2.7 is still affected, even though it fixes older Critical issues on the same page (CVE-2026-19117 and CVE-2026-15640). 12.3.0 is not named; treat it as unconfirmed. The November 5 records do not name a cloud action. Keep the management interface off untrusted networks until the new version is running. The Privilege Manager agent is a [separate install](#delinea-privilege-manager-windows-agent-remote-code-execution).
 
 Sources: [CVE-2026-115829](https://www.cve.org/CVERecord?id=CVE-2026-115829), [CVE-2026-115830](https://www.cve.org/CVERecord?id=CVE-2026-115830), [Delinea advisories](https://delinea.com/security-advisories), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -2550,18 +2579,19 @@ Sources: [MSRC CVE-2026-108398](https://msrc.microsoft.com/update-guide/vulnerab
 
 **CVEs:** [CVE-2026-83844](https://www.cve.org/CVERecord?id=CVE-2026-83844)
 
-**Microsoft (CNA) rates it CVSS 3.1 8.1 High and Important.** The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C`. The temporal score is 7.1. NVD has not scored it. An out-of-bounds read in Windows Paint lets an unauthorized attacker execute code over a network. Microsoft says the attacker sends a specially crafted packet to an affected service, and that no authentication and no user interaction are required. Attack complexity is High: Microsoft says a successful attack is not guaranteed and needs a deep understanding of the system. Paint 11.0.0.0 before 11.2605.91.0 is affected. This is the Store app, not the .NET Framework update and not the Windows Shell Mark of the Web bypass.
+**Microsoft (CNA) rates it CVSS 3.1 8.1 High and Important.** The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C`. The temporal score is 7.1. NVD has not scored it. An out-of-bounds read in Windows Paint lets an unauthorized attacker execute code over a network. Microsoft says the attacker sends a specially crafted packet to an affected service, and that no authentication and no user interaction are required. Attack complexity is High: Microsoft says a successful attack is not guaranteed and needs a deep understanding of the system. The CVE record says Paint 11.0.0.0 before 11.2605.91.0 is affected. Microsoft's current Security Update Guide product row says affected is below 11.2609.401.0, and that 11.2609.401.0 is the fix. The CSAF file still carries a version 1 revision history dated October 13. This is the Store app, not the .NET Framework update and not the Windows Shell Mark of the Web bypass.
 
 **CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Microsoft says it was not publicly disclosed and not exploited, and rates exploitation less likely. CISA-ADP records Exploitation none. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Public announcement and fix | 2026-10-13 14:00 UTC | MSRC entry, version 1.0. CVE record `datePublic` is the same instant; the record was published 18:59:53 UTC. |
-| Fixed Paint | 2026-10-13; time/TZ unknown | 11.2605.91.0. Versions from 11.0.0.0 before that build are affected. |
+| Fixed Paint, CVE record | 2026-10-13; time/TZ unknown | 11.2605.91.0. The record, last updated October 31, still says versions from 11.0.0.0 before that build are affected. |
+| Fixed Paint, Security Update Guide | Date of the build change not stated | The product row and the CSAF now say below 11.2609.401.0. The CSAF revision history is still version 1 on October 13. |
 | CISA-ADP | 2026-10-13 20:24:59 UTC | Exploitation none, Automatable no, Technical Impact total. |
-| **Last updated** | **2026-11-06 03:10 EST (UTC−05:00)** | New item. Update Paint to 11.2605.91.0 or later. |
+| **Last updated** | **2026-11-06 08:30 EST (UTC−05:00)** | The current product row names 11.2609.401.0. The CVE record still says 11.2605.91.0. |
 
-**Patch:** Update Microsoft Paint to **11.2605.91.0 or later** through the Microsoft Store, then confirm the installed version. Microsoft lists one product row and no separate Windows cumulative update. There is no workaround in the advisory. The update does not show whether a packet already ran code.
+**Patch:** Update Microsoft Paint to **11.2609.401.0 or later** through the Microsoft Store, then confirm the installed version. 11.2605.91.0 matches the CVE record and not the current product row. Microsoft lists one product row and no separate Windows cumulative update. There is no workaround in the advisory. The update does not show whether a packet already ran code.
 
 Sources: [MSRC CVE-2026-83844](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-83844), [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-83844), [detailed guide](details/windows-paint.md).
 
@@ -4572,7 +4602,8 @@ Sources: [GHSA-w4c7-34wj-hqm8](https://github.com/BerriAI/litellm/security/advis
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| Wiz threat alert | 2026-10-30 11:43 UTC | Northflank's status timeline. Not proof of the attacker's first access. |
+| First known secret decryption | 2026-10-30 02:39–03:08 UTC | Northflank's November 6 update. About nine hours before the alert. |
+| Wiz threat alert | 2026-10-30 11:43 UTC | Northflank's status timeline. Engineers responded within minutes. |
 | Public status incident | 2026-10-30 13:40 UTC | "Rotate environment variables immediately." |
 | Identified | 2026-10-30 13:58 UTC | "Assume all environment variables have been decrypted." |
 | Addon rotation enabled | 2026-10-30 15:12 UTC | Postgres and MongoDB. Users confirming AI keys were used. |
@@ -4582,10 +4613,11 @@ Sources: [GHSA-w4c7-34wj-hqm8](https://github.com/BerriAI/litellm/security/advis
 | Minio addon rotation | 2026-10-31 22:32 UTC | Available to all customers. The incident was still Identified. |
 | RabbitMQ addon rotation | 2026-10-31 23:31 UTC | Available to all customers. The incident was still Identified. |
 | Monitoring | 2026-11-02 11:09 UTC | Northflank says the attacker was gone within an hour of the first alert, and that dedicated control planes were not affected. Rotation is still required. |
+| Decryption window named | 2026-11-06 10:09 UTC | First known decryption 02:39–03:08 UTC on October 30. No root cause yet. Workloads still show no access. |
 | Local software patch | Not applicable | Revoke and replace credentials at each issuer. |
-| **Last updated** | **2026-11-02 08:15 EST (UTC−05:00)** | Status is Monitoring. Northflank says the attacker is gone. Rotate anyway. |
+| **Last updated** | **2026-11-06 08:30 EST (UTC−05:00)** | The known exposure starts at 02:39 UTC, not at the 11:43 alert. |
 
-From a clean browser session, list projects, services, addons, secret groups and global secrets. Do not export secret values. Treat any still-valid secret stored on Northflank at or before 13:40 UTC on October 30 as in scope. Review AI-provider usage from 11:43 UTC that day until revocation. Audit logs turned on at 01:04 UTC on October 31 do not cover earlier activity.
+From a clean browser session, list projects, services, addons, secret groups and global secrets. Do not export secret values. Treat any still-valid secret stored on Northflank at or before 13:40 UTC on October 30 as in scope. Review AI-provider usage from **02:39 UTC** that day until revocation. Northflank's November 6 update says the first known decryption was 02:39–03:08 UTC, about nine hours before the 11:43 alert. Audit logs turned on at 01:04 UTC on October 31 do not cover earlier activity.
 
 Wiz lists Northflank as one of nine AI developer platforms that disclosed an incident in October, in a pattern of hunting stored environment variables for AI access. Wiz says no single vulnerability links those incidents. Its published addresses (`23.106.46.239`, `38.246.114.118`, `104.243.32.50`, `31.57.201.201`) were used to test stolen keys; Wiz does not tie them to the platform intrusions themselves.
 
@@ -4660,6 +4692,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Kubeflow Pipelines before 2.18.0, multi-user** | Upgrade the API server to 2.18.0 or later. A pipeline upload with no namespace skips the permission check, and an unpinned recurring run can execute the injected version in another tenant's namespace. `REQUIRE_NAMESPACE_FOR_PIPELINES=true` rejects that upload until you upgrade, and it also blocks shared pipelines. The upgrade does not delete a version already stored. [Guide](details/kubeflow-pipelines.md#remediation). |
 | **Kyverno before 1.19.2** | Upgrade to 1.19.2 or later and roll the controllers. A tenant who can create a namespaced policy can otherwise make Kyverno's controllers read or write other namespaces. 1.19.1 is still affected. No 1.18 or 1.17 patch was published. [Guide](details/kyverno.md#remediation). |
 | **YOOtheme Pro 5.0.0 through 5.0.52 (WordPress or Joomla)** | Update to 5.0.53 or later, then look for `wp-content/uploads/yt` plus seven hex characters `.php` and for `wp-content/uploads/ALFA_DATA/`. The update does not delete a webshell already written. [Guide](details/yootheme-pro.md#remediation). |
 | **Sophos UTM used as an SMTP gateway with email scanning** | Update to 9.724 and install the manual RPM in KBA-000049692, then confirm the hash of `/usr/bin/cssd`. 9.724 alone is not the fix. UTM is end of life; Sophos Firewall is the replacement and is not this flaw. [Guide](details/sophos-utm.md#remediation). |
@@ -4713,7 +4746,7 @@ flowchart TD
 | **Signal (Android, iOS, Desktop) and RingRTC embedders** | Update to Android 8.27.0+, iOS 8.30.0+ or Desktop 8.29.0+ (RingRTC 2.72.0+) and restart the app; until then avoid calls with untrusted contacts. [Guide](details/signal.md#remediation). |
 | **OVHcloud CLI (ovhcloud) installed 2026-10-19** | Do not run it. Check the binary's MD5 against the advisory and look for envchecker-* temp folders. If affected, rotate every secret on that machine, delete the binary and install v0.16.0+. [Guide](details/ovhcloud-cli.md#remediation). |
 | **Windows with .NET Framework 3.5/4.x, especially WDAC/App Control-managed devices** | Install the October 2026 .NET Framework update for your OS (e.g. KB5127690 for Windows 11 24H2/25H2 and Server 2025) and confirm it is installed. [Guide](details/dotnet-framework.md#remediation). |
-| **Windows with Microsoft Paint before 11.2605.91.0** | Update Paint to 11.2605.91.0 or later through the Microsoft Store. This is the Store app, not a Windows cumulative update. Microsoft says an unauthenticated crafted packet can execute code, and that exploitation is less likely. [Guide](details/windows-paint.md#remediation). |
+| **Windows with Microsoft Paint before 11.2609.401.0** | Update Paint to 11.2609.401.0 or later through the Microsoft Store. The CVE record still says 11.2605.91.0; the current product row says 11.2609.401.0. This is the Store app, not a Windows cumulative update. [Guide](details/windows-paint.md#remediation). |
 | **SAP NetWeaver Visual Composer (VC70RUNTIME 7.50)** | Apply SAP Note 3797111 for your support package, or enable Visual Composer Secure Mode and restart com.sap.visualcomposer as the interim workaround, then review the backend destinations Visual Composer can reach. [Guide](details/sap-netweaver-visual-composer.md#remediation). |
 | **Docker Hub accounts and organizations** | No software to install (fixed service-side). If Docker emailed you on 2026-10-02, revoke unrecognized PATs, prefer organization access tokens, and check published image digests against CI records. [Guide](details/docker-hub-ghostpat.md#remediation). |
 | **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |
