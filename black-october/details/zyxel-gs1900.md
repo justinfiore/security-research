@@ -26,7 +26,8 @@ Binarly says the ten June firmware builds that fixed [CVE-2026-7273](https://www
 | CVE record published | 2026-11-03 01:41:52 UTC | Zyxel CNA. CVSS 3.1 8.8. Record updated 2026-11-04 04:56:27 UTC; the product list still matches the advisory. [Record][cve] |
 | Binarly public disclosure | 2026-11-03; time/TZ unknown | BRLY-2026-057. The June `.2` builds still contain the flaw. Binarly's score is 9.8, attack vector Network. [Binarly][bin] |
 | Advisory | 2026-11-03; time/TZ unknown | Revision history: "2026-11-3: Initial release." Patches for ten models still in the vulnerability support period. [Advisory][adv] |
-| **Last updated** | **2026-11-05 (America/New_York)** | Binarly: the June `.2` builds are still exploitable, and the score disagreement is 8.8 versus 9.8. |
+| Binarly blog | 2026-11-03; time/TZ unknown | Same day as the advisory. The recovered exploit is `gs1900_bundle.tar.gz` on an open directory, and it carries addresses for a June `.2` build. [Blog][blog] |
+| **Last updated** | **2026-11-05 (America/New_York)** | Binarly's blog adds the exploit bundle and the JITTERLY and SIXZUT hashes. The `.3` fix is unchanged. |
 
 ## Detection
 
@@ -68,6 +69,7 @@ Zyxel publishes no indicators. A switch whose management interface answers HTTP 
 - The result Zyxel names is operating-system command execution on the switch, with no login, from the LAN. Binarly says the same bug yields root and that the attacker only needs to reach the management service. A switch whose management interface was reachable may already have had its configuration read or changed.
 - Installing the `.3` build does not restore a configuration an attacker changed and does not remove an administrative credential they added. Review the admin accounts and the running configuration after the upgrade.
 - GreyNoise reported theft of configurations and hashed root credentials from 996 switches and named CVE-2026-7273. Binarly says that exploit is this flaw, and that the June `.2` firmware did not stop it. A switch that was still on `.2` or earlier while its management interface was reachable is in the population that report describes. Rotate the admin credentials. Zyxel's own advisory does not report exploitation.
+- Binarly's November 3 blog says the exploit it recovered, `gs1900_bundle.tar.gz` containing `exp.py`, was on an open directory at `p2.981666.xyz` port 18081, and that the script has addresses for firmware `2.90(AAHL.2)C0`, a June `.2` build. It also publishes hashes for the JITTERLY backdoor and the SIXZUT rootkit it says that operator used. Those hashes identify that malware. They do not show that a given switch ran it. The blog does not print a date for the open directory.
 
 ## Sources
 
@@ -75,6 +77,7 @@ Zyxel publishes no indicators. A switch whose management interface answers HTTP 
 - [CVE-2026-107441][cve] — published 2026-11-03 01:41:52 UTC, updated 2026-11-04 04:56:27 UTC. CVSS 3.1 8.8, Zyxel CNA. Description names GS1900-24E; the product list has all ten.
 - [NVD CVE-2026-107441][nvd] — NVD has no score of its own. Shows the CNA 8.8.
 - [Binarly BRLY-2026-057][bin] — public 2026-11-03. The unbounded copy lands before the parameter-count check, so the ten June `.2` builds are still affected. Score 9.8, vector Network, result root. Disclosure timeline: confirmed 2026-09-28, reported 2026-09-29, Zyxel reserved the CVE 2026-10-11, firmware 2026-10-22, advisory 2026-11-03.
+- [Binarly blog][blog] — 2026-11-03. `gs1900_bundle.tar.gz` / `exp.py` from `p2.981666.xyz:18081`, with GOT and stack modes, and addresses including `2.90(AAHL.2)C0`. JITTERLY SHA-256 `82d072ab03d90c0131b06a576eadf2c986a51f0de986d50db4e49be01bf125cb`, `663a8088faca8e126a11648f5671fcf4eaf96435e10daf63a1d1b17d8385154c`, `0f6e757e82c4d91df5bd249f775b9970b59dee42cc0dfe40f879d77fc16821c6`. SIXZUT SHA-256 `295133156b6a7d95b9c92f832f49e35235f1fbd3906e75c9202ef4cd65d1018c`, `64677002011bc2e4bc642a4154a20fdb95620ebd0144b98fc60f917901ec8b92`, `728810b07e911b235f6450e784391e39f68819a0a5d209662162916ffea25146`.
 - [GreyNoise, Open Season on Kapibala][grey] — 2026-09-21. Exploitation against 996 GS1900 switches, attributed there to CVE-2026-7273. Binarly says the captured exploit is this flaw.
 - [CISA KEV JSON feed][kev] — CVE-2026-107441 is not listed (catalog 2026.11.04, checked 2026-11-05). CVE-2026-7273 is a different record and is listed. CISA-ADP Exploitation "none" for CVE-2026-107441.
 
@@ -82,5 +85,6 @@ Zyxel publishes no indicators. A switch whose management interface answers HTTP 
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-107441
 [nvd]: https://nvd.nist.gov/vuln/detail/CVE-2026-107441
 [bin]: https://www.binarly.io/advisories/brly-2026-057
+[blog]: https://www.binarly.io/blog/zyxel-gs1900-rce-cve-2026-107441
 [grey]: https://www.greynoise.io/blog/open-season-on-kapibala-attacker-steals-government-records-wordpress-exploitation
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

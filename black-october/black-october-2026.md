@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [YOOtheme Pro: unauthenticated file write through the image handler](#yootheme-pro-unauthenticated-file-write-through-the-image-handler)
+- [Sophos UTM: unauthenticated root command through the email proxy](#sophos-utm-unauthenticated-root-command-through-the-email-proxy)
 - [SEPPmail: unauthenticated command execution and file deletion](#seppmail-unauthenticated-command-execution-and-file-deletion)
 - [OpenSSH: password login on musl accepts any long password](#openssh-password-login-on-musl-accepts-any-long-password)
 - [Better Auth: the Expo plugin signs a value it did not issue](#better-auth-the-expo-plugin-signs-a-value-it-did-not-issue)
@@ -166,6 +168,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [YOOtheme Pro](#yootheme-pro-unauthenticated-file-write-through-the-image-handler) to **5.0.53 or later** on WordPress and Joomla. The Joomla! Project rates [CVE-2026-102785](https://www.cve.org/CVERecord?id=CVE-2026-102785) CVSS 4.0 10.0 Critical: before 5.0.53, anyone who can see a signed image URL can reuse that signature and write a PHP file. Wordfence scores the WordPress theme 9.8. Unit 42 says webshells were written two days after the October 21 patch. Updating does not delete a file already written. It is not in KEV.
+- **New this update:** On [Sophos UTM](#sophos-utm-unauthenticated-root-command-through-the-email-proxy), install the manual RPM from KBA-000049692, or move off the product. Sophos rates [CVE-2026-118633](https://www.cve.org/CVERecord?id=CVE-2026-118633) CVSS 4.0 9.2 Critical: with email scanning on, a remote sender can run a command as root after repeating the attempt for a few minutes. UTM is end of life. Version 9.724 without that RPM is still affected. Sophos Firewall is not this flaw. It is not in KEV.
 - **New this update:** Upgrade [SEPPmail](#seppmail-unauthenticated-command-execution-and-file-deletion) Secure Email Gateway to **15.1.1 or later**. NCSC.ch rates two flaws CVSS 4.0 9.2 Critical: before 15.1.1, a remote sender can run a command as root through an address-replacement rule, and can make Large File Transfer read or delete a file. The same release fixes an 8.7 upload exhaustion flaw and an 8.3 GINA account takeover. The vendor's revision history swaps the scores on the two GINA CVEs. None is in KEV.
 - **New this update:** If a server loads the [Better Auth Expo plugin](#better-auth-the-expo-plugin-signs-a-value-it-did-not-issue), upgrade `@better-auth/expo` and `better-auth` to **1.7.16** (or **1.8.0-beta.5** on the beta line) and rotate the application secret. GitHub rates it 9.1 Critical: the plugin signs a caller-supplied value, and someone who knows a user's email can change that email. It is not in KEV.
 - **New this update:** On [Alpine and other musl Linux](#openssh-password-login-on-musl-accepts-any-long-password), upgrade OpenSSH and restart `sshd`. MITRE now rates it [CVE-2026-123158](https://www.cve.org/CVERecord?id=CVE-2026-123158) CVSS 3.1 8.1 High. OpenSSH still calls the workaround in **10.6p2** critical and does not name the CVE. Where sshd checks passwords itself, an account with no password accepts any password of 257 to 1024 bytes, if some other account has a password. glibc Linux, OpenBSD, and Dropbear are not affected. If you cannot update yet, set `PasswordAuthentication no` and restart `sshd`. The upgrade does not replace a daemon that is still running. It is not in KEV.
@@ -174,7 +178,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** On [OPNsense](#opnsense-google-cloud-dns-command-injection-in-the-acme-client), stop using Google Cloud DNS validation in the ACME Client plugin until the firmware page offers **os-acme-client 4.18**. MITRE rates [CVE-2026-123025](https://www.cve.org/CVERecord?id=CVE-2026-123025) CVSS 4.0 9.4 Critical: through 4.17, a logged-in user who can renew certificates can run commands as root. The fix is merged in git. The 26.7 package repository still publishes 4.17. It is not in KEV.
 - **New this update:** Upgrade [Cisco UCS Central](#cisco-ucs-central-authenticated-path-traversal-to-commands-and-files) to **2.1(2c) or later**. Cisco rates [CVE-2026-76506](https://www.cve.org/CVERecord?id=CVE-2026-76506) 7.6 High: a user account on the web management interface can run commands, write files, and read sensitive information. Releases 2.0 and earlier have no fix on that train. There is no workaround. It is not in KEV.
 - **New this update:** Reboot [Xen](#xen-a-guest-can-read-and-write-other-guests-memory) hosts onto a build with the XSA-523 patches. SUSE rates both flaws CVSS 4.0 8.4: a guest can read and write other guests' memory, including Dom0. Xen 4.6 and later are affected, and Xen says there is no mitigation. Xen 4.6 through 4.16 get no patch. It is not in KEV.
-- **New this update:** Upgrade [Rails](#rails-active-storage-file-write-and-read) to **8.0.5.2 or 8.1.4.1**. Rails rates the Active Storage ImageMagick issue 9.8 Critical, and no CVE is assigned. An unauthenticated upload can write files, and can read secrets when attachments use the Disk service. The same gems fix four more High issues. Rails 7 and older get no fix. It is not in KEV.
+- **New this update:** Upgrade [Rails](#rails-active-storage-file-write-and-read) to **8.0.5.2 or 8.1.4.1**. MITRE now rates the Active Storage ImageMagick issue [CVE-2026-122006](https://www.cve.org/CVERecord?id=CVE-2026-122006) CVSS 3.1 9.8 Critical. Rails scores the same issue 9.8 and its advisory still says no CVE is known. An unauthenticated upload can write files, and can read secrets when attachments use the Disk service. The same gems fix four more High issues that still have no CVE. Rails 7 and older get no fix. It is not in KEV.
 - **New this update:** Upgrade self-managed [Airbyte](#airbyte-connector-builder-runs-attacker-chosen-code) to **2.2.0 or later**. Airbyte rates the Connector Builder flaw 9.9 Critical, and no CVE is assigned. JPCERT/CC says exploitation is confirmed and scores it 8.8. Airbyte 1.x gets no fix. Airbyte Cloud needs no action. The 2.2 upgrade cannot be rolled back.
 - **New this update:** Upgrade [Puppet](#puppet-report-deserialization-runs-code-on-the-server) Enterprise to **2023.8.13, 2025.12.1, or 2026.0.1**, and restart Puppet Server. Perforce rates [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731) 9.4 Critical: a signed agent certificate can run code on the server. A second flaw, 9.0, lets a colliding certificate name impersonate another node. OpenVox published a proof of concept. Neither CVE is in KEV.
 - **New this update:** Upgrade `apt` on [Debian and Ubuntu](#debian-apt-a-resumed-download-can-install-a-different-package-as-root) before the rest of the system. Ubuntu rates [CVE-2026-109518](https://www.cve.org/CVERecord?id=CVE-2026-109518) 7.7 High: an on-path attacker can replace a package after verification, and the substitute installs as root. Debian 13 is fixed in `apt` **3.0.4**. Debian 12 is fixed in **2.6.2**. Ubuntu 26.10 is **3.3.3ubuntu0.1**, 26.04 is **3.2.1ubuntu0.1**, 24.04 is **2.8.4ubuntu0.1**, and 22.04 is **2.4.15ubuntu0.1**. Older Ubuntu releases are Ubuntu Pro. Debian forky and sid are **3.3.6**. It is not in KEV.
@@ -259,6 +263,52 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## YOOtheme Pro: unauthenticated file write through the image handler
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/yootheme-pro.md):** [Detection](details/yootheme-pro.md#detection) · [Remediation](details/yootheme-pro.md#remediation) · [Verification](details/yootheme-pro.md#verification) · [Timeline](details/yootheme-pro.md#timeline)
+
+**CVEs:** [CVE-2026-102785](https://www.cve.org/CVERecord?id=CVE-2026-102785)
+
+**The Joomla! Project rates [CVE-2026-102785](https://www.cve.org/CVERecord?id=CVE-2026-102785) CVSS 4.0 10.0 Critical. Wordfence rates the WordPress theme CVSS 3.1 9.8 Critical.** NVD has not scored it. YOOtheme Pro 5.0.0 through 5.0.52 signs an image URL and then accepts extra image operations that the signature does not cover. Anyone who can read that URL can write a file outside the cache, and the CNA says the file is a PNG/PHP polyglot in a public media directory. The CNA names the Joomla extension. Wordfence names the WordPress theme, same versions, same fix. JPCERT/CC's November 5 report covers both.
+
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). Unit 42 reports webshells written in the wild, starting two days after the patch. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix released | 2026-10-21; time/TZ unknown | YOOtheme Pro 5.0.53. The changelog names the CVE in one line. |
+| Public announcement | 2026-10-22 12:36:43 UTC | Joomla! Project CVE record. Wordfence's WordPress entry is the same date, time unknown. |
+| Unit 42 exploitation note | 2026-10-26 | Automated JPEG/PHP polyglots in the WordPress uploads folder, then an ALFA Team webshell. The write returns HTTP 500 and the file is still written. |
+| JPCERT/CC weekly report | 2026-11-05; time/TZ unknown | Says Palo Alto Networks confirmed attacks. The report covers October 25–31. |
+| **Last updated** | **2026-11-05 19:10 EST (UTC−05:00)** | New item. Update to 5.0.53 or later, then look for the planted files. |
+
+**Patch:** Update YOOtheme Pro to **5.0.53 or later** on every WordPress and Joomla site, including inactive copies. The update does not delete `wp-content/uploads/yt` plus seven hex characters `.php`, or `wp-content/uploads/ALFA_DATA/`. Unit 42 names scanner address `168.144.251.199` and says the operator also came through residential proxies.
+
+Sources: [YOOtheme changelog](https://yootheme.com/changelog), [CVE-2026-102785](https://www.cve.org/CVERecord?id=CVE-2026-102785), [Unit 42 note](https://github.com/PaloAltoNetworks/Unit42-timely-threat-intel/blob/main/2026-10-26-exploitation-of-CVE-2026-102785.txt), [JPCERT/CC 2026-11-05](https://www.jpcert.or.jp/wr/2026/wr261105.html), [detailed guide](details/yootheme-pro.md).
+
+---
+
+## Sophos UTM: unauthenticated root command through the email proxy
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/sophos-utm.md):** [Detection](details/sophos-utm.md#detection) · [Remediation](details/sophos-utm.md#remediation) · [Verification](details/sophos-utm.md#verification) · [Timeline](details/sophos-utm.md#timeline)
+
+**CVEs:** [CVE-2026-118633](https://www.cve.org/CVERecord?id=CVE-2026-118633)
+
+**Sophos rates [CVE-2026-118633](https://www.cve.org/CVERecord?id=CVE-2026-118633) CVSS 4.0 9.2 Critical and CVSS 3.1 8.1 High.** NVD has not scored it. On Sophos UTM, a path traversal in the email proxy lets a remote unauthenticated attacker run a command as root after winning a race by repeating the attempt for a few minutes, when email scanning is enabled. The record says every version through 9.724 is affected. The product is end of life, so the fix is a manual RPM on top of 9.724. Sophos Firewall is not named.
+
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). Sophos does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Advisory and CVE | 2026-10-28; time/TZ unknown | sophos-sa-20261028-utm-rce. First Published and Updated are both that day. |
+| JPCERT/CC weekly report | 2026-11-05; time/TZ unknown | Item 2. End of life, manual patch. The report covers October 25–31. |
+| **Last updated** | **2026-11-05 19:10 EST (UTC−05:00)** | New item. Install the RPM, or leave UTM. |
+
+**Patch:** Update the UTM to **9.724**, then install `ep-cssd-64-9.70-29.g7f03cc7.x86_64.rpm` from the support article and restart `cssd`. The installed fix is the hash of `/usr/bin/cssd`, not the 9.724 version string. Sophos lists no workaround. The advisory's first recommendation is to move to a supported Sophos Firewall release. A UTM that does not scan mail is outside the condition Sophos describes; the record still lists every version.
+
+Sources: [sophos-sa-20261028-utm-rce](https://www.sophos.com/en-us/security-advisories/sophos-sa-20261028-utm-rce), [KBA-000049692](https://support.sophos.com/support/s/article/KBA-000049692), [CVE-2026-118633](https://www.cve.org/CVERecord?id=CVE-2026-118633), [detailed guide](details/sophos-utm.md).
 
 ---
 
@@ -381,17 +431,18 @@ Sources: [XSA-523](https://xenbits.xen.org/xsa/advisory-523.html), [SUSE-SU-2026
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/rails.md):** [Detection](details/rails.md#detection) · [Remediation](details/rails.md#remediation) · [Verification](details/rails.md#verification) · [Timeline](details/rails.md#timeline)
 
-**CVEs:** No CVE is assigned. Rails tracks the issues as GitHub advisories.
+**CVEs:** [CVE-2026-122006](https://www.cve.org/CVERecord?id=CVE-2026-122006)
 
-**Rails rates GHSA-f3w6-w445-fwh9 CVSS 3.0 9.8 Critical.** An application that processes attachments with ImageMagick may let an unauthenticated attacker write arbitrary files. When attachments use the Disk service, the same issue can read files the process can read, including `secret_key_base`. Rails says that can become remote code execution. The same gems, 8.0.5.2 and 8.1.4.1, fix four more High issues and no CVE is assigned to any of them: an upload filename that selects an FFmpeg or ImageMagick decoder (8.8), `Parameters#each_key` bypassing mass-assignment protection (7.5), `safe_constantize` compiling an Action Cable channel name (7.5), and, on Rails 8.1 only, a client-supplied `Forwarded` header replacing `request.remote_ip` (7.4).
+**MITRE rates [CVE-2026-122006](https://www.cve.org/CVERecord?id=CVE-2026-122006) CVSS 3.1 9.8 Critical. Rails rates the same issue, GHSA-f3w6-w445-fwh9, CVSS 3.0 9.8 Critical.** The GitHub advisory still says no CVE is known. An application that processes attachments with ImageMagick may let an unauthenticated attacker write arbitrary files. When attachments use the Disk service, the same issue can read files the process can read, including `secret_key_base`. Rails says that can become remote code execution. The same gems, 8.0.5.2 and 8.1.4.1, fix four more High issues that still have no CVE: an upload filename that selects an FFmpeg or ImageMagick decoder (8.8), `Parameters#each_key` bypassing mass-assignment protection (7.5), `safe_constantize` compiling an Action Cable channel name (7.5), and, on Rails 8.1 only, a client-supplied `Forwarded` header replacing `request.remote_ip` (7.4).
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Rails does not report exploitation.
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). The four High issues that still have no CVE cannot be listed. Rails does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Public announcement | 2026-11-04 02:58:37 UTC | oss-security, 21:58:37 −0500 on November 3. The blog post is dated November 4. |
 | Fixed gems | 2026-11-04; time/TZ unknown | 8.0.5.2 and 8.1.4.1. Rails 7 and older are unsupported. 8.0 security support ends 2026-11-07. |
-| **Last updated** | **2026-11-04 16:01 EST (UTC−05:00)** | New item. Upgrade the gems and restart. |
+| CVE record | 2026-11-04; time/TZ unknown | MITRE published CVE-2026-122006, CVSS 3.1 9.8. The GitHub advisory still says no CVE is known. |
+| **Last updated** | **2026-11-05 19:10 EST (UTC−05:00)** | The Critical issue now has CVE-2026-122006. The gems are unchanged. |
 
 **Patch:** Upgrade to Rails **8.0.5.2 or later** on the 8.0 line, or **8.1.4.1 or later** on the 8.1 line, and restart every process. An application on `:mini_magick` also needs **mini_magick 5.1 or later**. Rails 7 and older get no backport. Copying the ImageMagick policy covers the 9.8 issue only. If the Disk service was in use, change `secret_key_base` and the other secrets the process could read.
 
@@ -637,9 +688,9 @@ Sources: [SNWLID-2026-0019](https://psirt.global.sonicwall.com/vuln-detail/SNWLI
 |---|---|---|
 | CVE record | 2026-11-03 01:41:52 UTC | Updated 2026-11-04 04:56 UTC. The product list did not change. |
 | Advisory | 2026-11-03; time/TZ unknown | Initial release. One patched build per model. |
-| **Last updated** | **2026-11-05 03:03 EST (UTC−05:00)** | The June `.2` builds are still exploitable. Binarly scores 9.8. |
+| **Last updated** | **2026-11-05 19:10 EST (UTC−05:00)** | Binarly's blog names the exploit bundle and the JITTERLY and SIXZUT hashes. The `.3` fix is unchanged. |
 
-**Patch:** Install the `.3` build for that model: GS1900-8 `2.90(AAHH.3)C0`, GS1900-8HP `2.90(AAHI.3)C0`, GS1900-10HP `2.90(AAZI.3)C0`, GS1900-16 `2.90(AAHJ.3)C0`, GS1900-24 `2.90(AAHL.3)C0`, GS1900-24E `2.90(AAHK.3)C0`, GS1900-24EP `2.90(ABTO.3)C0`, GS1900-24HPv2 `2.90(ABTP.3)C0`, GS1900-48 `2.90(AAHN.3)C0`, GS1900-48HPv2 `2.90(ABTQ.3)C0`. A `.2` build is the June firmware, and Binarly says the exploit still works on it. A 2.90 build from a different model is not the fix. Zyxel lists no workaround. The upgrade does not restore a configuration an attacker already changed. If the management interface was reachable while the switch was on `.2` or earlier, rotate the admin credentials.
+**Patch:** Install the `.3` build for that model: GS1900-8 `2.90(AAHH.3)C0`, GS1900-8HP `2.90(AAHI.3)C0`, GS1900-10HP `2.90(AAZI.3)C0`, GS1900-16 `2.90(AAHJ.3)C0`, GS1900-24 `2.90(AAHL.3)C0`, GS1900-24E `2.90(AAHK.3)C0`, GS1900-24EP `2.90(ABTO.3)C0`, GS1900-24HPv2 `2.90(ABTP.3)C0`, GS1900-48 `2.90(AAHN.3)C0`, GS1900-48HPv2 `2.90(ABTQ.3)C0`. A `.2` build is the June firmware, and Binarly says the exploit still works on it: the copy of the script it recovered has addresses for `2.90(AAHL.2)C0`. A 2.90 build from a different model is not the fix. Zyxel lists no workaround. The upgrade does not restore a configuration an attacker already changed. If the management interface was reachable while the switch was on `.2` or earlier, rotate the admin credentials. Binarly also publishes hashes for the JITTERLY backdoor and SIXZUT rootkit it ties to that operator; those hashes are in the [detailed guide](details/zyxel-gs1900.md#compromise-response).
 
 Sources: [Zyxel GS1900 advisory](https://www.zyxel.com/global/en/support/security-advisories/zyxel-security-advisory-for-out-of-bounds-write-vulnerability-in-gs1900-series-switches-11-03-2026), [Binarly BRLY-2026-057](https://www.binarly.io/advisories/brly-2026-057), [CVE-2026-107441](https://www.cve.org/CVERecord?id=CVE-2026-107441), [detailed guide](details/zyxel-gs1900.md).
 
@@ -3219,7 +3270,7 @@ Sources: [Gitea advisory GHSA-8pwg-hcgm-54cp](https://github.com/go-gitea/gitea/
 | First exploitation attempts (Previdian) | 2026-09-19 03:14 UTC | Third-party honeypot. Activity ramped up from 2026-10-11. |
 | GHSA-w794-rj3p-xv45 | 2026-09-28 17:26 UTC | CVE-2026-105697 advisory. |
 | CVEs published | 2026-10-05 20:16 UTC (105697); 20:46 UTC (105740) | GitHub CNA. |
-| **Last updated** | **2026-11-04 20:05 EST (UTC−05:00)** | Previdian's live count is now 7,341 attempts. |
+| **Last updated** | **2026-11-05 19:10 EST (UTC−05:00)** | Previdian's live count is now 9,013 attempts, last observed 2026-11-05. |
 
 Any Langflow user, including a non-admin, can save an MCP server with the **stdio** transport. Langflow runs its command through `bash -c` without validation. The stored command runs again whenever anyone lists the MCP servers.
 
@@ -3227,7 +3278,7 @@ Any Langflow user, including a non-admin, can save an MCP server with the **stdi
 
 **Worst case:** OS command execution as the Langflow process user. Attackers can steal environment secrets such as LLM keys and `LANGFLOW_SECRET_KEY`, and leave a persistent backdoor in MCP settings. With **`LANGFLOW_AUTO_LOGIN=true`**, which the advisory calls the default for affected releases, `/api/v1/auto_login` hands out a token without credentials. In that case the attack needs no account at all.
 
-**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 7,341 attempts from 52 IPs in 24 countries, last observed 2026-11-02. The 2026-10-27 page had 4,924 attempts from 34 IPs. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
+**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 9,013 attempts from 53 IPs in 24 countries, last observed 2026-11-05. The 2026-11-04 page had 7,341 attempts from 52 IPs. Previdian recorded a public Nuclei template on 2026-11-04. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
 
 **Am I impacted?** Check the installed `langflow`, `langflow-base` and `lfx` versions in every environment and container. Any version **below 1.10.3** is affected. Exposure is highest when auto-login is on, the superuser password is weak or the legacy `langflow`, untrusted users have accounts, or the instance is reachable from the internet. Do not open the MCP Servers page on an unpatched instance to check for stored commands, because loading it re-runs them.
 
@@ -4557,6 +4608,8 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **YOOtheme Pro 5.0.0 through 5.0.52 (WordPress or Joomla)** | Update to 5.0.53 or later, then look for `wp-content/uploads/yt` plus seven hex characters `.php` and for `wp-content/uploads/ALFA_DATA/`. The update does not delete a webshell already written. [Guide](details/yootheme-pro.md#remediation). |
+| **Sophos UTM used as an SMTP gateway with email scanning** | Update to 9.724 and install the manual RPM in KBA-000049692, then confirm the hash of `/usr/bin/cssd`. 9.724 alone is not the fix. UTM is end of life; Sophos Firewall is the replacement and is not this flaw. [Guide](details/sophos-utm.md#remediation). |
 | **SEPPmail Secure Email Gateway before 15.1.1** | Upgrade to 15.1.1 or later. A remote sender can run a command as root when a replacement rule uses text from the message, and can make Large File Transfer read or delete a file. The vendor changelog swaps the scores on the two GINA flaws; use the CNA scores. [Guide](details/seppmail.md#remediation). |
 | **Better Auth with the Expo plugin** | Upgrade `@better-auth/expo` and `better-auth` to 1.7.16, or 1.8.0-beta.5 on the beta line, and rotate the application secret. The plugin signs a caller-supplied value, and someone who knows an email address can change that account's email. A server that does not register `expo()` is outside this flaw. [Guide](details/better-auth-expo.md#remediation). |
 | **Alpine or other musl Linux running OpenSSH without PAM** | Upgrade `openssh` and restart `sshd`. On Alpine, edge is 10.6_p2-r0, 3.24 is 10.3_p1-r2, 3.23 is 10.2_p1-r1, 3.22 is 10.0_p1-r11, and 3.21 is 9.9_p2-r1. A source build takes OpenSSH 10.6p2. Until then, set `PasswordAuthentication no`. glibc Linux, OpenBSD, and Dropbear are outside this flaw. [Guide](details/openssh-musl.md#remediation). |
@@ -4645,7 +4698,7 @@ flowchart TD
 | **Self-hosted Zammad** | Upgrade to 7.2.2+ (6.5.5 only as a stopgap for CVE-2026-102489; DEB/RPM installs need 7.2.2 for the root escalation), then run DIVD's log check. [Guide](details/zammad.md#remediation). |
 | **Tailscale SSH / headscale** | Update Tailscale to **v1.104.4 or later** and headscale to **0.29.7 or later**. The headscale release does not apply the node-side SSH and Serve fixes. A complete fix for every Tailworm finding is not established. |
 | **Microsoft Authenticator on Android** | Install **6.2606.4246 or a later supported release** in every profile; investigate and revoke exposed work-account tokens where compromise is suspected. |
-| **PHP / WordPress / Laravel / Drupal / Joomla** | For PHP2Shell, use PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport and disable session upload progress pending the follow-up fix. On Windows, separately install the **`-1`** rebuild that carries Brotli 1.2.1 and restart workers; `php -v` does not prove it. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. WordPress itself: update core to **7.1.4** or the fixed branch release; the upgrade-window flaw is not PHP2Shell, and CISA now lists it. ACF Extended and ACF Extended PRO: update both to **0.9.2.8**. CryptoPayment Gateway has no fix: delete it and move funds to a new wallet. [PHP2Shell guide](details/php2shell.md#remediation) · [WordPress guide](details/wordpress-upgrade-window.md#remediation) · [ACF Extended guide](details/acf-extended.md#remediation) · [CryptoPayment Gateway guide](details/cryptopayment-gateway.md#remediation) · [Brotli guide](details/brotli.md#remediation). |
+| **PHP / WordPress / Laravel / Drupal / Joomla** | For PHP2Shell, use PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport and disable session upload progress pending the follow-up fix. On Windows, separately install the **`-1`** rebuild that carries Brotli 1.2.1 and restart workers; `php -v` does not prove it. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. WordPress itself: update core to **7.1.4** or the fixed branch release; the upgrade-window flaw is not PHP2Shell, and CISA now lists it. ACF Extended and ACF Extended PRO: update both to **0.9.2.8**. YOOtheme Pro: update to **5.0.53** on WordPress and Joomla, then look for planted PHP under the uploads directory. CryptoPayment Gateway has no fix: delete it and move funds to a new wallet. [PHP2Shell guide](details/php2shell.md#remediation) · [WordPress guide](details/wordpress-upgrade-window.md#remediation) · [ACF Extended guide](details/acf-extended.md#remediation) · [CryptoPayment Gateway guide](details/cryptopayment-gateway.md#remediation) · [Brotli guide](details/brotli.md#remediation). |
 | **Node.js / Bun** | Node **22.23.4 / 24.22.1 / 26.12.1**; Bun **1.4.4**. Rebuild containers and restart workers. |
 | **Python** | `Brotli` **1.2.1**, `brotlicffi` **1.2.1.0**, Pillow **13.0.0** where installed. Pillow may require a Python upgrade. |
 | **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps; update Visual Studio and PowerShell 7 to [MSRC's fixed builds](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497). [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |

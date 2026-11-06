@@ -1,12 +1,12 @@
 # Rails: Active Storage file write and read
 
-**Last updated:** 2026-11-04 (America/New_York)
+**Last updated:** 2026-11-05 (America/New_York)
 
 [Main Rails summary](../black-october-2026.md#rails-active-storage-file-write-and-read) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**No CVE is assigned.** Rails rates [GHSA-f3w6-w445-fwh9][ghsa-image] CVSS 3.0 9.8 Critical (`CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`). A Rails application that processes attachments with ImageMagick may let an unauthenticated attacker write arbitrary files, and, when attachments use the Disk service, read files the application process can read. Those files typically include `secret_key_base`. Rails says that can become remote code execution. The same releases fix four more High issues that also have no CVE. [Rails blog][blog] [GHSA][ghsa-image]
+**MITRE assigned [CVE-2026-122006](https://www.cve.org/CVERecord?id=CVE-2026-122006) on 2026-11-04 and rates it CVSS 3.1 9.8 Critical** (`CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`). Rails rates the same issue, [GHSA-f3w6-w445-fwh9][ghsa-image], CVSS 3.0 9.8 Critical. The GitHub advisory still says no CVE is known. A Rails application that processes attachments with ImageMagick may let an unauthenticated attacker write arbitrary files, and, when attachments use the Disk service, read files the application process can read. Those files typically include `secret_key_base`. Rails says that can become remote code execution. The record's range is activestorage before 8.0.5.2, and 8.1 before 8.1.4.1. The same releases fix four more High issues that still have no CVE. [Rails blog][blog] [GHSA][ghsa-image] [Record][cve]
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Rails does not report exploitation. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). The four High issues that still have no CVE cannot be listed. Rails does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -25,6 +25,7 @@
 | Private discovery | Unknown | Rails credits HackerOne researcher ryotak for the Critical issue. [GHSA][ghsa-image] |
 | Public announcement | 2026-11-04 02:58:37 UTC | Mike Dalessio posted the release to oss-security at 2026-11-03 21:58:37 −0500. The blog post is dated November 4 and lists 21 issues. [oss-security][oss] [Rails blog][blog] |
 | Fixed gems | 2026-11-04; time/TZ unknown | `activestorage` 8.0.5.2 and 8.1.4.1. Rails 7 and older are unsupported. Security support for 8.0 ends 2026-11-07. [Rails blog][blog] |
+| CVE record | 2026-11-04; time/TZ unknown | MITRE published CVE-2026-122006, CVSS 3.1 9.8. The GitHub advisory still says no CVE is known. [Record][cve] |
 
 ## The other High fixes in the same release
 
@@ -101,14 +102,16 @@ Rails describes what an upload can do. It does not describe a log line that show
 
 - [Rails 8.0.5.2 and 8.1.4.1][blog] — November 4, 2026. Twenty-one issues. 8.0 security support ends November 7, 2026. Older lines are unsupported.
 - [oss-security announcement][oss] — 2026-11-03 21:58:37 −0500 (2026-11-04 02:58:37 UTC).
-- [GHSA-f3w6-w445-fwh9][ghsa-image] — CVSS 3.0 9.8 Critical. No CVE. ImageMagick coder policy. Disk-service file read.
+- [GHSA-f3w6-w445-fwh9][ghsa-image] — Rails CVSS 3.0 9.8 Critical. The advisory text still says no CVE is known. ImageMagick coder policy. Disk-service file read.
+- [CVE-2026-122006][cve] — MITRE, published 2026-11-04. CVSS 3.1 9.8. activestorage before 8.0.5.2, and 8.1 before 8.1.4.1.
 - [GHSA-v924-7rp8-4mxh](https://github.com/rails/rails/security/advisories/GHSA-v924-7rp8-4mxh) — CVSS 3.1 8.8 High. Filename selects the decoder.
 - [GHSA-wm3x-v3qw-4jh3](https://github.com/rails/rails/security/advisories/GHSA-wm3x-v3qw-4jh3) — CVSS 3.0 7.5 High. `each_key` bypasses strong parameters.
 - [GHSA-8474-xrp6-wh69](https://github.com/rails/rails/security/advisories/GHSA-8474-xrp6-wh69) — CVSS 3.0 7.5 High. `safe_constantize` compiles untrusted input.
 - [GHSA-2gff-2mmg-m73p](https://github.com/rails/rails/security/advisories/GHSA-2gff-2mmg-m73p) — CVSS 3.0 7.4 High. Rails 8.1 `Forwarded` spoofing.
-- [CISA KEV JSON feed][kev] — catalog 2026.11.03. No CVE to list.
+- [CISA KEV JSON feed][kev] — CVE-2026-122006 is not listed (catalog 2026.11.04, checked 2026-11-05). The other four High issues have no CVE.
 
 [blog]: https://rubyonrails.org/2026/11/4/Rails-8.0.5.2-and-8.1.4.1-have-been-released
 [oss]: https://www.openwall.com/lists/oss-security/2026/11/04/2
 [ghsa-image]: https://github.com/rails/rails/security/advisories/GHSA-f3w6-w445-fwh9
+[cve]: https://www.cve.org/CVERecord?id=CVE-2026-122006
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
