@@ -1,6 +1,6 @@
 # OpenSSH: password login on musl accepts any long password
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-07 (America/New_York)
 
 [Back to OpenSSH summary](../black-october-2026.md#openssh-password-login-on-musl-accepts-any-long-password) · [Changelog](../../CHANGELOG.md)
 
@@ -31,7 +31,7 @@ OpenSSH calls the workaround in 10.6p2 a **critical** security fix. **MITRE rate
 | CVE record | 2026-11-05 15:46:26 UTC | MITRE, [CVE-2026-123158][cve], CVSS 3.1 8.1. Updated 17:18:17 UTC the same day. OpenSSH's notes still do not name it. |
 | CISA ADP | 2026-11-06 04:56:35 UTC | SSVC Exploitation `poc`. That is a proof-of-concept label, not a report of attacks and not a KEV listing. The description, the score, and the range are unchanged. |
 | Honeypot logins | 2026-11-06; clock time not on the page | Previdian. First attempt less than nine hours after the CVE record. Not a KEV listing. [Help Net Security][hns] [Previdian][prev] |
-| **Last updated** | **2026-11-06 (America/New_York)** | Honeypot logins reported. The fix is unchanged. |
+| **Last updated** | **2026-11-07 (America/New_York)** | Public count is 19 attempts from 12 addresses. The fix is unchanged. |
 
 ## Detection
 
@@ -93,7 +93,7 @@ The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems t
 - [The Hacker News][thn] — 2026-11-05. Reports that no attacks using the flaw have been reported, and that no CVE had been assigned that day. MITRE published the CVE later the same day.
 - [Help Net Security][hns] — 2026-11-06. Ryan Dewhurst of Previdian: the first attempt arrived less than nine hours after the CVE record, and a honeypot running Alpine and OpenSSH accepted a login as root. Eight attempts, all from `89.116.89.18`. The commands were `id`, `uname`, and `hostname`.
 - [The Hacker News, exploitation][thn2] — 2026-11-06. The same Dewhurst statement. It is not a CISA KEV listing.
-- [Previdian CVE-2026-123158][prev] — reread 2026-11-07. The public page says 14 attempts, 9 addresses, and 3 sensors, first and last observed 2026-11-06, in CH, DK, IR, JP, NL, NO, SG, and US. The chart says updated 2026-11-07. It still says an attempt is not a successful login, and it still does not print the source address. That count disagrees with the interview's eight attempts from one address. Not in CISA KEV.
+- [Previdian CVE-2026-123158][prev] — reread 2026-11-07. The public page says 19 attempts, 12 addresses, 8 countries, and 4 sensors. The chart says updated 2026-11-07, with 14 events on November 6 and 5 on November 7. It still says an attempt is not a successful login, and it still does not print the source address. That count disagrees with the interview's eight attempts from one address. Not in CISA KEV.
 - [CVE-2026-123158][cve] — MITRE, published 2026-11-05 15:46:26 UTC. CVSS 3.1 8.1 High. Affected from 0 before 10.6p2 on Linux. The description says 256 to 1024 characters; OpenSSH and Alpine say 257 to 1024 bytes.
 - [CISA KEV JSON feed][kev] — not listed (catalog 2026.11.04, checked 2026-11-06).
 

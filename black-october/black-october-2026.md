@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Symfony: a YAML document holds a PHP worker, and a data URI reads a file](#symfony-a-yaml-document-holds-a-php-worker-and-a-data-uri-reads-a-file)
+- [Technical University of Munich: stolen passwords for every myTUM account](#technical-university-of-munich-stolen-passwords-for-every-mytum-account)
 - [IBM API Connect: unauthenticated command execution and administrative control](#ibm-api-connect-unauthenticated-command-execution-and-administrative-control)
 - [JetBrains IDEs: a project file runs code in Safe Mode](#jetbrains-ides-a-project-file-runs-code-in-safe-mode)
 - [JetBrains Datalore: code execution from a view-only notebook](#jetbrains-datalore-code-execution-from-a-view-only-notebook)
@@ -184,6 +186,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Symfony](#symfony-a-yaml-document-holds-a-php-worker-and-a-data-uri-reads-a-file) to **5.4.56, 6.4.50, 7.4.23, or 8.1.11** or later on that line. GitHub rates [CVE-2026-123792](https://www.cve.org/CVERecord?id=CVE-2026-123792) CVSS 4.0 8.7 High: one unauthenticated request with a YAML content type can hold a PHP worker until `max_execution_time`. Checkmarx rates [CVE-2026-121623](https://www.cve.org/CVERecord?id=CVE-2026-121623) 8.2: a `DATA:` value is opened as a local file, so a public endpoint that deserializes into `File` can read a file the process can read. A third High advisory, with no CVE, lets a path check approve a file outside its directory. The advisories are November 4. The CVE records are November 6. Symfony's data-URI page still says no CVE is known. It is not in KEV.
+- **New this update:** If you have a [Technical University of Munich](#technical-university-of-munich-stolen-passwords-for-every-mytum-account) account, change that password wherever else you used it, and change it at TUM when TUM publishes the method. TUM said on November 6 that the myTUM attack stole the central-login password, name, home address, and date of birth of everyone registered there. One stolen login was a TUMonline administrator, and TUM took that system offline. Accounts that already had multi-factor authentication were protected. No CVE is assigned.
+- **New this update:** On [Red Hat Enterprise Linux 7 Extended Lifecycle Support](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix), install `kernel-3.10.0-1160.169.1.el7` and reboot. The November 5 errata names the local-root bug. CentOS 7 is still outside the affected set. No CVE is assigned.
 - **New this update:** Upgrade on-premises [IBM API Connect](#ibm-api-connect-unauthenticated-command-execution-and-administrative-control) V12 to **v12.1.1.3 or later**, or V10 to **10.0.8.13 or later**. IBM rates [CVE-2026-17408](https://www.cve.org/CVERecord?id=CVE-2026-17408) CVSS 3.1 9.8 Critical: a remote attacker can run a command. Two more 9.8 flaws need no login, one of them an authentication bypass. The V12 bulletin lists 203 CVEs and the V10 bulletin lists 135. IBM lists no workaround. The bulletins are dated November 5. The CVE records are November 7. It is not in KEV.
 - **New this update:** Update [CLion](#jetbrains-ides-a-project-file-runs-code-in-safe-mode) to **2026.2 or later** and [IntelliJ IDEA](#jetbrains-ides-a-project-file-runs-code-in-safe-mode) to **2026.3 or later**. JetBrains rates two CLion flaws CVSS 3.1 9.6 Critical: a project file runs code in Safe Mode, which is the mode for a project you have not trusted. Five IntelliJ flaws are 7.8 and need the IDE to open a project on the same machine. The issues-fixed page does not list them. It is not in KEV.
 - **New this update:** Update On-Premises [Datalore](#jetbrains-datalore-code-execution-from-a-view-only-notebook) to **2026.4 or later**. JetBrains rates [CVE-2026-123279](https://www.cve.org/CVERecord?id=CVE-2026-123279) CVSS 3.1 9.0 Critical: a view-only collaborator can run code in a notebook's computation. A published interactive report had its own flaw, 8.1, fixed in 2026.2.4. The issues-fixed page does not list them. Datalore Cloud is JetBrains' to patch. It is not in KEV.
@@ -295,6 +300,49 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Symfony: a YAML document holds a PHP worker, and a data URI reads a file
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/symfony.md):** [Detection](details/symfony.md#detection) · [Remediation](details/symfony.md#remediation) · [Verification](details/symfony.md#verification) · [Timeline](details/symfony.md#timeline)
+
+**CVEs:** [CVE-2026-123792](https://www.cve.org/CVERecord?id=CVE-2026-123792), [CVE-2026-121623](https://www.cve.org/CVERecord?id=CVE-2026-121623)
+
+**GitHub rates [CVE-2026-123792](https://www.cve.org/CVERecord?id=CVE-2026-123792) CVSS 4.0 8.7 High.** NVD has not scored it. Before 5.4.56, 6.4.50, 7.4.23, and 8.1.11, the YAML parser repeats work, and a small document holds a PHP process. On 7.4 and later, one request with a YAML content type does that through `#[MapRequestPayload]` when the endpoint does not restrict `acceptFormat`. **Checkmarx rates [CVE-2026-121623](https://www.cve.org/CVERecord?id=CVE-2026-121623) CVSS 4.0 8.2 High.** The same floors fix it. `DataUriNormalizer` accepts `DATA:`, PHP opens that string as a path, and Symfony says a value denormalized to `\SplFileObject` returns the file. A third advisory, with no CVE, is also High: `Path` treats text before `://` as a root, so `isBasePath()` can approve a file outside the directory. Symfony does not report exploitation. This is not [Laravel](#laravel-tokenguard-api-authentication-bypass-on-mysql-and-mariadb).
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-04; time/TZ unknown** | Three GitHub advisories, published by fabpot. |
+| CVE records | 2026-11-06; time/TZ unknown | Checkmarx. The data-URI advisory page still says no CVE is known. |
+| **Last updated** | **2026-11-07 12:10 EST (UTC−05:00)** | New item. Upgrade Symfony. The same four releases fix all three. |
+
+**Patch:** **5.4.56, 6.4.50, 7.4.23, or 8.1.11** or later, for `symfony/yaml`, `symfony/serializer`, and `symfony/filesystem` together. Restart PHP after the deploy. Symfony lists no workaround. Restricting `acceptFormat` avoids only the YAML content type on that one attribute. The upgrade does not show whether a request already read a file.
+
+Sources: [YAML advisory](https://github.com/symfony/symfony/security/advisories/GHSA-hwfg-qwvh-2wfx), [data-URI advisory](https://github.com/symfony/symfony/security/advisories/GHSA-pxj9-jh84-vhm5), [path advisory](https://github.com/symfony/symfony/security/advisories/GHSA-6prc-h956-hxjq), [CVE-2026-123792](https://www.cve.org/CVERecord?id=CVE-2026-123792), [detailed guide](details/symfony.md).
+
+---
+
+## Technical University of Munich: stolen passwords for every myTUM account
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/tum.md):** [Detection](details/tum.md#detection) · [Remediation](details/tum.md#remediation) · [Verification](details/tum.md#verification) · [Timeline](details/tum.md#timeline)
+
+**No CVE is assigned.**
+
+The Technical University of Munich says unknown individuals attacked the myTUM portal and stole the central-login password of everyone who had registered. The notice dated November 6, 12:20 p.m. (timezone not stated on the page) also names the person's name, home address, and date of birth. Employees additionally have a work address and a work phone number. Students may also have a student ID, a degree program, and a semester count. One stolen login belonged to a TUMonline administrator, and TUM says that login was used against TUMonline before TUM took the system offline. TUM says accounts that already had multi-factor authentication were protected, and that its reading of the TUMonline logs currently excludes grades and applications. It says that reading is not finished. Password-change options were promised by Monday. This is not [Chainalysis](#chainalysis-password-hashes-and-live-tokens-exposed).
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-06 12:20; timezone not stated** | TUM notice. Status line "Friday, November 6, 2026, 12:20 p.m." |
+| **Last updated** | **2026-11-07 12:10 EST (UTC−05:00)** | New item. Change a reused password now. Change the TUM password when TUM publishes the method. |
+
+**Patch:** No software update. Change the TUM password when [it.tum.de](https://www.it.tum.de/en/it/news-1/) publishes the method, turn on multi-factor authentication, and change that password anywhere else it was used. TUM says it will not ask for the password by email, phone, or letter.
+
+Sources: [TUM notice](https://www.tum.de/en/news-and-events/all-news/press-releases/details/it-security-incident-at-tum), [detailed guide](details/tum.md).
 
 ---
 
@@ -745,7 +793,7 @@ Vulnerability Info Site: [sshhole.com](https://sshhole.com/)
 | OpenWrt package | 2026-11-05 14:26 UTC | `openssh` 10.6_p2 merged into the 25.12 branch. The default SSH server, Dropbear, is not affected. |
 | CVE record | 2026-11-05 15:46:26 UTC | MITRE, CVE-2026-123158, CVSS 3.1 8.1. OpenSSH's release notes still do not name it. |
 | Honeypot logins | 2026-11-06; clock time not on the page | Previdian. First attempt less than nine hours after the record. Not a KEV listing. |
-| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | Previdian's public count is now 14 attempts from 9 addresses. The interview's 8 attempts from one address still disagree. The fix is unchanged. |
+| **Last updated** | **2026-11-07 12:10 EST (UTC−05:00)** | Previdian's public count is now 19 attempts from 12 addresses. The interview's 8 attempts from one address still disagree. The fix is unchanged. |
 
 **Patch:** Upgrade and restart `sshd`. The new package does not replace a daemon that is still running. On Alpine edge the package is **10.6_p2-r0**; 3.24 is **10.3_p1-r2**, 3.23 is **10.2_p1-r1**, 3.22 is **10.0_p1-r11**, and 3.21 is **9.9_p2-r1**, with backports through 3.16. A source build takes **10.6p2**. OpenWrt's optional OpenSSH package on the 25.12 branch is **10.6_p2**. If you cannot update yet, set `PasswordAuthentication no` and restart `sshd`; confirm a key login first. On Alpine's tiny-cloud images from 3.18.11 through 3.24.3, the `alpine` user has passwordless `doas`, so a password login there is root once any other account has a password hash. If the SSH port was reachable on November 6, look for `Accepted password for` on an account that has no password. The upgrade does not remove a key a login already wrote.
 
@@ -3078,7 +3126,8 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | CloudLinux 8 ELS and 9 ELS kernels | 2026-11-05 10:40 UTC | `kernel-lts-5.14.0-284.1101.el8.tuxcare.11.els17` and `kernel-lts-5.14.0-284.1101.el9.tuxcare.11.els17`. |
 | Linux 7.3.2 | 2026-11-06 12:10 −0500 | Backports the fix as `1a9c180cd843`. 7.3 and 7.3.1 do not have it. |
 | Linux 7.4-rc1 | 2026-11-01 21:26:31 UTC | The tag's `skb_zerocopy()` copies the shared-frag marker. A release candidate, not a kernel to deploy. |
-| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | Linux 7.3.2 backports the fix. 7.3.1 does not. |
+| RHEL 7 ELS | 2026-11-05; time/TZ unknown | `kernel-3.10.0-1160.169.1.el7` names ZDI-CAN-33367. This is the Extended Lifecycle Support kernel, not CentOS 7. |
+| **Last updated** | **2026-11-07 12:10 EST (UTC−05:00)** | RHEL 7 Extended Lifecycle Support has a kernel that names the bug. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -3396,7 +3445,8 @@ Sources: [Laravel advisory](https://github.com/laravel/framework/security/adviso
 | Advance notice | 2026-10-08; time/TZ unknown | "Two Critical and one High" announced, with no details. |
 | Advisories and fixed releases | 2026-10-14 17:46–17:47 UTC | `next` 15.5.28 and 16.4.1 on npm by 17:44 UTC. |
 | November advisories and releases | 2026-11-03 18:01–18:39 UTC | `next` 15.5.29 and 16.4.5. Seven repository advisories, all GitHub Medium. |
-| **Last updated** | **2026-11-03 15:06 EST (UTC−05:00)** | November cache-disclosure release. October RCE guidance is unchanged. |
+| GitHub advisory update | 2026-11-06 10:20 UTC | All seven November advisories now name 16.4.5, and 15.5.29 where a 15.x row exists. The 16.x ceiling is 16.4.4. |
+| **Last updated** | **2026-11-07 12:10 EST (UTC−05:00)** | The advisories name the patched versions. 16.4.2 is not the fix. |
 
 There are two separate RCE paths:
 
@@ -5013,6 +5063,8 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Symfony below 5.4.56, 6.4.50, 7.4.23, or 8.1.11** | Upgrade `symfony/yaml`, `symfony/serializer`, and `symfony/filesystem` together to that floor or later, redeploy, and restart PHP. One unauthenticated YAML request can hold a worker, and a `DATA:` value deserialized into `File` reads a local file. The same releases fix a path check that approves a file outside its directory. [Guide](details/symfony.md#remediation). |
+| **A Technical University of Munich account** | Change that password on every other service where it was reused, now. Change it at TUM when TUM publishes the method, and turn on multi-factor authentication. TUM says the myTUM passwords were stolen. There is no software update. [Guide](details/tum.md#remediation). |
 | **IBM API Connect V12 through v12.1.1.2, or V10 through 10.0.8.12** | Upgrade V12 to v12.1.1.3 or later, and V10 to 10.0.8.13 or later. A remote attacker can run a command, and an unauthenticated attacker can bypass authentication. IBM lists no workaround. The upgrade does not show whether a command already ran. [Guide](details/ibm-api-connect.md#remediation). |
 | **Kubeflow Pipelines before 2.18.0, multi-user** | Upgrade the API server to 2.18.0 or later. A pipeline upload with no namespace skips the permission check, and an unpinned recurring run can execute the injected version in another tenant's namespace. `REQUIRE_NAMESPACE_FOR_PIPELINES=true` rejects that upload until you upgrade, and it also blocks shared pipelines. The upgrade does not delete a version already stored. [Guide](details/kubeflow-pipelines.md#remediation). |
 | **Kyverno before 1.19.2** | Upgrade to 1.19.2 or later and roll the controllers. A tenant who can create a namespaced policy can otherwise make Kyverno's controllers read or write other namespaces. 1.19.1 is still affected. No 1.18 or 1.17 patch was published. [Guide](details/kyverno.md#remediation). |
@@ -5082,7 +5134,7 @@ flowchart TD
 | **Docker Hub accounts and organizations** | No software to install (fixed service-side). If Docker emailed you on 2026-10-02, revoke unrecognized PATs, prefer organization access tokens, and check published image digests against CI records. [Guide](details/docker-hub-ghostpat.md#remediation). |
 | **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |
 | **HPE Aruba Networking AOS-8 / AOS-10 (controllers, conductors, gateways, APs)** | Upgrade to AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, 8.13.3.1+ or 8.10.0.24+ (other branches: move to a fixed supported branch); until then confine SSH/WebUI/API to a management VLAN and UDP 8211 (PAPI) to your own APs and controllers. [Guide](details/aruba-aos.md#remediation). |
-| **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix: stable **7.2.15**, RHEL 9 `kernel-5.14.0-687.64.1.el9_8`, Rocky Linux 9 the same version, RHEL 8 `kernel-4.18.0-553.181.1.el8_10` (not the November 1 TCP kernel), RHEL 8.8 `kernel-4.18.0-477.178.1.el8_8`, RHEL 8.6 Advanced Mission Critical `kernel-4.18.0-372.227.1.el8_6`, RHEL 8.4 Advanced Mission Critical `kernel-4.18.0-305.217.1.el8_4` (not `305.218.1`, which fixes the TCP flaw and not this bug), Oracle Linux 8 `kernel-4.18.0-553.182.1.el8_10`, Oracle Linux 10 `kernel-6.12.0-211.72.1.el10_2` (the changelog has the fix and does not name ZDI-CAN-33367), RHEL 9.2 real-time `kernel-rt-5.14.0-284.202.1.rt14.487.el9_2`, AlmaLinux production 4.18.0-553.178.1.el8_10 / 5.14.0-687.60.1.el9_8 / 6.12.0-211.69.1.el10_2, CloudLinux 7 hybrid 4.18.0-553.177.1.lve.1.el7h, CloudLinux 8 4.18.0-553.177.1.lve.1.el8, or the KernelCare EL10 live patch. Linux 7.3 and 7.3.1, the main RHEL 10 line, Rocky Linux 8 and 10, Debian and Ubuntu still have no build that names this bug. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
+| **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix: stable **7.2.15**, RHEL 7 Extended Lifecycle Support `kernel-3.10.0-1160.169.1.el7`, RHEL 9 `kernel-5.14.0-687.64.1.el9_8`, Rocky Linux 9 the same version, RHEL 8 `kernel-4.18.0-553.181.1.el8_10` (not the November 1 TCP kernel), RHEL 8.8 `kernel-4.18.0-477.178.1.el8_8`, RHEL 8.6 Advanced Mission Critical `kernel-4.18.0-372.227.1.el8_6`, RHEL 8.4 Advanced Mission Critical `kernel-4.18.0-305.217.1.el8_4` (not `305.218.1`, which fixes the TCP flaw and not this bug), Oracle Linux 8 `kernel-4.18.0-553.182.1.el8_10`, Oracle Linux 10 `kernel-6.12.0-211.72.1.el10_2` (the changelog has the fix and does not name ZDI-CAN-33367), RHEL 9.2 real-time `kernel-rt-5.14.0-284.202.1.rt14.487.el9_2`, AlmaLinux production 4.18.0-553.178.1.el8_10 / 5.14.0-687.60.1.el9_8 / 6.12.0-211.69.1.el10_2, CloudLinux 7 hybrid 4.18.0-553.177.1.lve.1.el7h, CloudLinux 8 4.18.0-553.177.1.lve.1.el8, or the KernelCare EL10 live patch. Linux 7.3 and 7.3.1, the main RHEL 10 line, Rocky Linux 8 and 10, Debian and Ubuntu still have no build that names this bug. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
 | **Craft CMS below 5.11.2 or 4.18.9** | Update `craftcms/cms` to 5.11.2 or later, or 4.18.9 or later on 4.x. Before those releases, an unauthenticated SQL injection can set the administrator flag, and five more High flaws in the same releases still have no CVE. Craft 3 is outside the named ranges. [Guide](details/craft-cms.md#remediation). |
 | **Jumis for Windows before TJ7.0.141.36** | Update to TJ7.0.141.36 or later, then confirm the Jumis SQL login is no longer `sysadmin`. Until then, allow only the Jumis hosts to reach that SQL Server. Jumis Finance is not this application. [Guide](details/jumis.md#remediation). |
 | **WordPress sites with BookIt** | Update to 2.6.0.7 or later. Through 2.6.0.6, the public booking endpoint accepts an unauthenticated SQL injection. Deactivate the plugin until you can update. [Guide](details/bookit.md#remediation). |

@@ -1,6 +1,6 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-07 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skbzerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -56,6 +56,7 @@
 | Mainline release | Linux 7.3, 2026-10-18 | Linux 7.3 and stable 7.3.1 (2026-10-30) do **not** include `79dc34beb1fd`. The `skbuff.c` history on those tags has an older, different "shared-frag" commit. [kernel.org releases][releases] [v7.3 history][v73] |
 | Stable backport | 2026-11-01 12:44:45 +0100 | Linux **7.2.15** includes the fix as commit `d7d6ff98d5d1`, which is `79dc34beb1fd` upstream. Linux 7.2 is marked EOL. [ChangeLog-7.2.15][cl7215] |
 | Linux 7.3.2 | 2026-11-06 12:10:54 −0500 | Includes the fix as commit `1a9c180cd843`, which is `79dc34beb1fd` upstream. Linux 7.3.3, tagged later the same day, does not repeat it. 7.3 and 7.3.1 still do not have it. [ChangeLog-7.3.2][cl732] |
+| RHEL 7 Extended Lifecycle Support | 2026-11-05; time/TZ unknown | [RHSA-2026:95556][rhsa7] ships `kernel-3.10.0-1160.169.1.el7`. The fixes list names ZDI-CAN-33367 with an empty CVE field (BZ 2559835). This is the ELS kernel, not CentOS 7. |
 | Linux 7.4-rc1 | Tagged 2026-11-01 21:26:31 UTC | `skb_zerocopy()` on tag `v7.4-rc1` copies `SKBFL_SHARED_FRAG`. A release candidate, not a stable kernel. [v7.4-rc1 skbuff.c][v74] |
 | CVE assignment | None as of this review | CloudLinux (updated 2026-10-26) and AlmaLinux say no CVE is assigned. The kernel CNA assigns CVEs after a fix reaches a stable tree. No Debian or Ubuntu tracker entry or notice was found. [CloudLinux][cl] [Kernel CVE process][kernelcve] |
 
@@ -139,6 +140,7 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | RHEL 8 | `kernel-4.18.0-553.181.1.el8_10`; real-time `kernel-rt-4.18.0-553.181.1.rt7.522.el8_10` | [RHSA-2026:93436][rhsa8z] and [RHSA-2026:93437][rhsa8rt], issued 2026-11-02. Both name ZDI-CAN-33367 with an empty CVE field. These are not the November 1 TCP kernels. | [RHSA-2026:93436][rhsa8z] |
 | RHEL 8.8 | `kernel-4.18.0-477.178.1.el8_8` | [RHSA-2026:94303][rhsa88], issued 2026-11-03, rated Critical. RHEL 8.8 SAP Solutions, Telecommunications Update Service, and Extended Life Cycle Long Life. Names CVE-2026-98432 and ZDI-CAN-33367. Not the 8.10 kernel above. | [RHSA-2026:94303][rhsa88] |
 | RHEL 8.6 | `kernel-4.18.0-372.227.1.el8_6` | [RHSA-2026:94996][rhsa86], issued 2026-11-04, rated Critical. RHEL 8.6 Advanced Mission Critical Update Support and Extended Update Support Long-Life Add-On. Names CVE-2026-98432 and ZDI-CAN-33367 (empty CVE field). No `kernel-rt` package. Not the 8.8 or 8.10 kernels. | [RHSA-2026:94996][rhsa86] |
+| RHEL 7 ELS | `kernel-3.10.0-1160.169.1.el7` | [RHSA-2026:95556][rhsa7], issued 2026-11-05, rated Important. Red Hat Enterprise Linux 7 Extended Lifecycle Support, including the IBM Z and Power channels. The fixes list names ZDI-CAN-33367 with an empty CVE field. This is not CentOS 7, which the detection table still calls unaffected, and it is not the CloudLinux 7 hybrid kernel. | [RHSA-2026:95556][rhsa7] |
 | RHEL 8.4 | `kernel-4.18.0-305.217.1.el8_4` | [RHSA-2026:94596][rhsa84z], issued 2026-11-03, rated Important. RHEL 8.4 Advanced Mission Critical Update Support and Extended Update Support Long-Life Add-On. Names ZDI-CAN-33367 with an empty CVE field. Does not name CVE-2026-98432. No `kernel-rt` package. The same day's `kernel-4.18.0-305.218.1.el8_4` names the TCP flaw and not this bug. Neither replaces the 8.8 or 8.10 kernels. | [RHSA-2026:94596][rhsa84z] |
 | Rocky Linux 9 | `kernel-5.14.0-687.64.1.el9_8` | [RLSA-2026:93412][rlsa9], issued 2026-11-03. The description names ZDI-CAN-33367. The same errata also ships `kernel-rt` at that version. | [RLSA-2026:93412][rlsa9] |
 | RHEL 9.4 | `kernel-5.14.0-427.161.1.el9_4` and `kernel-rt-5.14.0-427.161.1.el9_4` | [RHSA-2026:94109][rhsa94], issued 2026-11-02, for 9.4 Update Services for SAP Solutions. Names ZDI-CAN-33367 with an empty CVE field, and CVE-2026-98432. Not the 9.8 kernel above. | [RHSA-2026:94109][rhsa94] |
@@ -244,6 +246,7 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 [rhsa92]: https://access.redhat.com/errata/RHSA-2026:94477
 [rhsa92rt]: https://access.redhat.com/errata/RHSA-2026:94558
 [rhsa100]: https://access.redhat.com/errata/RHSA-2026:94508
+[rhsa7]: https://access.redhat.com/errata/RHSA-2026:95556
 [elsa8]: https://linux.oracle.com/errata/ELSA-2026-93414.html
 [elsa10]: https://linux.oracle.com/errata/ELSA-2026-93413.html
 [osv]: https://osv.dev/vulnerability/CLSA-2026-1792751700
