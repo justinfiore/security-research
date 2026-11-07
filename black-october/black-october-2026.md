@@ -15,6 +15,10 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [JetBrains IDEs: a project file runs code in Safe Mode](#jetbrains-ides-a-project-file-runs-code-in-safe-mode)
+- [JetBrains Datalore: code execution from a view-only notebook](#jetbrains-datalore-code-execution-from-a-view-only-notebook)
+- [WordPress plugins: unauthenticated upload and role deletion](#wordpress-plugins-unauthenticated-upload-and-role-deletion)
+- [Chainalysis: password hashes and live tokens exposed](#chainalysis-password-hashes-and-live-tokens-exposed)
 - [Babelfish: a TDS handshake can run code as the database user](#babelfish-a-tds-handshake-can-run-code-as-the-database-user)
 - [UgCS: an empty login is accepted when only one user exists](#ugcs-an-empty-login-is-accepted-when-only-one-user-exists)
 - [Control Web Panel: login bypass and root commands on the loopback API](#control-web-panel-login-bypass-and-root-commands-on-the-loopback-api)
@@ -179,6 +183,10 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [CLion](#jetbrains-ides-a-project-file-runs-code-in-safe-mode) to **2026.2 or later** and [IntelliJ IDEA](#jetbrains-ides-a-project-file-runs-code-in-safe-mode) to **2026.3 or later**. JetBrains rates two CLion flaws CVSS 3.1 9.6 Critical: a project file runs code in Safe Mode, which is the mode for a project you have not trusted. Five IntelliJ flaws are 7.8 and need the IDE to open a project on the same machine. The issues-fixed page does not list them. It is not in KEV.
+- **New this update:** Update On-Premises [Datalore](#jetbrains-datalore-code-execution-from-a-view-only-notebook) to **2026.4 or later**. JetBrains rates [CVE-2026-123279](https://www.cve.org/CVERecord?id=CVE-2026-123279) CVSS 3.1 9.0 Critical: a view-only collaborator can run code in a notebook's computation. A published interactive report had its own flaw, 8.1, fixed in 2026.2.4. The issues-fixed page does not list them. Datalore Cloud is JetBrains' to patch. It is not in KEV.
+- **New this update:** If your organization uses [Chainalysis](#chainalysis-password-hashes-and-live-tokens-exposed), reset every password and rotate every API key when access returns. Chainalysis said on November 4 that password hashes and live tokens for all users were exposed, and that an on-path attack exposed a subset of passwords. The October 30 notice said credentials were not accessed. That line is withdrawn. No CVE is assigned.
+- **New this update:** Remove [WP Libre Form 1.5.0.1 and MDJM Event Management through 1.7.8.7](#wordpress-plugins-unauthenticated-upload-and-role-deletion). WPScan rates the upload flaw 10.0 and the role-deletion flaw 9.1, and says neither has a fix. Both need no login. They are not the four plugins from November 6, and neither is in KEV.
 - **New this update:** If [Babelfish](#babelfish-a-tds-handshake-can-run-code-as-the-database-user) is enabled, upgrade it. Amazon rates [CVE-2026-119923](https://www.cve.org/CVERecord?id=CVE-2026-119923) CVSS 3.1 9.8 Critical: a TDS prelogin packet can run code as the database user, with no login. The open-source fix is 4.10, 5.6, or 6.1. Aurora has its own version list. Until then, restrict TCP 1433. It is not in KEV.
 - **New this update:** Update [UgCS](#ugcs-an-empty-login-is-accepted-when-only-one-user-exists) to **6.2 or later**. ENISA rates [CVE-2026-59104](https://www.cve.org/CVERecord?id=CVE-2026-59104) CVSS 3.1 9.8 Critical: when the server has one user, an empty login on TCP 3334 is accepted, and that session can command a connected drone. The fix shipped October 9. The record is November 6. It is not in KEV.
 - **New this update:** Update [Control Web Panel](#control-web-panel-login-bypass-and-root-commands-on-the-loopback-api) to **1.29 or later**. VulnCheck rates nine of ten flaws High, disclosed November 3. Before 1.12, the user-panel login redirect does not stop the request. Before 1.29, routes on the loopback API run commands as root. The changelog does not name the CVEs. The update does not remove a file already written. None is in KEV.
@@ -285,6 +293,95 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## JetBrains IDEs: a project file runs code in Safe Mode
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/jetbrains-ides.md):** [Detection](details/jetbrains-ides.md#detection) · [Remediation](details/jetbrains-ides.md#remediation) · [Verification](details/jetbrains-ides.md#verification) · [Timeline](details/jetbrains-ides.md#timeline)
+
+**CVEs:** [CVE-2026-123831](https://www.cve.org/CVERecord?id=CVE-2026-123831), [CVE-2026-123832](https://www.cve.org/CVERecord?id=CVE-2026-123832), [CVE-2026-123838](https://www.cve.org/CVERecord?id=CVE-2026-123838), [CVE-2026-123293](https://www.cve.org/CVERecord?id=CVE-2026-123293), [CVE-2026-123837](https://www.cve.org/CVERecord?id=CVE-2026-123837), [CVE-2026-123304](https://www.cve.org/CVERecord?id=CVE-2026-123304), [CVE-2026-123853](https://www.cve.org/CVERecord?id=CVE-2026-123853)
+
+**JetBrains rates [CVE-2026-123831](https://www.cve.org/CVERecord?id=CVE-2026-123831) and [CVE-2026-123832](https://www.cve.org/CVERecord?id=CVE-2026-123832) CVSS 3.1 9.6 Critical.** NVD has not scored them. Before CLion 2026.2, and before 2026.1.4 for the first of the two, opening a project runs code in Safe Mode: once through Meson settings, once through a JSON compilation database. Safe Mode is the mode for a project you have not trusted, so it is not a workaround. Five IntelliJ IDEA flaws are 7.8 High and need the IDE to open a project on the same machine. The floor for all five is 2026.3. The issues-fixed page does not list them. This is not [Hub](#jetbrains-hub-privilege-escalation-during-email-verification) and not [Datalore](#jetbrains-datalore-code-execution-from-a-view-only-notebook).
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07). JetBrains does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public announcement | 2026-11-06 16:09:58 UTC | CVE-2026-123831. CVE-2026-123832 is one second later. The IntelliJ records are the same day. |
+| Patch | Builds above; release time unknown | The records name the builds. The issues-fixed page does not. |
+| **Last updated** | **2026-11-07 03:55 EST (UTC−05:00)** | New item. Update CLion to 2026.2 and IntelliJ IDEA to 2026.3. |
+
+**Patch:** CLion **2026.2 or later**, or **2026.1.4 or later** on the 2026.1 line. IntelliJ IDEA **2026.3 or later**. There is no documented workaround. The update does not undo a command a project file already ran.
+
+Sources: [CVE-2026-123831](https://www.cve.org/CVERecord?id=CVE-2026-123831), [JetBrains issues fixed](https://www.jetbrains.com/privacy-security/issues-fixed/), [detailed guide](details/jetbrains-ides.md).
+
+---
+
+## JetBrains Datalore: code execution from a view-only notebook
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/datalore.md):** [Detection](details/datalore.md#detection) · [Remediation](details/datalore.md#remediation) · [Verification](details/datalore.md#verification) · [Timeline](details/datalore.md#timeline)
+
+**CVEs:** [CVE-2026-123279](https://www.cve.org/CVERecord?id=CVE-2026-123279), [CVE-2026-123836](https://www.cve.org/CVERecord?id=CVE-2026-123836), [CVE-2026-123280](https://www.cve.org/CVERecord?id=CVE-2026-123280), [CVE-2026-123281](https://www.cve.org/CVERecord?id=CVE-2026-123281), [CVE-2026-123834](https://www.cve.org/CVERecord?id=CVE-2026-123834), [CVE-2026-123282](https://www.cve.org/CVERecord?id=CVE-2026-123282)
+
+**JetBrains rates [CVE-2026-123279](https://www.cve.org/CVERecord?id=CVE-2026-123279) CVSS 3.1 9.0 Critical.** NVD has not scored it. Before Datalore 2026.4, a view-only collaborator can run code in a notebook's computation. The record says that needs low privileges and a user interaction JetBrains does not describe. Five more flaws are High: a collaborator can read the owner's SSH private key through Git backup (8.8), anyone can run code through a published interactive report (8.1, fixed in 2026.2.4), notebook code can run a command in the sidecar container (7.5), a database task can use another workspace's service account (7.5), and an expired account token can start a new session (7.4). Ten more records the same day are below 7.0. The issues-fixed page does not list them. The what's-new page says 2026.4 fixes a Critical issue and withholds the details. Datalore Cloud is JetBrains' to patch. This is not [Hub](#jetbrains-hub-privilege-escalation-during-email-verification).
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07). JetBrains does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public announcement | 2026-11-06 10:27:47 UTC | CVE-2026-123279. The other Datalore records follow the same day. |
+| What's new | Page footer 2026-10-29; release time unknown | 2026.4 says it fixes a Critical issue. 2026.2.4 fixed the public-report flaw and not this one. |
+| **Last updated** | **2026-11-07 03:55 EST (UTC−05:00)** | New item. Update On-Premises Datalore to 2026.4 or later. |
+
+**Patch:** On-Premises Datalore **2026.4 or later**. 2026.2.4 fixes the 8.1 public-report flaw and not the 9.0 flaw. There is no documented workaround. The update does not rotate an SSH key a collaborator already copied.
+
+Sources: [CVE-2026-123279](https://www.cve.org/CVERecord?id=CVE-2026-123279), [Datalore what's new](https://www.jetbrains.com/help/datalore/whats-new.html), [detailed guide](details/datalore.md).
+
+---
+
+## WordPress plugins: unauthenticated upload and role deletion
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-plugins-nov7.md):** [Detection](details/wordpress-plugins-nov7.md#detection) · [Remediation](details/wordpress-plugins-nov7.md#remediation) · [Verification](details/wordpress-plugins-nov7.md#verification) · [Timeline](details/wordpress-plugins-nov7.md#timeline)
+
+**CVEs:** [CVE-2026-118423](https://www.cve.org/CVERecord?id=CVE-2026-118423), [CVE-2026-88800](https://www.cve.org/CVERecord?id=CVE-2026-88800)
+
+**WPScan rates WP Libre Form [CVE-2026-118423](https://www.cve.org/CVERecord?id=CVE-2026-118423) CVSS 3.1 10.0 Critical and MDJM Event Management [CVE-2026-88800](https://www.cve.org/CVERecord?id=CVE-2026-88800) CVSS 3.1 9.1 Critical.** NVD has not scored them. Both need no login. WP Libre Form 1.5.0.1 does not check an uploaded file's type, so a caller can upload PHP and run it. MDJM through 1.7.8.7, and the same versions of Mobile Events Manager, delete any role, including administrator, on a request with no capability check. WPScan says there is no known fix for either. WordPress.org closed WP Libre Form on September 8 and still offers MDJM 1.7.8.7. These are not the [four plugins from November 6](#wordpress-plugins-four-unauthenticated-critical-flaws) and not the [core upgrade-window flaw](#wordpress-unauthenticated-code-execution-during-a-core-upgrade).
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for either CVE. WPScan does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| WPScan pages | 2026-11-02 and 2026-11-03; time/TZ unknown | MDJM, then WP Libre Form. CVE records are later. |
+| CVE records | 2026-11-06 07:30 UTC | WPScan CNA. Both say no fixed version. |
+| **Last updated** | **2026-11-07 03:55 EST (UTC−05:00)** | New item. Remove the plugin. There is no update. |
+
+**Patch:** No fixed version. Remove WP Libre Form 1.5.0.1, and remove MDJM Event Management and Mobile Events Manager through 1.7.8.7. Removing the plugin does not delete a PHP file already uploaded or restore a role already deleted.
+
+Sources: [WPScan, WP Libre Form](https://wpscan.com/vulnerability/35149a79-aee1-4f13-ba29-583c2224c5da/), [WPScan, MDJM](https://wpscan.com/vulnerability/f39f77ac-1885-4021-a4d2-5a2b7c5260b5/), [detailed guide](details/wordpress-plugins-nov7.md).
+
+---
+
+## Chainalysis: password hashes and live tokens exposed
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/chainalysis.md):** [Detection](details/chainalysis.md#detection) · [Remediation](details/chainalysis.md#remediation) · [Verification](details/chainalysis.md#verification) · [Timeline](details/chainalysis.md#timeline)
+
+**CVEs:** None. Chainalysis has not assigned one.
+
+Chainalysis says an external actor used offensive agentic techniques to reach its systems. The October 30 notice said the exposed data was names, email addresses, and role labels, and that passwords and session tokens were not accessed. The November 4 updates withdraw that. An on-path attack exposed a subset of customer passwords. Names, usernames, password hashes, and live tokens for all users were exposed. Chainalysis says it has no evidence that investigation content was accessed or that attribution data was changed. KYT and Address Screening started coming back on November 6, in phases. Reactor and Data Solutions were still offline.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Chainalysis says it is locking accounts that appear to have been accessed.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| First notice | 2026-10-30; time/TZ unknown | Names and emails. Credentials said not accessed. |
+| Expanded notice | 2026-11-04 09:50 and 23:00 EST (UTC−05:00) | A subset of passwords, then hashes and live tokens for all users. |
+| Restoration | 2026-11-06 03:30 EST (UTC−05:00) | KYT and Address Screening, phased. Password and API-key reset required. |
+| **Last updated** | **2026-11-07 03:55 EST (UTC−05:00)** | New item. Reset the password and rotate the API key when access returns. |
+
+**What to do:** When Chainalysis restores your access, reset every Chainalysis password and rotate every API key before registering transactions. Reset the same password anywhere else it was reused. Send trusted IP addresses to Chainalysis for the allowlist. There is nothing to patch on your side.
+
+Sources: [Chainalysis notice](https://www.chainalysis.com/blog/security-incident-october-30/), [detailed guide](details/chainalysis.md).
 
 ---
 
@@ -4908,6 +5005,9 @@ flowchart TD
 | **WatchGuard AuthPoint Authentication Gateway before 7.6.0** | Upgrade to 7.6.0 or later. One build fixes the 9.2 unauthenticated disruption, the two 9.1 flaws, and the 8.9 LDAP result forgery. The upgrade does not restore a deleted directory sync or end a session already issued. [Guide](details/watchguard-authpoint-gateway.md#remediation). |
 | **SonicOS Gen7 through 7.3.3-7015, or Gen8 through 8.2.2-8015** | Upgrade Gen7 to 7.3.4-7013 or later and Gen8 to 8.2.3-8015 or later. Where SSLVPN uses SAML, CVE-2026-19868 is in CISA KEV: a user with another login method can skip that SAML check. Two management-interface flaws are 8.8. There is no workaround. This is not GMS. [Guide](details/sonicos.md#remediation). |
 | **SonicWall GMS 9.5.2 and earlier (Virtual Appliance or Windows)** | Power it off. There is no patch and no workaround. Move firewall management to Network Security Manager. Taking GMS offline does not expire a credential already copied. [Guide](details/sonicwall-gms.md#remediation). |
+| **CLion before 2026.2, or IntelliJ IDEA before 2026.3** | Update CLion to 2026.2 or later (2026.1.4 on the 2026.1 line) and IntelliJ IDEA to 2026.3 or later. A project file can run code in CLion's Safe Mode. The IntelliJ flaws need the IDE to open a project on the same machine. [Guide](details/jetbrains-ides.md#remediation). |
+| **Datalore On-Premises before 2026.4** | Update to 2026.4 or later. A view-only collaborator can run code in a notebook's computation. 2026.2.4 fixes the public-report flaw and not this one. The update does not rotate an SSH key a collaborator already copied. Datalore Cloud is not a version you upgrade. [Guide](details/datalore.md#remediation). |
+| **WordPress with WP Libre Form 1.5.0.1, or MDJM Event Management or Mobile Events Manager through 1.7.8.7** | Remove the plugin. WPScan says there is no fixed version. WP Libre Form can upload PHP with no login. MDJM can delete the administrator role with no login. This is not the November 6 plugin set and not the core upgrade-window flaw. [Guide](details/wordpress-plugins-nov7.md#remediation). |
 | **Self-hosted JetBrains Hub before 2026.2.52556** | Upgrade to 2026.2.52556 or later. A low-privilege user can escalate during email verification. Build 2026.2.52519 fixes a second, 7.5 flaw and not this one. YouTrack Cloud is not a build you upgrade. [Guide](details/jetbrains-hub.md#remediation). |
 | **WordPress with BuddyForms, miniOrange OAuth SSO, Radius Booking, or ELEX HelpDesk** | Update that plugin: BuddyForms 2.10.6, miniOrange OAuth SSO 7.1.4, Radius Booking 1.0.21, ELEX HelpDesk 3.3.9, or later. All four are unauthenticated and Critical. This is not the core upgrade-window flaw. [Guide](details/wordpress-plugins-nov6.md#remediation). |
 | **ASUS routers on ASUSWRT 3.0.0.4_386, 3.0.0.4_388, or 3.0.0.6_102** | Install the current firmware for that model and reboot. ASUS prints no build number. Until then, turn AiCloud off. The LAN flaw runs commands as root with no login. [Guide](details/asus-routers.md#remediation). |
