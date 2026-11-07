@@ -1,6 +1,6 @@
 # OpenSSH: password login on musl accepts any long password
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-07 (America/New_York)
 
 [Back to OpenSSH summary](../black-october-2026.md#openssh-password-login-on-musl-accepts-any-long-password) · [Changelog](../../CHANGELOG.md)
 
@@ -14,6 +14,8 @@ OpenSSH calls the workaround in 10.6p2 a **critical** security fix. **MITRE rate
 
 - [Timeline](#timeline)
 - [Detection](#detection)
+- [Containers and other musl systems](#containers-and-other-musl-systems)
+- [Checking a host](#checking-a-host)
 - [Remediation](#remediation)
 - [Verification](#verification)
 - [Compromise response](#compromise-response)
@@ -31,7 +33,7 @@ OpenSSH calls the workaround in 10.6p2 a **critical** security fix. **MITRE rate
 | CVE record | 2026-11-05 15:46:26 UTC | MITRE, [CVE-2026-123158][cve], CVSS 3.1 8.1. Updated 17:18:17 UTC the same day. OpenSSH's notes still do not name it. |
 | CISA ADP | 2026-11-06 04:56:35 UTC | SSVC Exploitation `poc`. That is a proof-of-concept label, not a report of attacks and not a KEV listing. The description, the score, and the range are unchanged. |
 | Honeypot logins | 2026-11-06; clock time not on the page | Previdian. First attempt less than nine hours after the CVE record. Not a KEV listing. [Help Net Security][hns] [Previdian][prev] |
-| **Last updated** | **2026-11-06 (America/New_York)** | Honeypot logins reported. The fix is unchanged. |
+| **Last updated** | **2026-11-07 (America/New_York)** | Added container, distribution, and check guidance. The fix is unchanged. |
 
 ## Detection
 
@@ -43,6 +45,107 @@ All of the following have to be true. A host that fails any one of them is outsi
 4. **Some other local account has a `$5$` or `$6$` password hash.** One such account is enough. A machine where no account has a `$`-style hash is not affected. The tiny-cloud images (qcow2, VHD, and AMI) from **3.18.11 through 3.24.3** ship the `alpine` user with `*` and passwordless `doas`. They are safe on first boot and become reachable as soon as any `$6$` hash exists, for example a console password or user-data `hashed_passwd`.
 
 The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems to check. A Buildroot or Yocto image that embeds OpenSSH without PAM is in the same condition; those projects had not published a fixed release when this was written.
+
+Do not probe by sending a 257-byte password. That is the exploit, and a success is a login. The checks below stop at the conditions.
+
+## Containers and other musl systems
+
+An Alpine base is not enough. The system has to run OpenSSH sshd, with password logins on, and with a real `$5$` or `$6$` hash somewhere. Alpine as a VM is uncommon. Almost all Alpine in the wild is a container base. The machines that do run it are routers and appliances (OpenWrt, Buildroot, Yocto), small VPS boxes, and the official cloud images. Vultr and Hetzner offer Alpine next to Ubuntu and Debian. They do not make it the default. AWS Marketplace listings exist mostly from small vendors rather than Amazon. A Vagrant box for Alpine 3.22 showed on the order of a couple thousand downloads in total when checked on 2026-11-07, against the volume of an Ubuntu box. That count will move. It is a scale marker, not a census.
+
+### Distributions that are not musl
+
+These use glibc, and OpenSSH on them authenticates through PAM. They are outside this flaw.
+
+- **Linux Mint**, including LMDE. Mint is Ubuntu LTS. LMDE is Debian stable. Current Mint tracks glibc 2.39.
+- **Amazon Linux 2** ships glibc 2.26, and **Amazon Linux 2023** ships glibc 2.34. That covers the AMIs and the `amazonlinux` container images.
+- **Bottlerocket**, the other AWS-built host OS, links against glibc. Its SDK can cross-compile against musl. The OS itself does not use it.
+- Debian, Ubuntu, Fedora, RHEL, UBI, and Photon, as already noted.
+
+### Containers
+
+Official `alpine` images do not ship sshd. `alpine`, `alpine:3`, `alpine:3.24`, and the other official tags are a miniroot with musl, BusyBox, and the apk index, about 5–8 MB. There is no `openssh` package. Alpine's advisory lists "Docker and other container users that do not run sshd" as not affected. A later Dockerfile line has to run `apk add openssh` or `apk add openssh-server`, and something has to start sshd.
+
+sshd inside an app container is uncommon, and it is deliberate when it is there. `docker exec` replaced it for debugging. What remains is images whose product is SSH: git-over-SSH and SFTP. Those images publish port 22 on purpose.
+
+Images checked on 2026-11-07 that are not an Alpine sshd, even where the base is Alpine:
+
+| Image | Base | sshd? |
+|---|---|---|
+| `ghcr.io/emissary-ingress/emissary` 4.x | Distroless Debian | No. 3.x was Alpine plus a bundled glibc (`frolvlad/alpine-glibc`) and also has no sshd. |
+| `docker.elastic.co/beats/filebeat` | Red Hat UBI 10 Minimal. Older tags were CentOS 7. The `-wolfi` tag is Wolfi, which is glibc, not musl. | No. |
+| `quay.io/strimzi/operator`, `quay.io/strimzi/kafka` | UBI 9 | No. |
+| `apache/kafka`, `apache/kafka-native` | Alpine | No. The Dockerfile adds a JRE, bash, and `gcompat`, not openssh. |
+| `confluentinc/cp-kafka`, `confluentinc/cp-kafka-connect` | UBI 9. Older tags were UBI 8. | No. |
+| `rabbitmq`, including the `-alpine` tag | Debian or Ubuntu for the default tag. The `-alpine` tag is Alpine. Its final `apk add` is `su-exec`, `bash`, `procps`, and `tzdata`. | No. |
+| `bitnami/rabbitmq`, Bitnami Kafka | Debian (`bitnami/minideb`) for the older free images. Current Secure Images are Photon, which is glibc. | No. |
+
+Public images that exist to run sshd on Alpine are the ones to check. They are in scope only when password authentication is on, the account layout matches, and the image was built before the fixed Alpine package.
+
+| Image | What it does | This bug |
+|---|---|---|
+| `lscr.io/linuxserver/openssh-server` | Alpine 3.24. Installs `openssh-server-pam` and sets `PasswordAuthentication no`. Password auth is opt-in through `PASSWORD_ACCESS`. | Not by default. A container started with password access needs `UsePAM` checked. `UsePAM yes` stays outside the flaw. |
+| `hermsi/alpine-sshd` | Alpine, rebuilt weekly. Root password login is a documented mode (`ROOT_PASSWORD`). | In scope when that mode is on and the pulled tag predates the fixed package. A weekly rebuild picks up Alpine updates. An old tag does not. |
+| `sickp/alpine-sshd` | Last published 2018. Root password is `root`. OpenSSH 7.5 on Alpine 3.7. | Frozen on an Alpine older than the 3.16 `root:*` layout. Nobody is shipping a fix. Treat a copy that is still running as unmaintained SSH on the internet, not as a clean yes or no on this CVE. |
+| `atmoz/sftp:alpine` | Installs `openssh-server-pam` and symlinks `sshd.pam` to `sshd`. Users are created with real passwords. The default tag is Debian. | The Alpine tag uses the PAM package. Confirm `UsePAM yes` in a running container before calling it clean. |
+| `panubo/sshd` (`quay.io/panubo/sshd`) | Password auth is off unless `SSH_ENABLE_PASSWORD_AUTH=true`. | In scope only when password auth is turned on and the build is the non-PAM package from before the fix. |
+| `devdotnetorg/openssh-server`, Alpine tags 3.15–3.20 | Password authentication is a documented feature. Last push was more than two years ago. | The Alpine tags are in scope if they run non-PAM sshd with password logins. The Ubuntu and Debian tags of the same repo are glibc and are not. |
+| `praqma/alpine-sshd` | Installs `openssh` and forces `PasswordAuthentication no`. | That setting closes the hole. |
+
+### A git forge image
+
+The official Forgejo root image, `codeberg.org/forgejo/forgejo`, is the shape this bug is about, and a stock container still fails the last condition. The official Gitea image is built the same way.
+
+- The root image is Alpine. It installs the `openssh` package, which pulls in `openssh-server` built without PAM, and s6 starts `/usr/sbin/sshd`.
+- The image locks the `git` user with `git:*`. That is the `*` account.
+- The accounts in the container are `root`, shipped locked, and `git`. The forge's own user passwords live in its database, and SSH users authenticate with keys in `authorized_keys`. A stock container has no `$5$` or `$6$` hash, so a long password does not get in. It becomes exposed only if someone later sets a real password hash inside that container.
+- The `-rootless` tag installs `openssh-client` only and serves git over Forgejo's built-in Go SSH server. That server is not OpenSSH and is not this bug.
+
+The Dockerfile says `apk add openssh` with no version pin, so a newly built copy of an existing tag picks up Alpine's fixed package. Pulling a tag you already have does nothing until the image was rebuilt after 2026-11-05. Compare `apk info -v openssh` inside the running container to the [package table](#remediation). On Alpine 3.24 the fixed package is `10.3_p1-r2`. On 3.23 it is `10.2_p1-r1`.
+
+Stopping the container does not fix an old image. The image already pulled keeps the old sshd until a newly built one is pulled. If the package is still old, turn password logins off. A forge's sshd is there for git, and git clients use keys:
+
+```sh
+docker exec CONTAINER sh -c 'mkdir -p /etc/ssh/sshd_config.d && printf "PasswordAuthentication no\n" > /etc/ssh/sshd_config.d/00-no-passwords.conf'
+docker restart CONTAINER
+```
+
+That file lives in the container's writable layer, not in the data volume, so it disappears when the container is recreated. The pull is the fix that stays.
+
+## Checking a host
+
+### From outside
+
+This shows whether anything is listening and whether that server offers password login. It does not show musl, PAM, the password field, or another account's hash. A banner that says `Ubuntu` or `Debian` is glibc and is not this bug. A bare `OpenSSH_10.2` or `OpenSSH_10.0` is the shape of an Alpine package, but the banner does not carry the Alpine `-r` revision, so it cannot prove the package is the fixed one.
+
+```sh
+ssh -v -o BatchMode=yes -o PreferredAuthentications=none -p 22 user@host
+```
+
+`Permission denied (publickey)` means passwords are off, and the bug has nothing to submit. `Permission denied (publickey,password)` means passwords are still offered, and the inside check below is what shows whether any account has a real hash. Try the port the service actually publishes. Git and SFTP containers are often mapped to 2222, or to 222, rather than 22.
+
+### On the machine, or inside a container
+
+`ldd` is not always installed. Any one of these separates musl from glibc:
+
+```sh
+ldd --version 2>&1 | head -1          # "musl libc" vs "GNU libc"
+ls /lib/ld-musl-*.so* /lib/libc.musl* 2>/dev/null
+getconf GNU_LIBC_VERSION              # prints a version on glibc; fails on musl
+```
+
+Then the sshd side, and the two password-field lists:
+
+```sh
+apk info -e openssh-server            # Alpine package without PAM
+apk info -e openssh-server-pam        # PAM build; safe only if UsePAM is yes
+sshd -T | grep -i -E '^(passwordauthentication|usepam|permitrootlogin) '
+awk -F: '$2 == "*" { print $1 " has *" }' /etc/shadow
+awk -F: '$2 ~ /^\$[56]\$/ { print $1 " has a real hash" }' /etc/shadow
+```
+
+`sshd -T` prints the setting that is actually in force, which is what the [verification](#verification) section compares. The second `awk` is the condition that decides it. If it prints nothing, no account has a real hash and the bug cannot fire, even when everything above it looks bad.
+
+For a container, run the same reads with `docker exec`. That needs the Docker socket on the host, and it only sees a container that is running and still has a shell. A distroless image with no shell fails the exec. That failure is not a finding. For an image you have not started, `docker image history --no-trunc IMAGE | grep -Ei 'openssh|sshd'` shows whether a layer installed it. `openssh-client` alone is the client. It does not run sshd.
 
 ## Remediation
 
