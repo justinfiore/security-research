@@ -1,6 +1,6 @@
 # Electrum Bitcoin wallet: malicious server swaps broadcast transactions so a fee bump pays the attacker
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-06 (America/New_York)
 
 [Main Electrum summary](../black-october-2026.md#electrum-bitcoin-wallet-malicious-server-swaps-broadcast-transactions-so-a-fee-bump-pays-the-attacker) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -11,7 +11,7 @@
 3. The wallet shows tx2 as a pending outgoing transaction, and tx1 disappears.
 4. If the user **fee-bumps tx2 with RBF**, Electrum signs a valid, higher-fee version of it, and the funds go to the attacker. In the reported loss case, the server made tx2 zero-fee, apparently to prompt a fee bump. [Advisory][ghsa]
 
-**Affected:** Electrum **< 4.8.3** on all platforms, including desktop and Android. **Not affected:** clients that connect only to servers they trust, such as their own. **Fixed:** **4.8.3**. Merge commit `90fe308` makes the client verify signatures of the wallet's own (`is_mine`) inputs on mempool transactions before adding them to history. The fix is deliberately limited: incoming transactions and inputs from other wallets are still not validated before confirmation. [Advisory][ghsa] [Fix][fix]
+**Affected:** Electrum **< 4.8.3** on all platforms, including desktop and Android. **Not affected:** clients that connect only to servers they trust, such as their own. **Fixed:** **4.8.3**. Merge commit `90fe308` makes the client verify signatures of the wallet's own (`is_mine`) inputs on mempool transactions before adding them to history. The fix is deliberately limited: incoming transactions and inputs from other wallets are still not validated before confirmation. [Advisory][ghsa] [Fix][fix] **4.8.4**, tagged 2026-11-06 and also labeled a security update, does not change this fix. Its new note is that a malformed incoming onion message could disconnect Electrum from its channel peer. The release notes do not rate that, and they name no CVE for it. [4.8.4 notes][notes484]
 
 **CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-28). The maintainers state that "some servers are performing this attack in the wild" and report a user who lost funds after fee-bumping. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -66,14 +66,14 @@ A clean history does not prove a different server was honest. The fix still does
 
 ## Remediation
 
-1. **Upgrade to Electrum 4.8.3** from electrum.org, and verify the GPG signatures on the download. [Downloads][dl]
+1. **Upgrade to Electrum 4.8.3 or later** from electrum.org, and verify the GPG signatures on the download. 4.8.4 is the current security release. It includes the 4.8.3 fix and also drops incoming onion messages. [Downloads][dl] [4.8.4 notes][notes484]
 2. **Until upgraded, and as a habit afterwards:** before signing **any** transaction, including an RBF fee bump or "cancel", check the full output address and amount against the intended payment. The maintainers give this as the workaround. [Advisory][ghsa]
 3. Do not fee-bump a pending transaction you did not create exactly as shown. If history changed after broadcast, stop and verify independently.
 4. Where practical, connect only to a server you trust or operate, for example your own Electrum server backed by your own node. [Advisory][ghsa]
 
 ## Verification
 
-- Confirm **Help → About** shows 4.8.3 or later on every device. Run the release you downloaded and verified; an old installation may still be on the PATH or start menu.
+- Confirm **Help → About** shows 4.8.4 or later on every device. 4.8.3 still fixes the fee-bump theft. Run the release you downloaded and verified; an old installation may still be on the PATH or start menu.
 - As a benign check, send a small payment between two of your own wallets and confirm that the txid and outputs shown after broadcast match what you signed and what an independent source shows.
 
 ## Compromise response
@@ -93,4 +93,5 @@ A clean history does not prove a different server was honest. The fix still does
 [fix]: https://github.com/spesmilo/electrum/commit/90fe30822561e515a9d2d6e5a352cc07780999eb
 [tag]: https://github.com/spesmilo/electrum/tree/4.8.3
 [notes]: https://github.com/spesmilo/electrum/blob/4.8.3/RELEASE-NOTES
+[notes484]: https://github.com/spesmilo/electrum/blob/master/RELEASE-NOTES
 [dl]: https://download.electrum.org/4.8.3/

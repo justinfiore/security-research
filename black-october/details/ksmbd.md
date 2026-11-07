@@ -1,6 +1,6 @@
 # Linux KSMBD: establish exposure and verify kernel-vendor fixes
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-06 (America/New_York)
 
 [Main guide](../black-october-2026.md#7-linux-ksmbd-serious-kernel-level-reports-but-not-every-linux-server) · [Changelog](../../CHANGELOG.md)
 
@@ -90,7 +90,7 @@ The reports tested **7.3-rc3**; that is a tested version, not a complete affecte
 ### Obtain a release that covers both reports
 
 - Ask the distribution/NAS supplier to map the **exact running build** to ZDI-CAN-33774 and ZDI-CAN-33549, including backport identifiers and relevant kernel configuration.
-- For 33774, supply commit `68f410faedaf`; for 33549, supply `7193241a49c9`. Both are in the Linux 7.4-rc1 tag (2026-11-01). Stable Linux 7.2.15 backports only `68f410faedaf`, as `aaf8a64a3fbf`, and that line is EOL. Require a stable or vendor package that names the report you actually run. Do not install 7.4-rc1 as the remediation.
+- For 33774, supply commit `68f410faedaf`; for 33549, supply `7193241a49c9`. Both are in the Linux 7.4-rc1 tag (2026-11-01). Stable Linux 7.2.15 backports only `68f410faedaf`, as `aaf8a64a3fbf`, and that line is EOL. **Linux 7.3.2** (2026-11-06) backports both: the negotiation wait as `d4a52e78378a`, and the SMB Direct length check as `956968544ae6`. **Linux 6.18.62** the same day backports both as `49675f7bc0e1` and `1f5c774488fa`. Require a stable or vendor package that names the report you actually run. Do not install 7.4-rc1 as the remediation.
 - Install the supported kernel/firmware and reboot into it, following storage-cluster/failover procedures. A `ksmbd-tools` update alone does not establish that kernel code changed.
 - A live patch is acceptable only with explicit vendor coverage for the relevant functions and a verified applied state; do not assume other Linux patches cover these reports.
 

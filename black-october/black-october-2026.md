@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [WordPress plugins: four unauthenticated Critical flaws](#wordpress-plugins-four-unauthenticated-critical-flaws)
+- [SonicOS: SSLVPN SAML bypass, and management-interface flaws](#sonicos-sslvpn-saml-bypass-and-management-interface-flaws)
+- [JetBrains Hub: privilege escalation during email verification](#jetbrains-hub-privilege-escalation-during-email-verification)
 - [Craft CMS: unauthenticated SQL injection to an administrator](#craft-cms-unauthenticated-sql-injection-to-an-administrator)
 - [Jumis: the SQL Server administrator password is computed from the server name](#jumis-the-sql-server-administrator-password-is-computed-from-the-server-name)
 - [Kubeflow Pipelines: shared upload skips authorization](#kubeflow-pipelines-shared-upload-skips-authorization)
@@ -173,10 +176,13 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** If the site runs [BuddyForms, miniOrange OAuth SSO, Radius Booking, or ELEX HelpDesk](#wordpress-plugins-four-unauthenticated-critical-flaws), update that plugin. Wordfence rates BuddyForms [CVE-2026-107622](https://www.cve.org/CVERecord?id=CVE-2026-107622) 9.8 and ELEX [CVE-2026-114630](https://www.cve.org/CVERecord?id=CVE-2026-114630) 9.1. Patchstack rates the miniOrange and Radius Booking flaws 9.8. All four need no login. They are not the WordPress core upgrade-window flaw, and none is in KEV.
+- **New this update (CISA KEV):** Upgrade [SonicOS](#sonicos-sslvpn-saml-bypass-and-management-interface-flaws) Gen7 to **7.3.4-7013 or later** and Gen8 to **8.2.3-8015 or later**. SonicWall rates two management-interface flaws CVSS 3.1 8.8. CISA added [CVE-2026-19868](https://www.cve.org/CVERecord?id=CVE-2026-19868) on November 6: where SSLVPN logins use SAML, a user with credentials for another method can skip that SAML check. SonicWall rates it 7.1 and CISA-ADP rates it 7.5. There is no workaround. This is not GMS.
+- **New this update:** Upgrade self-hosted [JetBrains Hub](#jetbrains-hub-privilege-escalation-during-email-verification) to **2026.2.52556 or later**. JetBrains rates [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294) CVSS 3.1 9.6 Critical: a low-privilege user can escalate during email verification. A second flaw, 7.5, is fixed one build earlier. It is not in KEV.
 - **New this update:** Update [Craft CMS](#craft-cms-unauthenticated-sql-injection-to-an-administrator) to **5.11.2 or later**, or **4.18.9 or later** on the 4.x line. Craft rates the unauthenticated SQL injection High. VulnCheck rates the same flaw, [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488), CVSS 4.0 9.3 and CVSS 3.1 9.8 Critical: before those releases, anyone can read and write the database and set the administrator flag. The same releases fix five more High flaws that still have no CVE, including control-panel paths to command execution. The fixes shipped on September 17. The CVE record is November 6. Craft's advisory still says no CVE is known. It is not in KEV.
 - **New this update:** Update [Jumis](#jumis-the-sql-server-administrator-password-is-computed-from-the-server-name) for Windows to **TJ7.0.141.36 or later**. ENISA rates [CVE-2026-59105](https://www.cve.org/CVERecord?id=CVE-2026-59105) CVSS 3.1 9.8 Critical: the application computes its SQL Server administrator password from the server name, so anyone who can reach that server can read every accounting database on it. The finder says the on-premise install also enables `xp_cmdshell`. The vendor's public site does not mention the CVE. It is not in KEV.
 - **New this update:** Upgrade [Kubeflow Pipelines](#kubeflow-pipelines-shared-upload-skips-authorization) to **2.18.0 or later**. GitHub rates [CVE-2026-77596](https://www.cve.org/CVERecord?id=CVE-2026-77596) CVSS 3.1 9.6 Critical: in a multi-user install, a pipeline upload with no namespace skips the permission check, so a tenant can replace a shared pipeline. An unpinned recurring run can then execute that version in another tenant's namespace. The fix shipped on October 28. The CVE record is November 5. Setting `REQUIRE_NAMESPACE_FOR_PIPELINES=true` rejects the empty namespace until you upgrade, and it also blocks shared pipelines you still use. The upgrade does not delete a version already uploaded. It is not in KEV.
-- **New this update:** Update [Windows Paint](#windows-paint-remote-code-execution) to **11.2609.401.0 or later** through the Microsoft Store. Microsoft rates [CVE-2026-83844](https://www.cve.org/CVERecord?id=CVE-2026-83844) CVSS 3.1 8.1 High and Important: an unauthenticated attacker can execute code by sending a crafted packet, with no user interaction. The CVE record still says 11.2605.91.0. Microsoft's current product row says the fix is 11.2609.401.0. Microsoft says exploitation is less likely and that it has not been exploited. It is not in KEV.
+- **New this update:** Update [Windows Paint](#windows-paint-remote-code-execution) to **11.2609.401.0 or later** through the Microsoft Store. Microsoft's November 6 CVE record now says the same build. The October record said 11.2605.91.0, and a machine on that build is still affected. Microsoft says exploitation is less likely and that it has not been exploited. It is not in KEV.
 - **New this update:** Upgrade [Kyverno](#kyverno-a-namespace-tenant-can-change-the-cluster) to **1.19.2 or later**. VulnCheck rates seven flaws Critical, published November 5: a tenant who can create a namespaced policy can make Kyverno's own controllers read or write other namespaces, and one flaw lets a moved image tag pass a signature check. The same release also fixes fourteen more flaws VulnCheck rates High, published the same day. 1.19.1 is still affected. No 1.18 or 1.17 patch was published. None is in KEV.
 - **New this update:** Update [YOOtheme Pro](#yootheme-pro-unauthenticated-file-write-through-the-image-handler) to **5.0.53 or later** on WordPress and Joomla. The Joomla! Project rates [CVE-2026-102785](https://www.cve.org/CVERecord?id=CVE-2026-102785) CVSS 4.0 10.0 Critical: before 5.0.53, anyone who can see a signed image URL can reuse that signature and write a PHP file. Wordfence scores the WordPress theme 9.8. Unit 42 says webshells were written two days after the October 21 patch. Updating does not delete a file already written. It is not in KEV.
 - **New this update:** On [Sophos UTM](#sophos-utm-unauthenticated-root-command-through-the-email-proxy), install the manual RPM from KBA-000049692, or move off the product. Sophos rates [CVE-2026-118633](https://www.cve.org/CVERecord?id=CVE-2026-118633) CVSS 4.0 9.2 Critical: with email scanning on, a remote sender can run a command as root after repeating the attempt for a few minutes. UTM is end of life. Version 9.724 without that RPM is still affected. Sophos Firewall is not this flaw. It is not in KEV.
@@ -273,6 +279,74 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## WordPress plugins: four unauthenticated Critical flaws
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-plugins-nov6.md):** [Detection](details/wordpress-plugins-nov6.md#detection) · [Remediation](details/wordpress-plugins-nov6.md#remediation) · [Verification](details/wordpress-plugins-nov6.md#verification) · [Timeline](details/wordpress-plugins-nov6.md#timeline)
+
+**CVEs:** [CVE-2026-107622](https://www.cve.org/CVERecord?id=CVE-2026-107622), [CVE-2026-120844](https://www.cve.org/CVERecord?id=CVE-2026-120844), [CVE-2026-119516](https://www.cve.org/CVERecord?id=CVE-2026-119516), [CVE-2026-114630](https://www.cve.org/CVERecord?id=CVE-2026-114630)
+
+**Wordfence rates BuddyForms [CVE-2026-107622](https://www.cve.org/CVERecord?id=CVE-2026-107622) CVSS 3.1 9.8 Critical and ELEX HelpDesk [CVE-2026-114630](https://www.cve.org/CVERecord?id=CVE-2026-114630) CVSS 3.1 9.1 Critical. Patchstack rates miniOrange OAuth SSO [CVE-2026-120844](https://www.cve.org/CVERecord?id=CVE-2026-120844) and Radius Booking [CVE-2026-119516](https://www.cve.org/CVERecord?id=CVE-2026-119516) CVSS 3.1 9.8 Critical.** NVD has not scored them. All four say no login is required. BuddyForms through 2.10.5 can register an administrator when the site allows registration and has a public form. ELEX through 3.3.8 can delete a chosen file, and Wordfence says deleting `wp-config.php` can lead to code execution. Radius Booking through 1.0.20 deserializes untrusted data. The miniOrange plugin through 7.1.3 escalates privileges; the record does not say how. These are not the [core upgrade-window flaw](#wordpress-unauthenticated-code-execution-during-a-core-upgrade).
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-06) for any of the four. Neither CNA reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Wordfence public pages | 2026-11-05; time/TZ unknown | BuddyForms and ELEX. CVE records are the next day. |
+| Patchstack pages | 2026-11-04; time/TZ unknown | miniOrange and Radius Booking. Records published 2026-11-06. |
+| CVE records | 2026-11-06 08:00 UTC and 11:17 UTC | Patchstack, then Wordfence. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | New item. Update the plugin you run. |
+
+**Patch:** BuddyForms **2.10.6 or later**. miniOrange OAuth SSO **7.1.4 or later**. Radius Booking **1.0.21 or later**. ELEX HelpDesk **3.3.9 or later**. Remove a plugin you do not use. The update does not delete an administrator already created or restore a file already deleted.
+
+Sources: [Wordfence BuddyForms](https://www.wordfence.com/threat-intel/vulnerabilities/id/2e83e654-f8a6-44a6-a687-92606331309e?source=cve), [Patchstack miniOrange](https://patchstack.com/database/wordpress/plugin/miniorange-login-with-eve-online-google-facebook/vulnerability/wordpress-oauth-single-sign-on-sso-oauth-client-plugin-7-1-3-privilege-escalation-vulnerability?_s_id=cve), [detailed guide](details/wordpress-plugins-nov6.md).
+
+---
+
+## SonicOS: SSLVPN SAML bypass, and management-interface flaws
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/sonicos.md):** [Detection](details/sonicos.md#detection) · [Remediation](details/sonicos.md#remediation) · [Verification](details/sonicos.md#verification) · [Timeline](details/sonicos.md#timeline)
+
+**CVEs:** [CVE-2026-107155](https://www.cve.org/CVERecord?id=CVE-2026-107155), [CVE-2026-107154](https://www.cve.org/CVERecord?id=CVE-2026-107154), [CVE-2026-19868](https://www.cve.org/CVERecord?id=CVE-2026-19868), [CVE-2026-82308](https://www.cve.org/CVERecord?id=CVE-2026-82308)
+
+**SonicWall rates [CVE-2026-107155](https://www.cve.org/CVERecord?id=CVE-2026-107155) and [CVE-2026-107154](https://www.cve.org/CVERecord?id=CVE-2026-107154) CVSS 3.1 8.8 High. CISA-ADP shows the same 8.8. NVD has not scored them.** Both are in the management interface, need a user to load a page, and in conditions SonicWall does not name can let a remote unauthenticated attacker perform unauthorized operations. [CVE-2026-19868](https://www.cve.org/CVERecord?id=CVE-2026-19868) is the SSLVPN flaw CISA lists: SonicWall scores it **7.1** and CISA-ADP scores it **7.5**. A user who already has credentials for another login method can skip SAML, including SAML multi-factor, and only when SAML is enabled for SSLVPN. SonicWall says it investigated a report of potential exploitation. [CVE-2026-82308](https://www.cve.org/CVERecord?id=CVE-2026-82308) is 7.5 and can crash SSLVPN before login. Three more flaws in the same advisory are 5.9, 5.9, and 5.2. This is not [GMS](#sonicwall-gms-unauthenticated-file-read-no-patch).
+
+**CISA KEV:** [CVE-2026-19868](https://www.cve.org/CVERecord?id=CVE-2026-19868) listed — added 2026-11-06, federal due date 2026-11-20. Ransomware use Unknown. The other six CVEs in SNWLID-2026-0014 are not listed (catalog 2026.11.06, checked 2026-11-06).
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public announcement | 2026-11-06; time/TZ unknown | SNWLID-2026-0014, revision 1.0. |
+| CVE records | 2026-11-06 19:17 UTC | SonicWall CNA. Scores are on the advisory and from CISA-ADP, not in the CNA container. |
+| CISA KEV | 2026-11-06 | Catalog 2026.11.06, released 19:44:45 UTC. CVE-2026-19868 only. Due 2026-11-20. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | New item. Upgrade Gen7 to 7.3.4-7013 and Gen8 to 8.2.3-8015. |
+
+**Patch:** Gen7 **7.3.4-7013 or later**. Gen8 **8.2.3-8015 or later**. Affected is Gen7 7.3.3-7015 and older, and Gen8 8.2.2-8015 and older, hardware and NSv. There is no workaround. The upgrade does not end a VPN session a bypassed SAML login already created.
+
+Sources: [SNWLID-2026-0014](https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2026-0014), [CVE-2026-19868](https://www.cve.org/CVERecord?id=CVE-2026-19868), [detailed guide](details/sonicos.md).
+
+---
+
+## JetBrains Hub: privilege escalation during email verification
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/jetbrains-hub.md):** [Detection](details/jetbrains-hub.md#detection) · [Remediation](details/jetbrains-hub.md#remediation) · [Verification](details/jetbrains-hub.md#verification) · [Timeline](details/jetbrains-hub.md#timeline)
+
+**CVEs:** [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294), [CVE-2026-123296](https://www.cve.org/CVERecord?id=CVE-2026-123296)
+
+**JetBrains rates [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294) CVSS 3.1 9.6 Critical. NVD has not scored it.** Before Hub 2026.2.52556, a low-privilege user can change email authentication details during verification and escalate privileges. JetBrains does not say which role that reaches. [CVE-2026-123296](https://www.cve.org/CVERecord?id=CVE-2026-123296) is 7.5 High, fixed in 2026.2.52519: a forged email verification escalates privileges. Four more Hub flaws published the same minute are 6.8, 5.0, 3.1, and 2.7. The vendor's issues-fixed page does not list these six. YouTrack Cloud is JetBrains' to patch.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-06). JetBrains does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public announcement | 2026-11-06 10:27:54 UTC | CVE-2026-123294. Five related Hub records follow within the same minute. |
+| Patch | Build 2026.2.52556; release timestamp not on the CVE record | 2026.2.52519 fixes the 7.5 flaw and not the 9.6 flaw. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | New item. Upgrade self-hosted Hub to 2026.2.52556 or later. |
+
+**Patch:** Upgrade Hub to **2026.2.52556 or later**. There is no documented workaround. The upgrade does not remove a role the verification flow already granted.
+
+Sources: [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294), [JetBrains issues fixed](https://www.jetbrains.com/privacy-security/issues-fixed/), [detailed guide](details/jetbrains-hub.md).
 
 ---
 
@@ -479,7 +553,7 @@ Vulnerability Info Site: [sshhole.com](https://sshhole.com/)
 | OpenWrt package | 2026-11-05 14:26 UTC | `openssh` 10.6_p2 merged into the 25.12 branch. The default SSH server, Dropbear, is not affected. |
 | CVE record | 2026-11-05 15:46:26 UTC | MITRE, CVE-2026-123158, CVSS 3.1 8.1. OpenSSH's release notes still do not name it. |
 | Honeypot logins | 2026-11-06; clock time not on the page | Previdian. First attempt less than nine hours after the record. Not a KEV listing. |
-| **Last updated** | **2026-11-06 12:15 EST (UTC−05:00)** | A honeypot accepted a login. The fix is unchanged. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | Previdian's public count is now 14 attempts from 9 addresses. The interview's 8 attempts from one address still disagree. The fix is unchanged. |
 
 **Patch:** Upgrade and restart `sshd`. The new package does not replace a daemon that is still running. On Alpine edge the package is **10.6_p2-r0**; 3.24 is **10.3_p1-r2**, 3.23 is **10.2_p1-r1**, 3.22 is **10.0_p1-r11**, and 3.21 is **9.9_p2-r1**, with backports through 3.16. A source build takes **10.6p2**. OpenWrt's optional OpenSSH package on the 25.12 branch is **10.6_p2**. If you cannot update yet, set `PasswordAuthentication no` and restart `sshd`; confirm a key login first. On Alpine's tiny-cloud images from 3.18.11 through 3.24.3, the `alpine` user has passwordless `doas`, so a password login there is root once any other account has a password hash. If the SSH port was reachable on November 6, look for `Accepted password for` on an account that has no password. The upgrade does not remove a key a login already wrote.
 
@@ -1749,7 +1823,7 @@ Sources: [kernel.org CNA record](https://www.cve.org/CVERecord?id=CVE-2026-98432
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Public advisory and fixes | 2026-10-28; time/TZ unknown | Jenkins weekly 2.588 and LTS 2.580.2 contain the fixes. |
-| **Last updated** | **2026-10-30 08:04 EDT (UTC−04:00)** | Added from Jenkins's advisory. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | NVD scored the deserialization flaw 8.8. Jenkins still publishes no score. The upgrade is unchanged. |
 
 **Patch:** Upgrade controllers to weekly **2.588** or LTS **2.580.2**, then validate trusted build, agent and configuration workflows. Restrict configuration and agent-management permissions until every controller is updated; do not use crafted XML or artifacts to test production instances.
 
@@ -2488,7 +2562,8 @@ Sources: [GHSA-pwpf-8799-94cj](https://github.com/ImageMagick/ImageMagick/securi
 | Binaries released | 2026-10-24; time/TZ unknown | Per the advisory. |
 | Advisory published (public announcement) | 2026-10-24 12:52 UTC | GitHub security advisory. |
 | CVE published | 2026-10-27; time/TZ unknown | VulnCheck assigned CVE-2026-117601 (CVSS 4.0 9.3) for Electrum <4.8.3. |
-| **Last updated** | **2026-10-28 16:00 EDT (UTC−04:00)** | Added published CVE and its issuer's severity attribution. |
+| 4.8.4 | 2026-11-06; time/TZ unknown | Also a security update. Drops incoming onion messages. Does not change the 4.8.3 fee-bump fix. No CVE for the onion note. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | 4.8.4 is the current release. 4.8.3 still fixes the theft. |
 
 Electrum trusts its server for unconfirmed transactions. A malicious server can swallow the payment you broadcast and show a conflicting, invalidly signed transaction instead. The fake pays an attacker address whose last four characters match your recipient's.
 
@@ -2498,7 +2573,7 @@ Electrum trusts its server for unconfirmed transactions. A malicious server can 
 
 **Am I impacted?** You are if you run Electrum **below 4.8.3** on desktop or Android and connect to public servers. Wallets connected only to a server you trust, such as your own, are not affected. Even after the fix, Electrum validates only your own inputs on pending transactions.
 
-**Patch:** Upgrade to **4.8.3** and verify the download's signatures. Before signing **any** transaction, including fee bumps, check the full address and amount.
+**Patch:** Upgrade to **4.8.4** and verify the download's signatures. 4.8.3 still fixes the fee-bump theft. Before signing **any** transaction, including fee bumps, check the full address and amount.
 
 Sources: [GHSA-6jp4-8v48-cc5v](https://github.com/spesmilo/electrum/security/advisories/GHSA-6jp4-8v48-cc5v), [CVE-2026-117601](https://www.cve.org/CVERecord?id=CVE-2026-117601), [fix commit](https://github.com/spesmilo/electrum/commit/90fe30822561e515a9d2d6e5a352cc07780999eb), [4.8.3 release notes](https://github.com/spesmilo/electrum/blob/4.8.3/RELEASE-NOTES).
 
@@ -2632,19 +2707,19 @@ Sources: [MSRC CVE-2026-108398](https://msrc.microsoft.com/update-guide/vulnerab
 
 **CVEs:** [CVE-2026-83844](https://www.cve.org/CVERecord?id=CVE-2026-83844)
 
-**Microsoft (CNA) rates it CVSS 3.1 8.1 High and Important.** The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C`. The temporal score is 7.1. NVD has not scored it. An out-of-bounds read in Windows Paint lets an unauthorized attacker execute code over a network. Microsoft says the attacker sends a specially crafted packet to an affected service, and that no authentication and no user interaction are required. Attack complexity is High: Microsoft says a successful attack is not guaranteed and needs a deep understanding of the system. The CVE record says Paint 11.0.0.0 before 11.2605.91.0 is affected. Microsoft's current Security Update Guide product row says affected is below 11.2609.401.0, and that 11.2609.401.0 is the fix. The CSAF file still carries a version 1 revision history dated October 13. This is the Store app, not the .NET Framework update and not the Windows Shell Mark of the Web bypass.
+**Microsoft (CNA) rates it CVSS 3.1 8.1 High and Important.** The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C`. The temporal score is 7.1. NVD has not scored it. An out-of-bounds read in Windows Paint lets an unauthorized attacker execute code over a network. Microsoft says the attacker sends a specially crafted packet to an affected service, and that no authentication and no user interaction are required. Attack complexity is High: Microsoft says a successful attack is not guaranteed and needs a deep understanding of the system. The CVE record, updated 2026-11-06, says Paint 11.0.0.0 before 11.2609.401.0 is affected. The CSAF is version 2, dated 2026-11-06, and names that build. The October record said 11.2605.91.0, and a machine on that build is still affected. This is the Store app, not the .NET Framework update and not the Windows Shell Mark of the Web bypass.
 
 **CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Microsoft says it was not publicly disclosed and not exploited, and rates exploitation less likely. CISA-ADP records Exploitation none. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Public announcement and fix | 2026-10-13 14:00 UTC | MSRC entry, version 1.0. CVE record `datePublic` is the same instant; the record was published 18:59:53 UTC. |
-| Fixed Paint, CVE record | 2026-10-13; time/TZ unknown | 11.2605.91.0. The record, last updated October 31, still says versions from 11.0.0.0 before that build are affected. |
-| Fixed Paint, Security Update Guide | Date of the build change not stated | The product row and the CSAF now say below 11.2609.401.0. The CSAF revision history is still version 1 on October 13. |
+| Fixed Paint, current record | 2026-11-06 08:00 UTC | CSAF version 2 and the CVE record now say affected is below 11.2609.401.0. The October record said 11.2605.91.0. |
+| Fixed Paint, CSAF | 2026-11-06 08:00 UTC | Version 2. Revision 2 names 11.2609.401.0. Version 1, on October 13, did not. |
 | CISA-ADP | 2026-10-13 20:24:59 UTC | Exploitation none, Automatable no, Technical Impact total. |
-| **Last updated** | **2026-11-06 08:30 EST (UTC−05:00)** | The current product row names 11.2609.401.0. The CVE record still says 11.2605.91.0. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | The CVE record now matches the product row: 11.2609.401.0. |
 
-**Patch:** Update Microsoft Paint to **11.2609.401.0 or later** through the Microsoft Store, then confirm the installed version. 11.2605.91.0 matches the CVE record and not the current product row. Microsoft lists one product row and no separate Windows cumulative update. There is no workaround in the advisory. The update does not show whether a packet already ran code.
+**Patch:** Update Microsoft Paint to **11.2609.401.0 or later** through the Microsoft Store, then confirm the installed version. 11.2605.91.0 is below the current record. Microsoft lists one product row and no separate Windows cumulative update. There is no workaround in the advisory. The update does not show whether a packet already ran code.
 
 Sources: [MSRC CVE-2026-83844](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-83844), [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-83844), [detailed guide](details/windows-paint.md).
 
@@ -2809,9 +2884,9 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | RHEL 9.4, 9.6, 9.2, and 10.0 | 2026-11-02 and 2026-11-03; time/TZ unknown | Each names ZDI-CAN-33367 with an empty CVE field, and CVE-2026-98432. These are EUS or SAP channels, not the 9.8 or 10.2 kernels. |
 | CloudLinux 9 and 10 production kernels | 2026-10-28; time/TZ unknown | Same AlmaLinux builds, shipped to CloudLinux production. |
 | CloudLinux 8 ELS and 9 ELS kernels | 2026-11-05 10:40 UTC | `kernel-lts-5.14.0-284.1101.el8.tuxcare.11.els17` and `kernel-lts-5.14.0-284.1101.el9.tuxcare.11.els17`. |
-| Linux 7.2.15 | 2026-11-01 12:44 +0100 | Stable 7.2.15 backports the fix as `d7d6ff98d5d1`. That line is EOL. 7.3 and 7.3.1 still do not. |
+| Linux 7.3.2 | 2026-11-06 12:10 −0500 | Backports the fix as `1a9c180cd843`. 7.3 and 7.3.1 do not have it. |
 | Linux 7.4-rc1 | 2026-11-01 21:26:31 UTC | The tag's `skb_zerocopy()` copies the shared-frag marker. A release candidate, not a kernel to deploy. |
-| **Last updated** | **2026-11-05 16:15 EST (UTC−05:00)** | CloudLinux 8 ELS and 9 ELS now have production kernels. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | Linux 7.3.2 backports the fix. 7.3.1 does not. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -3404,7 +3479,7 @@ Sources: [Gitea advisory GHSA-8pwg-hcgm-54cp](https://github.com/go-gitea/gitea/
 | First exploitation attempts (Previdian) | 2026-09-19 03:14 UTC | Third-party honeypot. Activity ramped up from 2026-10-11. |
 | GHSA-w794-rj3p-xv45 | 2026-09-28 17:26 UTC | CVE-2026-105697 advisory. |
 | CVEs published | 2026-10-05 20:16 UTC (105697); 20:46 UTC (105740) | GitHub CNA. |
-| **Last updated** | **2026-11-05 19:10 EST (UTC−05:00)** | Previdian's live count is now 9,013 attempts, last observed 2026-11-05. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | Previdian's live count is now 10,015 attempts from 54 addresses, last observed 2026-11-07. |
 
 Any Langflow user, including a non-admin, can save an MCP server with the **stdio** transport. Langflow runs its command through `bash -c` without validation. The stored command runs again whenever anyone lists the MCP servers.
 
@@ -3412,7 +3487,7 @@ Any Langflow user, including a non-admin, can save an MCP server with the **stdi
 
 **Worst case:** OS command execution as the Langflow process user. Attackers can steal environment secrets such as LLM keys and `LANGFLOW_SECRET_KEY`, and leave a persistent backdoor in MCP settings. With **`LANGFLOW_AUTO_LOGIN=true`**, which the advisory calls the default for affected releases, `/api/v1/auto_login` hands out a token without credentials. In that case the attack needs no account at all.
 
-**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 9,013 attempts from 53 IPs in 24 countries, last observed 2026-11-05. The 2026-11-04 page had 7,341 attempts from 52 IPs. Previdian recorded a public Nuclei template on 2026-11-04. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
+**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 10,015 attempts from 54 IPs in 24 countries, last observed 2026-11-07. The 2026-11-05 page had 9,013 attempts from 53 IPs. Previdian recorded a public Nuclei template on 2026-11-04. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
 
 **Am I impacted?** Check the installed `langflow`, `langflow-base` and `lfx` versions in every environment and container. Any version **below 1.10.3** is affected. Exposure is highest when auto-login is on, the superuser password is weak or the legacy `langflow`, untrusted users have accounts, or the instance is reachable from the internet. Do not open the MCP Servers page on an unpatched instance to check for stored commands, because loading it re-runs them.
 
@@ -4360,8 +4435,8 @@ Sources: [vendor advisory](https://github.com/CollaboraOnline/online/security/ad
 | Both fixes in a tag | 2026-11-01 21:26:31 UTC | Linux 7.4-rc1 contains both commits. Not a stable release. |
 | Dispatch fix in Linux 7.2.15 | 2026-11-01 | Stable backport `aaf8a64a3fbf` of the ZDI-CAN-33774 fix only. Linux 7.2 is EOL. The SMB Direct fix is not in 7.2.15. |
 | Red Hat bulletin RHSB-2026-014 | 2026-10-24 18:31; TZ not stated | Supported RHEL is not affected: the module is not built or the features are not enabled. |
-| SMB Direct and distribution fixes | None established (as of 2026-11-02) | 7.3.1 (2026-10-30) and 7.2.15 do not contain the SMB Direct fix. No CVE yet. |
-| **Last updated** | **2026-11-02 04:01 EST (UTC−05:00)** | 7.2.15 has the dispatch fix only. Do not deploy 7.4-rc1. |
+| Linux 7.3.2 and 6.18.62 | 2026-11-06 | Both tags backport both fixes. 7.2.15 has only the negotiation wait, and that line is EOL. No CVE yet. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | 7.3.2 and 6.18.62 have both fixes. Do not deploy 7.4-rc1. |
 
 These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinary Samba installations or all Linux machines are vulnerable.
 
@@ -4370,7 +4445,7 @@ These affect **KSMBD, the in-kernel SMB server**. They do not imply that ordinar
 | **ZDI-CAN-33774** | Protocol-dispatch race reachable before authentication; stronger write paths involve share access. | Kernel memory corruption, potentially **RCE**. |
 | **ZDI-CAN-33549** | SMB Direct with an RDMA-capable interface and a writable share. | Integer underflow leading to kernel buffer corruption and potentially **RCE**. |
 
-Public demonstrations establish disclosure/crashes, **not successful RCE**. Linux **7.4-rc1** (tagged 2026-11-01 21:26:31 UTC) contains both fix commits. It is a release candidate, not a stable kernel. Stable **Linux 7.2.15** backports only the dispatch fix (ZDI-CAN-33774), and that line is EOL. The SMB Direct fix is not in 7.2.15 or 7.3.1, and no distribution or NAS package containing either fix was established. **Do not deploy 7.4-rc1 to get the fix.** Software RXE can supply RDMA even without a physical RDMA card. See [prerequisites and fix tracking](details/ksmbd.md#evaluate-the-two-prerequisites-independently).
+Public demonstrations establish disclosure/crashes, **not successful RCE**. Linux **7.3.2** and **6.18.62**, both tagged 2026-11-06, backport both fixes. Linux **7.4-rc1** also contains both commits and is a release candidate, not a kernel to deploy. Stable **Linux 7.2.15** backports only the negotiation wait, and that line is EOL. No distribution or NAS package containing either fix was established. **Do not deploy 7.4-rc1 to get the fix.** Software RXE can supply RDMA even without a physical RDMA card. See [prerequisites and fix tracking](details/ksmbd.md#evaluate-the-two-prerequisites-independently).
 
 **Distribution applicability:** Red Hat says no supported RHEL version is affected because the module is not built or the vulnerable features are not enabled. TuxCare reports AlmaLinux and CloudLinux 9/10 do not build KSMBD, while Debian and Ubuntu build it as opt-in (it runs only after `ksmbd-tools` is installed and the service started). Sysdig reports Ubuntu builds SMB Direct support and Debian does not. Custom and NAS kernels still need a vendor statement.
 
@@ -4559,7 +4634,7 @@ Eight intermediate CA private keys were trivially recoverable because of defecti
 | eMudhra Update 7 | 2026-10-30; time/TZ unknown | eMudhra names KPMG as independent external reviewer; no scope detail or completion date. The promised root-cause analysis is not yet published. No change to client remediation. |
 | eMudhra report date | 2026-11-02 15:54:58 UTC | Bugzilla comment 73 says the full incident report needs until 2026-11-09. The public statement is unchanged. No change to client remediation. |
 | G1 distrust dates | 2026-11-05; time/TZ unknown | eMudhra Update 8. Chrome and Firefox stop trusting `emSign Root CA - G1` certificates issued after November 16. Apple removes G1 on November 30, which ends trust for every G1 certificate. |
-| **Last updated** | **2026-11-05 23:30 EST (UTC−05:00)** | Root programs set the G1 cutoff. |
+| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | Cisco lists IOS XE as impacted. The G1 dates are unchanged. |
 
 Inventory client trust stores as well as your server certificates: operating-system stores, browsers, Java truststores, Python/application CA bundles, containers, and embedded clients can update independently. Match certificate fingerprints/serials and affected issuer chains against the incident record; a name containing “emSign” is not a precise affected-certificate test. Inspect Go build versions with `sh stack-inventory.sh go /path/to/deployed-binary` and compare with the fixed branches above. Updating the installed Go compiler does not repair existing binaries. For third-party appliances or opaque applications, obtain the vendor's trust-update status. A successful TLS connection is not proof that fraudulent chains are rejected.
 
@@ -4574,7 +4649,7 @@ The affected keys comprise **six TLS and two code-signing intermediates**, plus 
 - **Alternate chains:** removing `emSign ECC Root CA - G3` alone does not block Sectigo cross-signs under **AAA Certificate Services**. Check direct anchors and the vendor's current policy, not only root names. [Trust-path guidance](details/emudhra.md#trust-paths-and-what-each-mitigation-changes) distinguishes intermediate blocks, root removal and revocation.
 - **Certificate owners:** prepare replacement chains before Google's **expected October 27 morning PDT** root removal. Legitimate certificates under the removed root may fail too. [Central controls and CT](details/emudhra.md#central-controls-ct-and-egress-limits) have coverage limits: a WAF, hostname allowlist or absence of CT evidence does not prove outbound TLS safety.
 - **macOS command-line tools:** Apple says curl, git, python3, ruby, perl and openssl from macOS or the Xcode Command Line Tools check `/etc/ssl/cert.pem` without Apple's block and can still accept the affected certificates until a future macOS update. Apply Apple's [administrator workaround](details/emudhra.md#containers-os-stores-and-alternate-copies) only with backups, and recheck after each macOS update.
-- **Cisco products:** check each product in Cisco's interim [cisco-sa-emudhra-info-ScS22A1r](https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-emudhra-info-ScS22A1r); several fixes have only target dates, and IOS XE and Nexus trains remain under investigation. See [Remediation](details/emudhra.md#remediation).
+- **Cisco products:** check each product in Cisco's interim [cisco-sa-emudhra-info-ScS22A1r](https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-emudhra-info-ScS22A1r). Version 1.7 (2026-11-05) lists IOS XE as impacted, with CSCwx51613. Nexus trains remain under investigation. Several fixes have only target dates. See [Remediation](details/emudhra.md#remediation).
 
 Sources: [Mozilla incident record](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449), [Go security announcement](https://groups.google.com/g/golang-announce/c/66pojueaQek), [Microsoft response](https://www.microsoft.com/en-us/msrc/blog/2026/10/microsoft-response-to-compromised-emudhra-certificate-authority-keys), and [eMudhra Update 6](https://emudhra.com/en/post/certificate-security-incident). See the detailed guide for per-runtime checks and vendor trust-distribution guidance.
 
@@ -4760,7 +4835,10 @@ flowchart TD
 | **Debian or Ubuntu with `apt` below the fixed floor** | On Debian 13 install `apt` 3.0.4 or later; on Debian 12 install 2.6.2 or later. On Ubuntu, USN-8996-1 is 3.3.3ubuntu0.1 (26.10), 3.2.1ubuntu0.1 (26.04), 2.8.4ubuntu0.1 (24.04), or 2.4.15ubuntu0.1 (22.04). Upgrade `apt` before other packages. Ubuntu 20.04 and older need Ubuntu Pro. [Guide](details/debian-apt.md#remediation). |
 | **Quest Foglight for Databases below 8.3** | Upgrade to 8.3 or later. Three flaws rated 9.8 need no login and run as SYSTEM. Keeping the service off untrusted networks is not a fix. [Guide](details/foglight.md#remediation). |
 | **WatchGuard AuthPoint Authentication Gateway before 7.6.0** | Upgrade to 7.6.0 or later. One build fixes the 9.2 unauthenticated disruption, the two 9.1 flaws, and the 8.9 LDAP result forgery. The upgrade does not restore a deleted directory sync or end a session already issued. [Guide](details/watchguard-authpoint-gateway.md#remediation). |
+| **SonicOS Gen7 through 7.3.3-7015, or Gen8 through 8.2.2-8015** | Upgrade Gen7 to 7.3.4-7013 or later and Gen8 to 8.2.3-8015 or later. Where SSLVPN uses SAML, CVE-2026-19868 is in CISA KEV: a user with another login method can skip that SAML check. Two management-interface flaws are 8.8. There is no workaround. This is not GMS. [Guide](details/sonicos.md#remediation). |
 | **SonicWall GMS 9.5.2 and earlier (Virtual Appliance or Windows)** | Power it off. There is no patch and no workaround. Move firewall management to Network Security Manager. Taking GMS offline does not expire a credential already copied. [Guide](details/sonicwall-gms.md#remediation). |
+| **Self-hosted JetBrains Hub before 2026.2.52556** | Upgrade to 2026.2.52556 or later. A low-privilege user can escalate during email verification. Build 2026.2.52519 fixes a second, 7.5 flaw and not this one. YouTrack Cloud is not a build you upgrade. [Guide](details/jetbrains-hub.md#remediation). |
+| **WordPress with BuddyForms, miniOrange OAuth SSO, Radius Booking, or ELEX HelpDesk** | Update that plugin: BuddyForms 2.10.6, miniOrange OAuth SSO 7.1.4, Radius Booking 1.0.21, ELEX HelpDesk 3.3.9, or later. All four are unauthenticated and Critical. This is not the core upgrade-window flaw. [Guide](details/wordpress-plugins-nov6.md#remediation). |
 | **ASUS routers on ASUSWRT 3.0.0.4_386, 3.0.0.4_388, or 3.0.0.6_102** | Install the current firmware for that model and reboot. ASUS prints no build number. Until then, turn AiCloud off. The LAN flaw runs commands as root with no login. [Guide](details/asus-routers.md#remediation). |
 | **Zyxel GS1900 switches (eight, ten, sixteen, twenty-four, and forty-eight port models in the advisory)** | Install that model's `.3` build, such as GS1900-24E `2.90(AAHK.3)C0`. The June `.2` build is still exploitable. A build from a different model is not the fix. If the management interface was reachable on `.2` or earlier, rotate the admin credentials. [Guide](details/zyxel-gs1900.md#remediation). |
 | **Zyxel access points, FWA7, and USG LITE 60AX running the affected firmware** | Install the build the advisory names for that model. WAC500H has no public build; request the hotfix. USG LITE 60AX moves to V2.40(ACIP.0)C0 by cloud update, so confirm the running string. A Nebula-managed access point is not exempt. [Guide](details/zyxel-aps.md#remediation). |
@@ -4800,7 +4878,7 @@ flowchart TD
 | **Signal (Android, iOS, Desktop) and RingRTC embedders** | Update to Android 8.27.0+, iOS 8.30.0+ or Desktop 8.29.0+ (RingRTC 2.72.0+) and restart the app; until then avoid calls with untrusted contacts. [Guide](details/signal.md#remediation). |
 | **OVHcloud CLI (ovhcloud) installed 2026-10-19** | Do not run it. Check the binary's MD5 against the advisory and look for envchecker-* temp folders. If affected, rotate every secret on that machine, delete the binary and install v0.16.0+. [Guide](details/ovhcloud-cli.md#remediation). |
 | **Windows with .NET Framework 3.5/4.x, especially WDAC/App Control-managed devices** | Install the October 2026 .NET Framework update for your OS (e.g. KB5127690 for Windows 11 24H2/25H2 and Server 2025) and confirm it is installed. [Guide](details/dotnet-framework.md#remediation). |
-| **Windows with Microsoft Paint before 11.2609.401.0** | Update Paint to 11.2609.401.0 or later through the Microsoft Store. The CVE record still says 11.2605.91.0; the current product row says 11.2609.401.0. This is the Store app, not a Windows cumulative update. [Guide](details/windows-paint.md#remediation). |
+| **Windows with Microsoft Paint before 11.2609.401.0** | Update Paint to 11.2609.401.0 or later through the Microsoft Store. The November 6 CVE record and the product row both name that build. 11.2605.91.0 is still affected. This is the Store app, not a Windows cumulative update. [Guide](details/windows-paint.md#remediation). |
 | **SAP NetWeaver Visual Composer (VC70RUNTIME 7.50)** | Apply SAP Note 3797111 for your support package, or enable Visual Composer Secure Mode and restart com.sap.visualcomposer as the interim workaround, then review the backend destinations Visual Composer can reach. [Guide](details/sap-netweaver-visual-composer.md#remediation). |
 | **Docker Hub accounts and organizations** | No software to install (fixed service-side). If Docker emailed you on 2026-10-02, revoke unrecognized PATs, prefer organization access tokens, and check published image digests against CI records. [Guide](details/docker-hub-ghostpat.md#remediation). |
 | **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |

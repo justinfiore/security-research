@@ -1,10 +1,10 @@
 # Jenkins: October core security fixes
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-11-06 (America/New_York)
 
 [Main Jenkins summary](../black-october-2026.md#jenkins-october-core-security-fixes) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-Jenkins rates the October 28 core advisory's tracked issues High. They affect Jenkins weekly 2.587 and earlier and LTS 2.580.1 and earlier. The group includes deserialization RCE, controller-file reads or writes, privilege escalation, and stored XSS; prerequisites differ by CVE.
+Jenkins rates the October 28 core advisory's tracked issues High. They affect Jenkins weekly 2.587 and earlier and LTS 2.580.1 and earlier. The group includes deserialization RCE, controller-file reads or writes, privilege escalation, and stored XSS; prerequisites differ by CVE. Jenkins publishes no CVSS. NVD scored [CVE-2026-117612](https://www.cve.org/CVERecord?id=CVE-2026-117612), the deserialization issue, **CVSS 3.1 8.8 High** on 2026-11-05 (`AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`). CISA-ADP the same day records Exploitation none. That score is NVD's, not Jenkins's.
 
 **CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). Jenkins reports no active exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -48,7 +48,7 @@ If an affected controller accepted untrusted configuration, artifacts, or agent 
 ## Sources
 
 - [Jenkins Security Advisory 2026-10-28][jenkins] — severity, affected releases, prerequisites and fixed versions.
-- [CVE-2026-117612][cve-rce] — CNA record for the deserialization issue.
+- [CVE-2026-117612][cve-rce] — CNA record for the deserialization issue. Jenkins publishes no score. NVD scored it 8.8 High on 2026-11-05.
 - [CISA KEV JSON feed][kev] — catalog status.
 
 [jenkins]: https://www.jenkins.io/security/advisory/2026-10-28/

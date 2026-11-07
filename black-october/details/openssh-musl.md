@@ -8,7 +8,7 @@ Vulnerability Info Site: [sshhole.com](https://sshhole.com/)
 
 OpenSSH calls the workaround in 10.6p2 a **critical** security fix. **MITRE rates [CVE-2026-123158](https://www.cve.org/CVERecord?id=CVE-2026-123158) CVSS 3.1 8.1 High** (`AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`), published 2026-11-05 15:46:26 UTC. OpenSSH's release notes and Alpine's advisory still say no CVE was assigned. On Linux built with musl, when sshd checks passwords itself instead of through PAM, an account whose password field is `*` accepts any password of 257 to 1024 bytes. The attacker needs the account name, a reachable SSH port, and at least one other local account with a `$5$` or `$6$` password hash. Alpine's `openssh-server` package is built without PAM, and password logins are on by default. glibc Linux, OpenBSD, and Dropbear are not affected. The record says the password is "between 256 and 1024 characters" and that every version before 10.6p2 is affected. OpenSSH and Alpine say 257 to 1024 bytes, and the Alpine backports fix older version numbers.
 
-**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Previdian reports honeypot logins, not a compromised customer system. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-06). Previdian reports honeypot logins, not a compromised customer system. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -93,7 +93,7 @@ The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems t
 - [The Hacker News][thn] — 2026-11-05. Reports that no attacks using the flaw have been reported, and that no CVE had been assigned that day. MITRE published the CVE later the same day.
 - [Help Net Security][hns] — 2026-11-06. Ryan Dewhurst of Previdian: the first attempt arrived less than nine hours after the CVE record, and a honeypot running Alpine and OpenSSH accepted a login as root. Eight attempts, all from `89.116.89.18`. The commands were `id`, `uname`, and `hostname`.
 - [The Hacker News, exploitation][thn2] — 2026-11-06. The same Dewhurst statement. It is not a CISA KEV listing.
-- [Previdian CVE-2026-123158][prev] — reread 2026-11-06. The public page says 7 attempts, 4 addresses, and 2 sensors, first and last observed 2026-11-06, in CH, IR, JP, and SG, and that an attempt on the page is not a successful login. It does not print the source address. That count disagrees with the interview. Not in CISA KEV.
+- [Previdian CVE-2026-123158][prev] — reread 2026-11-07. The public page says 14 attempts, 9 addresses, and 3 sensors, first and last observed 2026-11-06, in CH, DK, IR, JP, NL, NO, SG, and US. The chart says updated 2026-11-07. It still says an attempt is not a successful login, and it still does not print the source address. That count disagrees with the interview's eight attempts from one address. Not in CISA KEV.
 - [CVE-2026-123158][cve] — MITRE, published 2026-11-05 15:46:26 UTC. CVSS 3.1 8.1 High. Affected from 0 before 10.6p2 on Linux. The description says 256 to 1024 characters; OpenSSH and Alpine say 257 to 1024 bytes.
 - [CISA KEV JSON feed][kev] — not listed (catalog 2026.11.04, checked 2026-11-06).
 
