@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [IBM API Connect: unauthenticated command execution and administrative control](#ibm-api-connect-unauthenticated-command-execution-and-administrative-control)
 - [JetBrains IDEs: a project file runs code in Safe Mode](#jetbrains-ides-a-project-file-runs-code-in-safe-mode)
 - [JetBrains Datalore: code execution from a view-only notebook](#jetbrains-datalore-code-execution-from-a-view-only-notebook)
 - [WordPress plugins: unauthenticated upload and role deletion](#wordpress-plugins-unauthenticated-upload-and-role-deletion)
@@ -183,6 +184,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade on-premises [IBM API Connect](#ibm-api-connect-unauthenticated-command-execution-and-administrative-control) V12 to **v12.1.1.3 or later**, or V10 to **10.0.8.13 or later**. IBM rates [CVE-2026-17408](https://www.cve.org/CVERecord?id=CVE-2026-17408) CVSS 3.1 9.8 Critical: a remote attacker can run a command. Two more 9.8 flaws need no login, one of them an authentication bypass. The V12 bulletin lists 203 CVEs and the V10 bulletin lists 135. IBM lists no workaround. The bulletins are dated November 5. The CVE records are November 7. It is not in KEV.
 - **New this update:** Update [CLion](#jetbrains-ides-a-project-file-runs-code-in-safe-mode) to **2026.2 or later** and [IntelliJ IDEA](#jetbrains-ides-a-project-file-runs-code-in-safe-mode) to **2026.3 or later**. JetBrains rates two CLion flaws CVSS 3.1 9.6 Critical: a project file runs code in Safe Mode, which is the mode for a project you have not trusted. Five IntelliJ flaws are 7.8 and need the IDE to open a project on the same machine. The issues-fixed page does not list them. It is not in KEV.
 - **New this update:** Update On-Premises [Datalore](#jetbrains-datalore-code-execution-from-a-view-only-notebook) to **2026.4 or later**. JetBrains rates [CVE-2026-123279](https://www.cve.org/CVERecord?id=CVE-2026-123279) CVSS 3.1 9.0 Critical: a view-only collaborator can run code in a notebook's computation. A published interactive report had its own flaw, 8.1, fixed in 2026.2.4. The issues-fixed page does not list them. Datalore Cloud is JetBrains' to patch. It is not in KEV.
 - **New this update:** If your organization uses [Chainalysis](#chainalysis-password-hashes-and-live-tokens-exposed), reset every password and rotate every API key when access returns. Chainalysis said on November 4 that password hashes and live tokens for all users were exposed, and that an on-path attack exposed a subset of passwords. The October 30 notice said credentials were not accessed. That line is withdrawn. No CVE is assigned.
@@ -293,6 +295,28 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## IBM API Connect: unauthenticated command execution and administrative control
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ibm-api-connect.md):** [Detection](details/ibm-api-connect.md#detection) · [Remediation](details/ibm-api-connect.md#remediation) · [Verification](details/ibm-api-connect.md#verification) · [Timeline](details/ibm-api-connect.md#timeline)
+
+**CVEs:** [CVE-2026-17408](https://www.cve.org/CVERecord?id=CVE-2026-17408), [CVE-2026-17301](https://www.cve.org/CVERecord?id=CVE-2026-17301), [CVE-2026-16720](https://www.cve.org/CVERecord?id=CVE-2026-16720), [CVE-2026-17360](https://www.cve.org/CVERecord?id=CVE-2026-17360), [CVE-2026-17340](https://www.cve.org/CVERecord?id=CVE-2026-17340), [CVE-2026-17313](https://www.cve.org/CVERecord?id=CVE-2026-17313), [CVE-2026-17362](https://www.cve.org/CVERecord?id=CVE-2026-17362), [CVE-2026-16884](https://www.cve.org/CVERecord?id=CVE-2026-16884), [CVE-2026-17403](https://www.cve.org/CVERecord?id=CVE-2026-17403), [CVE-2026-17386](https://www.cve.org/CVERecord?id=CVE-2026-17386), [CVE-2026-17331](https://www.cve.org/CVERecord?id=CVE-2026-17331)
+
+**IBM rates [CVE-2026-17408](https://www.cve.org/CVERecord?id=CVE-2026-17408) CVSS 3.1 9.8 Critical.** NVD has not scored it. A remote attacker can run arbitrary code because special elements in an OS command are not neutralized. IBM does not say that one needs a login. [CVE-2026-17301](https://www.cve.org/CVERecord?id=CVE-2026-17301), also 9.8, lets an unauthenticated attacker bypass authentication because a signature is not verified. [CVE-2026-16720](https://www.cve.org/CVERecord?id=CVE-2026-16720), also 9.8, lets a remote attacker obtain access tokens for other users. Those three are on both the V12 and the V10 bulletins. V12 only, all unauthenticated: [CVE-2026-17360](https://www.cve.org/CVERecord?id=CVE-2026-17360) and [CVE-2026-17340](https://www.cve.org/CVERecord?id=CVE-2026-17340) are 9.8 (hard-coded credentials to full administrative control, and code execution through path traversal), [CVE-2026-17313](https://www.cve.org/CVERecord?id=CVE-2026-17313) and [CVE-2026-17362](https://www.cve.org/CVERecord?id=CVE-2026-17362) are 9.8 (gateway configuration, and create or delete tenants), [CVE-2026-16884](https://www.cve.org/CVERecord?id=CVE-2026-16884) is 9.9 (XXE), and [CVE-2026-17331](https://www.cve.org/CVERecord?id=CVE-2026-17331) is 7.5 (read arbitrary files). [CVE-2026-17403](https://www.cve.org/CVERecord?id=CVE-2026-17403), 9.0, is hard-coded credentials on both lines. [CVE-2026-17386](https://www.cve.org/CVERecord?id=CVE-2026-17386), 8.1, is on V10 only. The V12 bulletin lists 203 CVEs and scores 46 of them at 9.0 or higher. The V10 bulletin lists 135 and scores 25 at 9.0 or higher. This entry names the unauthenticated ones. The bulletins are the full list. IBM does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for the CVEs named here. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-05; time/TZ unknown** | IBM bulletins 7295635 (V12) and 7295637 (V10). Initial publication. |
+| CVE records | 2026-11-07 04:32 UTC | IBM CNA. |
+| **Last updated** | **2026-11-07 08:15 EST (UTC−05:00)** | New item. Upgrade on-premises API Connect. There is no workaround. |
+
+**Patch:** V12 on-premises **v12.1.1.3 or later**. V10 **10.0.8.13 or later**. IBM lists no workaround. The upgrade does not show whether a command already ran or a token for another user was already issued. A version older than 10.0.8.0 is not on either affected list, and IBM says omitting an unsupported version is not a finding that it is unaffected.
+
+Sources: [IBM V12 bulletin](https://www.ibm.com/support/pages/node/7295635), [IBM V10 bulletin](https://www.ibm.com/support/pages/node/7295637), [CVE-2026-17408](https://www.cve.org/CVERecord?id=CVE-2026-17408), [detailed guide](details/ibm-api-connect.md).
 
 ---
 
@@ -3647,7 +3671,7 @@ Sources: [Gitea advisory GHSA-8pwg-hcgm-54cp](https://github.com/go-gitea/gitea/
 | First exploitation attempts (Previdian) | 2026-09-19 03:14 UTC | Third-party honeypot. Activity ramped up from 2026-10-11. |
 | GHSA-w794-rj3p-xv45 | 2026-09-28 17:26 UTC | CVE-2026-105697 advisory. |
 | CVEs published | 2026-10-05 20:16 UTC (105697); 20:46 UTC (105740) | GitHub CNA. |
-| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | Previdian's live count is now 10,015 attempts from 54 addresses, last observed 2026-11-07. |
+| **Last updated** | **2026-11-07 08:15 EST (UTC−05:00)** | Previdian's live count is now 10,044 attempts from 54 addresses, last observed 2026-11-07. |
 
 Any Langflow user, including a non-admin, can save an MCP server with the **stdio** transport. Langflow runs its command through `bash -c` without validation. The stored command runs again whenever anyone lists the MCP servers.
 
@@ -3655,7 +3679,7 @@ Any Langflow user, including a non-admin, can save an MCP server with the **stdi
 
 **Worst case:** OS command execution as the Langflow process user. Attackers can steal environment secrets such as LLM keys and `LANGFLOW_SECRET_KEY`, and leave a persistent backdoor in MCP settings. With **`LANGFLOW_AUTO_LOGIN=true`**, which the advisory calls the default for affected releases, `/api/v1/auto_login` hands out a token without credentials. In that case the attack needs no account at all.
 
-**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 10,015 attempts from 54 IPs in 24 countries, last observed 2026-11-07. The 2026-11-05 page had 9,013 attempts from 53 IPs. Previdian recorded a public Nuclei template on 2026-11-04. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
+**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 10,044 attempts from 54 IPs in 24 countries, last observed 2026-11-07. An earlier read the same day had 10,015. The 2026-11-05 page had 9,013 attempts from 53 IPs. Previdian recorded a public Nuclei template on 2026-11-04. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
 
 **Am I impacted?** Check the installed `langflow`, `langflow-base` and `lfx` versions in every environment and container. Any version **below 1.10.3** is affected. Exposure is highest when auto-login is on, the superuser password is weak or the legacy `langflow`, untrusted users have accounts, or the instance is reachable from the internet. Do not open the MCP Servers page on an unpatched instance to check for stored commands, because loading it re-runs them.
 
@@ -4989,6 +5013,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **IBM API Connect V12 through v12.1.1.2, or V10 through 10.0.8.12** | Upgrade V12 to v12.1.1.3 or later, and V10 to 10.0.8.13 or later. A remote attacker can run a command, and an unauthenticated attacker can bypass authentication. IBM lists no workaround. The upgrade does not show whether a command already ran. [Guide](details/ibm-api-connect.md#remediation). |
 | **Kubeflow Pipelines before 2.18.0, multi-user** | Upgrade the API server to 2.18.0 or later. A pipeline upload with no namespace skips the permission check, and an unpinned recurring run can execute the injected version in another tenant's namespace. `REQUIRE_NAMESPACE_FOR_PIPELINES=true` rejects that upload until you upgrade, and it also blocks shared pipelines. The upgrade does not delete a version already stored. [Guide](details/kubeflow-pipelines.md#remediation). |
 | **Kyverno before 1.19.2** | Upgrade to 1.19.2 or later and roll the controllers. A tenant who can create a namespaced policy can otherwise make Kyverno's controllers read or write other namespaces. 1.19.1 is still affected. No 1.18 or 1.17 patch was published. [Guide](details/kyverno.md#remediation). |
 | **YOOtheme Pro 5.0.0 through 5.0.52 (WordPress or Joomla)** | Update to 5.0.53 or later, then look for `wp-content/uploads/yt` plus seven hex characters `.php` and for `wp-content/uploads/ALFA_DATA/`. The update does not delete a webshell already written. [Guide](details/yootheme-pro.md#remediation). |
