@@ -77,7 +77,7 @@ This advisory describes denial of service, not code execution or theft. A crash 
 ## Sources
 
 - [oss-security announcement, 2026-10-30 23:13:23 +0000][oss] — severity important, CVSS 4.0 8.2, affected before 0.24.0, credit.
-- [Apache CNA record][cve] — CVSS 4.0 8.2 vector (`AT:P`, availability High only), CWE-674, Maven package and version range, publication metadata. No CISA ADP SSVC block.
+- [Apache CNA record][cve] — CVSS 4.0 8.2 vector (`AT:P`, availability High only), CWE-674, Maven package and version range, publication metadata. CISA-ADP added an SSVC block on 2026-11-06: Exploitation none, Automatable no, Technical Impact partial. That block is not a KEV listing and does not change the score.
 - [NVD][nvd] — status "Received"; displays Apache's CVSS 4.0 metric and has not scored it itself.
 - [Apache Thrift download page][download] — latest stable release 0.25.0, released 2026-SEP-30. Does not mention this CVE.
 - [Maven Central `libthrift` 0.24.0][mvn-024] and [0.25.0][mvn-025] — artifact timestamps.
