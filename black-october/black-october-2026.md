@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Firefox: a layout bug can run code from a web page](#firefox-a-layout-bug-can-run-code-from-a-web-page)
 - [Symfony: a YAML document holds a PHP worker, and a data URI reads a file](#symfony-a-yaml-document-holds-a-php-worker-and-a-data-uri-reads-a-file)
 - [Technical University of Munich: stolen passwords for every myTUM account](#technical-university-of-munich-stolen-passwords-for-every-mytum-account)
 - [IBM API Connect: unauthenticated command execution and administrative control](#ibm-api-connect-unauthenticated-command-execution-and-administrative-control)
@@ -186,13 +187,14 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [Firefox](#firefox-a-layout-bug-can-run-code-from-a-web-page) to **159.0.1 or later** and relaunch. Mozilla rates [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572) High: incorrect boundary conditions in layout, fixed on November 3. CISA-ADP scores it CVSS 3.1 8.8. Mozilla's record does not name the affected range or Firefox ESR. It is not in KEV.
 - **New this update:** Upgrade [Symfony](#symfony-a-yaml-document-holds-a-php-worker-and-a-data-uri-reads-a-file) to **5.4.56, 6.4.50, 7.4.23, or 8.1.11** or later on that line. GitHub rates [CVE-2026-123792](https://www.cve.org/CVERecord?id=CVE-2026-123792) CVSS 4.0 8.7 High: one unauthenticated request with a YAML content type can hold a PHP worker until `max_execution_time`. Checkmarx rates [CVE-2026-121623](https://www.cve.org/CVERecord?id=CVE-2026-121623) 8.2: a `DATA:` value is opened as a local file, so a public endpoint that deserializes into `File` can read a file the process can read. A third High advisory, with no CVE, lets a path check approve a file outside its directory. The advisories are November 4. The CVE records are November 6. Symfony's data-URI page still says no CVE is known. It is not in KEV.
-- **New this update:** If you have a [Technical University of Munich](#technical-university-of-munich-stolen-passwords-for-every-mytum-account) account, change that password wherever else you used it, and change it at TUM when TUM publishes the method. TUM said on November 6 that the myTUM attack stole the central-login password, name, home address, and date of birth of everyone registered there. One stolen login was a TUMonline administrator, and TUM took that system offline. Accounts that already had multi-factor authentication were protected. No CVE is assigned.
+- **New this update:** If you have a [Technical University of Munich](#technical-university-of-munich-stolen-passwords-for-every-mytum-account) account, change the TUM password now if it was not changed since November 5, 00:00, and change it wherever else you used it. The German IT page published three methods at 13:00 CET on November 7: Microsoft 365, the German online ID, or email from the campus network. Every TUM account is in scope, not only myTUM. The English press page still says the method is coming by Monday. No CVE is assigned.
 - **New this update:** On [Red Hat Enterprise Linux 7 Extended Lifecycle Support](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix), install `kernel-3.10.0-1160.169.1.el7` and reboot. The November 5 errata names the local-root bug. CentOS 7 is still outside the affected set. No CVE is assigned.
 - **New this update:** Upgrade on-premises [IBM API Connect](#ibm-api-connect-unauthenticated-command-execution-and-administrative-control) V12 to **v12.1.1.3 or later**, or V10 to **10.0.8.13 or later**. IBM rates [CVE-2026-17408](https://www.cve.org/CVERecord?id=CVE-2026-17408) CVSS 3.1 9.8 Critical: a remote attacker can run a command. Two more 9.8 flaws need no login, one of them an authentication bypass. The V12 bulletin lists 203 CVEs and the V10 bulletin lists 135. IBM lists no workaround. The bulletins are dated November 5. The CVE records are November 7. It is not in KEV.
 - **New this update:** Update [CLion](#jetbrains-ides-a-project-file-runs-code-in-safe-mode) to **2026.2 or later** and [IntelliJ IDEA](#jetbrains-ides-a-project-file-runs-code-in-safe-mode) to **2026.3 or later**. JetBrains rates two CLion flaws CVSS 3.1 9.6 Critical: a project file runs code in Safe Mode, which is the mode for a project you have not trusted. Five IntelliJ flaws are 7.8 and need the IDE to open a project on the same machine. The issues-fixed page does not list them. It is not in KEV.
 - **New this update:** Update On-Premises [Datalore](#jetbrains-datalore-code-execution-from-a-view-only-notebook) to **2026.4 or later**. JetBrains rates [CVE-2026-123279](https://www.cve.org/CVERecord?id=CVE-2026-123279) CVSS 3.1 9.0 Critical: a view-only collaborator can run code in a notebook's computation. A published interactive report had its own flaw, 8.1, fixed in 2026.2.4. The issues-fixed page does not list them. Datalore Cloud is JetBrains' to patch. It is not in KEV.
-- **New this update:** If your organization uses [Chainalysis](#chainalysis-password-hashes-and-live-tokens-exposed), reset every password and rotate every API key when access returns. Chainalysis said on November 4 that password hashes and live tokens for all users were exposed, and that an on-path attack exposed a subset of passwords. The October 30 notice said credentials were not accessed. That line is withdrawn. No CVE is assigned.
+- **New this update:** If your organization uses [Chainalysis](#chainalysis-password-hashes-and-live-tokens-exposed), follow the November 7 email to reconnect, then reset every password and rotate every API key before registering transactions. Reactor, KYT, and Address Screening are back as of 1:50 p.m. EST. Data Solutions is not in that update. Chainalysis said on November 4 that password hashes and live tokens for all users were exposed. No CVE is assigned.
 - **New this update:** Remove [WP Libre Form 1.5.0.1 and MDJM Event Management through 1.7.8.7](#wordpress-plugins-unauthenticated-upload-and-role-deletion). WPScan rates the upload flaw 10.0 and the role-deletion flaw 9.1, and says neither has a fix. Both need no login. They are not the four plugins from November 6, and neither is in KEV.
 - **New this update:** If [Babelfish](#babelfish-a-tds-handshake-can-run-code-as-the-database-user) is enabled, upgrade it. Amazon rates [CVE-2026-119923](https://www.cve.org/CVERecord?id=CVE-2026-119923) CVSS 3.1 9.8 Critical: a TDS prelogin packet can run code as the database user, with no login. The open-source fix is 4.10, 5.6, or 6.1. Aurora has its own version list. Until then, restrict TCP 1433. It is not in KEV.
 - **New this update:** Update [UgCS](#ugcs-an-empty-login-is-accepted-when-only-one-user-exists) to **6.2 or later**. ENISA rates [CVE-2026-59104](https://www.cve.org/CVERecord?id=CVE-2026-59104) CVSS 3.1 9.8 Critical: when the server has one user, an empty login on TCP 3334 is accepted, and that session can command a connected drone. The fix shipped October 9. The record is November 6. It is not in KEV.
@@ -218,7 +220,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade [Rails](#rails-active-storage-file-write-and-read) to **8.0.5.2 or 8.1.4.1**. MITRE now rates the Active Storage ImageMagick issue [CVE-2026-122006](https://www.cve.org/CVERecord?id=CVE-2026-122006) CVSS 3.1 9.8 Critical. Rails scores the same issue 9.8 and its advisory still says no CVE is known. An unauthenticated upload can write files, and can read secrets when attachments use the Disk service. The same gems fix four more High issues that still have no CVE. Rails 7 and older get no fix. It is not in KEV.
 - **New this update:** Upgrade self-managed [Airbyte](#airbyte-connector-builder-runs-attacker-chosen-code) to **2.2.0 or later**. Airbyte rates the Connector Builder flaw 9.9 Critical, and no CVE is assigned. JPCERT/CC says exploitation is confirmed and scores it 8.8. Airbyte 1.x gets no fix. Airbyte Cloud needs no action. The 2.2 upgrade cannot be rolled back.
 - **New this update:** Upgrade [Puppet](#puppet-report-deserialization-runs-code-on-the-server) Enterprise to **2023.8.13, 2025.12.1, or 2026.0.1**, and restart Puppet Server. Perforce rates [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731) 9.4 Critical: a signed agent certificate can run code on the server. A second flaw, 9.0, lets a colliding certificate name impersonate another node. OpenVox published a proof of concept. Neither CVE is in KEV.
-- **New this update:** Upgrade `apt` on [Debian and Ubuntu](#debian-apt-a-resumed-download-can-install-a-different-package-as-root) before the rest of the system. Ubuntu rates [CVE-2026-109518](https://www.cve.org/CVERecord?id=CVE-2026-109518) 7.7 High: an on-path attacker can replace a package after verification, and the substitute installs as root. Debian 13 is fixed in `apt` **3.0.4**. Debian 12 is fixed in **2.6.2**. Ubuntu 26.10 is **3.3.3ubuntu0.1**, 26.04 is **3.2.1ubuntu0.1**, 24.04 is **2.8.4ubuntu0.1**, and 22.04 is **2.4.15ubuntu0.1**. Older Ubuntu releases are Ubuntu Pro. Debian forky and sid are **3.3.6**. It is not in KEV.
+- **New this update:** Upgrade `apt` on [Debian and Ubuntu](#debian-apt-a-resumed-download-can-install-a-different-package-as-root) before the rest of the system. Ubuntu rates [CVE-2026-109518](https://www.cve.org/CVERecord?id=CVE-2026-109518) 7.7 High: an on-path attacker can replace a package after verification, and the substitute installs as root. Debian 13 is fixed in `apt` **3.0.4**. Debian 12 is fixed in **2.6.2**. Ubuntu 26.10 is **3.3.3ubuntu0.1**, 26.04 is **3.2.1ubuntu0.1**, 24.04 is **2.8.4ubuntu0.1**, and 22.04 is **2.4.15ubuntu0.1**. Older Ubuntu releases are Ubuntu Pro. Debian forky is **3.3.6**, and sid's current package is **3.3.7**. The fix on both is 3.3.6 or later. It is not in KEV.
 - **New this update:** Update [ASUS routers](#asus-routers-aicloud-root-command-from-the-lan) on the 3.0.0.4_386, 3.0.0.4_388, and 3.0.0.6_102 firmware to the current build for that model. ASUS rates [CVE-2026-84730](https://www.cve.org/CVERecord?id=CVE-2026-84730) 8.7 High: from the LAN, with no login, a crafted device name runs commands as root through AiCloud. A second flaw, 7.2, is a nearby denial of service. ASUS prints no firmware build number. Turn AiCloud off until the update is installed. Neither CVE is in KEV.
 - **New this update:** Upgrade [Quest Foglight for Databases](#quest-foglight-unauthenticated-remote-code-execution) to **8.3 or later**. ZDI rates three flaws 9.8 Critical, and none needs a login: a deserialization bug, a missing authentication check, and a caller-supplied file path. ZDI says each runs as SYSTEM. Thirteen more flaws in the same release need a login or code already on the host. The CVE records name 8.2.0 and do not name 8.3. None is in KEV.
 - **New this update:** Upgrade [WatchGuard AuthPoint Gateway](#watchguard-authpoint-gateway-unauthenticated-disruption-and-forged-logins) to **7.6.0 or later**. WatchGuard rates three flaws Critical on CVSS 4.0: 9.2 lets anyone who can reach the gateway delete the local directory sync and disrupt logins, and two 9.1 flaws let an on-path attacker read the local provider's traffic or replay an administrative request. A fourth flaw, 8.9, forges an LDAP login result. Builds before 7.6.0 are affected. This is the on-premises gateway, not the AuthPoint cloud. None is in KEV.
@@ -303,6 +305,26 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Firefox: a layout bug can run code from a web page
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/firefox.md):** [Detection](details/firefox.md#detection) · [Remediation](details/firefox.md#remediation) · [Verification](details/firefox.md#verification) · [Timeline](details/firefox.md#timeline)
+
+**CVEs:** [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572)
+
+**Mozilla rates it High. CISA-ADP scores it CVSS 3.1 8.8 High.** [MFSA 2026-123](https://www.mozilla.org/en-US/security/advisories/mfsa2026-123/), announced November 3, is the vendor rating. The CNA record publishes no numeric score. NVD shows 8.8 from CISA-ADP, `CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H`. The description is incorrect boundary conditions in the Layout: Block and Inline component, fixed in Firefox **159.0.1**. The record does not say which earlier versions are affected, and it does not name Firefox ESR or Thunderbird. Bug 2079035 is not public. This is not the [eMudhra](#tls-and-code-signing-trust-stores-emudhra-emsign-certificate-authority-compromise) certificate distrust.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07). Mozilla does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public announcement and fix | 2026-11-03; time/TZ unknown | MFSA 2026-123. Firefox 159.0.1 first offered to Release channel users the same day. |
+| CVE record | 2026-11-03 14:17:35 UTC | Mozilla CNA. No numeric score. Unaffected at 159.0.1. |
+| **Last updated** | **2026-11-07 16:15 EST (UTC−05:00)** | New item. Update Firefox to 159.0.1 or later. |
+
+**Patch:** Update Firefox to **159.0.1 or later** and relaunch. Mozilla publishes no workaround and no affected range below 159.0.1. ESR 153.6 is a different advisory. The update does not show whether a page already ran code.
+
+Sources: [MFSA 2026-123](https://www.mozilla.org/en-US/security/advisories/mfsa2026-123/), [Firefox 159.0.1 release notes](https://www.firefox.com/firefox/159.0.1/releasenotes/), [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572), [detailed guide](details/firefox.md).
+
 ## Symfony: a YAML document holds a PHP worker, and a data URI reads a file
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/symfony.md):** [Detection](details/symfony.md#detection) · [Remediation](details/symfony.md#remediation) · [Verification](details/symfony.md#verification) · [Timeline](details/symfony.md#timeline)
@@ -331,16 +353,17 @@ Sources: [YAML advisory](https://github.com/symfony/symfony/security/advisories/
 
 **No CVE is assigned.**
 
-The Technical University of Munich says unknown individuals attacked the myTUM portal and stole the central-login password of everyone who had registered. The notice dated November 6, 12:20 p.m. (timezone not stated on the page) also names the person's name, home address, and date of birth. Employees additionally have a work address and a work phone number. Students may also have a student ID, a degree program, and a semester count. One stolen login belonged to a TUMonline administrator, and TUM says that login was used against TUMonline before TUM took the system offline. TUM says accounts that already had multi-factor authentication were protected, and that its reading of the TUMonline logs currently excludes grades and applications. It says that reading is not finished. Password-change options were promised by Monday. This is not [Chainalysis](#chainalysis-password-hashes-and-live-tokens-exposed).
+The Technical University of Munich says unknown individuals attacked the myTUM portal and stole the central-login password of everyone who had registered. The notice dated November 6, 12:20 p.m. (timezone not stated on the page) also names the person's name, home address, and date of birth. Employees additionally have a work address and a work phone number. Students may also have a student ID, a degree program, and a semester count. One stolen login belonged to a TUMonline administrator, and TUM says that login was used against TUMonline before TUM took the system offline. TUM says accounts that already had multi-factor authentication were protected, and that its reading of the TUMonline logs currently excludes grades and applications. It says that reading is not finished. On November 7 at 13:00 CET the German IT page published the reset: change the password if it was not changed since November 5, 00:00, for every TUM account, not only myTUM. The English press page still says the method is coming by Monday. This is not [Chainalysis](#chainalysis-password-hashes-and-live-tokens-exposed).
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-06 12:20; timezone not stated** | TUM notice. Status line "Friday, November 6, 2026, 12:20 p.m." |
-| **Last updated** | **2026-11-07 12:10 EST (UTC−05:00)** | New item. Change a reused password now. Change the TUM password when TUM publishes the method. |
+| Password reset published | 2026-11-07 13:00 CET (UTC+01:00) | German IT page. Every TUM account, if the password was not changed since 2026-11-05 00:00. |
+| **Last updated** | **2026-11-07 16:15 EST (UTC−05:00)** | The reset method is published. The English press page still says Monday. |
 
-**Patch:** No software update. Change the TUM password when [it.tum.de](https://www.it.tum.de/en/it/news-1/) publishes the method, turn on multi-factor authentication, and change that password anywhere else it was used. TUM says it will not ask for the password by email, phone, or letter.
+**Patch:** No software update. Change the TUM password now, if it was not changed since November 5, 00:00, using one method on the [German IT page](https://www.it.tum.de/it/aktuelles/): Microsoft 365, the German online ID, or email from the campus network. Then change that password anywhere else it was used. New multi-factor authentication waits until TUMonline accepts a login. TUM says it will not ask for the password by email, phone, or letter.
 
 Sources: [TUM notice](https://www.tum.de/en/news-and-events/all-news/press-releases/details/it-security-incident-at-tum), [detailed guide](details/tum.md).
 
@@ -440,7 +463,7 @@ Sources: [WPScan, WP Libre Form](https://wpscan.com/vulnerability/35149a79-aee1-
 
 **CVEs:** None. Chainalysis has not assigned one.
 
-Chainalysis says an external actor used offensive agentic techniques to reach its systems. The October 30 notice said the exposed data was names, email addresses, and role labels, and that passwords and session tokens were not accessed. The November 4 updates withdraw that. An on-path attack exposed a subset of customer passwords. Names, usernames, password hashes, and live tokens for all users were exposed. Chainalysis says it has no evidence that investigation content was accessed or that attribution data was changed. KYT and Address Screening started coming back on November 6, in phases. Reactor and Data Solutions were still offline.
+Chainalysis says an external actor used offensive agentic techniques to reach its systems. The October 30 notice said the exposed data was names, email addresses, and role labels, and that passwords and session tokens were not accessed. The November 4 updates withdraw that. An on-path attack exposed a subset of customer passwords. Names, usernames, password hashes, and live tokens for all users were exposed. Chainalysis says it has no evidence that investigation content was accessed or that attribution data was changed. On November 7 at 1:50 p.m. EST, Reactor, KYT (UI and API), and Address Screening were back online. Data Solutions is not in that update. Customers reconnect through the email Chainalysis is sending, and the November 6 instruction to reset passwords and rotate API keys still stands.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Chainalysis says it is locking accounts that appear to have been accessed.
 
@@ -449,7 +472,8 @@ Chainalysis says an external actor used offensive agentic techniques to reach it
 | First notice | 2026-10-30; time/TZ unknown | Names and emails. Credentials said not accessed. |
 | Expanded notice | 2026-11-04 09:50 and 23:00 EST (UTC−05:00) | A subset of passwords, then hashes and live tokens for all users. |
 | Restoration | 2026-11-06 03:30 EST (UTC−05:00) | KYT and Address Screening, phased. Password and API-key reset required. |
-| **Last updated** | **2026-11-07 03:55 EST (UTC−05:00)** | New item. Reset the password and rotate the API key when access returns. |
+| Reactor, KYT, and Address Screening online | 2026-11-07 13:50 EST (UTC−05:00) | Reconnection steps by email. Data Solutions is not in this update. |
+| **Last updated** | **2026-11-07 16:15 EST (UTC−05:00)** | Reactor, KYT, and Address Screening are back. Reset the password and rotate the API key before registering transactions. |
 
 **What to do:** When Chainalysis restores your access, reset every Chainalysis password and rotate every API key before registering transactions. Reset the same password anywhere else it was reused. Send trusted IP addresses to Chainalysis for the allowlist. There is nothing to patch on your side.
 
@@ -742,9 +766,9 @@ Sources: [sophos-sa-20261028-utm-rce](https://www.sophos.com/en-us/security-advi
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| Fix released | 2026-10-27; time/TZ unknown | Patch release 15.1.1. The revision history lists all five CVEs. |
+| Fix released | 2026-11-03; time/TZ unknown | Patch release 15.1.1. The revision history, read 2026-11-07, dates it that day. An earlier reading said 2026-10-27. |
 | CVE records | 2026-11-04 08:28–08:42 UTC | NCSC.ch. The two 9.2 records are CVE-2026-114424 and CVE-2026-114425. |
-| **Last updated** | **2026-11-05 16:15 EST (UTC−05:00)** | New item. Upgrade to 15.1.1 or later. |
+| **Last updated** | **2026-11-07 16:15 EST (UTC−05:00)** | The release date is November 3. The fixed version is still 15.1.1. |
 
 **Patch:** Upgrade SEPPmail Secure Email Gateway to **15.1.1 or later**. One release fixes all five CVEs. There is no workaround. Trust the CNA scores, not the two GINA lines in the revision history: it prints 6.9 on the account takeover and 8.3 on the email enumeration. The upgrade does not show whether a command already ran or a file was deleted.
 
@@ -906,8 +930,8 @@ Sources: [GHSA-g35w-6r6v-h4r7](https://github.com/airbytehq/airbyte/security/adv
 |---|---|---|
 | CVE records published | 2026-11-03; time/TZ unknown | Both Perforce CNA records. |
 | OpenVox advisory | 2026-11-03; time/TZ unknown | Includes the report JSON. Server 8.18.0 / 9.2.0. |
-| Puppet Core 9.1.3 | November 2026; day/time unknown | Release notes last published 2026-10-30 name both CVEs. |
-| **Last updated** | **2026-11-04 16:01 EST (UTC−05:00)** | New item. Upgrade the server and restart it. |
+| Puppet Core 9.1.3 | 2026-11-06; time/TZ unknown | The notes say November 6, 2026, and name both CVEs. An earlier reading said last published 2026-10-30. |
+| **Last updated** | **2026-11-07 16:15 EST (UTC−05:00)** | The notes now date 9.1.3 as November 6. The fixed builds are unchanged. |
 
 **Patch:** Upgrade Puppet Enterprise to **2023.8.13, 2025.12.1, or 2026.0.1**, or Puppet Core to **8.22.2 or 9.1.3**, and restart Puppet Server. OpenVox Server is **8.18.0 or 9.2.0**, and OpenVox Agent is **8.32.0 or 9.3.0**. An agent-only upgrade does not fix the server. Until then, do not autosign certificate requests without a check you already trust. That does not protect a server that already trusts a certificate.
 
@@ -931,9 +955,10 @@ Sources: [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731), [C
 | Debian 12 fix | 2026-11-04 12:46:36 UTC | DLA-4880-1. bookworm `apt` 2.6.2. The same update addresses several out-of-bounds access issues and names no CVE for them. |
 | Ubuntu packages | 2026-11-04; time/TZ unknown | USN-8996-1. 26.10 through 22.04 in the archive. 20.04 and older are Ubuntu Pro. |
 | forky fixed | Tracker read 2026-11-05 | forky and sid are both 3.3.6. On 2026-11-04 forky was still 3.3.5. |
-| **Last updated** | **2026-11-06 03:20 EST (UTC−05:00)** | DLA-4880-1 is dated 12:46:36 UTC and also fixes unnamed out-of-bounds issues. The package is unchanged. |
+| sid package | Tracker read 2026-11-07 | sid is 3.3.7 fixed. The first fixed version is still 3.3.6. forky stays 3.3.6. |
+| **Last updated** | **2026-11-07 16:15 EST (UTC−05:00)** | sid's current package is 3.3.7. 3.3.6 remains the fix. |
 
-**Patch:** On Debian 13, install `apt` **3.0.4 or later**. On Debian 12, install `apt` **2.6.2 or later**. On sid and on forky, install `apt` **3.3.6 or later**. The tracker read on 2026-11-05 lists both as fixed. Upgrade `apt` first. On Ubuntu, USN-8996-1 is `apt` **3.3.3ubuntu0.1** (26.10), **3.2.1ubuntu0.1** (26.04), **2.8.4ubuntu0.1** (24.04), and **2.4.15ubuntu0.1** (22.04). 20.04, 18.04, 16.04, and 14.04 are Ubuntu Pro. A container and a build host each need their own upgrade.
+**Patch:** On Debian 13, install `apt` **3.0.4 or later**. On Debian 12, install `apt` **2.6.2 or later**. On sid and on forky, install `apt` **3.3.6 or later**. The tracker read on 2026-11-07 lists sid as 3.3.7 and forky as 3.3.6, both fixed. Upgrade `apt` first. On Ubuntu, USN-8996-1 is `apt` **3.3.3ubuntu0.1** (26.10), **3.2.1ubuntu0.1** (26.04), **2.8.4ubuntu0.1** (24.04), and **2.4.15ubuntu0.1** (22.04). 20.04, 18.04, 16.04, and 14.04 are Ubuntu Pro. A container and a build host each need their own upgrade.
 
 Sources: [DSA-6607-1](https://lists.debian.org/debian-security-announce/2026/msg00526.html), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-109518), [USN-8996-1](https://ubuntu.com/security/notices/USN-8996-1), [detailed guide](details/debian-apt.md).
 
@@ -5063,8 +5088,9 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Firefox below 159.0.1** | Update to 159.0.1 or later and relaunch. Mozilla rates the layout bug High, and CISA-ADP scores it 8.8. The record does not name Firefox ESR. [Guide](details/firefox.md#remediation). |
 | **Symfony below 5.4.56, 6.4.50, 7.4.23, or 8.1.11** | Upgrade `symfony/yaml`, `symfony/serializer`, and `symfony/filesystem` together to that floor or later, redeploy, and restart PHP. One unauthenticated YAML request can hold a worker, and a `DATA:` value deserialized into `File` reads a local file. The same releases fix a path check that approves a file outside its directory. [Guide](details/symfony.md#remediation). |
-| **A Technical University of Munich account** | Change that password on every other service where it was reused, now. Change it at TUM when TUM publishes the method, and turn on multi-factor authentication. TUM says the myTUM passwords were stolen. There is no software update. [Guide](details/tum.md#remediation). |
+| **A Technical University of Munich account** | Change the TUM password now if it was not changed since 2026-11-05 00:00, using the German IT page: Microsoft 365, the German online ID, or email from the campus network. Every TUM account, not only myTUM. Change a reused password on every other service. New multi-factor authentication waits until TUMonline is back. [Guide](details/tum.md#remediation). |
 | **IBM API Connect V12 through v12.1.1.2, or V10 through 10.0.8.12** | Upgrade V12 to v12.1.1.3 or later, and V10 to 10.0.8.13 or later. A remote attacker can run a command, and an unauthenticated attacker can bypass authentication. IBM lists no workaround. The upgrade does not show whether a command already ran. [Guide](details/ibm-api-connect.md#remediation). |
 | **Kubeflow Pipelines before 2.18.0, multi-user** | Upgrade the API server to 2.18.0 or later. A pipeline upload with no namespace skips the permission check, and an unpinned recurring run can execute the injected version in another tenant's namespace. `REQUIRE_NAMESPACE_FOR_PIPELINES=true` rejects that upload until you upgrade, and it also blocks shared pipelines. The upgrade does not delete a version already stored. [Guide](details/kubeflow-pipelines.md#remediation). |
 | **Kyverno before 1.19.2** | Upgrade to 1.19.2 or later and roll the controllers. A tenant who can create a namespaced policy can otherwise make Kyverno's controllers read or write other namespaces. 1.19.1 is still affected. No 1.18 or 1.17 patch was published. [Guide](details/kyverno.md#remediation). |

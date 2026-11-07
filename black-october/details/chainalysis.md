@@ -12,6 +12,8 @@ The November 4 updates withdraw that limit. At 9:50 a.m. EST Chainalysis said an
 
 The November 6 update, 3:30 a.m. EST, says restoration of KYT and Address Screening has started, in phases. Once access returns, every user must reset their password and rotate API keys before registering transactions. Reactor and Data Solutions were still offline. Chainalysis asks customers to send trusted IP addresses for an allowlist.
 
+The November 7 update, 1:50 p.m. EST, says Reactor, KYT (the UI and the API), and Address Screening are back online, with extra security measures. Chainalysis is emailing customers the reconnection steps. The update does not mention Data Solutions, so that product is not part of the line that says services are back.
+
 Chainalysis does not say how the actor got in, does not name the actor, and does not say whether the password hashes can be cracked. The October 30 notice says this incident is not the Binance theft.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Chainalysis says customer accounts were exposed and that it is locking accounts that appear to have been accessed. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
@@ -36,6 +38,7 @@ Chainalysis does not say how the actor got in, does not name the actor, and does
 | Hashes and tokens | 2026-11-04 23:00 EST (UTC−05:00) | Names, usernames, password hashes, and live tokens for all users. Discovered Monday, November 2, and published in this update. |
 | KYT offline | 2026-11-04 10:30 EST (UTC−05:00) | After abnormal activity. Login page offline too. |
 | Restoration started | 2026-11-06 03:30 EST (UTC−05:00) | KYT and Address Screening, in phases. Password and API-key reset required. |
+| Reactor, KYT, and Address Screening online | 2026-11-07 13:50 EST (UTC−05:00) | Extra security measures. Reconnection instructions by email. Data Solutions is not in this update. |
 
 ## Detection
 
@@ -55,7 +58,7 @@ This is Chainalysis's platform, not software you patch.
 ## Verification
 
 - Each user can sign in only after a password reset, and each API integration works only after the key was rotated.
-- KYT or Address Screening access returns only from an address you submitted. Chainalysis said on November 6 that the rollout is phased, so a product still offline is expected.
+- KYT, Address Screening, or Reactor access returns only through the reconnection steps in the November 7 email, from an address you submitted. Data Solutions is not in that update, so it can still be offline.
 
 ## Compromise response
 
@@ -67,6 +70,6 @@ Chainalysis says it has no evidence that investigation content was accessed or t
 
 ## Sources
 
-- [Chainalysis security incident notice][notice] — the vendor's page. Updates on 2026-10-30, 2026-11-02, 2026-11-04 (three), and 2026-11-06 03:30 EST. Read 2026-11-07.
+- [Chainalysis security incident notice][notice] — the vendor's page. Updates on 2026-10-30, 2026-11-02, 2026-11-04 (three), 2026-11-06 03:30 EST, and 2026-11-07 13:50 EST. Read 2026-11-07.
 
 [notice]: https://www.chainalysis.com/blog/security-incident-october-30/

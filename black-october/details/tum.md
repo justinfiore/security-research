@@ -10,7 +10,9 @@ The notice dated Friday, November 6, 2026, 12:20 p.m. (the page does not name th
 
 TUM says the access inside TUMonline was largely logged, and that it currently assumes grades and college applications were not taken. It says that investigation is still open. It also says accounts that already had multi-factor authentication were protected from this attack.
 
-TUM suspended the affected accounts, reported the incident to the Bavarian data-protection commissioner, and filed a criminal complaint. It says password-change options will be available by Monday, and that the instructions will be at it.tum.de by Monday evening at the latest. This guide was written on Saturday, November 7, before that Monday.
+TUM suspended the affected accounts, reported the incident to the Bavarian data-protection commissioner, and filed a criminal complaint. The November 6 notice said password-change options would be available by Monday, with instructions at it.tum.de by Monday evening at the latest.
+
+The German IT page published the reset on Saturday, November 7, 2026, 13:00 CET. Change the TUM password if it was not changed since November 5, 2026, 00:00. A password changed since then still counts, for now. The requirement covers every TUM account, not only people who used myTUM. TUM has not set the deadline. The English press page still shows the November 6, 12:20 p.m. status and still says the method is coming by Monday. The EduVPN status entry on the same IT site still says a reset is not yet possible. The password page is the newer instruction.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. TUM says the passwords were stolen. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -29,7 +31,7 @@ TUM suspended the affected accounts, reported the incident to the Bavarian data-
 |---|---|---|
 | **Public announcement** | **2026-11-06 12:20; timezone not stated on the page** | TUM notice, status line "Friday, November 6, 2026, 12:20 p.m." [Notice][notice] |
 | TUMonline taken offline | Date not stated separately | After the stolen administrator login was used. Same notice. |
-| Password-change options | Promised by Monday; not published when this guide was written | TUM says instructions will be at it.tum.de by Monday evening at the latest. |
+| Password reset published | 2026-11-07 13:00 CET (UTC+01:00) | German IT news page. Change the password if it was not changed since 2026-11-05 00:00. Every TUM account, not only myTUM. No deadline yet. [IT news][it-de] |
 
 ## Detection
 
@@ -41,15 +43,20 @@ This is TUM's portal, not software you patch.
 
 ## Remediation
 
-1. Change the TUM password when TUM publishes the method. TUM said that would be available by Monday, with instructions at [it.tum.de](https://www.it.tum.de/en/it/news-1/).
-2. Turn on multi-factor authentication. TUM says accounts that already had it were protected.
-3. If that password was reused anywhere outside TUM, change it there now. Do not wait for TUM's reset page.
-4. There is nothing to upgrade.
+1. Change the TUM password now if it was not changed since **2026-11-05 00:00**. A password changed since then still counts. This applies to every TUM account, including people who never used myTUM. TUM has not set a deadline. Use one of the three methods on the [German IT page](https://www.it.tum.de/it/aktuelles/), updated 2026-11-07 13:00 CET. The English news URL does not carry this procedure.
+   - Microsoft 365, which TUM recommends: [campus.tum.de Microsoft 365 reset](https://campus.tum.de/tumonline/co_loc_wbmspwreset.init). A person who never set up multi-factor authentication cannot sign in to Microsoft 365 right now. Use the next method.
+   - German online ID (eID): [campus.tum.de eID reset](https://campus.tum.de/tumonline/co_loc_wbtumeid.initpwreset).
+   - Email, only if the first two are not possible, and only on the campus network or VPN: [campus.tum.de email reset](https://campus.tum.de/tumonline/co_loc_password_reset.main). eduVPN itself now requires multi-factor authentication that cannot be set up while TUMonline is down, so a person without it uses the campus network in person.
+2. Do not follow a link in an email, except the reset mail you just requested yourself on the email path. TUM says it will not ask for the password by email, phone, or letter. Type the address, or open the IT page above.
+3. Turn on multi-factor authentication when TUMonline accepts a login again. TUM says new TUM multi-factor authentication is not available until then, and that accounts that already had it were protected.
+4. If that password was reused anywhere outside TUM, change it there too. Also replace the old password anywhere it is stored, including eduroam, a mail program, and a phone.
+5. There is nothing to upgrade. TUMonline login is still down. Other services can take up to 15 minutes to take the new password.
 
 ## Verification
 
-- The account signs in only after the password change TUM describes, and multi-factor authentication is on.
-- TUMonline still being offline is the state TUM described. It is not a sign the notice was withdrawn.
+- The password was changed through one of the three campus.tum.de forms, after 2026-11-05 00:00, and a service other than TUMonline accepts it. TUMonline itself is still offline.
+- Multi-factor authentication is on, or it is waiting because TUMonline is still down. Those are different states.
+- The EduVPN status entry that still says a reset is not yet possible is older than the 13:00 CET password page. Do not treat that entry as the current instruction.
 
 ## Compromise response
 
@@ -61,8 +68,10 @@ TUM says the password, name, home address, and date of birth were stolen for eve
 
 ## Sources
 
-- [TUM notice][notice] — the university's page. Status line 2026-11-06 12:20 p.m., timezone not stated. Read 2026-11-07.
-- [TUM IT news][it] — the page TUM names for the Monday password instructions. Not yet the reset procedure when this guide was written.
+- [TUM notice][notice] — the university's English page. Status line 2026-11-06 12:20 p.m., timezone not stated. Still the current press status on 2026-11-07. It still says the reset method is coming by Monday.
+- [TUM IT news, German][it-de] — "Informationen zum Passwort Reset." Updated 2026-11-07 13:00 CET. Three reset methods. Applies to every TUM account if the password was not changed since 2026-11-05 00:00.
+- [TUM IT news, English][it] — the URL the November 6 notice names. On 2026-11-07 it embeds the status feed and does not carry the reset procedure. The German page does.
 
 [notice]: https://www.tum.de/en/news-and-events/all-news/press-releases/details/it-security-incident-at-tum
 [it]: https://www.it.tum.de/en/it/news-1/
+[it-de]: https://www.it.tum.de/it/aktuelles/

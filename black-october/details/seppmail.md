@@ -1,6 +1,6 @@
 # SEPPmail: unauthenticated command execution and file deletion
 
-**Last updated:** 2026-11-05 (America/New_York)
+**Last updated:** 2026-11-07 (America/New_York)
 
 [Main SEPPmail summary](../black-october-2026.md#seppmail-unauthenticated-command-execution-and-file-deletion) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -21,9 +21,9 @@
 
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
-| Fix released | 2026-10-27; time/TZ unknown | Patch release 15.1.1. The revision history dates the release that day and lists the five CVEs under Security. [Revision history][history] |
+| Fix released | 2026-11-03; time/TZ unknown | Patch release 15.1.1. The revision history, read 2026-11-07, dates the release that day and lists the five CVEs under Security. An earlier reading of the same page said 2026-10-27. [Revision history][history] |
 | CVE records published | 2026-11-04 08:28–08:42 UTC | NCSC.ch. [CVE-2026-114424][cve424] at 08:28:20 UTC, [CVE-2026-114425][cve425] at 08:29:55 UTC, [CVE-2026-114426][cve426] at 08:33:13 UTC, [CVE-2026-114420][cve420] at 08:41:15 UTC, [CVE-2026-114421][cve421] at 08:42:22 UTC. |
-| **Last updated** | **2026-11-05 (America/New_York)** | New item. |
+| **Last updated** | **2026-11-07 (America/New_York)** | The revision history now dates 15.1.1 as 2026-11-03. The fixed version is unchanged. |
 
 ## Detection
 
@@ -45,7 +45,7 @@ Two of the Critical flaws have an extra condition the version check does not sho
 
 ## Remediation
 
-1. **Upgrade the gateway to 15.1.1 or later.** The revision history dates that patch release 2026-10-27. One upgrade covers all five CVEs. There is no workaround in the revision history or the CVE records.
+1. **Upgrade the gateway to 15.1.1 or later.** The revision history, read 2026-11-07, dates that patch release 2026-11-03. An earlier reading of the same page said 2026-10-27. One upgrade covers all five CVEs. There is no workaround in the revision history or the CVE records.
 2. **Do not trust the scores printed next to the GINA CVEs in the revision history.** It assigns 6.9 to [CVE-2026-114421](https://www.cve.org/CVERecord?id=CVE-2026-114421) and 8.3 to [CVE-2026-114420](https://www.cve.org/CVERecord?id=CVE-2026-114420). The NCSC.ch records, which are the CNA scores, are the other way around: 8.3 High for 114421 (account takeover) and 6.9 Medium for 114420 (email-address enumeration). The 9.2 and 8.7 lines match the records.
 3. The upgrade does not show whether a command already ran, whether a file was read or deleted, or whether a GINA password was reset.
 
@@ -65,7 +65,7 @@ Two of the Critical flaws have an extra condition the version check does not sho
 
 ## Sources
 
-- [SEPPmail revision history][history] — patch release 15.1.1, dated 2026-10-27. Five CVEs under Security, with fix descriptions. The page prints 6.9 on CVE-2026-114421 and 8.3 on CVE-2026-114420; the CNA records swap those two scores.
+- [SEPPmail revision history][history] — patch release 15.1.1, dated 2026-11-03 on the page read 2026-11-07. An earlier reading said 2026-10-27. Five CVEs under Security, with fix descriptions. The page prints 6.9 on CVE-2026-114421 and 8.3 on CVE-2026-114420; the CNA records swap those two scores.
 - [CVE-2026-114424][cve424] — NCSC.ch, published 2026-11-04 08:28:20 UTC. CVSS 4.0 9.2 Critical (`AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`). Address-replacement rules evaluate message text as Perl. The worker context was root. Credit: Dario Weiss of InfoGuard Labs.
 - [CVE-2026-114425][cve425] — NCSC.ch, published 2026-11-04 08:29:55 UTC. CVSS 4.0 9.2 Critical (same vector shape, `AT:P`). Large File Transfer trusts a path in attachment metadata and can disclose, move, or delete a regular file. Workers ran as root. Credit: Dario Weiss of InfoGuard Labs.
 - [CVE-2026-114426][cve426] — NCSC.ch, published 2026-11-04 08:33:13 UTC. CVSS 4.0 8.7 High (`AT:N`, availability High only). The v1 file interface writes the upload before it authenticates the caller, with no absolute size limit.
