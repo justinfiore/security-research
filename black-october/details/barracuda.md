@@ -1,6 +1,6 @@
 # Barracuda: configuration restore without a login, and a root command
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-07 (America/New_York)
 
 [Main Barracuda summary](../black-october-2026.md#barracuda-configuration-restore-without-a-login-and-a-root-command) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,9 @@ Two flaws, published together on 2026-11-02. Mandiant is the CNA. Barracuda's ad
 
 Barracuda says chaining the two "could allow an attacker to bypass authorization controls and obtain root access." It also says exploitation requires access to the administrative interface. Mandiant says the import does not require authentication and the command injection does. Neither source reports exploitation.
 
-**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06) for either CVE. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+On 2026-11-05 watchTowr published how the two fit together, from the patch diff of ESG 9.4.0.027 and 9.4.0.029. A failed password change returns the login-screen role and the request continues, so an unauthenticated caller can upload a backup through `bayesian_upload`. The backup's checksum is `md5` of the file bytes plus the fixed string `Barracuda Networks is your new best friend`. Restoring it writes `system_timezone`, and `finalize_restore` passes that value to a shell that runs as root. watchTowr also published a Detection Artefact Generator. That is a researcher write-up of the patch, not a report that an appliance was compromised. Barracuda's advisory does not mention it. Do not run the generator against an appliance.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for either CVE. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -29,6 +31,8 @@ Barracuda says chaining the two "could allow an attacker to bypass authorization
 |---|---|---|
 | Reported to Mandiant | 2026-10-15 (command injection); 2026-10-22 (configuration import) | Dates only. [MNDT-2026-0041][m41] [MNDT-2026-0042][m42] |
 | Barracuda advisory and CVE records | 2026-11-02; time/TZ unknown | Advisory published and updated the same day. CVE records published 2026-11-02. [Barracuda][bar] |
+| Barracuda authentication line | 2026-11-05 2:30pm EST (UTC−05:00) | Changed to "No (Administrative UI Access Required)." [Barracuda][bar] |
+| watchTowr write-up | 2026-11-05; time/TZ unknown | The chain, the fixed checksum string, and a Detection Artefact Generator. Not a report of a compromised appliance. [watchTowr][wt] |
 
 ## Detection
 
@@ -50,7 +54,7 @@ Barracuda says chaining the two "could allow an attacker to bypass authorization
 
 ## Compromise response
 
-A restored configuration can replace administrator accounts and policy. A command that already ran as root is not undone by the patch. If the administrative interface was reachable, preserve the configuration history and the admin audit log before you upgrade, and review accounts and policy changes you did not make. Neither Barracuda nor Mandiant reports that this has happened.
+A restored configuration can replace administrator accounts and policy. A command that already ran as root is not undone by the patch. If the administrative interface was reachable, preserve the configuration history and the admin audit log before you upgrade, and review accounts and policy changes you did not make. watchTowr's write-up shows the request shape. It does not report that an appliance was compromised, and neither does Barracuda or Mandiant.
 
 ## Sources
 
@@ -58,9 +62,11 @@ A restored configuration can replace administrator accounts and policy. A comman
 - [Mandiant MNDT-2026-0042][m42] — CVE-2026-116606, unauthenticated configuration import, ESG before 9.4.0.030, CVSS 4.0 9.3.
 - [Mandiant MNDT-2026-0041][m41] — CVE-2026-111560, authenticated administrator, root command, CVSS 4.0 8.6, and the four product ceilings.
 - [Barracuda Campus, Web Security Gateway][wsg] — says firmware 15.0.0.009 through 16.1.003 was updated. That range is not the CVE ceiling.
-- [CISA KEV JSON feed][kev] — catalog 2026.11.04, checked 2026-11-06. Neither CVE is listed.
+- [watchTowr][wt] — published 2026-11-05. The failed password change continues into a backup upload, the checksum uses a fixed string, and the restored timezone reaches a root shell. Includes a Detection Artefact Generator. Not a compromise report.
+- [CISA KEV JSON feed][kev] — catalog 2026.11.06, checked 2026-11-07. Neither CVE is listed.
 
 [bar]: https://trust.barracuda.com/security/pre-authentication-authorization-bypass-command-injection
+[wt]: https://labs.watchtowr.com/barracuda-networks-is-your-new-best-friend-barracuda-email-security-gateway-pre-auth-remote-root-rce-cve-2026-116606-cve-2026-111560
 [m42]: https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0042.md
 [m41]: https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0041.md
 [wsg]: https://documentation.campus.barracuda.com/wiki/spaces/BWFv60/pages/963706956/Command+Injection+Vulnerability+in+Certain+Barracuda+Networks+Products

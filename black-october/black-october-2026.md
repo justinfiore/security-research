@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 7, 2026**
+**As of November 8, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Keycloak: a signed SAML message covers a different message than the one processed](#keycloak-a-signed-saml-message-covers-a-different-message-than-the-one-processed)
 - [WordPress plugins: LatePoint customer account takeover](#wordpress-plugins-latepoint-customer-account-takeover)
 - [Firefox: a layout bug can run code from a web page](#firefox-a-layout-bug-can-run-code-from-a-web-page)
 - [Symfony: a YAML document holds a PHP worker, and a data URI reads a file](#symfony-a-yaml-document-holds-a-php-worker-and-a-data-uri-reads-a-file)
@@ -188,6 +189,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Keycloak](#keycloak-a-signed-saml-message-covers-a-different-message-than-the-one-processed) to **26.8.2 or later**, or install Red Hat build of Keycloak **26.6.9** from RHSA-2026:96040. Red Hat rates [CVE-2026-117691](https://www.cve.org/CVERecord?id=CVE-2026-117691) CVSS 3.1 9.1 Critical: where a realm brokers a SAML identity provider over the HTTP-Redirect binding, a signed message can cover a different message than the one Keycloak processes, and the attacker logs in as any federated user. The community tags 26.6.9 and 26.4.18 do not contain the fix. Red Hat Single Sign-On 7 is not affected. It is not in KEV.
 - **New this update:** If the site runs [LatePoint](#wordpress-plugins-latepoint-customer-account-takeover), update it to **5.7.7 or later**. Wordfence rates [CVE-2026-118066](https://www.cve.org/CVERecord?id=CVE-2026-118066) CVSS 3.1 9.1 Critical: through 5.7.6, a logged-out caller can set a customer's password. When the site uses WordPress users as customers, the linked subscriber account is taken over too. The directory version on November 7 is 5.7.8. The update does not restore a password already changed. It is not in KEV.
 - **New this update:** [Windows Paint](#windows-paint-remote-code-execution) is still **11.2609.401.0 or later**, through the Microsoft Store. Microsoft's November 7 revision cuts the score from 8.1 to CVSS 3.1 **7.0**. The attack is local: a user has to open a crafted file. The October line, a crafted packet with no user interaction, is withdrawn. It is not in KEV.
 - **New this update:** Update [Firefox](#firefox-a-layout-bug-can-run-code-from-a-web-page) to **159.0.1 or later** and relaunch. Mozilla rates [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572) High: incorrect boundary conditions in layout, fixed on November 3. CISA-ADP scores it CVSS 3.1 8.8. Mozilla's record does not name the affected range or Firefox ESR. It is not in KEV.
@@ -305,6 +307,30 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Keycloak: a signed SAML message covers a different message than the one processed
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/keycloak.md):** [Detection](details/keycloak.md#detection) · [Remediation](details/keycloak.md#remediation) · [Verification](details/keycloak.md#verification) · [Timeline](details/keycloak.md#timeline)
+
+**CVEs:** [CVE-2026-117691](https://www.cve.org/CVERecord?id=CVE-2026-117691)
+
+**Red Hat rates [CVE-2026-117691](https://www.cve.org/CVERecord?id=CVE-2026-117691) CVSS 3.1 9.1 Critical.** Red Hat's product impact rating is Important. NVD has not scored it. The SAML HTTP-Redirect binding decodes a parameter name such as `%53AMLResponse` before processing it, and the signature check looks up the literal name. A request that carries both makes the signature succeed on a signed message while Keycloak parses an unsigned one. The result is a login as any federated user, with that user's roles and data. The attacker needs an account at the external identity provider and one signed redirect-binding message. A realm that does not broker SAML, or that uses only the POST or artifact binding, is outside this path. "Want Assertions Signed" rejects the unsigned assertion only when the provider signs assertions. Red Hat lists no workaround that meets its criteria.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07). CERT Santé's November 6 notice says exploitation was not observed and that an open-source proof of concept exists. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Reported to Red Hat | 2026-10-26 20:13 UTC | Mayssen Aidoudi (Think-it GmbH). |
+| **Public announcement** | **2026-11-05 13:27 UTC** | Red Hat published the CVE record. The record's public date has no time of day. |
+| Keycloak 26.8.2 | 2026-11-05 16:00 UTC | The community release that contains the fix. |
+| Red Hat packages | 2026-11-07; time/TZ unknown | RHSA-2026:96040. Red Hat build of Keycloak 26.6.9. |
+| **Last updated** | **2026-11-07 23:05 EST (UTC−05:00)** | New item. Upgrade Keycloak. |
+
+**Patch:** Community **26.8.2 or later**. Recreate the container after pulling the image. Red Hat build of Keycloak takes the **26.6.9** packages in [RHSA-2026:96040](https://access.redhat.com/errata/RHSA-2026:96040), not the community git tag of the same number. The community tags 26.6.9 and 26.4.18 do not contain the fix commit, and no later community release on those lines was published. Red Hat Single Sign-On 7 is not affected. The upgrade does not show whether a broker login already succeeded as another user.
+
+Sources: [CVE-2026-117691](https://www.cve.org/CVERecord?id=CVE-2026-117691), [RHSA-2026:96040](https://access.redhat.com/errata/RHSA-2026:96040), [Keycloak 26.8.2](https://github.com/keycloak/keycloak/releases/tag/26.8.2), [detailed guide](details/keycloak.md).
 
 ---
 
@@ -1218,16 +1244,17 @@ Sources: [WSO2-2026-5212](https://security.docs.wso2.com/en/latest/security-anno
 
 **CVEs:** [CVE-2026-116606](https://www.cve.org/CVERecord?id=CVE-2026-116606), [CVE-2026-111560](https://www.cve.org/CVERecord?id=CVE-2026-111560)
 
-**Mandiant rates CVE-2026-116606 CVSS 4.0 9.3 Critical and CVE-2026-111560 CVSS 4.0 8.6 High.** The 9.3 flaw is Email Security Gateway before 9.4.0.030: anyone who can reach the administrative interface can restore a crafted backup and replace the global configuration. Barracuda's November 5 revision now says authentication is not required, and that the attacker must be able to reach that interface. The 8.6 flaw needs an administrator and runs a command from the timezone field as root. Barracuda says the two together can produce root. Neither source reports exploitation.
+**Mandiant rates CVE-2026-116606 CVSS 4.0 9.3 Critical and CVE-2026-111560 CVSS 4.0 8.6 High.** The 9.3 flaw is Email Security Gateway before 9.4.0.030: anyone who can reach the administrative interface can restore a crafted backup and replace the global configuration. Barracuda's November 5 revision now says authentication is not required, and that the attacker must be able to reach that interface. The 8.6 flaw needs an administrator and runs a command from the timezone field as root. Barracuda says the two together can produce root. Neither source reports exploitation. On November 5 watchTowr published the chain: a failed password change lets the same request upload a backup, and the restored timezone reaches a root shell. That is a write-up of the patch, not a report that an appliance was compromised.
 
-**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06) for either CVE. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for either CVE. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Reported | 2026-10-15 and 2026-10-22; times unknown | Command injection, then the configuration import. |
 | Barracuda advisory and CVE records | 2026-11-02; time/TZ unknown | Patches named. Fixed firmware floors are in the CVE record, not in Barracuda's table. |
 | Barracuda authentication line | 2026-11-05 2:30pm EST (UTC−05:00) | Changed from "Yes, administrative access" to "No (Administrative UI Access Required)." |
-| **Last updated** | **2026-11-06 03:20 EST (UTC−05:00)** | Barracuda now agrees the configuration restore needs no login. The patches are unchanged. |
+| watchTowr write-up | 2026-11-05; time/TZ unknown | The chain and a Detection Artefact Generator. Not a compromise report. |
+| **Last updated** | **2026-11-07 23:20 EST (UTC−05:00)** | watchTowr published how the two flaws combine. The patches are unchanged. |
 
 **Patch:** Install the patch Barracuda names for the product: ESG **BNSF-40425** (firmware 9.4.017 and later) or **BNSF-40430** (below 9.4.017), ADC and WAF **BNADC-16586**, Message Archiver **BNMA-32468**, WAF Control Center **BNWF-60060**, Web Security Gateway **BNYF-24789**. Mandiant's floors, which the patch IDs do not print, are ESG before 9.4.0.030 for the import and through 9.4.0.27 for the command, ADC through 6.4.0, WAF through 11.0.1, and WSG through 16.1.100.100. The command-injection record, updated 2026-11-03, also lists Message Archiver through 5.5.4.0 and WAF Control Center through 2.2.1. Keep the administrative interface off the internet. That does not fix either flaw.
 
@@ -1693,9 +1720,9 @@ Sources: [CVE-2026-120306](https://www.cve.org/CVERecord?id=CVE-2026-120306), [C
 
 **CVEs:** [CVE-2026-118386](https://www.cve.org/CVERecord?id=CVE-2026-118386), [CVE-2026-116296](https://www.cve.org/CVERecord?id=CVE-2026-116296), [CVE-2026-113429](https://www.cve.org/CVERecord?id=CVE-2026-113429), [CVE-2026-120263](https://www.cve.org/CVERecord?id=CVE-2026-120263), [CVE-2026-117635](https://www.cve.org/CVERecord?id=CVE-2026-117635), [CVE-2026-119441](https://www.cve.org/CVERecord?id=CVE-2026-119441), [CVE-2026-117685](https://www.cve.org/CVERecord?id=CVE-2026-117685)
 
-**Seven High flaws fixed only in 28.3.0.** GitHub's advisories score five of them CVSS 3.1 8.7, 8.1, 8.1, 8.1, and 7.1. The OAuth2 account takeover is labeled High with no number. NVD had not scored them when checked. The same release also fixes Medium flaws that are not the reason to rush. This is not the [built-in SSH bypass](#gitea-built-in-ssh-server-authentication-bypass); 28.0.0 already fixed that, and 28.0.0 through 28.2.0 are still inside these ranges.
+**Seven High flaws fixed only in 28.3.0.** GitHub's advisories score five of them CVSS 3.1 8.7, 8.1, 8.1, 8.1, and 7.1. The OAuth2 account takeover is labeled High with no number. NVD had not scored them when checked. The same release also fixes Medium flaws that are not the reason to rush. Among them, a public-only token with `write:organization` can register an organization runner that then receives private-repository jobs and their secrets, and a token with an unrelated scope can read a user's private activity feed. This is not the [built-in SSH bypass](#gitea-built-in-ssh-server-authentication-bypass); 28.0.0 already fixed that, and 28.0.0 through 28.2.0 are still inside these ranges.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-02). No exploitation report was found. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07). No exploitation report was found. Absence from KEV is not evidence that exploitation has not occurred.
 
 **Affected technology:** self-hosted Gitea through 28.2.0. **Worst case:** a read-only user starts a workflow that receives Actions secrets and a commit token; a write collaborator replaces release binaries on an archived repository; a victim who opens a direct artifact link runs JavaScript as themselves, which the advisory says is instance control for an admin. Separately, with `ACCOUNT_LINKING = auto` (not the default), an OAuth2 sign-in can take over an existing account. A site administrator's public-only token can create another administrator, and an organization owner's public-only token can delete every repository in that organization.
 
@@ -1703,7 +1730,7 @@ Sources: [CVE-2026-120306](https://www.cve.org/CVERecord?id=CVE-2026-120306), [C
 |---|---|---|
 | Advisories published | 2026-11-01 09:42 UTC | All three say patched in 28.3.0. |
 | Gitea 28.3.0 tagged | 2026-11-01 09:55 UTC | First release that includes the fixes. |
-| **Last updated** | **2026-11-02 19:01 EST (UTC−05:00)** | The 28.3.0 blog lists four more High flaws in the same release. The upgrade does not change. |
+| **Last updated** | **2026-11-07 23:35 EST (UTC−05:00)** | The 28.3.0 blog's Medium list now includes the runner-token and private-feed flaws. The upgrade does not change. |
 
 **Remediation:** Upgrade to **28.3.0 or later** and restart. A read-only account is enough for the Actions flaw when a runner and one same-repository pull request exist. Disabling forks does not remove it.
 
@@ -5116,6 +5143,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Keycloak brokering SAML over the HTTP-Redirect binding, below 26.8.2** | Upgrade community Keycloak to 26.8.2 or later and recreate the container. Red Hat build of Keycloak takes the 26.6.9 packages in RHSA-2026:96040, not the community tag of that number. A signed redirect message can otherwise cover a different message than the one processed, and the attacker logs in as any federated user. Red Hat Single Sign-On 7 is not affected. [Guide](details/keycloak.md#remediation). |
 | **Firefox below 159.0.1** | Update to 159.0.1 or later and relaunch. Mozilla rates the layout bug High, and CISA-ADP scores it 8.8. The record does not name Firefox ESR. [Guide](details/firefox.md#remediation). |
 | **Symfony below 5.4.56, 6.4.50, 7.4.23, or 8.1.11** | Upgrade `symfony/yaml`, `symfony/serializer`, and `symfony/filesystem` together to that floor or later, redeploy, and restart PHP. One unauthenticated YAML request can hold a worker, and a `DATA:` value deserialized into `File` reads a local file. The same releases fix a path check that approves a file outside its directory. [Guide](details/symfony.md#remediation). |
 | **A Technical University of Munich account** | Change the TUM password now if it was not changed since 2026-11-05 00:00, using the German IT page: Microsoft 365, the German online ID, or email from the campus network. Every TUM account, not only myTUM. Change a reused password on every other service. New multi-factor authentication waits until TUMonline is back. [Guide](details/tum.md#remediation). |

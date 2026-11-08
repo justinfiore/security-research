@@ -1,6 +1,6 @@
 # Gitea 28.3.0: Actions secret theft, archived-repo writes, and stored XSS
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-07 (America/New_York)
 
 [Back to Gitea 28.3.0 summary](../black-october-2026.md#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss) · [Changelog](../../CHANGELOG.md)
 
@@ -27,10 +27,16 @@ The same 28.3.0 tag also fixes more Medium flaws, all patched in 28.3.0. They do
 | [CVE-2026-119627](https://www.cve.org/CVERecord?id=CVE-2026-119627) | 4.3 | Profile and feed routes bypass the public-only scope. |
 | [CVE-2026-118504](https://www.cve.org/CVERecord?id=CVE-2026-118504) | 6.5 | The API issue-archive restriction can be bypassed. |
 | [CVE-2026-114199](https://www.cve.org/CVERecord?id=CVE-2026-114199) | 4.3 | A contribution heatmap leaks private-repository counts to a public-only token. |
+| [CVE-2026-119625](https://www.cve.org/CVERecord?id=CVE-2026-119625) | 5.3 | A token with an unrelated scope, sent as HTTP Basic, reads the owner's private activity feed. A public-only token sees private repositories and organizations on the profile pages. |
+| [CVE-2026-116289](https://www.cve.org/CVERecord?id=CVE-2026-116289) | Medium; no numeric score on the blog | A public-only token with `write:organization`, held by an organization owner, creates an organization runner token. A runner registered with it receives jobs, including secrets, from the organization's private repositories. |
+| [CVE-2026-117646](https://www.cve.org/CVERecord?id=CVE-2026-117646) | 4.3 | The repositories, stars, and watching tabs of a user profile, and the organization home page, show private repositories to a public-only token. |
+| [CVE-2026-118395](https://www.cve.org/CVERecord?id=CVE-2026-118395) | 4.3 | The deprecated `POST /api/v1/org/{org}/repos` route lets a public-only token create a private repository in an organization. |
+| [CVE-2026-117677](https://www.cve.org/CVERecord?id=CVE-2026-117677) | Medium; no numeric score on the blog | A Helm chart upload inflates the whole archive before the package size quota is checked, so a user with package write access can tie up the server with a small, highly compressed upload. |
+| [CVE-2026-117649](https://www.cve.org/CVERecord?id=CVE-2026-117649) | Medium; no numeric score on the blog | The issue timeline shows a private issue linked as a dependency to a user who cannot read it. The web page shows the title, and the API returns the issue including its body. |
 
-The numbers are GitHub's CVSS 3.1 scores. CVE-2026-116474's advisory has no vector. The same binaries are built with Go 1.27.3, so outgoing certificate checks no longer trust the eMudhra intermediates ([CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943)). That is the [certificate-authority incident](emudhra.md), not a new Gitea flaw.
+The numbers are GitHub's CVSS 3.1 scores where the blog states one. CVE-2026-116474, CVE-2026-116289, CVE-2026-117677, and CVE-2026-117649 have no numeric score on the blog. The five rows added on 2026-11-07 come from that blog, reread that day. They do not change the upgrade: 28.3.0 already covers them. The same binaries are built with Go 1.27.3, so outgoing certificate checks no longer trust the eMudhra intermediates ([CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943)). That is the [certificate-authority incident](emudhra.md), not a new Gitea flaw.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-02) for any CVE in this release. No exploitation report was found. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for any CVE in this release. No exploitation report was found. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
