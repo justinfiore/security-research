@@ -1,16 +1,16 @@
 # Craft CMS: unauthenticated SQL injection to an administrator
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-07 (America/New_York)
 
 [Main Craft CMS summary](../black-october-2026.md#craft-cms-unauthenticated-sql-injection-to-an-administrator) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**[CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488) — VulnCheck (CNA) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** Craft's own advisory for the same flaw, [GHSA-qcvp-ggx3-97r6](https://github.com/craftcms/cms/security/advisories/GHSA-qcvp-ggx3-97r6), says **High** and **No known CVE**. NVD has not scored it. The vendor published the advisory on 2026-10-22. The CVE record is 2026-11-06. 5.11.2 and 4.18.9, both released 2026-09-17, also fix five more High flaws that still have no CVE.
+**[CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488) — VulnCheck (CNA) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** Craft's own advisory for the same flaw, [GHSA-qcvp-ggx3-97r6](https://github.com/craftcms/cms/security/advisories/GHSA-qcvp-ggx3-97r6), says **High** and **No known CVE**. NVD has not scored it. The vendor published the advisory on 2026-10-22. The CVE record is 2026-11-06. 5.11.2 and 4.18.9, both released 2026-09-17, also fix five more High flaws. One of those, the sandboxed `getOwners()` call, is now [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490). VulnCheck rates it CVSS 4.0 8.7 High and CVSS 3.1 8.8 High, published 2026-11-06. Craft's advisory for it still says no CVE is known. The other four still have no CVE.
 
 **Worst case:** The vendor says an unauthenticated caller can read and write the application database, set the admin flag on user ID 1, and overwrite any account's password hash. Craft treats that one column as an administrator. The same releases fix control-panel paths to command execution as the PHP worker. Those need a control-panel account.
 
 **Fixed in 5.11.2 and 4.18.9**, released 2026-09-17. Craft 3 is outside the ranges the advisories name.
 
-**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Neither Craft nor VulnCheck reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for either CVE. Neither Craft nor VulnCheck reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -29,13 +29,15 @@
 | Private discovery | Unknown | Craft's advisories carry report IDs. They do not name a finder or a report date. |
 | Patch available | 2026-09-17 18:45:32 UTC (5.11.2); 2026-09-17 18:41:07 UTC (4.18.9) | The release notes say high-severity and link the advisories. They do not name a CVE. [5.11.2][rel5] [4.18.9][rel4] |
 | **Public announcement** | **2026-10-22 22:52:11 UTC** | GHSA-qcvp-ggx3-97r6. Craft rates it High and says no CVE is known. [GHSA][ghsa] |
-| Other High advisories | 2026-10-22 and 2026-10-23; times on the advisory pages | Five more High flaws, still with no CVE. [Releases][rel5] |
+| Other High advisories | 2026-10-22 and 2026-10-23; times on the advisory pages | Five more High flaws. Four still have no CVE. [Releases][rel5] |
+| getOwners CVE | 2026-11-06; time/TZ unknown | VulnCheck published [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490) for GHSA-r56r-f696-c8w9. CVSS 4.0 8.7 and CVSS 3.1 8.8. 5.8.17 before 5.11.2. Craft's page still says no CVE. |
 | CVE record published | 2026-11-06; time/TZ unknown | VulnCheck CNA. CVSS 4.0 9.3 and CVSS 3.1 9.8. Craft's advisory is unchanged. [CNA][cve] |
-| CISA KEV | Not listed (catalog 2026.11.04, checked 2026-11-06) | [KEV][kev] |
+| CISA KEV | Not listed (catalog 2026.11.06, checked 2026-11-07) | Neither CVE. [KEV][kev] |
+| **Last updated** | **2026-11-07 (America/New_York)** | The getOwners flaw has a CVE. The fix is unchanged. |
 
 ## The other High fixes in the same releases
 
-These are the High advisories the 5.11.2 and 4.18.9 notes name. None has a CVE. A site below those versions is inside every row that names its line.
+These are the High advisories the 5.11.2 and 4.18.9 notes name. One now has a CVE. The other four do not. A site below those versions is inside every row that names its line.
 
 | Advisory | Who can reach it | Result Craft describes | Fixed in |
 |---|---|---|---|
@@ -44,7 +46,7 @@ These are the High advisories the 5.11.2 and 4.18.9 notes name. None has a CVE. 
 | [GHSA-v4q3-2g5g-wjj6](https://github.com/craftcms/cms/security/advisories/GHSA-v4q3-2g5g-wjj6) | Any control-panel user | Recovers `securityKey`, then command execution | 5.11.2 and 4.18.9 |
 | [GHSA-9hp6-3565-gvh5](https://github.com/craftcms/cms/security/advisories/GHSA-9hp6-3565-gvh5) | A control-panel user with `accessCp` | Replaces `CRAFT_SECURITY_KEY` in `.env`, then command execution | 5.11.2 and 4.18.9 |
 | [GHSA-qj3q-j7r4-428p](https://github.com/craftcms/cms/security/advisories/GHSA-qj3q-j7r4-428p) | A non-administrator control-panel user | Signs a Twig template, then command execution on login | 5.11.2 only (5.10.0 through 5.11.1) |
-| [GHSA-r56r-f696-c8w9](https://github.com/craftcms/cms/security/advisories/GHSA-r56r-f696-c8w9) | A control-panel user | Administrator through sandboxed `getOwners()` | 5.11.2 only (5.8.17 through 5.11.1) |
+| [GHSA-r56r-f696-c8w9](https://github.com/craftcms/cms/security/advisories/GHSA-r56r-f696-c8w9), [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490) | A control-panel user | Administrator through sandboxed `getOwners()`. VulnCheck: CVSS 4.0 8.7 and CVSS 3.1 8.8. | 5.11.2 only (5.8.17 through 5.11.1) |
 
 The same releases also fix moderate flaws: public registration can keep a deactivated account's direct permissions ([GHSA-v25r-wr32-jfg7](https://github.com/craftcms/cms/security/advisories/GHSA-v25r-wr32-jfg7), 5.x only), and anonymous GraphQL can read content the schema was set to withhold ([GHSA-xpg7-m6gm-4xfh](https://github.com/craftcms/cms/security/advisories/GHSA-xpg7-m6gm-4xfh), [GHSA-mp59-9rf5-93wr](https://github.com/craftcms/cms/security/advisories/GHSA-mp59-9rf5-93wr)). Those are not the High cluster.
 
@@ -91,8 +93,9 @@ The reviewed sources do not publish a query, an indicator, or a confirmed compro
 - [GHSA-qcvp-ggx3-97r6][ghsa]: Craft, High, no CVE, unauthenticated SQL injection to an administrator, 4.0.0–4.18.8 and 5.0.0–5.11.1, published 2026-10-22.
 - [CVE-2026-123488][cve]: VulnCheck CNA, published 2026-11-06, CVSS 4.0 9.3 and CVSS 3.1 9.8, same versions, cites the Craft advisory.
 - [5.11.2 release][rel5] and [4.18.9 release][rel4]: 2026-09-17, high-severity fixes, no CVE named.
+- [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490): VulnCheck CNA, published 2026-11-06, CVSS 4.0 8.7 and CVSS 3.1 8.8, GHSA-r56r-f696-c8w9, 5.8.17 before 5.11.2. Craft's advisory still says no CVE is known.
 - [NVD][nvd]: published 2026-11-06, no NVD score.
-- [CISA KEV JSON feed][kev]: catalog 2026.11.04. Not listed.
+- [CISA KEV JSON feed][kev]: catalog 2026.11.06, checked 2026-11-07. Neither CVE is listed.
 
 [ghsa]: https://github.com/craftcms/cms/security/advisories/GHSA-qcvp-ggx3-97r6
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-123488

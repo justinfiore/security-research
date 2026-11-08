@@ -4,6 +4,12 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
+## 2026-11-07 19:30 EST (UTC−05:00) — LatePoint; Windows Paint; Craft CMS
+
+- **LatePoint:** Update the WordPress plugin to [5.7.7 or later](black-october/details/wordpress-plugins-latepoint.md#remediation). Wordfence rates [CVE-2026-118066](https://www.cve.org/CVERecord?id=CVE-2026-118066) CVSS 3.1 9.1 Critical: through 5.7.6, a logged-out caller can set a customer's password. When the site uses WordPress users as customers, the linked subscriber or customer-role account is taken over too. That is not a WordPress administrator. The directory version on November 7 is 5.7.8, and its changelog credits Wordfence without naming the CVE. The update does not restore a password already changed. It is not the November 6 or November 7 plugin sets, and it is not in KEV.
+- **Windows Paint:** The [Store update](black-october/details/windows-paint.md#remediation) is still 11.2609.401.0 or later. Microsoft's November 7 revision cuts the score from 8.1 to CVSS 3.1 7.0. The attack is local: a user has to open a crafted file. The October line, a crafted packet with no user interaction, is withdrawn. A machine on 11.2605.91.0 is still affected. It is not in KEV.
+- **Craft CMS:** The [upgrade](black-october/details/craft-cms.md#remediation) is still 5.11.2 or 4.18.9. VulnCheck assigned [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490) on November 6 to the sandboxed `getOwners()` flaw and rates it CVSS 4.0 8.7 and CVSS 3.1 8.8: a control-panel user can make every account an administrator. Craft's advisory still says no CVE is known. The other four High flaws in those releases still have no CVE. It is not in KEV.
+
 ## 2026-11-07 16:15 EST (UTC−05:00) — Firefox; Chainalysis; TUM; Debian APT; SEPPmail; Puppet
 
 - **Firefox:** Update to [159.0.1 or later](black-october/details/firefox.md#remediation) and relaunch. Mozilla rates [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572) High: incorrect boundary conditions in layout, fixed on November 3. CISA-ADP scores it CVSS 3.1 8.8. Mozilla's record does not say which versions before 159.0.1 are affected, and it does not name Firefox ESR. The update does not show whether a page already ran code. It is not in KEV.

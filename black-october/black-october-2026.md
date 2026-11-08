@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [WordPress plugins: LatePoint customer account takeover](#wordpress-plugins-latepoint-customer-account-takeover)
 - [Firefox: a layout bug can run code from a web page](#firefox-a-layout-bug-can-run-code-from-a-web-page)
 - [Symfony: a YAML document holds a PHP worker, and a data URI reads a file](#symfony-a-yaml-document-holds-a-php-worker-and-a-data-uri-reads-a-file)
 - [Technical University of Munich: stolen passwords for every myTUM account](#technical-university-of-munich-stolen-passwords-for-every-mytum-account)
@@ -187,6 +188,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** If the site runs [LatePoint](#wordpress-plugins-latepoint-customer-account-takeover), update it to **5.7.7 or later**. Wordfence rates [CVE-2026-118066](https://www.cve.org/CVERecord?id=CVE-2026-118066) CVSS 3.1 9.1 Critical: through 5.7.6, a logged-out caller can set a customer's password. When the site uses WordPress users as customers, the linked subscriber account is taken over too. The directory version on November 7 is 5.7.8. The update does not restore a password already changed. It is not in KEV.
+- **New this update:** [Windows Paint](#windows-paint-remote-code-execution) is still **11.2609.401.0 or later**, through the Microsoft Store. Microsoft's November 7 revision cuts the score from 8.1 to CVSS 3.1 **7.0**. The attack is local: a user has to open a crafted file. The October line, a crafted packet with no user interaction, is withdrawn. It is not in KEV.
 - **New this update:** Update [Firefox](#firefox-a-layout-bug-can-run-code-from-a-web-page) to **159.0.1 or later** and relaunch. Mozilla rates [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572) High: incorrect boundary conditions in layout, fixed on November 3. CISA-ADP scores it CVSS 3.1 8.8. Mozilla's record does not name the affected range or Firefox ESR. It is not in KEV.
 - **New this update:** Upgrade [Symfony](#symfony-a-yaml-document-holds-a-php-worker-and-a-data-uri-reads-a-file) to **5.4.56, 6.4.50, 7.4.23, or 8.1.11** or later on that line. GitHub rates [CVE-2026-123792](https://www.cve.org/CVERecord?id=CVE-2026-123792) CVSS 4.0 8.7 High: one unauthenticated request with a YAML content type can hold a PHP worker until `max_execution_time`. Checkmarx rates [CVE-2026-121623](https://www.cve.org/CVERecord?id=CVE-2026-121623) 8.2: a `DATA:` value is opened as a local file, so a public endpoint that deserializes into `File` can read a file the process can read. A third High advisory, with no CVE, lets a path check approve a file outside its directory. The advisories are November 4. The CVE records are November 6. Symfony's data-URI page still says no CVE is known. It is not in KEV.
 - **New this update:** If you have a [Technical University of Munich](#technical-university-of-munich-stolen-passwords-for-every-mytum-account) account, change the TUM password now if it was not changed since November 5, 00:00, and change it wherever else you used it. The German IT page published three methods at 13:00 CET on November 7: Microsoft 365, the German online ID, or email from the campus network. Every TUM account is in scope, not only myTUM. The English press page still says the method is coming by Monday. No CVE is assigned.
@@ -302,6 +305,29 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## WordPress plugins: LatePoint customer account takeover
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-plugins-latepoint.md):** [Detection](details/wordpress-plugins-latepoint.md#detection) · [Remediation](details/wordpress-plugins-latepoint.md#remediation) · [Verification](details/wordpress-plugins-latepoint.md#verification) · [Timeline](details/wordpress-plugins-latepoint.md#timeline)
+
+**CVEs:** [CVE-2026-118066](https://www.cve.org/CVERecord?id=CVE-2026-118066)
+
+**Wordfence rates [CVE-2026-118066](https://www.cve.org/CVERecord?id=CVE-2026-118066) CVSS 3.1 9.1 Critical.** NVD has not scored it. LatePoint through 5.7.6 treats the literal string `IS NOT NULL` as a SQL operator. A logged-out caller can use that on the public password-change route, match the lowest-id customer who has a reset token, and set that customer's password. Wordfence says the same pattern on the public booking route returns a name and email, and that the caller can start the reset window themselves. When the site uses WordPress users as customers, the linked subscriber or customer-role account is taken over too. That is not a WordPress administrator. Wordfence's page is November 6. The NVD record is November 7. The fix is 5.7.7. The directory, read November 7, offers 5.7.8, and its changelog credits Wordfence without naming the CVE. This is not the [November 7 upload and role-deletion pair](#wordpress-plugins-unauthenticated-upload-and-role-deletion), not the [four plugins from November 6](#wordpress-plugins-four-unauthenticated-critical-flaws), and not the [core upgrade-window flaw](#wordpress-unauthenticated-code-execution-during-a-core-upgrade).
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07). Wordfence does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fixed in 5.7.7 | 2026-11-02; time/TZ unknown | Wordfence's patched version. The changelog says hardened and credits Wordfence. It does not name the CVE. |
+| Wordfence page | 2026-11-06; time/TZ unknown | Publicly published. CVSS 3.1 9.1. Through 5.7.6. |
+| NVD record | 2026-11-07; time/TZ unknown | Not scored. Enrichment not scheduled. |
+| **Last updated** | **2026-11-07 19:30 EST (UTC−05:00)** | New item. Update to 5.7.7 or later. |
+
+**Patch:** Update LatePoint to **5.7.7 or later**. The directory version on November 7 is 5.7.8. The update does not restore a customer password already overwritten.
+
+Sources: [Wordfence, LatePoint](https://www.wordfence.com/threat-intel/vulnerabilities/wordpress-plugins/latepoint-2/appointment-booking-plugin-576-unauthenticated-authentication-bypass-via-account-takeover-via-is-not-null-sentinel-in-password-reset-token-parameter), [detailed guide](details/wordpress-plugins-latepoint.md).
 
 ---
 
@@ -618,18 +644,19 @@ Sources: [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294), [J
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/craft-cms.md):** [Detection](details/craft-cms.md#detection) · [Remediation](details/craft-cms.md#remediation) · [Verification](details/craft-cms.md#verification) · [Timeline](details/craft-cms.md#timeline)
 
-**CVEs:** [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488)
+**CVEs:** [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488), [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490)
 
-**VulnCheck rates [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical. Craft rates the same flaw High and its advisory still says no CVE is known.** NVD has not scored it. Before 5.11.2 and 4.18.9, the element-search `attribute` parameter is concatenated into SQL, and emulated prepares run stacked statements. Craft says an unauthenticated caller can set the admin flag on user ID 1 and overwrite any password hash. The same releases fix five more High flaws that still have no CVE. Two of those, a signed-template oracle and a sandboxed `getOwners()` call, are 5.x only and reach command execution as the PHP worker. Craft 3 is outside the ranges.
+**VulnCheck rates [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical. Craft rates the same flaw High and its advisory still says no CVE is known.** NVD has not scored it. Before 5.11.2 and 4.18.9, the element-search `attribute` parameter is concatenated into SQL, and emulated prepares run stacked statements. Craft says an unauthenticated caller can set the admin flag on user ID 1 and overwrite any password hash. The same releases fix five more High flaws. One of them, the sandboxed `getOwners()` call, is now [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490): VulnCheck rates it CVSS 4.0 8.7 and CVSS 3.1 8.8, published November 6, and Craft's page still says no CVE. The other four still have no CVE. A signed-template oracle, also 5.x only, reaches command execution as the PHP worker. Craft 3 is outside the ranges.
 
-**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Neither Craft nor VulnCheck reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for either CVE. Neither Craft nor VulnCheck reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Patch available | 2026-09-17 18:45:32 UTC (5.11.2); 2026-09-17 18:41:07 UTC (4.18.9) | The notes say high-severity and do not name a CVE. |
 | Public announcement | 2026-10-22 22:52:11 UTC | GHSA-qcvp-ggx3-97r6. Craft rates it High. |
 | CVE record | 2026-11-06; time/TZ unknown | VulnCheck CNA. Craft's advisory is unchanged. |
-| **Last updated** | **2026-11-06 15:20 EST (UTC−05:00)** | New item. Update to 5.11.2 or 4.18.9. |
+| getOwners CVE | 2026-11-06; time/TZ unknown | [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490). VulnCheck: 8.7 and 8.8. Craft's page still says no CVE. |
+| **Last updated** | **2026-11-07 19:30 EST (UTC−05:00)** | The getOwners flaw has a CVE. The fix is unchanged. |
 
 **Patch:** Update `craftcms/cms` to **5.11.2 or later**, or **4.18.9 or later** on 4.x. There is no workaround for the unauthenticated injection. The update does not unset an admin flag already written, and it does not restore a `CRAFT_SECURITY_KEY` a control-panel flaw already replaced.
 
@@ -2972,7 +2999,7 @@ Sources: [MSRC CVE-2026-108398](https://msrc.microsoft.com/update-guide/vulnerab
 
 **CVEs:** [CVE-2026-83844](https://www.cve.org/CVERecord?id=CVE-2026-83844)
 
-**Microsoft (CNA) rates it CVSS 3.1 8.1 High and Important.** The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C`. The temporal score is 7.1. NVD has not scored it. An out-of-bounds read in Windows Paint lets an unauthorized attacker execute code over a network. Microsoft says the attacker sends a specially crafted packet to an affected service, and that no authentication and no user interaction are required. Attack complexity is High: Microsoft says a successful attack is not guaranteed and needs a deep understanding of the system. The CVE record, updated 2026-11-06, says Paint 11.0.0.0 before 11.2609.401.0 is affected. The CSAF is version 2, dated 2026-11-06, and names that build. The October record said 11.2605.91.0, and a machine on that build is still affected. This is the Store app, not the .NET Framework update and not the Windows Shell Mark of the Web bypass.
+**Microsoft (CNA) rates it CVSS 3.1 7.0 High and Important.** The vector is `CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C`. The temporal score is 6.1. NVD has not scored it. Revision 2.1, dated November 7, replaced the October score of 8.1. An out-of-bounds read in Windows Paint lets an unauthorized attacker execute code locally. Microsoft's new FAQ says the word "remote" in the title is the attacker's location: a user has to open a crafted file. The October FAQ, a crafted packet with no user interaction, is withdrawn. Attack complexity is High. The CVE record, updated 2026-11-06, says Paint 11.0.0.0 before 11.2609.401.0 is affected. The CSAF is version 2, dated 2026-11-06, and names that build. The October record said 11.2605.91.0, and a machine on that build is still affected. This is the Store app, not the .NET Framework update and not the Windows Shell Mark of the Web bypass.
 
 **CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Microsoft says it was not publicly disclosed and not exploited, and rates exploitation less likely. CISA-ADP records Exploitation none. Absence from KEV is not evidence that exploitation has not occurred.
 
@@ -2981,10 +3008,11 @@ Sources: [MSRC CVE-2026-108398](https://msrc.microsoft.com/update-guide/vulnerab
 | Public announcement and fix | 2026-10-13 14:00 UTC | MSRC entry, version 1.0. CVE record `datePublic` is the same instant; the record was published 18:59:53 UTC. |
 | Fixed Paint, current record | 2026-11-06 08:00 UTC | CSAF version 2 and the CVE record now say affected is below 11.2609.401.0. The October record said 11.2605.91.0. |
 | Fixed Paint, CSAF | 2026-11-06 08:00 UTC | Version 2. Revision 2 names 11.2609.401.0. Version 1, on October 13, did not. |
+| Score revised | 2026-11-07; time/TZ unknown | MSRC revision 2.1. Base 7.0, temporal 6.1. Local, and a user must open a file. Microsoft calls it informational. The fix build is unchanged. |
 | CISA-ADP | 2026-10-13 20:24:59 UTC | Exploitation none, Automatable no, Technical Impact total. |
-| **Last updated** | **2026-11-06 19:05 EST (UTC−05:00)** | The CVE record now matches the product row: 11.2609.401.0. |
+| **Last updated** | **2026-11-07 19:30 EST (UTC−05:00)** | The score is 7.0. The attack is local and needs a user to open a file. |
 
-**Patch:** Update Microsoft Paint to **11.2609.401.0 or later** through the Microsoft Store, then confirm the installed version. 11.2605.91.0 is below the current record. Microsoft lists one product row and no separate Windows cumulative update. There is no workaround in the advisory. The update does not show whether a packet already ran code.
+**Patch:** Update Microsoft Paint to **11.2609.401.0 or later** through the Microsoft Store, then confirm the installed version. 11.2605.91.0 is below the current record. Microsoft lists one product row and no separate Windows cumulative update. There is no workaround in the advisory. The update does not show whether a file already ran code.
 
 Sources: [MSRC CVE-2026-83844](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-83844), [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-83844), [detailed guide](details/windows-paint.md).
 
@@ -5155,7 +5183,8 @@ flowchart TD
 | **Signal (Android, iOS, Desktop) and RingRTC embedders** | Update to Android 8.27.0+, iOS 8.30.0+ or Desktop 8.29.0+ (RingRTC 2.72.0+) and restart the app; until then avoid calls with untrusted contacts. [Guide](details/signal.md#remediation). |
 | **OVHcloud CLI (ovhcloud) installed 2026-10-19** | Do not run it. Check the binary's MD5 against the advisory and look for envchecker-* temp folders. If affected, rotate every secret on that machine, delete the binary and install v0.16.0+. [Guide](details/ovhcloud-cli.md#remediation). |
 | **Windows with .NET Framework 3.5/4.x, especially WDAC/App Control-managed devices** | Install the October 2026 .NET Framework update for your OS (e.g. KB5127690 for Windows 11 24H2/25H2 and Server 2025) and confirm it is installed. [Guide](details/dotnet-framework.md#remediation). |
-| **Windows with Microsoft Paint before 11.2609.401.0** | Update Paint to 11.2609.401.0 or later through the Microsoft Store. The November 6 CVE record and the product row both name that build. 11.2605.91.0 is still affected. This is the Store app, not a Windows cumulative update. [Guide](details/windows-paint.md#remediation). |
+| **Windows with Microsoft Paint before 11.2609.401.0** | Update Paint to 11.2609.401.0 or later through the Microsoft Store. The November 6 CVE record and the product row both name that build. 11.2605.91.0 is still affected. Microsoft's November 7 revision says the attack is local and needs a user to open a file. This is the Store app, not a Windows cumulative update. [Guide](details/windows-paint.md#remediation). |
+| **WordPress with LatePoint through 5.7.6** | Update to 5.7.7 or later. Wordfence rates the unauthenticated customer-password reset 9.1. The directory version on November 7 is 5.7.8. The update does not restore a password already changed. This is not the November 6 or November 7 plugin sets, and not the core upgrade-window flaw. [Guide](details/wordpress-plugins-latepoint.md#remediation). |
 | **SAP NetWeaver Visual Composer (VC70RUNTIME 7.50)** | Apply SAP Note 3797111 for your support package, or enable Visual Composer Secure Mode and restart com.sap.visualcomposer as the interim workaround, then review the backend destinations Visual Composer can reach. [Guide](details/sap-netweaver-visual-composer.md#remediation). |
 | **Docker Hub accounts and organizations** | No software to install (fixed service-side). If Docker emailed you on 2026-10-02, revoke unrecognized PATs, prefer organization access tokens, and check published image digests against CI records. [Guide](details/docker-hub-ghostpat.md#remediation). |
 | **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |
