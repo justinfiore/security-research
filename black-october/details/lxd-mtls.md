@@ -1,12 +1,12 @@
 # LXD: client certificate chain authenticates as another trusted client
 
-**Last updated:** 2026-11-04 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Main LXD summary](../black-october-2026.md#lxd-client-certificate-chain-authenticates-as-another-trusted-client) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-112816](https://www.cve.org/CVERecord?id=CVE-2026-112816) — Canonical (CNA) CVSS 4.0 10.0 Critical** (`AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`). Ubuntu's CVE page lists the same issue at priority Medium and does not publish a competing CVSS score. NVD has not scored it. CISA's enrichment records Exploitation "none" and Automatable "yes".
 
-The LXD HTTPS API's mutual-TLS check compared every certificate in the client chain with the trust store. Only the leaf certificate proves the client holds the matching private key. An attacker who can reach the API, and who has another trusted client's **public** certificate, can present that certificate as an intermediate and authenticate as that client. Canonical says the result can be full access to the cluster and its virtual machines, and root on the host if the impersonated client had that privilege.
+The LXD HTTPS API's mutual-TLS check compared every certificate in the client chain with the trust store. Only the first certificate proves the client holds the matching private key. The GitHub advisory, reread 2026-11-08, says a client authenticates as any trusted certificate by appending that certificate's public part to its own chain. It also says the server certificate is returned by every TLS handshake, so no prior access is needed to obtain one. The earlier reading, that the attacker already needed another client's public certificate, is not what the advisory says. Canonical says the result can be full access to the cluster and its virtual machines, and root on the host if the impersonated client had that privilege. The same check covers the main API, the metrics endpoint, the cluster and database gateways, certificate self-renewal and deletion, token enrollment, and the virtual-machine agent. The advisory says the check has worked this way since the initial release. The CNA's affected ranges are narrower than that sentence; this guide keeps the ranges the CNA publishes.
 
 The same flaw affects MicroCloud, where an attacker can intercept a joining member's public TLS certificate and then authenticate as that member. MicroCloud's fixed snaps are 3.4.1 and 2.1.5. No separate CVE is assigned for MicroCloud in the sources read.
 

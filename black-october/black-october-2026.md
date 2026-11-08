@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Hickory DNS: a signed record from one zone is accepted for another](#hickory-dns-a-signed-record-from-one-zone-is-accepted-for-another)
+- [OpenAM: a notification socket hands out live session tokens](#openam-a-notification-socket-hands-out-live-session-tokens)
+- [imgproxy: an ICO image can crash the worker or run code](#imgproxy-an-ico-image-can-crash-the-worker-or-run-code)
 - [Keycloak: a signed SAML message covers a different message than the one processed](#keycloak-a-signed-saml-message-covers-a-different-message-than-the-one-processed)
 - [WordPress plugins: LatePoint customer account takeover](#wordpress-plugins-latepoint-customer-account-takeover)
 - [Firefox: a layout bug can run code from a web page](#firefox-a-layout-bug-can-run-code-from-a-web-page)
@@ -189,6 +192,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Hickory DNS](#hickory-dns-a-signed-record-from-one-zone-is-accepted-for-another) to **0.26.3** and rebuild. The project rates [GHSA-2vgh-3wfw-qj7c](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-2vgh-3wfw-qj7c) High: the validator checks a signature against whatever zone the signature names, so one correctly signed zone can sign a record in another. VulnCheck assigned [CVE-2026-123605](https://www.cve.org/CVERecord?id=CVE-2026-123605) on November 8 and scores it CVSS 3.1 8.8. The same 0.26.2 release fixes a batch of other DNSSEC and denial-of-service flaws. 0.26.3 fixes regressions in that release. The GitHub page still says no CVE is known. It is not in KEV.
+- **New this update:** Upgrade [OpenAM](#openam-a-notification-socket-hands-out-live-session-tokens) to **16.1.4 or later**. The project rates [GHSA-5c3q-hp86-xjr8](https://github.com/OpenIdentityPlatform/OpenAM/security/advisories/GHSA-5c3q-hp86-xjr8) CVSS 3.1 10.0 Critical: with agent notifications on, which is the default, anyone who can reach the server can read live session tokens from the notification socket, including an administrator's. VulnCheck assigned [CVE-2026-123551](https://www.cve.org/CVERecord?id=CVE-2026-123551) on November 8. The same release fixes two more Critical flaws, an unsigned SAML assertion and a self-registration path to an administrator. The GitHub pages still say no CVE is known. It is not in KEV.
+- **New this update:** Upgrade [imgproxy](#imgproxy-an-ico-image-can-crash-the-worker-or-run-code) to **4.0.17 or later**. GitHub rates [GHSA-hff9-5pqw-6w9f](https://github.com/imgproxy/imgproxy/security/advisories/GHSA-hff9-5pqw-6w9f) CVSS 3.1 9.8 Critical: on 4.0.0 through 4.0.15, a crafted ICO wraps a size check and writes past the allocation, which can crash the worker or run code. VulnCheck assigned [CVE-2026-123614](https://www.cve.org/CVERecord?id=CVE-2026-123614) on November 8. Two more ICO flaws are High, and one of them is still present in 4.0.16. The GitHub pages still say no CVE is known. It is not in KEV.
 - **New this update:** Upgrade [Keycloak](#keycloak-a-signed-saml-message-covers-a-different-message-than-the-one-processed) to **26.8.2 or later**, or install Red Hat build of Keycloak **26.6.9** from RHSA-2026:96040. Red Hat rates [CVE-2026-117691](https://www.cve.org/CVERecord?id=CVE-2026-117691) CVSS 3.1 9.1 Critical: where a realm brokers a SAML identity provider over the HTTP-Redirect binding, a signed message can cover a different message than the one Keycloak processes, and the attacker logs in as any federated user. The community tags 26.6.9 and 26.4.18 do not contain the fix. Red Hat Single Sign-On 7 is not affected. It is not in KEV.
 - **New this update:** If the site runs [LatePoint](#wordpress-plugins-latepoint-customer-account-takeover), update it to **5.7.7 or later**. Wordfence rates [CVE-2026-118066](https://www.cve.org/CVERecord?id=CVE-2026-118066) CVSS 3.1 9.1 Critical: through 5.7.6, a logged-out caller can set a customer's password. When the site uses WordPress users as customers, the linked subscriber account is taken over too. The directory version on November 7 is 5.7.8. The update does not restore a password already changed. It is not in KEV.
 - **New this update:** [Windows Paint](#windows-paint-remote-code-execution) is still **11.2609.401.0 or later**, through the Microsoft Store. Microsoft's November 7 revision cuts the score from 8.1 to CVSS 3.1 **7.0**. The attack is local: a user has to open a crafted file. The October line, a crafted packet with no user interaction, is withdrawn. It is not in KEV.
@@ -307,6 +313,78 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Hickory DNS: a signed record from one zone is accepted for another
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/hickory-dns.md):** [Detection](details/hickory-dns.md#detection) · [Remediation](details/hickory-dns.md#remediation) · [Verification](details/hickory-dns.md#verification) · [Timeline](details/hickory-dns.md#timeline)
+
+**CVEs:** [CVE-2026-123605](https://www.cve.org/CVERecord?id=CVE-2026-123605), [CVE-2026-123596](https://www.cve.org/CVERecord?id=CVE-2026-123596)
+
+**The project rates [GHSA-2vgh-3wfw-qj7c](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-2vgh-3wfw-qj7c) High.** It publishes no CVSS vector. VulnCheck rates the same flaw, [CVE-2026-123605](https://www.cve.org/CVERecord?id=CVE-2026-123605), CVSS 4.0 8.7 and CVSS 3.1 8.8. The GitHub page still says no CVE is known. The validator checks a signature against the key of whatever name the signature itself names, and not against the zone the record belongs to. Anyone who controls one correctly signed zone can sign a record in a different zone, and a resolver that validates accepts it. `hickory-proto` 0.1 through 0.25.0-alpha.3 and `hickory-net` before 0.26.2 are affected. The same 0.26.2 release, on September 3, fixes a batch the project rates mostly High, Medium, and Low. One of them, [CVE-2026-123596](https://www.cve.org/CVERecord?id=CVE-2026-123596), the project rates Medium and VulnCheck rates 8.8: a parent zone's NSEC record is accepted as proof that a name below the cut does not exist. 0.26.3, on September 10, fixes regressions from 0.26.2, including DNSSEC verification, and is current. A crate that does not validate DNSSEC is outside the forgery flaws and not outside the denial-of-service flaws.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Hickory DNS 0.26.2 | 2026-09-03 19:34 UTC | Fixes the batch. The notes say most reports came from LLM-based workflows. |
+| **Public announcement** | **2026-09-03 20:34 UTC** | The project published the advisories with the release. The signer-name page still says no CVE is known. |
+| Hickory DNS 0.26.3 | 2026-09-10 14:17 UTC | Fixes regressions from 0.26.2. Current release. |
+| CVE records | 2026-11-08 01:38 UTC | VulnCheck published CVE-2026-123605 and CVE-2026-123596. |
+| **Last updated** | **2026-11-08 07:25 EST (UTC−05:00)** | New item. Upgrade Hickory DNS. |
+
+**Patch:** **0.26.3**, and rebuild every binary that links the crates. 0.26.2 is the security floor and has regressions 0.26.3 fixes. There is no workaround. Restart the resolver after the rebuild so it drops its cache.
+
+Sources: [GHSA-2vgh-3wfw-qj7c](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-2vgh-3wfw-qj7c), [CVE-2026-123605](https://www.cve.org/CVERecord?id=CVE-2026-123605), [detailed guide](details/hickory-dns.md).
+
+---
+
+## OpenAM: a notification socket hands out live session tokens
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/openam.md):** [Detection](details/openam.md#detection) · [Remediation](details/openam.md#remediation) · [Verification](details/openam.md#verification) · [Timeline](details/openam.md#timeline)
+
+**CVEs:** [CVE-2026-123551](https://www.cve.org/CVERecord?id=CVE-2026-123551), [CVE-2026-123550](https://www.cve.org/CVERecord?id=CVE-2026-123550), [CVE-2026-123549](https://www.cve.org/CVERecord?id=CVE-2026-123549)
+
+**The project rates [GHSA-5c3q-hp86-xjr8](https://github.com/OpenIdentityPlatform/OpenAM/security/advisories/GHSA-5c3q-hp86-xjr8) CVSS 3.1 10.0 Critical.** VulnCheck rates the same flaw, [CVE-2026-123551](https://www.cve.org/CVERecord?id=CVE-2026-123551), CVSS 4.0 10.0 and CVSS 3.1 10.0. The GitHub page still says no CVE is known. On 14.0.0 through 16.1.3, agent notifications are on by default and the server publishes each session token to a WebSocket meant for policy agents. The check that limits that socket to agents can be skipped through a legacy Liberty ID-FF endpoint, with no login. A caller who holds the socket reads the token of every session that starts or ends while it is open, including an administrator's, and uses it as that user. The project says a captured administrator session can reach command execution as the OpenAM service account. Two more Critical flaws are in the same release. [CVE-2026-123550](https://www.cve.org/CVERecord?id=CVE-2026-123550) is 9.8: the SAML service provider accepts an unsigned assertion on the ECP and HTTP-Artifact bindings when `WantAssertionsSigned` is off, which is the generated default. [CVE-2026-123549](https://www.cve.org/CVERecord?id=CVE-2026-123549) is 9.8: self-registration, which is off by default, can put a new account in an administrative group. The project withholds proof-of-concept code. 16.1.4 is current.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| OpenAM 16.1.4 | 2026-10-22 06:52 UTC | Fixes all three. |
+| **Public announcement** | **2026-10-22 08:43 UTC** | The project published the three Critical advisories. Each page still says no CVE is known. |
+| CVE records | 2026-11-08 01:37 UTC | VulnCheck published CVE-2026-123549, CVE-2026-123550, and CVE-2026-123551. |
+| **Last updated** | **2026-11-08 07:25 EST (UTC−05:00)** | New item. Upgrade OpenAM. |
+
+**Patch:** **16.1.4 or later**, and recreate the container. A customised `web.xml` has to take the new `<dispatcher>` elements or the filters do not run on an internal forward. Until then, restrict `/openam/notifications` to the agent hosts. The upgrade does not end a session that was already copied.
+
+Sources: [GHSA-5c3q-hp86-xjr8](https://github.com/OpenIdentityPlatform/OpenAM/security/advisories/GHSA-5c3q-hp86-xjr8), [CVE-2026-123551](https://www.cve.org/CVERecord?id=CVE-2026-123551), [detailed guide](details/openam.md).
+
+---
+
+## imgproxy: an ICO image can crash the worker or run code
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/imgproxy.md):** [Detection](details/imgproxy.md#detection) · [Remediation](details/imgproxy.md#remediation) · [Verification](details/imgproxy.md#verification) · [Timeline](details/imgproxy.md#timeline)
+
+**CVEs:** [CVE-2026-123614](https://www.cve.org/CVERecord?id=CVE-2026-123614), [CVE-2026-123615](https://www.cve.org/CVERecord?id=CVE-2026-123615), [CVE-2026-123616](https://www.cve.org/CVERecord?id=CVE-2026-123616)
+
+**GitHub rates [GHSA-hff9-5pqw-6w9f](https://github.com/imgproxy/imgproxy/security/advisories/GHSA-hff9-5pqw-6w9f) CVSS 3.1 9.8 Critical.** VulnCheck rates the same flaw, [CVE-2026-123614](https://www.cve.org/CVERecord?id=CVE-2026-123614), CVSS 4.0 9.3 and CVSS 3.1 9.8. The GitHub page still says no CVE is known. On 4.0.0 through 4.0.15, the ICO loader adds a fixed header length to a 32-bit size from the file. The addition wraps, the process allocates a few bytes, and then it writes the image past that allocation. GitHub says that can terminate the process or lead to remote code execution. No login is required. Two more ICO flaws are High and crash the worker: [CVE-2026-123616](https://www.cve.org/CVERecord?id=CVE-2026-123616) allocates about 4 GB from a 23-byte file, and [CVE-2026-123615](https://www.cve.org/CVERecord?id=CVE-2026-123615) writes a reconstructed BMP header past a tiny buffer. GitHub rates both CVSS 3.1 7.5. VulnCheck rates both CVSS 4.0 8.7. The second one is still present in 4.0.16, so that release is not the fix. Both start at 3.3.0, and there is no 3.x backport. 4.0.21 fixed more BMP and ICO bugs and names no CVE. The current release is 4.0.22.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| imgproxy 4.0.16 | 2026-09-28 17:51 UTC | Fixes the integer overflow and the unbounded allocation. Still affected by the out-of-bounds header write. |
+| imgproxy 4.0.17 | 2026-09-30 16:10 UTC | Fixes the out-of-bounds header write. The floor for all three. |
+| **Public announcement** | **2026-10-06 15:30 UTC** | DarthSim published the three GitHub advisories. Each page still says no CVE is known. |
+| imgproxy 4.0.22 | 2026-11-05 12:41 UTC | Current release. 4.0.21, on November 2, fixed more BMP and ICO bugs and names no CVE. |
+| CVE records | 2026-11-08; time/TZ unknown | VulnCheck published CVE-2026-123614, CVE-2026-123615, and CVE-2026-123616. |
+| **Last updated** | **2026-11-08 07:25 EST (UTC−05:00)** | New item. Upgrade imgproxy. |
+
+**Patch:** **4.0.17 or later**, and recreate the container. 4.0.22 is current. 4.0.16 does not fix CVE-2026-123615. A 3.x install has no backport. The advisories list no workaround. The upgrade does not show whether a worker already ran a payload.
+
+Sources: [GHSA-hff9-5pqw-6w9f](https://github.com/imgproxy/imgproxy/security/advisories/GHSA-hff9-5pqw-6w9f), [CVE-2026-123614](https://www.cve.org/CVERecord?id=CVE-2026-123614), [detailed guide](details/imgproxy.md).
 
 ---
 
@@ -1281,7 +1359,7 @@ Sources: [Barracuda advisory](https://trust.barracuda.com/security/pre-authentic
 | Fake update | 2026-11-02 02:08–03:20 UTC | 5.88.12 through 5.88.19. About 2,950 servers. |
 | First cleanup | 2026-11-03 03:19 IST (UTC+05:30) | 5.88.25 removes the backdoor. It does not remove `/etc/cron.d/i93677`. |
 | Disclosure | 2026-11-03; time/TZ unknown | 5.88.26, the server count, and about 7,900 billing accounts. OPSSHIELD has started re-issuing every cPGuard license key pair. |
-| **Last updated** | **2026-11-05 11:30 EST (UTC−05:00)** | The disclosure already said the license keys are being re-issued. |
+| **Last updated** | **2026-11-08 07:40 EST (UTC−05:00)** | The disclosure now prints a SHA-256 for each of the four fake-update scripts. |
 
 **Patch:** Run `cpgcli update --start` and confirm **5.88.26 or later**, then check that `/etc/cron.d/i93677` and `/var/tmp/.i93677/` are gone. If the server was online in the window above, the install log shows 5.88.12–5.88.19, or the log is missing, reset local passwords, rotate database and cloud secrets, and replace root SSH keys. Reset the manage.opsshield.com password as well; those hashes were copied. OPSSHIELD has started re-issuing every cPGuard license key pair, because the attacker holds copies. The notice does not say you install a new license file yourself. A server already on 5.88.26 can still have installed an affected build earlier. OPSSHIELD is not recommending a routine operating-system reinstall.
 
@@ -1929,7 +2007,7 @@ Sources: [Opengear notice](https://portal.opengear.com/customerservice/s/article
 
 **CVEs:** [CVE-2026-112816](https://www.cve.org/CVERecord?id=CVE-2026-112816)
 
-**Canonical (CNA) rates the flaw CVSS 4.0 10.0 Critical. Canonical's GitHub advisory also rates it CVSS 3.1 10.0. Ubuntu's CVE page lists priority Medium and no CVSS score.** NVD has not scored it. The LXD HTTPS API compared every certificate in the client chain with the trust store. Only the leaf proves the client holds the key. An attacker who can reach the API, and who has another trusted client's public certificate, can authenticate as that client and, if that client was privileged, reach root on the host. MicroCloud has the same flaw: a joining member's public certificate can be intercepted and reused. No separate MicroCloud CVE is assigned. The GitHub advisory, published 2026-11-04, lists **6.10.0** as patched. The CNA text says "before 6.10.1".
+**Canonical (CNA) rates the flaw CVSS 4.0 10.0 Critical. Canonical's GitHub advisory also rates it CVSS 3.1 10.0. Ubuntu's CVE page lists priority Medium and no CVSS score.** NVD has not scored it. The LXD HTTPS API compared every certificate in the client chain with the trust store. Only the first certificate proves the client holds the key. The GitHub advisory, reread 2026-11-08, says appending a trusted certificate's public part is enough, and that the server certificate comes back from every TLS handshake, so no prior access is needed. If the impersonated client was privileged, the result is root on the host. MicroCloud has the same flaw. No separate MicroCloud CVE is assigned. The GitHub advisory, published 2026-11-04, lists **6.10.0** as patched. The CNA text says "before 6.10.1". The advisory says the check has worked this way since the initial release. The CNA's affected ranges are narrower, and this guide keeps those ranges.
 
 **CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31). CISA records Exploitation "none". Canonical does not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred.
 
@@ -1940,7 +2018,7 @@ Sources: [Opengear notice](https://portal.opengear.com/customerservice/s/article
 | CVE record published | 2026-10-30 16:42:06 UTC | Canonical CNA. |
 | Public lab reproduction | 2026-11-01 20:47 UTC | Isolated LXD 3.20 container. Not a customer incident. |
 | GitHub advisory | 2026-11-04; time/TZ unknown | Lists 6.10.0 as patched. CVSS 3.1 10.0. |
-| **Last updated** | **2026-11-04 23:55 EST (UTC−05:00)** | 6.10.0 is a fix. The CNA text still says before 6.10.1. |
+| **Last updated** | **2026-11-08 07:40 EST (UTC−05:00)** | The server certificate from any TLS handshake is enough. No prior client certificate is needed. |
 
 **Patch:** `sudo snap refresh lxd` and, where installed, `sudo snap refresh microcloud`. Confirm **6.10.0 or 6.10.1**, 5.21.9, 5.0.11, or 4.0.15 for LXD, and 3.4.1 or 2.1.5 for MicroCloud. The GitHub advisory lists 6.10.0 as patched. The point releases were still rolling from candidate to stable on October 28, so a refresh that does not change the version has not picked up the fix. Until then, do not expose the HTTPS API to untrusted networks. Ubuntu archive packages are marked not in this release or not affected; that does not clear a snap.
 
@@ -3803,7 +3881,7 @@ Sources: [Gitea advisory GHSA-8pwg-hcgm-54cp](https://github.com/go-gitea/gitea/
 | First exploitation attempts (Previdian) | 2026-09-19 03:14 UTC | Third-party honeypot. Activity ramped up from 2026-10-11. |
 | GHSA-w794-rj3p-xv45 | 2026-09-28 17:26 UTC | CVE-2026-105697 advisory. |
 | CVEs published | 2026-10-05 20:16 UTC (105697); 20:46 UTC (105740) | GitHub CNA. |
-| **Last updated** | **2026-11-07 08:15 EST (UTC−05:00)** | Previdian's live count is now 10,044 attempts from 54 addresses, last observed 2026-11-07. |
+| **Last updated** | **2026-11-08 07:40 EST (UTC−05:00)** | Previdian's live count is now 10,966 attempts from 57 addresses, last observed 2026-11-08. |
 
 Any Langflow user, including a non-admin, can save an MCP server with the **stdio** transport. Langflow runs its command through `bash -c` without validation. The stored command runs again whenever anyone lists the MCP servers.
 
@@ -3811,7 +3889,7 @@ Any Langflow user, including a non-admin, can save an MCP server with the **stdi
 
 **Worst case:** OS command execution as the Langflow process user. Attackers can steal environment secrets such as LLM keys and `LANGFLOW_SECRET_KEY`, and leave a persistent backdoor in MCP settings. With **`LANGFLOW_AUTO_LOGIN=true`**, which the advisory calls the default for affected releases, `/api/v1/auto_login` hands out a token without credentials. In that case the attack needs no account at all.
 
-**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 10,044 attempts from 54 IPs in 24 countries, last observed 2026-11-07. An earlier read the same day had 10,015. The 2026-11-05 page had 9,013 attempts from 53 IPs. Previdian recorded a public Nuclei template on 2026-11-04. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
+**Exploitation status:** The evidence comes only from **Previdian's single honeypot sensor**: 10,966 attempts from 57 IPs in 24 countries, last observed 2026-11-08. The 2026-11-07 page had 10,044 attempts from 54 IPs. The 2026-11-05 page had 9,013 attempts from 53 IPs. Previdian recorded a public Nuclei template on 2026-11-04. Attackers logged in with a **common username and password** and then called `/api/v2/mcp/servers`. Attempts do not show successful compromise. Langflow has not reported exploitation.
 
 **Am I impacted?** Check the installed `langflow`, `langflow-base` and `lfx` versions in every environment and container. Any version **below 1.10.3** is affected. Exposure is highest when auto-login is on, the superuser password is weak or the legacy `langflow`, untrusted users have accounts, or the instance is reachable from the internet. Do not open the MCP Servers page on an unpatched instance to check for stored commands, because loading it re-runs them.
 
@@ -5145,6 +5223,9 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Hickory DNS below 0.26.2** | Upgrade `hickory-resolver`, `hickory-proto`, `hickory-net`, and `hickory-recursor` to 0.26.3 and rebuild. 0.26.2 is the security floor and has regressions 0.26.3 fixes. One signed zone can otherwise sign a record in another zone. Restart the resolver so it drops its cache. [Guide](details/hickory-dns.md#remediation). |
+| **OpenAM through 16.1.3** | Upgrade to 16.1.4 or later and recreate the container. With agent notifications on, anyone who can reach the server can read live session tokens. The same release fixes an unsigned SAML assertion and a self-registration path to an administrator. A customised `web.xml` has to take the new dispatcher elements. [Guide](details/openam.md#remediation). |
+| **imgproxy below 4.0.17** | Upgrade to 4.0.17 or later and recreate the container. On 4.0.0 through 4.0.15 a crafted ICO can crash the worker or run code. 4.0.16 is still affected by a second ICO flaw that crashes the worker. A 3.x install has no backport. [Guide](details/imgproxy.md#remediation). |
 | **Keycloak brokering SAML over the HTTP-Redirect binding, below 26.8.2** | Upgrade community Keycloak to 26.8.2 or later and recreate the container. Red Hat build of Keycloak takes the 26.6.9 packages in RHSA-2026:96040, not the community tag of that number. A signed redirect message can otherwise cover a different message than the one processed, and the attacker logs in as any federated user. Red Hat Single Sign-On 7 is not affected. [Guide](details/keycloak.md#remediation). |
 | **Firefox below 159.0.1** | Update to 159.0.1 or later and relaunch. Mozilla rates the layout bug High, and CISA-ADP scores it 8.8. The record does not name Firefox ESR. [Guide](details/firefox.md#remediation). |
 | **Symfony below 5.4.56, 6.4.50, 7.4.23, or 8.1.11** | Upgrade `symfony/yaml`, `symfony/serializer`, and `symfony/filesystem` together to that floor or later, redeploy, and restart PHP. One unauthenticated YAML request can hold a worker, and a `DATA:` value deserialized into `File` reads a local file. The same releases fix a path check that approves a file outside its directory. [Guide](details/symfony.md#remediation). |

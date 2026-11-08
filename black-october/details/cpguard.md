@@ -1,6 +1,6 @@
 # cPGuard: malicious update collected server credentials
 
-**Last updated:** 2026-11-05 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Main cPGuard summary](../black-october-2026.md#cpguard-malicious-update-collected-server-credentials) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -50,7 +50,7 @@ The November 3 disclosure names these files. After 5.88.26, and the follow-up th
 - `/var/tmp/.cpg91511_sh` — setuid-root shell
 - `/etc/cron.d/i93677` and `/var/tmp/.i93677/` — scheduled task
 - `/var/tmp/.cpg91511` and `/var/tmp/.cpg91511/loot.tgz` — collection directory and staged archive, from the first notice
-- script names `cpguard-v58812-i91511.sh`, `i91511b`, `i91511c`, and `i91511d`
+- script names `cpguard-v58812-i91511.sh`, `i91511b`, `i91511c`, and `i91511d`, and the disclosure now prints a SHA-256 for each: `ffd7a47f65fa1244429baa936ae94be54676b53d2f88bc39564f24e22011de8a`, `d73919af84bf46de941db85e27fd1abc65701ef9ce6cf33bb27c5397f4a41c26`, `6add0201e9a3d02de772d561d05e0da86eb1c538686753b7adcc3aedf7366f77`, and `2c2acd988da531d133d0e17f245c49bf15781278f837543d18c95e8410eabd38`
 
 The disclosure also lists a gsocket backdoor and a Go implant. OPSSHIELD says those were on its own server, not on customer servers. Do not treat them as a customer IOC. The operator address it names is `94.183.188.91`.
 
