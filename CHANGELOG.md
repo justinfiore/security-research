@@ -4,7 +4,9 @@
 
 New findings, corrected impact assessments, patch releases, and detection or remediation guidance, newest first. Follow each link to the affected issue. Timestamps show when information was added to the guides, not when the vulnerability was discovered.
 
-## 2026-11-08 04:20 EST (UTC−05:00) — TUM; Linux KSMBD
+## 2026-11-08 04:40 EST (UTC−05:00) — Arista; TUM; Linux KSMBD
+
+- **Arista:** [Security Advisory 0203](black-october/details/linux-tcp-options.md#remediation) no longer lists the Wi-Fi access points as affected. Revision 1.1 on November 3 moved them to not affected, and revision 1.2 on November 6 did the same for CloudVision Portal on-premises. NDR through 5.4.11 is still the affected product, and Arista still has no fixed release. EOS stays not exposed because MPTCP is off.
 
 - **Technical University of Munich:** Change the TUM password now if it was not changed since [November 5, 00:00](black-october/details/tum.md#remediation). The three methods are unchanged. The English IT page, updated 05:07 CET on November 8, and the TUMonline status entry now say the change is possible immediately and link the German instructions. The English press page still says the method is coming by Monday. The EduVPN status entry still says a reset is not yet possible; that entry is not the current instruction.
 - **Linux KSMBD:** The stable backports are [Linux 7.3.2 and 6.18.61](black-october/details/ksmbd.md#remediation), both tagged November 6. An earlier note named 6.18.62. That tag is a later one-commit release and does not add the fixes; a 6.18.61 kernel already has them. 7.2.15 still has only the negotiation wait, and that line is end of life. A vendor kernel still needs the vendor's own build. No CVE is assigned.
