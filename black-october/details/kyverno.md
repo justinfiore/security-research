@@ -1,6 +1,6 @@
 # Kyverno: a namespace tenant can change the cluster
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Back to Kyverno summary](../black-october-2026.md#kyverno-a-namespace-tenant-can-change-the-cluster) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@
 
 A tenant who can create a namespaced Kyverno policy can make Kyverno's own controllers read or write outside that namespace, including cluster-scoped objects, using the controller's ServiceAccount. The ranges differ. [CVE-2026-122310](https://www.cve.org/CVERecord?id=CVE-2026-122310) exists only in 1.19.1: it is an incomplete fix of an earlier clamp. [CVE record][cve-122313] [Release][rel]
 
-**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). Neither VulnCheck nor Kyverno reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). Neither VulnCheck nor Kyverno reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -28,6 +28,7 @@ A tenant who can create a namespaced Kyverno policy can make Kyverno's own contr
 | [CVE-2026-122303](https://www.cve.org/CVERecord?id=CVE-2026-122303) | CVSS 4.0 9.4, CVSS 3.1 9.9, both Critical | 1.17.0 before 1.19.2 | A NamespacedMutatingPolicy returns a target in another namespace, and the background controller overwrites it. [GHSA-jcw5-3wcg-fqx5][ghsa-jcw5] |
 | [CVE-2026-122304](https://www.cve.org/CVERecord?id=CVE-2026-122304) | CVSS 4.0 9.4, CVSS 3.1 9.9, both Critical | 1.17.0 before 1.19.2 | The cleanup controller builds its context loader with no policy, so a namespaced CleanupPolicy reads across namespaces. [GHSA-p58h-r4j3-h5vx][ghsa-p58h] |
 | [CVE-2026-122310](https://www.cve.org/CVERecord?id=CVE-2026-122310) | CVSS 4.0 9.4, CVSS 3.1 9.9, both Critical | 1.19.1 before 1.19.2 | A Policy hides `../` in an apiCall path behind `#` or `?`. 1.19.1 cleaned the path it checked and sent the raw path. [GHSA-3xfv-vq8x-qhg4][ghsa-3xfv] |
+| [CVE-2026-124440](https://www.cve.org/CVERecord?id=CVE-2026-124440) | CVSS 4.0 9.4, CVSS 3.1 9.9, both Critical | 1.19.1 before 1.19.2 | A malformed percent-escape such as `?a=%` makes the 1.19.1 namespace clamp decode one path and send another. The project rates the same advisory Critical, CVSS 3.1 9.9, and says 1.19.2 is the patched release. [GHSA-39w8-hv5g-f73w][ghsa-39w8] |
 | [CVE-2026-122311](https://www.cve.org/CVERecord?id=CVE-2026-122311) | CVSS 4.0 9.4, CVSS 3.1 9.9, both Critical | 1.16.0 before 1.19.2 | `resource.get()` and `resource.post()` in a namespaced CEL policy accept `..` and leave the namespace. [GHSA-4pqm-wqq6-h9q2][ghsa-4pqm] |
 | [CVE-2026-122313](https://www.cve.org/CVERecord?id=CVE-2026-122313) | CVSS 4.0 9.4, CVSS 3.1 9.9, both Critical | 1.17.0 before 1.19.2 | A NamespacedMutatingPolicy names another tenant's RoleBinding, and the background controller edits it. [GHSA-f96w-622v-rqpq][ghsa-f96w] |
 | [CVE-2026-122321](https://www.cve.org/CVERecord?id=CVE-2026-122321) | CVSS 3.1 9.1 Critical, CVSS 4.0 8.5 High | 1.18.0 before 1.19.2 | verifyImages caches a pass by image tag. Moving the tag afterward admits the new digest without a new signature check. [GHSA-2r43-6962-xcw5][ghsa-2r43] |
@@ -62,7 +63,8 @@ CVE-2026-122317 is not a Kyverno record. The seven Critical records above this t
 | Fix released | 2026-10-20 23:50:19 UTC | Kyverno v1.19.2. The notes count 24 GitHub advisories: 9 Critical, 14 High, 1 Moderate. [Release][rel] |
 | GitHub advisories | 2026-10-21; time unknown | The vendor published the advisories. Several still say no CVE is known. [GHSA-3xfv-vq8x-qhg4][ghsa-3xfv] |
 | CVE records | 2026-11-05 02:25 UTC | VulnCheck. Seven records, all Critical on CVSS 3.1. [CVE-2026-122313][cve-122313] |
-| **Last updated** | **2026-11-05 (America/New_York)** | New item. |
+| CVE-2026-124440 | 2026-11-08 13:15 UTC | VulnCheck. The percent-escape bypass of the 1.19.1 clamp. The project published the advisory earlier and rates it Critical, CVSS 3.1 9.9. Patched in 1.19.2. [GHSA-39w8-hv5g-f73w][ghsa-39w8] |
+| **Last updated** | **2026-11-08 (America/New_York)** | Added CVE-2026-124440. The fix is still 1.19.2. |
 
 ## Detection
 
@@ -97,9 +99,11 @@ CVE-2026-122317 is not a Kyverno record. The seven Critical records above this t
 - [GHSA-q62c-r9v2-cf64][ghsa-q62c] — generate-rule permission check. GitHub rates it High and names no CVE.
 - [GHSA-jcw5-3wcg-fqx5][ghsa-jcw5] — cross-namespace overwrite. GitHub rates it Critical, CVSS 3.1 9.9, affected `>= 1.18.0`, patched 1.19.2.
 - [GHSA-3xfv-vq8x-qhg4][ghsa-3xfv] — apiCall fragment bypass of the 1.19.1 fix. GitHub rates it Critical, CVSS 3.1 9.9.
+- [GHSA-39w8-hv5g-f73w][ghsa-39w8] — the project. Critical, CVSS 3.1 9.9. Affected `>= 1.19.1`, patched 1.19.2. A malformed percent-escape defeats the 1.19.1 clamp. The page says this is present on 1.19.1 and on `main` at `dc45a66`, and the reproduction was on 1.19.1.
+- [CVE-2026-124440][cve-124440] — VulnCheck, published 2026-11-08 13:15 UTC. CVSS 4.0 9.4 and CVSS 3.1 9.9. 1.19.1 before 1.19.2.
 - [GHSA-4pqm-wqq6-h9q2][ghsa-4pqm], [GHSA-p58h-r4j3-h5vx][ghsa-p58h], [GHSA-f96w-622v-rqpq][ghsa-f96w], [GHSA-2r43-6962-xcw5][ghsa-2r43] — the other four.
 - [Nirmata, October 23, 2026][nirmata] — says no 1.18.x or 1.17.x patch was published and that CVE IDs had been requested.
-- [CISA KEV JSON feed][kev] — catalog 2026.11.04, checked 2026-11-05. None of these CVEs is listed.
+- [CISA KEV JSON feed][kev] — catalog 2026.11.06, checked 2026-11-08. None of these CVEs is listed.
 
 [rel]: https://github.com/kyverno/kyverno/releases/tag/v1.19.2
 [cve-122313]: https://www.cve.org/CVERecord?id=CVE-2026-122313
@@ -107,6 +111,8 @@ CVE-2026-122317 is not a Kyverno record. The seven Critical records above this t
 [ghsa-jcw5]: https://github.com/kyverno/kyverno/security/advisories/GHSA-jcw5-3wcg-fqx5
 [ghsa-p58h]: https://github.com/kyverno/kyverno/security/advisories/GHSA-p58h-r4j3-h5vx
 [ghsa-3xfv]: https://github.com/kyverno/kyverno/security/advisories/GHSA-3xfv-vq8x-qhg4
+[ghsa-39w8]: https://github.com/kyverno/kyverno/security/advisories/GHSA-39w8-hv5g-f73w
+[cve-124440]: https://www.cve.org/CVERecord?id=CVE-2026-124440
 [ghsa-4pqm]: https://github.com/kyverno/kyverno/security/advisories/GHSA-4pqm-wqq6-h9q2
 [ghsa-f96w]: https://github.com/kyverno/kyverno/security/advisories/GHSA-f96w-622v-rqpq
 [ghsa-2r43]: https://github.com/kyverno/kyverno/security/advisories/GHSA-2r43-6962-xcw5

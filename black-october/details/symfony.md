@@ -1,6 +1,6 @@
 # Symfony: a YAML document holds a PHP worker, and a data URI reads a file
 
-**Last updated:** 2026-11-07 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Main Symfony summary](../black-october-2026.md#symfony-a-yaml-document-holds-a-php-worker-and-a-data-uri-reads-a-file) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@ Symfony published three High advisories on 2026-11-04. Checkmarx published CVE r
 
 **GitHub rates [CVE-2026-123792](https://www.cve.org/CVERecord?id=CVE-2026-123792) CVSS 4.0 8.7 High.** NVD has not scored it. The YAML parser repeats work it has already done, so a small document can hold a PHP process for seconds or minutes. On Symfony 7.4 and later, one unauthenticated request with a YAML content type does that through `#[MapRequestPayload]` when the Yaml component is installed and the endpoint does not restrict `acceptFormat`. JSON is valid YAML, so a JSON body sent as YAML is enough for the flow-collection case. On 6.4, that attribute accepts YAML only when the application registers a yaml request format. Any other code that parses untrusted YAML with the default flags is affected too.
 
-**Checkmarx rates [CVE-2026-121623](https://www.cve.org/CVERecord?id=CVE-2026-121623) CVSS 4.0 8.2 High.** NVD has not scored it. `DataUriNormalizer::denormalize()` accepts `DATA:` and then PHP opens that string as a local path, including `..`. Symfony's advisory says a value denormalized to `\SplFileObject` returns the file. A public endpoint that deserializes untrusted input into `File`, `\SplFileInfo`, or `\SplFileObject` needs no login. FrameworkBundle registers this normalizer by default. Symfony's own advisory page still says no CVE is known.
+**Checkmarx rates [CVE-2026-121623](https://www.cve.org/CVERecord?id=CVE-2026-121623) CVSS 4.0 8.2 High.** NVD has not scored it. `DataUriNormalizer::denormalize()` accepts `DATA:` and then PHP opens that string as a local path, including `..`. Symfony's advisory says a value denormalized to `\SplFileObject` returns the file. A public endpoint that deserializes untrusted input into `File`, `\SplFileInfo`, or `\SplFileObject` needs no login. FrameworkBundle registers this normalizer by default. Symfony's advisory page now names [CVE-2026-121623](https://www.cve.org/CVERecord?id=CVE-2026-121623). The GitHub record was updated 2026-11-06. An earlier reading of the same page said no CVE was known.
 
 The third advisory, [GHSA-6prc-h956-hxjq](https://github.com/symfony/symfony/security/advisories/GHSA-6prc-h956-hxjq), has no CVE. Symfony rates it High. `Path` treats anything before `://` as a root, so a check with `isBasePath()` can say a path is inside a directory when PHP then opens a file outside it. On 6.4 and later, AssetMapper uses the same join when it installs a remote package, and a malicious package can write a file outside `assets/vendor`.
 
@@ -30,7 +30,7 @@ The floors are **5.4.56**, **6.4.50**, **7.4.23**, and **8.1.11**. The path-esca
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
 | **Public announcement** | **2026-11-04; time/TZ unknown** | GitHub advisories published by fabpot. [YAML][yaml] [Data URI][datauri] [Path][path] |
-| CVE records | 2026-11-06; time/TZ unknown | Checkmarx CNA. The data-URI advisory page still says no CVE is known. [CVE-2026-123792][cve792] [CVE-2026-121623][cve623] |
+| CVE records | 2026-11-06; time/TZ unknown | Checkmarx CNA. The data-URI advisory page now names CVE-2026-121623. It was updated 2026-11-06. [CVE-2026-123792][cve792] [CVE-2026-121623][cve623] |
 | CISA KEV | Not listed (catalog 2026.11.06, checked 2026-11-07) | [KEV][kev] |
 
 ## Detection
@@ -74,7 +74,7 @@ Symfony does not publish an indicator. If a public endpoint deserialized into `F
 ## Sources
 
 - [GHSA-hwfg-qwvh-2wfx][yaml] — Symfony, published 2026-11-04. YAML parse time. CVSS 4.0 8.7 High. Fixed in 5.4.56, 6.4.50, 7.4.23, and 8.1.11.
-- [GHSA-pxj9-jh84-vhm5][datauri] — Symfony, published 2026-11-04. Data URI read as a local file. Rated High. The page says no CVE is known.
+- [GHSA-pxj9-jh84-vhm5][datauri] — Symfony, published 2026-11-04, updated 2026-11-06. Data URI read as a local file. Rated High. The page now names CVE-2026-121623.
 - [GHSA-6prc-h956-hxjq][path] — Symfony, published 2026-11-04. Path prefix escape. Rated High. No CVE.
 - [CVE-2026-123792][cve792] — Checkmarx CNA, published 2026-11-06. CVSS 4.0 8.7.
 - [CVE-2026-121623][cve623] — Checkmarx CNA, published 2026-11-06. CVSS 4.0 8.2.
