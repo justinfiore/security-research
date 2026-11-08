@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Penpot: a logged-in user takes over any file, and an SVG export runs a command](#penpot-a-logged-in-user-takes-over-any-file-and-an-svg-export-runs-a-command)
+- [Apache OFBiz: an unauthenticated request runs code, and a captured login key is a session](#apache-ofbiz-an-unauthenticated-request-runs-code-and-a-captured-login-key-is-a-session)
 - [OpenEMR: a one-time portal link stays valid, and a logged-in user can write a file](#openemr-a-one-time-portal-link-stays-valid-and-a-logged-in-user-can-write-a-file)
 - [IBM Aspera Faspex: a logged-in user becomes an administrator](#ibm-aspera-faspex-a-logged-in-user-becomes-an-administrator)
 - [Hickory DNS: a signed record from one zone is accepted for another](#hickory-dns-a-signed-record-from-one-zone-is-accepted-for-another)
@@ -195,6 +197,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade self-hosted [Penpot](#penpot-a-logged-in-user-takes-over-any-file-and-an-svg-export-runs-a-command) to **2.18.6 or later**. GitHub rates [GHSA-8qqw-wm58-45v7](https://github.com/penpot/penpot/security/advisories/GHSA-8qqw-wm58-45v7) CVSS 3.1 9.9 Critical: a logged-in user overwrites any file and takes ownership of it. The same November 5 batch has four High flaws, including a thumbnail request that reads a server file. An older flaw, [CVE-2026-105691](https://www.cve.org/CVERecord?id=CVE-2026-105691), runs a command when an SVG is exported, and 2.17.2 fixes that one only. Penpot Cloud is the vendor's to patch. It is not in KEV.
+- **New this update:** Upgrade [Apache OFBiz](#apache-ofbiz-an-unauthenticated-request-runs-code-and-a-captured-login-key-is-a-session) to **24.09.08 or later**. Apache published 46 CVEs on November 4 and scored none of them. CISA-ADP scores [CVE-2026-83542](https://www.cve.org/CVERecord?id=CVE-2026-83542) and [CVE-2026-82907](https://www.cve.org/CVERecord?id=CVE-2026-82907) CVSS 3.1 9.8 Critical: an unauthenticated upload runs code, and a captured `externalLoginKey` is a session. Eight more are High on CISA-ADP's score. NVD has not scored them. It is not in KEV.
+
 - **New this update:** Upgrade [OpenEMR](#openemr-a-one-time-portal-link-stays-valid-and-a-logged-in-user-can-write-a-file) to **8.4.0 or later**. The project rates four flaws Critical. Before 8.4.0, a captured patient-portal token can be replayed for its whole lifetime, and a 6-digit PIN can be guessed. Before 8.3.0, a logged-in user can read the database password and write a file, and the Fee Sheet takes SQL in a warehouse field. VulnCheck assigned the CVEs on November 8. 8.3.0 does not fix the token. It is not in KEV.
 - **New this update:** On [IBM Aspera Faspex](#ibm-aspera-faspex-a-logged-in-user-becomes-an-administrator) 5, run `faspexctl setup` and confirm `faspex-core` is **5.0.19 (1ce4b13, Fix Pack: 1)**. IBM rates [CVE-2026-123218](https://www.cve.org/CVERecord?id=CVE-2026-123218) CVSS 3.1 9.8 Critical: on 5.0.0 through 5.0.19, a user can craft a message that gains full administrative privileges. The bulletin summary says the user is authenticated, and the score says no privileges are required. IBM lists no workaround. The RPM does not have to move. It is not in KEV. This is not IBM API Connect.
 - **New this update:** Upgrade [Hickory DNS](#hickory-dns-a-signed-record-from-one-zone-is-accepted-for-another) to **0.26.3** and rebuild. The project rates [GHSA-2vgh-3wfw-qj7c](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-2vgh-3wfw-qj7c) High: the validator checks a signature against whatever zone the signature names, so one correctly signed zone can sign a record in another. VulnCheck assigned [CVE-2026-123605](https://www.cve.org/CVERecord?id=CVE-2026-123605) on November 8 and scores it CVSS 3.1 8.8. The same 0.26.2 release fixes a batch of other DNSSEC and denial-of-service flaws. 0.26.3 fixes regressions in that release. The GitHub page still says no CVE is known. It is not in KEV.
@@ -206,7 +211,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Update [Firefox](#firefox-a-layout-bug-can-run-code-from-a-web-page) to **159.0.1 or later** and relaunch. Mozilla rates [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572) High: incorrect boundary conditions in layout, fixed on November 3. CISA-ADP scores it CVSS 3.1 8.8. Mozilla's record does not name the affected range or Firefox ESR. It is not in KEV.
 - **New this update:** Upgrade [Symfony](#symfony-a-yaml-document-holds-a-php-worker-and-a-data-uri-reads-a-file) to **5.4.56, 6.4.50, 7.4.23, or 8.1.11** or later on that line. GitHub rates [CVE-2026-123792](https://www.cve.org/CVERecord?id=CVE-2026-123792) CVSS 4.0 8.7 High: one unauthenticated request with a YAML content type can hold a PHP worker until `max_execution_time`. Checkmarx rates [CVE-2026-121623](https://www.cve.org/CVERecord?id=CVE-2026-121623) 8.2: a `DATA:` value is opened as a local file, so a public endpoint that deserializes into `File` can read a file the process can read. A third High advisory, with no CVE, lets a path check approve a file outside its directory. The advisories are November 4. The CVE records are November 6. Symfony's data-URI page now names CVE-2026-121623. An earlier reading said no CVE was known. It is not in KEV.
 - **New this update:** If you have a [Technical University of Munich](#technical-university-of-munich-stolen-passwords-for-every-mytum-account) account, change the TUM password now if it was not changed since November 5, 00:00, and change it wherever else you used it. The German IT page published three methods at 13:00 CET on November 7: Microsoft 365, the German online ID, or email from the campus network. Every TUM account is in scope, not only myTUM. The English IT page now says the change is possible immediately. The English press page still says the method is coming by Monday. No CVE is assigned.
-- **New this update:** On [Red Hat Enterprise Linux 7 Extended Lifecycle Support](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix), install `kernel-3.10.0-1160.169.1.el7` and reboot. The November 5 errata names the local-root bug. CentOS 7 is still outside the affected set. No CVE is assigned.
+- **New this update:** On [Red Hat Enterprise Linux 7 Extended Lifecycle Support](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix), install `kernel-3.10.0-1160.169.1.el7` and reboot. The November 5 errata names the local-root bug. CentOS 7 is still outside the affected set. The kernel.org CNA assigned [CVE-2026-99284](https://www.cve.org/CVERecord?id=CVE-2026-99284) on November 7 and did not score it. The kernel to install does not change.
 - **New this update:** Upgrade on-premises [IBM API Connect](#ibm-api-connect-unauthenticated-command-execution-and-administrative-control) V12 to **v12.1.1.3 or later**, or V10 to **10.0.8.13 or later**. IBM rates [CVE-2026-17408](https://www.cve.org/CVERecord?id=CVE-2026-17408) CVSS 3.1 9.8 Critical: a remote attacker can run a command. Two more 9.8 flaws need no login, one of them an authentication bypass. The V12 bulletin lists 203 CVEs and the V10 bulletin lists 135. IBM lists no workaround. The bulletins are dated November 5. The CVE records are November 7. It is not in KEV.
 - **New this update:** Update [CLion](#jetbrains-ides-a-project-file-runs-code-in-safe-mode) to **2026.2 or later** and [IntelliJ IDEA](#jetbrains-ides-a-project-file-runs-code-in-safe-mode) to **2026.3 or later**. JetBrains rates two CLion flaws CVSS 3.1 9.6 Critical: a project file runs code in Safe Mode, which is the mode for a project you have not trusted. Five IntelliJ flaws are 7.8 and need the IDE to open a project on the same machine. The issues-fixed page does not list them. It is not in KEV.
 - **New this update:** Update On-Premises [Datalore](#jetbrains-datalore-code-execution-from-a-view-only-notebook) to **2026.4 or later**. JetBrains rates [CVE-2026-123279](https://www.cve.org/CVERecord?id=CVE-2026-123279) CVSS 3.1 9.0 Critical: a view-only collaborator can run code in a notebook's computation. A published interactive report had its own flaw, 8.1, fixed in 2026.2.4. The issues-fixed page does not list them. Datalore Cloud is JetBrains' to patch. It is not in KEV.
@@ -319,6 +324,51 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Penpot: a logged-in user takes over any file, and an SVG export runs a command
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/penpot.md):** [Detection](details/penpot.md#detection) · [Remediation](details/penpot.md#remediation) · [Verification](details/penpot.md#verification) · [Timeline](details/penpot.md#timeline)
+
+**CVEs:** [CVE-2026-105691](https://www.cve.org/CVERecord?id=CVE-2026-105691). The November 5 advisories say no CVE is known. Voke Cyber assigned [CVE-2026-17613](https://www.cve.org/CVERecord?id=CVE-2026-17613) to the file takeover before the project published a fix.
+
+**GitHub rates [GHSA-8qqw-wm58-45v7](https://github.com/penpot/penpot/security/advisories/GHSA-8qqw-wm58-45v7) CVSS 3.1 9.9 Critical.** The body of the same page says 9.6, and 10.0 when self-registration is on, which the project says is the default. From v1.20 on, a logged-in user calls `import-binfile` with another file's id, overwrites it, and moves it into their own project. The header says the patch is 2.18.0. Four more advisories published the same day are High and say no CVE is known. [GHSA-pf4p-35w6-gcqc](https://github.com/penpot/penpot/security/advisories/GHSA-pf4p-35w6-gcqc) is 7.7 and is the one that needs **2.18.6**: a thumbnail request reads a file off the server, including the session-signing key. The other three are fixed in 2.18.2 or 2.18.3. An older flaw, [CVE-2026-105691](https://www.cve.org/CVERecord?id=CVE-2026-105691), is also 9.9: a text fill color is passed to a shell when the file is exported as SVG. The header says patched in 1.17.2. The body says 2.17.2, which is the release that exists. 2.17.2 does not fix the November set.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). The November advisories say no CVE is known, so they cannot be listed. The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Exporter advisory | 2026-09-25; time/TZ unknown | GitHub published the command-injection advisory and named CVE-2026-105691. |
+| Penpot 2.18.6 | 2026-11-04 17:11 UTC | Current release. The thumbnail advisory names this as the fix. |
+| **Public announcement** | **2026-11-05; time/TZ unknown** | The project published the file-takeover advisory and four High advisories. |
+| **Last updated** | **2026-11-08 15:40 EST (UTC−05:00)** | New item. Upgrade Penpot. |
+
+**Patch:** **2.18.6 or later**, frontend, backend, and exporter together. Penpot Cloud is the vendor's to patch. The advisories list no workaround. The upgrade does not return a file that was already taken, and it does not show whether an export already ran a command. Rotate `PENPOT_SECRET_KEY` if any account could log in before 2.18.6.
+
+Sources: [GHSA-8qqw-wm58-45v7](https://github.com/penpot/penpot/security/advisories/GHSA-8qqw-wm58-45v7), [GHSA-pf4p-35w6-gcqc](https://github.com/penpot/penpot/security/advisories/GHSA-pf4p-35w6-gcqc), [detailed guide](details/penpot.md).
+
+---
+
+## Apache OFBiz: an unauthenticated request runs code, and a captured login key is a session
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-ofbiz.md):** [Detection](details/apache-ofbiz.md#detection) · [Remediation](details/apache-ofbiz.md#remediation) · [Verification](details/apache-ofbiz.md#verification) · [Timeline](details/apache-ofbiz.md#timeline)
+
+**CVEs:** [CVE-2026-83542](https://www.cve.org/CVERecord?id=CVE-2026-83542), [CVE-2026-82907](https://www.cve.org/CVERecord?id=CVE-2026-82907), [CVE-2026-82910](https://www.cve.org/CVERecord?id=CVE-2026-82910), [CVE-2026-82912](https://www.cve.org/CVERecord?id=CVE-2026-82912), [CVE-2026-82960](https://www.cve.org/CVERecord?id=CVE-2026-82960), [CVE-2026-84183](https://www.cve.org/CVERecord?id=CVE-2026-84183), [CVE-2026-85627](https://www.cve.org/CVERecord?id=CVE-2026-85627), [CVE-2026-71901](https://www.cve.org/CVERecord?id=CVE-2026-71901), [CVE-2026-82904](https://www.cve.org/CVERecord?id=CVE-2026-82904), [CVE-2026-82916](https://www.cve.org/CVERecord?id=CVE-2026-82916). The November 4 announcement names 46. These ten are the ones CISA-ADP scored High or Critical.
+
+**Apache scored none of them. CISA-ADP scores [CVE-2026-83542](https://www.cve.org/CVERecord?id=CVE-2026-83542) and [CVE-2026-82907](https://www.cve.org/CVERecord?id=CVE-2026-82907) CVSS 3.1 9.8 Critical.** NVD has not scored either. Before 24.09.08, an unauthenticated upload makes OFBiz evaluate a Groovy expression, including through a public SFA route that returns the output. A captured `externalLoginKey` is a session: it does not expire, it is not bound to a client, and the framework appends live keys to links it renders. Five more, scored 8.8, let a logged-in user with a view permission run a command. One, 8.1, lets an SFA user name a different service. One, 7.5, lets one unauthenticated request pin a thread. One, 7.1, lets a webtools user export any entity, including password hashes. [CVE-2026-105330](https://www.cve.org/CVERecord?id=CVE-2026-105330) has no score: on 24.09.06 and 24.09.07 only, a forged JWT signed with the factory-default key is an administrator, and the upgrade does not replace a key already configured.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). The announcement does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-04 16:13 UTC** | The project posted the CVE list and named 24.09.08. |
+| CVE records | 2026-11-05; time/TZ unknown | Apache published the records. CISA-ADP scored ten of them. |
+| **Last updated** | **2026-11-08 15:40 EST (UTC−05:00)** | New item. Upgrade OFBiz. |
+
+**Patch:** **24.09.08 or later**, then restart. The announcement lists no workaround and no older-branch fix. On 24.09.06 or 24.09.07 that kept an old `security.properties`, replace `security.token.key` after the upgrade. The upgrade does not expire a captured login key. End sessions.
+
+Sources: [Apache announcement](https://lists.apache.org/thread/7b2syzksp7klt9fvhdg0olldvs2g83lz), [CVE-2026-83542](https://www.cve.org/CVERecord?id=CVE-2026-83542), [detailed guide](details/apache-ofbiz.md).
 
 ---
 
@@ -747,9 +797,9 @@ Sources: [CVE-2026-59104](https://www.cve.org/CVERecord?id=CVE-2026-59104), [Off
 |---|---|---|
 | Fixes shipped | 2026-09-08, 2026-09-29, and 2026-10-31; time/TZ unknown | 1.12, 1.16, and 1.29. The changelog has no 1.16 entry. |
 | **Public announcement** | **2026-11-03; time/TZ unknown** | VulnCheck. CVE records published 2026-11-02. |
-| **Last updated** | **2026-11-06 23:55 EST (UTC−05:00)** | New item. Update to 1.29 or later. |
+| **Last updated** | **2026-11-08 15:40 EST (UTC−05:00)** | Current changelog release is 1.30.4. The fix floor is still 1.29.
 
-**Patch:** Control Web Panel **1.29 or later**. The current changelog release is 1.30, the same day as 1.29. A server below 1.12 is inside the unauthenticated bypass and the later flaws. There is no workaround. The update does not remove a file already written or undo a command already run as root.
+**Patch:** Control Web Panel **1.29 or later**. The changelog reread on November 8 lists 1.30.1, released November 3, and the page footer says the current version is 1.30.4. VulnCheck's disclosure still says 1.29 or later contains the ten fixes. A server below 1.12 is inside the unauthenticated bypass and the later flaws. There is no workaround. The update does not remove a file already written or undo a command already run as root.
 
 Sources: [VulnCheck](https://www.vulncheck.com/blog/control-web-panel-pre-auth-module-dispatch-rce), [CWP changelog](https://control-webpanel.com/changelog), [detailed guide](details/control-web-panel.md).
 
@@ -3341,11 +3391,11 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/skb-zerocopy-lpe.md):** [Detection](details/skb-zerocopy-lpe.md#detection) · [Remediation](details/skb-zerocopy-lpe.md#remediation) · [Verification](details/skb-zerocopy-lpe.md#verification) · [Timeline](details/skb-zerocopy-lpe.md#timeline)
 
-**CVEs:** None assigned as of 2026-10-26; tracked as ZDI-CAN-33367. [CVE-2026-43284](https://www.cve.org/CVERecord?id=CVE-2026-43284) ("Dirty Frag") is the related earlier fix that this flaw bypasses, not this flaw.
+**CVEs:** [CVE-2026-99284](https://www.cve.org/CVERecord?id=CVE-2026-99284). The kernel.org CNA published it on 2026-11-07 and did not score it. It was tracked as ZDI-CAN-33367. [CVE-2026-43284](https://www.cve.org/CVERecord?id=CVE-2026-43284) ("Dirty Frag") is the related earlier fix that this flaw bypasses, not this flaw.
 
 **ZDI-CAN-33367 — ZDI (reporter, not a CNA): CVSS 3.0 7.8 High (AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H). Red Hat: Important, "Potentially Affected" (RHSB-2026-014).**
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. A working public proof of concept exists; no in-the-wild exploitation had been reported as of Sysdig's October 24 analysis.
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). A working public proof of concept exists; no in-the-wild exploitation had been reported as of Sysdig's October 24 analysis. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -3368,7 +3418,8 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | Linux 7.3.2 | 2026-11-06 12:10 −0500 | Backports the fix as `1a9c180cd843`. 7.3 and 7.3.1 do not have it. |
 | Linux 7.4-rc1 | 2026-11-01 21:26:31 UTC | The tag's `skb_zerocopy()` copies the shared-frag marker. A release candidate, not a kernel to deploy. |
 | RHEL 7 ELS | 2026-11-05; time/TZ unknown | `kernel-3.10.0-1160.169.1.el7` names ZDI-CAN-33367. This is the Extended Lifecycle Support kernel, not CentOS 7. |
-| **Last updated** | **2026-11-07 12:10 EST (UTC−05:00)** | RHEL 7 Extended Lifecycle Support has a kernel that names the bug. |
+| CVE record | 2026-11-07; time/TZ unknown | kernel.org CNA published CVE-2026-99284. No score. The kernel to install does not change. |
+| **Last updated** | **2026-11-08 16:10 EST (UTC−05:00)** | The bug now has CVE-2026-99284. The kernel to install is unchanged. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -4827,7 +4878,7 @@ Sources: [Pillow release notes](https://pillow.readthedocs.io/en/stable/releasen
 | Vendor confirms active exploitation | 2026-10-19 20:17 UTC | Plex: “actively and widely exploited.” |
 | CISA KEV addition (all four) | 2026-10-20; date only | Due 2026-10-23 for -96654/-96656 and 2026-11-03 for -96652/-96655; forensic triage required for -96656. |
 | QNAP customer reports | 2026-11-06; time/TZ unknown | Some NAS users report Plex appears compromised. QTS and QuTS hero are not the flaw. |
-| **Last updated** | **2026-11-06 15:20 EST (UTC−05:00)** | QNAP reports. The fix is still 1.43.3.10861 or later. |
+| **Last updated** | **2026-11-08 15:40 EST (UTC−05:00)** | Synology named package builds for Plex2Shell. The Plex floor is still 1.43.3.10861.
 
 The chain combines:
 
@@ -4840,7 +4891,7 @@ The chain combines:
 
 **Exploitation status:** Plex confirmed on 2026-10-19 that the chain is being actively and widely exploited, including miners and Linux proxy/backdoor payloads. CISA added all four CVEs to KEV on 2026-10-20. On November 6, QNAP said it has reports from some users that Plex Media Server on their NAS appears to have been compromised, and that QTS and QuTS hero are not themselves the flaw. Plex says any server below 1.43.3.10861 that was reachable from the internet may be compromised; see [vendor indicators](details/plex2shell.md#detection).
 
-**Patch:** **Plex Media Server 1.43.3.10861 or later**; use the latest supported release. Check NAS-packaged installations and containers, which may lag upstream. Remove unnecessary public exposure on port 32400.
+**Patch:** **Plex Media Server 1.43.3.10861 or later**; use the latest supported release. On Synology, Synology-SA-26:17 (November 8) names the package: DSM 7.4 and 7.3 take 1.43.5.11079-720011079 or above, and DSM 7.2.2 and 7.2.1 take 1.43.5.11079-700011079 or above. DSM itself is not the flaw. QNAP's App Center fix is still 1.43.3.10861. Check other NAS packages and containers, which may lag upstream. Remove unnecessary public exposure on port 32400.
 
 If an exposed installation remained vulnerable, investigate for compromise. **Installing the update does not remove an existing backdoor.**
 
@@ -5304,6 +5355,8 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Self-hosted Penpot below 2.18.6** | Upgrade frontend, backend, and exporter to 2.18.6 or later and recreate the containers. A logged-in user can otherwise overwrite any file and take it. Before 2.18.6 a thumbnail request can read the session-signing key. Rotate `PENPOT_SECRET_KEY` if any account could log in. Penpot Cloud is not a version you upgrade. [Guide](details/penpot.md#remediation). |
+| **Apache OFBiz before 24.09.08** | Upgrade to 24.09.08 or later and restart. An unauthenticated request can run code, and a captured `externalLoginKey` is a session. End sessions after the upgrade. On 24.09.06 or 24.09.07 that kept an old `security.properties`, replace `security.token.key`. [Guide](details/apache-ofbiz.md#remediation). |
 | **WordPress with Registration Form for WooCommerce through 1.1.4, Naimur Email OTP through 2.1.0, or Checkout Field Editor Pro through 3.8.0** | Update that plugin: Registration Form 1.1.5, Naimur 2.1.1, Checkout Field Editor Pro 3.8.1, or later. All three need no login. This is not the November 6 or November 7 plugin set and not LatePoint. [Guide](details/wordpress-plugins-nov8.md#remediation). |
 | **OpenEMR before 8.4.0** | Upgrade to 8.4.0 or later. 8.3.0 fixes the file read and write and the Fee Sheet SQL injection, and it does not fix the patient-portal token, which can be replayed until it expires. Rotate the database password if a version before 8.3.0 was reachable by a logged-in user. [Guide](details/openemr.md#remediation). |
 | **IBM Aspera Faspex 5.0.0 through 5.0.19** | Run `faspexctl setup` as root and confirm `faspex-core` is `5.0.19 (1ce4b13, Fix Pack: 1)` or a later Fix Pack. A logged-in user can otherwise gain full administrative privileges. IBM lists no workaround. The RPM does not have to move. The image update does not undo an account that already became an administrator. [Guide](details/aspera-faspex.md#remediation). |
@@ -5435,7 +5488,7 @@ flowchart TD
 | **Rails 8.0 and 8.1** | Upgrade to 8.0.5.2 or 8.1.4.1 and restart. Rails 7 and older get no fix for the Active Storage file write. On `:mini_magick`, also install mini_magick 5.1 or later. If the Disk service was in use, rotate `secret_key_base`. [Guide](details/rails.md#remediation). |
 | **Self-managed Airbyte** | Upgrade to 2.2.0 or later (manifest-server 7.23.7) after a database backup. The migration cannot roll back. 1.x has no fix. Airbyte Cloud needs no action. [Guide](details/airbyte.md#remediation). |
 | **Puppet Enterprise, Puppet Core, and OpenVox** | Upgrade Puppet Enterprise to 2023.8.13, 2025.12.1, or 2026.0.1, or Puppet Core to 8.22.2 or 9.1.3, and restart Puppet Server. OpenVox Server is 8.18.0 or 9.2.0. An agent-only upgrade does not fix the server. Until then, do not autosign without a check you trust. [Guide](details/puppet.md#remediation). |
-| **Plex** | Media Server **1.43.3.10861 or later**; investigate previously exposed vulnerable servers. |
+| **Plex** | Media Server **1.43.3.10861 or later**; investigate previously exposed vulnerable servers. On Synology DSM 7.4 or 7.3 install package 1.43.5.11079-720011079 or above; on DSM 7.2.2 or 7.2.1 install 1.43.5.11079-700011079 or above. DSM itself is not the flaw. [Guide](details/plex2shell.md#remediation). |
 | **Nextcloud + built-in CODE** | `richdocumentscode` **26.4.303+**, or remove it. **Patch PHP separately.** |
 | **KSMBD / Broadcom Wi-Fi** | Obtain an exact vendor fix status; restrict or disable the affected service, or replace unsupported hardware. |
 | **HTTP/3** | Upgrade the product to a build containing the fixed QPACK library (Bun **1.4.4** for Bun HTTP/3), or disable affected HTTP/3 support. |

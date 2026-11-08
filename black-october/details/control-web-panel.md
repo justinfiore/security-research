@@ -62,7 +62,7 @@ Do not send the module-name traversal or a shell metacharacter to the panel. The
 
 ## Remediation
 
-1. **Update Control Web Panel to 1.29 or later.** The changelog's current release is 1.30, dated 31/10/2026, the same day as 1.29. VulnCheck says 1.30 still contains every fix from 1.29. Use the panel's own update. A jump across many versions may need more than one update; the vendor's update log is the record of what ran.
+1. **Update Control Web Panel to 1.29 or later.** The changelog now lists 1.30.1, released 03/11/2026, as a security and stability update, and the page footer says the current version is 1.30.4. VulnCheck's November 3 disclosure still says 1.29 or later contains the ten fixes, and it does not assign a new CVE to 1.30.1. Use the panel's own update. A jump across many versions may need more than one update; the vendor's update log is the record of what ran.
 2. There is no vendor workaround for the ten flaws. Keeping the panel off the internet reduces who can reach the user panel. It does not fix a server that is still below 1.29, and it does not matter for an attacker who already has a hosting account on that server.
 3. Updating does not remove a PHP file the `phpini_editor` module already wrote, and it does not undo a command the loopback API already ran as root.
 
@@ -83,7 +83,7 @@ VulnCheck does not publish an indicator for these ten flaws. If the panel was re
 ## Sources
 
 - [VulnCheck, CWP2Shell][vc] — public disclosure 2026-11-03. Ten CVEs, the version each fix landed in, and the lab reproduction. No customer compromise claimed for these ten.
-- [CWP changelog][log] — 1.12 on 08/09/2026 ("Security improvements"), 1.27 and 1.29 and 1.30 on 30/10/2026 and 31/10/2026. No CVE IDs.
+- [CWP changelog][log] — 1.12 on 08/09/2026 ("Security improvements"), 1.27 and 1.29 and 1.30 on 30/10/2026 and 31/10/2026. Reread 2026-11-08: 1.30.1 released 03/11/2026, and the footer says current version 1.30.4. No CVE IDs.
 - [CVE-2026-73696][cve696] — VulnCheck CNA, published 2026-11-02, updated 2026-11-03. CVSS 4.0 8.6, CVSS 3.1 8.1. Before 1.12.
 - [CVE-2026-73695][cve695] — CVSS 4.0 8.7, CVSS 3.1 8.8. Before 1.16.
 - [CVE-2026-104080][cve080] — CVSS 4.0 8.5, CVSS 3.1 7.8. Before 1.29. Updated 2026-11-07; the ceiling is still 1.29.

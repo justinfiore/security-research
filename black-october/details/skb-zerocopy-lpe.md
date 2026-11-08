@@ -1,10 +1,10 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-11-07 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skbzerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**ZDI-CAN-33367 (no CVE assigned): ZDI, the reporter, rates it CVSS 3.0 7.8 High (AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H). Red Hat lists it as "Potentially Affected" with severity Important (RHSB-2026-014). ZDI is reporting through Trend Micro's disclosure program, not as the kernel's CNA; no CNA or NVD score exists because no CVE exists.** [ZDI report][report] [ZDI upcoming][zdi] [Red Hat][rh]
+**[CVE-2026-99284](https://www.cve.org/CVERecord?id=CVE-2026-99284), tracked before that as ZDI-CAN-33367.** The kernel.org CNA published the record on 2026-11-07 and did not score it. ZDI, the reporter, rates it CVSS 3.0 7.8 High (AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H). Red Hat lists it as "Potentially Affected" with severity Important (RHSB-2026-014). The record's title is the fix commit, "net: skbuff: propagate shared-frag marker in skb_zerocopy()". It names the same unaffected lines the guide already uses: 7.2.15 and later on 7.2, 7.3.2 and later on 7.3, and 7.4-rc1. [CVE record][cve99284] [ZDI report][report] [Red Hat][rh]
 
 **Scope:** a bug in the kernel networking helper `skb_zerocopy()`. It lets an **unprivileged local user change the page-cache copy of any file they can read**, including root-owned setuid binaries and libraries, which leads to root. The file on disk is not modified, but every process that reads the file sees the attacker's bytes until the cached pages are evicted or the host reboots. [AlmaLinux][alma] [CloudLinux][cl]
 
@@ -14,7 +14,7 @@
 - **Worst case:** any shell account, CI job, compromised web application or container with the prerequisites becomes root on the host. On shared hosts this reaches every tenant. [CloudLinux][cl] [TuxCare][tux]
 - **Exploit code:** the ZDI report was posted to public kernel mailing lists with PoC source. CloudLinux/TuxCare obtained root with it on AlmaLinux 8, 9 and 10, CloudLinux 9 and 10, Debian 12 and 13 and Ubuntu 24.04 and 26.04, bypassing Ubuntu's AppArmor user-namespace restriction. CentOS 6 and 7 kernels are not affected. [CloudLinux][cl] [TuxCare][tux]
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. A working public PoC exists; no in-the-wild exploitation had been reported as of TuxCare's October 23 update or Sysdig's October 24 analysis. [What KEV means](../black-october-2026.md#what-cisa-kev-means). [TuxCare][tux] [Sysdig][sysdig]
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). A working public PoC exists; no in-the-wild exploitation had been reported as of TuxCare's October 23 update or Sysdig's October 24 analysis. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means). [TuxCare][tux] [Sysdig][sysdig]
 
 ## Table of contents
 
@@ -56,6 +56,7 @@
 | Mainline release | Linux 7.3, 2026-10-18 | Linux 7.3 and stable 7.3.1 (2026-10-30) do **not** include `79dc34beb1fd`. The `skbuff.c` history on those tags has an older, different "shared-frag" commit. [kernel.org releases][releases] [v7.3 history][v73] |
 | Stable backport | 2026-11-01 12:44:45 +0100 | Linux **7.2.15** includes the fix as commit `d7d6ff98d5d1`, which is `79dc34beb1fd` upstream. Linux 7.2 is marked EOL. [ChangeLog-7.2.15][cl7215] |
 | Linux 7.3.2 | 2026-11-06 12:10:54 −0500 | Includes the fix as commit `1a9c180cd843`, which is `79dc34beb1fd` upstream. Linux 7.3.3, tagged later the same day, does not repeat it. 7.3 and 7.3.1 still do not have it. [ChangeLog-7.3.2][cl732] |
+| CVE record | 2026-11-07; time/TZ unknown | kernel.org CNA published CVE-2026-99284. No score. The unaffected lines match the tags already named. [CVE record][cve99284] |
 | RHEL 7 Extended Lifecycle Support | 2026-11-05; time/TZ unknown | [RHSA-2026:95556][rhsa7] ships `kernel-3.10.0-1160.169.1.el7`. The fixes list names ZDI-CAN-33367 with an empty CVE field (BZ 2559835). This is the ELS kernel, not CentOS 7. |
 | Linux 7.4-rc1 | Tagged 2026-11-01 21:26:31 UTC | `skb_zerocopy()` on tag `v7.4-rc1` copies `SKBFL_SHARED_FRAG`. A release candidate, not a stable kernel. [v7.4-rc1 skbuff.c][v74] |
 | CVE assignment | None as of this review | CloudLinux (updated 2026-10-26) and AlmaLinux say no CVE is assigned. The kernel CNA assigns CVEs after a fix reaches a stable tree. No Debian or Ubuntu tracker entry or notice was found. [CloudLinux][cl] [Kernel CVE process][kernelcve] |
@@ -81,7 +82,7 @@ Affected status by distribution, as reported (not a complete matrix):
 
 1. Record the **running** kernel with `uname -r`, and the installed packages with `rpm -q kernel` or `dpkg -l 'linux-image*'`. A newer installed package does not help until the host reboots into it.
 2. Compare against a vendor build that explicitly includes "net: skbuff: propagate shared-frag marker in skb_zerocopy()" or names ZDI-CAN-33367. Known builds as of 2026-10-29 are listed under [Fixed kernels and live patches](#fixed-kernels-and-live-patches).
-3. Do not accept a CVE-2026-43284, [CVE-2026-46300](https://www.cve.org/CVERecord?id=CVE-2026-46300) ("Fragnesia"), [CVE-2026-43503](https://www.cve.org/CVERecord?id=CVE-2026-43503) or CVE-2026-90049 fix as coverage. Those are different paths. Vulnerability scanners keyed on CVE IDs will not report this issue until a CVE exists. [Sysdig][sysdig] [TuxCare][tux]
+3. Do not accept a CVE-2026-43284, [CVE-2026-46300](https://www.cve.org/CVERecord?id=CVE-2026-46300) ("Fragnesia"), [CVE-2026-43503](https://www.cve.org/CVERecord?id=CVE-2026-43503) or CVE-2026-90049 fix as coverage. Those are different paths. A scanner that only knows [CVE-2026-99284](https://www.cve.org/CVERecord?id=CVE-2026-99284) still misses a vendor kernel whose changelog names ZDI-CAN-33367 and not the CVE. [Sysdig][sysdig] [TuxCare][tux]
 4. With KernelCare, run `kcarectl --patch-info | grep -i 33367`. CloudLinux warns that `kcarectl --info` returns nothing for a specific issue even on a patched server. [CloudLinux][cl]
 
 ### Read-only exposure checks
@@ -207,6 +208,7 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 
 ## Sources
 
+- [CVE-2026-99284][cve99284] — kernel.org CNA, published 2026-11-07. No score. Title is the fix commit. Unaffected from 7.2.15 on the 7.2 line, from 7.3.2 on the 7.3 line, and at 7.4-rc1.
 - [ZDI-CAN-33367 report on LKML][report] (public report, CVSS vector, tested version 7.3-rc1 on Debian trixie, PoC source) and [ZDI upcoming advisories][zdi] (reported date, deadline, CVSS 3.0 calculator link).
 - [Eric Dumazet's reply][dumazet], [v2 patch][patch] and [netdev `net` commit `79dc34beb1fd`][commit] — fix authorship, review, stable tag and commit time.
 - [AlmaLinux, 2026-10-23][alma] — affected releases, testing kernels, `esp4`/`esp6` mitigation, cache-eviction guidance.
@@ -257,3 +259,4 @@ Do not force-unload modules that an active IPsec tunnel or tooling depends on; s
 [releases]: https://www.kernel.org/releases.json
 [kernelcve]: https://docs.kernel.org/process/cve.html
 [almarepo]: https://repo.almalinux.org/almalinux/8/BaseOS/x86_64/os/Packages/
+[cve99284]: https://www.cve.org/CVERecord?id=CVE-2026-99284

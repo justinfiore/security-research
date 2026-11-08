@@ -1,6 +1,6 @@
 # Plex2Shell: detection and recovery for Plex Media Server
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Main guide](../black-october-2026.md#5-plex2shell-a-home-server-compromise-chain-is-being-exploited) · [Changelog](../../CHANGELOG.md)
 
@@ -40,6 +40,7 @@
 | Vendor confirms active exploitation | 2026-10-19 20:17 UTC | Plex says the flaws are “actively and widely exploited” against unpatched internet-facing servers, publishes CVE mapping and compromise indicators. [Vendor notice][vendor] |
 | CISA KEV addition, all four | 2026-10-20 (date only) | Added “based on evidence of active exploitation.” Due dates differ: **CVE-2026-96654 and -96656: 2026-10-23**; **CVE-2026-96652 and -96655: 2026-11-03**. BOD 26-04 forensic triage required: Yes for -96656 only. Known ransomware use: Unknown. KEV addition is not the exploitation start date. [KEV][kev], [CISA alert][kevalert] |
 | QNAP customer reports | 2026-11-06; time/TZ unknown | QNAP says some users report that Plex Media Server on their NAS appears compromised, and that QTS and QuTS hero are not the flaw. The fix in App Center is still 1.43.3.10861. [QNAP][qnap] |
+| Synology package advisory | 2026-11-08 02:15 UTC | Synology-SA-26:17 names the Plex Media Server package, not DSM. DSM 7.4 and 7.3: 1.43.5.11079-720011079 or above. DSM 7.2.2 and 7.2.1: 1.43.5.11079-700011079 or above. Synology does not report compromised Synology systems. [Synology][syn] |
 
 **KEV required action (identical for all four entries)** [KEV][kev]:
 
@@ -88,9 +89,10 @@ The following are **recommended investigation steps**, derived from the chain, n
 
 1. Back up configuration and library metadata for rollback on a system with no compromise evidence; quarantine suspect backups instead of treating them as trusted recovery media.
 2. Install a supported vendor release **at least 1.43.3.10861**, preferably the latest compatible stable build. Fresh vendor release notes also list **1.43.5.11079** as generally available at this review. [Releases][releases]
-3. NAS: verify the actual installed PMS build after the package manager finishes; “latest” in a delayed app store is insufficient. Use the NAS/vendor-supported package route.
-4. Containers: replace the image with a verified updated digest and recreate the running container. Inspect persistent configuration/codec volumes separately; replacing an image does not clean a mounted volume.
-5. Native services: restart PMS and verify the process is using the updated installation. Avoid running the service with root or broad writable mounts; these are operator hardening recommendations, not fixes for the chain.
+3. On Synology DSM, install the package Synology names, not the Plex build number alone. DSM 7.4 and 7.3 take **1.43.5.11079-720011079 or above**. DSM 7.2.2 and 7.2.1 take **1.43.5.11079-700011079 or above**. DSM itself is not the flaw. [Synology][syn]
+4. Other NAS: verify the actual installed PMS build after the package manager finishes; “latest” in a delayed app store is insufficient. Use the NAS/vendor-supported package route.
+5. Containers: replace the image with a verified updated digest and recreate the running container. Inspect persistent configuration/codec volumes separately; replacing an image does not clean a mounted volume.
+6. Native services: restart PMS and verify the process is using the updated installation. Avoid running the service with root or broad writable mounts; these are operator hardening recommendations, not fixes for the chain.
 
 ## Verification
 
@@ -116,6 +118,7 @@ The following are **recommended investigation steps**, derived from the chain, n
 - [October 19 exploitation reporting][reporting] — patch target and reported campaign artifacts, with attribution limitations.
 - [Plex security notice and October 19 exploitation update][vendor] — CVE mapping, active-exploitation statement, compromise indicators and recovery steps.
 - [QNAP security notice, November 6, 2026][qnap] — reports from some NAS users that Plex appears compromised; QNAP operating systems are not the flaw; update in App Center and, if Plex was reachable from the internet, follow QNAP's clean-reinstall FAQ.
+- [Synology-SA-26:17][syn] — published 2026-11-08 02:15 UTC. Plex Media Server package only. DSM 7.4 and 7.3: 1.43.5.11079-720011079 or above. DSM 7.2.2 and 7.2.1: 1.43.5.11079-700011079 or above. Severity Important. Does not report compromised Synology systems.
 - [CISA KEV catalog feed][kev] and [October 20 KEV alert][kevalert] — date added, due dates, required action and forensic-triage flags.
 - [CVE-2026-96652 record][cve96652] (and the corresponding records for [-96654][cve96654], [-96655][cve96655], [-96656][cve96656]) and [CISA advisory VA-26-266-01][csaf] — CNA scores, affected range and publication dates.
 
@@ -131,3 +134,4 @@ The following are **recommended investigation steps**, derived from the chain, n
 [releases]: https://forums.plex.tv/t/plex-media-server/30447/712
 [reporting]: https://thehackernews.com/2026/10/hackers-exploit-plex2shell-flaws-to.html
 [qnap]: https://www.qnap.com/en/security-news/2026/qnap-security-notice-plex-media-server-vulnerabilities-plex2shell-update-to-1-43-3-10861-or-later-immediately
+[syn]: https://www.synology.com/en-global/security/advisory/Synology_SA_26_17
