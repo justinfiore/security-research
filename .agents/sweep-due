@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+"""Decide which existing items the existing-item sweep must refresh this run.
+
+Usage:
+  .agents/sweep-due <run_started_at>
+      Print one tab-separated line per detail guide, due items first:
+        DUE      <guide> <reason>
+        SKIP     <guide> <reason; next due time>
+        RETIRED  <guide> <reason>
+      then a SUMMARY line on stderr. Read-only.
+  .agents/sweep-due --record <run_started_at> <hold> <guide>...
+      After sweeping, record each guide as checked at <run_started_at> with
+      <hold>: none, awaiting-fix or awaiting-distros.
+
+Backoff (black-october/MAINTENANCE.md, "Existing-item refresh backoff"):
+quiet days = days from the guide's "**Last updated:** YYYY-MM-DD" date to the
+run's America/New_York date. Any material update bumps that date, which resets
+the item to daily. Items on hold are refreshed daily and never retire.
+"""
+import json
+import re
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+ROOT = Path(__file__).resolve().parent.parent
+DETAILS = ROOT / "black-october" / "details"
+STATE = ROOT / "black-october" / "sweep-state.json"
+ET = ZoneInfo("America/New_York")
+HOLDS = ("none", "awaiting-fix", "awaiting-distros")
+# (quiet days below this bound, refresh interval in days)
+TIERS = ((7, 1), (14, 2), (21, 3), (35, 5), (56, 7))
+RETIRE_AFTER = 56
+SLACK = timedelta(hours=2)  # runs start a few minutes apart from the 4-hour grid
+
+
+def parse_time(value):
+    if not re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", value):
+        sys.exit(f"bad timestamp {value!r}; use the run's run_started_at, e.g. 2026-11-09T11:55:47Z")
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+def load_state():
+    return json.loads(STATE.read_text()) if STATE.exists() else {"items": {}}
+
+
+def last_updated(path):
+    m = re.search(r"^\*\*Last updated:\*\* (\d{4}-\d\d-\d\d)", path.read_text(), re.M)
+    return datetime.strptime(m.group(1), "%Y-%m-%d").date() if m else None
+
+
+def plan(run_at):
+    items = load_state()["items"]
+    today = run_at.astimezone(ET).date()
+    rows = []
+    for path in sorted(DETAILS.glob("*.md")):
+        name = path.name
+        entry = items.get(name, {})
+        hold = entry.get("hold", "none")
+        checked = entry.get("last_checked")
+        updated = last_updated(path)
+        if updated is None:
+            rows.append(("DUE", name, "no Last updated date"))
+            continue
+        quiet = (today - updated).days
+        if hold != "none":
+            interval, why = 1, f"hold {hold}, quiet {quiet}d"
+        elif quiet >= RETIRE_AFTER:
+            rows.append(("RETIRED", name, f"quiet {quiet}d since {updated}"))
+            continue
+        else:
+            interval = next(i for bound, i in TIERS if quiet < bound)
+            why = f"quiet {quiet}d, every {interval}d"
+        if not checked:
+            rows.append(("DUE", name, f"{why}; never recorded"))
+            continue
+        next_due = parse_time(checked) + timedelta(days=interval) - SLACK
+        if run_at >= next_due:
+            rows.append(("DUE", name, f"{why}; last checked {checked}"))
+        else:
+            rows.append(("SKIP", name, f"{why}; next due {next_due:%Y-%m-%dT%H:%MZ}"))
+    order = {"DUE": 0, "SKIP": 1, "RETIRED": 2}
+    for row in sorted(rows, key=lambda r: order[r[0]]):
+        print("\t".join(row))
+    counts = {k: sum(r[0] == k for r in rows) for k in order}
+    print("SUMMARY: " + ", ".join(f"{v} {k.lower()}" for k, v in counts.items()), file=sys.stderr)
+
+
+def record(run_at_text, hold, names):
+    parse_time(run_at_text)
+    if hold not in HOLDS:
+        sys.exit(f"hold must be one of {', '.join(HOLDS)}")
+    state = load_state()
+    for name in names:
+        name = Path(name).name
+        if not (DETAILS / name).exists():
+            sys.exit(f"no such guide: {name}")
+        state["items"][name] = {"last_checked": run_at_text, "hold": hold}
+    state["items"] = dict(sorted(state["items"].items()))
+    STATE.write_text(json.dumps(state, indent=2) + "\n")
+    print(f"recorded {len(names)} guide(s) as checked at {run_at_text}, hold {hold}")
+
+
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    if len(args) == 1 and not args[0].startswith("-"):
+        plan(parse_time(args[0]))
+    elif len(args) >= 4 and args[0] == "--record":
+        record(args[1], args[2], args[3:])
+    else:
+        sys.exit(__doc__)
