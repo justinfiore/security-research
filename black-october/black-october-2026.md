@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [UnrealIRCd: a label tag runs a server command](#unrealircd-a-label-tag-runs-a-server-command)
 - [WordPress plugins: Contact Form 7 file upload, Ecommerce Affiliate account takeover, and Turisbook stored XSS](#wordpress-plugins-contact-form-7-file-upload-ecommerce-affiliate-account-takeover-and-turisbook-stored-xss)
 - [WordPress plugins: Frontend Admin privilege escalation](#wordpress-plugins-frontend-admin-privilege-escalation)
 - [WordPress plugins: Userplace administrator creation, and Productive Commerce SQL injection](#wordpress-plugins-userplace-administrator-creation-and-productive-commerce-sql-injection)
@@ -200,6 +201,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** On [UnrealIRCd](#unrealircd-a-label-tag-runs-a-server-command) 6.0.0 through 6.2.7, add the project's spamfilter, then run `./unrealircd hot-patch bundle-20261107` on every server, or upgrade to **6.2.7.1** and restart. The project calls [CVE-2026-114713](https://www.cve.org/CVERecord?id=CVE-2026-114713) the most critical issue in 15 years: on a network of two or more linked servers, any user can run a server command. MITRE scores it CVSS 3.1 8.6 High, and that vector rates confidentiality and availability None. The same patch fixes eight more issues the project does not score. The project says it is seeing exploitation attempts. It is not in KEV.
 - **New this update:** Update [Contact Form 7](#wordpress-plugins-contact-form-7-file-upload-ecommerce-affiliate-account-takeover-and-turisbook-stored-xss) to **6.2.4 or later**, and remove [Ecommerce Affiliate](#wordpress-plugins-contact-form-7-file-upload-ecommerce-affiliate-account-takeover-and-turisbook-stored-xss) and [Turisbook](#wordpress-plugins-contact-form-7-file-upload-ecommerce-affiliate-account-takeover-and-turisbook-stored-xss). WPScan rates [CVE-2026-114432](https://www.cve.org/CVERecord?id=CVE-2026-114432) CVSS 3.1 9.8 Critical: on 6.2 through 6.2.3, a logged-out visitor can leave a file in the uploads directory, and on a stock Debian or Ubuntu Apache setup that file can run. [CVE-2026-106015](https://www.cve.org/CVERecord?id=CVE-2026-106015) is 8.1 High, an account takeover with no fix. [CVE-2026-103303](https://www.cve.org/CVERecord?id=CVE-2026-103303) is 8.8 High, stored script with no fix. None is in KEV.
 - **New this update:** Update [Frontend Admin](#wordpress-plugins-frontend-admin-privilege-escalation) to **3.30.2 or later**. Patchstack rates [CVE-2026-119506](https://www.cve.org/CVERecord?id=CVE-2026-119506) CVSS 3.1 9.1 Critical: through 3.30.1, a logged-out visitor can gain a higher role. The page also says a low-privilege user can become an admin. The CVE record does not say which request does it. The update does not undo a role already granted. It is not in KEV.
 - **New this update:** Remove [Userplace](#wordpress-plugins-userplace-administrator-creation-and-productive-commerce-sql-injection), and update [Productive Commerce](#wordpress-plugins-userplace-administrator-creation-and-productive-commerce-sql-injection) to **1.1.54 or later**. WPScan rates [CVE-2026-110963](https://www.cve.org/CVERecord?id=CVE-2026-110963) CVSS 3.1 9.8 Critical: through 1.2.0, which is the only version, a logged-out visitor can create an administrator. There is no fix. WPScan rates [CVE-2026-109925](https://www.cve.org/CVERecord?id=CVE-2026-109925) 8.6 High: before 1.1.54, the wishlist and compare handlers take SQL with no login. Patchstack scores that one 9.3. Neither is in KEV.
@@ -330,6 +332,30 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## UnrealIRCd: a label tag runs a server command
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/unrealircd.md):** [Detection](details/unrealircd.md#detection) · [Remediation](details/unrealircd.md#remediation) · [Verification](details/unrealircd.md#verification) · [Timeline](details/unrealircd.md#timeline)
+
+**CVEs:** [CVE-2026-114713](https://www.cve.org/CVERecord?id=CVE-2026-114713)
+
+**The project calls [CVE-2026-114713](https://www.cve.org/CVERecord?id=CVE-2026-114713) critical and publishes no CVSS vector.** MITRE, the CNA, rates it CVSS 3.1 8.6 High. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:N`, so confidentiality and availability are None. NVD has not scored it. On UnrealIRCd 6.0.0 through 6.2.7, the labeled-response module echoes an IRCv3 `label` tag without escaping it. On a network with two or more linked servers, any user can put a newline in that tag, and the next server runs the rest as its own command. The project says that command has server or IRC operator authority: any ordinary user can KILL, GLINE, and do many more bad things. A single server is outside that condition. The CVE record's affected line is wider than the project's: from 0 before 6.2.7.1. The project says UnrealIRCd 5, end of life since 2023-07-01, is similarly affected, and that 3.2.x and 4 were not checked. The same release fixes eight more issues the project does not score and does not assign CVEs, including a decloak that reveals another user's IP address, crashes, a hang, and a counting error that refuses every new connection. The project says it found the set during an internal audit with the help of AI.
+
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-09). The project's X account said on November 8 that it is seeing attempts to exploit the flaw. That post does not say a network was taken over. Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-07 15:00 UTC** | The project posted the advisory. 6.2.7.1 and hot-patch `bundle-20261107`. The forum board is UTC. |
+| oss-security | 2026-11-08 07:31 UTC | The same advisory. The mail says the CVE record is now published. |
+| CVE record | 2026-11-08; time/TZ unknown | MITRE published CVE-2026-114713. CVSS 3.1 8.6. The record does not mention the other eight issues. |
+| Exploitation attempts | 2026-11-08 10:59 UTC | The project says it is seeing attempts. It does not say a network was taken over. |
+| **Last updated** | **2026-11-09 07:25 EST (UTC−05:00)** | New item. Hot-patch or upgrade UnrealIRCd. |
+
+**Patch:** As an IRC operator, on a network whose servers are all 6.0.4 or newer, add `/SPAMFILTER add -regex T block - Invalid_label ^label=(?![^\r\n;\x20]*\z)`. That blocks the critical flaw only. Then, on every 6.0.0 through 6.2.7 server, run `./unrealircd hot-patch bundle-20261107`, or upgrade to **6.2.7.1** and restart. Windows, and a Unix host where the hot-patch fails, take the upgrade. UnrealIRCd 5 has no hot-patch: add `blacklist-module "labeled-response";` and restart, then move to 6. The patch does not show whether a label already ran a command, and it does not remove a ban that command set.
+
+Sources: [forum advisory](https://forums.unrealircd.org/viewtopic.php?t=9487), [CVE-2026-114713](https://www.cve.org/CVERecord?id=CVE-2026-114713), [detailed guide](details/unrealircd.md).
 
 ---
 
@@ -933,17 +959,17 @@ Sources: [SNWLID-2026-0014](https://psirt.global.sonicwall.com/vuln-detail/SNWLI
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/jetbrains-hub.md):** [Detection](details/jetbrains-hub.md#detection) · [Remediation](details/jetbrains-hub.md#remediation) · [Verification](details/jetbrains-hub.md#verification) · [Timeline](details/jetbrains-hub.md#timeline)
 
-**CVEs:** [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294), [CVE-2026-123296](https://www.cve.org/CVERecord?id=CVE-2026-123296)
+**CVEs:** [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294), [CVE-2026-123296](https://www.cve.org/CVERecord?id=CVE-2026-123296), [CVE-2026-123295](https://www.cve.org/CVERecord?id=CVE-2026-123295)
 
-**JetBrains rates [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294) CVSS 3.1 9.6 Critical. NVD has not scored it.** Before Hub 2026.2.52556, a low-privilege user can change email authentication details during verification and escalate privileges. JetBrains does not say which role that reaches. [CVE-2026-123296](https://www.cve.org/CVERecord?id=CVE-2026-123296) is 7.5 High, fixed in 2026.2.52519: a forged email verification escalates privileges. Four more Hub flaws published the same minute are 6.8, 5.0, 3.1, and 2.7. The issues-fixed page, reread November 8, now lists the 9.6 flaw at 2026.2.52556 and the 7.5 flaw at 2026.2.52519. YouTrack Cloud is JetBrains' to patch.
+**JetBrains rates [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294) CVSS 3.1 9.6 Critical. NVD has not scored it.** Before Hub 2026.2.52556, a low-privilege user can change email authentication details during verification and escalate privileges. JetBrains does not say which role that reaches. Two more are High and are fixed one build earlier, in 2026.2.52519. [CVE-2026-123296](https://www.cve.org/CVERecord?id=CVE-2026-123296) is 7.5: a forged email verification escalates privileges. [CVE-2026-123295](https://www.cve.org/CVERecord?id=CVE-2026-123295) is 8.1: a logged-in user can turn off enforced two-factor authentication. An earlier reading put that one below 7.0, with the 6.8, 5.0, 3.1, and 2.7 flaws. The issues-fixed page, reread November 8, lists the 9.6 flaw at 2026.2.52556 and the 7.5 flaw at 2026.2.52519. YouTrack Cloud is JetBrains' to patch. The upgrade does not turn two-factor authentication back on.
 
 **CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). JetBrains does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Public announcement | 2026-11-06 10:27:54 UTC | CVE-2026-123294. Five related Hub records follow within the same minute. |
-| Patch | Build 2026.2.52556; release timestamp not on the CVE record | 2026.2.52519 fixes the 7.5 flaw and not the 9.6 flaw. |
-| **Last updated** | **2026-11-08 19:05 EST (UTC−05:00)** | The issues-fixed page now lists the Hub CVEs. The fix is unchanged. |
+| Patch | Build 2026.2.52556; release timestamp not on the CVE record | 2026.2.52519 fixes the 7.5 flaw and the 8.1 flaw, and not the 9.6 flaw. |
+| **Last updated** | **2026-11-09 07:25 EST (UTC−05:00)** | The 8.1 two-factor flaw is named. The build to install is unchanged. |
 
 **Patch:** Upgrade Hub to **2026.2.52556 or later**. There is no documented workaround. The upgrade does not remove a role the verification flow already granted.
 
@@ -955,11 +981,11 @@ Sources: [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294), [J
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/craft-cms.md):** [Detection](details/craft-cms.md#detection) · [Remediation](details/craft-cms.md#remediation) · [Verification](details/craft-cms.md#verification) · [Timeline](details/craft-cms.md#timeline)
 
-**CVEs:** [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488), [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490), [CVE-2026-124427](https://www.cve.org/CVERecord?id=CVE-2026-124427)
+**CVEs:** [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488), [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490), [CVE-2026-124427](https://www.cve.org/CVERecord?id=CVE-2026-124427), [CVE-2026-124430](https://www.cve.org/CVERecord?id=CVE-2026-124430)
 
-**VulnCheck rates [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical. Craft rates the same flaw High and its advisory still says no CVE is known.** NVD has not scored it. Before 5.11.2 and 4.18.9, the element-search `attribute` parameter is concatenated into SQL, and emulated prepares run stacked statements. Craft says an unauthenticated caller can set the admin flag on user ID 1 and overwrite any password hash. The same releases fix five more High flaws. One of them, the sandboxed `getOwners()` call, is now [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490): VulnCheck rates it CVSS 4.0 8.7 and CVSS 3.1 8.8, published November 6, and Craft's page still says no CVE. The other four still have no CVE. A signed-template oracle, also 5.x only, reaches command execution as the PHP worker. Craft 3 is outside the ranges. A flaw Craft rates Moderate now has a Critical CVE score: [CVE-2026-124427](https://www.cve.org/CVERecord?id=CVE-2026-124427), published November 8, is the anonymous GraphQL `prev`/`next` read of a section the schema withholds. VulnCheck rates it CVSS 4.0 9.3 and CVSS 3.1 9.8, including integrity and availability High. Craft's page describes a read and still says no CVE. It is 5.x only, and 5.11.2 is the fix. Two later High advisories, both published November 2 and neither with a CVE, raise the 5.x floor. [GHSA-hq78-cm2m-h24h](https://github.com/craftcms/cms/security/advisories/GHSA-hq78-cm2m-h24h) is fixed in 5.11.4: an image-transform class guard can be bypassed, and Craft says an unauthenticated attacker can execute PHP in the right circumstances. [GHSA-cphx-cx67-jcqj](https://github.com/craftcms/cms/security/advisories/GHSA-cphx-cx67-jcqj) is fixed in 5.11.5: a lowest-privilege account passes raw SQL through `Element::findOne()`, a path the 5.11.2 fix missed. Craft 4 is not in either advisory.
+**VulnCheck rates [CVE-2026-123488](https://www.cve.org/CVERecord?id=CVE-2026-123488) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical. Craft rates the same flaw High and its advisory still says no CVE is known.** NVD has not scored it. Before 5.11.2 and 4.18.9, the element-search `attribute` parameter is concatenated into SQL, and emulated prepares run stacked statements. Craft says an unauthenticated caller can set the admin flag on user ID 1 and overwrite any password hash. The same releases fix five more High flaws. One of them, the sandboxed `getOwners()` call, is now [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490): VulnCheck rates it CVSS 4.0 8.7 and CVSS 3.1 8.8, published November 6, and Craft's page still says no CVE. The other three still have no CVE. The signed-template oracle is now [CVE-2026-124430](https://www.cve.org/CVERecord?id=CVE-2026-124430): VulnCheck rates it CVSS 4.0 8.7 and CVSS 3.1 8.8, published November 8, and Craft's page still says no CVE. It is 5.x only and reaches command execution as the PHP worker. Craft 3 is outside the ranges. A flaw Craft rates Moderate now has a Critical CVE score: [CVE-2026-124427](https://www.cve.org/CVERecord?id=CVE-2026-124427), published November 8, is the anonymous GraphQL `prev`/`next` read of a section the schema withholds. VulnCheck rates it CVSS 4.0 9.3 and CVSS 3.1 9.8, including integrity and availability High. Craft's page describes a read and still says no CVE. It is 5.x only, and 5.11.2 is the fix. Two later High advisories, both published November 2 and neither with a CVE, raise the 5.x floor. [GHSA-hq78-cm2m-h24h](https://github.com/craftcms/cms/security/advisories/GHSA-hq78-cm2m-h24h) is fixed in 5.11.4: an image-transform class guard can be bypassed, and Craft says an unauthenticated attacker can execute PHP in the right circumstances. [GHSA-cphx-cx67-jcqj](https://github.com/craftcms/cms/security/advisories/GHSA-cphx-cx67-jcqj) is fixed in 5.11.5: a lowest-privilege account passes raw SQL through `Element::findOne()`, a path the 5.11.2 fix missed. Craft 4 is not in either advisory.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08) for any of the three CVEs. Neither Craft nor VulnCheck reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-09) for any of these CVEs. Neither Craft nor VulnCheck reports exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -970,7 +996,8 @@ Sources: [CVE-2026-123294](https://www.cve.org/CVERecord?id=CVE-2026-123294), [J
 | GraphQL prev/next CVE | 2026-11-08 13:15:24 UTC | [CVE-2026-124427](https://www.cve.org/CVERecord?id=CVE-2026-124427). VulnCheck: 9.3 and 9.8. Craft rates the same advisory Moderate and says no CVE. |
 | 5.11.4 and 5.11.5 tagged | 2026-10-01 15:49:48 UTC; 2026-10-07 17:38:22 UTC | The fixes shipped before the advisories. |
 | Two more High advisories | 2026-11-02; time/TZ unknown | Image-transform PHP execution, fixed in 5.11.4. `findOne()` SQL injection, fixed in 5.11.5. Neither has a CVE. Craft 4 is not affected by either. |
-| **Last updated** | **2026-11-08 23:06 EST (UTC−05:00)** | The 5.x floor is 5.11.5. 4.18.9 is unchanged. |
+| Signing-oracle CVE | 2026-11-08 13:15:26 UTC | [CVE-2026-124430](https://www.cve.org/CVERecord?id=CVE-2026-124430). VulnCheck: 8.7 and 8.8. Craft's page still says no CVE. Fixed in 5.11.2. |
+| **Last updated** | **2026-11-09 07:25 EST (UTC−05:00)** | The signing-oracle flaw has a CVE. The 5.x floor is still 5.11.5. |
 
 **Patch:** Update `craftcms/cms` to **5.11.5 or later**, or **4.18.9 or later** on 4.x. 5.11.2 is no longer enough on 5.x. There is no workaround for the unauthenticated injection. The update does not unset an admin flag already written, and it does not restore a `CRAFT_SECURITY_KEY` a control-panel flaw already replaced.
 
@@ -3855,9 +3882,9 @@ Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/adviso
 
 **CVEs:** [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097), [CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099)
 
-**SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): Drupal Security Team Critical 19/25. The CVE record is now published and contains no CVSS score, so there is still no numeric CNA or NVD score. A related advisory, SA-CONTRIB-2026-218 for Entity List ([CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099)), is also Critical 19/25 and also has no CVSS score.**
+**SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): Drupal Security Team Critical 19/25. The CNA record has no CVSS score, and NVD has not scored it. CISA-ADP scored it CVSS 3.1 8.1 High on 2026-11-06, with Exploitation none. That score is not Drupal's. A related advisory, SA-CONTRIB-2026-218 for Entity List ([CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099)), is also Critical 19/25 from Drupal and also has no CNA score. CISA-ADP scored that one 8.1 the same day.**
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-10-31) for either CVE. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-09) for either CVE. CISA-ADP's Exploitation field is none. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -3867,7 +3894,8 @@ Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/adviso
 | SA-CONTRIB-2026-218 (Entity List 3.0.10) | 2026-10-14 (RSS 17:26 UTC) | Release published 15:59 UTC. |
 | Fortbridge lab reconstruction | 2026-10-18; time/TZ unknown | File disclosure and command execution on 11.4.9 with a synthetic writer module; fails on 11.4.10. Not in-the-wild exploitation. |
 | CVE records published | 2026-10-30 03:09 UTC | Drupal CNA. No CVSS score in either record. Affected bounds match the advisories. |
-| **Last updated** | **2026-10-31 16:05 EDT (UTC−04:00)** | CVE records published; Drupal's 19/25 rating is unchanged. |
+| CISA-ADP score | 2026-11-06 | CVSS 3.1 8.1 High on both records. Exploitation none. Drupal's 19/25 is unchanged. |
+| **Last updated** | **2026-11-09 07:25 EST (UTC−05:00)** | The ADP score is recorded. The versions to install are unchanged. |
 
 The flaw is in core's Field UI module. Drupal says core alone cannot be exploited, but "multiple serious exploit paths exist with contributed modules", and at least one of them needs no login. Custom code may also expose it. The contributed modules are not named. Entity List has its own separate RCE with the same pattern.
 
