@@ -1,6 +1,6 @@
 # Debian APT: a resumed download can install a different package as root
 
-**Last updated:** 2026-11-07 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Main APT summary](../black-october-2026.md#debian-apt-a-resumed-download-can-install-a-different-package-as-root) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -28,6 +28,7 @@
 | Maintainer branch list | 2026-11-04 12:00:16 UTC | Julian Andres Klode names the stable-branch fixes, including 2.2.5, 2.4.15, 2.6.2, 2.8.4, 3.0.4, and 3.2.1, and says Ubuntu and Ubuntu Pro packages are being released. [deity][deity] |
 | forky now fixed | Tracker read 2026-11-05 | forky and sid are both 3.3.6 fixed. On 2026-11-04 forky was still 3.3.5. [Tracker][tracker] |
 | sid package moves | Tracker read 2026-11-07 | sid is 3.3.7 fixed. The tracker's first fixed version for unstable is still 3.3.6. forky stays 3.3.6. [Tracker][tracker] |
+| sid package, reread | Tracker read 2026-11-09 | forky and sid are both 3.3.6 fixed. The unstable first fixed version is still 3.3.6. The tracker no longer lists 3.3.7. [Tracker][tracker] |
 | Ubuntu packages | 2026-11-04; time/TZ unknown | USN-8996-1. 26.10 `3.3.3ubuntu0.1`, 26.04 `3.2.1ubuntu0.1`, 24.04 `2.8.4ubuntu0.1`, 22.04 `2.4.15ubuntu0.1`. 20.04, 18.04, 16.04, and 14.04 are Ubuntu Pro. [USN-8996-1][usn] |
 
 ## Detection
@@ -45,8 +46,8 @@ Debian's tracker, read 2026-11-04:
 |---|---|---|
 | bookworm (Debian 12) | 2.6.1 | 2.6.2 (bookworm-security, DLA-4880-1) |
 | trixie (Debian 13) | 3.0.3 | 3.0.4 (trixie-security, DSA-6607-1) |
-| sid | 3.3.5 | 3.3.6. The tracker read on 2026-11-07 lists the current sid package as 3.3.7, still fixed. |
-| forky | 3.3.5 | 3.3.6, as of the tracker read on 2026-11-07 |
+| sid | 3.3.5 | 3.3.6. The tracker read on 2026-11-09 lists the current sid package as 3.3.6, fixed. A read on 2026-11-07 had listed 3.3.7. |
+| forky | 3.3.5 | 3.3.6, as of the tracker read on 2026-11-09 |
 
 A version below the fixed floor for that release is vulnerable. A version the table does not name is **unknown**, not safe.
 
@@ -77,7 +78,7 @@ HTTPS to the archive does not remove the flaw. Ubuntu includes a malicious mirro
 
    Upgrade `apt` before the rest of the system. The same Debian updates also fix several out-of-bounds access issues that have no CVE.
 
-2. On sid and on forky, install `apt` **3.3.6 or later**. The tracker's first fixed version for unstable is 3.3.6. The tracker read on 2026-11-07 lists the current sid package as 3.3.7 and forky as 3.3.6, both fixed. On 2026-11-04 forky was still 3.3.5.
+2. On sid and on forky, install `apt` **3.3.6 or later**. The tracker's first fixed version for unstable is 3.3.6. The tracker read on 2026-11-09 lists forky and sid together at 3.3.6, both fixed. A read on 2026-11-07 had listed sid as 3.3.7. On 2026-11-04 forky was still 3.3.5.
 
 3. On Ubuntu 26.10, 26.04, 24.04, and 22.04, a normal update installs the USN-8996-1 package. Upgrade `apt` before other packages:
 
@@ -107,7 +108,7 @@ The advisory describes replacement of a package after verification. It does not 
 ## Sources
 
 - [DSA-6607-1][dsa] — 2026-11-04 12:07:32 UTC. trixie `apt` 3.0.4. Credits Max Justicz. Also addresses several out-of-bounds access issues, with no separate CVE.
-- [Debian security tracker][tracker] — bookworm 2.6.2 fixed (DLA-4880-1); trixie 3.0.4 fixed; forky 3.3.6 fixed; sid 3.3.7 fixed, first fixed version 3.3.6. Read 2026-11-07.
+- [Debian security tracker][tracker] — bookworm 2.6.2 fixed (DLA-4880-1); trixie 3.0.4 fixed; forky and sid both 3.3.6 fixed; unstable first fixed version 3.3.6. Read 2026-11-09. A read on 2026-11-07 had listed sid as 3.3.7.
 - [APT-2026-11-01][deity] — Julian Andres Klode, 2026-11-04 13:00:16 +0100. Names the stable-branch fixes and says Ubuntu and Ubuntu Pro packages are being released. USN-8996-1 is that release.
 - [DLA-4880-1][dla-announce] — 2026-11-04 12:46:36 UTC. bookworm `apt` 2.6.2. The announcement also says the update addresses several out-of-bounds access issues, and it names no CVE for those.
 - [Ubuntu CVE-2026-109518][ubuntu] — CVSS 4.0 7.7 High, priority High, published 2026-11-04. States the retries and redirect conditions. Fixed versions are in [USN-8996-1][usn], 4 November 2026.

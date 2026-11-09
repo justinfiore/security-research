@@ -35,7 +35,10 @@
 | CVE record published | 2026-11-06; time/TZ unknown | VulnCheck CNA. CVSS 4.0 9.3 and CVSS 3.1 9.8. Craft's advisory is unchanged. [CNA][cve] |
 | GraphQL prev/next CVE | 2026-11-08 13:15:24 UTC | VulnCheck published [CVE-2026-124427](https://www.cve.org/CVERecord?id=CVE-2026-124427) for GHSA-xpg7-m6gm-4xfh. CVSS 4.0 9.3 and CVSS 3.1 9.8. Craft's page still says Moderate and no CVE. |
 | CISA KEV | Not listed (catalog 2026.11.06, checked 2026-11-08) | None of the three CVEs. [KEV][kev] |
-| **Last updated** | **2026-11-08 (America/New_York)** | The GraphQL prev/next read has a Critical CVE score. The fix is unchanged. |
+| 5.11.4 tagged | 2026-10-01 15:49:48 UTC | Fixes the image-transform class guard. The advisory came later. [GHSA-hq78-cm2m-h24h](https://github.com/craftcms/cms/security/advisories/GHSA-hq78-cm2m-h24h) |
+| 5.11.5 tagged | 2026-10-07 17:38:22 UTC | Fixes the `findOne()` injection. The advisory came later. [GHSA-cphx-cx67-jcqj](https://github.com/craftcms/cms/security/advisories/GHSA-cphx-cx67-jcqj) |
+| Two more High advisories | 2026-11-02; time/TZ unknown | Both published this day. Neither has a CVE. Craft 4 is not in either. |
+| **Last updated** | **2026-11-08 (America/New_York)** | The 5.x floor is 5.11.5. 4.18.9 is unchanged. |
 
 ## The other High fixes in the same releases
 
@@ -49,6 +52,8 @@ These are the High advisories the 5.11.2 and 4.18.9 notes name. One now has a CV
 | [GHSA-9hp6-3565-gvh5](https://github.com/craftcms/cms/security/advisories/GHSA-9hp6-3565-gvh5) | A control-panel user with `accessCp` | Replaces `CRAFT_SECURITY_KEY` in `.env`, then command execution | 5.11.2 and 4.18.9 |
 | [GHSA-qj3q-j7r4-428p](https://github.com/craftcms/cms/security/advisories/GHSA-qj3q-j7r4-428p) | A non-administrator control-panel user | Signs a Twig template, then command execution on login | 5.11.2 only (5.10.0 through 5.11.1) |
 | [GHSA-r56r-f696-c8w9](https://github.com/craftcms/cms/security/advisories/GHSA-r56r-f696-c8w9), [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490) | A control-panel user | Administrator through sandboxed `getOwners()`. VulnCheck: CVSS 4.0 8.7 and CVSS 3.1 8.8. | 5.11.2 only (5.8.17 through 5.11.1) |
+| [GHSA-hq78-cm2m-h24h](https://github.com/craftcms/cms/security/advisories/GHSA-hq78-cm2m-h24h) | A public site user with a profile photo, in the right circumstances | Image-transform class guard bypassed, then PHP execution. Craft says unauthenticated. No CVE. | 5.11.4 (5.0.0 through 5.11.3). Craft 4 is not in the advisory. |
+| [GHSA-cphx-cx67-jcqj](https://github.com/craftcms/cms/security/advisories/GHSA-cphx-cx67-jcqj) | A lowest-privilege account | `Element::findOne()` takes array criteria as raw SQL. The 5.11.2 fix missed this path. No CVE. | 5.11.5 (5.0.0 through 5.11.4). Craft 4 is not in the advisory. |
 
 The same releases also fix flaws Craft rates moderate. Public registration can keep a deactivated account's direct permissions ([GHSA-v25r-wr32-jfg7](https://github.com/craftcms/cms/security/advisories/GHSA-v25r-wr32-jfg7), 5.x only). Anonymous GraphQL can read content the schema was set to withhold. [GHSA-mp59-9rf5-93wr](https://github.com/craftcms/cms/security/advisories/GHSA-mp59-9rf5-93wr) is still Moderate and has no CVE. [GHSA-xpg7-m6gm-4xfh](https://github.com/craftcms/cms/security/advisories/GHSA-xpg7-m6gm-4xfh) is the one VulnCheck scored Critical, below.
 
@@ -73,17 +78,17 @@ If Composer is unavailable, or the site may be compromised, read the constraint 
 python3 -c 'import json; d=json.load(open("PROJECT_ROOT/composer.lock")); print(next(p["version"] for p in d["packages"] if p["name"]=="craftcms/cms"))'
 ```
 
-Affected: **5.0.0 through 5.11.1**, and **4.0.0 through 4.18.8**. Two of the High flaws, the signing oracle and `getOwners()`, are 5.x only. Craft 3 is outside every range the advisories name. Include staging copies. An install that is not on the public internet is still affected if the control panel or the GraphQL endpoint is reachable by someone who should not have it.
+Affected: **5.0.0 through 5.11.4** for the `findOne()` injection, and **4.0.0 through 4.18.8** for the September cluster. An install on 5.11.2 or 5.11.3 is past the September flaws and still inside the image-transform PHP execution (through 5.11.3) and the `findOne()` injection (through 5.11.4). Two of the September High flaws, the signing oracle and `getOwners()`, are 5.x only, and so are both November advisories. Craft 3 is outside every range the advisories name. Include staging copies. An install that is not on the public internet is still affected if the control panel or the GraphQL endpoint is reachable by someone who should not have it.
 
 ## Remediation
 
-1. **Update `craftcms/cms` to 5.11.2 or later, or 4.18.9 or later on the 4.x line,** then deploy and clear caches the way you normally do. The current 5.x release may be newer than 5.11.2; 5.11.2 is the floor, not a pin.
+1. **Update `craftcms/cms` to 5.11.5 or later, or 4.18.9 or later on the 4.x line,** then deploy and clear caches the way you normally do. 5.11.2 fixed the September cluster and left two High paths open. 5.11.4 fixes the image-transform PHP execution. 5.11.5 fixes the `findOne()` injection. 5.11.5 is the floor, not a pin.
 2. **There is no workaround** in the advisories. Taking the control panel off the internet removes the paths that need a control-panel account. It does not remove the unauthenticated element-search injection or the anonymous GraphQL injection.
 3. Updating stops the queries and the template signing. It does not unset an admin flag an injected query already set, and it does not restore a `CRAFT_SECURITY_KEY` an attacker already replaced.
 
 ## Verification
 
-- Re-run the version check and confirm **5.11.2 or later**, or **4.18.9 or later**, on every install, including staging.
+- Re-run the version check and confirm **5.11.5 or later**, or **4.18.9 or later**, on every install, including staging.
 - Load the control panel and one public page you already use. Do not send SQL payloads.
 
 ## Compromise response
@@ -103,6 +108,8 @@ The reviewed sources do not publish a query, an indicator, or a confirmed compro
 - [5.11.2 release][rel5] and [4.18.9 release][rel4]: 2026-09-17, high-severity fixes, no CVE named.
 - [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490): VulnCheck CNA, published 2026-11-06, CVSS 4.0 8.7 and CVSS 3.1 8.8, GHSA-r56r-f696-c8w9, 5.8.17 before 5.11.2. Craft's advisory still says no CVE is known.
 - [GHSA-xpg7-m6gm-4xfh](https://github.com/craftcms/cms/security/advisories/GHSA-xpg7-m6gm-4xfh): Craft, Moderate, no CVE, anonymous GraphQL prev/next read of a withheld section, 5.0.0 before 5.11.2, published 2026-10-23.
+- [GHSA-hq78-cm2m-h24h](https://github.com/craftcms/cms/security/advisories/GHSA-hq78-cm2m-h24h): Craft, High, no CVE, image-transform class guard bypass to PHP execution, 5.0.0 before 5.11.4, published 2026-11-02. Craft says an unauthenticated attacker can execute PHP in the right circumstances.
+- [GHSA-cphx-cx67-jcqj](https://github.com/craftcms/cms/security/advisories/GHSA-cphx-cx67-jcqj): Craft, High, no CVE, authenticated SQL injection through `Element::findOne()` array criteria, 5.0.0 before 5.11.5, published 2026-11-02. A lowest-privilege account can read the database. The 5.11.2 fix missed this path.
 - [CVE-2026-124427](https://www.cve.org/CVERecord?id=CVE-2026-124427): VulnCheck CNA, published 2026-11-08 13:15:24 UTC, CVSS 4.0 9.3 and CVSS 3.1 9.8, same advisory. NVD has not scored it. Craft's page still says Moderate and no CVE.
 - [NVD][nvd]: published 2026-11-06, no NVD score, for CVE-2026-123488.
 - [CISA KEV JSON feed][kev]: catalog 2026.11.06, checked 2026-11-08. None of the three CVEs is listed.
