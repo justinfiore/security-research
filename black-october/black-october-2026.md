@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [GPUStack: a loopback request is the administrator](#gpustack-a-loopback-request-is-the-administrator)
+- [FreeSWITCH: a SIP MESSAGE runs an API command](#freeswitch-a-sip-message-runs-an-api-command)
+- [Swarm: bee-js 13.3.0 and Swarm Desktop 0.56.2 were malicious releases](#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases)
 - [UnrealIRCd: a label tag runs a server command](#unrealircd-a-label-tag-runs-a-server-command)
 - [WordPress plugins: Contact Form 7 file upload, Ecommerce Affiliate account takeover, and Turisbook stored XSS](#wordpress-plugins-contact-form-7-file-upload-ecommerce-affiliate-account-takeover-and-turisbook-stored-xss)
 - [WordPress plugins: Frontend Admin privilege escalation](#wordpress-plugins-frontend-admin-privilege-escalation)
@@ -201,6 +204,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update (CISA KEV):** Upgrade [GPUStack](#gpustack-a-loopback-request-is-the-administrator) to **2.3.0 or later** and restart the server and the workers. GitHub rates [CVE-2026-102895](https://www.cve.org/CVERecord?id=CVE-2026-102895) CVSS 3.1 9.8 Critical: before 2.2.0, a request that looks like it came from localhost is the administrator. CISA added it on November 9, due November 12. The project says a 2.1.1 deployment was exploited. 2.2.0 does not fix the SAML callback or the cluster proxy, both fixed in 2.2.2. 2.3.0 also fixes a High flaw with no CVE. The upgrade does not delete an administrator key already created.
+- **New this update (CISA KEV):** Upgrade [FreeSWITCH](#freeswitch-a-sip-message-runs-an-api-command) to **1.11.3 or later** and restart. GitHub rates [CVE-2026-116779](https://www.cve.org/CVERecord?id=CVE-2026-116779) CVSS 3.1 9.8 Critical: an inbound SIP MESSAGE can run an API command, and chat is on by default. CISA added it on November 9, due November 12. The project says exploitation has been observed. Until the upgrade, set `enable-chat=false` on profiles that do not need chat. The upgrade does not show whether a command already ran.
+- **New this update:** If you installed [@ethersphere/bee-js 13.3.0](#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases) or launched [Swarm Desktop 0.56.2](#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases), treat that machine as compromised. GitHub rates the bee-js advisory Critical, and it has no CVSS score and no CVE. Both releases were published November 9 with the project's own CI and stolen credentials. Pin bee-js to **13.2.0** and install Swarm Desktop **0.56.3**. Uninstalling does not remove the backdoor. From a different computer, rotate every credential that machine could read and move the node's funds to a new key.
 - **New this update:** On [UnrealIRCd](#unrealircd-a-label-tag-runs-a-server-command) 6.0.0 through 6.2.7, add the project's spamfilter, then run `./unrealircd hot-patch bundle-20261107` on every server, or upgrade to **6.2.7.1** and restart. The project calls [CVE-2026-114713](https://www.cve.org/CVERecord?id=CVE-2026-114713) the most critical issue in 15 years: on a network of two or more linked servers, any user can run a server command. MITRE scores it CVSS 3.1 8.6 High, and that vector rates confidentiality and availability None. The same patch fixes eight more issues the project does not score. The project says it is seeing exploitation attempts. It is not in KEV.
 - **New this update:** Update [Contact Form 7](#wordpress-plugins-contact-form-7-file-upload-ecommerce-affiliate-account-takeover-and-turisbook-stored-xss) to **6.2.4 or later**, and remove [Ecommerce Affiliate](#wordpress-plugins-contact-form-7-file-upload-ecommerce-affiliate-account-takeover-and-turisbook-stored-xss) and [Turisbook](#wordpress-plugins-contact-form-7-file-upload-ecommerce-affiliate-account-takeover-and-turisbook-stored-xss). WPScan rates [CVE-2026-114432](https://www.cve.org/CVERecord?id=CVE-2026-114432) CVSS 3.1 9.8 Critical: on 6.2 through 6.2.3, a logged-out visitor can leave a file in the uploads directory, and on a stock Debian or Ubuntu Apache setup that file can run. [CVE-2026-106015](https://www.cve.org/CVERecord?id=CVE-2026-106015) is 8.1 High, an account takeover with no fix. [CVE-2026-103303](https://www.cve.org/CVERecord?id=CVE-2026-103303) is 8.8 High, stored script with no fix. None is in KEV.
 - **New this update:** Update [Frontend Admin](#wordpress-plugins-frontend-admin-privilege-escalation) to **3.30.2 or later**. Patchstack rates [CVE-2026-119506](https://www.cve.org/CVERecord?id=CVE-2026-119506) CVSS 3.1 9.1 Critical: through 3.30.1, a logged-out visitor can gain a higher role. The page also says a low-privilege user can become an admin. The CVE record does not say which request does it. The update does not undo a role already granted. It is not in KEV.
@@ -241,7 +247,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** On [Sophos UTM](#sophos-utm-unauthenticated-root-command-through-the-email-proxy), install the manual RPM from KBA-000049692, or move off the product. Sophos rates [CVE-2026-118633](https://www.cve.org/CVERecord?id=CVE-2026-118633) CVSS 4.0 9.2 Critical: with email scanning on, a remote sender can run a command as root after repeating the attempt for a few minutes. UTM is end of life. Version 9.724 without that RPM is still affected. Sophos Firewall is not this flaw. It is not in KEV.
 - **New this update:** Upgrade [SEPPmail](#seppmail-unauthenticated-command-execution-and-file-deletion) Secure Email Gateway to **15.1.1 or later**. NCSC.ch rates two flaws CVSS 4.0 9.2 Critical: before 15.1.1, a remote sender can run a command as root through an address-replacement rule, and can make Large File Transfer read or delete a file. The same release fixes an 8.7 upload exhaustion flaw and an 8.3 GINA account takeover. The vendor's revision history swaps the scores on the two GINA CVEs. None is in KEV.
 - **New this update:** If a server loads the [Better Auth Expo plugin](#better-auth-the-expo-plugin-signs-a-value-it-did-not-issue), upgrade `@better-auth/expo` and `better-auth` to **1.7.16** (or **1.8.0-beta.5** on the beta line) and rotate the application secret. GitHub rates it 9.1 Critical: the plugin signs a caller-supplied value, and someone who knows a user's email can change that email. It is not in KEV.
-- **New this update:** On [Alpine and other musl Linux](#openssh-password-login-on-musl-accepts-any-long-password), upgrade OpenSSH and restart `sshd`, then look for a password login on an account that has none. MITRE rates it [CVE-2026-123158](https://www.cve.org/CVERecord?id=CVE-2026-123158) CVSS 3.1 8.1 High. Previdian says a honeypot accepted a root login on November 6. Its public page, reread the same day, counts 7 attempts from 4 addresses and does not call them successful. Where sshd checks passwords itself, an account with no password accepts any password of 257 to 1024 bytes, if some other account has a password. glibc Linux, OpenBSD, and Dropbear are not affected. If you cannot update yet, set `PasswordAuthentication no` and restart `sshd`. The upgrade does not replace a daemon that is still running, and it does not remove a key a login already wrote. It is not in KEV.
+- **New this update (CISA KEV):** On [Alpine and other musl Linux](#openssh-password-login-on-musl-accepts-any-long-password), upgrade OpenSSH and restart `sshd`, then look for a password login on an account that has none. CISA added [CVE-2026-123158](https://www.cve.org/CVERecord?id=CVE-2026-123158) on November 9, due November 12. MITRE rates it CVSS 3.1 8.1 High. Where sshd checks passwords itself, an account with no password accepts any password of 257 to 1024 bytes, if some other account has a password. glibc Linux, OpenBSD, and Dropbear are not affected. If you cannot update yet, set `PasswordAuthentication no` and restart `sshd`. The upgrade does not replace a daemon that is still running, and it does not remove a key a login already wrote.
 - **New this update:** Upgrade [SHIRASAGI](#shirasagi-authenticated-command-injection-in-open-data-harvest) to **v1.21.1**. JPCERT/CC rates [CVE-2026-118869](https://www.cve.org/CVERecord?id=CVE-2026-118869) 8.8 High: in v1.19.0 through v1.21.0, a logged-in user who can edit an open-data harvest URL can run a command. v1.18.2 and earlier are not affected. It is not in KEV.
 - **New this update:** Upgrade [Mistral Vibe](#mistral-vibe-a-repository-git-setting-runs-a-program-before-the-trust-prompt) to **3.0.3 or later**. VulnCheck rates [CVE-2026-122135](https://www.cve.org/CVERecord?id=CVE-2026-122135) CVSS 4.0 8.6 High: opening a repository can run a program named by that repository's Git config before Vibe asks you to trust the folder. 3.0.3 shipped on October 26. The CVE record is November 4. Two older High flaws in the same tool are fixed in 2.25.7 and 2.25.5. None is in KEV.
 - **New this update:** On [OPNsense](#opnsense-google-cloud-dns-command-injection-in-the-acme-client), stop using Google Cloud DNS validation in the ACME Client plugin until the firmware page offers **os-acme-client 4.18**. MITRE rates [CVE-2026-123025](https://www.cve.org/CVERecord?id=CVE-2026-123025) CVSS 4.0 9.4 Critical: through 4.17, a logged-in user who can renew certificates can run commands as root. The fix is merged in git. The 26.7 package repository still publishes 4.17. It is not in KEV.
@@ -332,6 +338,79 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## GPUStack: a loopback request is the administrator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/gpustack.md):** [Detection](details/gpustack.md#detection) · [Remediation](details/gpustack.md#remediation) · [Verification](details/gpustack.md#verification) · [Timeline](details/gpustack.md#timeline)
+
+**CVEs:** [CVE-2026-102895](https://www.cve.org/CVERecord?id=CVE-2026-102895), [CVE-2026-102894](https://www.cve.org/CVERecord?id=CVE-2026-102894), [CVE-2026-103002](https://www.cve.org/CVERecord?id=CVE-2026-103002)
+
+**GitHub rates [CVE-2026-102895](https://www.cve.org/CVERecord?id=CVE-2026-102895) CVSS 3.1 9.8 Critical.** Before 2.2.0, a request that looks like it came from localhost is the built-in administrator, and `force_auth_localhost` is off by default. A same-host reverse proxy makes every remote request look that way. A client can also send `X-GPUStack-Real-IP: 127.0.0.1`. The project says a 2.1.1 deployment was exploited, with attacker-created backends running reverse shells. **2.2.0 is not the release to install.** [CVE-2026-102894](https://www.cve.org/CVERecord?id=CVE-2026-102894) is 9.1: through 2.2.1 the SAML callback accepts an unsigned response and issues a session, and SAML does not have to be configured. [CVE-2026-103002](https://www.cve.org/CVERecord?id=CVE-2026-103002) is 8.8: on 2.2.0 and 2.2.1 a logged-in non-administrator reaches a Kubernetes cluster through a worker's ServiceAccount. A fourth flaw, High 7.6, has no CVE and is fixed only in 2.3.0.
+
+**CISA KEV:** [CVE-2026-102895](https://www.cve.org/CVERecord?id=CVE-2026-102895) listed — added 2026-11-09, federal due date 2026-11-12. Ransomware use Unknown. The other two CVEs are not listed (catalog 2026.11.09, checked 2026-11-09).
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| GPUStack 2.2.0 | 2026-06-18 15:54 UTC | Removes the loopback path. The notes do not name the flaw. |
+| GPUStack 2.2.2 | 2026-07-24 14:47 UTC | Fixes the SAML callback and the cluster proxy. |
+| **Public advisory** | **2026-07-31; time/TZ unknown** | The loopback advisory. Exploitation against a 2.1.1 deployment. |
+| CVE records | 2026-11-04; time/TZ unknown | GitHub published all three. |
+| **CISA KEV** | **2026-11-09** | Catalog 2026.11.09, released 16:16:16 UTC. CVE-2026-102895 only. Due 2026-11-12. |
+| **Last updated** | **2026-11-09 16:15 EST (UTC−05:00)** | New item. Upgrade GPUStack. |
+
+**Patch:** **2.3.0 or later**, server and workers, then restart. 2.2.2 fixes the three CVEs and leaves the worker-management flaw. Until then, set `force_auth_localhost=true` and block `/auth/saml/callback`. The upgrade does not delete an administrator key or a backend already created.
+
+Sources: [GHSA-gj9m-f8ph-pmhr](https://github.com/gpustack/gpustack/security/advisories/GHSA-gj9m-f8ph-pmhr), [CVE-2026-102895](https://www.cve.org/CVERecord?id=CVE-2026-102895), [detailed guide](details/gpustack.md).
+
+---
+
+## FreeSWITCH: a SIP MESSAGE runs an API command
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/freeswitch.md):** [Detection](details/freeswitch.md#detection) · [Remediation](details/freeswitch.md#remediation) · [Verification](details/freeswitch.md#verification) · [Timeline](details/freeswitch.md#timeline)
+
+**CVEs:** [CVE-2026-116779](https://www.cve.org/CVERecord?id=CVE-2026-116779)
+
+**GitHub rates [CVE-2026-116779](https://www.cve.org/CVERecord?id=CVE-2026-116779) CVSS 3.1 9.8 Critical.** Before 1.11.3, an inbound SIP MESSAGE splits the user part of the To header on a plus sign and treats the left side as a chat protocol. Choosing `api` runs a FreeSWITCH API command as the daemon, including an operating-system command. Chat is on unless a profile sets `enable-chat=false`, and the stock internal and external profiles do not. The project says exploitation has been observed. One registered account is enough. The stock directory also ships a user named `default` with no password.
+
+**CISA KEV:** Listed — added 2026-11-09, federal due date 2026-11-12. Ransomware use Unknown.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| FreeSWITCH 1.11.3 | 2026-08-28 22:27 UTC | Adds `enable-chat-api-proto`, off unless a profile sets it. The notes do not name the CVE. |
+| **Public advisory** | **2026-10-28; time/TZ unknown** | Exploitation observed. Fixed in 1.11.3. |
+| CVE record | 2026-11-05; time/TZ unknown | GitHub, CVSS 3.1 9.8. |
+| **CISA KEV** | **2026-11-09** | Catalog 2026.11.09, released 16:16:16 UTC. Due 2026-11-12. |
+| **Last updated** | **2026-11-09 16:15 EST (UTC−05:00)** | New item. Upgrade FreeSWITCH. |
+
+**Patch:** **1.11.3 or later**, then restart. Until then, set `enable-chat=false` on every profile that does not need inbound chat, and remove directory users that have no password. `disable_system_api_commands` does not close the path. The upgrade does not show whether a command already ran.
+
+Sources: [GHSA-mg63-h38w-8p9p](https://github.com/signalwire/freeswitch/security/advisories/GHSA-mg63-h38w-8p9p), [CVE-2026-116779](https://www.cve.org/CVERecord?id=CVE-2026-116779), [detailed guide](details/freeswitch.md).
+
+---
+
+## Swarm: bee-js 13.3.0 and Swarm Desktop 0.56.2 were malicious releases
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/bee-js.md):** [Detection](details/bee-js.md#detection) · [Remediation](details/bee-js.md#remediation) · [Verification](details/bee-js.md#verification) · [Timeline](details/bee-js.md#timeline)
+
+**CVEs:** No CVE is assigned. GitHub lists [GHSA-hh7j-5m3j-23pf](https://github.com/advisories/GHSA-hh7j-5m3j-23pf).
+
+**GitHub Advisory Database rates the bee-js release Critical. There is no CVSS score.** The advisory type is malware. `@ethersphere/bee-js` 13.3.0 was on npm for about 75 minutes on November 9, from 00:09 UTC. Its install script downloads and runs code. Swarm Desktop 0.56.2, published about 00:36 UTC the same day, runs the same loader at each launch. The maintainer's note says 0.56.2 was published with stolen CI credentials. Both were built by the project's own automation, so the npm package carried valid provenance. The loader reads the Swarm node's key and the password stored next to it, and it installs a backdoor. **13.2.0 is the last clean bee-js release. 0.56.3 replaces 0.56.2.**
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| bee-js 13.3.0 on npm | 2026-11-09 00:09:50 UTC | Removed 01:24:58 UTC. Socket's estimate is about 10 downloads, including scanners. |
+| Swarm Desktop 0.56.2 | 2026-11-09, about 00:36 UTC | Withdrawn about 8.5 hours later. 65 downloads by 08:27 UTC, including researchers. |
+| GitHub malware advisory | 2026-11-09 01:25:27 UTC | Severity `critical`. No CVSS and no CVE. |
+| **Clean release** | **2026-11-09 12:52 UTC** | Swarm Desktop 0.56.3. The notes say it replaces 0.56.2. |
+| **Last updated** | **2026-11-09 16:15 EST (UTC−05:00)** | New item. Remove both releases. |
+
+**Patch:** Pin `@ethersphere/bee-js` to **13.2.0**. Install Swarm Desktop **0.56.3**, and on Linux replace the package by hand. If 13.3.0 was installed with scripts enabled, or 0.56.2 ever launched, treat that machine as compromised. Uninstalling does not remove the backdoor. From a different computer, rotate every credential that machine could read, and move the node's funds to a new key.
+
+Sources: [GHSA-hh7j-5m3j-23pf](https://github.com/advisories/GHSA-hh7j-5m3j-23pf), [Swarm Desktop 0.56.3](https://github.com/ethersphere/swarm-desktop/releases/tag/v0.56.3), [detailed guide](details/bee-js.md).
 
 ---
 
@@ -1179,7 +1258,7 @@ Vulnerability Info Site: [sshhole.com](https://sshhole.com/)
 
 **MITRE rates CVE-2026-123158 CVSS 3.1 8.1 High. OpenSSH calls the 10.6p2 workaround critical and still names no CVE.** On Linux built with musl, when sshd checks passwords itself instead of through PAM, an account whose password field is `*` accepts any password of 257 to 1024 bytes. The attacker needs that account's name and one other local account with a `$5$` or `$6$` password hash. It takes one connection. Alpine's `openssh-server` is built without PAM, and password logins are the default. glibc Linux, OpenBSD, and Dropbear are not affected. A build that includes PAM but sets `UsePAM no` is affected. The record says "between 256 and 1024 characters"; OpenSSH and Alpine say 257 to 1024 bytes. The record's affected range is every version before 10.6p2, which is wider than the distribution backports.
 
-**CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-06). Previdian told The Hacker News that a honeypot running Alpine and OpenSSH accepted a root login on November 6, less than nine hours after the CVE record. The public Previdian page, reread the same day, counts 7 attempts from 4 addresses and says an attempt is not a successful login. That is a honeypot, not a customer system. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Listed — added 2026-11-09, federal due date 2026-11-12. Ransomware use Unknown. Previdian told The Hacker News that a honeypot running Alpine and OpenSSH accepted a root login on November 6, less than nine hours after the CVE record. The public Previdian page, reread the same day, counts 7 attempts from 4 addresses and says an attempt is not a successful login. That is a honeypot, not a customer system.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1187,8 +1266,9 @@ Vulnerability Info Site: [sshhole.com](https://sshhole.com/)
 | Alpine packages | 2026-11-05; time/TZ unknown | Point releases 3.21.10, 3.22.8, 3.23.8, and 3.24.4. Fixed packages back to 3.16. |
 | OpenWrt package | 2026-11-05 14:26 UTC | `openssh` 10.6_p2 merged into the 25.12 branch. The default SSH server, Dropbear, is not affected. |
 | CVE record | 2026-11-05 15:46:26 UTC | MITRE, CVE-2026-123158, CVSS 3.1 8.1. OpenSSH's release notes still do not name it. |
-| Honeypot logins | 2026-11-06; clock time not on the page | Previdian. First attempt less than nine hours after the record. Not a KEV listing. |
-| **Last updated** | **2026-11-07 12:10 EST (UTC−05:00)** | Previdian's public count is now 19 attempts from 12 addresses. The interview's 8 attempts from one address still disagree. The fix is unchanged. |
+| Honeypot logins | 2026-11-06; clock time not on the page | Previdian. First attempt less than nine hours after the record. |
+| **CISA KEV** | **2026-11-09** | Catalog 2026.11.09, released 16:16:16 UTC. Due 2026-11-12. Ransomware use Unknown. |
+| **Last updated** | **2026-11-09 16:15 EST (UTC−05:00)** | CISA listed it. The package to install is unchanged. |
 
 **Patch:** Upgrade and restart `sshd`. The new package does not replace a daemon that is still running. On Alpine edge the package is **10.6_p2-r0**; 3.24 is **10.3_p1-r2**, 3.23 is **10.2_p1-r1**, 3.22 is **10.0_p1-r11**, and 3.21 is **9.9_p2-r1**, with backports through 3.16. A source build takes **10.6p2**. OpenWrt's optional OpenSSH package on the 25.12 branch is **10.6_p2**. If you cannot update yet, set `PasswordAuthentication no` and restart `sshd`; confirm a key login first. On Alpine's tiny-cloud images from 3.18.11 through 3.24.3, the `alpine` user has passwordless `doas`, so a password login there is root once any other account has a password hash. If the SSH port was reachable on November 6, look for `Accepted password for` on an account that has no password. The upgrade does not remove a key a login already wrote.
 
@@ -5465,6 +5545,9 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **GPUStack below 2.3.0** | Upgrade the server and every worker to 2.3.0 or later and restart. 2.2.0 fixes only the loopback administrator bypass, which CISA listed on November 9. 2.2.2 is the floor for the SAML callback and the cluster proxy, and it leaves a worker-management flaw. Until then, set `force_auth_localhost=true` and block `/auth/saml/callback`. The upgrade does not delete an administrator key already created. [Guide](details/gpustack.md#remediation). |
+| **FreeSWITCH before 1.11.3** | Upgrade to 1.11.3 or later and restart. CISA listed CVE-2026-116779 on November 9, due November 12. An inbound SIP MESSAGE can run an API command, and chat is on by default. Until then, set `enable-chat=false` on profiles that do not need it. Turning off the `system` API does not close the path. [Guide](details/freeswitch.md#remediation). |
+| **@ethersphere/bee-js, or Swarm Desktop** | Pin bee-js to 13.2.0. Install Swarm Desktop 0.56.3. 13.3.0 and 0.56.2 were malicious releases published November 9 with the project's own CI. If either ran, rebuild the machine or remove the persistence it left, and rotate credentials from a different computer. Move the node's funds to a new key. [Guide](details/bee-js.md#remediation). |
 | **WordPress with Contact Form 7 6.2 through 6.2.3, Ecommerce Affiliate through 1.0.0, or Turisbook Booking System through 1.3.8** | Update Contact Form 7 to 6.2.4 or later. A form with a file field can otherwise leave a file in the uploads directory, and on a stock Debian or Ubuntu Apache setup that file can run. Remove Ecommerce Affiliate and Turisbook. WPScan says neither has a fix. [Guide](details/wordpress-plugins-nov9b.md#remediation). |
 | **WordPress with Frontend Admin through 3.30.1** | Update `acf-frontend-form-element` to 3.30.2 or later. Patchstack rates the unauthenticated privilege escalation 9.1. The update does not remove a role already granted. This is not the November 6, 7, 8, or 9 plugin set and not LatePoint. [Guide](details/wordpress-plugins-frontend-admin.md#remediation). |
 | **WordPress with Userplace through 1.2.0, or Productive Commerce before 1.1.54** | Remove Userplace. WPScan rates the unauthenticated administrator creation 9.8 and says there is no fix. Update Productive Commerce to 1.1.54 or later. WPScan rates the unauthenticated SQL injection 8.6, and Patchstack scores it 9.3. This is not the November 6, 7, or 8 plugin set and not LatePoint. [Guide](details/wordpress-plugins-nov9.md#remediation). |
@@ -5487,7 +5570,7 @@ flowchart TD
 | **Sophos UTM used as an SMTP gateway with email scanning** | Update to 9.724 and install the manual RPM in KBA-000049692, then confirm the hash of `/usr/bin/cssd`. 9.724 alone is not the fix. UTM is end of life; Sophos Firewall is the replacement and is not this flaw. [Guide](details/sophos-utm.md#remediation). |
 | **SEPPmail Secure Email Gateway before 15.1.1** | Upgrade to 15.1.1 or later. A remote sender can run a command as root when a replacement rule uses text from the message, and can make Large File Transfer read or delete a file. The vendor changelog swaps the scores on the two GINA flaws; use the CNA scores. [Guide](details/seppmail.md#remediation). |
 | **Better Auth with the Expo plugin** | Upgrade `@better-auth/expo` and `better-auth` to 1.7.16, or 1.8.0-beta.5 on the beta line, and rotate the application secret. The plugin signs a caller-supplied value, and someone who knows an email address can change that account's email. A server that does not register `expo()` is outside this flaw. [Guide](details/better-auth-expo.md#remediation). |
-| **Alpine or other musl Linux running OpenSSH without PAM** | Upgrade `openssh` and restart `sshd`. On Alpine, edge is 10.6_p2-r0, 3.24 is 10.3_p1-r2, 3.23 is 10.2_p1-r1, 3.22 is 10.0_p1-r11, and 3.21 is 9.9_p2-r1. A source build takes OpenSSH 10.6p2. Until then, set `PasswordAuthentication no`. glibc Linux, OpenBSD, and Dropbear are outside this flaw. [Guide](details/openssh-musl.md#remediation). |
+| **Alpine or other musl Linux running OpenSSH without PAM** | Upgrade `openssh` and restart `sshd`. CISA added CVE-2026-123158 on November 9, due November 12. On Alpine, edge is 10.6_p2-r0, 3.24 is 10.3_p1-r2, 3.23 is 10.2_p1-r1, 3.22 is 10.0_p1-r11, and 3.21 is 9.9_p2-r1. A source build takes OpenSSH 10.6p2. Until then, set `PasswordAuthentication no`. glibc Linux, OpenBSD, and Dropbear are outside this flaw. [Guide](details/openssh-musl.md#remediation). |
 | **SHIRASAGI v1.19.0 through v1.21.0** | Upgrade to v1.21.1. A logged-in user who can edit an open-data harvest URL can run a command. v1.18.2 and earlier are outside this flaw. A jump from v1.14.2 or earlier crosses the v1.15.0 incompatibility. [Guide](details/shirasagi.md#remediation). |
 | **Mistral Vibe before 3.0.3** | Upgrade to 3.0.3 or later. Opening a repository can run a program named in that repository's Git config before the trust prompt. Builds before 2.25.7 are also inside two older High flaws. [Guide](details/mistral-vibe.md#remediation). |
 | **OPNsense with os-acme-client through 4.17** | Do not install a package that is not published. On 2026-11-05 the 26.7 repository is still 4.17, including the devel package. Stop using Google Cloud DNS validation until the firmware page offers 4.18. A logged-in certificate manager can run commands as root through that module. [Guide](details/opnsense-acme-client.md#remediation). |
