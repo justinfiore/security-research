@@ -1,6 +1,6 @@
 # Linux kernel: IPv4 TCP options use-after-free
 
-**Last updated:** 2026-11-08 (America/New_York)
+**Last updated:** 2026-11-09 (America/New_York)
 
 [Main Linux kernel summary](../black-october-2026.md#linux-kernel-ipv4-tcp-options-use-after-free) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -64,7 +64,7 @@ The reviewed primary sources do not provide compromise indicators. Preserve kern
 
 - [Marcus Hutchins, 2026-11-03][hutchins] — suspected MPTCP scanning of port 443 as of November 2, no public RCE exploit, and `ss -Mlnp` for listeners. His reachability counts do not separate patched kernels.
 - [kernel.org CNA CVE record][cve] — vulnerability mechanics, score and fixed commit ranges.
-- [Red Hat advisory][redhat] — public CVSS 3.1 9.8, status VERIFIED as of 2026-11-08, and a pointer to the mitigation bulletin. The earlier \"preliminary\" label is gone. OpenShift Container Platform 4.22 `ose-rhel-coreos-9` is Fixed in [RHSA-2026:95346](https://access.redhat.com/errata/RHSA-2026:95346) (2026-11-06). RHEL 9.2 Update Services for SAP `kernel` is Fixed in [RHSA-2026:94477](https://access.redhat.com/errata/RHSA-2026:94477) (2026-11-03), and RHEL 9.6 Extended Update Support `kernel` is Fixed in [RHSA-2026:94438](https://access.redhat.com/errata/RHSA-2026:94438) (2026-11-03). Generic OpenShift 4 and 5 stay Affected.
+- [Red Hat advisory][redhat] — public CVSS 3.1 9.8, status VERIFIED as of 2026-11-08, and a pointer to the mitigation bulletin. The earlier \"preliminary\" label is gone. OpenShift Container Platform 4.22 `ose-rhel-coreos-9` is Fixed in [RHSA-2026:95346](https://access.redhat.com/errata/RHSA-2026:95346) (2026-11-06). On 2026-11-09 Red Hat also fixed 4.19 in [RHSA-2026:95523](https://access.redhat.com/errata/RHSA-2026:95523) (4.19.55), 4.20 in [RHSA-2026:95377](https://access.redhat.com/errata/RHSA-2026:95377) (4.20.46), and 4.21 in [RHSA-2026:95408](https://access.redhat.com/errata/RHSA-2026:95408) (4.21.42). Each is rated Critical and names this CVE. RHEL 9.2 Update Services for SAP `kernel` is Fixed in [RHSA-2026:94477](https://access.redhat.com/errata/RHSA-2026:94477) (2026-11-03), and RHEL 9.6 Extended Update Support `kernel` is Fixed in [RHSA-2026:94438](https://access.redhat.com/errata/RHSA-2026:94438) (2026-11-03). Other OpenShift 4 minor releases, and OpenShift 5, stay Affected.
 - [RHSA-2026:93414][rhsa8], [RHSA-2026:93415][rhsart], [RHSA-2026:93412][rhsa9] and [RHSA-2026:93413][rhsa10] — RHEL 8, 8 real-time, 9 and 10 kernels issued 2026-11-01. Each names CVE-2026-98432.
 - [Red Hat RHSB-2026-016][rhsb] — nftables mitigation, published 2026-10-30 16:03, explicitly not a substitute for a kernel update.
 - [Ubuntu advisory][ubuntu] — supported-release status.
