@@ -58,11 +58,11 @@ Items are refreshed less often as they go quiet, so the sweep concentrates on it
 | Quiet days (since the detail guide's **Last updated** date) | Sweep the item |
 |---|---|
 | 0–6 | Daily |
-| 7–13 | Every 2 days |
-| 14–20 | Every 3 days |
-| 21–34 | Every 5 days |
-| 35–55 | Every 7 days |
-| 56 or more | Retired: no scheduled sweep |
+| 7–11 | Every 2 days |
+| 12–18 | Every 3 days |
+| 19–25 | Every 5 days |
+| 26–40 | Every 7 days |
+| 41 or more | Retired: no scheduled sweep |
 
 - **Any update resets the backoff to daily.** When a sweep, discovery or any other source changes an item materially (new exploitation, fix, version, severity, KEV status, detection or remediation), bump the detail guide's **Last updated** date as the [date conventions](#document-and-date-conventions) require. That date is what the backoff counts from, so the item is back to daily automatically. Do not bump it for presentation-only edits, or the backoff never progresses.
 - **Retired items are not forgotten.** Discovery still deduplicates every new finding against the whole guide. A new disclosure, exploitation report, KEV addition or fix for a retired item is a lead like any other: apply it, bump **Last updated**, and the item returns to daily.

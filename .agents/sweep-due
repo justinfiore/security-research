@@ -30,8 +30,8 @@ STATE = ROOT / "black-october" / "sweep-state.json"
 ET = ZoneInfo("America/New_York")
 HOLDS = ("none", "awaiting-fix", "awaiting-distros")
 # (quiet days below this bound, refresh interval in days)
-TIERS = ((7, 1), (14, 2), (21, 3), (35, 5), (56, 7))
-RETIRE_AFTER = 56
+TIERS = ((7, 1), (12, 2), (19, 3), (26, 5), (41, 7))
+RETIRE_AFTER = 41
 SLACK = timedelta(hours=2)  # runs start a few minutes apart from the 4-hour grid
 
 
