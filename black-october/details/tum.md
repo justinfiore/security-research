@@ -1,6 +1,6 @@
 # Technical University of Munich: stolen passwords for every myTUM account
 
-**Last updated:** 2026-11-08 (America/New_York)
+**Last updated:** 2026-11-09 (America/New_York)
 
 [Main TUM summary](../black-october-2026.md#technical-university-of-munich-stolen-passwords-for-every-mytum-account) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,7 @@ TUM says the access inside TUMonline was largely logged, and that it currently a
 
 TUM suspended the affected accounts, reported the incident to the Bavarian data-protection commissioner, and filed a criminal complaint. The November 6 notice said password-change options would be available by Monday, with instructions at it.tum.de by Monday evening at the latest.
 
-The German IT page published the reset on Saturday, November 7, 2026, 13:00 CET. Change the TUM password if it was not changed since November 5, 2026, 00:00. A password changed since then still counts, for now. The requirement covers every TUM account, not only people who used myTUM. TUM has not set the deadline. The English press page still shows the November 6, 12:20 p.m. status and still says the method is coming by Monday. The English IT news page, updated 2026-11-08 05:07 CET, and the TUMonline status entry now say the password change is possible immediately and link the German instructions. The EduVPN status entry on the same page still says a reset is not yet possible. The password page is the newer instruction.
+The German IT page published the reset on Saturday, November 7, 2026, 13:00 CET. Change the TUM password if it was not changed since November 5, 2026, 00:00. A password changed since then still counts, for now. The requirement covers every TUM account, not only people who used myTUM. TUM has not set the deadline. The English press page, status line Monday, November 9, 2026, 7:00 a.m. (timezone not stated), now says password changes in TUMonline are re-enabled at `https://campus.tum.de/tumonline/`. The November 6 status is still on the page below that line. The English IT news page and the German page both list the three methods. The English page footer says "Updated: 2026-11-09 08:46 CET"; that line is the page, not a dated line on the article. The German page says "Stand: 08.11.2026 - 13:00." Both still say signing in to TUMonline is not possible yet. The EduVPN status entry still says a reset is not yet possible. The password page and the November 9 press line are the newer instruction.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. TUM says the passwords were stolen. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -32,7 +32,8 @@ The German IT page published the reset on Saturday, November 7, 2026, 13:00 CET.
 | **Public announcement** | **2026-11-06 12:20; timezone not stated on the page** | TUM notice, status line "Friday, November 6, 2026, 12:20 p.m." [Notice][notice] |
 | TUMonline taken offline | Date not stated separately | After the stolen administrator login was used. Same notice. |
 | Password reset published | 2026-11-07 13:00 CET (UTC+01:00) | German IT news page. Change the password if it was not changed since 2026-11-05 00:00. Every TUM account, not only myTUM. No deadline yet. [IT news][it-de] |
-| English IT page points at the reset | 2026-11-08 05:07 CET (UTC+01:00) | The English news page and the TUMonline status entry say \"Die Passwortänderung ist ab Sofort möglich\" and link the German instructions. The English press page is unchanged. The EduVPN entry still says a reset is not yet possible. [English IT news][it] [Status][status] |
+| English IT page points at the reset | 2026-11-08 05:07 CET (UTC+01:00) | The English news page and the TUMonline status entry say the change is possible immediately and link the German instructions. The English press page was still the November 6 status. The EduVPN entry still says a reset is not yet possible. [English IT news][it] [Status][status] |
+| Press page says the reset is open | 2026-11-09 7:00 a.m.; timezone not stated | \"Status as of Monday, November 9, 2026, 7:00 a.m.\" Password changes in TUMonline are re-enabled at `https://campus.tum.de/tumonline/`. Signing in to TUMonline is still not possible, per the IT pages the same day. [Press][notice] |
 
 ## Detection
 
@@ -69,9 +70,9 @@ TUM says the password, name, home address, and date of birth were stolen for eve
 
 ## Sources
 
-- [TUM notice][notice] — the university's English page. Status line 2026-11-06 12:20 p.m., timezone not stated. Still the current press status on 2026-11-07. It still says the reset method is coming by Monday.
+- [TUM notice][notice] — the university's English page. The lead status is Monday, November 9, 2026, 7:00 a.m., timezone not stated: password changes in TUMonline are re-enabled at `https://campus.tum.de/tumonline/`. The November 6, 12:20 p.m. status is still on the page below it.
 - [TUM IT news, German][it-de] — "Informationen zum Passwort Reset." Updated 2026-11-07 13:00 CET. Three reset methods. Applies to every TUM account if the password was not changed since 2026-11-05 00:00.
-- [TUM IT news, English][it] — updated 2026-11-08 05:07 CET. The TUMonline status block now says the password change is possible immediately and links the German page. The page itself does not list the three methods. The EduVPN block on the same page still says a reset is not yet possible.
+- [TUM IT news, English][it] — the password-reset article lists the three methods and says signing in to TUMonline is not possible yet. The page footer says "Updated: 2026-11-09 08:46 CET"; that line is the page, not a dated line on the article. The EduVPN block on the same page still says a reset is not yet possible.
 - [TUMonline status entry][status] — \"Die Passwortänderung ist ab Sofort möglich,\" with the German IT link. The page shows the event window as 2026-11-03 08:55 through 2026-11-08 09:55, Central European Time, and does not date the sentence itself.
 
 [notice]: https://www.tum.de/en/news-and-events/all-news/press-releases/details/it-security-incident-at-tum
