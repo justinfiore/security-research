@@ -1,6 +1,6 @@
 # JetBrains Datalore: code execution from a view-only notebook
 
-**Last updated:** 2026-11-07 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Main Datalore summary](../black-october-2026.md#jetbrains-datalore-code-execution-from-a-view-only-notebook) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,9 +12,9 @@ Ten more Datalore records published the same day are below 7.0. They include an 
 
 This is the Datalore you run. Datalore Cloud is JetBrains' to patch. The records do not say Cloud was vulnerable, and they do not say it was not. This is not [Hub](jetbrains-hub.md).
 
-**Fixed in 2026.4.** JetBrains' issues-fixed page, read 2026-11-07, does not list these CVEs. The CVE records are the source for the scores and the fixed versions. The On-Premises what's-new page says 2026.4 fixes multiple security issues, including a Critical one, and that further details will be shared after customers have had time to update. It says 2026.2.4 fixed a high-severity vulnerability in public interactive reports, which matches the 8.1 record's version and not its CVE ID. 2026.4.1, the next row, applies security updates to agent Python environments, including eMudhra and Brotli. That is not these CVEs.
+**Fixed in 2026.4.** JetBrains' issues-fixed page, reread 2026-11-08, now lists these CVEs. It rates CVE-2026-123279 Critical, resolved in 2026.4, and CVE-2026-123280 High, resolved in 2026.2.4. It also lists CVE-2026-123836 as High, resolved in 2026.4. Those versions match the CVE records. The page did not list them on 2026-11-07. The On-Premises what's-new page says 2026.4 fixes multiple security issues, including a Critical one, and that further details will be shared after customers have had time to update. It says 2026.2.4 fixed a high-severity vulnerability in public interactive reports, which matches the 8.1 record's version and not its CVE ID. 2026.4.1, the next row, applies security updates to agent Python environments, including eMudhra and Brotli. That is not these CVEs.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for any of these CVEs. JetBrains does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08) for any of these CVEs. JetBrains does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -33,6 +33,8 @@ This is the Datalore you run. Datalore Cloud is JetBrains' to patch. The records
 | **Public announcement** | **2026-11-06 10:27:47 UTC** | CVE-2026-123279 published. The other Datalore records in this cluster follow the same day, through 16:10 UTC. [Record][cve] |
 | 2026.2.4 | Date not on the what's-new page | The page says that release fixed a high-severity flaw in public interactive reports. The page footer is 29 October 2026, which is not a release date for 2026.4. [What's new][whatsnew] |
 | Patch | 2026.4; release timestamp not on the CVE record | Affected is every version before 2026.4 for the 9.0 flaw. 2026.2.4 is the floor only for CVE-2026-123280. |
+| Issues-fixed page | Reread 2026-11-08 | It now lists CVE-2026-123279, CVE-2026-123280, and CVE-2026-123836 at those versions. It did not on 2026-11-07. |
+| **Last updated** | **2026-11-08 (America/New_York)** | The vendor index lists the CVEs. The fix is unchanged. |
 
 ## Detection
 
@@ -71,7 +73,7 @@ JetBrains does not publish an indicator. If the instance was below 2026.4 while 
 - [CVE-2026-123280](https://www.cve.org/CVERecord?id=CVE-2026-123280) — 8.1 High, fixed before 2026.2.4. Published 2026-11-06 10:27:48 UTC.
 - [CVE-2026-123836](https://www.cve.org/CVERecord?id=CVE-2026-123836) — 8.8 High, SSH private key through Git backup, fixed before 2026.4. Published 2026-11-06 16:10:01 UTC.
 - [Datalore what's new][whatsnew] — On-Premises release notes. 2026.4 fixes multiple security issues, including a Critical one, and withholds the details. Read 2026-11-07. Page footer 29 October 2026.
-- [JetBrains issues fixed](https://www.jetbrains.com/privacy-security/issues-fixed/) — read 2026-11-07. It does not list these CVEs. Older Datalore rows on that page are earlier issues.
+- [JetBrains issues fixed](https://www.jetbrains.com/privacy-security/issues-fixed/) — reread 2026-11-08. It now lists CVE-2026-123279, CVE-2026-123280, and CVE-2026-123836 at the versions above. It did not list them on 2026-11-07. Older Datalore rows on that page are earlier issues.
 
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-123279
 [whatsnew]: https://www.jetbrains.com/help/datalore/whats-new.html

@@ -1,6 +1,6 @@
 # Babelfish: a TDS handshake can run code as the database user
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Main Babelfish summary](../black-october-2026.md#babelfish-a-tds-handshake-can-run-code-as-the-database-user) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,11 +8,13 @@
 
 The open-source extension is affected in 1.0 through 1.5, 2.1 through 2.15, 3.1 through 3.12, 4.0 through 4.8, and 5.1 through 5.4. Amazon's fix for that extension is 4.10, 5.6, or 6.1, or later. There is no 1.x, 2.x, or 3.x open-source fix on those lines. Aurora PostgreSQL with Babelfish has its own version list, below.
 
-**[CVE-2026-119924](https://www.cve.org/CVERecord?id=CVE-2026-119924)** is the second issue in the same bulletin. Amazon says an authenticated actor can read adjacent process memory or cause a denial of service through TDS remote-procedure-call handling. This entry does not repeat a score for it; the bulletin does not print one. The same upgrades cover it.
+**[CVE-2026-119924](https://www.cve.org/CVERecord?id=CVE-2026-119924) — Amazon (CNA) CVSS 3.1 8.1 High and CVSS 4.0 7.2 High.** The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:H`. Amazon says an authenticated actor can read adjacent process memory or cause a denial of service through TDS remote-procedure-call handling. The bulletin, dated 2026-11-06, still prints no score. Amazon added the scores when it republished the record on 2026-11-07 21:32:34 UTC. NVD has not scored it. The same upgrades cover it.
+
+The same republish, and the matching update of CVE-2026-119923 at 21:32:19 UTC, adds one Aurora Babelfish version the earlier record did not name: **5.5.0, with no later bound**. The remediation text still says Aurora PostgreSQL 17.9.3 (Babelfish 5.5.1) or later. Read 5.5.0 as affected, and 5.5.1 as the floor the prose names. Open-source 6.0 is now on the Aurora list as 6.0.0 before 6.0.2. A self-managed 6.0 before 6.1 is still not in the open-source affected ranges.
 
 Amazon's bulletin is 2026-166-AWS, published 2026-11-06 10:00 AM PST. It does not report exploitation. Restricting the TDS port is the workaround, not the fix.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-06). Amazon does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). Amazon does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -28,7 +30,9 @@ Amazon's bulletin is 2026-166-AWS, published 2026-11-06 10:00 AM PST. It does no
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
 | **Public announcement** | **2026-11-06 10:00 AM PST (UTC−08:00)** | AWS bulletin 2026-166-AWS. CVE records the same day. [AWS][aws] |
-| CISA KEV | Not listed (catalog 2026.11.06, checked 2026-11-06) | [KEV][kev] |
+| Record updated | 2026-11-07 21:32:19 UTC and 21:32:34 UTC | Amazon added the 8.1 and 7.2 scores to CVE-2026-119924, and added Aurora Babelfish 5.5.0 with no upper bound to both records. [CVE-2026-119924](https://www.cve.org/CVERecord?id=CVE-2026-119924) |
+| CISA KEV | Not listed (catalog 2026.11.06, checked 2026-11-08) | [KEV][kev] |
+| **Last updated** | **2026-11-08 (America/New_York)** | The second flaw has a score, and Aurora 5.5.0 is affected. The upgrade list is unchanged. |
 
 ## Detection
 
@@ -36,7 +40,7 @@ This only reads.
 
 On Aurora, the cluster's engine version is in the RDS console or in `aws rds describe-db-clusters`. Compare it with the fixed floors in Remediation. A cluster that does not have Babelfish enabled is outside both flaws. AWS does not say the PostgreSQL port is affected; the packet is TDS, default port 1433.
 
-On a self-managed Babelfish build, `SELECT babelfish_version();` inside the database prints the extension version. If that function is absent, Babelfish is not installed. A version inside 1.0–1.5, 2.1–2.15, 3.1–3.12, 4.0–4.8, or 5.1–5.4 is affected. 6.0 before 6.1 is on Amazon's Aurora list and is not in the open-source affected ranges; treat a self-managed 6.0 as unknown rather than clear.
+On a self-managed Babelfish build, `SELECT babelfish_version();` inside the database prints the extension version. If that function is absent, Babelfish is not installed. A version inside 1.0–1.5, 2.1–2.15, 3.1–3.12, 4.0–4.8, or 5.1–5.4 is affected. Aurora Babelfish **5.5.0** is affected on both records and has no upper bound; 5.5.1 is the floor the remediation prose names. Aurora 6.0.0 before 6.0.2 is affected. A self-managed 6.0 before 6.1 is on the Aurora list and is not in the open-source affected ranges; treat a self-managed 6.0 as unknown rather than clear.
 
 Do not send a malformed prelogin packet to check.
 
@@ -63,8 +67,9 @@ Amazon does not publish an indicator. If port 1433 was reachable from an untrust
 ## Sources
 
 - [AWS bulletin 2026-166-AWS][aws] — published 2026-11-06 10:00 AM PST. Both CVEs, the Aurora version floors, and the open-source extension floors.
-- [CVE-2026-119923][cve] — Amazon CNA, published 2026-11-06. CVSS 3.1 9.8 and CVSS 4.0 9.3. Unauthenticated. Commands as the database process user.
-- [CISA KEV][kev] — catalog 2026.11.06. Not listed.
+- [CVE-2026-119923][cve] — Amazon CNA, published 2026-11-06, updated 2026-11-07 21:32:19 UTC. CVSS 3.1 9.8 and CVSS 4.0 9.3. Unauthenticated. Commands as the database process user. Aurora affected list now includes 5.5.0 with no upper bound, and 6.0.0 before 6.0.2.
+- [CVE-2026-119924](https://www.cve.org/CVERecord?id=CVE-2026-119924) — Amazon CNA, published 2026-11-06, updated 2026-11-07 21:32:34 UTC. CVSS 3.1 8.1 and CVSS 4.0 7.2. Authenticated memory read or denial of service. The bulletin still prints no score. Same Aurora addition.
+- [CISA KEV][kev] — catalog 2026.11.06, checked 2026-11-08. Not listed.
 
 [aws]: https://aws.amazon.com/security/security-bulletins/2026-166-aws/
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-119923

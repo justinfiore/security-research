@@ -1,6 +1,6 @@
 # Craft CMS: unauthenticated SQL injection to an administrator
 
-**Last updated:** 2026-11-07 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Main Craft CMS summary](../black-october-2026.md#craft-cms-unauthenticated-sql-injection-to-an-administrator) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,12 +10,13 @@
 
 **Fixed in 5.11.2 and 4.18.9**, released 2026-09-17. Craft 3 is outside the ranges the advisories name.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for either CVE. Neither Craft nor VulnCheck reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08) for any of the three CVEs. Neither Craft nor VulnCheck reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
 - [Timeline](#timeline)
 - [The other High fixes in the same releases](#the-other-high-fixes-in-the-same-releases)
+  - [GraphQL prev/next, now CVE-2026-124427](#graphql-prevnext-now-cve-2026-124427)
 - [Detection](#detection)
 - [Remediation](#remediation)
 - [Verification](#verification)
@@ -32,8 +33,9 @@
 | Other High advisories | 2026-10-22 and 2026-10-23; times on the advisory pages | Five more High flaws. Four still have no CVE. [Releases][rel5] |
 | getOwners CVE | 2026-11-06; time/TZ unknown | VulnCheck published [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490) for GHSA-r56r-f696-c8w9. CVSS 4.0 8.7 and CVSS 3.1 8.8. 5.8.17 before 5.11.2. Craft's page still says no CVE. |
 | CVE record published | 2026-11-06; time/TZ unknown | VulnCheck CNA. CVSS 4.0 9.3 and CVSS 3.1 9.8. Craft's advisory is unchanged. [CNA][cve] |
-| CISA KEV | Not listed (catalog 2026.11.06, checked 2026-11-07) | Neither CVE. [KEV][kev] |
-| **Last updated** | **2026-11-07 (America/New_York)** | The getOwners flaw has a CVE. The fix is unchanged. |
+| GraphQL prev/next CVE | 2026-11-08 13:15:24 UTC | VulnCheck published [CVE-2026-124427](https://www.cve.org/CVERecord?id=CVE-2026-124427) for GHSA-xpg7-m6gm-4xfh. CVSS 4.0 9.3 and CVSS 3.1 9.8. Craft's page still says Moderate and no CVE. |
+| CISA KEV | Not listed (catalog 2026.11.06, checked 2026-11-08) | None of the three CVEs. [KEV][kev] |
+| **Last updated** | **2026-11-08 (America/New_York)** | The GraphQL prev/next read has a Critical CVE score. The fix is unchanged. |
 
 ## The other High fixes in the same releases
 
@@ -48,7 +50,13 @@ These are the High advisories the 5.11.2 and 4.18.9 notes name. One now has a CV
 | [GHSA-qj3q-j7r4-428p](https://github.com/craftcms/cms/security/advisories/GHSA-qj3q-j7r4-428p) | A non-administrator control-panel user | Signs a Twig template, then command execution on login | 5.11.2 only (5.10.0 through 5.11.1) |
 | [GHSA-r56r-f696-c8w9](https://github.com/craftcms/cms/security/advisories/GHSA-r56r-f696-c8w9), [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490) | A control-panel user | Administrator through sandboxed `getOwners()`. VulnCheck: CVSS 4.0 8.7 and CVSS 3.1 8.8. | 5.11.2 only (5.8.17 through 5.11.1) |
 
-The same releases also fix moderate flaws: public registration can keep a deactivated account's direct permissions ([GHSA-v25r-wr32-jfg7](https://github.com/craftcms/cms/security/advisories/GHSA-v25r-wr32-jfg7), 5.x only), and anonymous GraphQL can read content the schema was set to withhold ([GHSA-xpg7-m6gm-4xfh](https://github.com/craftcms/cms/security/advisories/GHSA-xpg7-m6gm-4xfh), [GHSA-mp59-9rf5-93wr](https://github.com/craftcms/cms/security/advisories/GHSA-mp59-9rf5-93wr)). Those are not the High cluster.
+The same releases also fix flaws Craft rates moderate. Public registration can keep a deactivated account's direct permissions ([GHSA-v25r-wr32-jfg7](https://github.com/craftcms/cms/security/advisories/GHSA-v25r-wr32-jfg7), 5.x only). Anonymous GraphQL can read content the schema was set to withhold. [GHSA-mp59-9rf5-93wr](https://github.com/craftcms/cms/security/advisories/GHSA-mp59-9rf5-93wr) is still Moderate and has no CVE. [GHSA-xpg7-m6gm-4xfh](https://github.com/craftcms/cms/security/advisories/GHSA-xpg7-m6gm-4xfh) is the one VulnCheck scored Critical, below.
+
+### GraphQL prev/next, now CVE-2026-124427
+
+Craft rates [GHSA-xpg7-m6gm-4xfh](https://github.com/craftcms/cms/security/advisories/GHSA-xpg7-m6gm-4xfh) **Moderate** and the page still says **No known CVE**. VulnCheck, the CNA for [CVE-2026-124427](https://www.cve.org/CVERecord?id=CVE-2026-124427), rates the same advisory **CVSS 4.0 9.3 Critical** and **CVSS 3.1 9.8 Critical**, published 2026-11-08 13:15:24 UTC. NVD has not scored it. The CVSS 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Craft's description is a read: title, slug, uid, post date, and custom-field content from a section the schema withholds, by chaining `next` from one visible entry. The record's integrity and availability ratings are VulnCheck's, not Craft's.
+
+It needs a public GraphQL schema, or a scoped private token, that can read at least one section and withholds another, plus one visible entry, and the two sections have to share an entry type so the response serializes. It does not need an account. The range is **5.0.0 before 5.11.2**. Craft 4 is not in the advisory. The fix is the same 5.11.2 release as the High cluster. The update does not show whether a withheld entry was already read.
 
 ## Detection
 
@@ -94,8 +102,10 @@ The reviewed sources do not publish a query, an indicator, or a confirmed compro
 - [CVE-2026-123488][cve]: VulnCheck CNA, published 2026-11-06, CVSS 4.0 9.3 and CVSS 3.1 9.8, same versions, cites the Craft advisory.
 - [5.11.2 release][rel5] and [4.18.9 release][rel4]: 2026-09-17, high-severity fixes, no CVE named.
 - [CVE-2026-123490](https://www.cve.org/CVERecord?id=CVE-2026-123490): VulnCheck CNA, published 2026-11-06, CVSS 4.0 8.7 and CVSS 3.1 8.8, GHSA-r56r-f696-c8w9, 5.8.17 before 5.11.2. Craft's advisory still says no CVE is known.
-- [NVD][nvd]: published 2026-11-06, no NVD score.
-- [CISA KEV JSON feed][kev]: catalog 2026.11.06, checked 2026-11-07. Neither CVE is listed.
+- [GHSA-xpg7-m6gm-4xfh](https://github.com/craftcms/cms/security/advisories/GHSA-xpg7-m6gm-4xfh): Craft, Moderate, no CVE, anonymous GraphQL prev/next read of a withheld section, 5.0.0 before 5.11.2, published 2026-10-23.
+- [CVE-2026-124427](https://www.cve.org/CVERecord?id=CVE-2026-124427): VulnCheck CNA, published 2026-11-08 13:15:24 UTC, CVSS 4.0 9.3 and CVSS 3.1 9.8, same advisory. NVD has not scored it. Craft's page still says Moderate and no CVE.
+- [NVD][nvd]: published 2026-11-06, no NVD score, for CVE-2026-123488.
+- [CISA KEV JSON feed][kev]: catalog 2026.11.06, checked 2026-11-08. None of the three CVEs is listed.
 
 [ghsa]: https://github.com/craftcms/cms/security/advisories/GHSA-qcvp-ggx3-97r6
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-123488

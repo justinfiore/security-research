@@ -1,6 +1,6 @@
 # JetBrains Hub: privilege escalation during email verification
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-08 (America/New_York)
 
 [Main JetBrains Hub summary](../black-october-2026.md#jetbrains-hub-privilege-escalation-during-email-verification) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,9 +10,9 @@ The same publication includes five more Hub flaws. Only one is also High. [CVE-2
 
 Hub is the identity service behind self-hosted YouTrack and other JetBrains team tools. A hosted YouTrack Cloud instance is JetBrains' to patch. This entry is the Hub you run.
 
-**Fixed in 2026.2.52556.** JetBrains' issues-fixed page, read 2026-11-06, does not list CVE-2026-123294. The CVE record is the source for the score, the description, and the fixed build. Affected is every version before that build.
+**Fixed in 2026.2.52556.** JetBrains' issues-fixed page, reread 2026-11-08, now lists both High and Critical Hub flaws. It rates CVE-2026-123294 Critical, resolved in 2026.2.52556, and CVE-2026-123296 High, resolved in 2026.2.52519. The page did not list CVE-2026-123294 on 2026-11-06. The CVE record remains the source for the score. Affected is every version before that build.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-06) for any of these CVEs. JetBrains does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08) for any of these CVEs. JetBrains does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -30,6 +30,8 @@ Hub is the identity service behind self-hosted YouTrack and other JetBrains team
 | Private discovery | Unknown | The CVE records name no finder and no report date. |
 | **Public announcement** | **2026-11-06 10:27:54 UTC** | CVE-2026-123294 published. The five related records follow within the same minute, through 10:27:57 UTC. [Record][cve] |
 | Patch available | Unconfirmed as a calendar date | The record says fixed before is not the case at 2026.2.52556. JetBrains does not publish that build's release timestamp on the CVE record. |
+| Issues-fixed page | Reread 2026-11-08 | It now lists CVE-2026-123294 at 2026.2.52556 and CVE-2026-123296 at 2026.2.52519. It did not list the first on 2026-11-06. |
+| **Last updated** | **2026-11-08 (America/New_York)** | The vendor index lists the CVEs. The fix is unchanged. |
 
 ## Detection
 
