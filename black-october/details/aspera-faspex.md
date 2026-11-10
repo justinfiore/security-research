@@ -1,6 +1,6 @@
 # IBM Aspera Faspex: a logged-in user becomes an administrator
 
-**Last updated:** 2026-11-08 (America/New_York)
+**Last updated:** 2026-11-09 (America/New_York)
 
 [Main Faspex summary](../black-october-2026.md#ibm-aspera-faspex-a-logged-in-user-becomes-an-administrator) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,7 @@ IBM Aspera Faspex 5 is a web application for sending large files. On 5.0.0 throu
 
 The affected range in both the bulletin and the CVE record is Faspex 5.0.0 through 5.0.19. The bulletin's fix is **5.0.19 PL1** on Linux. The check it names is the running `faspex-core` image: `5.0.19 (1ce4b13, Fix Pack: 1)`. The RPM does not have to move. The bulletin's document page also names Faspex On Demand 3.7, Aspera on Demand, and Aspera Enterprise, and the affected-products table names only Faspex 5.0.0 through 5.0.19. Those other products are not established as affected or as unaffected. Faspex 4 is outside the named range.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). The bulletin does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-123218](https://www.cve.org/CVERecord?id=CVE-2026-123218) added 2026-11-09, federal due date 2026-11-12. The bulletin does not describe the exploitation. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -27,7 +27,7 @@ The affected range in both the bulletin and the CVE record is Faspex 5.0.0 throu
 |---|---|---|
 | **Public announcement** | **2026-11-07; time/TZ unknown** | IBM published the security bulletin. The page's initial publish date is 07 November 2026 and its modified date is 06 November 2026. The change history says "07 Nov 2026: Initial Publication." [Bulletin][bulletin] |
 | CVE record | 2026-11-07; time/TZ unknown | IBM published [CVE-2026-123218][cve]. CVSS 3.1 9.8. Affected 5.0.0 through 5.0.19. |
-| CISA KEV | Not listed (catalog 2026.11.06, checked 2026-11-08) | [KEV][kev] |
+| CISA KEV | 2026-11-09; time/TZ unknown | Added. Federal due date 2026-11-12. The feed does not describe the exploitation. [KEV][kev] |
 
 ## Detection
 
@@ -74,7 +74,7 @@ If the host was reachable by any Faspex account on 5.0.0 through 5.0.19:
 - [IBM bulletin 7295921][bulletin] — initial publication 07 November 2026. CVSS 3.1 9.8 from IBM. Affected Faspex 5.0.0 through 5.0.19. Fixed in 5.0.19 PL1. Validate `faspex-core` `5.0.19 (1ce4b13, Fix Pack: 1)`. No workaround.
 - [CVE-2026-123218][cve] — IBM CNA, published 2026-11-07. Same score and the same affected range. The description says an authorized user. The vector sets Privileges Required to None.
 - [Patching container images][patch] — `faspexctl setup` as root, then `faspexctl version`. The RPM does not have to move.
-- [CISA KEV JSON][kev] — catalog 2026.11.06, checked 2026-11-08. CVE-2026-123218 is not listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.09. CVE-2026-123218 added 2026-11-09, due 2026-11-12.
 
 [bulletin]: https://www.ibm.com/support/pages/node/7295921
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-123218

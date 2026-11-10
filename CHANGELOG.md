@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-09 23:40 EST (UTC−05:00) — SAP; IBM Aspera Faspex
+
+- **SAP:** Apply the [November 10 notes](black-october/details/sap-november.md#remediation), starting with anything reachable from the internet. SAP rates four flaws CVSS 3.1 10.0: a SAML2 login can be forged ([CVE-2026-120017](https://www.cve.org/CVERecord?id=CVE-2026-120017)), crafted traffic can run code in Web Dispatcher ([CVE-2026-89126](https://www.cve.org/CVERecord?id=CVE-2026-89126)) and in the Internet Communication Manager ([CVE-2026-76964](https://www.cve.org/CVERecord?id=CVE-2026-76964)), and SAP Gateway treats an outside attacker as an internal server ([CVE-2026-89103](https://www.cve.org/CVERecord?id=CVE-2026-89103)). Five more are Critical. The notes need an SAP login, and no fixed patch level is published outside them. Restrict Gateway, Web Dispatcher, and ICM until the notes are in, and restart the component after a kernel update. None is in KEV.
+- **IBM Aspera Faspex:** CISA added [CVE-2026-123218](https://www.cve.org/CVERecord?id=CVE-2026-123218) on November 9, due November 12. The [fix](black-october/details/aspera-faspex.md#remediation) is unchanged: confirm `faspex-core` is 5.0.19 (1ce4b13, Fix Pack: 1).
+
 ## 2026-11-09 19:15 EST (UTC−05:00) — N-central
 
 - **N-central:** Keep it [offline](black-october/details/n-central.md#remediation). N-able says an independent researcher disclosed critical vulnerabilities on November 9. At 15:15 UTC N-able took hosted N-central offline and told on-premises customers to shut their servers down until further notice. There is no CVE, no CVSS score, and no hotfix. The 19:59 UTC update says N-able has not seen active exploitation or unauthorized data access. Ecoverse at n-able.app stays up. Bringing the server back to install a hotfix that is not published is not the instruction. Shutting it down does not undo a script or a remote session that already ran.

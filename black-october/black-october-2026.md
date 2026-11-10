@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [SAP: November patch day - unauthenticated code execution in Web Dispatcher, ICM, and Gateway](#sap-november-patch-day---unauthenticated-code-execution-in-web-dispatcher-icm-and-gateway)
 - [N-central: critical vulnerabilities, no hotfix yet](#n-central-critical-vulnerabilities-no-hotfix-yet)
 - [GPUStack: a loopback request is the administrator](#gpustack-a-loopback-request-is-the-administrator)
 - [FreeSWITCH: a SIP MESSAGE runs an API command](#freeswitch-a-sip-message-runs-an-api-command)
@@ -205,6 +206,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Apply the [November 10 SAP Security Notes](#sap-november-patch-day---unauthenticated-code-execution-in-web-dispatcher-icm-and-gateway), starting with anything reachable from the internet. SAP rates four flaws CVSS 3.1 10.0 Critical: a SAML2 login can be forged, crafted traffic can run code in Web Dispatcher and in the Internet Communication Manager, and SAP Gateway treats an outside attacker as an internal application server. Five more are Critical at 9.9, 9.9, 9.9, 9.6, and 9.1. The notes are behind an SAP login, and no fixed patch level is published outside them. None is in KEV.
 - **New this update:** If you run [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet), keep it offline. N-able says an independent researcher disclosed critical vulnerabilities on November 9, took hosted N-central offline at 15:15 UTC, and told on-premises customers to shut their servers down until further notice. There is no CVE, no CVSS score, and no hotfix. N-able says it has not seen active exploitation or unauthorized data access. Ecoverse at n-able.app stays up. Bringing the server back to patch it is not the instruction.
 - **New this update (CISA KEV):** Upgrade [GPUStack](#gpustack-a-loopback-request-is-the-administrator) to **2.3.0 or later** and restart the server and the workers. GitHub rates [CVE-2026-102895](https://www.cve.org/CVERecord?id=CVE-2026-102895) CVSS 3.1 9.8 Critical: before 2.2.0, a request that looks like it came from localhost is the administrator. CISA added it on November 9, due November 12. The project says a 2.1.1 deployment was exploited. 2.2.0 does not fix the SAML callback or the cluster proxy, both fixed in 2.2.2. 2.3.0 also fixes a High flaw with no CVE. The upgrade does not delete an administrator key already created.
 - **New this update (CISA KEV):** Upgrade [FreeSWITCH](#freeswitch-a-sip-message-runs-an-api-command) to **1.11.3 or later** and restart. GitHub rates [CVE-2026-116779](https://www.cve.org/CVERecord?id=CVE-2026-116779) CVSS 3.1 9.8 Critical: an inbound SIP MESSAGE can run an API command, and chat is on by default. CISA added it on November 9, due November 12. The project says exploitation has been observed. Until the upgrade, set `enable-chat=false` on profiles that do not need chat. The upgrade does not show whether a command already ran.
@@ -217,7 +219,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade [Apache OFBiz](#apache-ofbiz-an-unauthenticated-request-runs-code-and-a-captured-login-key-is-a-session) to **24.09.08 or later**. Apache published 46 CVEs on November 4 and scored none of them. CISA-ADP scores [CVE-2026-83542](https://www.cve.org/CVERecord?id=CVE-2026-83542) and [CVE-2026-82907](https://www.cve.org/CVERecord?id=CVE-2026-82907) CVSS 3.1 9.8 Critical: an unauthenticated upload runs code, and a captured `externalLoginKey` is a session. Eight more are High on CISA-ADP's score. NVD has not scored them. It is not in KEV.
 
 - **New this update:** Upgrade [OpenEMR](#openemr-a-one-time-portal-link-stays-valid-and-a-logged-in-user-can-write-a-file) to **8.4.0 or later**. The project rates four flaws Critical. Before 8.4.0, a captured patient-portal token can be replayed for its whole lifetime, and a 6-digit PIN can be guessed. Before 8.3.0, a logged-in user can read the database password and write a file, and the Fee Sheet takes SQL in a warehouse field. VulnCheck assigned the CVEs on November 8. 8.3.0 does not fix the token. It is not in KEV.
-- **New this update:** On [IBM Aspera Faspex](#ibm-aspera-faspex-a-logged-in-user-becomes-an-administrator) 5, run `faspexctl setup` and confirm `faspex-core` is **5.0.19 (1ce4b13, Fix Pack: 1)**. IBM rates [CVE-2026-123218](https://www.cve.org/CVERecord?id=CVE-2026-123218) CVSS 3.1 9.8 Critical: on 5.0.0 through 5.0.19, a user can craft a message that gains full administrative privileges. The bulletin summary says the user is authenticated, and the score says no privileges are required. IBM lists no workaround. The RPM does not have to move. It is not in KEV. This is not IBM API Connect.
+- **New this update:** On [IBM Aspera Faspex](#ibm-aspera-faspex-a-logged-in-user-becomes-an-administrator) 5, run `faspexctl setup` and confirm `faspex-core` is **5.0.19 (1ce4b13, Fix Pack: 1)**. IBM rates [CVE-2026-123218](https://www.cve.org/CVERecord?id=CVE-2026-123218) CVSS 3.1 9.8 Critical: on 5.0.0 through 5.0.19, a user can craft a message that gains full administrative privileges. The bulletin summary says the user is authenticated, and the score says no privileges are required. IBM lists no workaround. The RPM does not have to move. CISA added it on November 9, due November 12. This is not IBM API Connect.
 - **New this update:** Upgrade [Hickory DNS](#hickory-dns-a-signed-record-from-one-zone-is-accepted-for-another) to **0.26.3** and rebuild. The project rates [GHSA-2vgh-3wfw-qj7c](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-2vgh-3wfw-qj7c) High: the validator checks a signature against whatever zone the signature names, so one correctly signed zone can sign a record in another. VulnCheck assigned [CVE-2026-123605](https://www.cve.org/CVERecord?id=CVE-2026-123605) on November 8 and scores it CVSS 3.1 8.8. The same 0.26.2 release fixes a batch of other DNSSEC and denial-of-service flaws. 0.26.3 fixes regressions in that release. The GitHub page still says no CVE is known. It is not in KEV.
 - **New this update:** Upgrade [OpenAM](#openam-a-notification-socket-hands-out-live-session-tokens) to **16.1.4 or later**. The project rates [GHSA-5c3q-hp86-xjr8](https://github.com/OpenIdentityPlatform/OpenAM/security/advisories/GHSA-5c3q-hp86-xjr8) CVSS 3.1 10.0 Critical: with agent notifications on, which is the default, anyone who can reach the server can read live session tokens from the notification socket, including an administrator's. VulnCheck assigned [CVE-2026-123551](https://www.cve.org/CVERecord?id=CVE-2026-123551) on November 8. The same release fixes two more Critical flaws, an unsigned SAML assertion and a self-registration path to an administrator. The GitHub pages still say no CVE is known. It is not in KEV.
 - **New this update:** Upgrade [imgproxy](#imgproxy-an-ico-image-can-crash-the-worker-or-run-code) to **4.0.17 or later**. GitHub rates [GHSA-hff9-5pqw-6w9f](https://github.com/imgproxy/imgproxy/security/advisories/GHSA-hff9-5pqw-6w9f) CVSS 3.1 9.8 Critical: on 4.0.0 through 4.0.15, a crafted ICO wraps a size check and writes past the allocation, which can crash the worker or run code. VulnCheck assigned [CVE-2026-123614](https://www.cve.org/CVERecord?id=CVE-2026-123614) on November 8. Two more ICO flaws are High, and one of them is still present in 4.0.16. The GitHub pages still say no CVE is known. It is not in KEV.
@@ -342,6 +344,39 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
 ---
+
+## SAP: November patch day - unauthenticated code execution in Web Dispatcher, ICM, and Gateway
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/sap-november.md):** [Detection](details/sap-november.md#detection) · [Remediation](details/sap-november.md#remediation) · [Verification](details/sap-november.md#verification) · [Timeline](details/sap-november.md#timeline)
+
+**CVEs:** [CVE-2026-120017](https://www.cve.org/CVERecord?id=CVE-2026-120017), [CVE-2026-89126](https://www.cve.org/CVERecord?id=CVE-2026-89126), [CVE-2026-76964](https://www.cve.org/CVERecord?id=CVE-2026-76964), [CVE-2026-89103](https://www.cve.org/CVERecord?id=CVE-2026-89103), [CVE-2026-76965](https://www.cve.org/CVERecord?id=CVE-2026-76965), [CVE-2026-109803](https://www.cve.org/CVERecord?id=CVE-2026-109803), [CVE-2026-109795](https://www.cve.org/CVERecord?id=CVE-2026-109795), [CVE-2026-89119](https://www.cve.org/CVERecord?id=CVE-2026-89119), [CVE-2026-109798](https://www.cve.org/CVERecord?id=CVE-2026-109798)
+
+**SAP (CNA) CVSS 3.1: four at 10.0 Critical, three at 9.9, one at 9.6, one at 9.1. NVD has added no score of its own.**
+
+**CISA KEV:** Not listed (catalog 2026.11.09, checked 2026-11-10). Absence from KEV is not evidence that exploitation has not occurred.
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Private discovery/report | Unknown | No report date is in the CVE records. |
+| CVE records published | 2026-11-10 00:17–00:43 UTC | SAP CNA. Nine records. |
+| SAP Security Patch Day | 2026-11-10; time/TZ unknown | The public notes page for November was not published when checked. |
+| **Last updated** | **2026-11-09 23:40 EST (UTC−05:00)** | Added from the CVE records. The SAP Notes require a login and were not read. |
+
+SAP's November 10 patch day fixes nine Critical flaws. Four need no account. [CVE-2026-120017](https://www.cve.org/CVERecord?id=CVE-2026-120017) lets an attacker forge a SAML2 login and impersonate any user on SAP NetWeaver AS ABAP, SAP_BASIS 702 through 922. [CVE-2026-89126](https://www.cve.org/CVERecord?id=CVE-2026-89126) and [CVE-2026-76964](https://www.cve.org/CVERecord?id=CVE-2026-76964) are memory corruption in SAP Web Dispatcher and in the Internet Communication Manager: crafted traffic can run code. [CVE-2026-89103](https://www.cve.org/CVERecord?id=CVE-2026-89103) activates SAP Gateway's default access control list with high privileges, so an outside attacker is treated as an internal application server.
+
+Three more need only a low-privileged account and score 9.9. [CVE-2026-76965](https://www.cve.org/CVERecord?id=CVE-2026-76965) runs an operating system command. [CVE-2026-109803](https://www.cve.org/CVERecord?id=CVE-2026-109803) runs code through an XSL transformation in Knowledge Management XML Forms. [CVE-2026-109795](https://www.cve.org/CVERecord?id=CVE-2026-109795) runs code through a remote interface in S/4HANA CRM. [CVE-2026-89119](https://www.cve.org/CVERecord?id=CVE-2026-89119) at 9.6 needs an administrator to open a link, and SAP says that can compromise the operating system. [CVE-2026-109798](https://www.cve.org/CVERecord?id=CVE-2026-109798) at 9.1 lets an authenticated user read files through a BusinessObjects Web Intelligence connection.
+
+**Worst case:** An internet-reachable Web Dispatcher, ICM, or Gateway on an affected kernel is code execution with no account. The SAML2 flaw is any user on the ABAP system.
+
+**Exploitation:** None reported. The same day also published High flaws, including [CVE-2026-76966](https://www.cve.org/CVERecord?id=CVE-2026-76966) at 8.9, which this entry does not track individually.
+
+**Am I impacted?** Check the kernel release and the component versions against the affected list in [the detail guide](details/sap-november.md#detection). The CVE records name affected versions and no fixed version. The correction is inside the SAP Note, which needs an SAP login.
+
+**Patch:** Apply the November 10 notes, starting with [3849308](https://me.sap.com/notes/3849308), [3778556](https://me.sap.com/notes/3778556), [3778530](https://me.sap.com/notes/3778530), and [3798345](https://me.sap.com/notes/3798345) on anything reachable from the internet. Until then, restrict network access to Gateway, Web Dispatcher, and ICM. Restart the component after a kernel update. Applying the note does not undo a change already made.
+
+October's Visual Composer flaw and the SAP Cloud SDK for Python flaw are earlier patch days and are tracked separately.
+
+Sources: [CVE-2026-120017](https://cveawg.mitre.org/api/cve/CVE-2026-120017), [CVE-2026-89126](https://cveawg.mitre.org/api/cve/CVE-2026-89126), [CVE-2026-76964](https://cveawg.mitre.org/api/cve/CVE-2026-76964), [CVE-2026-89103](https://cveawg.mitre.org/api/cve/CVE-2026-89103), [CVE-2026-76965](https://cveawg.mitre.org/api/cve/CVE-2026-76965), [CVE-2026-109803](https://cveawg.mitre.org/api/cve/CVE-2026-109803), [CVE-2026-109795](https://cveawg.mitre.org/api/cve/CVE-2026-109795), [CVE-2026-89119](https://cveawg.mitre.org/api/cve/CVE-2026-89119), [CVE-2026-109798](https://cveawg.mitre.org/api/cve/CVE-2026-109798), [SAP Security Patch Day index](https://support.sap.com/en/my-support/knowledge-base/security-notes-news.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
 ## N-central: critical vulnerabilities, no hotfix yet
 
@@ -610,13 +645,14 @@ Sources: [GHSA-xg3m-9pfq-c8r6](https://github.com/openemr/openemr/security/advis
 
 **IBM rates [CVE-2026-123218](https://www.cve.org/CVERecord?id=CVE-2026-123218) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`, so the score says no privileges are required. The bulletin summary says an authenticated user crafts a message and gains full administrative privileges. Both sentences are IBM's, and IBM does not name the message or the endpoint. NVD has not scored it. Faspex 5.0.0 through 5.0.19 are affected. The fix is the `faspex-core` container image **5.0.19 (1ce4b13, Fix Pack: 1)**, which IBM calls 5.0.19 PL1. The RPM does not have to move. IBM lists no workaround. Faspex 4 is outside the named range. The bulletin's document page also names Faspex On Demand, and the affected table does not.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). The bulletin does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Listed — [CVE-2026-123218](https://www.cve.org/CVERecord?id=CVE-2026-123218) added 2026-11-09, federal due date 2026-11-12. The bulletin does not describe the exploitation.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-07; time/TZ unknown** | IBM published the bulletin. The page's initial publish date is 07 November 2026. The change history says the same day. |
 | CVE record | 2026-11-07; time/TZ unknown | IBM published the record. Same score, same affected range. |
-| **Last updated** | **2026-11-08 11:05 EST (UTC−05:00)** | New item. Patch the Faspex image. |
+| CISA KEV | 2026-11-09; time/TZ unknown | Added. Federal due date 2026-11-12. |
+| **Last updated** | **2026-11-09 23:40 EST (UTC−05:00)** | CISA listed CVE-2026-123218. The fix is unchanged. |
 
 **Patch:** Run `faspexctl setup` as root, then confirm `faspexctl version` shows `faspex-core` **5.0.19 (1ce4b13, Fix Pack: 1)** or a later Fix Pack. IBM lists no workaround. The image update does not show whether an account already became an administrator.
 
@@ -5570,6 +5606,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **SAP NetWeaver, Web Dispatcher, SAP Gateway, or BusinessObjects** | Apply the November 10 SAP Security Notes, starting with the four 10.0 notes on anything reachable from the internet. The notes need an SAP login and name the correction. Until then, restrict access to Gateway, Web Dispatcher, and ICM ports. Restart the component after a kernel update. [Guide](details/sap-november.md#remediation). |
 | **N-central, hosted or on premises** | Keep it offline. N-able took hosted N-central down on November 9 at 15:15 UTC after a public disclosure of critical vulnerabilities, and told on-premises customers to shut their servers down until further notice. There is no hotfix. Ecoverse at n-able.app stays up. [Guide](details/n-central.md#remediation). |
 | **GPUStack below 2.3.0** | Upgrade the server and every worker to 2.3.0 or later and restart. 2.2.0 fixes only the loopback administrator bypass, which CISA listed on November 9. 2.2.2 is the floor for the SAML callback and the cluster proxy, and it leaves a worker-management flaw. Until then, set `force_auth_localhost=true` and block `/auth/saml/callback`. The upgrade does not delete an administrator key already created. [Guide](details/gpustack.md#remediation). |
 | **FreeSWITCH before 1.11.3** | Upgrade to 1.11.3 or later and restart. CISA listed CVE-2026-116779 on November 9, due November 12. An inbound SIP MESSAGE can run an API command, and chat is on by default. Until then, set `enable-chat=false` on profiles that do not need it. Turning off the `system` API does not close the path. [Guide](details/freeswitch.md#remediation). |
