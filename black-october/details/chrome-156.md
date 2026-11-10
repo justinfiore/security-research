@@ -1,6 +1,6 @@
 # Google Chrome 156: Critical browser memory-safety fixes
 
-**Last updated:** 2026-11-03 (America/New_York)
+**Last updated:** 2026-11-10 (America/New_York)
 
 [Main summary](../black-october-2026.md#google-chrome-critical-browser-security-fixes) · [Main TOC](../black-october-2026.md#table-of-contents)
 
@@ -8,7 +8,9 @@
 
 On 2026-11-03 Google promoted Chrome 157. The Linux build is **157.0.8103.38**. Windows and Mac are **157.0.8103.38/.39**. Google says the update includes 213 security fixes and restricts bug details until most users have it. Seven are rated Critical: [CVE-2026-121156](https://www.cve.org/CVERecord?id=CVE-2026-121156) (buffer overflow in Dawn), [CVE-2026-121229](https://www.cve.org/CVERecord?id=CVE-2026-121229) (memory corruption in ANGLE), [CVE-2026-121246](https://www.cve.org/CVERecord?id=CVE-2026-121246) (use after free in WebGL), [CVE-2026-121035](https://www.cve.org/CVERecord?id=CVE-2026-121035) (use after free in Prerender), [CVE-2026-121247](https://www.cve.org/CVERecord?id=CVE-2026-121247) (buffer overflow in Dawn), [CVE-2026-121203](https://www.cve.org/CVERecord?id=CVE-2026-121203) (use after free in Geometry), and [CVE-2026-121126](https://www.cve.org/CVERecord?id=CVE-2026-121126) (use after free in Core). A Chrome 156 build, including 156.0.8078.79/.80, does not contain these fixes.
 
-**CISA KEV:** Not listed (catalog 2026.11.03, checked 2026-11-03) for the Chrome 156 CVEs or these seven. Google's release notes do not report active exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+On 2026-11-09 Google updated the Stable channel again. Windows and Mac are **157.0.8103.50/.51** and Linux is **157.0.8103.50**. The post lists nine security fixes, seven of them High and none Critical. [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) is High, a use after free in XML, reported by an anonymous researcher on 2026-11-06. Google writes: "Google is aware that an exploit for CVE-2026-125350 exists in the wild." The same post lists six more High fixes and two Medium fixes, and it does not report exploitation for those. A Chrome 157 build from November 3, 157.0.8103.38/.39, does not contain these nine fixes. The same day's Extended Stable update for Windows and Mac, **156.0.8078.96**, lists CVE-2026-125350 among eleven fixes. Google does not publish a numeric CVSS score for any of them.
+
+**CISA KEV:** Not listed (catalog 2026.11.09, checked 2026-11-10) for the Chrome 156 CVEs, the seven Chrome 157 Critical CVEs, or CVE-2026-125350. Google's November 9 Stable post says an exploit for CVE-2026-125350 exists in the wild. That is Google's statement, not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -26,6 +28,8 @@ On 2026-11-03 Google promoted Chrome 157. The Linux build is **157.0.8103.38**. 
 | Stable release announcement | 2026-10-27; time/TZ unknown | Google announced Chrome 156.0.8078.73 for Linux and 156.0.8078.73/.74 for Windows and macOS. |
 | Later Stable and Extended Stable release | 2026-10-29; time/TZ unknown | Google announced 156.0.8078.79/.80 for Windows and Mac and 156.0.8078.79 for Linux, including Critical [CVE-2026-76024](https://www.cve.org/CVERecord?id=CVE-2026-76024). |
 | Chrome 157 stable | 2026-11-03; time/TZ unknown | 157.0.8103.38 for Linux and 157.0.8103.38/.39 for Windows and Mac. Seven new Critical fixes. [Release][chrome157] |
+| **Stable update** | **2026-11-09; time/TZ unknown** | 157.0.8103.50/.51 for Windows and Mac and 157.0.8103.50 for Linux. Nine fixes. Google says an exploit for High [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) exists in the wild. [Release][chrome157b] |
+| Extended Stable update | 2026-11-09; time/TZ unknown | 156.0.8078.96 for Windows and Mac, including CVE-2026-125350. [Release][chrome156ext] |
 
 ## Detection
 
@@ -33,7 +37,7 @@ Use Chrome's **About Google Chrome** page or managed-browser inventory to identi
 
 ## Remediation
 
-Update Windows and macOS Chrome to **157.0.8103.38/.39 or later** and Linux Chrome to **157.0.8103.38 or later** through the supported update channel, then relaunch it. A Chrome 156 build, including 156.0.8078.79/.80, does not include the seven Critical fixes in the November 3 release. The October 27 builds (156.0.8078.73/.74) also lack CVE-2026-76024. Keep enterprise browser auto-update enabled. The source does not establish an alternative mitigation for an unpatched browser. Google says the 157 update rolls out over the coming days and weeks, so a machine that has not received it yet is still on the older build.
+Update Windows and macOS Chrome to **157.0.8103.50/.51 or later** and Linux Chrome to **157.0.8103.50 or later** through the supported update channel, then relaunch it. On the Extended Stable channel, update Windows and Mac to **156.0.8078.96 or later**. A Chrome 157 build from November 3, 157.0.8103.38/.39, does not include the November 9 fixes, including CVE-2026-125350. A Chrome 156 build, including 156.0.8078.79/.80, does not include the seven Critical fixes in the November 3 release. The October 27 builds (156.0.8078.73/.74) also lack CVE-2026-76024. Keep enterprise browser auto-update enabled. The source does not establish an alternative mitigation for an unpatched browser. Google says the November 9 update rolls out over the coming days and weeks, so a machine that has not received it yet is still on the older build. The update does not show whether a page already used the exploit.
 
 ## Verification
 
@@ -49,6 +53,11 @@ If browser compromise is suspected, preserve relevant endpoint/browser telemetry
 - [Google Chrome desktop stable release, October 29](https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_02107719452.html) — 156.0.8078.79/.80 and Critical CVE-2026-76024.
 - [CVE-2026-76024](https://www.cve.org/CVERecord?id=CVE-2026-76024) — Google's Critical rating and affected range before 156.0.8078.79.
 - [Google Chrome 157 desktop stable release, November 3](https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop.html) — 157.0.8103.38/.39 and seven Critical fixes.
-- [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.03. None of these CVEs is listed.
+- [Google Chrome desktop stable release, November 9][chrome157b] — 157.0.8103.50/.51 for Windows and Mac and 157.0.8103.50 for Linux. Nine fixes. Google says an exploit for CVE-2026-125350 exists in the wild.
+- [Google Chrome Extended Stable, November 9][chrome156ext] — 156.0.8078.96 for Windows and Mac, including CVE-2026-125350.
+- [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) — the CVE.org URL. No record was published when this page was written.
+- [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.09, checked 2026-11-10. None of these CVEs is listed.
 
 [chrome157]: https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop.html
+[chrome157b]: https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_018223192.html
+[chrome156ext]: https://chromereleases.googleblog.com/2026/11/extended-stable-update-for-desktop_0910980127.html
