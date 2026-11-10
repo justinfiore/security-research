@@ -80,6 +80,10 @@
       "last_checked": "2026-11-09T15:55:49Z",
       "hold": "none"
     },
+    "bee-js.md": {
+      "last_checked": "2026-11-09T23:56:10Z",
+      "hold": "none"
+    },
     "beta9.md": {
       "last_checked": "2026-11-09T15:55:49Z",
       "hold": "none"
@@ -240,6 +244,10 @@
       "last_checked": "2026-11-09T15:55:49Z",
       "hold": "awaiting-fix"
     },
+    "freeswitch.md": {
+      "last_checked": "2026-11-09T23:56:10Z",
+      "hold": "none"
+    },
     "gitea-28-3.md": {
       "last_checked": "2026-11-09T15:55:49Z",
       "hold": "none"
@@ -262,6 +270,10 @@
     },
     "google-mcp-toolbox.md": {
       "last_checked": "2026-11-09T15:55:49Z",
+      "hold": "none"
+    },
+    "gpustack.md": {
+      "last_checked": "2026-11-09T23:56:10Z",
       "hold": "none"
     },
     "grafana-mimir.md": {
@@ -395,6 +407,10 @@
     "mitsubishi-iconics-genesis.md": {
       "last_checked": "2026-11-09T15:55:49Z",
       "hold": "awaiting-fix"
+    },
+    "n-central.md": {
+      "last_checked": "2026-11-09T23:56:10Z",
+      "hold": "none"
     },
     "n8n-credential-guard.md": {
       "last_checked": "2026-11-09T15:55:49Z",

@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-09 19:15 EST (UTC−05:00) — N-central
+
+- **N-central:** Keep it [offline](black-october/details/n-central.md#remediation). N-able says an independent researcher disclosed critical vulnerabilities on November 9. At 15:15 UTC N-able took hosted N-central offline and told on-premises customers to shut their servers down until further notice. There is no CVE, no CVSS score, and no hotfix. The 19:59 UTC update says N-able has not seen active exploitation or unauthorized data access. Ecoverse at n-able.app stays up. Bringing the server back to install a hotfix that is not published is not the instruction. Shutting it down does not undo a script or a remote session that already ran.
+
 ## 2026-11-09 16:15 EST (UTC−05:00) — GPUStack; FreeSWITCH; Swarm; OpenSSH
 
 - **GPUStack:** Upgrade to [2.3.0 or later](black-october/details/gpustack.md#remediation) and restart the server and the workers. GitHub rates [CVE-2026-102895](https://www.cve.org/CVERecord?id=CVE-2026-102895) CVSS 3.1 9.8: before 2.2.0, a request that looks like it came from localhost is the administrator. CISA added it on November 9, due November 12. The project says a 2.1.1 deployment was exploited. 2.2.0 does not fix the SAML callback, [CVE-2026-102894](https://www.cve.org/CVERecord?id=CVE-2026-102894), or the cluster proxy, [CVE-2026-103002](https://www.cve.org/CVERecord?id=CVE-2026-103002). Both are fixed in 2.2.2. 2.3.0 also fixes a High flaw with no CVE. The upgrade does not delete an administrator key already created.
