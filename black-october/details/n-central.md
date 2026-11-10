@@ -1,12 +1,12 @@
 # N-central: critical vulnerabilities, no hotfix yet
 
-**Last updated:** 2026-11-09 (America/New_York)
+**Last updated:** 2026-11-10 (America/New_York)
 
 [Back to N-central summary](../black-october-2026.md#n-central-critical-vulnerabilities-no-hotfix-yet) · [Changelog](../../CHANGELOG.md)
 
 N-able says an independent researcher publicly disclosed critical vulnerabilities in N-central, its remote monitoring and management platform. N-able took hosted N-central offline and told on-premises customers to take their servers offline until further notice. There is no CVE, no CVSS score, and no hotfix.
 
-The incident started 2026-11-09 15:15:00 UTC. N-able's page calls it a major outage and says the disclosure was "non-responsible communication of critical vulnerabilities." At 15:15 UTC N-able said it had not seen active exploitation. The 19:59:46 UTC update says the same, and adds that there is no evidence of unauthorized data access. A hotfix is being developed and validated. N-able has not named a time when servers can come back.
+The incident started 2026-11-09 15:15:00 UTC. N-able's page calls it a major outage and says the disclosure was "non-responsible communication of critical vulnerabilities." At 15:15 UTC N-able said it had not seen active exploitation. The 19:59:46 UTC update says the same, and adds that there is no evidence of unauthorized data access. A hotfix is being developed and validated. The November 10, 05:00:00 UTC update says the work is on track with an estimate of mid-day November 10 (EST), and that N-able has seen no indication an environment was impacted or compromised. That estimate is not a restoration time. The instruction on that update is still to keep the server offline.
 
 N-central holds privileged access to the machines it manages: software deployment, scripts, remote control, and patching. A server that was reachable before it was taken offline is the thing to investigate. Hosted customers cannot reach the classic console. Ecoverse services under N-able Login stay up at `https://n-able.app`.
 
@@ -31,7 +31,8 @@ The researcher, Sean Bales, published the material as Able2Shell. BleepingComput
 | **Public announcement** | **2026-11-09 15:15:00 UTC** | N-able incident 202561. Hosted N-central taken offline. On-premises servers should be taken offline. No active exploitation seen. [Status][status] |
 | Status update | 2026-11-09 19:59:46 UTC | Hotfix still being validated. No evidence of active exploitation or unauthorized data access. Updates about every four hours. [Status][status] |
 | Page last updated | 2026-11-09 22:05:26 UTC | Still investigating. No hotfix and no restoration time. [Status][status] |
-| **Last updated** | **2026-11-09 (America/New_York)** | New item. Keep N-central offline. |
+| **Status update** | **2026-11-10 05:00:00 UTC** | Hotfix still being validated. N-able estimates mid-day November 10 (EST) and says it has seen no indication an environment was impacted or compromised. Servers stay offline. [Status][status] |
+| **Last updated** | **2026-11-10 (America/New_York)** | The estimate is not a restoration time. Keep N-central offline. |
 
 ## Detection
 
@@ -44,7 +45,7 @@ This is the N-central server, hosted or on premises. N-sight, Cove, EDR, and the
 ## Remediation
 
 1. **Keep the N-central server offline until N-able says it can come back.** Hosted is already offline. On premises, shut the server down or remove it from every network, including the networks of the machines it manages. N-able's words are "temporarily take their N-central servers offline until further notice."
-2. **There is no hotfix to install.** The 19:59 UTC update says the hotfix is still being validated. Do not bring the server back to install something N-able has not published.
+2. **There is no hotfix to install.** The November 10, 05:00 UTC update says the hotfix is still being validated and estimates mid-day November 10 (EST). An estimate is not a published build. Do not bring the server back to install something N-able has not published.
 3. **Ecoverse is not a substitute console for this decision.** Asset View, patching, vulnerability management, scripting, policies, and tagging stay available at `https://n-able.app` for an account that uses N-able Login. N-able also lists a preview of on-demand Windows patching and Take Control from the assets view. Those features still act on the machines N-central manages. Do not treat them as out of scope for the review below.
 4. **Recheck [the status page](https://uptime.n-able.com/).** N-able said it would update about every four hours. The page, not this guide, is where the restoration time will appear.
 
@@ -64,7 +65,7 @@ N-able says it has not seen active exploitation or unauthorized data access. Tha
 
 ## Sources
 
-- [N-able status, incident 202561][status] — read 2026-11-09. Start 15:15:00 UTC. Updates at 15:15:00 UTC and 19:59:46 UTC. Page last updated 22:05:26 UTC. Critical vulnerabilities, no CVE, no hotfix, no active exploitation observed, no unauthorized data access.
+- [N-able status, incident 202561][status] — reread 2026-11-10. Start 15:15:00 UTC. Updates at 15:15:00 UTC, 19:59:46 UTC, and 05:00:00 UTC on November 10. The newest says the hotfix work is on track, estimates mid-day November 10 (EST), and says N-able has seen no indication an environment was impacted or compromised. No CVE, no hotfix, and the shutdown stands. The event page no longer shows the 19:59:46 UTC entry; the November 9 read of this guide recorded it.
 - [BleepingComputer][bc] — 2026-11-09, 04:26 PM (the page does not name the timezone). Names the researcher, the Able2Shell repository, the pre-release build 2026.4.0.31, and the chains the researcher demonstrated. N-able's statement to that outlet confirms a hotfix is in development.
 
 [status]: https://uptime.n-able.com/

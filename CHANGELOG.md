@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-10 07:10 EST (UTC−05:00) — Apple; N-central
+
+- **Apple:** Install the [November 9 update](black-october/details/apple-november.md#remediation) and restart. CISA-ADP scores [CVE-2026-113961](https://www.cve.org/CVERecord?id=CVE-2026-113961) CVSS 3.1 7.5 High: a remote attacker may be able to join an iMessage group and receive its messages. [CVE-2026-113970](https://www.cve.org/CVERecord?id=CVE-2026-113970) is 8.8 High: an attacker in Bluetooth range may be able to corrupt process memory. Apple publishes no score. iOS and iPadOS go to 27.2.1 or 26.7.3, and a Mac goes to Sequoia 15.8.3, Tahoe 26.7.3, or Golden Gate 27.2.1. iOS 18.7.12 fixes the Bluetooth flaw and does not list the iMessage flaw. CISA-ADP says Exploitation none for both, and neither is in KEV. The update does not show whether a group was already joined.
+- **N-central:** Keep it [offline](black-october/details/n-central.md#remediation). N-able's November 10, 05:00 UTC update estimates a hotfix for mid-day November 10 (EST) and says it has seen no indication an environment was impacted or compromised. That estimate is not a restoration time, and no hotfix is published. There is still no CVE. Bringing the server back to install a build N-able has not published is not the instruction.
+
 ## 2026-11-10 03:15 EST (UTC−05:00) — Chrome; SAP
 
 - **Chrome:** Update and [relaunch](black-october/details/chrome-156.md#remediation). Windows and Mac go to 157.0.8103.50/.51 or later, Linux to 157.0.8103.50 or later, and Extended Stable on Windows and Mac to 156.0.8078.96 or later. Google rates [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) High, a use after free in XML, and says an exploit for it exists in the wild. The November 3 builds, 157.0.8103.38/.39, do not include it. The same Stable post lists six more High fixes and two Medium fixes, and does not report exploitation for those. Google publishes no numeric score. It is not in KEV. The update does not show whether a page already used the exploit.

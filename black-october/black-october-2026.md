@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Apple: an iMessage group accepts an outsider, and a nearby Bluetooth device corrupts memory](#apple-an-imessage-group-accepts-an-outsider-and-a-nearby-bluetooth-device-corrupts-memory)
 - [SAP: November patch day - unauthenticated code execution in Web Dispatcher, ICM, and Gateway](#sap-november-patch-day---unauthenticated-code-execution-in-web-dispatcher-icm-and-gateway)
 - [N-central: critical vulnerabilities, no hotfix yet](#n-central-critical-vulnerabilities-no-hotfix-yet)
 - [GPUStack: a loopback request is the administrator](#gpustack-a-loopback-request-is-the-administrator)
@@ -206,9 +207,10 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Install the [November 9 Apple update](#apple-an-imessage-group-accepts-an-outsider-and-a-nearby-bluetooth-device-corrupts-memory) and restart. CISA-ADP scores [CVE-2026-113961](https://www.cve.org/CVERecord?id=CVE-2026-113961) CVSS 3.1 7.5 High: a remote attacker may be able to join an iMessage group and receive its messages. [CVE-2026-113970](https://www.cve.org/CVERecord?id=CVE-2026-113970) is 8.8 High: an attacker in Bluetooth range may be able to corrupt process memory. Apple publishes no score. iOS and iPadOS go to **27.2.1** or **26.7.3**, and a Mac goes to Sequoia **15.8.3**, Tahoe **26.7.3**, or Golden Gate **27.2.1**. iOS **18.7.12** fixes the Bluetooth flaw and does not list the iMessage flaw. Neither is in KEV.
 - **New this update:** Update [Chrome](#google-chrome-critical-browser-security-fixes) and relaunch. Windows and Mac go to **157.0.8103.50/.51 or later**, Linux to **157.0.8103.50 or later**, and Extended Stable on Windows and Mac to **156.0.8078.96 or later**. Google rates [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) High, a use after free in XML, and says an exploit for it exists in the wild. The November 3 builds, 157.0.8103.38/.39, do not include it. Google publishes no numeric score. It is not in KEV.
 - **New this update:** Apply the [November 10 SAP Security Notes](#sap-november-patch-day---unauthenticated-code-execution-in-web-dispatcher-icm-and-gateway), starting with anything reachable from the internet. SAP rates four flaws CVSS 3.1 10.0 Critical: a SAML2 login can be forged, crafted traffic can run code in Web Dispatcher and in the Internet Communication Manager, and SAP Gateway treats an outside attacker as an internal application server. Five more are Critical at 9.9, 9.9, 9.9, 9.6, and 9.1. The notes are behind an SAP login, and no fixed patch level is published outside them. None is in KEV.
-- **New this update:** If you run [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet), keep it offline. N-able says an independent researcher disclosed critical vulnerabilities on November 9, took hosted N-central offline at 15:15 UTC, and told on-premises customers to shut their servers down until further notice. There is no CVE, no CVSS score, and no hotfix. N-able says it has not seen active exploitation or unauthorized data access. Ecoverse at n-able.app stays up. Bringing the server back to patch it is not the instruction.
+- **New this update:** If you run [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet), keep it offline. N-able's November 10, 05:00 UTC update estimates a hotfix for mid-day November 10 (EST) and says it has seen no indication an environment was impacted or compromised. That estimate is not a restoration time. There is still no CVE, no CVSS score, and no published hotfix. Ecoverse at n-able.app stays up. Bringing the server back to install a hotfix that is not published is not the instruction.
 - **New this update (CISA KEV):** Upgrade [GPUStack](#gpustack-a-loopback-request-is-the-administrator) to **2.3.0 or later** and restart the server and the workers. GitHub rates [CVE-2026-102895](https://www.cve.org/CVERecord?id=CVE-2026-102895) CVSS 3.1 9.8 Critical: before 2.2.0, a request that looks like it came from localhost is the administrator. CISA added it on November 9, due November 12. The project says a 2.1.1 deployment was exploited. 2.2.0 does not fix the SAML callback or the cluster proxy, both fixed in 2.2.2. 2.3.0 also fixes a High flaw with no CVE. The upgrade does not delete an administrator key already created.
 - **New this update (CISA KEV):** Upgrade [FreeSWITCH](#freeswitch-a-sip-message-runs-an-api-command) to **1.11.3 or later** and restart. GitHub rates [CVE-2026-116779](https://www.cve.org/CVERecord?id=CVE-2026-116779) CVSS 3.1 9.8 Critical: an inbound SIP MESSAGE can run an API command, and chat is on by default. CISA added it on November 9, due November 12. The project says exploitation has been observed. Until the upgrade, set `enable-chat=false` on profiles that do not need chat. The upgrade does not show whether a command already ran.
 - **New this update:** If you installed [@ethersphere/bee-js 13.3.0](#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases) or launched [Swarm Desktop 0.56.2](#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases), treat that machine as compromised. GitHub rates the bee-js advisory Critical, and it has no CVSS score and no CVE. Both releases were published November 9 with the project's own CI and stolen credentials. Pin bee-js to **13.2.0** and install Swarm Desktop **0.56.3**. Uninstalling does not remove the backdoor. From a different computer, rotate every credential that machine could read and move the node's funds to a new key.
@@ -346,6 +348,28 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Apple: an iMessage group accepts an outsider, and a nearby Bluetooth device corrupts memory
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apple-november.md):** [Detection](details/apple-november.md#detection) · [Remediation](details/apple-november.md#remediation) · [Verification](details/apple-november.md#verification) · [Timeline](details/apple-november.md#timeline)
+
+**CVEs:** [CVE-2026-113961](https://www.cve.org/CVERecord?id=CVE-2026-113961), [CVE-2026-113970](https://www.cve.org/CVERecord?id=CVE-2026-113970)
+
+**CISA-ADP scores [CVE-2026-113961](https://www.cve.org/CVERecord?id=CVE-2026-113961) CVSS 3.1 7.5 High and [CVE-2026-113970](https://www.cve.org/CVERecord?id=CVE-2026-113970) CVSS 3.1 8.8 High.** Apple publishes no score, and NVD has added none. The 7.5 flaw is an authorization issue in Messages: a remote attacker may be able to join an iMessage group and receive its messages. The 8.8 flaw is a use after free in Bluetooth: an attacker in Bluetooth range may be able to corrupt process memory. CISA-ADP says Exploitation none for both. The same November 9 updates fix seven more issues, and none of those reaches 7.0. iOS 27.2.1 also carries the [Brotli](details/brotli.md) decoder fix, CVE-2026-111497, which is a separate item.
+
+**CISA KEV:** Not listed (catalog 2026.11.09, checked 2026-11-10).
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fixes** | **2026-11-09; time/TZ unknown** | Apple's releases page dates the updates November 9 and gives no time. |
+| CISA-ADP scores | 2026-11-09 21:02:34 UTC | 7.5 for the iMessage flaw, 8.8 for the Bluetooth flaw. Exploitation none. |
+| **Last updated** | **2026-11-10 07:10 EST (UTC−05:00)** | New item. Install the November 9 update. |
+
+**Patch:** Install the November 9 update and restart: iOS and iPadOS **27.2.1** or **26.7.3**, macOS Sequoia **15.8.3**, macOS Tahoe **26.7.3**, or macOS Golden Gate **27.2.1**, visionOS **27.2.1**, and watchOS **27.2.1**. iOS **18.7.12** fixes the Bluetooth flaw and does not list the iMessage flaw. The update does not show whether a group was already joined.
+
+Sources: [iOS 27.2.1](https://support.apple.com/en-us/149715), [CVE-2026-113961](https://www.cve.org/CVERecord?id=CVE-2026-113961), [detailed guide](details/apple-november.md).
+
+---
+
 ## SAP: November patch day - unauthenticated code execution in Web Dispatcher, ICM, and Gateway
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/sap-november.md):** [Detection](details/sap-november.md#detection) · [Remediation](details/sap-november.md#remediation) · [Verification](details/sap-november.md#verification) · [Timeline](details/sap-november.md#timeline)
@@ -386,7 +410,7 @@ Sources: [CVE-2026-120017](https://cveawg.mitre.org/api/cve/CVE-2026-120017), [C
 
 **No CVE is assigned.**
 
-N-able says an independent researcher publicly disclosed critical vulnerabilities in N-central. The incident started 2026-11-09 15:15:00 UTC. N-able took hosted N-central offline in the Americas, Europe, and Asia-Pacific, and told customers running N-central on their own servers to take those servers offline until further notice. At 15:15 UTC N-able said it had not seen active exploitation. The 19:59:46 UTC update says there is still no evidence of active exploitation or unauthorized data access, and that a hotfix is being validated. N-able has not published the flaws, the affected versions, a CVSS score, or the hotfix. N-central is the console that deploys software, runs scripts, and opens remote-control sessions on the machines it manages, so the instruction is to keep that console off the network. Ecoverse services under N-able Login stay available at `https://n-able.app`. This is not the November 3 notice about AlmaLinux updates in N-central 2026.4 HF1.
+N-able says an independent researcher publicly disclosed critical vulnerabilities in N-central. The incident started 2026-11-09 15:15:00 UTC. N-able took hosted N-central offline in the Americas, Europe, and Asia-Pacific, and told customers running N-central on their own servers to take those servers offline until further notice. At 15:15 UTC N-able said it had not seen active exploitation. The 19:59:46 UTC update says there is still no evidence of active exploitation or unauthorized data access, and that a hotfix is being validated. The November 10, 05:00:00 UTC update estimates the hotfix for mid-day November 10 (EST) and says N-able has seen no indication an environment was impacted or compromised. That estimate is not a restoration time, and the same update says servers stay offline. N-able has not published the flaws, the affected versions, a CVSS score, or the hotfix. N-central is the console that deploys software, runs scripts, and opens remote-control sessions on the machines it manages, so the instruction is to keep that console off the network. Ecoverse services under N-able Login stay available at `https://n-able.app`. This is not the November 3 notice about AlmaLinux updates in N-central 2026.4 HF1.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs.
 
@@ -395,9 +419,10 @@ N-able says an independent researcher publicly disclosed critical vulnerabilitie
 | Researcher publishes the flaws | 2026-11-08; time unknown | N-able says late Sunday night, November 8. |
 | **Public announcement** | **2026-11-09 15:15:00 UTC** | Incident 202561. Hosted N-central offline. On-premises servers should be taken offline. |
 | Status update | 2026-11-09 19:59:46 UTC | Hotfix still being validated. No unauthorized data access seen. |
-| **Last updated** | **2026-11-09 19:15 EST (UTC−05:00)** | New item. Keep N-central offline. |
+| **Status update** | **2026-11-10 05:00:00 UTC** | Estimate of mid-day November 10 (EST). No indication of impact or compromise. Servers stay offline. |
+| **Last updated** | **2026-11-10 07:10 EST (UTC−05:00)** | The estimate is not a restoration time. Keep N-central offline. |
 
-**Patch:** No patch. Keep hosted and on-premises N-central offline until [N-able's status page](https://uptime.n-able.com/) says the server can come back. Do not bring it online to install a hotfix that is not published. Shutting it down does not undo a script or a remote session that already ran.
+**Patch:** No patch. Keep hosted and on-premises N-central offline until [N-able's status page](https://uptime.n-able.com/) says the server can come back. The November 10 estimate of mid-day (EST) is not that clearance, and no hotfix is published. Shutting it down does not undo a script or a remote session that already ran.
 
 Sources: [N-able status](https://uptime.n-able.com/), [detailed guide](details/n-central.md).
 
@@ -5610,8 +5635,9 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **iPhone, iPad, Mac, Apple Watch, or Apple Vision Pro** | Install the November 9 update and restart. CISA-ADP scores an iMessage group-join flaw 7.5 and a Bluetooth memory-corruption flaw 8.8. Apple publishes no score. iOS 18.7.12 fixes the Bluetooth flaw only. [Guide](details/apple-november.md#remediation). |
 | **SAP NetWeaver, Web Dispatcher, SAP Gateway, or BusinessObjects** | Apply the November 10 SAP Security Notes, starting with the four 10.0 notes on anything reachable from the internet. The notes need an SAP login and name the correction. Until then, restrict access to Gateway, Web Dispatcher, and ICM ports. Restart the component after a kernel update. [Guide](details/sap-november.md#remediation). |
-| **N-central, hosted or on premises** | Keep it offline. N-able took hosted N-central down on November 9 at 15:15 UTC after a public disclosure of critical vulnerabilities, and told on-premises customers to shut their servers down until further notice. There is no hotfix. Ecoverse at n-able.app stays up. [Guide](details/n-central.md#remediation). |
+| **N-central, hosted or on premises** | Keep it offline. N-able's November 10, 05:00 UTC update estimates a hotfix for mid-day (EST) and says it has seen no indication of compromise. No hotfix is published, and the estimate is not a clearance to bring the server back. Ecoverse at n-able.app stays up. [Guide](details/n-central.md#remediation). |
 | **GPUStack below 2.3.0** | Upgrade the server and every worker to 2.3.0 or later and restart. 2.2.0 fixes only the loopback administrator bypass, which CISA listed on November 9. 2.2.2 is the floor for the SAML callback and the cluster proxy, and it leaves a worker-management flaw. Until then, set `force_auth_localhost=true` and block `/auth/saml/callback`. The upgrade does not delete an administrator key already created. [Guide](details/gpustack.md#remediation). |
 | **FreeSWITCH before 1.11.3** | Upgrade to 1.11.3 or later and restart. CISA listed CVE-2026-116779 on November 9, due November 12. An inbound SIP MESSAGE can run an API command, and chat is on by default. Until then, set `enable-chat=false` on profiles that do not need it. Turning off the `system` API does not close the path. [Guide](details/freeswitch.md#remediation). |
 | **@ethersphere/bee-js, or Swarm Desktop** | Pin bee-js to 13.2.0. Install Swarm Desktop 0.56.3. 13.3.0 and 0.56.2 were malicious releases published November 9 with the project's own CI. If either ran, rebuild the machine or remove the persistence it left, and rotate credentials from a different computer. Move the node's funds to a new key. [Guide](details/bee-js.md#remediation). |
