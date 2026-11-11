@@ -1,10 +1,10 @@
 # SAP: November patch day - unauthenticated code execution in Web Dispatcher, ICM, and Gateway
 
-**Last updated:** 2026-11-10 (America/New_York)
+**Last updated:** 2026-11-11 (America/New_York)
 
 [Main SAP November summary](../black-october-2026.md#sap-november-patch-day---unauthenticated-code-execution-in-web-dispatcher-icm-and-gateway) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**SAP (CNA) rates four of these CVSS 3.1 10.0 Critical and five more Critical at 9.9, 9.9, 9.9, 9.6, and 9.1. NVD has added no score of its own.** All nine records were published 2026-11-10, between 00:17 and 00:43 UTC, as part of the November 10 SAP Security Patch Day. Each CVE record links an SAP Note at `me.sap.com`, which requires an SAP login. Those notes were not read for this guide, so no fixed patch level is stated here. SAP published the public patch-day page on November 10. It lists 35 new security notes and 4 GitHub security advisories, plus 3 updates to notes released earlier. It names affected versions and scores, and it does not name a fixed patch level. The notes index still does not link that page. [November bulletin][nov] [CNA records][cve-list]
+**SAP (CNA) rates four of these CVSS 3.1 10.0 Critical and five more Critical at 9.9, 9.9, 9.9, 9.6, and 9.1. NVD has added no score of its own.** All nine records were published 2026-11-10, between 00:17 and 00:43 UTC, as part of the November 10 SAP Security Patch Day. Each CVE record links an SAP Note at `me.sap.com`, which requires an SAP login. Those notes were not read for this guide, so no fixed patch level is stated here. SAP published the public patch-day page on November 10. It lists 35 new security notes and 4 GitHub security advisories, plus 3 updates to notes released earlier. It names affected versions and scores, and it does not name a fixed patch level. The notes index now links that page. A read on November 10 did not find the link. [November bulletin][nov] [CNA records][cve-list]
 
 The four unauthenticated 10.0 flaws:
 
@@ -27,7 +27,7 @@ The other five Critical flaws:
 
 **Related items:** October's Visual Composer flaw, [CVE-2026-89110](https://www.cve.org/CVERecord?id=CVE-2026-89110), is tracked in [sap-netweaver-visual-composer.md](sap-netweaver-visual-composer.md). The SAP Cloud SDK for Python flaw, [CVE-2026-89111](https://www.cve.org/CVERecord?id=CVE-2026-89111), is tracked in [sap-cloud-sdk-python.md](sap-cloud-sdk-python.md). Neither is part of this patch day.
 
-**CISA KEV:** Not listed (catalog 2026.11.09, checked 2026-11-10). None of the nine CVEs is in the feed. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11). None of the nine CVEs is in the feed. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -49,7 +49,7 @@ The other five Critical flaws:
 | Public bulletin | 2026-11-10; time/TZ unknown | SAP's page lists 35 new notes and 4 GitHub advisories, plus 3 updates. It names no fixed patch level. [November bulletin][nov] |
 | CVE records published | 2026-11-10 00:17–00:43 UTC | Nine Critical records, SAP CNA. [CNA records][cve-list] |
 | Exploitation evidence | None found | No vendor or government report of exploitation was found. |
-| CISA KEV | Not listed (catalog 2026.11.09) | Checked 2026-11-10 against the live feed. [KEV JSON][kev] |
+| CISA KEV | Not listed (catalog 2026.11.10) | Checked 2026-11-11 against the live feed. [KEV JSON][kev] |
 
 ## Detection
 
@@ -90,10 +90,10 @@ SAP and the reviewed sources have published no indicators of compromise and no r
 ## Sources
 
 - [CVE-2026-120017][c120017], [CVE-2026-89126][c89126], [CVE-2026-76964][c76964], [CVE-2026-89103][c89103], [CVE-2026-76965][c76965], [CVE-2026-109803][c109803], [CVE-2026-109795][c109795], [CVE-2026-89119][c89119], [CVE-2026-109798][c109798] — SAP CNA records, published 2026-11-10. Scores, vectors, affected components, and note links.
-- [SAP Security Patch Day index][patchday] — lists November 10 as the patch day. The index still does not link the November page.
-- [SAP Security Patch Day, November 2026][nov] — read 2026-11-10. 35 new notes and 4 GitHub advisories, plus 3 updates. Affected versions and scores. No fixed patch level. Note 3804858 also lists CVE-2026-120014 at 7.6.
+- [SAP Security Patch Day index][patchday] — reread 2026-11-11. November 10 is a link to the November bulletin. A read on November 10 found the date with no link.
+- [SAP Security Patch Day, November 2026][nov] — reread 2026-11-11. 35 new notes and 4 GitHub advisories, plus 3 updates. Affected versions and scores. No fixed patch level. Note 3804858 also lists CVE-2026-120014 at 7.6. The nine `me.sap.com` notes still return an unauthenticated redirect to SAP login.
 - [SecurityOnline, November 10 2026][news] — secondary count of the day's notes (9 Critical, 15 High, 13 Medium, 1 Low). Not a source for versions or scores.
-- [CISA KEV JSON feed][kev] — none of the nine is listed in catalog 2026.11.09.
+- [CISA KEV JSON feed][kev] — none of the nine is listed in catalog 2026.11.10, checked 2026-11-11.
 
 [cve-list]: https://www.cve.org/CVERecord?id=CVE-2026-120017
 [c120017]: https://cveawg.mitre.org/api/cve/CVE-2026-120017

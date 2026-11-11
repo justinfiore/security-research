@@ -553,8 +553,8 @@
       "hold": "none"
     },
     "sap-november.md": {
-      "last_checked": "2026-11-10T07:56:13Z",
-      "hold": "none"
+      "last_checked": "2026-11-11T07:55:45Z",
+      "hold": "awaiting-fix"
     },
     "seppmail.md": {
       "last_checked": "2026-11-10T23:55:43Z",
@@ -670,6 +670,10 @@
     },
     "windows-paint.md": {
       "last_checked": "2026-11-10T23:55:43Z",
+      "hold": "none"
+    },
+    "windows-search.md": {
+      "last_checked": "2026-11-11T07:55:45Z",
       "hold": "none"
     },
     "windows-shell.md": {

@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-11 03:04 EST (UTC−05:00) — SAP
+
+- **SAP:** The [November notes](black-october/details/sap-november.md#remediation) are unchanged, and the public [patch-day index](https://support.sap.com/en/my-support/knowledge-base/security-notes-news.html) now links the November bulletin. A read on November 10 found the date with no link. The notes still need an SAP login, and no fixed patch level is published outside them. None is in KEV.
+
 ## 2026-11-10 23:04 EST (UTC−05:00) — Windows Search; Fortinet
 
 - **Windows Search:** Install the [November 10 update](black-october/details/windows-search.md#remediation) and reboot, starting with Exchange servers. Microsoft rates [CVE-2026-116928](https://www.cve.org/CVERecord?id=CVE-2026-116928) CVSS 3.1 9.8: an email with a crafted attachment runs code when Exchange indexes it, and the recipient never opens it. Windows Server 2022 is KB5131090, build 10.0.20348.5870. Microsoft says it has not been exploited. It is not in KEV. The update does not show whether an attachment already ran.
