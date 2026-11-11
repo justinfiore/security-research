@@ -1,6 +1,6 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-11-09 (America/New_York)
+**Last updated:** 2026-11-10 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skbzerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -147,7 +147,7 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | RHEL 9.4 | `kernel-5.14.0-427.161.1.el9_4` and `kernel-rt-5.14.0-427.161.1.el9_4` | [RHSA-2026:94109][rhsa94], issued 2026-11-02, for 9.4 Update Services for SAP Solutions. Names ZDI-CAN-33367 with an empty CVE field, and CVE-2026-98432. Not the 9.8 kernel above. | [RHSA-2026:94109][rhsa94] |
 | RHEL 9.6 | `kernel-5.14.0-570.154.1.el9_6` and `kernel-rt-5.14.0-570.154.1.el9_6` | [RHSA-2026:94438][rhsa96], issued 2026-11-03, for 9.6 Extended Update Support. Names ZDI-CAN-33367 with an empty CVE field, and CVE-2026-98432. | [RHSA-2026:94438][rhsa96] |
 | RHEL 9.2 | `kernel-5.14.0-284.202.1.el9_2` | [RHSA-2026:94477][rhsa92], issued 2026-11-03, for 9.2 Update Services for SAP Solutions. Names ZDI-CAN-33367 with an empty CVE field, and CVE-2026-98432. No `kernel-rt` package was listed. | [RHSA-2026:94477][rhsa92] |
-| RHEL 10 | No errata for the main 10.2 line names ZDI-CAN-33367 | The November 1 RHEL 10 kernel errata fixes CVE-2026-98432 and does not list this bug. | [RHSA-2026:93413][rhsa10] |
+| RHEL 10 | `kernel-6.12.0-211.72.1.el10_2` | The erratum page does not name ZDI-CAN-33367. Red Hat's CVE API lists this package under CVE-2026-99284, and the Rocky build of the same kernel contains the `skb_zerocopy()` marker copy. Issued 2026-11-01. | [RHSA-2026:93413][rhsa10] |
 | RHEL 10.0 | `kernel-6.12.0-55.117.1.el10_0` and `kernel-rt-6.12.0-55.117.1.el10_0` | [RHSA-2026:94508][rhsa100], issued 2026-11-03, for 10.0 Extended Update Support. Names ZDI-CAN-33367 with an empty CVE field, and CVE-2026-98432. This is not the 10.2 kernel. | [RHSA-2026:94508][rhsa100] |
 | Oracle Linux 8 | `kernel-4.18.0-553.182.1.el8_10` | [ELSA-2026-93414][elsa8], 2026-11-02. The 4.18.0-553.181.1 changelog line is the marker copy; the same build fixes CVE-2026-98432. | [ELSA-2026-93414][elsa8] |
 | Oracle Linux 10 | `kernel-6.12.0-211.72.1.el10_2` | [ELSA-2026-93413][elsa10] (2026-11-02). The changelog has `net: skbuff: propagate shared-frag marker in skb_zerocopy()` at 6.12.0-211.71.1 and does not name ZDI-CAN-33367. | [ELSA-2026-93413][elsa10] |

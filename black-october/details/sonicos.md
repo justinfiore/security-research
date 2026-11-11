@@ -1,6 +1,6 @@
 # SonicOS: SSLVPN SAML bypass, and two management-interface flaws
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-10 (America/New_York)
 
 [Main SonicOS summary](../black-october-2026.md#sonicos-sslvpn-saml-bypass-and-management-interface-flaws) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -14,7 +14,7 @@ SonicWall published [SNWLID-2026-0014][adv] on 2026-11-06 with seven CVEs. The a
 
 Three more flaws in the same advisory are below 7.0 and are not the reason for this entry. [CVE-2026-77708](https://www.cve.org/CVERecord?id=CVE-2026-77708) and [CVE-2026-77709](https://www.cve.org/CVERecord?id=CVE-2026-77709) are 5.9: pre-authentication buffer overflows in the TACACS+ client, denial of service only. [CVE-2026-19703](https://www.cve.org/CVERecord?id=CVE-2026-19703) is 5.2 on the advisory and 5.1 from CISA-ADP: weak password hashing on virtual appliances, and it needs existing local access. The same fixed builds cover them.
 
-**Fixed in Gen7 7.3.4-7013 and later, and Gen8 8.2.3-8015 and later.** Affected is Gen7 **7.3.3-7015 and older**, and Gen8 **8.2.2-8015 and older**, hardware and NSv. There is no workaround.
+**Fixed in Gen7 7.3.4-7013 and later, and Gen8 8.2.3-8015 and later.** Affected is Gen7 **7.3.3-7015 and older**, and Gen8 **8.2.2-8015 and older**, hardware and NSv. Revision 1.1, dated 2026-11-09, adds a workaround for CVE-2026-19868 only: if SAML is in use and the firmware cannot be upgraded yet, disable or delete any active LDAP, RADIUS, and TACACS+ server on the firewall. The other flaws in this advisory still have no workaround.
 
 **CISA KEV:** [CVE-2026-19868](https://www.cve.org/CVERecord?id=CVE-2026-19868) is listed — added 2026-11-06, federal due date 2026-11-20. Ransomware use is Unknown. Forensic triage is No. The other six CVEs in SNWLID-2026-0014 are not listed (catalog 2026.11.06, checked 2026-11-06). [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -51,7 +51,7 @@ SonicWall publishes no log signature and no indicator for any of the seven. A qu
 
 ## Remediation
 
-1. Upgrade Gen7 to **7.3.4-7013 or later**, and Gen8 to **8.2.3-8015 or later**. SonicWall says there is no workaround.
+1. Upgrade Gen7 to **7.3.4-7013 or later**, and Gen8 to **8.2.3-8015 or later**. For CVE-2026-19868 only, until that upgrade, disable or delete any active LDAP, RADIUS, and TACACS+ server if SAML is in use. That does not fix the other flaws in this advisory.
 2. If SAML is enabled for SSLVPN and the firewall is still on an affected build, treat a VPN login that did not pass the SAML identity provider as possible. The upgrade does not expire a session that login already created.
 3. Restrict the management interface to networks that should administer the firewall. That reduces who can be asked to load a page against it. It is not a fix for the 8.8 flaws, and it does not fix the SSLVPN bypass.
 4. The three flaws below 7.0 are fixed by the same builds. Do not stay on an affected build because only those remain.

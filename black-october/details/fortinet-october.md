@@ -1,6 +1,6 @@
 # Fortinet FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator: October 2026 hardening release and SQL injection fixes
 
-**Last updated:** 2026-10-30 (America/New_York)
+**Last updated:** 2026-11-10 (America/New_York)
 
 [Main Fortinet October summary](../black-october-2026.md#fortinet-fortios-fortimanager-fortianalyzer-fortimail-and-fortiauthenticator-october-2026-hardening-release-and-sql-injection-fixes) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@ This guide groups three related Fortinet October 2026 fix sets. They have differ
 
 | Part | What it is | Severity and attribution | CVEs |
 |---|---|---|---|
-| **A. Security Hardening Release** | Undisclosed vulnerabilities in FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator, found through Fortinet's AI-assisted testing | Fortinet: the releases "include critical and high-severity fixes". No per-issue scores. ASD's ACSC: Alert Status **Critical**. | None published yet. Fortinet will publish advisories on **2026-11-10**. |
+| **A. Security Hardening Release** | Vulnerabilities in FortiOS, FortiManager, FortiAnalyzer, FortiMail and FortiAuthenticator, found through Fortinet's AI-assisted testing | Fortinet: the releases "include critical and high-severity fixes". ASD's ACSC: Alert Status **Critical**. | Published 2026-11-10. Five read in full are Critical: see below. The PSIRT index listed more than these five. |
 | **B. FG-IR-26-178** | SQL injection in FortiAnalyzer and FortiManager (on-prem and Cloud) letting a low-privileged user execute arbitrary commands; advisory title "Multiple Arbitrary File Read/Write via SQL Injection" | Fortinet advisory: **High, CVSSv3 7.9**. Per-CVE scores differ (below). | [CVE-2025-46773](https://www.cve.org/CVERecord?id=CVE-2025-46773), [CVE-2026-23705](https://www.cve.org/CVERecord?id=CVE-2026-23705), [CVE-2026-23706](https://www.cve.org/CVERecord?id=CVE-2026-23706), [CVE-2026-23707](https://www.cve.org/CVERecord?id=CVE-2026-23707) |
 | **C. FG-IR-26-184** | SQL injection in FortiMail webmail letting an authenticated attacker execute unauthorized code or commands | Fortinet advisory: **High, CVSSv3 7.7** | [CVE-2025-57739](https://www.cve.org/CVERecord?id=CVE-2025-57739) |
 
@@ -22,7 +22,19 @@ This guide groups three related Fortinet October 2026 fix sets. They have differ
 | CVE-2026-23707 | 6.5 Medium | 7.2 High | High |
 | CVE-2025-57739 | 7.7 High (`E:U/RL:O/RC:C`) | 8.8 High | Low |
 
-**Worst case:** For part A, unknown until Fortinet publishes the advisories; Fortinet rates some fixes critical and warns that attackers can diff patches quickly. For part B, a low-privileged FortiAnalyzer or FortiManager user can execute commands and read or write files on a central management or logging system that holds device configurations and credentials. For part C, an authenticated webmail user can execute code or commands on the mail gateway.
+**Part A, published 2026-11-10.** Fortinet's PSIRT index for that day lists far more than the five read here. These five are Critical, Known Exploited No, and the fixed builds are the hardening builds already in this guide except where a line says "upcoming" or "migrate."
+
+| Advisory | CVE | Fortinet score | What it is | Fix |
+|---|---|---|---|---|
+| [FG-IR-26-267](https://www.fortiguard.com/psirt/FG-IR-26-267) | [CVE-2026-126253](https://www.cve.org/CVERecord?id=CVE-2026-126253) | CVSS 3.1 9.3 Critical | Unauthenticated OSPF LSA broadcast on FortiOS and FortiSASE | FortiOS 8.0.2, 7.6.8, 7.4.13, 7.2.14 |
+| [FG-IR-26-275](https://www.fortiguard.com/psirt/FG-IR-26-275) | [CVE-2026-126261](https://www.cve.org/CVERecord?id=CVE-2026-126261) | 9.0 Critical | Unauthenticated code execution on the FGFM port of FortiManager | 8.0.1 and 7.6.8. FortiManager 7.4 and 7.2: migrate to a fixed release |
+| [FG-IR-26-276](https://www.fortiguard.com/psirt/FG-IR-26-276) | [CVE-2026-126262](https://www.cve.org/CVERecord?id=CVE-2026-126262) | 9.3 Critical | Unauthenticated code execution on the OFTP port | FortiAnalyzer 8.0.2, 7.6.8, 7.4.12, 7.2.13. FortiManager 8.0.1, 7.6.8, 7.4.12, 7.2.13 |
+| [FG-IR-26-219](https://www.fortiguard.com/psirt/FG-IR-26-219) | [CVE-2026-126170](https://www.cve.org/CVERecord?id=CVE-2026-126170) | 9.8 Critical | Unauthenticated code execution through a crafted HTTP request. The JSON API is disabled by default | FortiManager and FortiAnalyzer 7.6 fixed in 7.6.8. 8.0.0 through 8.0.2: upgrade to upcoming 8.0.3, or apply the workaround. 7.4 and 7.2 not affected |
+| [FG-IR-26-273](https://www.fortiguard.com/psirt/FG-IR-26-273) | [CVE-2026-126259](https://www.cve.org/CVERecord?id=CVE-2026-126259) | 9.0 Critical | Unauthenticated command execution as super admin through HA packets, only with HA FGSP plus standalone-config-sync, or autoscale | FortiOS 8.0.1, 7.6.8, 7.4.13, 7.2.14 |
+
+[FG-IR-26-270](https://www.fortiguard.com/psirt/FG-IR-26-270), [CVE-2026-126256](https://www.cve.org/CVERecord?id=CVE-2026-126256), is High, CVSS 3.1 7.4, not Critical. FortiOS 7.4 and 7.2 have no fix on those lines: migrate to a fixed release. 8.0.2 and 7.6.8 are the fixes Fortinet names. This sweep did not read the rest of the November 10 index. A product on the hardening builds above can still be inside an advisory this page has not opened.
+
+**Worst case:** For part A, an unauthenticated attacker who can reach the named port can run code on FortiOS, FortiManager, or FortiAnalyzer. FortiManager and FortiAnalyzer 8.0.2 are still inside CVE-2026-126170 until 8.0.3 ships. Fortinet warns that attackers can diff patches quickly. For part B, a low-privileged FortiAnalyzer or FortiManager user can execute commands and read or write files on a central management or logging system that holds device configurations and credentials. For part C, an authenticated webmail user can execute code or commands on the mail gateway.
 
 **Out of scope here:** The exploited FortiMail file write is tracked in [fortimail.md](fortimail.md), FortiSandbox in [fortisandbox.md](fortisandbox.md) and FortiSIEM in [fortisiem.md](fortisiem.md). The FortiOS path traversal [CVE-2025-61624](https://www.cve.org/CVERecord?id=CVE-2025-61624) was added to KEV on 2026-10-16 after Unit 42 tied it to PEERSTITCH intrusions, but it is not admitted as an item because its scores are below High (Fortinet CNA 5.4 with temporal metrics, Fortinet base 6.0, NVD 6.5 Medium). Patch it with [FG-IR-26-122][fg122] anyway. [KEV JSON][kev] [Unit 42][unit42]
 
@@ -34,7 +46,7 @@ This guide groups three related Fortinet October 2026 fix sets. They have differ
 
 What to do: patch FortiWeb, keep FortiGate and FortiWeb management interfaces off the internet, and enforce MFA and strong, unique administrator passwords. Enable `private-data-encryption` with your own key; FG-IR-19-007 warns that it can cause FortiManager install errors and HA split-brain on managed or clustered FortiGates, so test it first. Treat any configuration an attacker may have downloaded as a credential disclosure. Group-IB publishes network and file IOCs. [Group-IB][k0t] [FG-IR-25-910][fg910] [FG-IR-19-007][fg19007] [KEV JSON][kev]
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). None of [CVE-2025-46773](https://www.cve.org/CVERecord?id=CVE-2025-46773), [CVE-2026-23705](https://www.cve.org/CVERecord?id=CVE-2026-23705), [CVE-2026-23706](https://www.cve.org/CVERecord?id=CVE-2026-23706), [CVE-2026-23707](https://www.cve.org/CVERecord?id=CVE-2026-23707) or [CVE-2025-57739](https://www.cve.org/CVERecord?id=CVE-2025-57739) is listed, and the hardening-release fixes have no CVE yet, so KEV cannot list them. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-10) for the five October SQL-injection CVEs or for CVE-2026-126253, CVE-2026-126261, CVE-2026-126262, CVE-2026-126170, CVE-2026-126259, and CVE-2026-126256. Fortinet marks each of the six November advisories Known Exploited No. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 

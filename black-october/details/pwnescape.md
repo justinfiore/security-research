@@ -1,6 +1,6 @@
 # Linux kernel: PwnEscape - guest-to-host escape via IPv4 checksum metadata
 
-**Last updated:** 2026-11-08 (America/New_York)
+**Last updated:** 2026-11-10 (America/New_York)
 
 [Main PwnEscape summary](../black-october-2026.md#linux-kernel-pwnescape---guest-to-host-escape-via-ipv4-checksum-metadata) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -109,7 +109,7 @@ Upstream fixed versions (CNA): **5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113,
 - **No upstream stable fix is listed for other series**, including 5.4, 7.0 and 7.1. Use a distribution backport or move to a fixed series.
 - **Distribution kernels keep older base versions.** For example, RHEL 9 reports 5.14.0-*, and Ubuntu 24.04 reports 6.8.0-*. Their `uname -r` cannot be compared with upstream numbers. Status when reviewed:
   - **Red Hat:** fixed kernels shipped for RHEL 10 (`kernel-6.12.0-211.67.1.el10_2`), RHEL 9 (`kernel-5.14.0-687.59.1.el9_8`), RHEL 8 (`kernel-4.18.0-553.178.1.el8_10`), RHEL 7 ELS (`kernel-3.10.0-1160.167.2.el7`), RHEL 6 ELS (`kernel-2.6.32-754.66.1.el6`, 2026-10-27) and listed EUS/SAP streams. Real-time fixes are listed for RHEL 7 ELS, RHEL 9.2 SAP Solutions and RHEL 8. OpenShift RHCOS images for 4.12 through 4.22 except 4.13, 4.15 and 4.17 shipped on 2026-10-27. General RHEL 9 `kernel-rt` and OpenShift Container Platform 5 remain affected. [Red Hat][rhapi]
-  - **Ubuntu:** the tracker, read 2026-11-09, lists 26.10 `linux` Fixed in **7.3.0-10.10**. 26.04, 24.04, and 22.04 are still "Vulnerable, work in progress" (`7.0.0-43.43`, `6.8.0-149.149`, `5.15.0-203.213`). A work-in-progress build is not a package `apt upgrade` installs. The page previously said no release was fixed (updated 2026-10-23). [Ubuntu][ubuntu]
+  - **Ubuntu:** generic `linux` is fixed on 26.10 (`7.3.0-10.10`), 26.04 (`7.0.0-43.43`), 24.04 (`6.8.0-149.149`), and 22.04 (`5.15.0-203.213`). USN-9018-1, dated 10 November 2026, names `linux-image-7.0.0-43-generic` and this CVE. The November 9 "work in progress" line is no longer what the tracker says for those four. HWE, cloud, and FIPS rows are still work in progress. 20.04 has no released build. [Ubuntu][ubuntu]
   - **AlmaLinux:** production kernels `kernel-4.18.0-553.177.1.el8_10`, `kernel-5.14.0-687.59.1.el9_8` and `kernel-6.12.0-211.67.1.el10_2` (2026-10-23). `kernel-5.14.0-687.58.1.el9_8` does **not** contain the fix. [AlmaLinux][alma]
   - **Debian:** bookworm-security `6.1.190-1` (DLA-4841-1), bookworm `linux-6.12` `6.12.113-1~deb12u1` (DLA-4850-1), trixie-security `6.12.113-1` (DSA-6568-1). [Debian][debian]
   - **Oracle Linux UEK:** ELSA-2026-500397, -500398 and -500399. [Oracle][oracle]

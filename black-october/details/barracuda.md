@@ -1,6 +1,6 @@
 # Barracuda: configuration restore without a login, and a root command
 
-**Last updated:** 2026-11-07 (America/New_York)
+**Last updated:** 2026-11-10 (America/New_York)
 
 [Main Barracuda summary](../black-october-2026.md#barracuda-configuration-restore-without-a-login-and-a-root-command) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,11 +10,13 @@ Two flaws, published together on 2026-11-02. Mandiant is the CNA. Barracuda's ad
 
 **[CVE-2026-111560](https://www.cve.org/CVERecord?id=CVE-2026-111560): Mandiant CVSS 4.0 8.6 High (`AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`).** An authenticated administrator can put shell metacharacters in the timezone field. The appliance runs the resulting command as root. The CVE record, updated 2026-11-03, lists ESG through **9.4.0.27**, Load Balancer ADC through **6.4.0**, Web Application Firewall through **11.0.1**, Web Security Gateway through **16.1.100.100**, Message Archiver through **5.5.4.0**, and WAF Control Center through **2.2.1**. Barracuda's patch IDs are **BNADC-16586** (ADC and WAF), **BNMA-32468** (Message Archiver), **BNWF-60060** (WAF Control Center), and **BNYF-24789** (WSG). A Barracuda Campus page says WSG firmware **15.0.0.009 through 16.1.003** was updated and that 15.0 and below should move to 15.0.0.009 or later. That page does not match the CVE ceiling of 16.1.100.100. [Mandiant][m41] [Campus][wsg]
 
-Barracuda says chaining the two "could allow an attacker to bypass authorization controls and obtain root access." It also says exploitation requires access to the administrative interface. Mandiant says the import does not require authentication and the command injection does. Neither source reports exploitation.
+Barracuda says chaining the two "could allow an attacker to bypass authorization controls and obtain root access." It also says exploitation requires access to the administrative interface. Mandiant says the import does not require authentication and the command injection does.
+
+On November 9, 2026, at 9:00pm EST Barracuda added that it has identified exploitation activity affecting a small number of organizations. The advisory does not name the organizations, the product that was entered, or the date the activity started. CISA added both CVEs on November 10.
 
 On 2026-11-05 watchTowr published how the two fit together, from the patch diff of ESG 9.4.0.027 and 9.4.0.029. A failed password change returns the login-screen role and the request continues, so an unauthenticated caller can upload a backup through `bayesian_upload`. The backup's checksum is `md5` of the file bytes plus the fixed string `Barracuda Networks is your new best friend`. Restoring it writes `system_timezone`, and `finalize_restore` passes that value to a shell that runs as root. watchTowr also published a Detection Artefact Generator. That is a researcher write-up of the patch, not a report that an appliance was compromised. Barracuda's advisory does not mention it. Do not run the generator against an appliance.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for either CVE. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-116606](https://www.cve.org/CVERecord?id=CVE-2026-116606) and [CVE-2026-111560](https://www.cve.org/CVERecord?id=CVE-2026-111560) added 2026-11-10, federal due date 2026-11-13. Ransomware use Unknown. The feed says the two can be chained. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -32,7 +34,9 @@ On 2026-11-05 watchTowr published how the two fit together, from the patch diff 
 | Reported to Mandiant | 2026-10-15 (command injection); 2026-10-22 (configuration import) | Dates only. [MNDT-2026-0041][m41] [MNDT-2026-0042][m42] |
 | Barracuda advisory and CVE records | 2026-11-02; time/TZ unknown | Advisory published and updated the same day. CVE records published 2026-11-02. [Barracuda][bar] |
 | Barracuda authentication line | 2026-11-05 2:30pm EST (UTC−05:00) | Changed to "No (Administrative UI Access Required)." [Barracuda][bar] |
-| watchTowr write-up | 2026-11-05; time/TZ unknown | The chain, the fixed checksum string, and a Detection Artefact Generator. Not a report of a compromised appliance. [watchTowr][wt] |
+| watchTowr write-up | 2026-11-05; time/TZ unknown | The chain, the fixed checksum string, and a Detection Artefact Generator. A write-up of the patch. [watchTowr][wt] |
+| **Barracuda exploitation note** | **2026-11-09 9:00pm EST (UTC−05:00)** | "We have identified exploitation activity affecting a small number of organizations." [Barracuda][bar] |
+| **CISA KEV** | **2026-11-10; time/TZ unknown** | Both CVEs added. Federal due date 2026-11-13. [KEV][kev] |
 
 ## Detection
 
@@ -63,7 +67,7 @@ A restored configuration can replace administrator accounts and policy. A comman
 - [Mandiant MNDT-2026-0041][m41] — CVE-2026-111560, authenticated administrator, root command, CVSS 4.0 8.6, and the four product ceilings.
 - [Barracuda Campus, Web Security Gateway][wsg] — says firmware 15.0.0.009 through 16.1.003 was updated. That range is not the CVE ceiling.
 - [watchTowr][wt] — published 2026-11-05. The failed password change continues into a backup upload, the checksum uses a fixed string, and the restored timezone reaches a root shell. Includes a Detection Artefact Generator. Not a compromise report.
-- [CISA KEV JSON feed][kev] — catalog 2026.11.06, checked 2026-11-07. Neither CVE is listed.
+- [CISA KEV JSON feed][kev] — catalog 2026.11.10. Both CVEs added 2026-11-10, due 2026-11-13. Ransomware use Unknown.
 
 [bar]: https://trust.barracuda.com/security/pre-authentication-authorization-bypass-command-injection
 [wt]: https://labs.watchtowr.com/barracuda-networks-is-your-new-best-friend-barracuda-email-security-gateway-pre-auth-remote-root-rce-cve-2026-116606-cve-2026-111560

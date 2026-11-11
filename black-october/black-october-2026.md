@@ -15,9 +15,12 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Xen Orchestra: an empty login cookie is an administrator](#xen-orchestra-an-empty-login-cookie-is-an-administrator)
+- [Git: a recursive clone of a malicious repository runs code](#git-a-recursive-clone-of-a-malicious-repository-runs-code)
+- [Cisco BroadWorks: an unauthenticated XML message reads a file](#cisco-broadworks-an-unauthenticated-xml-message-reads-a-file)
 - [Apple: an iMessage group accepts an outsider, and a nearby Bluetooth device corrupts memory](#apple-an-imessage-group-accepts-an-outsider-and-a-nearby-bluetooth-device-corrupts-memory)
 - [SAP: November patch day - unauthenticated code execution in Web Dispatcher, ICM, and Gateway](#sap-november-patch-day---unauthenticated-code-execution-in-web-dispatcher-icm-and-gateway)
-- [N-central: critical vulnerabilities, no hotfix yet](#n-central-critical-vulnerabilities-no-hotfix-yet)
+- [N-central: critical vulnerabilities, hotfix 2026.4.1.26](#n-central-critical-vulnerabilities-hotfix-20264126)
 - [GPUStack: a loopback request is the administrator](#gpustack-a-loopback-request-is-the-administrator)
 - [FreeSWITCH: a SIP MESSAGE runs an API command](#freeswitch-a-sip-message-runs-an-api-command)
 - [Swarm: bee-js 13.3.0 and Swarm Desktop 0.56.2 were malicious releases](#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases)
@@ -207,10 +210,13 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [Xen Orchestra](#xen-orchestra-an-empty-login-cookie-is-an-administrator) to **6.10.1** (latest) or **6.9.2** (stable) and restart it. Vates rates VSA-2026-062 Critical and says it is being exploited: a cookie of `authenticationToken=j:{}` logs in as the first stored token's owner, and from there the console can run code on the pools it manages. There is no CVE and no CVSS score. If the console was reachable from the internet, revoke sessions and rotate the secrets it holds. Keeping it off the internet does not close the check.
+- **New this update:** Upgrade [Git](#git-a-recursive-clone-of-a-malicious-repository-runs-code) to **2.56.1**, or to 2.55.1, 2.54.1, 2.53.1, 2.52.1, 2.51.3, or 2.50.2 on the line you already run. GitHub rates [CVE-2026-111760](https://www.cve.org/CVERecord?id=CVE-2026-111760) CVSS 3.1 8.0 High: `git clone --recurse-submodules` of a repository built for this bug runs the repository's code. GitLab rates a second flaw in the same release, [CVE-2026-105437](https://www.cve.org/CVERecord?id=CVE-2026-105437), 7.5 High. It is not in KEV. The upgrade does not show whether a clone already ran a hook.
+- **New this update (CISA KEV):** Upgrade [Cisco BroadWorks](#cisco-broadworks-an-unauthenticated-xml-message-reads-a-file) to **RI.2026.07 or later**. Cisco rates [CVE-2026-20320](https://www.cve.org/CVERecord?id=CVE-2026-20320) CVSS 3.1 7.5 High: an unauthenticated XML message to OCI-P reads a file as the BroadWorks user. CISA added it on November 10, due November 24. Cisco's August advisory said it had seen no malicious use. There is no workaround.
 - **New this update:** Install the [November 9 Apple update](#apple-an-imessage-group-accepts-an-outsider-and-a-nearby-bluetooth-device-corrupts-memory) and restart. CISA-ADP scores [CVE-2026-113961](https://www.cve.org/CVERecord?id=CVE-2026-113961) CVSS 3.1 7.5 High: a remote attacker may be able to join an iMessage group and receive its messages. [CVE-2026-113970](https://www.cve.org/CVERecord?id=CVE-2026-113970) is 8.8 High: an attacker in Bluetooth range may be able to corrupt process memory. Apple publishes no score. iOS and iPadOS go to **27.2.1** or **26.7.3**, and a Mac goes to Sequoia **15.8.3**, Tahoe **26.7.3**, or Golden Gate **27.2.1**. iOS **18.7.12** fixes the Bluetooth flaw and does not list the iMessage flaw. Neither is in KEV.
-- **New this update:** Update [Chrome](#google-chrome-critical-browser-security-fixes) and relaunch. Windows and Mac go to **157.0.8103.50/.51 or later**, Linux to **157.0.8103.50 or later**, and Extended Stable on Windows and Mac to **156.0.8078.96 or later**. Google rates [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) High, a use after free in XML, and says an exploit for it exists in the wild. The November 3 builds, 157.0.8103.38/.39, do not include it. Google publishes no numeric score. It is not in KEV.
+- **New this update (CISA KEV):** Update [Chrome](#google-chrome-critical-browser-security-fixes) and relaunch. Windows and Mac go to **157.0.8103.50/.51 or later**, Linux to **157.0.8103.50 or later**, and Extended Stable on Windows and Mac to **156.0.8078.96 or later**. CISA added [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) on November 10, due November 24. Google rates it High, a use after free in XML, and says an exploit exists in the wild. CISA-ADP scores it 8.8. The November 3 builds, 157.0.8103.38/.39, do not include it. Google publishes no numeric score.
 - **New this update:** Apply the [November 10 SAP Security Notes](#sap-november-patch-day---unauthenticated-code-execution-in-web-dispatcher-icm-and-gateway), starting with anything reachable from the internet. SAP rates four flaws CVSS 3.1 10.0 Critical: a SAML2 login can be forged, crafted traffic can run code in Web Dispatcher and in the Internet Communication Manager, and SAP Gateway treats an outside attacker as an internal application server. Five more are Critical at 9.9, 9.9, 9.9, 9.6, and 9.1. The notes are behind an SAP login, and no fixed patch level is published outside them. None is in KEV.
-- **New this update:** If you run [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet), keep it offline. N-able's November 10, 05:00 UTC update estimates a hotfix for mid-day November 10 (EST) and says it has seen no indication an environment was impacted or compromised. That estimate is not a restoration time. There is still no CVE, no CVSS score, and no published hotfix. Ecoverse at n-able.app stays up. Bringing the server back to install a hotfix that is not published is not the instruction.
+- **New this update:** Upgrade [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) to **2026.4.1.26** and keep it offline until that upgrade has succeeded. N-able rates [CVE-2026-125883](https://www.cve.org/CVERecord?id=CVE-2026-125883) and [CVE-2026-125881](https://www.cve.org/CVERecord?id=CVE-2026-125881) CVSS 4.0 9.3 Critical, and five more High. N-able is observing scanning that matches the published proof of concept. Hosted regions are being upgraded by N-able. On premises, upgrade the server, then the Agents, then the Probes. A follow-up hotfix is still planned. None of the seven is in KEV. Built-in remote control is off in this build.
 - **New this update (CISA KEV):** Upgrade [GPUStack](#gpustack-a-loopback-request-is-the-administrator) to **2.3.0 or later** and restart the server and the workers. GitHub rates [CVE-2026-102895](https://www.cve.org/CVERecord?id=CVE-2026-102895) CVSS 3.1 9.8 Critical: before 2.2.0, a request that looks like it came from localhost is the administrator. CISA added it on November 9, due November 12. The project says a 2.1.1 deployment was exploited. 2.2.0 does not fix the SAML callback or the cluster proxy, both fixed in 2.2.2. 2.3.0 also fixes a High flaw with no CVE. The upgrade does not delete an administrator key already created.
 - **New this update (CISA KEV):** Upgrade [FreeSWITCH](#freeswitch-a-sip-message-runs-an-api-command) to **1.11.3 or later** and restart. GitHub rates [CVE-2026-116779](https://www.cve.org/CVERecord?id=CVE-2026-116779) CVSS 3.1 9.8 Critical: an inbound SIP MESSAGE can run an API command, and chat is on by default. CISA added it on November 9, due November 12. The project says exploitation has been observed. Until the upgrade, set `enable-chat=false` on profiles that do not need chat. The upgrade does not show whether a command already ran.
 - **New this update:** If you installed [@ethersphere/bee-js 13.3.0](#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases) or launched [Swarm Desktop 0.56.2](#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases), treat that machine as compromised. GitHub rates the bee-js advisory Critical, and it has no CVSS score and no CVE. Both releases were published November 9 with the project's own CI and stolen credentials. Pin bee-js to **13.2.0** and install Swarm Desktop **0.56.3**. Uninstalling does not remove the backdoor. From a different computer, rotate every credential that machine could read and move the node's funds to a new key.
@@ -229,7 +235,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade [Keycloak](#keycloak-a-signed-saml-message-covers-a-different-message-than-the-one-processed) to **26.8.2 or later**, or install Red Hat build of Keycloak **26.6.9** from RHSA-2026:96040. Red Hat rates [CVE-2026-117691](https://www.cve.org/CVERecord?id=CVE-2026-117691) CVSS 3.1 9.1 Critical: where a realm brokers a SAML identity provider over the HTTP-Redirect binding, a signed message can cover a different message than the one Keycloak processes, and the attacker logs in as any federated user. The community tags 26.6.9 and 26.4.18 do not contain the fix. Red Hat Single Sign-On 7 is not affected by that flaw. A second flaw, [CVE-2026-120984](https://www.cve.org/CVERecord?id=CVE-2026-120984), is also 9.1: a client administrator can upload a JavaScript policy that runs on the server. Red Hat lists no fix and no workaround for it. 26.8.2 does not list it. Neither is in KEV.
 - **New this update:** If the site runs [LatePoint](#wordpress-plugins-latepoint-customer-account-takeover), update it to **5.7.7 or later**. Wordfence rates [CVE-2026-118066](https://www.cve.org/CVERecord?id=CVE-2026-118066) CVSS 3.1 9.1 Critical: through 5.7.6, a logged-out caller can set a customer's password. When the site uses WordPress users as customers, the linked subscriber account is taken over too. The directory version on November 7 is 5.7.8. The update does not restore a password already changed. It is not in KEV.
 - **New this update:** [Windows Paint](#windows-paint-remote-code-execution) is still **11.2609.401.0 or later**, through the Microsoft Store. Microsoft's November 7 revision cuts the score from 8.1 to CVSS 3.1 **7.0**. The attack is local: a user has to open a crafted file. The October line, a crafted packet with no user interaction, is withdrawn. It is not in KEV.
-- **New this update:** Update [Firefox](#firefox-a-layout-bug-can-run-code-from-a-web-page) to **159.0.1 or later** and relaunch. Mozilla rates [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572) High: incorrect boundary conditions in layout, fixed on November 3. CISA-ADP scores it CVSS 3.1 8.8. Mozilla's record does not name the affected range or Firefox ESR. It is not in KEV.
+- **New this update:** Update [Firefox](#firefox-a-layout-bug-can-run-code-from-a-web-page) to **160 or later** and relaunch. Mozilla's November 10 advisory rates 57 issues High, including a sandbox escape, [CVE-2026-124903](https://www.cve.org/CVERecord?id=CVE-2026-124903). ESR goes to **153.7**, or **115.45** on the 115 line. 159.0.1 fixes only the November 3 layout bug. It is not in KEV.
 - **New this update:** Upgrade [Symfony](#symfony-a-yaml-document-holds-a-php-worker-and-a-data-uri-reads-a-file) to **5.4.56, 6.4.50, 7.4.23, or 8.1.11** or later on that line. GitHub rates [CVE-2026-123792](https://www.cve.org/CVERecord?id=CVE-2026-123792) CVSS 4.0 8.7 High: one unauthenticated request with a YAML content type can hold a PHP worker until `max_execution_time`. Checkmarx rates [CVE-2026-121623](https://www.cve.org/CVERecord?id=CVE-2026-121623) 8.2: a `DATA:` value is opened as a local file, so a public endpoint that deserializes into `File` can read a file the process can read. A third High advisory, with no CVE, lets a path check approve a file outside its directory. The advisories are November 4. The CVE records are November 6. Symfony's data-URI page now names CVE-2026-121623. An earlier reading said no CVE was known. It is not in KEV.
 - **New this update:** If you have a [Technical University of Munich](#technical-university-of-munich-stolen-passwords-for-every-mytum-account) account, change the TUM password now if it was not changed since November 5, 00:00, and change it wherever else you used it. The German IT page published three methods at 13:00 CET on November 7: Microsoft 365, the German online ID, or email from the campus network. Every TUM account is in scope, not only myTUM. A reread of the English and German press pages on November 9 no longer shows the Monday 7:00 a.m. status; both again say the options will be provided by Monday. Use the German IT page. Signing in to TUMonline is still not possible. No CVE is assigned.
 - **New this update:** On [Red Hat Enterprise Linux 7 Extended Lifecycle Support](#linux-kernel-skb_zerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix), install `kernel-3.10.0-1160.169.1.el7` and reboot. The November 5 errata names the local-root bug. CentOS 7 is still outside the affected set. The kernel.org CNA assigned [CVE-2026-99284](https://www.cve.org/CVERecord?id=CVE-2026-99284) on November 7 and did not score it. The kernel to install does not change.
@@ -348,6 +354,70 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Xen Orchestra: an empty login cookie is an administrator
+
+<a id="xen-orchestra-an-empty-login-cookie-is-an-administrator"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/xen-orchestra.md):** [Detection](details/xen-orchestra.md#detection) · [Remediation](details/xen-orchestra.md#remediation) · [Verification](details/xen-orchestra.md#verification) · [Timeline](details/xen-orchestra.md#timeline)
+
+**CVEs:** No CVE is assigned. Vates tracks this as VSA-2026-062.
+
+**Vates classifies VSA-2026-062 as Critical. No CVSS score is assigned.** A REST cookie of `authenticationToken=j:{}` is parsed into an empty object. The token store treats that object as a lookup with no filter and returns its first token, and the caller is logged in as that token's owner. The authenticated route then returns login token IDs that can be reused. Vates says a compromised console can run code on the pools it manages and take an XCP-ng node as root. Vates says the vulnerability is actively exploited, first from `91.211.251.112` and a Tor service. Xen Orchestra before **6.9.2** (stable) and **6.10.1** (latest) is affected, and so is the appliance. The fixing packages are `xo-server` **5.211.2** (stable) and **5.213.1** (latest).
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Vates says this vulnerability is actively exploited. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-10; time/TZ unknown** | VSA-2026-062. Critical. CVSS not assigned. Actively exploited. |
+| **Last updated** | **2026-11-10 19:04 EST (UTC−05:00)** | New item. Update Xen Orchestra. |
+
+**Patch:** Update to **6.10.1** (latest) or **6.9.2** (stable) and restart `xo-server`. A source install takes the latest `master`, which includes pull request 10748. If the console was reachable from the internet, revoke every session and API token and rotate the secrets the stack uses. Vates says a reinstall is the recommendation when a compromise is confirmed. Blocking the addresses Vates names stops the campaign it has seen and does not close the check.
+
+Sources: [VSA-2026-062](https://docs.vates.tech/security-advisories/advisories/2026/vates-sa-2026-062/), [detailed guide](details/xen-orchestra.md).
+
+## Git: a recursive clone of a malicious repository runs code
+
+<a id="git-a-recursive-clone-of-a-malicious-repository-runs-code"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/git-recursive-clone.md):** [Detection](details/git-recursive-clone.md#detection) · [Remediation](details/git-recursive-clone.md#remediation) · [Verification](details/git-recursive-clone.md#verification) · [Timeline](details/git-recursive-clone.md#timeline)
+
+**CVEs:** [CVE-2026-111760](https://www.cve.org/CVERecord?id=CVE-2026-111760), [CVE-2026-105437](https://www.cve.org/CVERecord?id=CVE-2026-105437)
+
+**GitHub rates CVE-2026-111760 CVSS 3.1 8.0 High. GitLab rates CVE-2026-105437 CVSS 3.1 7.5 High.** An integer truncation in Git's index lets a very long path pass the check that refuses to overwrite Git's own metadata, and Git then writes it under a shorter name. A repository built for this replaces a submodule's `.git` file with a link to a directory of hooks, which run during `git clone --recurse-submodules`. The fix is Git **2.56.1**, and **2.55.1, 2.54.1, 2.53.1, 2.52.1, 2.51.3, and 2.50.2** on the older lines. The same releases fix four more flaws GitHub describes without a numeric score. This guide does not treat those four as High. GitHub's advisory page still says the patched-versions field is none. The release post is the list of versions.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-10). GitHub does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-10; time/TZ unknown** | GitHub advisory and the 2.56.1 release note, the same day. |
+| **Last updated** | **2026-11-10 19:04 EST (UTC−05:00)** | New item. Upgrade Git. |
+
+**Patch:** Upgrade to **2.56.1**, or to the patched release on the line you run. Upgrade an application that ships its own Git. On GitHub Enterprise Server the builds are 3.19.15, 3.20.11, 3.21.9, and 3.22.4. Until `git --version` prints a fixed build, do not recursively clone a repository you do not trust. The upgrade does not show whether a hook already ran.
+
+Sources: [GHSA-vp2w-7xxj-jvxr](https://github.com/git/git/security/advisories/GHSA-vp2w-7xxj-jvxr), [GitHub release post](https://github.blog/open-source/git/git-security-vulnerabilities-announced-7), [detailed guide](details/git-recursive-clone.md).
+
+## Cisco BroadWorks: an unauthenticated XML message reads a file
+
+<a id="cisco-broadworks-an-unauthenticated-xml-message-reads-a-file"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cisco-broadworks.md):** [Detection](details/cisco-broadworks.md#detection) · [Remediation](details/cisco-broadworks.md#remediation) · [Verification](details/cisco-broadworks.md#verification) · [Timeline](details/cisco-broadworks.md#timeline)
+
+**CVEs:** [CVE-2026-20320](https://www.cve.org/CVERecord?id=CVE-2026-20320)
+
+**Cisco rates CVE-2026-20320 CVSS 3.1 7.5 High.** The Open Client Interface parser resolves external entities. An unauthenticated XML message to OCI-P reads a file as the BroadWorks user. The advisory was published 2026-08-19 16:00 GMT and says the PSIRT was not aware of malicious use. CISA added it on November 10. There is no workaround. The affected products, on any release earlier than **RI.2026.07**, are the Application Delivery Platform, the Application Server, the Profile Server, and the Xtended Services Platform. RI.2026.07 is the first fixed release for each.
+
+**CISA KEV:** Listed — added 2026-11-10, federal due date 2026-11-24. Ransomware use Unknown. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Public announcement and fix | 2026-08-19 16:00 GMT | Cisco advisory cisco-sa-bworks-xxe-uwUd7CEt. Fixed in RI.2026.07. |
+| **CISA KEV** | **2026-11-10; time/TZ unknown** | Added. Federal due date 2026-11-24. |
+| **Last updated** | **2026-11-10 19:04 EST (UTC−05:00)** | New item. Upgrade BroadWorks. |
+
+**Patch:** Upgrade each affected server to **RI.2026.07 or later**. Restricting who can reach OCI-P is not a fix. The upgrade does not show whether a file was already read.
+
+Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-bworks-xxe-uwUd7CEt), [CVE-2026-20320](https://www.cve.org/CVERecord?id=CVE-2026-20320), [detailed guide](details/cisco-broadworks.md).
+
 ## Apple: an iMessage group accepts an outsider, and a nearby Bluetooth device corrupts memory
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/apple-november.md):** [Detection](details/apple-november.md#detection) · [Remediation](details/apple-november.md#remediation) · [Verification](details/apple-november.md#verification) · [Timeline](details/apple-november.md#timeline)
@@ -404,27 +474,30 @@ October's Visual Composer flaw and the SAP Cloud SDK for Python flaw are earlier
 
 Sources: [CVE-2026-120017](https://cveawg.mitre.org/api/cve/CVE-2026-120017), [CVE-2026-89126](https://cveawg.mitre.org/api/cve/CVE-2026-89126), [CVE-2026-76964](https://cveawg.mitre.org/api/cve/CVE-2026-76964), [CVE-2026-89103](https://cveawg.mitre.org/api/cve/CVE-2026-89103), [CVE-2026-76965](https://cveawg.mitre.org/api/cve/CVE-2026-76965), [CVE-2026-109803](https://cveawg.mitre.org/api/cve/CVE-2026-109803), [CVE-2026-109795](https://cveawg.mitre.org/api/cve/CVE-2026-109795), [CVE-2026-89119](https://cveawg.mitre.org/api/cve/CVE-2026-89119), [CVE-2026-109798](https://cveawg.mitre.org/api/cve/CVE-2026-109798), [SAP November bulletin](https://support.sap.com/en/my-support/knowledge-base/security-notes-news/november-2026.html), [SAP Security Patch Day index](https://support.sap.com/en/my-support/knowledge-base/security-notes-news.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
-## N-central: critical vulnerabilities, no hotfix yet
+## N-central: critical vulnerabilities, hotfix 2026.4.1.26
+
+<a id="n-central-critical-vulnerabilities-no-hotfix-yet"></a>
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/n-central.md):** [Detection](details/n-central.md#detection) · [Remediation](details/n-central.md#remediation) · [Verification](details/n-central.md#verification) · [Timeline](details/n-central.md#timeline)
 
-**No CVE is assigned.**
+**CVEs:** [CVE-2026-125883](https://www.cve.org/CVERecord?id=CVE-2026-125883), [CVE-2026-125881](https://www.cve.org/CVERecord?id=CVE-2026-125881), [CVE-2026-125878](https://www.cve.org/CVERecord?id=CVE-2026-125878), [CVE-2026-125879](https://www.cve.org/CVERecord?id=CVE-2026-125879), [CVE-2026-125882](https://www.cve.org/CVERecord?id=CVE-2026-125882), [CVE-2026-91000](https://www.cve.org/CVERecord?id=CVE-2026-91000), [CVE-2026-125880](https://www.cve.org/CVERecord?id=CVE-2026-125880)
 
-N-able says an independent researcher publicly disclosed critical vulnerabilities in N-central. The incident started 2026-11-09 15:15:00 UTC. N-able took hosted N-central offline in the Americas, Europe, and Asia-Pacific, and told customers running N-central on their own servers to take those servers offline until further notice. At 15:15 UTC N-able said it had not seen active exploitation. The 19:59:46 UTC update says there is still no evidence of active exploitation or unauthorized data access, and that a hotfix is being validated. The November 10, 05:00:00 UTC update estimates the hotfix for mid-day November 10 (EST) and says N-able has seen no indication an environment was impacted or compromised. That estimate is not a restoration time, and the same update says servers stay offline. N-able has not published the flaws, the affected versions, a CVSS score, or the hotfix. N-central is the console that deploys software, runs scripts, and opens remote-control sessions on the machines it manages, so the instruction is to keep that console off the network. Ecoverse services under N-able Login stay available at `https://n-able.app`. This is not the November 3 notice about AlmaLinux updates in N-central 2026.4 HF1.
+**N-able rates CVE-2026-125883 and CVE-2026-125881 CVSS 4.0 9.3 Critical, and the other five High.** The High scores are 8.7, 8.6, 8.6, 8.4, and 8.3. N-able published the records and the fix on November 10: N-central **2026.4 HF2, build 2026.4.1.26**. The two Critical flaws need no login. One is XXE. The other is server-side request forgery in service-import schema validation. The High flaws are OGNL injection, a local privilege escalation to root, path traversal in a file upload, a local privilege escalation over IPC, and stored cross-site scripting in an administrator's browser. Six records say "before 26.4.1." CVE-2026-91000 says "before 2026.4.1." Both writings are N-able's.
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs.
+N-able's current status page says it is observing scanning that matches the published proof of concept, and that servers should stay offline until the upgrade has succeeded. Hosted regions are being upgraded by N-able. A follow-up hotfix is still planned. Built-in remote control is off in this build. Take Control still works. Ecoverse stays up at `https://n-able.app`. This is not the November 3 notice about AlmaLinux updates.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-10) for any of the seven. N-able reports scanning, not a confirmed intrusion of a customer environment. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Researcher publishes the flaws | 2026-11-08; time unknown | N-able says late Sunday night, November 8. |
-| **Public announcement** | **2026-11-09 15:15:00 UTC** | Incident 202561. Hosted N-central offline. On-premises servers should be taken offline. |
-| Status update | 2026-11-09 19:59:46 UTC | Hotfix still being validated. No unauthorized data access seen. |
-| **Status update** | **2026-11-10 05:00:00 UTC** | Estimate of mid-day November 10 (EST). No indication of impact or compromise. Servers stay offline. |
-| **Last updated** | **2026-11-10 07:10 EST (UTC−05:00)** | The estimate is not a restoration time. Keep N-central offline. |
+| **Public announcement** | **2026-11-09 15:15:00 UTC** | Hosted N-central taken offline. On-premises servers told to shut down. |
+| **Release** | **2026-11-10; time/TZ unknown** | 2026.4 HF2, build 2026.4.1.26. Seven CVEs. |
+| **Last updated** | **2026-11-10 19:04 EST (UTC−05:00)** | Upgrade, and stay offline until it succeeds. |
 
-**Patch:** No patch. Keep hosted and on-premises N-central offline until [N-able's status page](https://uptime.n-able.com/) says the server can come back. The November 10 estimate of mid-day (EST) is not that clearance, and no hotfix is published. Shutting it down does not undo a script or a remote session that already ran.
+**Patch:** On premises, upgrade to **2026.4.1.26** while the server is still offline, then bring it back. Upgrade Agents before Probes, both to 2026.4.1.26. A Probe on the new build stops talking to an older Agent. Hosted servers are N-able's to upgrade. The download is [SD-000143](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LUHIA2/sd-000143). Supported paths start at 2025.4. The upgrade does not undo a script or a remote session that already ran.
 
-Sources: [N-able status](https://uptime.n-able.com/), [detailed guide](details/n-central.md).
+Sources: [N-able status, incident 202584](https://uptime.n-able.com/event/202584), [release notes](https://status.n-able.com/2026/11/10/n-central-2026-4-hf2-release-notes/), [detailed guide](details/n-central.md).
 
 ---
 
@@ -838,7 +911,9 @@ Sources: [Wordfence, LatePoint](https://www.wordfence.com/threat-intel/vulnerabi
 
 **CVEs:** [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572)
 
-**Mozilla rates it High. CISA-ADP scores it CVSS 3.1 8.8 High.** [MFSA 2026-123](https://www.mozilla.org/en-US/security/advisories/mfsa2026-123/), announced November 3, is the vendor rating. The CNA record publishes no numeric score. NVD shows 8.8 from CISA-ADP, `CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H`. The description is incorrect boundary conditions in the Layout: Block and Inline component, fixed in Firefox **159.0.1**. The record does not say which earlier versions are affected, and it does not name Firefox ESR or Thunderbird. Bug 2079035 is not public. This is not the [eMudhra](#tls-and-code-signing-trust-stores-emudhra-emsign-certificate-authority-compromise) certificate distrust.
+**Mozilla rates it High. CISA-ADP scores it CVSS 3.1 8.8 High.** [MFSA 2026-123](https://www.mozilla.org/en-US/security/advisories/mfsa2026-123/), announced November 3, is the vendor rating. The CNA record publishes no numeric score. NVD shows 8.8 from CISA-ADP, `CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H`. The description is incorrect boundary conditions in the Layout: Block and Inline component, fixed in Firefox **159.0.1**. The record does not say which earlier versions are affected, and it does not name Firefox ESR or Thunderbird. Bug 2079035 is not public.
+
+On November 10 Mozilla published [MFSA 2026-125](https://www.mozilla.org/en-US/security/advisories/mfsa2026-125/), impact high, fixed in Firefox **160**. It lists 57 issues Mozilla rates high. [CVE-2026-124903](https://www.cve.org/CVERecord?id=CVE-2026-124903) is a sandbox escape from a use-after-free in IPC, rated high. [CVE-2026-124917](https://www.cve.org/CVERecord?id=CVE-2026-124917) is in the same advisory at impact moderate. Secondary pages score both 9.6. Mozilla publishes no numeric score. Firefox 159.0.1 does not contain these fixes. ESR **153.7** fixes both. ESR **115.45** fixes CVE-2026-124903 and does not list CVE-2026-124917. This is not the [eMudhra](#tls-and-code-signing-trust-stores-emudhra-emsign-certificate-authority-compromise) certificate distrust.
 
 **CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07). Mozilla does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
@@ -846,9 +921,10 @@ Sources: [Wordfence, LatePoint](https://www.wordfence.com/threat-intel/vulnerabi
 |---|---|---|
 | Public announcement and fix | 2026-11-03; time/TZ unknown | MFSA 2026-123. Firefox 159.0.1 first offered to Release channel users the same day. |
 | CVE record | 2026-11-03 14:17:35 UTC | Mozilla CNA. No numeric score. Unaffected at 159.0.1. |
-| **Last updated** | **2026-11-07 16:15 EST (UTC−05:00)** | New item. Update Firefox to 159.0.1 or later. |
+| **Firefox 160** | **2026-11-10; time/TZ unknown** | MFSA 2026-125. 57 issues Mozilla rates high. |
+| **Last updated** | **2026-11-10 19:04 EST (UTC−05:00)** | 159.0.1 is no longer the current fix. |
 
-**Patch:** Update Firefox to **159.0.1 or later** and relaunch. Mozilla publishes no workaround and no affected range below 159.0.1. ESR 153.6 is a different advisory. The update does not show whether a page already ran code.
+**Patch:** Update Firefox to **160 or later** and relaunch. Update ESR to **153.7 or later**, or **115.45 or later** on the 115 line. 159.0.1 fixes only the November 3 layout bug. The update does not show whether a page already ran code.
 
 Sources: [MFSA 2026-123](https://www.mozilla.org/en-US/security/advisories/mfsa2026-123/), [Firefox 159.0.1 release notes](https://www.firefox.com/firefox/159.0.1/releasenotes/), [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572), [detailed guide](details/firefox.md).
 
@@ -1731,17 +1807,19 @@ Sources: [WSO2-2026-5212](https://security.docs.wso2.com/en/latest/security-anno
 
 **CVEs:** [CVE-2026-116606](https://www.cve.org/CVERecord?id=CVE-2026-116606), [CVE-2026-111560](https://www.cve.org/CVERecord?id=CVE-2026-111560)
 
-**Mandiant rates CVE-2026-116606 CVSS 4.0 9.3 Critical and CVE-2026-111560 CVSS 4.0 8.6 High.** The 9.3 flaw is Email Security Gateway before 9.4.0.030: anyone who can reach the administrative interface can restore a crafted backup and replace the global configuration. Barracuda's November 5 revision now says authentication is not required, and that the attacker must be able to reach that interface. The 8.6 flaw needs an administrator and runs a command from the timezone field as root. Barracuda says the two together can produce root. Neither source reports exploitation. On November 5 watchTowr published the chain: a failed password change lets the same request upload a backup, and the restored timezone reaches a root shell. That is a write-up of the patch, not a report that an appliance was compromised.
+**Mandiant rates CVE-2026-116606 CVSS 4.0 9.3 Critical and CVE-2026-111560 CVSS 4.0 8.6 High.** The 9.3 flaw is Email Security Gateway before 9.4.0.030: anyone who can reach the administrative interface can restore a crafted backup and replace the global configuration. Barracuda's November 5 revision now says authentication is not required, and that the attacker must be able to reach that interface. The 8.6 flaw needs an administrator and runs a command from the timezone field as root. Barracuda says the two together can produce root. On November 9 at 9:00pm EST Barracuda added that it has identified exploitation activity affecting a small number of organizations. On November 5 watchTowr published the chain: a failed password change lets the same request upload a backup, and the restored timezone reaches a root shell. That is a write-up of the patch, not a report that an appliance was compromised.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for either CVE. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Listed — both added 2026-11-10, federal due date 2026-11-13. Ransomware use Unknown. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Reported | 2026-10-15 and 2026-10-22; times unknown | Command injection, then the configuration import. |
 | Barracuda advisory and CVE records | 2026-11-02; time/TZ unknown | Patches named. Fixed firmware floors are in the CVE record, not in Barracuda's table. |
 | Barracuda authentication line | 2026-11-05 2:30pm EST (UTC−05:00) | Changed from "Yes, administrative access" to "No (Administrative UI Access Required)." |
-| watchTowr write-up | 2026-11-05; time/TZ unknown | The chain and a Detection Artefact Generator. Not a compromise report. |
-| **Last updated** | **2026-11-07 23:20 EST (UTC−05:00)** | watchTowr published how the two flaws combine. The patches are unchanged. |
+| watchTowr write-up | 2026-11-05; time/TZ unknown | The chain and a Detection Artefact Generator. A write-up of the patch. |
+| **Barracuda exploitation note** | **2026-11-09 9:00pm EST (UTC−05:00)** | Exploitation activity affecting a small number of organizations. |
+| **CISA KEV** | **2026-11-10; time/TZ unknown** | Both CVEs added. Federal due date 2026-11-13. |
+| **Last updated** | **2026-11-10 19:04 EST (UTC−05:00)** | Both CVEs are in KEV. The patches are unchanged. |
 
 **Patch:** Install the patch Barracuda names for the product: ESG **BNSF-40425** (firmware 9.4.017 and later) or **BNSF-40430** (below 9.4.017), ADC and WAF **BNADC-16586**, Message Archiver **BNMA-32468**, WAF Control Center **BNWF-60060**, Web Security Gateway **BNYF-24789**. Mandiant's floors, which the patch IDs do not print, are ESG before 9.4.0.030 for the import and through 9.4.0.27 for the command, ADC through 6.4.0, WAF through 11.0.1, and WSG through 16.1.100.100. The command-injection record, updated 2026-11-03, also lists Message Archiver through 5.5.4.0 and WAF Control Center through 2.2.1. Keep the administrative interface off the internet. That does not fix either flaw.
 
@@ -2738,7 +2816,7 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 
 **CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). No in-the-wild exploitation is reported by the CNA. Absence from KEV is not evidence that exploitation has not occurred.
 
-**Patch:** this is the same flaw as [IPv4 TCP options use-after-free](#linux-kernel-ipv4-tcp-options-use-after-free). Install that item's vendor kernel and reboot. Ubuntu 26.10 has a normal update. Ubuntu 22.04, 24.04, and 26.04 builds are in `-proposed` only. [Guide](details/linux-tcp-rcu.md#remediation).
+**Patch:** this is the same flaw as [IPv4 TCP options use-after-free](#linux-kernel-ipv4-tcp-options-use-after-free). Install that item's vendor kernel and reboot. Ubuntu's generic kernel is fixed on 22.04 (`5.15.0-203.213`), 24.04 (`6.8.0-149.149`), 26.04 (`7.0.0-43.43`), and 26.10 (`7.3.0-10.10`). The November 2 `-proposed` note no longer applies to those. 20.04 and `linux-fips` are still work in progress. [Guide](details/linux-tcp-rcu.md#remediation).
 
 ## Ultralytics: parse_model code injection through an untrusted model file
 
@@ -2920,7 +2998,7 @@ Sources: [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-46300), [Ubuntu 
 
 **Google rates five Chrome 156 flaws Critical, and seven more in Chrome 157.** The October 27 release fixed four in FileSystem, FileAPI, Layout and Skia. The October 29 release adds [CVE-2026-76024](https://www.cve.org/CVERecord?id=CVE-2026-76024), memory corruption in MediaStream. On 2026-11-03 Google promoted Chrome 157, with 213 security fixes. The seven new Critical fixes are [CVE-2026-121156](https://www.cve.org/CVERecord?id=CVE-2026-121156), [CVE-2026-121229](https://www.cve.org/CVERecord?id=CVE-2026-121229), [CVE-2026-121246](https://www.cve.org/CVERecord?id=CVE-2026-121246), [CVE-2026-121035](https://www.cve.org/CVERecord?id=CVE-2026-121035), [CVE-2026-121247](https://www.cve.org/CVERecord?id=CVE-2026-121247), [CVE-2026-121203](https://www.cve.org/CVERecord?id=CVE-2026-121203), and [CVE-2026-121126](https://www.cve.org/CVERecord?id=CVE-2026-121126). On 2026-11-09 Google updated Stable to 157.0.8103.50/.51 and rates [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) High, a use after free in XML. Google says an exploit for it exists in the wild. The same post lists six more High fixes and two Medium fixes, and does not report exploitation for those. Google publishes no numeric score. The CVE-2026-76024 record has no CNA numeric score. CISA's enrichment scores it CVSS 3.1 6.5 Medium, which is not Google's rating.
 
-**CISA KEV:** Not listed (catalog 2026.11.09, checked 2026-11-10) for the Chrome 156 CVEs, the seven Chrome 157 Critical CVEs, or CVE-2026-125350. Google's November 9 post says an exploit for CVE-2026-125350 exists in the wild. That is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) added 2026-11-10, federal due date 2026-11-24. Ransomware use Unknown. The Chrome 156 CVEs and the seven Chrome 157 Critical CVEs from November 3 are not listed (catalog 2026.11.10, checked 2026-11-10). CISA-ADP scores CVE-2026-125350 8.8, which is not Google's rating. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -2929,7 +3007,8 @@ Sources: [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-46300), [Ubuntu 
 | Chrome 157 stable | 2026-11-03; time/TZ unknown | 157.0.8103.38 for Linux and 157.0.8103.38/.39 for Windows and Mac. Seven new Critical fixes. |
 | **Stable update** | **2026-11-09; time/TZ unknown** | 157.0.8103.50/.51 for Windows and Mac and 157.0.8103.50 for Linux. Google says an exploit for High CVE-2026-125350 exists in the wild. |
 | Extended Stable update | 2026-11-09; time/TZ unknown | 156.0.8078.96 for Windows and Mac, including CVE-2026-125350. |
-| **Last updated** | **2026-11-10 03:10 EST (UTC−05:00)** | Raised the minimum build. Google reports an exploit for CVE-2026-125350. |
+| **CISA KEV** | **2026-11-10; time/TZ unknown** | CVE-2026-125350 added. Federal due date 2026-11-24. |
+| **Last updated** | **2026-11-10 19:04 EST (UTC−05:00)** | Now in KEV. The minimum build is unchanged. |
 
 **Patch:** Update Windows/macOS Chrome to **157.0.8103.50/.51 or later** and Linux Chrome to **157.0.8103.50 or later**, then relaunch. On Extended Stable, update Windows and Mac to **156.0.8078.96 or later**. The November 3 builds, 157.0.8103.38/.39, do not include CVE-2026-125350. Google says the update rolls out over the coming days and weeks. Use the supported update channel; the major version alone does not prove the security update is installed. The update does not show whether a page already used the exploit.
 
@@ -5637,7 +5716,7 @@ flowchart TD
 |---|---|
 | **iPhone, iPad, Mac, Apple Watch, or Apple Vision Pro** | Install the November 9 update and restart. CISA-ADP scores an iMessage group-join flaw 7.5 and a Bluetooth memory-corruption flaw 8.8. Apple publishes no score. iOS 18.7.12 fixes the Bluetooth flaw only. [Guide](details/apple-november.md#remediation). |
 | **SAP NetWeaver, Web Dispatcher, SAP Gateway, or BusinessObjects** | Apply the November 10 SAP Security Notes, starting with the four 10.0 notes on anything reachable from the internet. The notes need an SAP login and name the correction. Until then, restrict access to Gateway, Web Dispatcher, and ICM ports. Restart the component after a kernel update. [Guide](details/sap-november.md#remediation). |
-| **N-central, hosted or on premises** | Keep it offline. N-able's November 10, 05:00 UTC update estimates a hotfix for mid-day (EST) and says it has seen no indication of compromise. No hotfix is published, and the estimate is not a clearance to bring the server back. Ecoverse at n-able.app stays up. [Guide](details/n-central.md#remediation). |
+| **N-central, hosted or on premises** | Upgrade to 2026.4.1.26 and keep the server offline until that upgrade succeeds. N-able rates two of the seven CVEs 9.3. Upgrade Agents before Probes. A follow-up hotfix is still planned. [Guide](details/n-central.md#remediation). |
 | **GPUStack below 2.3.0** | Upgrade the server and every worker to 2.3.0 or later and restart. 2.2.0 fixes only the loopback administrator bypass, which CISA listed on November 9. 2.2.2 is the floor for the SAML callback and the cluster proxy, and it leaves a worker-management flaw. Until then, set `force_auth_localhost=true` and block `/auth/saml/callback`. The upgrade does not delete an administrator key already created. [Guide](details/gpustack.md#remediation). |
 | **FreeSWITCH before 1.11.3** | Upgrade to 1.11.3 or later and restart. CISA listed CVE-2026-116779 on November 9, due November 12. An inbound SIP MESSAGE can run an API command, and chat is on by default. Until then, set `enable-chat=false` on profiles that do not need it. Turning off the `system` API does not close the path. [Guide](details/freeswitch.md#remediation). |
 | **@ethersphere/bee-js, or Swarm Desktop** | Pin bee-js to 13.2.0. Install Swarm Desktop 0.56.3. 13.3.0 and 0.56.2 were malicious releases published November 9 with the project's own CI. If either ran, rebuild the machine or remove the persistence it left, and rotate credentials from a different computer. Move the node's funds to a new key. [Guide](details/bee-js.md#remediation). |
@@ -5653,7 +5732,7 @@ flowchart TD
 | **OpenAM through 16.1.3** | Upgrade to 16.1.4 or later and recreate the container. With agent notifications on, anyone who can reach the server can read live session tokens. The same release fixes an unsigned SAML assertion and a self-registration path to an administrator. A customised `web.xml` has to take the new dispatcher elements. [Guide](details/openam.md#remediation). |
 | **imgproxy below 4.0.17** | Upgrade to 4.0.17 or later and recreate the container. On 4.0.0 through 4.0.15 a crafted ICO can crash the worker or run code. 4.0.16 is still affected by a second ICO flaw that crashes the worker. A 3.x install has no backport. [Guide](details/imgproxy.md#remediation). |
 | **Keycloak** | Upgrade community Keycloak to 26.8.2 or later and recreate the container. Red Hat build of Keycloak takes the 26.6.9 packages in RHSA-2026:96040, not the community tag of that number. That fixes the SAML redirect flaw only. A second flaw, CVE-2026-120984, lets a client administrator upload a JavaScript policy that runs on the server, and Red Hat lists no fix. Removing `manage-clients` from accounts that do not need it is not that fix. [Guide](details/keycloak.md#remediation). |
-| **Firefox below 159.0.1** | Update to 159.0.1 or later and relaunch. Mozilla rates the layout bug High, and CISA-ADP scores it 8.8. The record does not name Firefox ESR. [Guide](details/firefox.md#remediation). |
+| **Firefox below 160, or ESR below 153.7** | Update to 160 or later and relaunch. ESR goes to 153.7, or 115.45 on the 115 line. Mozilla's November 10 advisory rates 57 issues High. 159.0.1 fixes only the November 3 layout bug. [Guide](details/firefox.md#remediation). |
 | **Symfony below 5.4.56, 6.4.50, 7.4.23, or 8.1.11** | Upgrade `symfony/yaml`, `symfony/serializer`, and `symfony/filesystem` together to that floor or later, redeploy, and restart PHP. One unauthenticated YAML request can hold a worker, and a `DATA:` value deserialized into `File` reads a local file. The same releases fix a path check that approves a file outside its directory. [Guide](details/symfony.md#remediation). |
 | **A Technical University of Munich account** | Change the TUM password now if it was not changed since 2026-11-05 00:00, using the German IT page: Microsoft 365, the German online ID, or email from the campus network. Every TUM account, not only myTUM. Change a reused password on every other service. New multi-factor authentication waits until TUMonline is back. [Guide](details/tum.md#remediation). |
 | **IBM API Connect V12 through v12.1.1.2, or V10 through 10.0.8.12** | Upgrade V12 to v12.1.1.3 or later, and V10 to 10.0.8.13 or later. A remote attacker can run a command, and an unauthenticated attacker can bypass authentication. IBM lists no workaround. The upgrade does not show whether a command already ran. [Guide](details/ibm-api-connect.md#remediation). |
