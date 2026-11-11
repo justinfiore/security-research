@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Zoom Workplace for Windows: a network request raises privileges](#zoom-workplace-for-windows-a-network-request-raises-privileges)
 - [MongoDB: a replica set primary runs code before login](#mongodb-a-replica-set-primary-runs-code-before-login)
 - [Ivanti Endpoint Manager: a SQL query runs code before login](#ivanti-endpoint-manager-a-sql-query-runs-code-before-login)
 - [Synology DSM: a login request reads or writes any file](#synology-dsm-a-login-request-reads-or-writes-any-file)
@@ -215,8 +216,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [Zoom Workplace for Windows](#zoom-workplace-for-windows-a-network-request-raises-privileges) to **7.1.8 or later** and relaunch it. Zoom rates [CVE-2026-108186](https://www.cve.org/CVERecord?id=CVE-2026-108186) CVSS 3.1 9.6 Critical: a network request can raise privileges, and the person at the computer has to act. [CVE-2026-108187](https://www.cve.org/CVERecord?id=CVE-2026-108187) is 8.1 and is fixed at 7.1.5, so a build that stops there is still inside the 9.6 flaw. Zoom lists no workaround. Neither is in KEV. The update does not show whether a request already raised privileges.
 - **New this update:** Upgrade a [MongoDB](#mongodb-a-replica-set-primary-runs-code-before-login) replica set to **9.0.7, 8.3.16, 8.0.37, or 7.0.48** or later on that line, and restart every member. MongoDB rates [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383) CVSS 4.0 9.5 Critical: a request that needs no login can run code when a new primary finishes catch-up. A standalone server is not affected. MongoDB says it is not aware of exploitation. It is not in KEV. Atlas upgrades during maintenance. The restart does not show whether the process already ran code.
-- **New this update:** Upgrade [Ivanti Endpoint Manager](#ivanti-endpoint-manager-a-sql-query-runs-code-before-login) to **2024 SU8**. Ivanti rates [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653) CVSS 3.1 9.8 Critical: SQL injection in EPM Core runs code with no login. The reviewed sources do not report exploitation. It is not in KEV. The same day, [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683) is 9.4 in Cloud Services Application: the description names 5.0.8 and the record marks 5.0.8 unaffected, so read the advisory before picking a build. The upgrade does not show whether a query already ran.
+- **New this update:** Upgrade [Ivanti Endpoint Manager](#ivanti-endpoint-manager-a-sql-query-runs-code-before-login) to **2024 SU8**, and Cloud Services Application 5.0.8 to **5.0.8.1**. Ivanti rates [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653) CVSS 3.1 9.8 Critical: SQL injection in EPM Core runs code with no login. [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683) is 9.4 and affects CSA 5.0.8 only. The CVE record marks 5.0.8 unaffected; the advisory says 5.0.8.1 is the fix. Ivanti says it has no evidence of exploitation. Neither is in KEV. The upgrade does not show whether a query already ran.
 - **New this update:** Upgrade [Synology DSM](#synology-dsm-a-login-request-reads-or-writes-any-file) to **7.4.1-90080-1**, **7.3.2-86009-5**, **7.2.2-72806-10**, or **7.2.1-69057-13** or later, and reboot. Synology rates [CVE-2026-76954](https://www.cve.org/CVERecord?id=CVE-2026-76954) CVSS 3.1 9.8 Critical: a login request reads or writes any file. A second flaw, [CVE-2026-85101](https://www.cve.org/CVERecord?id=CVE-2026-85101), is 8.6 in rsync and skips the login too. Synology lists no workaround. Both CVE records are still Reserved. Neither is in KEV. The September build does not include this fix.
 - **New this update:** Upgrade [FortiClient](#forticlient-a-web-page-runs-code-through-the-local-api) to **7.4.8 or later**, or to **7.2.15 or later** on the 7.2 Windows line. Fortinet rates [CVE-2026-121529](https://www.cve.org/CVERecord?id=CVE-2026-121529) CVSS 3.1 9.1 Critical: a web page can run code through the agent's local API. FortiClient Windows, FortiClient Mac 7.4, and FortiClient Windows PAM are affected. Fortinet says it is not known to be exploited, and there is no virtual patch. It is not in KEV.
 - **New this update:** Install the [November 10 Windows update](#windows-search-an-email-attachment-runs-code-when-exchange-indexes-it) and reboot, starting with Exchange servers. Microsoft rates [CVE-2026-116928](https://www.cve.org/CVERecord?id=CVE-2026-116928) CVSS 3.1 9.8 Critical: an email with a crafted attachment runs code when Exchange indexes it, and the recipient never opens it. Microsoft says it has not been exploited. It is not in KEV. The update does not show whether an attachment already ran.
@@ -365,6 +367,27 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Zoom Workplace for Windows: a network request raises privileges
+
+<a id="zoom-workplace-for-windows-a-network-request-raises-privileges"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/zoom-workplace.md):** [Detection](details/zoom-workplace.md#detection) · [Remediation](details/zoom-workplace.md#remediation) · [Verification](details/zoom-workplace.md#verification) · [Timeline](details/zoom-workplace.md#timeline)
+
+**CVEs:** [CVE-2026-108186](https://www.cve.org/CVERecord?id=CVE-2026-108186), [CVE-2026-108187](https://www.cve.org/CVERecord?id=CVE-2026-108187)
+
+**Zoom rates CVE-2026-108186 CVSS 3.1 9.6 Critical and CVE-2026-108187 CVSS 3.1 8.1 High.** Both are in Zoom Workplace for Windows, and both need the person at the computer to act. The 9.6 flaw is improper input validation: a user who is not logged in can raise privileges over the network. ZSB-26023 says it starts at **7.1.0** and ends before **7.1.8**. The 8.1 flaw is an origin-validation error with the same outcome, and ZSB-26024 says it affects builds before **7.1.5**. A build at 7.1.5, 7.1.6, or 7.1.7 is outside the second and still inside the first. Zoom does not say which privilege is reached, and it names no workaround. The bulletins do not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11) for either CVE. The bulletins do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-10; time/TZ unknown** | ZSB-26023 and ZSB-26024, revision 1.0, dated 11/10/2026. Zoom gives no time. |
+| **Last updated** | **2026-11-11 15:04 EST (UTC−05:00)** | New item. Update Zoom Workplace for Windows. |
+
+**Patch:** Update Zoom Workplace for Windows to **7.1.8 or later** and relaunch it. Stopping at 7.1.5 leaves CVE-2026-108186 in place. The bulletins name the Windows client only. The update does not show whether a request already raised privileges.
+
+Sources: [ZSB-26023](https://www.zoom.com/en/trust/security-bulletin/zsb-26023), [ZSB-26024](https://www.zoom.com/en/trust/security-bulletin/zsb-26024), [detailed guide](details/zoom-workplace.md).
+
 ## MongoDB: a replica set primary runs code before login
 
 <a id="mongodb-a-replica-set-primary-runs-code-before-login"></a>
@@ -394,16 +417,16 @@ Sources: [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383), [M
 
 **CVEs:** [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653), [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683)
 
-**Ivanti rates CVE-2026-121653 CVSS 3.1 9.8 Critical.** SQL injection in Endpoint Manager Core, before **2024 SU8**, lets a remote attacker who is not logged in run code. The CVE record says every version except 2024 SU8 is affected, and names 2024 SU8 as unaffected. The same day's second Critical flaw is [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683), CVSS 3.1 9.4: missing authentication in Cloud Services Application **5.0.8** lets a remote attacker add or delete a trusted EPM Core certificate entry. The record names 5.0.8 as unaffected, which is the version the description says is affected; the advisory is the page that resolves that. The hub pages did not load from this run. Ivanti's advisory is the source of the score and the fix.
+**Ivanti rates CVE-2026-121653 CVSS 3.1 9.8 Critical.** SQL injection in Endpoint Manager Core, before **2024 SU8**, lets a remote attacker who is not logged in run code. The CVE record says every version except 2024 SU8 is affected, and names 2024 SU8 as unaffected. The same day's second Critical flaw is [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683), CVSS 3.1 9.4: missing authentication in Cloud Services Application **5.0.8** lets a remote attacker add or delete a trusted EPM Core certificate entry. The CVE record names 5.0.8 as unaffected, which is the version the description says is affected. The advisory resolves that: only 5.0.8 is affected, **5.0.8.1** is the fix, and 5.0.7 and earlier are not. The advisory table labels the same vector CVSS 3.0. The EPM hub page still did not return article text. Ivanti says it has no evidence of exploitation.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11) for either CVE. The reviewed sources do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11) for either CVE. Ivanti says it has no evidence of exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-10 15:28:19 UTC** | CVE-2026-121653 published. CVE-2026-121683 at 15:33:51 UTC the same day. |
-| **Last updated** | **2026-11-11 12:15 EST (UTC−05:00)** | New item. Upgrade EPM. |
+| **Last updated** | **2026-11-11 15:04 EST (UTC−05:00)** | CSA advisory names 5.0.8.1. |
 
-**Patch:** Upgrade Endpoint Manager to **2024 SU8**. For Cloud Services Application, install the build the [CSA advisory](https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-CSA-CVE-2026-121683?language=en_US) names; do not treat the CVE record's "unaffected at 5.0.8" as the fixed build until that page is read. Until EPM is on 2024 SU8, keep the Core service off untrusted networks. The upgrade does not show whether a query already ran.
+**Patch:** Upgrade Endpoint Manager to **2024 SU8**. For Cloud Services Application 5.0.8, install **5.0.8.1**. Do not treat the CVE record's "unaffected at 5.0.8" as the fixed build. A dual-NIC layout limits exposure to the internal interface and is not a substitute for 5.0.8.1. Until EPM is on 2024 SU8, keep the Core service off untrusted networks. The upgrade does not show whether a query already ran.
 
 Sources: [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653), [EPM advisory](https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-Endpoint-Manager-EPM-November-2026?language=en_US), [detailed guide](details/ivanti-epm.md).
 
@@ -4201,11 +4224,11 @@ Sources: [Laravel advisory](https://github.com/laravel/framework/security/adviso
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/nextjs.md):** [Detection](details/nextjs.md#detection) · [Remediation](details/nextjs.md#remediation) · [Verification](details/nextjs.md#verification) · [Timeline](details/nextjs.md#timeline)
 
-**CVEs:** [CVE-2026-96889](https://www.cve.org/CVERecord?id=CVE-2026-96889), [CVE-2026-94482](https://www.cve.org/CVERecord?id=CVE-2026-94482), [CVE-2026-119790](https://www.cve.org/CVERecord?id=CVE-2026-119790), [CVE-2026-119351](https://www.cve.org/CVERecord?id=CVE-2026-119351), [CVE-2026-119350](https://www.cve.org/CVERecord?id=CVE-2026-119350), [CVE-2026-119349](https://www.cve.org/CVERecord?id=CVE-2026-119349), [CVE-2026-119348](https://www.cve.org/CVERecord?id=CVE-2026-119348), [CVE-2026-119347](https://www.cve.org/CVERecord?id=CVE-2026-119347), [CVE-2026-119346](https://www.cve.org/CVERecord?id=CVE-2026-119346). The `use cache` RCE (GHSA-673q-mjm6-r5xr) has no CVE assigned.
+**CVEs:** [CVE-2026-126187](https://www.cve.org/CVERecord?id=CVE-2026-126187), [CVE-2026-96889](https://www.cve.org/CVERecord?id=CVE-2026-96889), [CVE-2026-94482](https://www.cve.org/CVERecord?id=CVE-2026-94482), [CVE-2026-119790](https://www.cve.org/CVERecord?id=CVE-2026-119790), [CVE-2026-119351](https://www.cve.org/CVERecord?id=CVE-2026-119351), [CVE-2026-119350](https://www.cve.org/CVERecord?id=CVE-2026-119350), [CVE-2026-119349](https://www.cve.org/CVERecord?id=CVE-2026-119349), [CVE-2026-119348](https://www.cve.org/CVERecord?id=CVE-2026-119348), [CVE-2026-119347](https://www.cve.org/CVERecord?id=CVE-2026-119347), [CVE-2026-119346](https://www.cve.org/CVERecord?id=CVE-2026-119346). CVE-2026-126187 is the React Server Components flaw behind the `use cache` RCE. The Next.js advisory, GHSA-673q-mjm6-r5xr, still has no CVE of its own.
 
 **GHSA-673q-mjm6-r5xr and GHSA-2464-fhr4-w9xw ([CVE-2026-96889](https://www.cve.org/CVERecord?id=CVE-2026-96889)): Vercel Critical, CVSS 4.0 9.5 each. Red Hat, the CNA for the librsvg CVE, scores CVE-2026-96889 CVSS 3.1 7.8 High. The same October release fixes a High DoS, [CVE-2026-94482](https://www.cve.org/CVERecord?id=CVE-2026-94482) (CVSS 4.0 8.2). The November 3 release is separate: GitHub rates all seven Medium, CVSS 4.0 6.0–6.9. The blog calls the `unstable_cache` issue High; the advisory does not.**
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03) for any of these CVEs. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11) for any of these CVEs, including CVE-2026-126187. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -4215,11 +4238,12 @@ Sources: [Laravel advisory](https://github.com/laravel/framework/security/adviso
 | Advisories and fixed releases | 2026-10-14 17:46–17:47 UTC | `next` 15.5.28 and 16.4.1 on npm by 17:44 UTC. |
 | November advisories and releases | 2026-11-03 18:01–18:39 UTC | `next` 15.5.29 and 16.4.5. Seven repository advisories, all GitHub Medium. |
 | GitHub advisory update | 2026-11-06 10:20 UTC | All seven November advisories now name 16.4.5, and 15.5.29 where a 15.x row exists. The 16.x ceiling is 16.4.4. |
-| **Last updated** | **2026-11-07 12:10 EST (UTC−05:00)** | The advisories name the patched versions. 16.4.2 is not the fix. |
+| React CVE assigned | 2026-11-10; time unknown | CVE-2026-126187, the React advisory published October 14. Same CVSS 4.0 9.5. |
+| **Last updated** | **2026-11-11 15:04 EST (UTC−05:00)** | The React flaw now has CVE-2026-126187. The fix is unchanged. |
 
 There are two separate RCE paths:
 
-- In 16.x App Router apps that use Cache Components, a `use cache` function that returns multiple typed arrays can be exploited. The flaw comes from React Server Components, and there is no workaround.
+- In 16.x App Router apps that use Cache Components, a `use cache` function that returns multiple typed arrays can be exploited. The flaw comes from React Server Components, now [CVE-2026-126187](https://www.cve.org/CVERecord?id=CVE-2026-126187), and there is no workaround.
 - The Image Optimization API passes SVG to `sharp`'s bundled librsvg, which has a use-after-free. Vercel says this is exploitable "when Next.js runs on glibc-based Linux".
 
 Vercel's sources do not say whether apps hosted on Vercel are protected.
@@ -5835,6 +5859,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Zoom Workplace for Windows** | Update to 7.1.8 or later and relaunch. Zoom rates CVE-2026-108186 9.6: a network request can raise privileges, and the person at the computer has to act. 7.1.5 fixes only the 8.1 flaw. Zoom lists no workaround. [Guide](details/zoom-workplace.md#remediation). |
 | **Synology DSM 7.2.1, 7.2.2, 7.3, or 7.4** | Upgrade to 7.4.1-90080-1, 7.3.2-86009-5, 7.2.2-72806-10, or 7.2.1-69057-13 or later, and reboot. A login request can otherwise read or write any file, and rsync has a second flaw that skips the login. The September build is not this fix. Synology lists no workaround. [Guide](details/synology-dsm-nov11.md#remediation). |
 | **FortiClient Windows, FortiClient Mac 7.4, or FortiClient Windows PAM** | Upgrade to 7.4.8 or later, or to 7.2.15 or later on the 7.2 Windows line. A web page can otherwise run code through the agent's local API. The 8.0 builds and FortiClient Mac 7.2 are not affected. There is no virtual patch. [Guide](details/forticlient-nov11.md#remediation). |
 | **Windows, especially a server running Exchange** | Install the November 10 cumulative update and reboot. Microsoft rates CVE-2026-116928 9.8: an email attachment runs code when Exchange indexes it, and the recipient never opens it. Windows Server 2022 is KB5131090, build 10.0.20348.5870. It is not in KEV. [Guide](details/windows-search.md#remediation). |

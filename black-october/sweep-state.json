@@ -328,6 +328,10 @@
       "last_checked": "2026-11-10T23:55:43Z",
       "hold": "none"
     },
+    "ivanti-epm.md": {
+      "last_checked": "2026-11-11T19:55:51Z",
+      "hold": "none"
+    },
     "jenkins-october.md": {
       "last_checked": "2026-11-10T23:55:43Z",
       "hold": "none"
@@ -422,6 +426,10 @@
     },
     "mitsubishi-iconics-genesis.md": {
       "last_checked": "2026-11-10T23:55:43Z",
+      "hold": "none"
+    },
+    "mongodb.md": {
+      "last_checked": "2026-11-11T19:55:51Z",
       "hold": "none"
     },
     "n-central.md": {
@@ -750,6 +758,10 @@
     },
     "zammad.md": {
       "last_checked": "2026-11-09T15:55:49Z",
+      "hold": "none"
+    },
+    "zoom-workplace.md": {
+      "last_checked": "2026-11-11T19:55:51Z",
       "hold": "none"
     },
     "zyxel-aps.md": {

@@ -1,6 +1,6 @@
 # Next.js: unauthenticated RCE in use cache and Image Optimization
 
-**Last updated:** 2026-11-07 (America/New_York)
+**Last updated:** 2026-11-11 (America/New_York)
 
 [Main Next.js summary](../black-october-2026.md#nextjs-unauthenticated-rce-then-november-cache-disclosure) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@
 
 | Issue | Component | Vercel rating | Affected `next` | Fixed `next` | Workaround |
 |---|---|---|---|---|---|
-| **GHSA-673q-mjm6-r5xr** (no CVE) | App Router with Cache Components; a `use cache` function that returns multiple typed arrays | Critical, CVSS 4.0 9.5 (`AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:N`) | 16.0.0 through 16.4.0 | **16.4.1** | None |
+| **GHSA-673q-mjm6-r5xr** / [CVE-2026-126187](https://www.cve.org/CVERecord?id=CVE-2026-126187) | App Router with Cache Components; a `use cache` function that returns multiple typed arrays | Critical, CVSS 4.0 9.5 (`AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:N`) | 16.0.0 through 16.4.0 | **16.4.1** | None |
 | **GHSA-2464-fhr4-w9xw** / CVE-2026-96889 | Image Optimization API decoding SVG through `sharp` → bundled librsvg, on **glibc-based Linux** | Critical, CVSS 4.0 9.5 (`AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`) | 10.0.0 through 15.5.27; 16.0.0 through 16.4.0 | **15.5.28**, **16.4.1** | `sharp` ≥ **0.35.5** |
 | GHSA-p3m5-59mp-jv5r / [CVE-2026-94482](https://www.cve.org/CVERecord?id=CVE-2026-94482) (same release, DoS) | App Router with at least one Server Action | High, CVSS 4.0 8.2 | 13.0.0 through 15.5.27; 16.0.0 through 16.4.0 | **15.5.28**, **16.4.1** | None |
 | [GHSA-mfr8-8qww-v76h][ghsa-mfr8] / [CVE-2026-119790](https://www.cve.org/CVERecord?id=CVE-2026-119790) | Cache Components; the same public `use cache` function called directly and through `unstable_cache`, reading a root param | GitHub Medium, CVSS 4.0 6.3. The [November blog][blog-nov] calls this one High and names no score | `>= 16.3.0, <= 16.4.4` | **16.4.5** | Do not call `use cache` from `unstable_cache`. The advisory says that nesting already throws outside the race |
@@ -25,7 +25,7 @@
 
 - **use cache:** The application must use the App Router with Cache Components and have a `use cache` function that returns multiple typed arrays. The upstream React advisory calls this "extremely rare". Vercel still says to upgrade "even if your application does not have similar functions". [GHSA-673q][ghsa-cache] [React GHSA-xqc2][react-rce]
 - **Image Optimization:** The advisory says only that a memory-safety flaw in an upstream library "can lead to possible remote code execution (RCE) when Next.js runs on glibc-based Linux". It lists no other preconditions. Next.js does not optimize SVG unless `images.dangerouslyAllowSVG` is `true` ([Next.js docs][img-docs]), and secondary reports treat that setting as the trigger. The primary advisory does not confirm this, so treat any affected glibc deployment as exposed until it is patched. [GHSA-2464][ghsa-img] [CSA note][csa]
-- **Root cause upstream:** The `use cache` flaw comes from React Server Components packages (`react-server-dom-webpack`, `-parcel` and `-turbopack` 19.0.0–19.0.8, 19.1.0–19.1.9, 19.2.0–19.2.8 and 19.3.0; fixed in 19.0.9, 19.1.10, 19.2.9 and 19.3.1). Other RSC frameworks need the React fix too. The SVG flaw is a librsvg use-after-free that `sharp` 0.35.5 fixes by bundling librsvg 2.63.2. [React GHSA-xqc2][react-rce] [sharp GHSA][sharp-ghsa]
+- **Root cause upstream:** The `use cache` flaw comes from React Server Components packages (`react-server-dom-webpack`, `-parcel` and `-turbopack` 19.0.0–19.0.8, 19.1.0–19.1.9, 19.2.0–19.2.8 and 19.3.0; fixed in 19.0.9, 19.1.10, 19.2.9 and 19.3.1). GitHub assigned [CVE-2026-126187](https://www.cve.org/CVERecord?id=CVE-2026-126187) to that React advisory on 2026-11-10. The score is the same CVSS 4.0 9.5. The Next.js advisory still has no CVE of its own. Other RSC frameworks need the React fix too. The SVG flaw is a librsvg use-after-free that `sharp` 0.35.5 fixes by bundling librsvg 2.63.2. [React GHSA-xqc2][react-rce] [sharp GHSA][sharp-ghsa]
 
 **Vercel-hosted vs self-hosted:** The reviewed Vercel and Next.js sources (advisories, blog post and Vercel changelog) do **not** say whether deployments hosted on Vercel are protected. Do not assume they are. Upgrade the `next` dependency and redeploy wherever you deploy.
 

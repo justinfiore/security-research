@@ -2,6 +2,12 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-11 15:04 EST (UTC−05:00) — Zoom Workplace; Ivanti Cloud Services Application; Next.js
+
+- **Zoom Workplace for Windows:** Update to [7.1.8 or later](black-october/details/zoom-workplace.md#remediation) and relaunch. Zoom rates [CVE-2026-108186](https://www.cve.org/CVERecord?id=CVE-2026-108186) CVSS 3.1 9.6: a network request can raise privileges, and the person at the computer has to act. [CVE-2026-108187](https://www.cve.org/CVERecord?id=CVE-2026-108187) is 8.1 and is fixed at 7.1.5, so a build that stops there is still inside the 9.6 flaw. Zoom lists no workaround. Neither is in KEV. The update does not show whether a request already raised privileges.
+- **Ivanti Cloud Services Application:** On 5.0.8, install [5.0.8.1](black-october/details/ivanti-epm.md#remediation). The advisory says that build is the fix for [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683), and that 5.0.7 and earlier are not affected. The CVE record still marks 5.0.8 unaffected. Endpoint Manager stays at 2024 SU8. A dual-NIC layout is not a substitute for 5.0.8.1. Neither CVE is in KEV.
+- **Next.js:** The [upgrade](black-october/details/nextjs.md#remediation) is unchanged: 16.4.5, or 15.5.29 on the 15.x line. GitHub assigned [CVE-2026-126187](https://www.cve.org/CVERecord?id=CVE-2026-126187) on November 10 to the React Server Components flaw behind the `use cache` issue, at the same CVSS 4.0 9.5. The Next.js advisory still has no CVE of its own. It is not in KEV.
+
 ## 2026-11-11 12:15 EST (UTC−05:00) — MongoDB; Ivanti Endpoint Manager; GitLab; SAP Cloud SDK; Railway
 
 - **MongoDB:** Upgrade a replica set to [9.0.7, 8.3.16, 8.0.37, or 7.0.48](black-october/details/mongodb.md#remediation) or later on that line, and restart every member. MongoDB rates [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383) CVSS 4.0 9.5: a request that needs no login can run code when a new primary finishes catch-up. A standalone server is not affected. The 6.0, 5.0, and 4.4 floors are 6.0.30, 5.0.35, and 4.4.32, from the CVE record. MongoDB says it is not aware of exploitation. It is not in KEV. Atlas upgrades during maintenance. The restart does not show whether the process already ran code.
