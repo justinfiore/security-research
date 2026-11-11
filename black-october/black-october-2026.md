@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [MongoDB: a replica set primary runs code before login](#mongodb-a-replica-set-primary-runs-code-before-login)
+- [Ivanti Endpoint Manager: a SQL query runs code before login](#ivanti-endpoint-manager-a-sql-query-runs-code-before-login)
 - [Synology DSM: a login request reads or writes any file](#synology-dsm-a-login-request-reads-or-writes-any-file)
 - [FortiClient: a web page runs code through the local API](#forticlient-a-web-page-runs-code-through-the-local-api)
 - [Windows Search: an email attachment runs code when Exchange indexes it](#windows-search-an-email-attachment-runs-code-when-exchange-indexes-it)
@@ -213,12 +215,14 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade a [MongoDB](#mongodb-a-replica-set-primary-runs-code-before-login) replica set to **9.0.7, 8.3.16, 8.0.37, or 7.0.48** or later on that line, and restart every member. MongoDB rates [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383) CVSS 4.0 9.5 Critical: a request that needs no login can run code when a new primary finishes catch-up. A standalone server is not affected. MongoDB says it is not aware of exploitation. It is not in KEV. Atlas upgrades during maintenance. The restart does not show whether the process already ran code.
+- **New this update:** Upgrade [Ivanti Endpoint Manager](#ivanti-endpoint-manager-a-sql-query-runs-code-before-login) to **2024 SU8**. Ivanti rates [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653) CVSS 3.1 9.8 Critical: SQL injection in EPM Core runs code with no login. The reviewed sources do not report exploitation. It is not in KEV. The same day, [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683) is 9.4 in Cloud Services Application: the description names 5.0.8 and the record marks 5.0.8 unaffected, so read the advisory before picking a build. The upgrade does not show whether a query already ran.
 - **New this update:** Upgrade [Synology DSM](#synology-dsm-a-login-request-reads-or-writes-any-file) to **7.4.1-90080-1**, **7.3.2-86009-5**, **7.2.2-72806-10**, or **7.2.1-69057-13** or later, and reboot. Synology rates [CVE-2026-76954](https://www.cve.org/CVERecord?id=CVE-2026-76954) CVSS 3.1 9.8 Critical: a login request reads or writes any file. A second flaw, [CVE-2026-85101](https://www.cve.org/CVERecord?id=CVE-2026-85101), is 8.6 in rsync and skips the login too. Synology lists no workaround. Both CVE records are still Reserved. Neither is in KEV. The September build does not include this fix.
 - **New this update:** Upgrade [FortiClient](#forticlient-a-web-page-runs-code-through-the-local-api) to **7.4.8 or later**, or to **7.2.15 or later** on the 7.2 Windows line. Fortinet rates [CVE-2026-121529](https://www.cve.org/CVERecord?id=CVE-2026-121529) CVSS 3.1 9.1 Critical: a web page can run code through the agent's local API. FortiClient Windows, FortiClient Mac 7.4, and FortiClient Windows PAM are affected. Fortinet says it is not known to be exploited, and there is no virtual patch. It is not in KEV.
 - **New this update:** Install the [November 10 Windows update](#windows-search-an-email-attachment-runs-code-when-exchange-indexes-it) and reboot, starting with Exchange servers. Microsoft rates [CVE-2026-116928](https://www.cve.org/CVERecord?id=CVE-2026-116928) CVSS 3.1 9.8 Critical: an email with a crafted attachment runs code when Exchange indexes it, and the recipient never opens it. Microsoft says it has not been exploited. It is not in KEV. The update does not show whether an attachment already ran.
 - **New this update:** On [FortiManager and FortiAnalyzer 8.0.2](#fortinet-fortios-fortimanager-fortianalyzer-fortimail-and-fortiauthenticator-october-2026-hardening-release-and-sql-injection-fixes), set `rpc-permit none` until 8.0.3 ships. Fortinet published the hardening advisories on November 10. [CVE-2026-126170](https://www.cve.org/CVERecord?id=CVE-2026-126170) is CVSS 3.1 9.8, and 8.0.0 through 8.0.2 are still inside it. FortiManager 7.4.6 and 7.2.9 fix the FGFM flaw. None of the five is in KEV.
 - **New this update:** Update [Xen Orchestra](#xen-orchestra-an-empty-login-cookie-is-an-administrator) to **6.10.1** (latest) or **6.9.2** (stable) and restart it. Vates rates VSA-2026-062 Critical and says it is being exploited: a cookie of `authenticationToken=j:{}` logs in as the first stored token's owner, and from there the console can run code on the pools it manages. There is no CVE and no CVSS score. If the console was reachable from the internet, revoke sessions and rotate the secrets it holds. Keeping it off the internet does not close the check.
-- **New this update:** Upgrade [Git](#git-a-recursive-clone-of-a-malicious-repository-runs-code) to **2.56.1**, or to 2.55.1, 2.54.1, 2.53.1, 2.52.1, 2.51.3, or 2.50.2 on the line you already run. GitHub rates [CVE-2026-111760](https://www.cve.org/CVERecord?id=CVE-2026-111760) CVSS 3.1 8.0 High: `git clone --recurse-submodules` of a repository built for this bug runs the repository's code. GitLab rates a second flaw in the same release, [CVE-2026-105437](https://www.cve.org/CVERecord?id=CVE-2026-105437), 7.5 High. It is not in KEV. The upgrade does not show whether a clone already ran a hook.
+- **New this update:** Upgrade [Git](#git-a-recursive-clone-of-a-malicious-repository-runs-code) to **2.56.1**, or to 2.55.1, 2.54.1, 2.53.1, 2.52.1, 2.51.3, or 2.50.2 on the line you already run. GitHub rates [CVE-2026-111760](https://www.cve.org/CVERecord?id=CVE-2026-111760) CVSS 3.1 8.0 High: `git clone --recurse-submodules` of a repository built for this bug runs the repository's code. Self-managed GitLab also needs **19.5.4, 19.4.6, or 19.3.8**: GitLab rates the same merge flaw, [CVE-2026-105437](https://www.cve.org/CVERecord?id=CVE-2026-105437), Critical inside Gitaly. It is not in KEV. The upgrade does not show whether a clone already ran a hook.
 - **New this update (CISA KEV):** Upgrade [Cisco BroadWorks](#cisco-broadworks-an-unauthenticated-xml-message-reads-a-file) to **RI.2026.07 or later**. Cisco rates [CVE-2026-20320](https://www.cve.org/CVERecord?id=CVE-2026-20320) CVSS 3.1 7.5 High: an unauthenticated XML message to OCI-P reads a file as the BroadWorks user. CISA added it on November 10, due November 24. Cisco's August advisory said it had seen no malicious use. There is no workaround.
 - **New this update:** Install the [November 9 Apple update](#apple-an-imessage-group-accepts-an-outsider-and-a-nearby-bluetooth-device-corrupts-memory) and restart. CISA-ADP scores [CVE-2026-113961](https://www.cve.org/CVERecord?id=CVE-2026-113961) CVSS 3.1 7.5 High: a remote attacker may be able to join an iMessage group and receive its messages. [CVE-2026-113970](https://www.cve.org/CVERecord?id=CVE-2026-113970) is 8.8 High: an attacker in Bluetooth range may be able to corrupt process memory. Apple publishes no score. iOS and iPadOS go to **27.2.1** or **26.7.3**, and a Mac goes to Sequoia **15.8.3**, Tahoe **26.7.3**, or Golden Gate **27.2.1**. iOS **18.7.12** fixes the Bluetooth flaw and does not list the iMessage flaw. Neither is in KEV.
 - **New this update (CISA KEV):** Update [Chrome](#google-chrome-critical-browser-security-fixes) and relaunch. Windows and Mac go to **157.0.8103.50/.51 or later**, Linux to **157.0.8103.50 or later**, and Extended Stable on Windows and Mac to **156.0.8078.96 or later**. CISA added [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) on November 10, due November 24. Google rates it High, a use after free in XML, and says an exploit exists in the wild. CISA-ADP scores it 8.8. The November 3 builds, 157.0.8103.38/.39, do not include it. Google publishes no numeric score.
@@ -361,6 +365,48 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## MongoDB: a replica set primary runs code before login
+
+<a id="mongodb-a-replica-set-primary-runs-code-before-login"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/mongodb.md):** [Detection](details/mongodb.md#detection) · [Remediation](details/mongodb.md#remediation) · [Verification](details/mongodb.md#verification) · [Timeline](details/mongodb.md#timeline)
+
+**CVEs:** [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383)
+
+**MongoDB rates CVE-2026-118383 CVSS 4.0 9.5 Critical and CVSS 3.1 9.0 Critical.** A use after free in replication runs when a newly elected primary finishes catch-up. The request that triggers it does not need a login. MongoDB says the process can stop, or, under some conditions, run code as the server process. Replica set members are affected, including the shard and config servers of a sharded cluster. A standalone `mongod` is not. The CVE record lists seven lines: before **9.0.7**, **8.3.16**, **8.0.37**, **7.0.48**, **6.0.30**, **5.0.35**, and **4.4.32**. The release notes confirm the November 10 date for 9.0.7, 8.3.16, 8.0.37, and 7.0.48. The 6.0, 5.0, and 4.4 notes did not load, so those three floors come from the CVE record and the downloads page only.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11). MongoDB says it is not aware of attempts to use the flaw. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-10 20:23:51 UTC** | CVE record published. Release notes the same day for 9.0.7, 8.3.16, 8.0.37, and 7.0.48. |
+| **Last updated** | **2026-11-11 12:15 EST (UTC−05:00)** | New item. Upgrade the replica set. |
+
+**Patch:** Upgrade each replica set member to **9.0.7, 8.3.16, 8.0.37, or 7.0.48** or later on the line you run, and restart it. For 6.0, 5.0, and 4.4, the CVE record names **6.0.30, 5.0.35, and 4.4.32**. MongoDB says Atlas clusters upgrade during maintenance, and a deferred window should be applied now. The restart does not show whether the process already ran code.
+
+Sources: [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383), [MongoDB community notice](https://www.mongodb.com/community/forums/t/important-mongodb-security-update-available-action-required-november-10-2026/344843), [detailed guide](details/mongodb.md).
+
+## Ivanti Endpoint Manager: a SQL query runs code before login
+
+<a id="ivanti-endpoint-manager-a-sql-query-runs-code-before-login"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ivanti-epm.md):** [Detection](details/ivanti-epm.md#detection) · [Remediation](details/ivanti-epm.md#remediation) · [Verification](details/ivanti-epm.md#verification) · [Timeline](details/ivanti-epm.md#timeline)
+
+**CVEs:** [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653), [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683)
+
+**Ivanti rates CVE-2026-121653 CVSS 3.1 9.8 Critical.** SQL injection in Endpoint Manager Core, before **2024 SU8**, lets a remote attacker who is not logged in run code. The CVE record says every version except 2024 SU8 is affected, and names 2024 SU8 as unaffected. The same day's second Critical flaw is [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683), CVSS 3.1 9.4: missing authentication in Cloud Services Application **5.0.8** lets a remote attacker add or delete a trusted EPM Core certificate entry. The record names 5.0.8 as unaffected, which is the version the description says is affected; the advisory is the page that resolves that. The hub pages did not load from this run. Ivanti's advisory is the source of the score and the fix.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11) for either CVE. The reviewed sources do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-10 15:28:19 UTC** | CVE-2026-121653 published. CVE-2026-121683 at 15:33:51 UTC the same day. |
+| **Last updated** | **2026-11-11 12:15 EST (UTC−05:00)** | New item. Upgrade EPM. |
+
+**Patch:** Upgrade Endpoint Manager to **2024 SU8**. For Cloud Services Application, install the build the [CSA advisory](https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-CSA-CVE-2026-121683?language=en_US) names; do not treat the CVE record's "unaffected at 5.0.8" as the fixed build until that page is read. Until EPM is on 2024 SU8, keep the Core service off untrusted networks. The upgrade does not show whether a query already ran.
+
+Sources: [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653), [EPM advisory](https://hub.ivanti.com/s/article/Security-Advisory-Ivanti-Endpoint-Manager-EPM-November-2026?language=en_US), [detailed guide](details/ivanti-epm.md).
+
 ## Synology DSM: a login request reads or writes any file
 
 <a id="synology-dsm-a-login-request-reads-or-writes-any-file"></a>
@@ -461,9 +507,10 @@ Sources: [VSA-2026-062](https://docs.vates.tech/security-advisories/advisories/2
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement and fix** | **2026-11-10; time/TZ unknown** | GitHub advisory and the 2.56.1 release note, the same day. |
-| **Last updated** | **2026-11-10 19:04 EST (UTC−05:00)** | New item. Upgrade Git. |
+| GitLab packages | 2026-11-10; time/TZ unknown | 19.5.4, 19.4.6, and 19.3.8 update the bundled Git for CVE-2026-105437. GitLab calls that path Critical. |
+| **Last updated** | **2026-11-11 12:15 EST (UTC−05:00)** | GitLab's packages now carry the merge fix. |
 
-**Patch:** Upgrade to **2.56.1**, or to the patched release on the line you run. Upgrade an application that ships its own Git. On GitHub Enterprise Server the builds are 3.19.15, 3.20.11, 3.21.9, and 3.22.4. Until `git --version` prints a fixed build, do not recursively clone a repository you do not trust. The upgrade does not show whether a hook already ran.
+**Patch:** Upgrade to **2.56.1**, or to the patched release on the line you run. Upgrade an application that ships its own Git. On GitHub Enterprise Server the builds are 3.19.15, 3.20.11, 3.21.9, and 3.22.4. Self-managed GitLab needs **19.5.4, 19.4.6, or 19.3.8**, which is the same merge flaw inside Gitaly, and GitLab rates that path Critical. Until `git --version` prints a fixed build, do not recursively clone a repository you do not trust. The upgrade does not show whether a hook already ran.
 
 Sources: [GHSA-vp2w-7xxj-jvxr](https://github.com/git/git/security/advisories/GHSA-vp2w-7xxj-jvxr), [GitHub release post](https://github.blog/open-source/git/git-security-vulnerabilities-announced-7), [detailed guide](details/git-recursive-clone.md).
 
@@ -4051,7 +4098,7 @@ Sources: [Adobe APSB26-153](https://www.adobe.com/trust/security/products/commer
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/sap-cloud-sdk-python.md):** [Detection](details/sap-cloud-sdk-python.md#detection) · [Remediation](details/sap-cloud-sdk-python.md#remediation) · [Verification](details/sap-cloud-sdk-python.md#verification) · [Timeline](details/sap-cloud-sdk-python.md#timeline)
 
-**CVEs:** [CVE-2026-89111](https://www.cve.org/CVERecord?id=CVE-2026-89111)
+**CVEs:** [CVE-2026-89111](https://www.cve.org/CVERecord?id=CVE-2026-89111), [CVE-2026-109799](https://www.cve.org/CVERecord?id=CVE-2026-109799), [CVE-2026-120013](https://www.cve.org/CVERecord?id=CVE-2026-120013)
 
 **[CVE-2026-89111](https://www.cve.org/CVERecord?id=CVE-2026-89111) — SAP CNA CVSS 3.1: 10.0 Critical (same in SAP's GitHub advisory); NVD has not scored it**
 
@@ -4064,7 +4111,8 @@ Sources: [Adobe APSB26-153](https://www.adobe.com/trust/security/products/commer
 | Second affected range fixed in 0.55.1 | Released 2026-09-18 16:34:56 UTC; range published 2026-10-30 | SAP's CNA record adds `>=0.53.0` and `<0.55.1`. |
 | Public announcement (SAP Security Patch Day, CVE record) | 2026-10-13; CVE record 00:24:28 UTC | The Patch Day page gives only a date. SAP's repository advisory GHSA-4mv3-jxxm-9cx2 was published at 07:33:01 UTC. |
 | GitHub global advisory (unreviewed) | 2026-10-13 03:30:30 UTC | GHSA-m3j7-wp2j-mhc3 lists no package or version range, so Dependabot may not alert. |
-| **Last updated** | **2026-10-31 00:45 EDT (UTC−04:00)** | SAP's CNA record now also lists 0.53.0 through 0.55.0. |
+| Two more High flaws | 2026-11-10 00:10 UTC | CVE-2026-109799 needs 0.63.1. CVE-2026-120013 needs 0.50.0. |
+| **Last updated** | **2026-11-11 12:15 EST (UTC−05:00)** | The upgrade is now 0.63.1. The SSRF ranges are unchanged. |
 
 `sap-cloud-sdk` inserts a caller-supplied tenant subdomain into the service binding's OAuth2 token URL without validating it. In a multi-tenant SAP BTP application, an attacker who controls that value can redirect the token request, which carries the binding's client ID and secret, to a server they control. SAP's CNA record lists two ranges: before 0.45.2, and 0.53.0 up to but not including 0.55.1.
 
@@ -4074,7 +4122,7 @@ Sources: [Adobe APSB26-153](https://www.adobe.com/trust/security/products/commer
 
 **Am I impacted?** Only if the application passes a tenant value that callers can influence (request host, header, query or body) to the SDK. The affected calls are the Destination, Fragment and Certificate clients' `tenant=` argument, the DMS client's `tenant=` argument, and `agentgateway.create_client(tenant_subdomain=...)`. In each deployed environment, run `ls -d SITE_PACKAGES/sap_cloud_sdk-*.dist-info` (or `pip show sap-cloud-sdk`) and `grep -rnE 'tenant_subdomain|tenant[[:space:]]*=' --include='*.py' APP_ROOT`. Affected: versions below 0.45.2, and 0.53.0 through 0.55.0.
 
-**Patch:** Upgrade `sap-cloud-sdk` to **0.55.1 or later** (requires Python 3.11+), rebuild, and restage or redeploy every instance. 0.45.2 does not cover 0.53.0–0.55.0. The fixed releases raise `ValueError` for invalid tenant values, so handle that error. Vendor workaround: validate the tenant value against an allowlist of registered tenant subdomains before every SDK call. If abuse is suspected, rotate the affected service-binding credentials by recreating the binding or service key.
+**Patch:** Upgrade `sap-cloud-sdk` to **0.63.1 or later** (requires Python 3.11+), rebuild, and restage or redeploy every instance. 0.55.1 fixes the SSRF and does not fix [CVE-2026-109799](https://www.cve.org/CVERecord?id=CVE-2026-109799), which SAP rates 7.5 High: before 0.63.1, `IASContextProvider` trusts a JWT it did not verify. 0.45.2 does not cover 0.53.0–0.55.0. A third High flaw, [CVE-2026-120013](https://www.cve.org/CVERecord?id=CVE-2026-120013), is fixed in 0.50.0 and is inside 0.63.1. The fixed releases raise `ValueError` for invalid tenant values, so handle that error. Vendor workaround for the SSRF: validate the tenant value against an allowlist of registered tenant subdomains before every SDK call. If abuse is suspected, rotate the affected service-binding credentials by recreating the binding or service key.
 
 Sources: [SAP advisory GHSA-4mv3-jxxm-9cx2](https://github.com/SAP/cloud-sdk-python/security/advisories/GHSA-4mv3-jxxm-9cx2), [SAP CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-89111), [SAP Security Patch Day – October 2026](https://support.sap.com/en/my-support/knowledge-base/security-notes-news/october-2026.html), [v0.45.2 release](https://github.com/SAP/cloud-sdk-python/releases/tag/v0.45.2), [BleepingComputer](https://www.bleepingcomputer.com/news/security/sap-warns-of-maximum-severity-oauth2-ssrf-security-flaw/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -5182,7 +5230,8 @@ Additional patch sources: [Microsoft .NET advisory](https://github.com/dotnet/an
 | Public exploit module | 2026-10-30 17:44 UTC | Metasploit merged a module for CVE-2026-97229. It needs a planted CI configuration, then crashes a Puma worker while compiling. |
 | GitLab eMudhra trust removal | 2026-10-29; time/TZ unknown | 19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11 and 18.11.14 remove the compromised intermediates. This does not replace the regex RCE fixes. |
 | Alpine Linux rebuild | 2026-10-28; time/TZ unknown | Alpine rebuilt gitlab.alpinelinux.org after October 20–21 attempts against 19.3.4. It found no tampering of aports, packages, or the October 21 releases, and could not rule code execution out. Its custom image stayed vulnerable after the move to 19.3.6 because that image used stock Ruby. |
-| **Last updated** | **2026-11-01 15:12 EST (UTC−05:00)** | Alpine's rebuild shows a custom GitLab image can miss the Ruby patch. The GitLab version numbers are unchanged. |
+| Bundled Git | 2026-11-10; time/TZ unknown | 19.5.4, 19.4.6, and 19.3.8 update Gitaly's Git for CVE-2026-105437. |
+| **Last updated** | **2026-11-11 12:15 EST (UTC−05:00)** | The November 10 packages carry the Git fix. The regex floors are unchanged. |
 
 Both vulnerabilities involve memory corruption while compiling specially crafted regular expressions.
 
@@ -5195,7 +5244,7 @@ A compromised GitLab server can expose source code and accessible CI/CD secrets 
 
 **If you patched on October 12, patch again.** The first release does not cover the October 21 issue.
 
-**GitLab fixes:** **19.5.1, 19.4.3, 19.3.6, 19.2.9, 19.1.9, 19.0.10, or 18.11.13** for the latest RCE. Prefer a currently supported branch; the older backports are not equivalent to receiving every other security fix. Follow GitLab’s required upgrade stops and migration guidance. The later 2026-10-29 releases (**19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11, 18.11.14**) remove trust for the compromised eMudhra intermediates; they do not replace the RCE fixes. Also update self-hosted Runner to 19.5.1 and AI Gateway to the matching fixed release, because a GitLab upgrade does not update either.
+**GitLab fixes:** **19.5.4, 19.4.6, or 19.3.8**. The regex RCE floors are still 19.5.1, 19.4.3, 19.3.6, 19.2.9, 19.1.9, 19.0.10, and 18.11.13. The November 10 builds add the bundled Git fix for [CVE-2026-105437](https://www.cve.org/CVERecord?id=CVE-2026-105437), which GitLab rates Critical inside Gitaly. Prefer a currently supported branch; the older backports are not equivalent to receiving every other security fix. Follow GitLab’s required upgrade stops and migration guidance. The 2026-10-29 releases (**19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11, 18.11.14**) remove trust for the compromised eMudhra intermediates; they do not replace the RCE fixes, and they do not include the Git update. Also update self-hosted Runner to 19.5.1 and AI Gateway to the matching fixed release, because a GitLab upgrade does not update either.
 
 GitLab.com was patched by the vendor. GitLab Dedicated customers should verify the vendor’s listed internal release status.
 
@@ -5745,7 +5794,8 @@ Sources: [Northflank status incident](https://status.northflank.com/cmvv0rn5a092
 | Recovery status | 2026-10-28 15:27 UTC | Recovery remained in monitoring; new signups were still paused while Railway prioritized reliability for existing customers. |
 | Signups reopened | 2026-11-02 19:19 UTC | Railway resolved the recovery incident. A new account needs a paid Hobby or Pro plan before it can deploy. Free trial deployments stay unavailable. |
 | Local software patch | Not applicable | Issuer-side revocation and replacement of exposed credentials required. |
-| **Last updated** | **2026-11-02 19:01 EST (UTC−05:00)** | Signups are open again. The secret-rotation advice is unchanged. |
+| Full incident report | 2026-11-10 14:00 UTC; last updated 18:02 UTC | Decryption began at 04:42 UTC on October 21. 1,852 linked-account tokens were reset. Spend estimated at about $740,000. |
+| **Last updated** | **2026-11-11 12:15 EST (UTC−05:00)** | The full report is published. Rotation is unchanged. |
 
 From a clean browser/session, review your projects, shared variables, environment-specific variables, deployment history, and Railway's incident notices. Identify credentials stored before October 21 and the external services they authorize. Do not export or print secret values to perform this inventory; variable names, owners, creation/history records, and provider key IDs are sufficient. If you cannot establish whether a still-valid credential was present during the window, include it in the vendor-recommended rotation. Audit the credential's provider for unexpected use; absence of suspicious logs does not prove it was not disclosed. There is no local package-version script that can rule out this server-side exposure.
 

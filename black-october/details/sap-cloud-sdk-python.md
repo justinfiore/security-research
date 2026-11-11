@@ -1,6 +1,6 @@
 # SAP Cloud SDK for Python: OAuth2 SSRF leaking multi-tenant client credentials
 
-**Last updated:** 2026-10-31 (America/New_York)
+**Last updated:** 2026-11-11 (America/New_York)
 
 [Main SAP Cloud SDK for Python summary](../black-october-2026.md#sap-cloud-sdk-for-python-oauth2-ssrf-leaking-multi-tenant-client-credentials) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -18,7 +18,13 @@ Invalid values now raise `ValueError: Invalid tenant_subdomain: '<value>'`. [v0.
 
 **Worst case:** the attacker obtains the OAuth client credentials of the service bindings the SDK uses, such as the Destination service or Document Management service. They can then request tokens as the application, outside it, until the credentials are rotated. SAP rates confidentiality and integrity impact High with changed scope. [CNA][cve]
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). CISA's ADP SSVC entry in the CVE record (2026-10-14) records "Exploitation: none", and the reviewed sources report no in-the-wild exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**Two more High flaws in the same package, published 2026-11-10.** Neither is the SSRF, and 0.55.1 does not fix both.
+
+**[CVE-2026-109799](https://www.cve.org/CVERecord?id=CVE-2026-109799) (GHSA-93m8-crj2-v997): SAP CVSS 3.1 7.5 High** (`CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N`). Before **0.63.1**, `IASContextProvider` reads `app_tid`, `sap_gtid`, and `user_uuid` from the IAS JWT without checking the signature, and writes them into the request context. A caller can send a token they signed themselves and have that tenant and user stamped onto traces, logs, audit events, and tenant routing. 0.63.1 verifies the signature and returns an empty context when verification fails. Affected: every version before 0.63.1.
+
+**[CVE-2026-120013](https://www.cve.org/CVERecord?id=CVE-2026-120013) (GHSA-28c8-457r-4cf6): SAP CVSS 3.1 7.5 High** (`CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N`). Before **0.50.0**, the `tenant` argument of `agent_memory.create_client` is used in a filesystem path. A value with `../` can read another tenant's OAuth client ID and secret under `/etc/secrets/appfnd/hana-agent-memory/`. 0.50.0 validates the tenant. A build at 0.55.1 is already past this one.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11) for CVE-2026-89111, CVE-2026-109799, or CVE-2026-120013. CISA's ADP SSVC entry for the SSRF (2026-10-14) records "Exploitation: none", and the reviewed sources report no in-the-wild exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -97,7 +103,7 @@ Many BTP apps do not log egress destinations or SDK debug output. Finding nothin
 
 ## Remediation
 
-1. **Upgrade `sap-cloud-sdk` to 0.55.1 or later** in every application, for example `pip install --upgrade 'sap-cloud-sdk>=0.55.1'`. 0.45.2 fixes only the first range; 0.53.0 through 0.55.0 are affected again. Update your lock file, rebuild and redeploy. The package requires Python 3.11+. [CNA][cve] [v0.55.1 release][r0551] [PyPI][pypi]
+1. **Upgrade `sap-cloud-sdk` to 0.63.1 or later** in every application, for example `pip install --upgrade 'sap-cloud-sdk>=0.63.1'`. 0.55.1 fixes the SSRF and does not fix CVE-2026-109799. 0.45.2 fixes only the first SSRF range; 0.53.0 through 0.55.0 are affected again. Update your lock file, rebuild and redeploy. The package requires Python 3.11+. [CNA][cve] [v0.55.1 release][r0551] [PyPI][pypi] [JWT advisory][jwt]
 2. **Restart or restage every app instance** so that running processes load the new code. A Cloud Foundry `cf restage`/redeploy or a Kubernetes rollout replaces long-running workers.
 3. **Handle the new `ValueError`.** Version 0.45.2 rejects tenant values that are not a single DNS label. Catch the error in request handlers and return a client error instead of a 500. [v0.45.2 release][r0452]
 4. **Vendor workaround (if you cannot upgrade immediately):** "validate `tenant_subdomain` against a known allowlist of registered tenant subdomains before passing it to any SDK call." Apply it to every `tenant=` and `tenant_subdomain=` argument found during [reachability](#reachability) review. [SAP advisory][ghsa]
@@ -105,7 +111,7 @@ Many BTP apps do not log egress destinations or SDK debug output. Finding nothin
 
 ## Verification
 
-- Re-run the inventory on the **deployed** artifact (each droplet or image and each app instance) and confirm **0.55.1 or later**. A version in 0.45.2–0.52.x is outside the published ranges; move it to 0.55.1 or later anyway so a later install cannot land in 0.53.0–0.55.0.
+- Re-run the inventory on the **deployed** artifact (each droplet or image and each app instance) and confirm **0.63.1 or later**. 0.55.1 closes the SSRF and still trusts an unverified JWT. A version in 0.45.2–0.52.x is outside the SSRF ranges; move it to 0.63.1 anyway.
 - Confirm the installed SDK contains the validator. This reads a file and does not import it:
 
   ```sh
@@ -147,6 +153,7 @@ If a vulnerable version handled tenant values that callers could influence, and 
 [r0452]: https://github.com/SAP/cloud-sdk-python/releases/tag/v0.45.2
 [r0551]: https://github.com/SAP/cloud-sdk-python/releases/tag/v0.55.1
 [pypi]: https://pypi.org/project/sap-cloud-sdk/#history
+[jwt]: https://github.com/SAP/cloud-sdk-python/security/advisories/GHSA-93m8-crj2-v997
 [destsrc]: https://github.com/SAP/cloud-sdk-python/blob/v0.45.1/src/sap_cloud_sdk/destination/_http.py
 [dmssrc]: https://github.com/SAP/cloud-sdk-python/blob/v0.45.1/src/sap_cloud_sdk/dms/_auth.py
 [destguide]: https://github.com/SAP/cloud-sdk-python/blob/v0.45.2/src/sap_cloud_sdk/destination/user-guide.md

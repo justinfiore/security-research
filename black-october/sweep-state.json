@@ -1,7 +1,7 @@
 {
   "items": {
     "acf-extended.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "adobe-campaign-classic.md": {
@@ -17,7 +17,7 @@
       "hold": "none"
     },
     "ahsaycbs.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "airbyte.md": {
@@ -41,7 +41,7 @@
       "hold": "none"
     },
     "apache-thrift.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "apache-wicket.md": {
@@ -61,7 +61,7 @@
       "hold": "none"
     },
     "assent-apple.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "asus-routers.md": {
@@ -89,7 +89,7 @@
       "hold": "none"
     },
     "beta9.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "better-auth-expo.md": {
@@ -101,7 +101,7 @@
       "hold": "none"
     },
     "bookit.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "bricksforge.md": {
@@ -165,7 +165,7 @@
       "hold": "none"
     },
     "cursor-claude-code.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "datalore.md": {
@@ -177,7 +177,7 @@
       "hold": "none"
     },
     "debugbear.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "delinea-secret-server.md": {
@@ -193,7 +193,7 @@
       "hold": "none"
     },
     "drupal-commerce.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "drupal.md": {
@@ -225,7 +225,7 @@
       "hold": "none"
     },
     "fastify-http-proxy.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "firefox.md": {
@@ -269,7 +269,7 @@
       "hold": "none"
     },
     "gitea.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "github-gheist.md": {
@@ -277,7 +277,7 @@
       "hold": "none"
     },
     "gitlab-ruby.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "goahead-tls.md": {
@@ -297,7 +297,7 @@
       "hold": "none"
     },
     "gravity-forms.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "header-accordions.md": {
@@ -349,7 +349,7 @@
       "hold": "none"
     },
     "kaniko.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "keycloak.md": {
@@ -397,11 +397,11 @@
       "hold": "awaiting-distros"
     },
     "litellm-enterprise-file-read.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "litellm.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "lxd-mtls.md": {
@@ -453,7 +453,7 @@
       "hold": "none"
     },
     "nvidia-brev.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "openam.md": {
@@ -465,7 +465,7 @@
       "hold": "none"
     },
     "opengear-console.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "openssh-musl.md": {
@@ -505,11 +505,11 @@
       "hold": "none"
     },
     "prefab-ui.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "presenton.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "privilege-manager.md": {
@@ -533,11 +533,11 @@
       "hold": "none"
     },
     "railway.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "rancher-fleet.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "rankmath-pro.md": {
@@ -545,11 +545,11 @@
       "hold": "none"
     },
     "s2member.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "sap-cloud-sdk-python.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "sap-netweaver-visual-composer.md": {
@@ -565,7 +565,7 @@
       "hold": "none"
     },
     "servicenow-ai-platform.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "shirasagi.md": {
@@ -645,7 +645,7 @@
       "hold": "none"
     },
     "ultra-addons-cf7.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "ultralytics-parse-model.md": {
@@ -661,7 +661,7 @@
       "hold": "none"
     },
     "velocloud.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "vertiv-avocent-acs.md": {

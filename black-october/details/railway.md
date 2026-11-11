@@ -1,6 +1,6 @@
 # Railway: exposed environment secrets and recovery
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-11 (America/New_York)
 
 [Back to Railway summary](../black-october-2026.md#railway) · [Changelog](../../CHANGELOG.md)
 
@@ -39,7 +39,7 @@ Times below are UTC. The October 22 report is preliminary; the initial October 2
 | 2026-10-24 | Railway clarified that OpenAI and Anthropic may have revoked replacement keys created after the incident because its later batch could not be filtered by creation date. The notice does not establish compromise of those replacement keys. |
 | 2026-10-28 15:27 | Railway's recovery status still reported recovery in monitoring: new signups remained paused while it prioritized reliability for existing customers, with daily updates planned until normal operations are restored. The preliminary report's “resolved for existing users” statement does not mean all recovery work was complete. [Official status](https://status.railway.com/incident/O1VGXWU5) |
 | 2026-11-02 19:19 UTC | Railway resolved the recovery incident. New customers can sign up again. A new account needs a paid Hobby or Pro plan before it can deploy; free trial deployments stay unavailable. No final forensic report was posted with this update. [Official status](https://status.railway.com/incident/O1VGXWU5) |
-| As of 2026-10-26 | Final forensic report, full exploit details, definitive source-code-access findings, and precise affected-variable list were **not available in the reviewed sources**. |
+| 2026-11-10 14:00 UTC; last updated 18:02 UTC | Railway published the full incident report. The first exploit was a partial filesystem escape in the build infrastructure at 07:28 UTC on October 20. Decryption of per-environment keys began at 04:42 UTC on October 21, earlier than the preliminary report's window, and ran until 07:14 UTC. The attacker also read 353 build histories, and linked-account tokens for 1,852 users. Railway says it reset those tokens. Unauthorized spend was estimated at about $740,000. An outside forensic firm's investigation is still open, and Railway is still withholding public indicators. [Full report](https://blog.railway.com/p/incident-report-october-security-incident) |
 
 **Evidence limits:** Railway estimates at most **1.85% of workspaces (about 100,000)** had some environment variables potentially compromised. This is the vendor's preliminary estimate, not an independently verified count or the number of every precautionary revocation. Its report says individual Railway accounts were not logged into, but does not rule out source-code access. Claims about AI-assisted attacks and motive are preliminary vendor assessments, not necessary premises for recovery.
 
@@ -90,6 +90,7 @@ Times below are UTC. The October 22 report is preliminary; the initial October 2
 - [October 21 initial security disclosure](https://blog.railway.com/p/security-disclosure-wednesday-october-21st): original precautionary rotation guidance, including private registry credentials.
 - [October 22 preliminary report](https://blog.railway.com/p/preliminary-report-october-security-incident): expanded timeline, scope estimate, limitations, containment, and provider revocations.
 - [October 23 failing-deployment recovery guide](https://blog.railway.com/p/security-disclosure-recommendation-recover-failing-deploys): unqueued commits, GitHub reconnection, and revoked CLI/CI tokens.
+- [November 10 incident report](https://blog.railway.com/p/incident-report-october-security-incident): the full timeline, the 07:28 UTC filesystem escape, decryption from 04:42 UTC, 353 build histories, 1,852 linked-account tokens, and the spend estimate. Last updated 18:02 UTC the same day.
 - [Railway engineering recovery-guide index](https://blog.railway.com/engineering), [blog RSS feed](https://blog.railway.com/rss.xml) (publication timestamps) and [official status](https://status.railway.com/): provider-specific follow-up guides and the place to verify current service availability. No live availability guarantee is made here.
 
-Incident reports and the recovery guide/index were freshly read on the update date. No customer variables, Railway administration, provider audit logs, or revocation systems were accessible for verification; no final report was found in the reviewed vendor index. The actions above are operational guidance, not evidence that any particular customer's recovery is complete.
+The November 10 report is the full account Railway said was still outstanding. An outside forensic firm's investigation is still open, and Railway is still withholding public indicators. No customer variables, Railway administration, provider audit logs, or revocation systems were accessible for verification. The actions above are operational guidance, not evidence that any particular customer's recovery is complete.

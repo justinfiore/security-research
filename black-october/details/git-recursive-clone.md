@@ -1,6 +1,6 @@
 # Git: a recursive clone of a malicious repository runs code
 
-**Last updated:** 2026-11-10 (America/New_York)
+**Last updated:** 2026-11-11 (America/New_York)
 
 [Main Git summary](../black-october-2026.md#git-a-recursive-clone-of-a-malicious-repository-runs-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -27,6 +27,7 @@ The same releases fix five more. GitLab rates [CVE-2026-105437](https://www.cve.
 |---|---|---|
 | **Public announcement and fix** | **2026-11-10; time/TZ unknown** | GitHub published the six-flaw release note and the CVE-2026-111760 advisory the same day. Git 2.56.1 and the 2.50 through 2.55 updates. [Release][blog] [Advisory][ghsa] |
 | CVE-2026-105437 record | 2026-11-10; time/TZ unknown | GitLab, CVSS 3.1 7.5 High. [Record][cve105437] |
+| GitLab packages | 2026-11-10; time/TZ unknown | 19.5.4, 19.4.6, and 19.3.8 update the Git bundled with Gitaly. GitLab rates that path Critical: the overflow can run a command in the Gitaly environment. [GitLab][gitlab] |
 
 ## Detection
 
@@ -46,6 +47,7 @@ Git for Windows is a separate build. This page does not establish whether a Git 
 2. Until that build is what `git --version` prints, do not clone with `--recurse-submodules` from a source you do not trust. GitHub's advisory says that is the path it believes triggers CVE-2026-111760. Cloning without that flag is not a fix.
 3. On GitHub Enterprise Server, GitHub names **3.19.15**, **3.20.11**, **3.21.9**, and **3.22.4**. github.com, Enterprise Cloud, and Enterprise Cloud with data residency already have the fixes, per the same post.
 4. The upgrade does not show whether a recursive clone already ran a hook.
+5. Self-managed GitLab CE and EE from 16.2 before 19.3.8, 19.4 before 19.4.6, and 19.5 before 19.5.4 ship this merge flaw inside Gitaly. Upgrade to **19.5.4, 19.4.6, or 19.3.8**. GitLab.com and GitLab Dedicated already run a patched version. A self-compiled install also has to rebuild the Git that `git.bin_path` points at, or upgrade that Git to 2.56.1. GitLab's package does not replace a Git you installed yourself.
 
 ## Verification
 
@@ -64,9 +66,11 @@ A recursive clone of a repository you do not trust, on a build older than the ve
 - [GitHub advisory GHSA-vp2w-7xxj-jvxr][ghsa] — published 2026-11-10 by newren. High, CVSS 3.1 8.0. The patched-versions field says none. The workaround is to avoid `--recurse-submodules` on an untrusted repository.
 - [GitHub release post][blog] — 2026-11-10. Fixes in 2.56.1, 2.55.1, 2.54.1, 2.53.1, 2.52.1, 2.51.3, and 2.50.2. Enterprise Server 3.19.15, 3.20.11, 3.21.9, and 3.22.4. Describes the five companion flaws without numeric scores.
 - [CVE-2026-105437][cve105437] — GitLab, CVSS 3.1 7.5 High. Heap buffer overflow in the three-way merge.
+- [GitLab 19.5.4][gitlab] — November 10, 2026. The same flaw, inside the Git that Gitaly ships. Fixed in 19.5.4, 19.4.6, and 19.3.8. GitLab's table rates it Critical. Impacted: 16.2 before 19.3.8, 19.4 before 19.4.6, and 19.5 before 19.5.4.
 - [CVE-2026-111760](https://www.cve.org/CVERecord?id=CVE-2026-111760) — the CVE.org URL. No record was published when this page was written.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.10, checked 2026-11-10. Neither published CVE is listed.
 
 [ghsa]: https://github.com/git/git/security/advisories/GHSA-vp2w-7xxj-jvxr
 [blog]: https://github.blog/open-source/git/git-security-vulnerabilities-announced-7
 [cve105437]: https://www.cve.org/CVERecord?id=CVE-2026-105437
+[gitlab]: https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-5-4-released/
