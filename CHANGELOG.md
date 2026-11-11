@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-10 23:04 EST (UTC−05:00) — Windows Search; Fortinet
+
+- **Windows Search:** Install the [November 10 update](black-october/details/windows-search.md#remediation) and reboot, starting with Exchange servers. Microsoft rates [CVE-2026-116928](https://www.cve.org/CVERecord?id=CVE-2026-116928) CVSS 3.1 9.8: an email with a crafted attachment runs code when Exchange indexes it, and the recipient never opens it. Windows Server 2022 is KB5131090, build 10.0.20348.5870. Microsoft says it has not been exploited. It is not in KEV. The update does not show whether an attachment already ran.
+- **Fortinet:** On [FortiManager and FortiAnalyzer 8.0.2](black-october/details/fortinet-october.md#remediation), set `rpc-permit none` until 8.0.3 ships. Fortinet published the hardening advisories on November 10. [CVE-2026-126170](https://www.cve.org/CVERecord?id=CVE-2026-126170) is 9.8, and 8.0.0 through 8.0.2 are still inside it. FortiManager 7.4.6 and 7.2.9 fix the FGFM flaw, [CVE-2026-126261](https://www.cve.org/CVERecord?id=CVE-2026-126261). Fortinet marks each of the five Known Exploited No. None is in KEV.
+
 ## 2026-11-10 19:04 EST (UTC−05:00) — Xen Orchestra; Git; Cisco BroadWorks; N-central; Chrome; Barracuda; Firefox
 
 - **Xen Orchestra:** Update to [6.10.1 or 6.9.2](black-october/details/xen-orchestra.md#remediation) and restart it. Vates rates VSA-2026-062 Critical and says it is being exploited. A cookie of `authenticationToken=j:{}` logs in as the owner of the first stored token, and the console can then run code on the pools it manages. There is no CVE. If the console was reachable from the internet, revoke sessions and rotate the secrets it holds.
