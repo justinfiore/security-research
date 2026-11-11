@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-11 07:04 EST (UTC−05:00) — Synology DSM; FortiClient
+
+- **Synology DSM:** Upgrade to [7.4.1-90080-1, 7.3.2-86009-5, 7.2.2-72806-10, or 7.2.1-69057-13](black-october/details/synology-dsm-nov11.md#remediation) or later, and reboot. Synology rates [CVE-2026-76954](https://www.cve.org/CVERecord?id=CVE-2026-76954) CVSS 3.1 9.8: a login request reads or writes any file. [CVE-2026-85101](https://www.cve.org/CVERecord?id=CVE-2026-85101) is 8.6, an authentication bypass in rsync. Synology lists no workaround. Both CVE records are still Reserved. Neither is in KEV. The September build does not include this fix. The upgrade does not show whether a file was already written.
+- **FortiClient:** Upgrade to [7.4.8 or later](black-october/details/forticlient-nov11.md#remediation), or to 7.2.15 or later on the 7.2 Windows line. Fortinet rates [CVE-2026-121529](https://www.cve.org/CVERecord?id=CVE-2026-121529) CVSS 3.1 9.1: a web page can run code through the agent's local API. FortiClient Windows, FortiClient Mac 7.4, and FortiClient Windows PAM are affected. Fortinet says it is not known to be exploited, and there is no virtual patch. It is not in KEV. The upgrade does not show whether the local API already ran code.
+
 ## 2026-11-11 03:04 EST (UTC−05:00) — SAP
 
 - **SAP:** The [November notes](black-october/details/sap-november.md#remediation) are unchanged, and the public [patch-day index](https://support.sap.com/en/my-support/knowledge-base/security-notes-news.html) now links the November bulletin. A read on November 10 found the date with no link. The notes still need an SAP login, and no fixed patch level is published outside them. None is in KEV.

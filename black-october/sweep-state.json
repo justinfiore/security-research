@@ -236,6 +236,10 @@
       "last_checked": "2026-11-10T23:55:43Z",
       "hold": "none"
     },
+    "forticlient-nov11.md": {
+      "last_checked": "2026-11-11T11:55:43Z",
+      "hold": "none"
+    },
     "fortimail.md": {
       "last_checked": "2026-11-10T23:55:43Z",
       "hold": "awaiting-fix"
@@ -606,6 +610,10 @@
     },
     "symfony.md": {
       "last_checked": "2026-11-10T23:55:43Z",
+      "hold": "none"
+    },
+    "synology-dsm-nov11.md": {
+      "last_checked": "2026-11-11T11:55:43Z",
       "hold": "none"
     },
     "synology-dsm.md": {

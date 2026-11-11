@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Synology DSM: a login request reads or writes any file](#synology-dsm-a-login-request-reads-or-writes-any-file)
+- [FortiClient: a web page runs code through the local API](#forticlient-a-web-page-runs-code-through-the-local-api)
 - [Windows Search: an email attachment runs code when Exchange indexes it](#windows-search-an-email-attachment-runs-code-when-exchange-indexes-it)
 - [Xen Orchestra: an empty login cookie is an administrator](#xen-orchestra-an-empty-login-cookie-is-an-administrator)
 - [Git: a recursive clone of a malicious repository runs code](#git-a-recursive-clone-of-a-malicious-repository-runs-code)
@@ -211,6 +213,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Synology DSM](#synology-dsm-a-login-request-reads-or-writes-any-file) to **7.4.1-90080-1**, **7.3.2-86009-5**, **7.2.2-72806-10**, or **7.2.1-69057-13** or later, and reboot. Synology rates [CVE-2026-76954](https://www.cve.org/CVERecord?id=CVE-2026-76954) CVSS 3.1 9.8 Critical: a login request reads or writes any file. A second flaw, [CVE-2026-85101](https://www.cve.org/CVERecord?id=CVE-2026-85101), is 8.6 in rsync and skips the login too. Synology lists no workaround. Both CVE records are still Reserved. Neither is in KEV. The September build does not include this fix.
+- **New this update:** Upgrade [FortiClient](#forticlient-a-web-page-runs-code-through-the-local-api) to **7.4.8 or later**, or to **7.2.15 or later** on the 7.2 Windows line. Fortinet rates [CVE-2026-121529](https://www.cve.org/CVERecord?id=CVE-2026-121529) CVSS 3.1 9.1 Critical: a web page can run code through the agent's local API. FortiClient Windows, FortiClient Mac 7.4, and FortiClient Windows PAM are affected. Fortinet says it is not known to be exploited, and there is no virtual patch. It is not in KEV.
 - **New this update:** Install the [November 10 Windows update](#windows-search-an-email-attachment-runs-code-when-exchange-indexes-it) and reboot, starting with Exchange servers. Microsoft rates [CVE-2026-116928](https://www.cve.org/CVERecord?id=CVE-2026-116928) CVSS 3.1 9.8 Critical: an email with a crafted attachment runs code when Exchange indexes it, and the recipient never opens it. Microsoft says it has not been exploited. It is not in KEV. The update does not show whether an attachment already ran.
 - **New this update:** On [FortiManager and FortiAnalyzer 8.0.2](#fortinet-fortios-fortimanager-fortianalyzer-fortimail-and-fortiauthenticator-october-2026-hardening-release-and-sql-injection-fixes), set `rpc-permit none` until 8.0.3 ships. Fortinet published the hardening advisories on November 10. [CVE-2026-126170](https://www.cve.org/CVERecord?id=CVE-2026-126170) is CVSS 3.1 9.8, and 8.0.0 through 8.0.2 are still inside it. FortiManager 7.4.6 and 7.2.9 fix the FGFM flaw. None of the five is in KEV.
 - **New this update:** Update [Xen Orchestra](#xen-orchestra-an-empty-login-cookie-is-an-administrator) to **6.10.1** (latest) or **6.9.2** (stable) and restart it. Vates rates VSA-2026-062 Critical and says it is being exploited: a cookie of `authenticationToken=j:{}` logs in as the first stored token's owner, and from there the console can run code on the pools it manages. There is no CVE and no CVSS score. If the console was reachable from the internet, revoke sessions and rotate the secrets it holds. Keeping it off the internet does not close the check.
@@ -356,6 +360,48 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
 ---
+
+## Synology DSM: a login request reads or writes any file
+
+<a id="synology-dsm-a-login-request-reads-or-writes-any-file"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/synology-dsm-nov11.md):** [Detection](details/synology-dsm-nov11.md#detection) · [Remediation](details/synology-dsm-nov11.md#remediation) · [Verification](details/synology-dsm-nov11.md#verification) · [Timeline](details/synology-dsm-nov11.md#timeline)
+
+**CVEs:** [CVE-2026-76954](https://www.cve.org/CVERecord?id=CVE-2026-76954), [CVE-2026-85101](https://www.cve.org/CVERecord?id=CVE-2026-85101)
+
+**Synology rates CVE-2026-76954 CVSS 3.1 9.8 Critical and CVE-2026-85101 CVSS 3.1 8.6 Important.** The 9.8 flaw is SQL injection in the Auth API: a remote attacker who is not logged in reads or writes arbitrary files. The 8.6 flaw is an authentication bypass in rsync: a remote attacker reads specific files and writes arbitrary files. Both CVE.org records were still Reserved on November 11, so the score and the description come from [Synology-SA-26:19](https://www.synology.com/en-global/security/advisory/Synology_SA_26_19). Synology lists no mitigation. This is not the September pair, CVE-2026-13639 and CVE-2026-13684, and a DSM build that fixed those is still inside this one.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11). Synology does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-10 17:06:42 UTC+8** | Synology-SA-26:19. Severity Critical. No mitigation. |
+| **Last updated** | **2026-11-11 07:04 EST (UTC−05:00)** | New item. Upgrade DSM. |
+
+**Patch:** Upgrade to **7.4.1-90080-1**, **7.3.2-86009-5**, **7.2.2-72806-10**, or **7.2.1-69057-13** or later, and reboot. Until that build is running, do not leave DSM or rsync reachable from the internet. The upgrade does not show whether a file was already written.
+
+Sources: [Synology-SA-26:19](https://www.synology.com/en-global/security/advisory/Synology_SA_26_19), [detailed guide](details/synology-dsm-nov11.md).
+
+## FortiClient: a web page runs code through the local API
+
+<a id="forticlient-a-web-page-runs-code-through-the-local-api"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/forticlient-nov11.md):** [Detection](details/forticlient-nov11.md#detection) · [Remediation](details/forticlient-nov11.md#remediation) · [Verification](details/forticlient-nov11.md#verification) · [Timeline](details/forticlient-nov11.md#timeline)
+
+**CVEs:** [CVE-2026-121529](https://www.cve.org/CVERecord?id=CVE-2026-121529)
+
+**Fortinet rates CVE-2026-121529 CVSS 3.1 9.1 Critical.** An origin check on a local API endpoint fails, so a web page can make the FortiClient agent run code. The person using the computer has to visit the page. FortiClient Windows 7.4.0 through 7.4.7 and 7.2.0 through 7.2.14 are affected, FortiClient Mac 7.4.0 through 7.4.7 is affected, and FortiClient Windows PAM has the same two ranges. The 8.0 builds and FortiClient Mac 7.2 are not. The CVE record names FortiClient Windows PAM only at 7.4.7 and 7.2.14, which is narrower than the advisory, and the advisory is the range to patch. Fortinet says no virtual patch exists and marks the flaw as not known to be exploited.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11). Fortinet marks it as not known to be exploited. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-10; time/TZ unknown** | FG-IR-26-194. Critical. Known Exploited: No. |
+| **Last updated** | **2026-11-11 07:04 EST (UTC−05:00)** | New item. Upgrade FortiClient. |
+
+**Patch:** Upgrade to **7.4.8 or later**, or to **7.2.15 or later** on FortiClient Windows 7.2 and FortiClient Windows PAM 7.2. There is no workaround. The upgrade does not show whether the local API already ran code.
+
+Sources: [FG-IR-26-194](https://fortiguard.fortinet.com/psirt/FG-IR-26-194), [detailed guide](details/forticlient-nov11.md).
 
 ## Windows Search: an email attachment runs code when Exchange indexes it
 
@@ -5739,6 +5785,8 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Synology DSM 7.2.1, 7.2.2, 7.3, or 7.4** | Upgrade to 7.4.1-90080-1, 7.3.2-86009-5, 7.2.2-72806-10, or 7.2.1-69057-13 or later, and reboot. A login request can otherwise read or write any file, and rsync has a second flaw that skips the login. The September build is not this fix. Synology lists no workaround. [Guide](details/synology-dsm-nov11.md#remediation). |
+| **FortiClient Windows, FortiClient Mac 7.4, or FortiClient Windows PAM** | Upgrade to 7.4.8 or later, or to 7.2.15 or later on the 7.2 Windows line. A web page can otherwise run code through the agent's local API. The 8.0 builds and FortiClient Mac 7.2 are not affected. There is no virtual patch. [Guide](details/forticlient-nov11.md#remediation). |
 | **Windows, especially a server running Exchange** | Install the November 10 cumulative update and reboot. Microsoft rates CVE-2026-116928 9.8: an email attachment runs code when Exchange indexes it, and the recipient never opens it. Windows Server 2022 is KB5131090, build 10.0.20348.5870. It is not in KEV. [Guide](details/windows-search.md#remediation). |
 | **iPhone, iPad, Mac, Apple Watch, or Apple Vision Pro** | Install the November 9 update and restart. CISA-ADP scores an iMessage group-join flaw 7.5 and a Bluetooth memory-corruption flaw 8.8. Apple publishes no score. iOS 18.7.12 fixes the Bluetooth flaw only. [Guide](details/apple-november.md#remediation). |
 | **SAP NetWeaver, Web Dispatcher, SAP Gateway, or BusinessObjects** | Apply the November 10 SAP Security Notes, starting with the four 10.0 notes on anything reachable from the internet. The notes need an SAP login and name the correction. Until then, restrict access to Gateway, Web Dispatcher, and ICM ports. Restart the component after a kernel update. [Guide](details/sap-november.md#remediation). |
