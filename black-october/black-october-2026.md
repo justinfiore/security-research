@@ -576,16 +576,16 @@ Sources: [ZSB-26023](https://www.zoom.com/en/trust/security-bulletin/zsb-26023),
 
 **CVEs:** [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383)
 
-**MongoDB rates CVE-2026-118383 CVSS 4.0 9.5 Critical and CVSS 3.1 9.0 Critical.** A use after free in replication runs when a newly elected primary finishes catch-up. The request that triggers it does not need a login. MongoDB says the process can stop, or, under some conditions, run code as the server process. Replica set members are affected, including the shard and config servers of a sharded cluster. A standalone `mongod` is not. The CVE record lists seven lines: before **9.0.7**, **8.3.16**, **8.0.37**, **7.0.48**, **6.0.30**, **5.0.35**, and **4.4.32**. The release notes confirm the November 10 date for 9.0.7, 8.3.16, 8.0.37, and 7.0.48. The 6.0, 5.0, and 4.4 notes did not load, so those three floors come from the CVE record and the downloads page only.
+**MongoDB rates CVE-2026-118383 CVSS 4.0 9.5 Critical and CVSS 3.1 9.0 Critical.** A use after free in replication runs when a newly elected primary finishes catch-up. The request that triggers it does not need a login. MongoDB says the process can stop, or, under some conditions, run code as the server process. Replica set members are affected, including the shard and config servers of a sharded cluster. A standalone `mongod` is not. The CVE record lists seven lines: before **9.0.7**, **8.3.16**, **8.0.37**, **7.0.48**, **6.0.30**, **5.0.35**, and **4.4.32**. The release notes confirm the November 10 date for 9.0.7, 8.3.16, 8.0.37, and 7.0.48. The 6.0, 5.0, and 4.4 notes did not load, so those three floors come from the CVE record and the downloads page only. MongoDB never published 9.0.7, 8.3.16, or 8.0.37 for some platforms, and the same day's 9.0.8, 8.3.17, and 8.0.38 are the builds for those. A public repository reports a crash on 8.0.34 and no code execution.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11). MongoDB says it is not aware of attempts to use the flaw. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12). MongoDB says it is not aware of attempts to use the flaw. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement and fix** | **2026-11-10 20:23:51 UTC** | CVE record published. Release notes the same day for 9.0.7, 8.3.16, 8.0.37, and 7.0.48. |
-| **Last updated** | **2026-11-11 12:15 EST (UTC−05:00)** | New item. Upgrade the replica set. |
+| **Last updated** | **2026-11-12 15:05 EST (UTC−05:00)** | The floors were never published for some platforms. Use the next build there. |
 
-**Patch:** Upgrade each replica set member to **9.0.7, 8.3.16, 8.0.37, or 7.0.48** or later on the line you run, and restart it. For 6.0, 5.0, and 4.4, the CVE record names **6.0.30, 5.0.35, and 4.4.32**. MongoDB says Atlas clusters upgrade during maintenance, and a deferred window should be applied now. The restart does not show whether the process already ran code.
+**Patch:** Upgrade each replica set member to **9.0.7, 8.3.16, 8.0.37, or 7.0.48** or later on the line you run, and restart it. For 6.0, 5.0, and 4.4, the CVE record names **6.0.30, 5.0.35, and 4.4.32**. On the platforms where MongoDB never published the floor, use **9.0.8**, **8.3.17**, or **8.0.38** instead. MongoDB says Atlas clusters upgrade during maintenance, and a deferred window should be applied now. The restart does not show whether the process already ran code.
 
 Sources: [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383), [MongoDB community notice](https://www.mongodb.com/community/forums/t/important-mongodb-security-update-available-action-required-november-10-2026/344843), [detailed guide](details/mongodb.md).
 

@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-12 15:05 EST (UTC−05:00) — MongoDB
+
+- **MongoDB:** On a few platforms the [November 10 floor](black-october/details/mongodb.md#remediation) was never published, so install the next build. MongoDB's notes say 9.0.7 has no Red Hat or CentOS 8.1, 9, or 10 ppc64le binary and no 8.3 or 9 s390x binary, 8.3.16 has no 8.1 or 9 ppc64le binary and no 8.3 or 9 s390x binary, and 8.0.37 has no 8.3 or 9 s390x binary. Use **9.0.8, 8.3.17, or 8.0.38** there. Those builds fix the packaging, not a further flaw, and every other platform stays on the floor. A public repository reports a crash on 8.0.34 and no code execution. MongoDB says it is not aware of exploitation. It is not in KEV.
+
 ## 2026-11-12 11:04 EST (UTC−05:00) — NetScaler; Lenovo XClarity Controller; Red Hat Quay; Windows Shell; GoAhead
 
 - **NetScaler:** Upgrade ADC and Gateway to [14.1-73.57, 13.1-64.39, 14.1-73.58 FIPS, or 13.1-37.293](black-october/details/netscaler-november.md#remediation) or later on that line, and upgrade Console to 14.1-74.34. Citrix rates [CVE-2026-120868](https://www.cve.org/CVERecord?id=CVE-2026-120868) CVSS 4.0 9.3: a packet can crash any ADC or Gateway, and no feature has to be on. The CVE record is still Reserved. [CVE-2026-120869](https://www.cve.org/CVERecord?id=CVE-2026-120869) is the Console login bypass. The bulletin scores it 9.4 and says adjacent; the CVE record scores it 9.3 and says network. Citrix says it is not aware of exploits. Neither is in KEV. The October builds, 14.1-73.41 and 13.1-64.28, do not include this fix. The upgrade does not show whether a packet already crashed the appliance.
