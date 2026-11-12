@@ -5,15 +5,15 @@
       "hold": "none"
     },
     "adobe-campaign-classic.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "adobe-commerce-upload.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "adobe-connect.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "ahsaycbs.md": {
@@ -44,6 +44,10 @@
       "last_checked": "2026-11-11T23:55:42Z",
       "hold": "none"
     },
+    "apache-roller.md": {
+      "last_checked": "2026-11-12T15:56:21Z",
+      "hold": "none"
+    },
     "apache-thrift.md": {
       "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
@@ -57,8 +61,8 @@
       "hold": "none"
     },
     "aruba-aos.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
-      "hold": "none"
+      "last_checked": "2026-11-12T15:56:21Z",
+      "hold": "awaiting-fix"
     },
     "aspera-faspex.md": {
       "last_checked": "2026-11-11T23:55:42Z",
@@ -77,7 +81,7 @@
       "hold": "none"
     },
     "authmask.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "babelfish.md": {
@@ -109,7 +113,7 @@
       "hold": "none"
     },
     "bricksforge.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "brotli.md": {
@@ -124,6 +128,10 @@
       "last_checked": "2026-11-11T23:55:42Z",
       "hold": "none"
     },
+    "checkmk.md": {
+      "last_checked": "2026-11-12T15:56:21Z",
+      "hold": "awaiting-fix"
+    },
     "chrome-156.md": {
       "last_checked": "2026-11-11T23:55:42Z",
       "hold": "none"
@@ -133,15 +141,15 @@
       "hold": "none"
     },
     "cisco-sdwan-keydrift.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "cisco-secure-firewall-vpn.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "cisco-seg.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "cisco-ucs-central.md": {
@@ -165,8 +173,8 @@
       "hold": "awaiting-fix"
     },
     "curl.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
-      "hold": "none"
+      "last_checked": "2026-11-12T15:56:21Z",
+      "hold": "awaiting-distros"
     },
     "cursor-claude-code.md": {
       "last_checked": "2026-11-11T15:56:09Z",
@@ -189,11 +197,11 @@
       "hold": "none"
     },
     "docker-hub-ghostpat.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "dotnet-framework.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "drupal-commerce.md": {
@@ -205,7 +213,7 @@
       "hold": "none"
     },
     "edge-pwn2own.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "edk2-pxe.md": {
@@ -217,7 +225,7 @@
       "hold": "none"
     },
     "elixir-bandit.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "emudhra.md": {
@@ -225,7 +233,7 @@
       "hold": "awaiting-fix"
     },
     "epics-base.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "fastify-http-proxy.md": {
@@ -277,19 +285,19 @@
       "hold": "none"
     },
     "github-gheist.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "gitlab-ruby.md": {
-      "last_checked": "2026-11-11T15:56:09Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "goahead-tls.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "google-mcp-toolbox.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "gpustack.md": {
@@ -353,7 +361,7 @@
       "hold": "none"
     },
     "juniper-session-smart.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "kaniko.md": {
@@ -385,7 +393,11 @@
       "hold": "none"
     },
     "laravel.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
+      "hold": "none"
+    },
+    "lenovo-xcc.md": {
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "libslirp.md": {
@@ -417,11 +429,11 @@
       "hold": "none"
     },
     "magento-blockstrap.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "marklogic.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "mistral-vibe.md": {
@@ -441,15 +453,19 @@
       "hold": "awaiting-fix"
     },
     "n8n-credential-guard.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
+      "hold": "none"
+    },
+    "netscaler-november.md": {
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "netscaler.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "nextcloud-code.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "nextjs.md": {
@@ -497,11 +513,11 @@
       "hold": "none"
     },
     "ovhcloud-cli.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "pan-os.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "penpot.md": {
@@ -533,7 +549,7 @@
       "hold": "none"
     },
     "progress-wsftp.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "puppet.md": {
@@ -549,7 +565,7 @@
       "hold": "none"
     },
     "railway.md": {
-      "last_checked": "2026-11-11T15:56:09Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "rancher-fleet.md": {
@@ -557,19 +573,23 @@
       "hold": "none"
     },
     "rankmath-pro.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
+    },
+    "red-hat-quay.md": {
+      "last_checked": "2026-11-12T15:56:21Z",
+      "hold": "awaiting-fix"
     },
     "s2member.md": {
       "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
     "sap-cloud-sdk-python.md": {
-      "last_checked": "2026-11-11T15:56:09Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "sap-netweaver-visual-composer.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "sap-november.md": {
@@ -593,15 +613,15 @@
       "hold": "none"
     },
     "siemens-software-center.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "signal.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "siteguard.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "skb-zerocopy-lpe.md": {
@@ -633,19 +653,19 @@
       "hold": "none"
     },
     "synology-dsm.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "tabularis.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "tailworm.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
-      "hold": "none"
+      "last_checked": "2026-11-12T15:56:21Z",
+      "hold": "awaiting-fix"
     },
     "teamviewer.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "telegram-clients.md": {
@@ -673,7 +693,7 @@
       "hold": "none"
     },
     "veeam-backup.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "velocloud.md": {
@@ -692,6 +712,10 @@
       "last_checked": "2026-11-11T23:55:42Z",
       "hold": "none"
     },
+    "windchill.md": {
+      "last_checked": "2026-11-12T15:56:21Z",
+      "hold": "awaiting-fix"
+    },
     "windows-paint.md": {
       "last_checked": "2026-11-11T23:55:42Z",
       "hold": "none"
@@ -701,11 +725,11 @@
       "hold": "none"
     },
     "windows-shell.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "wing-ftp.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "wolfvision-cynap.md": {
@@ -765,7 +789,7 @@
       "hold": "none"
     },
     "zammad.md": {
-      "last_checked": "2026-11-09T15:55:49Z",
+      "last_checked": "2026-11-12T15:56:21Z",
       "hold": "none"
     },
     "zoom-workplace.md": {

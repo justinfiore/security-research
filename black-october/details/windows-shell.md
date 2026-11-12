@@ -1,6 +1,6 @@
 # Windows Shell: Mark of the Web bypass zero-day
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-12 (America/New_York)
 
 [Main Windows Shell summary](../black-october-2026.md#windows-shell-mark-of-the-web-bypass-zero-day-cve-2026-96951) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -77,7 +77,7 @@ Compare `CurrentBuild.UBR` (for example `26100.9711`) with the table. `Get-HotFi
 2. Prioritize user endpoints that receive email or chat attachments or browse the web, and multi-user hosts (RDS/VDI). Servers where users rarely open files are lower priority but still affected.
 3. While you roll out the update, keep in place controls that do not depend on MOTW alone: attachment detonation and file-type blocking at the email gateway, ASR rules for Office and script content, application control (WDAC/AppLocker), and SmartScreen enforcement. These reduce risk but do **not** replace the update.
 4. **Outlook.com:** MSRC lists a service-side fixed build and no customer-installable package was identified. Account owners have nothing to install.
-5. **Microsoft Edge:** MSRC revision 2.0 added Edge software to its Security Updates table. Update supported Edge through its normal managed browser-update channel; the browser’s About page or fleet browser-compliance report should show the version Microsoft lists for this CVE.
+5. **Microsoft Edge:** MSRC revision 2.0 added Edge software to its Security Updates table. The CNA record, updated 2026-11-10, and MSRC's affected-product API both name the fixed build: Edge (Chromium-based) before **154.0.4258.62**. Update supported Edge to that build or later through its normal channel, and read the version from the browser's About page or the fleet report.
 6. Rollback caution: uninstalling the cumulative update to fix a compatibility problem reintroduces the vulnerability. Use Known Issue Rollback or vendor guidance where available instead of removing the security update.
 
 ## Verification

@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [NetScaler: a packet crashes the appliance, and the Console skips login](#netscaler-a-packet-crashes-the-appliance-and-the-console-skips-login)
+- [Lenovo XClarity Controller: a factory reset restores the OpenBMC root password](#lenovo-xclarity-controller-a-factory-reset-restores-the-openbmc-root-password)
 - [Red Hat Quay: an anonymous token installs a signing key](#red-hat-quay-an-anonymous-token-installs-a-signing-key)
 - [PTC Windchill and FlexPLM: a new deserialization patch](#ptc-windchill-and-flexplm-a-new-deserialization-patch)
 - [Checkmk: a monitored host writes a file the server runs](#checkmk-a-monitored-host-writes-a-file-the-server-runs)
@@ -378,6 +380,47 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## NetScaler: a packet crashes the appliance, and the Console skips login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/netscaler-november.md):** [Detection](details/netscaler-november.md#detection) · [Remediation](details/netscaler-november.md#remediation) · [Verification](details/netscaler-november.md#verification) · [Timeline](details/netscaler-november.md#timeline)
+
+**CVEs:** [CVE-2026-120868](https://www.cve.org/CVERecord?id=CVE-2026-120868), [CVE-2026-120869](https://www.cve.org/CVERecord?id=CVE-2026-120869). The same ADC and Gateway bulletin lists eight more that Citrix scores 9.3 or 9.5, each with a configuration it names. [CVE-2026-118268](https://www.cve.org/CVERecord?id=CVE-2026-118268) and [CVE-2026-118269](https://www.cve.org/CVERecord?id=CVE-2026-118269) are 8.5 in the Secure Access Client.
+
+**Citrix rates CVE-2026-120868 CVSS 4.0 9.3 Critical and CVE-2026-120869 CVSS 4.0 9.4 Critical.** The 9.3 flaw is a memory overflow in packet processing. Citrix says every NetScaler ADC and NetScaler Gateway deployment is affected, including the default configuration, and the result it names is unpredictable behavior or a denial of service. The CVE record for it was still Reserved on November 12. The 9.4 flaw is in NetScaler Console before 14.1-74.34: a request that is not logged in reaches restricted resources. The CVE record scores that one 9.3 and says the attack is over the network; the bulletin scores 9.4 and says adjacent. Both are Citrix's. The highest of the conditional flaws is [CVE-2026-107412](https://www.cve.org/CVERecord?id=CVE-2026-107412) at 9.5, and it needs a Gateway or an AAA virtual server.
+
+This is not the October SAML crash, [CVE-2026-88779](https://www.cve.org/CVERecord?id=CVE-2026-88779). The builds that fixed that one are still inside this one.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12) for either CVE. Citrix says it is not aware of exploits for any of the announced vulnerabilities. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fixes** | **2026-11-12; time/TZ unknown** | CTX697305 and CTX697320, initial publication. Citrix gives no time. |
+| **Last updated** | **2026-11-12 11:04 EST (UTC−05:00)** | New item. |
+
+**Patch:** Upgrade ADC and Gateway to **14.1-73.57**, **13.1-64.39**, **14.1-73.58 FIPS**, or **13.1-37.293** or later on that line, both nodes of an HA pair. Upgrade Console to **14.1-74.34** or later. Upgrade Secure Access Client for Windows to **26.11.1.6** and for Linux to **26.10.4**. Citrix names no workaround for the packet flaw. Citrix-managed cloud services are updated by Cloud Software Group. The upgrade does not show whether a packet already crashed the appliance.
+
+Sources: [CTX697305](https://support.citrix.com/support-home/kbsearch/article?articleNumber=CTX697305), [CTX697320](https://support.citrix.com/support-home/kbsearch/article?articleNumber=CTX697320), [detailed guide](details/netscaler-november.md).
+
+## Lenovo XClarity Controller: a factory reset restores the OpenBMC root password
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/lenovo-xcc.md):** [Detection](details/lenovo-xcc.md#detection) · [Remediation](details/lenovo-xcc.md#remediation) · [Verification](details/lenovo-xcc.md#verification) · [Timeline](details/lenovo-xcc.md#timeline)
+
+**CVEs:** [CVE-2026-81936](https://www.cve.org/CVERecord?id=CVE-2026-81936)
+
+**Lenovo rates CVE-2026-81936 CVSS 4.0 7.1 High and CVSS 3.1 6.8 Medium.** Both scores are on the same record. A regression in ThinkSystem v4 XClarity Controller 3 firmware (2.51) IHX432Y through (2.56) IHX436K puts the default OpenBMC root password back when someone runs Reset to Default. That password reaches the controller's administrative interfaces and its own operating system, which is not normally reachable. The attack needs high privileges and a user action. Lenovo says only those versions are affected, that they are no longer available for download, and the record names no fixed build.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12). The record does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Advisory LEN-226771 | 2026-10-13; time unknown | Lenovo's index. |
+| **Public announcement** | **2026-11-11; time unknown** | The CVE record. Lenovo gives no time. |
+| **Last updated** | **2026-11-12 11:04 EST (UTC−05:00)** | New item. |
+
+**Patch:** Move off (2.51) IHX432Y through (2.56) IHX436K. Lenovo names no fixed build, so take the current XCC3 firmware for the server and confirm the build string is outside that range. After a Reset to Default on a controller that was inside it, change the root password before the controller is reachable again. The firmware change does not show whether the default password was already used.
+
+Sources: [CVE-2026-81936](https://www.cve.org/CVERecord?id=CVE-2026-81936), [Lenovo advisory index](https://support.lenovo.com/us/en/product_security/ps500001), [detailed guide](details/lenovo-xcc.md).
+
 ## Red Hat Quay: an anonymous token installs a signing key
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/red-hat-quay.md):** [Detection](details/red-hat-quay.md#detection) · [Remediation](details/red-hat-quay.md#remediation) · [Verification](details/red-hat-quay.md#verification) · [Timeline](details/red-hat-quay.md#timeline)
@@ -391,9 +434,10 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-11 14:00:00 UTC** | Red Hat's public date for CVE-2026-123710. Both records published that day. |
-| **Last updated** | **2026-11-12 07:55 EST (UTC−05:00)** | New item. |
+| Red Hat solution 7149923 | 2026-11-12; time unknown | Public portion: turning off anonymous access does not stop the signing-key flaw. |
+| **Last updated** | **2026-11-12 11:04 EST (UTC−05:00)** | Anonymous access is not a mitigation. |
 
-**Patch:** On the line you run, upgrade to **3.9.28, 3.10.28, 3.12.24, 3.14.10, 3.15.9, 3.16.7, 3.17.7, or 3.18.3**. Red Hat names those builds for CVE-2026-110697 and says Quay.io is already on a fixed build for that one. Red Hat names no build for CVE-2026-123710, so also restrict `/keys` at the proxy to internal components. Review `service_key_rotate` and `service_key_delete` events whose expiration is null, and remove a key you do not recognize. Deleting it is not durable until a fixed build is deployed. Quay 5 has no named fix. The upgrade does not show whether a key was already installed.
+**Patch:** On the line you run, upgrade to **3.9.28, 3.10.28, 3.12.24, 3.14.10, 3.15.9, 3.16.7, 3.17.7, or 3.18.3**. Red Hat names those builds for CVE-2026-110697 and says Quay.io is already on a fixed build for that one. Red Hat names no build for CVE-2026-123710, so also restrict `/keys` at the proxy to internal components. Turning off anonymous access does not close that one: Red Hat's November 12 solution says any valid account can still install a key. Review `service_key_rotate` and `service_key_delete` events whose expiration is null, and remove a key you do not recognize. Deleting it is not durable until a fixed build is deployed, and resetting passwords or robot tokens does not revoke it. Quay 5 has no named fix. The upgrade does not show whether a key was already installed.
 
 Sources: [Red Hat, CVE-2026-123710](https://access.redhat.com/security/cve/cve-2026-123710), [Red Hat, CVE-2026-110697](https://access.redhat.com/security/cve/cve-2026-110697), [detailed guide](details/red-hat-quay.md).
 
@@ -3389,11 +3433,12 @@ Sources: [CISA ICSA-26-300-01](https://www.cisa.gov/news-events/ics-advisories/i
 | Vendor fix release | 2026-08-02; time/TZ unknown | GoAhead 6.1.1 fixes the OpenSSL and Mbed TLS defects. |
 | Vendor advisories published | 2026-10-12; time/TZ unknown | GOAHEAD-SA-2026-0004 through -0006. |
 | Public technical disclosure | 2026-10-26 20:21 UTC | FoxIO published the backend-specific analysis. |
-| **Last updated** | **2026-10-27 16:01 EDT (UTC−04:00)** | Added from primary vendor and researcher sources. |
+| Windows CGI argument injection | 2026-11-08; time unknown | CVE-2026-121706, CVSS 3.1 8.1. Fixed in the same 6.1.1. Windows only, and only where the operator deployed an interpreter CGI. |
+| **Last updated** | **2026-11-12 11:04 EST (UTC−05:00)** | The Windows CGI flaw uses the same fix. |
 
 GoAhead is an embedded device-management web server. Exposure depends on its compiled TLS backend and build-time verification settings, not simply its version. In OpenSSL-compatible builds 3.4.5–6.1.0 with a configured CRL, the server loads but does not enforce revocation, so a revoked client certificate can retain mTLS access. In Mbed TLS builds 4.0.2–6.1.0, an affected TLS 1.2 DHE_RSA connection to a permissive client can be passively decrypted. LibreSSL 3.2.x or 3.3.2–3.3.6 builds with peer verification on but issuer verification off can accept an over-depth client chain.
 
-**Patch:** Upgrade affected OpenSSL-compatible or Mbed TLS builds to **6.1.1 or later**. For the LibreSSL legacy case, enable issuer verification with a trusted CA bundle, or use OpenSSL or LibreSSL 4.x. Until upgraded, do not treat a loaded CRL as enforced; remove revoked client access through the device's supported identity controls and restrict management interfaces to a dedicated network.
+**Patch:** Upgrade affected OpenSSL-compatible or Mbed TLS builds to **6.1.1 or later**. The same release fixes [CVE-2026-121706](https://www.cve.org/CVERecord?id=CVE-2026-121706), CVSS 3.1 8.1: on Windows, a request with no login can change the arguments a CGI program receives, and an interpreter the operator deployed, such as `php-cgi.exe`, can then run code. POSIX builds are not affected. For the LibreSSL legacy case, enable issuer verification with a trusted CA bundle, or use OpenSSL or LibreSSL 4.x. Until upgraded, do not treat a loaded CRL as enforced; remove revoked client access through the device's supported identity controls and restrict management interfaces to a dedicated network.
 
 Sources: [EmbedThis advisories](https://github.com/embedthis/goahead/security/advisories), [FoxIO technical disclosure](https://foxio.io/blog/choose-your-backend-three-tls-bugs-in-goahead), [GoAhead TLS documentation](https://www.embedthis.com/goahead/doc/users/ssl.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -4873,7 +4918,8 @@ Sources: [EG Secure Solutions advisory (Japanese)](https://www.eg-secure.co.jp/s
 | Microsoft disclosure and Windows updates | 2026-10-13 07:00 PDT (UTC−07:00) | October 2026 Patch Tuesday; exploited as a zero-day. |
 | CVE record published | 2026-10-13 19:01:26 UTC | Microsoft CNA record. |
 | CISA KEV addition | 2026-10-13; time/TZ unknown | Federal due date 2026-10-16. Not the date exploitation started. |
-| **Last updated** | **2026-10-26 09:28 EDT (UTC−04:00)** | Added from CISA KEV backlog review and primary sources. |
+| Edge fixed build | 2026-11-10; time unknown | The CNA record names Edge before 154.0.4258.62. |
+| **Last updated** | **2026-11-12 11:04 EST (UTC−05:00)** | The Edge build is now named. |
 
 A command-injection flaw in Windows Shell lets a crafted file or link evade **Mark of the Web (MOTW)** protections. The user must open the file or click the link, for example from email or instant messaging. Microsoft also lists Outlook.com, which it fixed on the service side.
 
@@ -4883,7 +4929,7 @@ A command-injection flaw in Windows Shell lets a crafted file or link evade **Ma
 
 **Am I impacted?** Every supported Windows 10, Windows 11 and Windows Server 2012 R2–2025 branch below the October fixed build. Examples: 24H2 `26100.9711`, 25H2 `26200.9711`, 23H2 `22631.7652`, 22H2 `19045.7807`, Server 2022 `20348.5761`, Server 2025 `26100.33650`. Read `CurrentBuild` and `UBR` from the registry as shown in the [detail guide](details/windows-shell.md#establish-exposure). A device that has not reported recently counts as unknown.
 
-**Patch:** Install the October 2026 cumulative update for each branch and reboot. KBs: 24H2/25H2/26H2 KB5127648; 26H1 KB5127646; 23H2 KB5126653; Windows 10 21H2/22H2 KB5126657; 1809/Server 2019 KB5126651; 1607/Server 2016 KB5126868; Server 2022 KB5126655; Server 2025 KB5126646; Server 2012 R2 KB5126836. Attachment filtering and ASR rules reduce risk but do not replace the update.
+**Patch:** Install the October 2026 cumulative update for each branch and reboot. KBs: 24H2/25H2/26H2 KB5127648; 26H1 KB5127646; 23H2 KB5126653; Windows 10 21H2/22H2 KB5126657; 1809/Server 2019 KB5126651; 1607/Server 2016 KB5126868; Server 2022 KB5126655; Server 2025 KB5126646; Server 2012 R2 KB5126836. Update Microsoft Edge to **154.0.4258.62** or later: the CNA record, updated November 10, names that build. Attachment filtering and ASR rules reduce risk but do not replace the update.
 
 Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-96951), [Microsoft CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-96951), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), [Rapid7 analysis](https://www.rapid7.com/blog/post/em-patch-tuesday-october-2026/).
 
@@ -6003,6 +6049,8 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **NetScaler ADC, Gateway, or Console** | Upgrade ADC and Gateway to 14.1-73.57, 13.1-64.39, 14.1-73.58 FIPS, or 13.1-37.293 or later. Citrix rates CVE-2026-120868 9.3, and it needs no feature turned on. Upgrade Console to 14.1-74.34: CVE-2026-120869 lets a request skip the login. The October builds do not include this fix. [Guide](details/netscaler-november.md#remediation). |
+| **ThinkSystem v4 with XClarity Controller 3** | If the firmware is (2.51) IHX432Y through (2.56) IHX436K, move off it. Lenovo rates CVE-2026-81936 7.1: a Reset to Default puts the OpenBMC root password back. Lenovo names no fixed build and says those versions are no longer available. Change the root password after any reset. [Guide](details/lenovo-xcc.md#remediation). |
 | **Self-managed Red Hat Quay** | Upgrade to 3.18.3, 3.17.7, 3.16.7, 3.15.9, 3.14.10, 3.12.24, 3.10.28, or 3.9.28 on the line you run. Red Hat names those builds for CVE-2026-110697 and names no build for CVE-2026-123710, so also block `/keys` from anything outside the registry's own components. Quay.io is already fixed for the second flaw. Quay 5 has no named fix. [Guide](details/red-hat-quay.md#remediation). |
 | **PTC Windchill or FlexPLM, not hosted by PTC** | Install the CVE-2026-126325 patch from support article CS483249. PTC-hosted systems are already patched. The article needs a PTC login and is the only place that names the fixed build. [Guide](details/windchill.md#remediation). |
 | **Checkmk 2.4 or 2.5** | Upgrade to 2.4.0p40 or 2.5.0p19 or later. A monitored host that can write its own agent output can otherwise place a file the server runs. 2.3.0 is end of life and has no fix. [Guide](details/checkmk.md#remediation). |
