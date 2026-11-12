@@ -2,6 +2,13 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-11 19:10 EST (UTC−05:00) — Chrome; GPUStack; eMudhra; N-central
+
+- **Chrome:** Update to [157.0.8103.78/.79](black-october/details/chrome-156.md#remediation) on Windows and Mac, or 157.0.8103.78 on Linux, and relaunch. The November 9 builds do not include this one. Google rates five of the 83 fixes Critical and does not report exploitation of them. Extended Stable goes to 156.0.8078.100. CVE-2026-125350 stays in KEV.
+- **GPUStack:** Upgrade the server and every worker to [2.3.1](black-october/details/gpustack.md#remediation) and restart. GitHub rates GHSA-gjf9-3p3r-9h9c CVSS 3.1 9.1: through 2.3.0, inspecting a model repository can run Python it supplies. GHSA-mv55-58pg-4xgf is 8.8 and lets an organization member write through the cluster proxy. Neither has a CVE. Neither advisory reports exploitation. 2.3.0 leaves both.
+- **eMudhra:** On November 7 eMudhra revoked eight more intermediate CAs, the RSA-4096 G2B and G2C series, with reason `cessationOfOperation`. Their keys were not weakened. The [incident report](black-october/details/emudhra.md#timeline) says the same script read the key material into process memory, and the G2C subscriber certificates have been migrated. macOS 27.2.1, 26.7.3, and 15.8.3 now stop the command-line tools accepting the compromised certificates. The public statement page still ends at Update 8.
+- **N-central:** N-able finished upgrading every [hosted server](black-october/details/n-central.md#remediation) at 01:04 UTC on November 11. An on-premises server still has to reach **2026.4.1.26** while it is offline, and Agents and Probes still have to move. Scanning is still being observed. A follow-up hotfix is still planned.
+
 ## 2026-11-11 15:04 EST (UTC−05:00) — Zoom Workplace; Ivanti Cloud Services Application; Next.js
 
 - **Zoom Workplace for Windows:** Update to [7.1.8 or later](black-october/details/zoom-workplace.md#remediation) and relaunch. Zoom rates [CVE-2026-108186](https://www.cve.org/CVERecord?id=CVE-2026-108186) CVSS 3.1 9.6: a network request can raise privileges, and the person at the computer has to act. [CVE-2026-108187](https://www.cve.org/CVERecord?id=CVE-2026-108187) is 8.1 and is fixed at 7.1.5, so a build that stops there is still inside the 9.6 flaw. Zoom lists no workaround. Neither is in KEV. The update does not show whether a request already raised privileges.
