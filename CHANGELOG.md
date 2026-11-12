@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-11 23:04 EST (UTC−05:00) — Node.js
+
+- **Node.js:** Upgrade to [22.23.5, 24.22.3, or 26.13.1](black-october/details/nodejs-november.md#remediation) or later on that line, and restart every process that loaded the old binary. OpenJS rates [CVE-2026-123864](https://www.cve.org/CVERecord?id=CVE-2026-123864) CVSS 3.0 8.1: an HTTPS request can read memory from another connection, including a TLS private key. The project rates six more flaws in the same release High and publishes no number for them. It reports no exploitation. None is in KEV. A 20.x or 18.x process gets no fix. The upgrade does not show whether a request already read memory.
+
 ## 2026-11-11 19:10 EST (UTC−05:00) — Chrome; GPUStack; eMudhra; N-central
 
 - **Chrome:** Update to [157.0.8103.78/.79](black-october/details/chrome-156.md#remediation) on Windows and Mac, or 157.0.8103.78 on Linux, and relaunch. The November 9 builds do not include this one. Google rates five of the 83 fixes Critical and does not report exploitation of them. Extended Stable goes to 156.0.8078.100. CVE-2026-125350 stays in KEV.

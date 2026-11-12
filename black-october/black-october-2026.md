@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 10, 2026**
+**As of November 11, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Node.js: an HTTPS request can read another connection's memory](#nodejs-an-https-request-can-read-another-connections-memory)
 - [Zoom Workplace for Windows: a network request raises privileges](#zoom-workplace-for-windows-a-network-request-raises-privileges)
 - [MongoDB: a replica set primary runs code before login](#mongodb-a-replica-set-primary-runs-code-before-login)
 - [Ivanti Endpoint Manager: a SQL query runs code before login](#ivanti-endpoint-manager-a-sql-query-runs-code-before-login)
@@ -216,6 +217,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Node.js](#nodejs-an-https-request-can-read-another-connections-memory) to **22.23.5, 24.22.3, or 26.13.1** or later on that line, and restart every process that loaded the old binary. OpenJS rates [CVE-2026-123864](https://www.cve.org/CVERecord?id=CVE-2026-123864) CVSS 3.0 8.1 High: an HTTPS request can read memory from another connection, including a TLS private key. The project rates six more flaws in the same release High and does not score them. It reports no exploitation. None is in KEV. A 20.x or 18.x process gets no fix. The upgrade does not show whether a request already read memory.
 - **New this update:** Update [Zoom Workplace for Windows](#zoom-workplace-for-windows-a-network-request-raises-privileges) to **7.1.8 or later** and relaunch it. Zoom rates [CVE-2026-108186](https://www.cve.org/CVERecord?id=CVE-2026-108186) CVSS 3.1 9.6 Critical: a network request can raise privileges, and the person at the computer has to act. [CVE-2026-108187](https://www.cve.org/CVERecord?id=CVE-2026-108187) is 8.1 and is fixed at 7.1.5, so a build that stops there is still inside the 9.6 flaw. Zoom lists no workaround. Neither is in KEV. The update does not show whether a request already raised privileges.
 - **New this update:** Upgrade a [MongoDB](#mongodb-a-replica-set-primary-runs-code-before-login) replica set to **9.0.7, 8.3.16, 8.0.37, or 7.0.48** or later on that line, and restart every member. MongoDB rates [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383) CVSS 4.0 9.5 Critical: a request that needs no login can run code when a new primary finishes catch-up. A standalone server is not affected. MongoDB says it is not aware of exploitation. It is not in KEV. Atlas upgrades during maintenance. The restart does not show whether the process already ran code.
 - **New this update:** Upgrade [Ivanti Endpoint Manager](#ivanti-endpoint-manager-a-sql-query-runs-code-before-login) to **2024 SU8**, and Cloud Services Application 5.0.8 to **5.0.8.1**. Ivanti rates [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653) CVSS 3.1 9.8 Critical: SQL injection in EPM Core runs code with no login. [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683) is 9.4 and affects CSA 5.0.8 only. The CVE record marks 5.0.8 unaffected; the advisory says 5.0.8.1 is the fix. Ivanti says it has no evidence of exploitation. Neither is in KEV. The upgrade does not show whether a query already ran.
@@ -366,6 +368,27 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
 ---
+
+## Node.js: an HTTPS request can read another connection's memory
+
+<a id="nodejs-an-https-request-can-read-another-connections-memory"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/nodejs-november.md):** [Detection](details/nodejs-november.md#detection) · [Remediation](details/nodejs-november.md#remediation) · [Verification](details/nodejs-november.md#verification) · [Timeline](details/nodejs-november.md#timeline)
+
+**CVEs:** [CVE-2026-123864](https://www.cve.org/CVERecord?id=CVE-2026-123864), [CVE-2026-123863](https://www.cve.org/CVERecord?id=CVE-2026-123863), [CVE-2026-123865](https://www.cve.org/CVERecord?id=CVE-2026-123865), [CVE-2026-123866](https://www.cve.org/CVERecord?id=CVE-2026-123866), [CVE-2026-126051](https://www.cve.org/CVERecord?id=CVE-2026-126051), [CVE-2026-123872](https://www.cve.org/CVERecord?id=CVE-2026-123872), [CVE-2026-123874](https://www.cve.org/CVERecord?id=CVE-2026-123874). The release fixes nine more, six Medium and three Low.
+
+**OpenJS rates CVE-2026-123864 CVSS 3.0 8.1 High.** The Node.js project rates it High and does not publish a number. A client who is not logged in can make an HTTPS server copy memory from other connections into a request body, including TLS private keys and other users' requests. The trigger needs a handler that calls `res.flushHeaders()` before the request body ends and then `res.end()` with a non-empty chunk. Cleartext HTTP is not affected. The same November 11 release fixes six more flaws the project rates High: an HTTP/2 abort, a session leak, freed response memory sent to a peer, a TLS server crash, a TLS 1.2 client-certificate bypass, and a use after free in `respondWithFile()`. The project says High is the top of the release and does not report exploitation. NVD had not scored CVE-2026-123864 on November 11.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11). The advisory does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-11 18:17:56 UTC** | CVE-2026-123864 published. Fixed the same day in 22.23.5, 24.22.3, and 26.13.1. |
+| **Last updated** | **2026-11-11 23:04 EST (UTC−05:00)** | New item. Upgrade Node.js. |
+
+**Patch:** Upgrade to **22.23.5, 24.22.3, or 26.13.1** or later on the line you run, and restart every process that loaded the old binary. The CVE record says everything before 22.23.5, from 23.0.0 before 24.22.3, and from 25.0.0 before 26.13.1 is affected. The advisory says an end-of-life line, including 20.x and 18.x, is affected and gets no fix. A container or a bundled runtime does not move with the system `node`. The upgrade does not show whether a request already read memory.
+
+Sources: [November 11 security releases](https://nodejs.org/en/blog/vulnerability/november-2026-security-releases), [CVE-2026-123864](https://www.cve.org/CVERecord?id=CVE-2026-123864), [detailed guide](details/nodejs-november.md).
 
 ## Zoom Workplace for Windows: a network request raises privileges
 
@@ -5996,7 +6019,7 @@ flowchart TD
 | **Tailscale SSH / headscale** | Update Tailscale to **v1.104.4 or later** and headscale to **0.29.7 or later**. The headscale release does not apply the node-side SSH and Serve fixes. A complete fix for every Tailworm finding is not established. |
 | **Microsoft Authenticator on Android** | Install **6.2606.4246 or a later supported release** in every profile; investigate and revoke exposed work-account tokens where compromise is suspected. |
 | **PHP / WordPress / Laravel / Drupal / Joomla** | For PHP2Shell, use PHP **8.5.12 / 8.4.27 / 8.3.36 / 8.2.35** or verified backport and disable session upload progress pending the follow-up fix. On Windows, separately install the **`-1`** rebuild that carries Brotli 1.2.1 and restart workers; `php -v` does not prove it. PAN-OS/Panorama embed PHP: apply Palo Alto's PHP2Shell hotfix and restrict the management interface. WordPress itself: update core to **7.1.4** or the fixed branch release, and block PHP under `/wp-content/upgrade/` before that update; the upgrade-window flaw is not PHP2Shell, and CISA lists it. ACF Extended and ACF Extended PRO: update both to **0.9.2.8**. YOOtheme Pro: update to **5.0.53** on WordPress and Joomla, then look for planted PHP under the uploads directory. CryptoPayment Gateway has no fix: delete it and move funds to a new wallet. [PHP2Shell guide](details/php2shell.md#remediation) · [WordPress guide](details/wordpress-upgrade-window.md#remediation) · [ACF Extended guide](details/acf-extended.md#remediation) · [CryptoPayment Gateway guide](details/cryptopayment-gateway.md#remediation) · [Brotli guide](details/brotli.md#remediation). |
-| **Node.js / Bun** | Node **22.23.4 / 24.22.1 / 26.12.1**; Bun **1.4.4**. Rebuild containers and restart workers. |
+| **Node.js / Bun** | Node **22.23.5 / 24.22.3 / 26.13.1**; Bun **1.4.4**. The November 11 release fixes CVE-2026-123864, which OpenJS scores 8.1: an HTTPS request can read another connection's memory. Rebuild containers and restart workers. [Guide](details/nodejs-november.md#remediation). |
 | **Python** | `Brotli` **1.2.1**, `brotlicffi` **1.2.1.0**, Pillow **13.0.0** where installed. Pillow may require a Python upgrade. |
 | **.NET** | Runtime **8.0.33 / 9.0.22 / 10.0.14**, or fixed .NET 11 preview; rebuild self-contained/NativeAOT apps; update Visual Studio and PowerShell 7 to [MSRC's fixed builds](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-111497). [Check actual decoding paths](details/brotli.md#inventory-by-language-and-deployment). |
 | **Linux system `libbrotli` packages** | Debian bookworm `1.0.9-2+deb12u1` / trixie `1.1.0-2+deb13u1`; Amazon Linux 2023 `1.1.0-1.amzn2023.0.2`; Ubuntu USN-8956-1 (`libbrotli1` 1.2.0-4ubuntu0.1 on 26.10, 1.2.0-3ubuntu0.1 on 26.04, 1.1.0-2ubuntu0.1 on 24.04, 1.0.9-2ubuntu0.1 on 22.04). Backports keep old version strings; restart processes that load the library. [Guide](details/brotli.md#remediation). |
