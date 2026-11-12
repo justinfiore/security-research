@@ -32,6 +32,10 @@
       "last_checked": "2026-11-11T23:55:42Z",
       "hold": "none"
     },
+    "apache-http-server.md": {
+      "last_checked": "2026-11-12T11:55:47Z",
+      "hold": "awaiting-distros"
+    },
     "apache-mina.md": {
       "last_checked": "2026-11-11T23:55:42Z",
       "hold": "none"
@@ -237,7 +241,7 @@
       "hold": "none"
     },
     "forticlient-nov11.md": {
-      "last_checked": "2026-11-11T11:55:43Z",
+      "last_checked": "2026-11-12T11:55:47Z",
       "hold": "none"
     },
     "fortimail.md": {
@@ -625,7 +629,7 @@
       "hold": "none"
     },
     "synology-dsm-nov11.md": {
-      "last_checked": "2026-11-11T11:55:43Z",
+      "last_checked": "2026-11-12T11:55:47Z",
       "hold": "none"
     },
     "synology-dsm.md": {

@@ -1,10 +1,10 @@
 # N-central: critical vulnerabilities, hotfix 2026.4.1.26
 
-**Last updated:** 2026-11-11 (America/New_York)
+**Last updated:** 2026-11-12 (America/New_York)
 
 [Back to N-central summary](../black-october-2026.md#n-central-critical-vulnerabilities-hotfix-20264126) · [Changelog](../../CHANGELOG.md)
 
-N-able released N-central **2026.4 HF2, build 2026.4.1.26**, on November 10. The release notes say it fixes seven CVEs, and N-able's status page says servers should stay offline until the upgrade has succeeded. N-able is now observing scanning that matches the published proof of concept. A follow-up hotfix is still coming.
+N-able released N-central **2026.4 HF2, build 2026.4.1.26**, on November 10. The release notes say it fixes seven CVEs. On November 12 N-able opened a second incident: a new disclosure claims more flaws in on-premises **2026.4.1 HF2**. N-able's initial review says the server issue needs the Legacy API turned on and reachable from the internet. That API is off by default. Hosted servers are not affected by this second issue.
 
 **N-able rates two of the seven CVSS 4.0 Critical and five High.** All seven were published 2026-11-10 by N-able.
 
@@ -22,7 +22,7 @@ The incident started 2026-11-09. N-able took hosted N-central offline and told o
 
 N-central deploys software, runs scripts, and opens remote-control sessions on the machines it manages. Ecoverse under N-able Login stays up at `https://n-able.app`.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-10) for any of the seven CVEs. N-able says it is observing scanning associated with the published proof of concept, and its earlier updates said it had not seen an environment compromised. Scanning is not the same statement as a successful intrusion. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12) for any of the seven CVEs. N-able says it is observing scanning associated with the published proof of concept. The Hacker News says Presidian saw probing of the new claim from 157.20.241.16 and saw no successful exploitation. Scanning and probing are not the same statement as an intrusion. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -45,6 +45,7 @@ N-central deploys software, runs scripts, and opens remote-control sessions on t
 | **Release** | **2026-11-10; time/TZ unknown** | Release notes posted November 10, 2026, by annemayekar. The page says 8:48 pm and does not name the timezone. Build 2026.4.1.26. Seven CVEs. [Notes][notes] |
 | Hosted upgrade complete | 2026-11-11 01:04:27 UTC | Incident 202584. Every hosted N-central server, all regions, upgraded. On-premises servers stay offline until their own upgrade succeeds. Scanning still observed. [Event][event] |
 | CVE records | 2026-11-10 21:19 to 21:26 UTC | N-able published the seven records. |
+| Second disclosure | 2026-11-12 00:00:00 MST (UTC−07:00) | Incident 202609, status Investigating. N-able says the claimed server issue needs Legacy API on and exposed to the internet. Hosted is not affected. [Event 202609][event2] |
 
 ## Detection
 
@@ -54,7 +55,7 @@ N-central deploys software, runs scripts, and opens remote-control sessions on t
 
 ## Remediation
 
-1. **On premises, upgrade the server to 2026.4.1.26 while it is still offline, then bring it back.** The download is [SD-000143](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LUHIA2/sd-000143). A CMMC account uses [SD-000144](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LVtIAM/sd-000144). Supported paths are 2025.4, 2026.1, 2026.2, 2026.3, 2026.3.1 HF1 through HF4, 2026.4.0.27, and 2026.4.0.32. Anything older goes to one of those first. N-able's words are to keep the server offline until the upgrade has succeeded.
+1. **On premises, upgrade the server to 2026.4.1.26 while it is still offline, then confirm Legacy API is off before you bring it back.** The download is [SD-000143](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LUHIA2/sd-000143). A CMMC account uses [SD-000144](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LVtIAM/sd-000144). Supported paths are 2025.4, 2026.1, 2026.2, 2026.3, 2026.3.1 HF1 through HF4, 2026.4.0.27, and 2026.4.0.32. Anything older goes to one of those first. Incident 202584 still says to keep the server offline until the upgrade has succeeded. Incident 202609, opened 2026-11-12, says a new claim against this same build needs Legacy API turned on and reachable from the internet. N-able says that API is off by default and is not recommended. If it is on, turn it off. [How to disable Legacy API](https://me.n-able.com/s/article/How-to-Disable-Legacy-API-settings-on-On-premise-N-central-servers). N-able has not published a newer build for this claim, and it says hosted servers are not affected by it.
 2. **Upgrade Agents before Probes, and both to 2026.4.1.26.** Hosted and on-premises customers both do this. A Probe on 2026.4.1.26 stops talking to an Agent or Patch Management Engine that is still older, and the offline patch cache stops with it. An older Probe keeps talking to a newer Agent, so the Agent can move first. The updated Patch Management Engine is pushed separately and needs no action.
 3. **Hosted servers are upgraded.** The 01:04:27 UTC update on 2026-11-11 says all regions are done. Agents and Probes still have to move.
 4. **A follow-up hotfix is still planned.** N-able says it will carry further security updates. 2026.4.1.26 is the build that addresses the most critical November 9 vulnerabilities, not the last build in this response.
@@ -62,7 +63,7 @@ N-central deploys software, runs scripts, and opens remote-control sessions on t
 
 ## Verification
 
-- The server reports 2026.4.1.26, and it was not reachable from the network during the upgrade.
+- The server reports 2026.4.1.26, it was not reachable from the network during the upgrade, and Legacy API is off.
 - Agents report 2026.4.1.26 before the Probes do. A Probe and an Agent on 2026.4.1.26 can still use the offline patch cache.
 - A machine that should be managed still checks in. Do not replay the proof of concept.
 
@@ -76,13 +77,16 @@ N-able's earlier updates said it had not seen an environment compromised. The cu
 
 ## Sources
 
-- [N-able status, incident 202584][event] — reread 2026-11-11. Start 14:00:00 UTC, status Monitoring. At 01:04:27 UTC on 2026-11-11 every hosted server, all regions, was upgraded. Scanning observed. On-premises servers stay offline until their own upgrade succeeds. Follow-up hotfix still planned. Lists the seven CVEs.
+- [N-able status, incident 202584][event] — reread 2026-11-12. Start 14:00:00 UTC, status Monitoring. At 01:04:27 UTC on 2026-11-11 every hosted server, all regions, was upgraded. Scanning observed. On-premises servers stay offline until their own upgrade succeeds. Follow-up hotfix still planned. Lists the seven CVEs.
+- [N-able status, incident 202609][event2] — read 2026-11-12. Start 2026-11-12 00:00:00 MST, status Investigating. Claims of more flaws in on-premises 2026.4.1 HF2. N-able's initial review: the server issue needs Legacy API on and exposed to the internet. Hosted is not affected. No CVE and no newer build on that page.
 - [Release notes][notes] — posted November 10, 2026. Build 2026.4.1.26. The seven CVEs, the Agent and Probe order, the supported upgrade paths, and the disabled built-in remote control.
 - [CVE-2026-125883](https://www.cve.org/CVERecord?id=CVE-2026-125883), [CVE-2026-125881](https://www.cve.org/CVERecord?id=CVE-2026-125881), [CVE-2026-125878](https://www.cve.org/CVERecord?id=CVE-2026-125878), [CVE-2026-125879](https://www.cve.org/CVERecord?id=CVE-2026-125879), [CVE-2026-125882](https://www.cve.org/CVERecord?id=CVE-2026-125882), [CVE-2026-91000](https://www.cve.org/CVERecord?id=CVE-2026-91000), [CVE-2026-125880](https://www.cve.org/CVERecord?id=CVE-2026-125880) — N-able, published 2026-11-10. Scores in the summary above.
 - [BleepingComputer][bc] — the Able2Shell publication and the pre-release build 2026.4.0.31 the researcher tested.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.10, checked 2026-11-10. None of the seven is listed.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.10, checked 2026-11-12. None of the seven is listed.
+- [The Hacker News](https://thehackernews.com/2026/11/new-n-central-exploits-work-against.html) — November 12. Quotes incident 202609. Attributes probing of the new claim, from 157.20.241.16, to Presidian, and says there is no evidence of successful exploitation. The researcher names and the proof of concept are the researcher's, not N-able's.
 
 [event]: https://uptime.n-able.com/event/202584
+[event2]: https://uptime.n-able.com/event/202609
 [status]: https://uptime.n-able.com/
 [notes]: https://status.n-able.com/2026/11/10/n-central-2026-4-hf2-release-notes/
 [bc]: https://www.bleepingcomputer.com/news/security/n-able-takes-cloud-platform-offline-after-30-plus-zero-days-published/

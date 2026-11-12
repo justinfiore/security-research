@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 11, 2026**
+**As of November 12, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,10 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Red Hat Quay: an anonymous token installs a signing key](#red-hat-quay-an-anonymous-token-installs-a-signing-key)
+- [PTC Windchill and FlexPLM: a new deserialization patch](#ptc-windchill-and-flexplm-a-new-deserialization-patch)
+- [Checkmk: a monitored host writes a file the server runs](#checkmk-a-monitored-host-writes-a-file-the-server-runs)
+- [Apache Roller: an Atom entry reads a file, and a link creates an administrator](#apache-roller-an-atom-entry-reads-a-file-and-a-link-creates-an-administrator)
 - [Apache HTTP Server: an HTTP/2 request can run code](#apache-http-server-an-http2-request-can-run-code)
 - [Node.js: an HTTPS request can read another connection's memory](#nodejs-an-https-request-can-read-another-connections-memory)
 - [Zoom Workplace for Windows: a network request raises privileges](#zoom-workplace-for-windows-a-network-request-raises-privileges)
@@ -218,7 +222,11 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
-- **New this update:** Upgrade [Apache HTTP Server](#apache-http-server-an-http2-request-can-run-code) to **2.4.71 or later** and restart it. Apache rates [CVE-2026-119618](https://www.cve.org/CVERecord?id=CVE-2026-119618) critical and publishes no number. Red Hat rates it CVSS 3.1 9.8: an HTTP/2 request can run code, on 2.4.55 through 2.4.70. A server that serves only HTTP/1.1 is not affected. It is not in KEV. Debian bookworm, trixie, and forky have no fixed package yet. The upgrade does not show whether a request already ran code.
+- **New this update:** Upgrade self-managed [Red Hat Quay](#red-hat-quay-an-anonymous-token-installs-a-signing-key) to **3.18.3, 3.17.7, 3.16.7, 3.15.9, 3.14.10, 3.12.24, 3.10.28, or 3.9.28** on the line you run, and block `/keys` from anything that is not an internal component. Red Hat rates [CVE-2026-123710](https://www.cve.org/CVERecord?id=CVE-2026-123710) CVSS 3.1 9.8 Critical: an anonymous token can install a signing key with no expiry, and tokens from that key read and write every repository. [CVE-2026-110697](https://www.cve.org/CVERecord?id=CVE-2026-110697) is 9.9: a namespace whose name contains an underscore lists another tenant's robot tokens. Red Hat names those builds for the second flaw and names no build for the first. Red Hat says Quay.io is already fixed for the second. Neither is in KEV. Deleting a key you do not recognize is not durable until a fixed build is in.
+- **New this update:** Install the [PTC patch](#ptc-windchill-and-flexplm-a-new-deserialization-patch) for [CVE-2026-126325](https://www.cve.org/CVERecord?id=CVE-2026-126325). PTC rates it CVSS 3.1 9.0 and CVSS 4.0 9.2 Critical: deserializing untrusted data can run code in Windchill and FlexPLM. PTC-hosted systems are already patched. A system you host takes the patch from support article CS483249, which needs a PTC login, and that article is the only place that names the fixed build. It is not in KEV. The earlier Windchill flaws, CVE-2026-12569 and CVE-2026-77645, are different records.
+- **New this update:** Upgrade [Checkmk](#checkmk-a-monitored-host-writes-a-file-the-server-runs) to **2.5.0p19 or 2.4.0p40** or later. Checkmk rates [CVE-2026-120495](https://www.cve.org/CVERecord?id=CVE-2026-120495) CVSS 4.0 9.4 Critical: a monitored host that can write its own agent output can place an HTML file the Checkmk server then runs, and automatic service discovery has to be on. 2.3.0 is end of life and has no fix. It is not in KEV.
+- **New this update:** Upgrade [Apache Roller](#apache-roller-an-atom-entry-reads-a-file-and-a-link-creates-an-administrator) to **6.1.7 or later**. Apache rates [CVE-2026-105153](https://www.cve.org/CVERecord?id=CVE-2026-105153) CVSS 3.1 7.7 High: any account can submit an Atom entry that reads a file the server can read, and AtomPub does not have to be turned on. [CVE-2026-118411](https://www.cve.org/CVERecord?id=CVE-2026-118411) is 8.8: a link a logged-in administrator opens can create an administrator. The same release fixes thirteen more, and Apache rates none of those two scores or higher. It is not in KEV.
+- **New this update:** Upgrade [Apache HTTP Server](#apache-http-server-an-http2-request-can-run-code) to **2.4.71 or later** and restart it. Apache rates [CVE-2026-119618](https://www.cve.org/CVERecord?id=CVE-2026-119618) critical and publishes no number. Red Hat rates it CVSS 3.1 9.8: an HTTP/2 request can run code, on 2.4.55 through 2.4.70. A server that serves only HTTP/1.1 is not affected. It is not in KEV. Debian trixie has the fix in `apache2` 2.4.71-1~deb13u1; bookworm and forky do not. The upgrade does not show whether a request already ran code.
 - **New this update:** Update [Zoom Workplace for Windows](#zoom-workplace-for-windows-a-network-request-raises-privileges) to **7.1.8 or later** and relaunch it. Zoom rates [CVE-2026-108186](https://www.cve.org/CVERecord?id=CVE-2026-108186) CVSS 3.1 9.6 Critical: a network request can raise privileges, and the person at the computer has to act. [CVE-2026-108187](https://www.cve.org/CVERecord?id=CVE-2026-108187) is 8.1 and is fixed at 7.1.5, so a build that stops there is still inside the 9.6 flaw. Zoom lists no workaround. Neither is in KEV. The update does not show whether a request already raised privileges.
 - **New this update:** Upgrade a [MongoDB](#mongodb-a-replica-set-primary-runs-code-before-login) replica set to **9.0.7, 8.3.16, 8.0.37, or 7.0.48** or later on that line, and restart every member. MongoDB rates [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383) CVSS 4.0 9.5 Critical: a request that needs no login can run code when a new primary finishes catch-up. A standalone server is not affected. MongoDB says it is not aware of exploitation. It is not in KEV. Atlas upgrades during maintenance. The restart does not show whether the process already ran code.
 - **New this update:** Upgrade [Ivanti Endpoint Manager](#ivanti-endpoint-manager-a-sql-query-runs-code-before-login) to **2024 SU8**, and Cloud Services Application 5.0.8 to **5.0.8.1**. Ivanti rates [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653) CVSS 3.1 9.8 Critical: SQL injection in EPM Core runs code with no login. [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683) is 9.4 and affects CSA 5.0.8 only. The CVE record marks 5.0.8 unaffected; the advisory says 5.0.8.1 is the fix. Ivanti says it has no evidence of exploitation. Neither is in KEV. The upgrade does not show whether a query already ran.
@@ -232,7 +240,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Install the [November 9 Apple update](#apple-an-imessage-group-accepts-an-outsider-and-a-nearby-bluetooth-device-corrupts-memory) and restart. CISA-ADP scores [CVE-2026-113961](https://www.cve.org/CVERecord?id=CVE-2026-113961) CVSS 3.1 7.5 High: a remote attacker may be able to join an iMessage group and receive its messages. [CVE-2026-113970](https://www.cve.org/CVERecord?id=CVE-2026-113970) is 8.8 High: an attacker in Bluetooth range may be able to corrupt process memory. Apple publishes no score. iOS and iPadOS go to **27.2.1** or **26.7.3**, and a Mac goes to Sequoia **15.8.3**, Tahoe **26.7.3**, or Golden Gate **27.2.1**. iOS **18.7.12** fixes the Bluetooth flaw and does not list the iMessage flaw. Neither is in KEV.
 - **New this update (CISA KEV):** Update [Chrome](#google-chrome-critical-browser-security-fixes) and relaunch. Windows and Mac go to **157.0.8103.78/.79 or later**, Linux to **157.0.8103.78 or later**, and Extended Stable on Windows and Mac to **156.0.8078.100 or later**. The November 9 builds do not include the November 11 fixes. CISA added [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) on November 10, due November 24. Google rates it High, a use after free in XML, and says an exploit exists in the wild. CISA-ADP scores it 8.8. The November 3 builds, 157.0.8103.38/.39, do not include it. Google publishes no numeric score.
 - **New this update:** Apply the [November 10 SAP Security Notes](#sap-november-patch-day---unauthenticated-code-execution-in-web-dispatcher-icm-and-gateway), starting with anything reachable from the internet. SAP rates four flaws CVSS 3.1 10.0 Critical: a SAML2 login can be forged, crafted traffic can run code in Web Dispatcher and in the Internet Communication Manager, and SAP Gateway treats an outside attacker as an internal application server. Five more are Critical at 9.9, 9.9, 9.9, 9.6, and 9.1. The notes are behind an SAP login, and no fixed patch level is published outside them. The public patch-day index now links the November bulletin. None is in KEV.
-- **New this update:** Upgrade [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) to **2026.4.1.26** and keep an on-premises server offline until that upgrade has succeeded. N-able rates [CVE-2026-125883](https://www.cve.org/CVERecord?id=CVE-2026-125883) and [CVE-2026-125881](https://www.cve.org/CVERecord?id=CVE-2026-125881) CVSS 4.0 9.3 Critical, and five more High. N-able is observing scanning that matches the published proof of concept. N-able finished the hosted upgrade on 2026-11-11. On premises, upgrade the server, then the Agents, then the Probes. A follow-up hotfix is still planned. None of the seven is in KEV. Built-in remote control is off in this build.
+- **New this update:** Upgrade [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) to **2026.4.1.26** and, on premises, confirm Legacy API is off before the server comes back. N-able rates [CVE-2026-125883](https://www.cve.org/CVERecord?id=CVE-2026-125883) and [CVE-2026-125881](https://www.cve.org/CVERecord?id=CVE-2026-125881) CVSS 4.0 9.3 Critical, and five more High. On November 12 N-able opened incident 202609: a new claim against this same build needs Legacy API turned on and reachable from the internet. That API is off by default. Hosted servers are not affected by the new claim, and N-able finished their upgrade on 2026-11-11. None of the seven is in KEV. Built-in remote control is off in this build.
 - **New this update (CISA KEV):** Upgrade [GPUStack](#gpustack-a-loopback-request-is-the-administrator) to **2.3.1 or later** and restart the server and the workers. 2.3.0 leaves two flaws published November 11, one Critical at 9.1. GitHub rates [CVE-2026-102895](https://www.cve.org/CVERecord?id=CVE-2026-102895) CVSS 3.1 9.8 Critical: before 2.2.0, a request that looks like it came from localhost is the administrator. CISA added it on November 9, due November 12. The project says a 2.1.1 deployment was exploited. 2.2.0 does not fix the SAML callback or the cluster proxy, both fixed in 2.2.2. 2.3.0 also fixes a High flaw with no CVE. The upgrade does not delete an administrator key already created.
 - **New this update (CISA KEV):** Upgrade [FreeSWITCH](#freeswitch-a-sip-message-runs-an-api-command) to **1.11.3 or later** and restart. GitHub rates [CVE-2026-116779](https://www.cve.org/CVERecord?id=CVE-2026-116779) CVSS 3.1 9.8 Critical: an inbound SIP MESSAGE can run an API command, and chat is on by default. CISA added it on November 9, due November 12. The project says exploitation has been observed. Until the upgrade, set `enable-chat=false` on profiles that do not need chat. The upgrade does not show whether a command already ran.
 - **New this update:** If you installed [@ethersphere/bee-js 13.3.0](#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases) or launched [Swarm Desktop 0.56.2](#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases), treat that machine as compromised. GitHub rates the bee-js advisory Critical, and it has no CVSS score and no CVE. Both releases were published November 9 with the project's own CI and stolen credentials. Pin bee-js to **13.2.0** and install Swarm Desktop **0.56.3**. Uninstalling does not remove the backdoor. From a different computer, rotate every credential that machine could read and move the node's funds to a new key.
@@ -370,6 +378,88 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Red Hat Quay: an anonymous token installs a signing key
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/red-hat-quay.md):** [Detection](details/red-hat-quay.md#detection) · [Remediation](details/red-hat-quay.md#remediation) · [Verification](details/red-hat-quay.md#verification) · [Timeline](details/red-hat-quay.md#timeline)
+
+**CVEs:** [CVE-2026-123710](https://www.cve.org/CVERecord?id=CVE-2026-123710), [CVE-2026-110697](https://www.cve.org/CVERecord?id=CVE-2026-110697)
+
+**Red Hat rates CVE-2026-123710 CVSS 3.1 9.8 Critical and CVE-2026-110697 CVSS 3.1 9.9 Critical.** The first needs no login. An anonymous registry token, minted at `/v2/auth` with an audience the caller picks, passes the check on the service-key rotation endpoint, and the caller installs a signing key with no expiry. Tokens signed with that key are accepted for any repository. The second needs an account. A namespace whose name contains an underscore is matched as a SQL wildcard, and the listing returns another tenant's robot tokens, decrypted. Red Hat says Quay 3 and Quay 5 are affected, and that Quay.io is already fixed for the second flaw. The CVE record for the first lists no fixed version, and its Red Hat page does not either.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12) for either CVE. Neither page reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-11 14:00:00 UTC** | Red Hat's public date for CVE-2026-123710. Both records published that day. |
+| **Last updated** | **2026-11-12 07:55 EST (UTC−05:00)** | New item. |
+
+**Patch:** On the line you run, upgrade to **3.9.28, 3.10.28, 3.12.24, 3.14.10, 3.15.9, 3.16.7, 3.17.7, or 3.18.3**. Red Hat names those builds for CVE-2026-110697 and says Quay.io is already on a fixed build for that one. Red Hat names no build for CVE-2026-123710, so also restrict `/keys` at the proxy to internal components. Review `service_key_rotate` and `service_key_delete` events whose expiration is null, and remove a key you do not recognize. Deleting it is not durable until a fixed build is deployed. Quay 5 has no named fix. The upgrade does not show whether a key was already installed.
+
+Sources: [Red Hat, CVE-2026-123710](https://access.redhat.com/security/cve/cve-2026-123710), [Red Hat, CVE-2026-110697](https://access.redhat.com/security/cve/cve-2026-110697), [detailed guide](details/red-hat-quay.md).
+
+## PTC Windchill and FlexPLM: a new deserialization patch
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/windchill.md):** [Detection](details/windchill.md#detection) · [Remediation](details/windchill.md#remediation) · [Verification](details/windchill.md#verification) · [Timeline](details/windchill.md#timeline)
+
+**CVEs:** [CVE-2026-126325](https://www.cve.org/CVERecord?id=CVE-2026-126325)
+
+**PTC rates CVE-2026-126325 CVSS 3.1 9.0 Critical and CVSS 4.0 9.2 Critical.** Deserializing untrusted data can run code. The record lists Windchill 11.0 M030, 11.1 M020, 11.2.1.0, 12.0.2.0, 12.1.2.0, 13.0.2.0, and 13.1.0.0 through 13.1.4.0, and the same FlexPLM builds through 13.1.3.0. PTC's trust-center page says a patch shipped on November 11 at 10:30 AM ET, that PTC-hosted systems are already patched, and that a system you host takes the patch from support article CS483249. That article needs a PTC login. No public page names the fixed build.
+
+This is not [CVE-2026-12569](https://www.cve.org/CVERecord?id=CVE-2026-12569), published June 18, or [CVE-2026-77645](https://www.cve.org/CVERecord?id=CVE-2026-77645), published August 20. Those are earlier records on the same page, and 13.1.4.0 is in the new record and not in the August one.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12). The trust-center page does not say this CVE is being exploited. It does publish indicators for the earlier incident on the same page, and those indicators are not a statement about this CVE. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and patch** | **2026-11-11 10:30 AM ET (UTC−05:00)** | Trust-center change log. The CVE record was published the same day and gives no time. |
+| **Last updated** | **2026-11-12 07:55 EST (UTC−05:00)** | New item. |
+
+**Patch:** If PTC hosts the system, PTC says the patch is already in and no action is needed. If you host it, a Windchill administrator installs the patch from [CS483249](https://www.ptc.com/en/support/article/CS483249). That page needs a PTC login, and it is the only source for the fixed build, so this guide does not name one. The patch does not show whether a request already ran code.
+
+Sources: [PTC trust center](https://www.ptc.com/en/about/trust-center/advisory-center/active-advisories/windchill-flexplm-rce-vulnerability), [CVE-2026-126325](https://www.cve.org/CVERecord?id=CVE-2026-126325), [detailed guide](details/windchill.md).
+
+## Checkmk: a monitored host writes a file the server runs
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/checkmk.md):** [Detection](details/checkmk.md#detection) · [Remediation](details/checkmk.md#remediation) · [Verification](details/checkmk.md#verification) · [Timeline](details/checkmk.md#timeline)
+
+**CVEs:** [CVE-2026-120495](https://www.cve.org/CVERecord?id=CVE-2026-120495)
+
+**Checkmk rates CVE-2026-120495 CVSS 4.0 9.4 Critical** (`CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`). The Robotmk test service builds a folder path from a test-case name in the agent output and did not check that path. A host that can write its own agent output, which Checkmk says usually takes root on that host, can place an HTML file outside `~/var/robotmk/html_logs`, and the server runs it as the site user. Automatic service discovery has to be on, or a monitoring administrator has to confirm the new service. 2.5.0 before 2.5.0p19, 2.4.0 before 2.4.0p40, and 2.3.0 are affected. 2.3.0 is end of life.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12). The werk does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Werk dated | 2026-11-02; time unknown | Werk 22624. Checkmk gives no time. |
+| **Public announcement** | **2026-11-11; time unknown** | The CVE record was published that day. |
+| **Last updated** | **2026-11-12 07:55 EST (UTC−05:00)** | New item. |
+
+**Patch:** Upgrade to **2.5.0p19 or 2.4.0p40** or later on the line you run. 2.3.0 has no fix. The fixed build refuses a log path outside `~/var/robotmk/html_logs` and shows UNKNOWN. The upgrade does not show whether a file was already written.
+
+Sources: [Werk 22624](https://checkmk.com/werk/22624), [CVE-2026-120495](https://www.cve.org/CVERecord?id=CVE-2026-120495), [detailed guide](details/checkmk.md).
+
+## Apache Roller: an Atom entry reads a file, and a link creates an administrator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-roller.md):** [Detection](details/apache-roller.md#detection) · [Remediation](details/apache-roller.md#remediation) · [Verification](details/apache-roller.md#verification) · [Timeline](details/apache-roller.md#timeline)
+
+**CVEs:** [CVE-2026-105153](https://www.cve.org/CVERecord?id=CVE-2026-105153), [CVE-2026-118411](https://www.cve.org/CVERecord?id=CVE-2026-118411). The same release fixes thirteen more. Apache rates three of the fifteen Important and the rest Moderate or Low, and the two above are the ones at 7.0 or higher.
+
+**Apache rates CVE-2026-105153 CVSS 3.1 7.7 High and CVE-2026-118411 CVSS 3.1 8.8 High.** Both advisories say Important. The 7.7 flaw is in 4.0 through 6.1.6: an account with no weblog permissions submits an Atom entry, the parser follows an external entity, and the server reads a file or makes a request. The parse happens before the feature check, so AtomPub does not have to be turned on. The 8.8 flaw is in 5.0.1 through 6.1.6: the token check covered POST only, and a logged-in administrator who opens a link runs an administrative action, including creating an administrator. [CVE-2026-123374](https://www.cve.org/CVERecord?id=CVE-2026-123374), deserialization of a weblog-update ping response, is the third one Apache rates Important, and that advisory gives no number.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12) for either CVE. The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Project post | 2026-11-10; time unknown | Dave Johnson. The advisories came the next day. |
+| **Public announcement and fix** | **2026-11-11 03:14 UTC** | The CVE-2026-105153 advisory. 6.1.7 is the fix. |
+| **Last updated** | **2026-11-12 07:55 EST (UTC−05:00)** | New item. |
+
+**Patch:** Upgrade to **6.1.7 or later**. Read the release notes first: Planet is off by default after the upgrade, and the entry editor applies the Limited role to each entry. Rebuild the search index so it no longer holds commenter email addresses. The upgrade does not show whether an entry already read a file.
+
+Sources: [CVE-2026-105153 advisory](https://lists.apache.org/thread/w7dsz19261myrcwx8ssbwr67hc1wfosj), [project post](https://rollerweblogger.org/project/entry/apache-roller-6-1-7), [detailed guide](details/apache-roller.md).
+
+---
+
 ## Apache HTTP Server: an HTTP/2 request can run code
 
 <a id="apache-http-server-an-http2-request-can-run-code"></a>
@@ -385,9 +475,10 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement and fix** | **2026-11-11 14:54:08 UTC** | CVE-2026-119618 published. Fixed the same day in Apache HTTP Server 2.4.71. |
-| **Last updated** | **2026-11-12 03:03 EST (UTC−05:00)** | New item. Upgrade Apache HTTP Server. |
+| Debian trixie package | 2026-11-12 09:54:11 UTC | DSA-6620-1. Bookworm and forky still have no fixed package. |
+| **Last updated** | **2026-11-12 07:55 EST (UTC−05:00)** | Debian trixie has a fixed package. |
 
-**Patch:** Upgrade to **2.4.71 or later** and restart the server. On Red Hat Enterprise Linux 9 and 10, install the November 11 `mod_http2` erratum instead of the upstream tarball. Debian bookworm, trixie, and forky have no fixed package yet; sid is fixed at `apache2` 2.4.71-1. Until a package is in, remove `h2` and `h2c` from `Protocols`. That does not fix the `mod_md` crash, CVE-2026-106023, which does not need HTTP/2. The upgrade does not show whether a request already ran code.
+**Patch:** Upgrade to **2.4.71 or later** and restart the server. On Red Hat Enterprise Linux 9 and 10, install the November 11 `mod_http2` erratum instead of the upstream tarball. On Debian trixie, install `apache2` **2.4.71-1~deb13u1** from the security pocket; sid is fixed at 2.4.71-1. Bookworm and forky have no fixed package yet. Until a package is in, remove `h2` and `h2c` from `Protocols`. That does not fix the `mod_md` crash, CVE-2026-106023, which does not need HTTP/2. The upgrade does not show whether a request already ran code.
 
 Sources: [Apache 2.4 vulnerabilities](https://httpd.apache.org/security/vulnerabilities_24.html), [Red Hat](https://access.redhat.com/security/cve/cve-2026-119618), [detailed guide](details/apache-http-server.md).
 
@@ -672,7 +763,9 @@ Sources: [CVE-2026-120017](https://cveawg.mitre.org/api/cve/CVE-2026-120017), [C
 
 N-able's current status page says it is observing scanning that matches the published proof of concept, and that on-premises servers should stay offline until the upgrade has succeeded. At 01:04:27 UTC on 2026-11-11 N-able said every hosted server, in every region, had been upgraded. A follow-up hotfix is still planned. Built-in remote control is off in this build. Take Control still works. Ecoverse stays up at `https://n-able.app`. This is not the November 3 notice about AlmaLinux updates.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-10) for any of the seven. N-able reports scanning, not a confirmed intrusion of a customer environment. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+On November 12 N-able opened [incident 202609](https://uptime.n-able.com/event/202609). A new disclosure claims more flaws in on-premises 2026.4.1 HF2. N-able's initial review says the server issue needs Legacy API turned on and reachable from the internet, and that API is off by default and not recommended. Hosted servers are not affected. N-able has published no CVE and no newer build for that claim. The Hacker News says Presidian saw probing from 157.20.241.16 and saw no successful exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12) for any of the seven. N-able reports scanning, not a confirmed intrusion of a customer environment. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -680,9 +773,10 @@ N-able's current status page says it is observing scanning that matches the publ
 | **Public announcement** | **2026-11-09 15:15:00 UTC** | Hosted N-central taken offline. On-premises servers told to shut down. |
 | **Release** | **2026-11-10; time/TZ unknown** | 2026.4 HF2, build 2026.4.1.26. Seven CVEs. |
 | Hosted upgrade complete | 2026-11-11 01:04:27 UTC | Every hosted server, all regions. On premises is still the customer's upgrade. |
-| **Last updated** | **2026-11-11 19:10 EST (UTC−05:00)** | Hosted regions are upgraded. On premises, stay offline until the upgrade succeeds. |
+| Second disclosure | 2026-11-12 00:00:00 MST (UTC−07:00) | Incident 202609. The claimed server issue needs Legacy API on and exposed. Hosted is not affected. |
+| **Last updated** | **2026-11-12 07:55 EST (UTC−05:00)** | On premises, turn Legacy API off. |
 
-**Patch:** On premises, upgrade to **2026.4.1.26** while the server is still offline, then bring it back. Upgrade Agents before Probes, both to 2026.4.1.26. A Probe on the new build stops talking to an older Agent. Hosted servers were upgraded by N-able on 2026-11-11. The download is [SD-000143](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LUHIA2/sd-000143). Supported paths start at 2025.4. The upgrade does not undo a script or a remote session that already ran.
+**Patch:** On premises, upgrade to **2026.4.1.26** while the server is still offline, then confirm Legacy API is off before bringing it back. If it is on, [turn it off](https://me.n-able.com/s/article/How-to-Disable-Legacy-API-settings-on-On-premise-N-central-servers). Upgrade Agents before Probes, both to 2026.4.1.26. A Probe on the new build stops talking to an older Agent. Hosted servers were upgraded by N-able on 2026-11-11 and are not affected by the November 12 claim. The download is [SD-000143](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LUHIA2/sd-000143). Supported paths start at 2025.4. The upgrade does not undo a script or a remote session that already ran.
 
 Sources: [N-able status, incident 202584](https://uptime.n-able.com/event/202584), [release notes](https://status.n-able.com/2026/11/10/n-central-2026-4-hf2-release-notes/), [detailed guide](details/n-central.md).
 
@@ -5909,13 +6003,17 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Self-managed Red Hat Quay** | Upgrade to 3.18.3, 3.17.7, 3.16.7, 3.15.9, 3.14.10, 3.12.24, 3.10.28, or 3.9.28 on the line you run. Red Hat names those builds for CVE-2026-110697 and names no build for CVE-2026-123710, so also block `/keys` from anything outside the registry's own components. Quay.io is already fixed for the second flaw. Quay 5 has no named fix. [Guide](details/red-hat-quay.md#remediation). |
+| **PTC Windchill or FlexPLM, not hosted by PTC** | Install the CVE-2026-126325 patch from support article CS483249. PTC-hosted systems are already patched. The article needs a PTC login and is the only place that names the fixed build. [Guide](details/windchill.md#remediation). |
+| **Checkmk 2.4 or 2.5** | Upgrade to 2.4.0p40 or 2.5.0p19 or later. A monitored host that can write its own agent output can otherwise place a file the server runs. 2.3.0 is end of life and has no fix. [Guide](details/checkmk.md#remediation). |
+| **Apache Roller through 6.1.6** | Upgrade to 6.1.7 or later. Any account can otherwise submit an Atom entry that reads a file, and a link an administrator opens can create an administrator. Rebuild the search index after the upgrade. [Guide](details/apache-roller.md#remediation). |
 | **Zoom Workplace for Windows** | Update to 7.1.8 or later and relaunch. Zoom rates CVE-2026-108186 9.6: a network request can raise privileges, and the person at the computer has to act. 7.1.5 fixes only the 8.1 flaw. Zoom lists no workaround. [Guide](details/zoom-workplace.md#remediation). |
 | **Synology DSM 7.2.1, 7.2.2, 7.3, or 7.4** | Upgrade to 7.4.1-90080-1, 7.3.2-86009-5, 7.2.2-72806-10, or 7.2.1-69057-13 or later, and reboot. A login request can otherwise read or write any file, and rsync has a second flaw that skips the login. The September build is not this fix. Synology lists no workaround. [Guide](details/synology-dsm-nov11.md#remediation). |
 | **FortiClient Windows, FortiClient Mac 7.4, or FortiClient Windows PAM** | Upgrade to 7.4.8 or later, or to 7.2.15 or later on the 7.2 Windows line. A web page can otherwise run code through the agent's local API. The 8.0 builds and FortiClient Mac 7.2 are not affected. There is no virtual patch. [Guide](details/forticlient-nov11.md#remediation). |
 | **Windows, especially a server running Exchange** | Install the November 10 cumulative update and reboot. Microsoft rates CVE-2026-116928 9.8: an email attachment runs code when Exchange indexes it, and the recipient never opens it. Windows Server 2022 is KB5131090, build 10.0.20348.5870. It is not in KEV. [Guide](details/windows-search.md#remediation). |
 | **iPhone, iPad, Mac, Apple Watch, or Apple Vision Pro** | Install the November 9 update and restart. CISA-ADP scores an iMessage group-join flaw 7.5 and a Bluetooth memory-corruption flaw 8.8. Apple publishes no score. iOS 18.7.12 fixes the Bluetooth flaw only. [Guide](details/apple-november.md#remediation). |
 | **SAP NetWeaver, Web Dispatcher, SAP Gateway, or BusinessObjects** | Apply the November 10 SAP Security Notes, starting with the four 10.0 notes on anything reachable from the internet. The notes need an SAP login and name the correction. Until then, restrict access to Gateway, Web Dispatcher, and ICM ports. Restart the component after a kernel update. [Guide](details/sap-november.md#remediation). |
-| **N-central, hosted or on premises** | Upgrade to 2026.4.1.26. N-able finished the hosted servers on 2026-11-11. On premises, keep the server offline until that upgrade succeeds. N-able rates two of the seven CVEs 9.3. Upgrade Agents before Probes. A follow-up hotfix is still planned. [Guide](details/n-central.md#remediation). |
+| **N-central, hosted or on premises** | Upgrade to 2026.4.1.26. N-able finished the hosted servers on 2026-11-11. On premises, keep the server offline until that upgrade succeeds, then confirm Legacy API is off: incident 202609 says a new claim against this build needs that API on and reachable from the internet. N-able rates two of the seven CVEs 9.3. Upgrade Agents before Probes. [Guide](details/n-central.md#remediation). |
 | **GPUStack below 2.3.1** | Upgrade the server and every worker to 2.3.1 or later and restart. 2.3.0 leaves a Critical flaw (repository Python running on the server) and a High proxy bypass. 2.2.0 fixes only the loopback administrator bypass, which CISA listed on November 9. 2.2.2 is the floor for the SAML callback and the cluster proxy, and it leaves a worker-management flaw. Until then, set `force_auth_localhost=true` and block `/auth/saml/callback`. The upgrade does not delete an administrator key already created. [Guide](details/gpustack.md#remediation). |
 | **FreeSWITCH before 1.11.3** | Upgrade to 1.11.3 or later and restart. CISA listed CVE-2026-116779 on November 9, due November 12. An inbound SIP MESSAGE can run an API command, and chat is on by default. Until then, set `enable-chat=false` on profiles that do not need it. Turning off the `system` API does not close the path. [Guide](details/freeswitch.md#remediation). |
 | **@ethersphere/bee-js, or Swarm Desktop** | Pin bee-js to 13.2.0. Install Swarm Desktop 0.56.3. 13.3.0 and 0.56.2 were malicious releases published November 9 with the project's own CI. If either ran, rebuild the machine or remove the persistence it left, and rotate credentials from a different computer. Move the node's funds to a new key. [Guide](details/bee-js.md#remediation). |
