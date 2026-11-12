@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Apache HTTP Server: an HTTP/2 request can run code](#apache-http-server-an-http2-request-can-run-code)
 - [Node.js: an HTTPS request can read another connection's memory](#nodejs-an-https-request-can-read-another-connections-memory)
 - [Zoom Workplace for Windows: a network request raises privileges](#zoom-workplace-for-windows-a-network-request-raises-privileges)
 - [MongoDB: a replica set primary runs code before login](#mongodb-a-replica-set-primary-runs-code-before-login)
@@ -217,7 +218,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
-- **New this update:** Upgrade [Node.js](#nodejs-an-https-request-can-read-another-connections-memory) to **22.23.5, 24.22.3, or 26.13.1** or later on that line, and restart every process that loaded the old binary. OpenJS rates [CVE-2026-123864](https://www.cve.org/CVERecord?id=CVE-2026-123864) CVSS 3.0 8.1 High: an HTTPS request can read memory from another connection, including a TLS private key. The project rates six more flaws in the same release High and does not score them. It reports no exploitation. None is in KEV. A 20.x or 18.x process gets no fix. The upgrade does not show whether a request already read memory.
+- **New this update:** Upgrade [Apache HTTP Server](#apache-http-server-an-http2-request-can-run-code) to **2.4.71 or later** and restart it. Apache rates [CVE-2026-119618](https://www.cve.org/CVERecord?id=CVE-2026-119618) critical and publishes no number. Red Hat rates it CVSS 3.1 9.8: an HTTP/2 request can run code, on 2.4.55 through 2.4.70. A server that serves only HTTP/1.1 is not affected. It is not in KEV. Debian bookworm, trixie, and forky have no fixed package yet. The upgrade does not show whether a request already ran code.
 - **New this update:** Update [Zoom Workplace for Windows](#zoom-workplace-for-windows-a-network-request-raises-privileges) to **7.1.8 or later** and relaunch it. Zoom rates [CVE-2026-108186](https://www.cve.org/CVERecord?id=CVE-2026-108186) CVSS 3.1 9.6 Critical: a network request can raise privileges, and the person at the computer has to act. [CVE-2026-108187](https://www.cve.org/CVERecord?id=CVE-2026-108187) is 8.1 and is fixed at 7.1.5, so a build that stops there is still inside the 9.6 flaw. Zoom lists no workaround. Neither is in KEV. The update does not show whether a request already raised privileges.
 - **New this update:** Upgrade a [MongoDB](#mongodb-a-replica-set-primary-runs-code-before-login) replica set to **9.0.7, 8.3.16, 8.0.37, or 7.0.48** or later on that line, and restart every member. MongoDB rates [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383) CVSS 4.0 9.5 Critical: a request that needs no login can run code when a new primary finishes catch-up. A standalone server is not affected. MongoDB says it is not aware of exploitation. It is not in KEV. Atlas upgrades during maintenance. The restart does not show whether the process already ran code.
 - **New this update:** Upgrade [Ivanti Endpoint Manager](#ivanti-endpoint-manager-a-sql-query-runs-code-before-login) to **2024 SU8**, and Cloud Services Application 5.0.8 to **5.0.8.1**. Ivanti rates [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653) CVSS 3.1 9.8 Critical: SQL injection in EPM Core runs code with no login. [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683) is 9.4 and affects CSA 5.0.8 only. The CVE record marks 5.0.8 unaffected; the advisory says 5.0.8.1 is the fix. Ivanti says it has no evidence of exploitation. Neither is in KEV. The upgrade does not show whether a query already ran.
@@ -368,6 +369,27 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
 ---
+
+## Apache HTTP Server: an HTTP/2 request can run code
+
+<a id="apache-http-server-an-http2-request-can-run-code"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-http-server.md):** [Detection](details/apache-http-server.md#detection) · [Remediation](details/apache-http-server.md#remediation) · [Verification](details/apache-http-server.md#verification) · [Timeline](details/apache-http-server.md#timeline)
+
+**CVEs:** [CVE-2026-119618](https://www.cve.org/CVERecord?id=CVE-2026-119618). The same release also fixes [CVE-2026-106023](https://www.cve.org/CVERecord?id=CVE-2026-106023), which Apache rates important, and [CVE-2026-109163](https://www.cve.org/CVERecord?id=CVE-2026-109163), which Apache rates low.
+
+**Apache rates CVE-2026-119618 critical and publishes no number. Red Hat rates it CVSS 3.1 9.8 Critical.** A race in `mod_http2` lets a request with no login corrupt heap memory and run code, on **2.4.55 through 2.4.70**. Red Hat says it needs HTTP/2 (`h2` or `h2c`). A server that serves only HTTP/1.1 is not affected. NVD had not scored it on November 12. Red Hat says public research demonstrated a reliable exploit and does not link it. Wiz says no exploit is available and no exploitation in the wild has been reported. Those two disagree. Red Hat rates its own Enterprise Linux 9 and 10 packages Important rather than Critical, because each HTTP/2 stream has its own allocator. Enterprise Linux 8 and earlier do not contain the code.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-11 14:54:08 UTC** | CVE-2026-119618 published. Fixed the same day in Apache HTTP Server 2.4.71. |
+| **Last updated** | **2026-11-12 03:03 EST (UTC−05:00)** | New item. Upgrade Apache HTTP Server. |
+
+**Patch:** Upgrade to **2.4.71 or later** and restart the server. On Red Hat Enterprise Linux 9 and 10, install the November 11 `mod_http2` erratum instead of the upstream tarball. Debian bookworm, trixie, and forky have no fixed package yet; sid is fixed at `apache2` 2.4.71-1. Until a package is in, remove `h2` and `h2c` from `Protocols`. That does not fix the `mod_md` crash, CVE-2026-106023, which does not need HTTP/2. The upgrade does not show whether a request already ran code.
+
+Sources: [Apache 2.4 vulnerabilities](https://httpd.apache.org/security/vulnerabilities_24.html), [Red Hat](https://access.redhat.com/security/cve/cve-2026-119618), [detailed guide](details/apache-http-server.md).
 
 ## Node.js: an HTTPS request can read another connection's memory
 

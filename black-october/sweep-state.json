@@ -456,6 +456,10 @@
       "last_checked": "2026-11-11T23:55:42Z",
       "hold": "awaiting-distros"
     },
+    "nodejs-november.md": {
+      "last_checked": "2026-11-12T07:55:59Z",
+      "hold": "none"
+    },
     "northflank.md": {
       "last_checked": "2026-11-11T23:55:42Z",
       "hold": "none"
@@ -565,7 +569,7 @@
       "hold": "none"
     },
     "sap-november.md": {
-      "last_checked": "2026-11-11T07:55:45Z",
+      "last_checked": "2026-11-12T07:55:59Z",
       "hold": "awaiting-fix"
     },
     "seppmail.md": {
@@ -689,7 +693,7 @@
       "hold": "none"
     },
     "windows-search.md": {
-      "last_checked": "2026-11-11T07:55:45Z",
+      "last_checked": "2026-11-12T07:55:59Z",
       "hold": "none"
     },
     "windows-shell.md": {

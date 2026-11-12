@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-12 03:03 EST (UTC−05:00) — Apache HTTP Server
+
+- **Apache HTTP Server:** Upgrade to [2.4.71 or later](black-october/details/apache-http-server.md#remediation) and restart. Apache rates [CVE-2026-119618](https://www.cve.org/CVERecord?id=CVE-2026-119618) critical and publishes no number. Red Hat rates it CVSS 3.1 9.8: an HTTP/2 request can run code, on 2.4.55 through 2.4.70. A server that serves only HTTP/1.1 is not affected. Red Hat says a reliable exploit has been demonstrated and does not link it. Wiz says no exploit is available and no exploitation in the wild has been reported. It is not in KEV. On Enterprise Linux 9 and 10, install the November 11 `mod_http2` package. Debian bookworm, trixie, and forky have no fixed package yet. Enterprise Linux 8 and earlier are not affected. The upgrade does not show whether a request already ran code.
+
 ## 2026-11-11 23:04 EST (UTC−05:00) — Node.js
 
 - **Node.js:** Upgrade to [22.23.5, 24.22.3, or 26.13.1](black-october/details/nodejs-november.md#remediation) or later on that line, and restart every process that loaded the old binary. OpenJS rates [CVE-2026-123864](https://www.cve.org/CVERecord?id=CVE-2026-123864) CVSS 3.0 8.1: an HTTPS request can read memory from another connection, including a TLS private key. The project rates six more flaws in the same release High and publishes no number for them. It reports no exploitation. None is in KEV. A 20.x or 18.x process gets no fix. The upgrade does not show whether a request already read memory.
