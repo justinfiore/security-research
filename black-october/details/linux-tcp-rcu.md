@@ -1,6 +1,6 @@
 # Linux kernel: IPv4 TCP SYN-ACK options use-after-free
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-12 (America/New_York)
 
 [Main summary](../black-october-2026.md#linux-kernel-ipv4-tcp-syn-ack-options-use-after-free) · [Main TOC](../black-october-2026.md#table-of-contents)
 

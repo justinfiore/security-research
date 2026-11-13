@@ -1,6 +1,6 @@
 # Incus: certificate-chain authentication bypass and restricted-project host root
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-12 (America/New_York)
 
 [Back to Incus summary](../black-october-2026.md#incus-certificate-chain-authentication-bypass-and-restricted-project-host-root) · [Changelog](../../CHANGELOG.md)
 
@@ -51,7 +51,7 @@ Monthly feature releases are supported only until the next one. Incus points ope
 
 ## Remediation
 
-1. Upgrade the Incus server to **7.6.0 or later** and restart so the new daemon is the one listening. Upstream publishes a release tarball and client binaries; distribution and Zabbly packages are separate. The announcement said the Zabbly repository was still finishing a build on the day of release. Debian trixie is not that upstream version: [DSA-6604-1][dsa] (2026-11-02) is **incus 6.0.4-2+deb13u12** and has no CVE id. Debian's tracker says that package fixes the certificate-chain bypass and seven of the other advisories in this release, and leaves GHSA-3rgf-297m-775x and GHSA-q9fc-p923-6vp7 unfixed. Forky 7.0.2-2 is still vulnerable for this set. Sid 7.0.2-3 is fixed. A trixie host that installed the DSA is not equivalent to 7.6.0.
+1. Upgrade the Incus server to **7.6.0 or later** and restart so the new daemon is the one listening. Upstream publishes a release tarball and client binaries; distribution and Zabbly packages are separate. The announcement said the Zabbly repository was still finishing a build on the day of release. Debian trixie is not that upstream version: [DSA-6604-1][dsa] (2026-11-02) is **incus 6.0.4-2+deb13u12** and has no CVE id. Debian's tracker says that package fixes the certificate-chain bypass and seven of the other advisories in this release, and leaves GHSA-3rgf-297m-775x and GHSA-q9fc-p923-6vp7 unfixed. Forky and sid are both at 7.0.2-3, which cherry-picks the certificate-chain bypass and the two advisories the earlier forky package left open. A trixie host that installed the DSA is not equivalent to 7.6.0.
 2. Until 7.6.0 is running, do not expose the HTTPS listener to untrusted networks. Incus publishes no configuration switch that stops the chain comparison.
 3. For the restricted-project issues, do not import untrusted images or backups, and do not grant create rights to tenants, until the new daemon is running. Those limits do not close the certificate-chain bug.
 4. Do not use a [LXD](lxd-mtls.md) snap refresh as the Incus upgrade.

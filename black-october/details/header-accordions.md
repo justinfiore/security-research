@@ -1,6 +1,6 @@
 # Header Accordions: identify HTTP/3 decoders and contain resource exhaustion
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-12 (America/New_York)
 
 [Main guide](../black-october-2026.md#9-header-accordions-http3-compression-becomes-resource-exhaustion) · [Changelog](../../CHANGELOG.md)
 
@@ -31,7 +31,7 @@
 | Cloudflare quiche / [CVE-2026-12523](https://www.cve.org/CVERecord?id=CVE-2026-12523) | 2025-11-15 | Advisory 2026-07-14 | **0.29.3**, released 2026-07-14. [Research][research] [Advisory][quiche] |
 | hyperium h3 | 2025-12-04 | In combined research 2026-10-20; earliest separate public date not established | No fixed release as of 2026-10-26; latest `h3` release is 0.0.8 (2025-05-06). December 5, 2025 issue closure was not a shipped fix; new issue #379 and fix PRs #377/#378 (opened 2026-10-22) remain open. [Research][research] [h3 issue][h3issue] |
 | Bun (no CVE) | 2026-05-24 | Combined research 2026-10-20; Bun advisory **GHSA-cf8x-9m69-3gg3** 2026-10-24 00:13 UTC | **1.4.4**, GitHub release 2026-10-22 10:11 UTC. Advisory rates it **High** (no CVSS score or CVE published); affected `>= 1.3.14, < 1.4.4`. [Bun advisory][bun] [Release][bunrel] |
-| aioquic / mitmproxy | 2026-07-13 | In combined research 2026-10-20; earliest separate public date not established | No verified fixed version as of 2026-10-26: no aioquic commit after 1.7.0 (2026-10-16), and mitmproxy 12.3.0 / 12.3.1 (2026-10-22 / 2026-10-25) changelogs list no HTTP/3 header-limit fix. [Research][research] [mitmproxy changelog][mitmlog] |
+| aioquic / mitmproxy | 2026-07-13 | In combined research 2026-10-20; earliest separate public date not established | aioquic 1.8.0, tagged 2026-11-12, limits decoded HTTP/3 field sections to 64 KiB and refuses larger ones. mitmproxy's changelog still lists no HTTP/3 header-limit fix. [Research][research] [aioquic changelog](https://github.com/aiortc/aioquic/blob/main/CHANGELOG.rst) |
 | lsquic | 2026-07-13 | Separate public advisory date unknown | **4.9.0**, released 2026-07-15; no CVE in research. [Research][research] |
 | Combined “Header Accordions” research | Discovery date unknown | **2026-10-20** | Article’s visible byline/timeline date; fetched metadata saying October 26 is not a new initial-disclosure date. [Research][research] |
 
@@ -61,7 +61,8 @@ sh stack-inventory.sh go /path/to/deployed-server
 | Cloudflare quiche | Earliest affected 0.1.0; 0.29.3 is first fixed; both frame preallocation and incorrect decoded-size accounting. [Advisory][quiche] | 0.29.3+; not Google’s similarly named QUICHE. |
 | lsquic | Research demonstrates missing cumulative/header-set limits in pre-fix implementation. [Research][research] | Product containing 4.9.0+ or verified backport; check custom callbacks too. |
 | Bun | Vendor: **`>= 1.3.14, < 1.4.4`**; `Bun.serve` with `http3: true` (off by default) **and** the opt-in HTTP/3 `fetch` client. `bun build --compile` executables embed the runtime. [Bun advisory][bun] | 1.4.4+; rebuild compiled executables with it. |
-| aioquic / mitmproxy / h3 | Research lists aioquic 1.7.0, mitmproxy 12.2.3 and h3 0.0.8 test fingerprints, not exhaustive affected ranges. [Research][research] | Confirm later product fix explicitly or use mitigation below. |
+| aioquic | Through 1.7.0. [Research][research] | 1.8.0, tagged 2026-11-12. |
+| mitmproxy / h3 | Research lists mitmproxy 12.2.3 and h3 0.0.8 test fingerprints, not exhaustive affected ranges. [Research][research] | No verified fixed release. hyperium h3's latest release is still 0.0.8. |
 | Wireshark | **4.6.0–4.6.1 / 4.4.0–4.4.11**; HTTP/3 dissection when decrypting with a keylog or capture-embedded secrets. [Advisory][wireshark] | 4.6.2 / 4.4.12 or later supported release, including TShark. |
 
 The research found Google QUICHE, IIS and ngtcp2/nghttp3 unaffected in its tests; do not turn that into a universal guarantee for custom applications. In particular, nghttp3’s field-section setting is signaling-only and application enforcement still matters. [Research][research]

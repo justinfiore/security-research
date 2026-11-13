@@ -4,7 +4,7 @@
 
 [Back to N-central summary](../black-october-2026.md#n-central-critical-vulnerabilities-hotfix-20264126) · [Changelog](../../CHANGELOG.md)
 
-N-able released N-central **2026.4 HF2, build 2026.4.1.26**, on November 10. The release notes say it fixes seven CVEs. On November 12 N-able opened a second incident: a new disclosure claims more flaws in on-premises **2026.4.1 HF2**. N-able's initial review says the server issue needs the Legacy API turned on and reachable from the internet. That API is off by default. Hosted servers are not affected by this second issue.
+N-able released N-central **2026.4 HF2, build 2026.4.1.26**, on November 10. The release notes say it fixes seven CVEs. On November 12 N-able opened a second incident: a new disclosure claims more flaws in on-premises **2026.4.1 HF2**. N-able's initial review says the server issue needs the Legacy API turned on and reachable from the internet. That API is off by default. At 16:00 UTC the same day N-able opened [incident 202613](https://uptime.n-able.com/event/202613) and turned the Intune integration off as a precaution, on hosted servers itself and on on-premises servers where it could. N-able says it has seen no signs of compromise. It has published no newer build.
 
 **N-able rates two of the seven CVSS 4.0 Critical and five High.** All seven were published 2026-11-10 by N-able.
 
@@ -22,7 +22,7 @@ The incident started 2026-11-09. N-able took hosted N-central offline and told o
 
 N-central deploys software, runs scripts, and opens remote-control sessions on the machines it manages. Ecoverse under N-able Login stays up at `https://n-able.app`.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12) for any of the seven CVEs. N-able says it is observing scanning associated with the published proof of concept. The Hacker News says Presidian saw probing of the new claim from 157.20.241.16 and saw no successful exploitation. Scanning and probing are not the same statement as an intrusion. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12) for any of the seven CVEs. N-able says it is observing scanning associated with the published proof of concept, and incident 202613 says it has seen no signs of compromise. The Hacker News says Presidian saw probing of the new claim from 157.20.241.16 and saw no successful exploitation. Scanning and probing are not the same statement as an intrusion. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -46,6 +46,7 @@ N-central deploys software, runs scripts, and opens remote-control sessions on t
 | Hosted upgrade complete | 2026-11-11 01:04:27 UTC | Incident 202584. Every hosted N-central server, all regions, upgraded. On-premises servers stay offline until their own upgrade succeeds. Scanning still observed. [Event][event] |
 | CVE records | 2026-11-10 21:19 to 21:26 UTC | N-able published the seven records. |
 | Second disclosure | 2026-11-12 00:00:00 MST (UTC−07:00) | Incident 202609, status Investigating. N-able says the claimed server issue needs Legacy API on and exposed to the internet. Hosted is not affected. [Event 202609][event2] |
+| Precautionary restrictions | 2026-11-12 16:00:00 UTC | Incident 202613, status Identified. N-able turned the Intune integration off and says it has seen no signs of compromise. No newer build. [Event 202613][event3] |
 
 ## Detection
 
@@ -58,18 +59,19 @@ N-central deploys software, runs scripts, and opens remote-control sessions on t
 1. **On premises, upgrade the server to 2026.4.1.26 while it is still offline, then confirm Legacy API is off before you bring it back.** The download is [SD-000143](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LUHIA2/sd-000143). A CMMC account uses [SD-000144](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LVtIAM/sd-000144). Supported paths are 2025.4, 2026.1, 2026.2, 2026.3, 2026.3.1 HF1 through HF4, 2026.4.0.27, and 2026.4.0.32. Anything older goes to one of those first. Incident 202584 still says to keep the server offline until the upgrade has succeeded. Incident 202609, opened 2026-11-12, says a new claim against this same build needs Legacy API turned on and reachable from the internet. N-able says that API is off by default and is not recommended. If it is on, turn it off. [How to disable Legacy API](https://me.n-able.com/s/article/How-to-Disable-Legacy-API-settings-on-On-premise-N-central-servers). N-able has not published a newer build for this claim, and it says hosted servers are not affected by it.
 2. **Upgrade Agents before Probes, and both to 2026.4.1.26.** Hosted and on-premises customers both do this. A Probe on 2026.4.1.26 stops talking to an Agent or Patch Management Engine that is still older, and the offline patch cache stops with it. An older Probe keeps talking to a newer Agent, so the Agent can move first. The updated Patch Management Engine is pushed separately and needs no action.
 3. **Hosted servers are upgraded.** The 01:04:27 UTC update on 2026-11-11 says all regions are done. Agents and Probes still have to move.
-4. **A follow-up hotfix is still planned.** N-able says it will carry further security updates. 2026.4.1.26 is the build that addresses the most critical November 9 vulnerabilities, not the last build in this response.
-5. **Built-in remote control does not work on this build.** Take Control does. Plan around that until N-able says the built-in feature is back.
+4. **A follow-up hotfix is still planned.** N-able says it will carry further security updates. 2026.4.1.26 is the build that addresses the most critical November 9 vulnerabilities, not the last build in this response. Incident 202613, opened 2026-11-12 16:00 UTC, says N-able is still developing that additional remediation.
+5. **Leave the Intune integration off.** Incident 202613 says N-able turned it off on hosted servers, and on on-premises servers where it could. Where it could not, N-able says support will make contact. Do not turn it back on until N-able says the protection is in. N-able calls this a precaution and says it has seen no signs of compromise.
+6. **Built-in remote control does not work on this build.** Take Control does. Plan around that until N-able says the built-in feature is back.
 
 ## Verification
 
-- The server reports 2026.4.1.26, it was not reachable from the network during the upgrade, and Legacy API is off.
+- The server reports 2026.4.1.26, it was not reachable from the network during the upgrade, Legacy API is off, and the Intune integration is off.
 - Agents report 2026.4.1.26 before the Probes do. A Probe and an Agent on 2026.4.1.26 can still use the offline patch cache.
 - A machine that should be managed still checks in. Do not replay the proof of concept.
 
 ## Compromise response
 
-N-able's earlier updates said it had not seen an environment compromised. The current page says scanning is being observed and does not repeat that sentence. Neither statement inspects one on-premises server.
+N-able's earlier updates said it had not seen an environment compromised. Incident 202584 says scanning is being observed and does not repeat that sentence. Incident 202613, at 16:00 UTC on November 12, says N-able has seen no signs of compromise. Neither statement inspects one on-premises server.
 
 - Review administrator accounts, script and software jobs, remote-control sessions, and configuration changes from November 8 onward.
 - Rotate a credential stored in N-central if that review finds a change you did not make.
@@ -79,6 +81,7 @@ N-able's earlier updates said it had not seen an environment compromised. The cu
 
 - [N-able status, incident 202584][event] — reread 2026-11-12. Start 14:00:00 UTC, status Monitoring. At 01:04:27 UTC on 2026-11-11 every hosted server, all regions, was upgraded. Scanning observed. On-premises servers stay offline until their own upgrade succeeds. Follow-up hotfix still planned. Lists the seven CVEs.
 - [N-able status, incident 202609][event2] — read 2026-11-12. Start 2026-11-12 00:00:00 MST, status Investigating. Claims of more flaws in on-premises 2026.4.1 HF2. N-able's initial review: the server issue needs Legacy API on and exposed to the internet. Hosted is not affected. No CVE and no newer build on that page.
+- [N-able status, incident 202613][event3] — read 2026-11-13. Start 2026-11-12 16:00:00 UTC, status Identified. N-able turned the Intune integration off on hosted servers and, where it could, on on-premises servers. It says it has seen no signs of compromise and names no newer build.
 - [Release notes][notes] — posted November 10, 2026. Build 2026.4.1.26. The seven CVEs, the Agent and Probe order, the supported upgrade paths, and the disabled built-in remote control.
 - [CVE-2026-125883](https://www.cve.org/CVERecord?id=CVE-2026-125883), [CVE-2026-125881](https://www.cve.org/CVERecord?id=CVE-2026-125881), [CVE-2026-125878](https://www.cve.org/CVERecord?id=CVE-2026-125878), [CVE-2026-125879](https://www.cve.org/CVERecord?id=CVE-2026-125879), [CVE-2026-125882](https://www.cve.org/CVERecord?id=CVE-2026-125882), [CVE-2026-91000](https://www.cve.org/CVERecord?id=CVE-2026-91000), [CVE-2026-125880](https://www.cve.org/CVERecord?id=CVE-2026-125880) — N-able, published 2026-11-10. Scores in the summary above.
 - [BleepingComputer][bc] — the Able2Shell publication and the pre-release build 2026.4.0.31 the researcher tested.
@@ -87,6 +90,7 @@ N-able's earlier updates said it had not seen an environment compromised. The cu
 
 [event]: https://uptime.n-able.com/event/202584
 [event2]: https://uptime.n-able.com/event/202609
+[event3]: https://uptime.n-able.com/event/202613
 [status]: https://uptime.n-able.com/
 [notes]: https://status.n-able.com/2026/11/10/n-central-2026-4-hf2-release-notes/
 [bc]: https://www.bleepingcomputer.com/news/security/n-able-takes-cloud-platform-offline-after-30-plus-zero-days-published/

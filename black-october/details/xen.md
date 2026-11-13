@@ -1,6 +1,6 @@
 # Xen: a guest can read and write other guests' memory
 
-**Last updated:** 2026-11-05 (America/New_York)
+**Last updated:** 2026-11-12 (America/New_York)
 
 [Main Xen summary](../black-october-2026.md#xen-a-guest-can-read-and-write-other-guests-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -29,7 +29,7 @@
 | Qubes OS | 2026-11-03; time/TZ unknown | QSB-121. Qubes 4.3 dom0 Xen packages 4.19.6-3, first in security-testing. Restart dom0. [QSB-121][qubes] |
 | Citrix XenServer | 2026-11-03; time/TZ unknown | CTX697256, created 12:31 and last modified 12:34. The page does not state a timezone. Updates pushed to Early Access and Normal for 8.4 and 9. The bulletin names CVE-2026-102703 and not CVE-2026-102704. [CTX697256][citrix] |
 | Debian 12 | 2026-11-04 21:39:04 UTC | DLA-4881-1, mailed 22:39:04 +0100. `xen` 4.17.7+13-g2445b30a44-0+deb12u1. The advisory also fixes older Xen issues. [DLA-4881-1][dla] |
-| Debian 13 | 2026-11-04; time/TZ unknown | [DSA-6610-1][dsa] fixes trixie at `xen` `4.20.4+63-g7abfd2bce2-0+deb13u1` for both CVEs. sid `4.20.4+63-g7abfd2bce2-1` is also fixed. forky `4.20.4+39-gf1e1321c87-1` is still vulnerable. [Debian tracker][tracker] |
+| Debian 13 | 2026-11-04; time/TZ unknown | [DSA-6610-1][dsa] fixes trixie at `xen` `4.20.4+63-g7abfd2bce2-0+deb13u1` for both CVEs. sid `4.20.4+63-g7abfd2bce2-1` is also fixed. forky is now fixed at `4.20.4+63-g7abfd2bce2-1`, which migrated to testing on 2026-11-10. [Debian tracker][tracker] |
 
 ## What the two flaws are
 
@@ -68,7 +68,7 @@ rpm -q xen
 | SUSE Linux Enterprise 15 SP7 | below 4.20.4_08-150700.3.52.1 | `xen` 4.20.4_08-150700.3.52.1 |
 | Debian 13 (trixie) | 4.20.3+127-gc42374a105-0+deb13u1 and earlier | 4.20.4+63-g7abfd2bce2-0+deb13u1 from trixie-security |
 | Debian 12 (bookworm) | 4.17.5+72-g01140da4e8-1 and earlier | 4.17.7+13-g2445b30a44-0+deb12u1 |
-| Debian forky | 4.20.4+39-gf1e1321c87-1 | no fixed package yet |
+| Debian forky | below 4.20.4+63-g7abfd2bce2-1 | 4.20.4+63-g7abfd2bce2-1, fixed; migrated to testing 2026-11-10 |
 | Debian sid | below 4.20.4+63-g7abfd2bce2-1 | 4.20.4+63-g7abfd2bce2-1 |
 | XCP-ng 8.3 | below xen-4.17.7-4.2.xcpng8.3 | xen-4.17.7-4.2.xcpng8.3 |
 | Qubes OS 4.3 | below Xen 4.19.6-3 in dom0 | 4.19.6-3, first in security-testing |
@@ -83,7 +83,7 @@ A version this table does not name is **unknown**, not safe. Ubuntu's "Needs eva
    - **SUSE Linux Enterprise 15 SP7:** `zypper in -t patch SUSE-SLE-Module-Server-Applications-15-SP7-2026-5087`, then reboot. SUSE's note says to reboot after this update.
    - **Debian 13:** install `xen` 4.20.4+63-g7abfd2bce2-0+deb13u1 or later from trixie-security and reboot.
    - **Debian 12:** install `xen` 4.17.7+13-g2445b30a44-0+deb12u1 or later and reboot. That package also fixes older Xen issues named in DLA-4881-1.
-   - **Debian forky:** no fixed package yet. Do not treat the sid package as the forky fix.
+   - **Debian forky:** install `xen` 4.20.4+63-g7abfd2bce2-1 or later and reboot. That is the same version sid already had.
    - **XCP-ng 8.3:** update to `xen-4.17.7-4.2.xcpng8.3` and reboot the host.
    - **Qubes OS 4.3:** install Xen packages 4.19.6-3 in dom0 and restart dom0. The packages start in security-testing and move to stable over about two weeks. If you use Anti Evil Maid, reseal the secret passphrase: PCR18 and PCR19 change with the new Xen binaries.
    - **Citrix XenServer 8.4 and 9:** install the latest update from the channel you already use. CTX697256 says the updates were pushed to Early Access and Normal and prints no build number. The same bulletin's other fixes are not this flaw: CVE-2026-98432 is the separate management-network issue, and the PXE issues are a third group.

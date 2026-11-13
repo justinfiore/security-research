@@ -1,6 +1,6 @@
 # Linux kernel: PwnEscape - guest-to-host escape via IPv4 checksum metadata
 
-**Last updated:** 2026-11-10 (America/New_York)
+**Last updated:** 2026-11-12 (America/New_York)
 
 [Main PwnEscape summary](../black-october-2026.md#linux-kernel-pwnescape---guest-to-host-escape-via-ipv4-checksum-metadata) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -111,7 +111,7 @@ Upstream fixed versions (CNA): **5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113,
   - **Red Hat:** fixed kernels shipped for RHEL 10 (`kernel-6.12.0-211.67.1.el10_2`), RHEL 9 (`kernel-5.14.0-687.59.1.el9_8`), RHEL 8 (`kernel-4.18.0-553.178.1.el8_10`), RHEL 7 ELS (`kernel-3.10.0-1160.167.2.el7`), RHEL 6 ELS (`kernel-2.6.32-754.66.1.el6`, 2026-10-27) and listed EUS/SAP streams. Real-time fixes are listed for RHEL 7 ELS, RHEL 9.2 SAP Solutions and RHEL 8. OpenShift RHCOS images for 4.12 through 4.22 except 4.13, 4.15 and 4.17 shipped on 2026-10-27. General RHEL 9 `kernel-rt` and OpenShift Container Platform 5 remain affected. [Red Hat][rhapi]
   - **Ubuntu:** generic `linux` is fixed on 26.10 (`7.3.0-10.10`), 26.04 (`7.0.0-43.43`), 24.04 (`6.8.0-149.149`), and 22.04 (`5.15.0-203.213`). USN-9018-1, dated 10 November 2026, names `linux-image-7.0.0-43-generic` and this CVE. The November 9 "work in progress" line is no longer what the tracker says for those four. HWE, cloud, and FIPS rows are still work in progress. 20.04 has no released build. [Ubuntu][ubuntu]
   - **AlmaLinux:** production kernels `kernel-4.18.0-553.177.1.el8_10`, `kernel-5.14.0-687.59.1.el9_8` and `kernel-6.12.0-211.67.1.el10_2` (2026-10-23). `kernel-5.14.0-687.58.1.el9_8` does **not** contain the fix. [AlmaLinux][alma]
-  - **Debian:** bookworm-security `6.1.190-1` (DLA-4841-1), bookworm `linux-6.12` `6.12.113-1~deb12u1` (DLA-4850-1), trixie-security `6.12.113-1` (DSA-6568-1). [Debian][debian]
+  - **Debian:** bookworm-security `6.1.190-1` (DLA-4841-1), bookworm `linux-6.12` `6.12.115-2~deb12u1` (bookworm-security; the earlier fixed row was `6.12.113-1~deb12u1`), trixie-security `6.12.113-1` (DSA-6568-1). [Debian][debian]
   - **Oracle Linux UEK:** ELSA-2026-500397, -500398 and -500399. [Oracle][oracle]
   - **Amazon Linux:** advisories ALAS2-2026-3962, ALAS2KERNEL-5.4-2026-131, ALAS2KERNEL-5.10-2026-133, ALAS2KERNEL-5.15-2026-117, ALAS2023-2026-3197, ALAS2023-2026-3196 and ALAS2023-2026-3192. [Amazon Linux][alas]
 - **`uname -r` alone does not prove the fix is present.** It shows the running build string, not which patches the vendor backported. Check the vendor's advisory or package changelog for this CVE or the fix title `ipv4: validate checksum_start before completing checksum`. Also confirm the host has **rebooted** into that kernel.

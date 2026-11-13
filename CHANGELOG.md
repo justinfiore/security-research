@@ -2,6 +2,12 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-12 19:05 EST (UTC−05:00) — N-central; Apple HomeView; Siemens IoT2050
+
+- **N-central:** Leave the [Intune integration off](black-october/details/n-central.md#remediation). At 16:00 UTC on November 12, incident 202613 says N-able turned it off on hosted servers and, where it could, on on-premises servers, and that it has seen no signs of compromise. The server build is still **2026.4.1.26**, and Legacy API still has to be off. N-able has published no newer build.
+- **Apple HomeView:** Update to [HomeView Software Version 27.2](black-october/details/apple-november.md#remediation). Apple's November 12 notes list the same two High flaws as the November 9 updates: the iMessage group-join flaw and the Bluetooth memory corruption. The iPhone, iPad, Mac, Watch, and Vision Pro builds are unchanged.
+- **Siemens SIMATIC IoT2050:** An [Example Image](black-october/details/siemens-iot2050.md#remediation) has no fix. SSA-834709 V1.2, dated November 10, says so for Advanced, Basic, M.2, and SM when Node-RED is installed. Move that device to Industrial OS **V4.3.4-1 or later**, or uninstall Node-RED. Industrial OS below that version is still fixed by the update.
+
 ## 2026-11-12 15:05 EST (UTC−05:00) — MongoDB
 
 - **MongoDB:** On a few platforms the [November 10 floor](black-october/details/mongodb.md#remediation) was never published, so install the next build. MongoDB's notes say 9.0.7 has no Red Hat or CentOS 8.1, 9, or 10 ppc64le binary and no 8.3 or 9 s390x binary, 8.3.16 has no 8.1 or 9 ppc64le binary and no 8.3 or 9 s390x binary, and 8.0.37 has no 8.3 or 9 s390x binary. Use **9.0.8, 8.3.17, or 8.0.38** there. Those builds fix the packaging, not a further flaw, and every other platform stays on the floor. A public repository reports a crash on 8.0.34 and no code execution. MongoDB says it is not aware of exploitation. It is not in KEV.
