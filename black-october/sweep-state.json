@@ -33,7 +33,7 @@
       "hold": "none"
     },
     "apache-http-server.md": {
-      "last_checked": "2026-11-12T11:55:47Z",
+      "last_checked": "2026-11-13T11:56:03Z",
       "hold": "awaiting-distros"
     },
     "apache-mina.md": {
@@ -184,6 +184,10 @@
       "last_checked": "2026-11-11T15:56:09Z",
       "hold": "none"
     },
+    "danfoss-ak-sm800a.md": {
+      "last_checked": "2026-11-13T11:56:03Z",
+      "hold": "awaiting-fix"
+    },
     "datalore.md": {
       "last_checked": "2026-11-12T23:55:46Z",
       "hold": "none"
@@ -253,7 +257,7 @@
       "hold": "none"
     },
     "forticlient-nov11.md": {
-      "last_checked": "2026-11-12T11:55:47Z",
+      "last_checked": "2026-11-13T11:56:03Z",
       "hold": "none"
     },
     "fortimail.md": {
@@ -632,6 +636,10 @@
       "last_checked": "2026-11-12T23:55:46Z",
       "hold": "awaiting-distros"
     },
+    "sogo.md": {
+      "last_checked": "2026-11-13T11:56:03Z",
+      "hold": "none"
+    },
     "sonicos.md": {
       "last_checked": "2026-11-12T23:55:46Z",
       "hold": "none"
@@ -653,7 +661,7 @@
       "hold": "none"
     },
     "synology-dsm-nov11.md": {
-      "last_checked": "2026-11-12T11:55:47Z",
+      "last_checked": "2026-11-13T11:56:03Z",
       "hold": "none"
     },
     "synology-dsm.md": {

@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 12, 2026**
+**As of November 13, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Danfoss AK-SM800A: six flaws run code before login](#danfoss-ak-sm800a-six-flaws-run-code-before-login)
+- [SOGo: a password-recovery question resets the account](#sogo-a-password-recovery-question-resets-the-account)
 - [Check Point Gaia: a local socket runs a command as root](#check-point-gaia-a-local-socket-runs-a-command-as-root)
 - [NetScaler: a packet crashes the appliance, and the Console skips login](#netscaler-a-packet-crashes-the-appliance-and-the-console-skips-login)
 - [Lenovo XClarity Controller: a factory reset restores the OpenBMC root password](#lenovo-xclarity-controller-a-factory-reset-restores-the-openbmc-root-password)
@@ -225,16 +227,18 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Take a [Danfoss AK-SM800A](#danfoss-ak-sm800a-six-flaws-run-code-before-login) off the public internet. Midnight Blue reports six stack-based buffer overflows through firmware **5.3.2**: a request with no login can run code as root, and Strict mode does not close the one in the session-control process. No CVE and no vendor score are published. Germany's BSI says package **5.4.0** is not affected, and Danfoss's download page still offered only 5.3.x. BSI knows of no exploitation of these six. The October refrigeration attacks are a separate campaign.
+- **New this update:** Upgrade [SOGo](#sogo-a-password-recovery-question-resets-the-account) to **5.12.13 or later** and restart it. VulnCheck rates [CVE-2026-127111](https://www.cve.org/CVERecord?id=CVE-2026-127111) CVSS 4.0 9.1 Critical and CVSS 3.1 7.4 High: guessing the answers to a secret question resets the password, with no lockout. [CVE-2026-127131](https://www.cve.org/CVERecord?id=CVE-2026-127131) is the same pair of scores for TOTP guesses once the password is known. Alinto shipped the fix on November 4 and named no CVE. Neither is in KEV.
 - **New this update:** Install the [November Jumbo](#check-point-gaia-a-local-socket-runs-a-command-as-root) on Check Point gateways and management servers, and reboot. Check Point rates [CVE-2026-123039](https://www.cve.org/CVERecord?id=CVE-2026-123039) CVSS 3.1 7.8 High: a process already on the appliance sends one request to a world-writable socket, and Gaia runs it as root. Check Point says a couple of dozen customers were exploited, chained with PHP2Shell through the Mobile Access Portal, from October 30 to November 4. The floors are R82.20 Take 14, R82.10 Take 52, R82 Take 132, and R81.20 Take 174. Spark firewalls and Smart-1 Cloud are not affected. It is not in KEV. The Jumbo does not remove an implant.
 - **New this update:** Upgrade self-managed [Red Hat Quay](#red-hat-quay-an-anonymous-token-installs-a-signing-key) to **3.18.3, 3.17.7, 3.16.7, 3.15.9, 3.14.10, 3.12.24, 3.10.28, or 3.9.28** on the line you run, and block `/keys` from anything that is not an internal component. Red Hat rates [CVE-2026-123710](https://www.cve.org/CVERecord?id=CVE-2026-123710) CVSS 3.1 9.8 Critical: an anonymous token can install a signing key with no expiry, and tokens from that key read and write every repository. [CVE-2026-110697](https://www.cve.org/CVERecord?id=CVE-2026-110697) is 9.9: a namespace whose name contains an underscore lists another tenant's robot tokens. Red Hat names those builds for the second flaw and names no build for the first. Red Hat says Quay.io is already fixed for the second. Neither is in KEV. Deleting a key you do not recognize is not durable until a fixed build is in.
 - **New this update:** Install the [PTC patch](#ptc-windchill-and-flexplm-a-new-deserialization-patch) for [CVE-2026-126325](https://www.cve.org/CVERecord?id=CVE-2026-126325). PTC rates it CVSS 3.1 9.0 and CVSS 4.0 9.2 Critical: deserializing untrusted data can run code in Windchill and FlexPLM. PTC-hosted systems are already patched. A system you host takes the patch from support article CS483249, which needs a PTC login, and that article is the only place that names the fixed build. It is not in KEV. The earlier Windchill flaws, CVE-2026-12569 and CVE-2026-77645, are different records.
 - **New this update:** Upgrade [Checkmk](#checkmk-a-monitored-host-writes-a-file-the-server-runs) to **2.5.0p19 or 2.4.0p40** or later. Checkmk rates [CVE-2026-120495](https://www.cve.org/CVERecord?id=CVE-2026-120495) CVSS 4.0 9.4 Critical: a monitored host that can write its own agent output can place an HTML file the Checkmk server then runs, and automatic service discovery has to be on. 2.3.0 is end of life and has no fix. It is not in KEV.
 - **New this update:** Upgrade [Apache Roller](#apache-roller-an-atom-entry-reads-a-file-and-a-link-creates-an-administrator) to **6.1.7 or later**. Apache rates [CVE-2026-105153](https://www.cve.org/CVERecord?id=CVE-2026-105153) CVSS 3.1 7.7 High: any account can submit an Atom entry that reads a file the server can read, and AtomPub does not have to be turned on. [CVE-2026-118411](https://www.cve.org/CVERecord?id=CVE-2026-118411) is 8.8: a link a logged-in administrator opens can create an administrator. The same release fixes thirteen more, and Apache rates none of those two scores or higher. It is not in KEV.
-- **New this update:** Upgrade [Apache HTTP Server](#apache-http-server-an-http2-request-can-run-code) to **2.4.71 or later** and restart it. Apache rates [CVE-2026-119618](https://www.cve.org/CVERecord?id=CVE-2026-119618) critical and publishes no number. Red Hat rates it CVSS 3.1 9.8: an HTTP/2 request can run code, on 2.4.55 through 2.4.70. A server that serves only HTTP/1.1 is not affected. It is not in KEV. Debian trixie has the fix in `apache2` 2.4.71-1~deb13u1; bookworm and forky do not. The upgrade does not show whether a request already ran code.
+- **New this update:** Upgrade [Apache HTTP Server](#apache-http-server-an-http2-request-can-run-code) to **2.4.71 or later** and restart it. Apache rates [CVE-2026-119618](https://www.cve.org/CVERecord?id=CVE-2026-119618) critical and publishes no number. Red Hat rates it CVSS 3.1 9.8: an HTTP/2 request can run code, on 2.4.55 through 2.4.70. A server that serves only HTTP/1.1 is not affected. It is not in KEV. Debian bookworm now has the fix in `apache2` 2.4.71-1~deb12u1, and Ubuntu and Amazon Linux shipped fixed packages on November 12. Forky and SUSE still have none. The upgrade does not show whether a request already ran code.
 - **New this update:** Update [Zoom Workplace for Windows](#zoom-workplace-for-windows-a-network-request-raises-privileges) to **7.1.8 or later** and relaunch it. Zoom rates [CVE-2026-108186](https://www.cve.org/CVERecord?id=CVE-2026-108186) CVSS 3.1 9.6 Critical: a network request can raise privileges, and the person at the computer has to act. [CVE-2026-108187](https://www.cve.org/CVERecord?id=CVE-2026-108187) is 8.1 and is fixed at 7.1.5, so a build that stops there is still inside the 9.6 flaw. Zoom lists no workaround. Neither is in KEV. The update does not show whether a request already raised privileges.
 - **New this update:** Upgrade a [MongoDB](#mongodb-a-replica-set-primary-runs-code-before-login) replica set to **9.0.7, 8.3.16, 8.0.37, or 7.0.48** or later on that line, and restart every member. MongoDB rates [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383) CVSS 4.0 9.5 Critical: a request that needs no login can run code when a new primary finishes catch-up. A standalone server is not affected. MongoDB says it is not aware of exploitation. It is not in KEV. Atlas upgrades during maintenance. The restart does not show whether the process already ran code.
 - **New this update:** Upgrade [Ivanti Endpoint Manager](#ivanti-endpoint-manager-a-sql-query-runs-code-before-login) to **2024 SU8**, and Cloud Services Application 5.0.8 to **5.0.8.1**. Ivanti rates [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653) CVSS 3.1 9.8 Critical: SQL injection in EPM Core runs code with no login. [CVE-2026-121683](https://www.cve.org/CVERecord?id=CVE-2026-121683) is 9.4 and affects CSA 5.0.8 only. The CVE record marks 5.0.8 unaffected; the advisory says 5.0.8.1 is the fix. Ivanti says it has no evidence of exploitation. Neither is in KEV. The upgrade does not show whether a query already ran.
-- **New this update:** Upgrade [Synology DSM](#synology-dsm-a-login-request-reads-or-writes-any-file) to **7.4.1-90080-1**, **7.3.2-86009-5**, **7.2.2-72806-10**, or **7.2.1-69057-13** or later, and reboot. Synology rates [CVE-2026-76954](https://www.cve.org/CVERecord?id=CVE-2026-76954) CVSS 3.1 9.8 Critical: a login request reads or writes any file. A second flaw, [CVE-2026-85101](https://www.cve.org/CVERecord?id=CVE-2026-85101), is 8.6 in rsync and skips the login too. Synology lists no workaround. Both CVE records are still Reserved. Neither is in KEV. The September build does not include this fix.
+- **New this update:** Upgrade [Synology DSM](#synology-dsm-a-login-request-reads-or-writes-any-file) to **7.4.1-90080-1**, **7.3.2-86009-5**, **7.2.2-72806-10**, or **7.2.1-69057-13** or later, and reboot. Synology rates [CVE-2026-76954](https://www.cve.org/CVERecord?id=CVE-2026-76954) CVSS 3.1 9.8 Critical: a login request reads or writes any file. A second flaw, [CVE-2026-85101](https://www.cve.org/CVERecord?id=CVE-2026-85101), is 8.6 in rsync and skips the login too. Synology lists no workaround. Both CVE records were published on November 12 with those same scores. Neither is in KEV. The September build does not include this fix.
 - **New this update:** Upgrade [FortiClient](#forticlient-a-web-page-runs-code-through-the-local-api) to **7.4.8 or later**, or to **7.2.15 or later** on the 7.2 Windows line. Fortinet rates [CVE-2026-121529](https://www.cve.org/CVERecord?id=CVE-2026-121529) CVSS 3.1 9.1 Critical: a web page can run code through the agent's local API. FortiClient Windows, FortiClient Mac 7.4, and FortiClient Windows PAM are affected. Fortinet says it is not known to be exploited, and there is no virtual patch. It is not in KEV.
 - **New this update:** Install the [November 10 Windows update](#windows-search-an-email-attachment-runs-code-when-exchange-indexes-it) and reboot, starting with Exchange servers. Microsoft rates [CVE-2026-116928](https://www.cve.org/CVERecord?id=CVE-2026-116928) CVSS 3.1 9.8 Critical: an email with a crafted attachment runs code when Exchange indexes it, and the recipient never opens it. Microsoft says it has not been exploited. It is not in KEV. The update does not show whether an attachment already ran.
 - **New this update:** On [FortiManager and FortiAnalyzer 8.0.2](#fortinet-fortios-fortimanager-fortianalyzer-fortimail-and-fortiauthenticator-october-2026-hardening-release-and-sql-injection-fixes), set `rpc-permit none` until 8.0.3 ships. Fortinet published the hardening advisories on November 10. [CVE-2026-126170](https://www.cve.org/CVERecord?id=CVE-2026-126170) is CVSS 3.1 9.8, and 8.0.0 through 8.0.2 are still inside it. FortiManager 7.4.6 and 7.2.9 fix the FGFM flaw. None of the five is in KEV.
@@ -381,6 +385,50 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
 ---
+
+## Danfoss AK-SM800A: six flaws run code before login
+
+<a id="danfoss-ak-sm800a-six-flaws-run-code-before-login"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/danfoss-ak-sm800a.md):** [Detection](details/danfoss-ak-sm800a.md#detection) · [Remediation](details/danfoss-ak-sm800a.md#remediation) · [Verification](details/danfoss-ak-sm800a.md#verification) · [Timeline](details/danfoss-ak-sm800a.md#timeline)
+
+**CVEs:** None assigned. Midnight Blue says the identifiers are pending.
+
+**Neither Midnight Blue nor a vendor publishes a numeric score.** Midnight Blue researcher Carlo Meijer reports six stack-based buffer overflows in the Danfoss AK-SM800A, a refrigeration system manager. A remote attacker who is not logged in can run code as root, on every firmware through **5.3.2**. One of the six is in the session-control process, so Strict mode does not close it. The controller has no secure boot, and the researcher says an implant can survive a factory reset. The Centre for Cybersecurity Belgium repeated that account on November 12. Danfoss has published no advisory for these six.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Germany's BSI says it knows of no exploitation of these six flaws. The refrigeration attacks that began on October 11 are a separate campaign, and no source ties them to these flaws. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-12; time/TZ unknown** | Midnight Blue and the CCB. Six pre-authentication flaws through firmware 5.3.2. No CVE. |
+| BSI names package 5.4.0 | 2026-11-13; time/TZ unknown | Firmware through 5.3.2 is affected. Package 5.4.0, dated November 2026, is not. |
+| **Last updated** | **2026-11-13 07:15 EST (UTC−05:00)** | New item. Take the controller off the internet. |
+
+**Patch:** Take the management interface off the public internet and put remote access behind a VPN. Do not treat an upgrade to 5.3.2, a password change, or Strict mode as the remedy. BSI says package **5.4.0** is not affected, and Danfoss's download page still offered only 5.3.x, dated October 2026. Danfoss has not said that 5.4.0 fixes these flaws. A firmware update does not show whether the flash already holds an implant.
+
+Sources: [Midnight Blue](https://www.midnightblue.nl/blog/multiple-rce-danfoss-aksm800a), [CCB](https://ccb.belgium.be/advisories/warning-six-new-danfoss-vulnerabilities-refrigeration-controllers-risk-immediate-action), [BSI](https://www.bsi.bund.de/DE/Service-Navi/Presse/Pressemitteilungen/Presse2026/261113_Kuehlgeraete-Danfoss.html), [detailed guide](details/danfoss-ak-sm800a.md).
+
+## SOGo: a password-recovery question resets the account
+
+<a id="sogo-a-password-recovery-question-resets-the-account"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/sogo.md):** [Detection](details/sogo.md#detection) · [Remediation](details/sogo.md#remediation) · [Verification](details/sogo.md#verification) · [Timeline](details/sogo.md#timeline)
+
+**CVEs:** [CVE-2026-127111](https://www.cve.org/CVERecord?id=CVE-2026-127111), [CVE-2026-127131](https://www.cve.org/CVERecord?id=CVE-2026-127131)
+
+**VulnCheck rates both CVEs CVSS 4.0 9.1 Critical and CVSS 3.1 7.4 High.** VulnCheck is the CNA. CVE-2026-127111 lets a remote attacker who is not logged in guess the answers to an account's secret questions with no lockout, then set a new password. The record says this takes over an account that does not have TOTP. CVE-2026-127131 lets someone who already has the password guess the TOTP code, because a wrong code does not count as a failed login. Every version before **5.12.13** is affected. Alinto shipped that release on November 4, called the flaws critical, and named no CVE and no score.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-13) for either CVE. Neither record reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| SOGo 5.12.13 released | 2026-11-04 09:24:58 UTC | Alinto says the CVE identifiers were not assigned yet. |
+| **Public announcement** | **2026-11-12 15:53:16 UTC** | CVE-2026-127111 published. CVE-2026-127131 followed at 15:56:31 UTC. |
+| **Last updated** | **2026-11-13 07:15 EST (UTC−05:00)** | New item. Upgrade SOGo. |
+
+**Patch:** Upgrade to **SOGo 5.12.13 or later** and restart it. Until then, turn password recovery off if you do not need it. That does not fix the TOTP guessing. The upgrade does not undo a password that was already changed.
+
+Sources: [SOGo 5.12.13](https://github.com/Alinto/sogo/releases/tag/SOGo-5.12.13), [CVE-2026-127111](https://www.cve.org/CVERecord?id=CVE-2026-127111), [detailed guide](details/sogo.md).
 
 ## Check Point Gaia: a local socket runs a command as root
 
@@ -536,15 +584,16 @@ Sources: [CVE-2026-105153 advisory](https://lists.apache.org/thread/w7dsz19261my
 
 **Apache rates CVE-2026-119618 critical and publishes no number. Red Hat rates it CVSS 3.1 9.8 Critical.** A race in `mod_http2` lets a request with no login corrupt heap memory and run code, on **2.4.55 through 2.4.70**. Red Hat says it needs HTTP/2 (`h2` or `h2c`). A server that serves only HTTP/1.1 is not affected. NVD had not scored it on November 12. Red Hat says public research demonstrated a reliable exploit and does not link it. Wiz says no exploit is available and no exploitation in the wild has been reported. Those two disagree. Red Hat rates its own Enterprise Linux 9 and 10 packages Important rather than Critical, because each HTTP/2 stream has its own allocator. Enterprise Linux 8 and earlier do not contain the code.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-13). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement and fix** | **2026-11-11 14:54:08 UTC** | CVE-2026-119618 published. Fixed the same day in Apache HTTP Server 2.4.71. |
-| Debian trixie package | 2026-11-12 09:54:11 UTC | DSA-6620-1. Bookworm and forky still have no fixed package. |
-| **Last updated** | **2026-11-12 07:55 EST (UTC−05:00)** | Debian trixie has a fixed package. |
+| Debian trixie package | 2026-11-12 09:54:11 UTC | DSA-6620-1, `apache2` 2.4.71-1~deb13u1. |
+| Debian bookworm, Ubuntu, Amazon Linux | 2026-11-12; time/TZ unknown | DLA-4902-1 for bookworm. USN-9090-1 for Ubuntu. ALAS advisories for Amazon Linux 2 and 2023. |
+| **Last updated** | **2026-11-13 07:15 EST (UTC−05:00)** | Bookworm, Ubuntu, and Amazon Linux have fixed packages. |
 
-**Patch:** Upgrade to **2.4.71 or later** and restart the server. On Red Hat Enterprise Linux 9 and 10, install the November 11 `mod_http2` erratum instead of the upstream tarball. On Debian trixie, install `apache2` **2.4.71-1~deb13u1** from the security pocket; sid is fixed at 2.4.71-1. Bookworm and forky have no fixed package yet. Until a package is in, remove `h2` and `h2c` from `Protocols`. That does not fix the `mod_md` crash, CVE-2026-106023, which does not need HTTP/2. The upgrade does not show whether a request already ran code.
+**Patch:** Upgrade to **2.4.71 or later** and restart the server. On Red Hat Enterprise Linux 9 and 10, install the November 11 `mod_http2` erratum instead of the upstream tarball. On Debian bookworm, install `apache2` **2.4.71-1~deb12u1**; on trixie, **2.4.71-1~deb13u1** from the security pocket; sid is fixed at 2.4.71-1. Ubuntu 22.04 through 26.10 and Amazon Linux 2 and 2023 have fixed packages. Forky and SUSE do not. Until a package is in, remove `h2` and `h2c` from `Protocols`. That does not fix the `mod_md` crash, CVE-2026-106023, which does not need HTTP/2. The upgrade does not show whether a request already ran code.
 
 Sources: [Apache 2.4 vulnerabilities](https://httpd.apache.org/security/vulnerabilities_24.html), [Red Hat](https://access.redhat.com/security/cve/cve-2026-119618), [detailed guide](details/apache-http-server.md).
 
@@ -640,14 +689,15 @@ Sources: [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653), [E
 
 **CVEs:** [CVE-2026-76954](https://www.cve.org/CVERecord?id=CVE-2026-76954), [CVE-2026-85101](https://www.cve.org/CVERecord?id=CVE-2026-85101)
 
-**Synology rates CVE-2026-76954 CVSS 3.1 9.8 Critical and CVE-2026-85101 CVSS 3.1 8.6 Important.** The 9.8 flaw is SQL injection in the Auth API: a remote attacker who is not logged in reads or writes arbitrary files. The 8.6 flaw is an authentication bypass in rsync: a remote attacker reads specific files and writes arbitrary files. Both CVE.org records were still Reserved on November 11, so the score and the description come from [Synology-SA-26:19](https://www.synology.com/en-global/security/advisory/Synology_SA_26_19). Synology lists no mitigation. This is not the September pair, CVE-2026-13639 and CVE-2026-13684, and a DSM build that fixed those is still inside this one.
+**Synology rates CVE-2026-76954 CVSS 3.1 9.8 Critical and CVE-2026-85101 CVSS 3.1 8.6 Important.** The 9.8 flaw is SQL injection in the Auth API: a remote attacker who is not logged in reads or writes arbitrary files. The 8.6 flaw is an authentication bypass in rsync: a remote attacker reads specific files and writes arbitrary files. Synology published both CVE.org records on November 12 with those same scores and the same fixed builds. Synology lists no mitigation. This is not the September pair, CVE-2026-13639 and CVE-2026-13684, and a DSM build that fixed those is still inside this one.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-11). Synology does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-13). Synology does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement and fix** | **2026-11-10 17:06:42 UTC+8** | Synology-SA-26:19. Severity Critical. No mitigation. |
-| **Last updated** | **2026-11-11 07:04 EST (UTC−05:00)** | New item. Upgrade DSM. |
+| CVE records published | 2026-11-12 03:40:28 UTC and 03:41:52 UTC | Same scores and fixed builds as the advisory. |
+| **Last updated** | **2026-11-13 07:15 EST (UTC−05:00)** | Both CVE records are published. |
 
 **Patch:** Upgrade to **7.4.1-90080-1**, **7.3.2-86009-5**, **7.2.2-72806-10**, or **7.2.1-69057-13** or later, and reboot. Until that build is running, do not leave DSM or rsync reachable from the internet. The upgrade does not show whether a file was already written.
 
@@ -6076,6 +6126,8 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Danfoss AK-SM800A** | Take the management interface off the public internet. Midnight Blue reports six pre-authentication flaws through firmware 5.3.2, and Strict mode does not close them. BSI says package 5.4.0 is not affected; Danfoss had not published it. No CVE is assigned. [Guide](details/danfoss-ak-sm800a.md#remediation). |
+| **SOGo before 5.12.13** | Upgrade to 5.12.13 or later and restart. Guessing a secret-question answer resets the password, and a known password can guess the TOTP code, both with no lockout. VulnCheck rates both 9.1. [Guide](details/sogo.md#remediation). |
 | **NetScaler ADC, Gateway, or Console** | Upgrade ADC and Gateway to 14.1-73.57, 13.1-64.39, 14.1-73.58 FIPS, or 13.1-37.293 or later. Citrix rates CVE-2026-120868 9.3, and it needs no feature turned on. Upgrade Console to 14.1-74.34: CVE-2026-120869 lets a request skip the login. The October builds do not include this fix. [Guide](details/netscaler-november.md#remediation). |
 | **ThinkSystem v4 with XClarity Controller 3** | If the firmware is (2.51) IHX432Y through (2.56) IHX436K, move off it. Lenovo rates CVE-2026-81936 7.1: a Reset to Default puts the OpenBMC root password back. Lenovo names no fixed build and says those versions are no longer available. Change the root password after any reset. [Guide](details/lenovo-xcc.md#remediation). |
 | **Self-managed Red Hat Quay** | Upgrade to 3.18.3, 3.17.7, 3.16.7, 3.15.9, 3.14.10, 3.12.24, 3.10.28, or 3.9.28 on the line you run. Red Hat names those builds for CVE-2026-110697 and names no build for CVE-2026-123710, so also block `/keys` from anything outside the registry's own components. Quay.io is already fixed for the second flaw. Quay 5 has no named fix. [Guide](details/red-hat-quay.md#remediation). |
