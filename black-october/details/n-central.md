@@ -1,10 +1,10 @@
 # N-central: critical vulnerabilities, hotfix 2026.4.1.26
 
-**Last updated:** 2026-11-12 (America/New_York)
+**Last updated:** 2026-11-13 (America/New_York)
 
 [Back to N-central summary](../black-october-2026.md#n-central-critical-vulnerabilities-hotfix-20264126) · [Changelog](../../CHANGELOG.md)
 
-N-able released N-central **2026.4 HF2, build 2026.4.1.26**, on November 10. The release notes say it fixes seven CVEs. On November 12 N-able opened a second incident: a new disclosure claims more flaws in on-premises **2026.4.1 HF2**. N-able's initial review says the server issue needs the Legacy API turned on and reachable from the internet. That API is off by default. At 16:00 UTC the same day N-able opened [incident 202613](https://uptime.n-able.com/event/202613) and turned the Intune integration off as a precaution, on hosted servers itself and on on-premises servers where it could. N-able says it has seen no signs of compromise. It has published no newer build.
+N-able released N-central **2026.4 HF2, build 2026.4.1.26**, on November 10. The release notes say it fixes seven CVEs. On November 12 a second disclosure, called 4EverAble2Shell by the researcher, claims an unauthenticated path to root that still works on that build when the Legacy API is turned on and reachable from the internet. That API is off by default. At 16:00 UTC the same day N-able opened [incident 202613](https://uptime.n-able.com/event/202613) and turned the Intune integration off as a precaution, on hosted servers itself and on on-premises servers where it could. N-able has published no newer build. On November 13 N-able said its investigation had found indicators of compromise and that it is working with those customers. Two research firms report a cryptocurrency miner on production servers, including servers already on 2026.4.1.26.
 
 **N-able rates two of the seven CVSS 4.0 Critical and five High.** All seven were published 2026-11-10 by N-able.
 
@@ -22,7 +22,9 @@ The incident started 2026-11-09. N-able took hosted N-central offline and told o
 
 N-central deploys software, runs scripts, and opens remote-control sessions on the machines it manages. Ecoverse under N-able Login stays up at `https://n-able.app`.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12) for any of the seven CVEs. N-able says it is observing scanning associated with the published proof of concept, and incident 202613 says it has seen no signs of compromise. The Hacker News says Presidian saw probing of the new claim from 157.20.241.16 and saw no successful exploitation. Scanning and probing are not the same statement as an intrusion. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+The November 12 chain has no CVE of its own. The published proof of concept starts with [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436), an unauthenticated class instantiation in Apache Axis 1.x, which Apache says is end of life and will not release a fix for. Apache rates it critical in text and publishes no numeric score. CISA's enrichment of that record scores it CVSS 3.1 9.8. The second step is an N-central privilege escalation that no vendor has scored. Previdian tracks the chain as VULN-2026-0009 and scores it 9.8 itself. That score is Previdian's, not N-able's and not Apache's.
+
+**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-13) for any of the seven CVEs or for CVE-2026-90436. N-able's November 13 update says it has identified indicators of compromise and is working with those customers. It does not say how many, or whether they were hosted or on premises. Huntback reports 21 production N-central servers mining Monero at 12:50 UTC on November 12, 19 of them on build 2026.4.1.26, identified from a public mining pool and checked by requesting each server's login page. Previdian reports exploitation attempts against its own honeypot, which is not a compromised customer. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -46,13 +48,20 @@ N-central deploys software, runs scripts, and opens remote-control sessions on t
 | Hosted upgrade complete | 2026-11-11 01:04:27 UTC | Incident 202584. Every hosted N-central server, all regions, upgraded. On-premises servers stay offline until their own upgrade succeeds. Scanning still observed. [Event][event] |
 | CVE records | 2026-11-10 21:19 to 21:26 UTC | N-able published the seven records. |
 | Second disclosure | 2026-11-12 00:00:00 MST (UTC−07:00) | Incident 202609, status Investigating. N-able says the claimed server issue needs Legacy API on and exposed to the internet. Hosted is not affected. [Event 202609][event2] |
-| Precautionary restrictions | 2026-11-12 16:00:00 UTC | Incident 202613, status Identified. N-able turned the Intune integration off and says it has seen no signs of compromise. No newer build. [Event 202613][event3] |
+| Precautionary restrictions | 2026-11-12 16:00:00 UTC | Incident 202613, status Identified. N-able turned the Intune integration off and, in that first update, said it had seen no signs of compromise. No newer build. [Event 202613][event3] |
+| Exploitation reported | 2026-11-12 12:50 UTC | Huntback says a public mining pool listed 21 active `nc_` rigs, and that each address serves an N-central login page. 19 report build 2026.4.1.26. [Huntback][huntback] |
+| N-able finds indicators | 2026-11-13 03:50:42 UTC | Incident 202613. N-able says it identified indicators of compromise and is working with those customers. It names no count and no build. [Event 202613][event3] |
 
 ## Detection
 
 1. **Version.** 2026.4.1.26 is the build the release notes name. Anything earlier, including 2026.4.0.27 and 2026.4.0.32, is not this fix. The CVE records say "before 26.4.1" for six of the seven and "before 2026.4.1" for CVE-2026-91000. N-able does not explain the two writings.
 2. **Hosted.** N-able's 01:04:27 UTC update on 2026-11-11 says every hosted server, in every region, has been upgraded. Agents and Probes are still the customer's to upgrade.
 3. **What the scanning looks like.** N-able does not publish the proof of concept. The questions that match what the server can do are: a new administrator, a script or software job you did not schedule, a remote-control session you did not start, and a configuration import you did not run. Absence of those is not proof the server was not entered.
+4. **The November 12 miner.** Huntback publishes these indicators for the campaign it observed. A match is a reason to treat the server as fully compromised. Absence is not a clean bill.
+   - Files: `/tmp/.xvd/` or `/var/tmp/.xvd/`, a `serverchild-*.bak` in `/var/opt/n-central/tmp/`, or a symlink at `/var/opt/n-central/flag/flag_default.json`.
+   - Persistence: `/etc/systemd/system/xvd.service`, `/etc/cron.d/xvd`, or a crontab line ending `# xvkeep`.
+   - A process whose command line contains `--rig-id nc_`, or outbound connections to `157.20.241.16` (port 8080, or TCP 19202 through 19418), `139.99.69.109:10128`, or `79.76.51.56:39100`.
+   - POSTs to `/dms/services/ServerUI` whose body is a SOAP fault naming `jline.internal.TerminalLineSettings`.
 
 ## Remediation
 
@@ -71,7 +80,7 @@ N-central deploys software, runs scripts, and opens remote-control sessions on t
 
 ## Compromise response
 
-N-able's earlier updates said it had not seen an environment compromised. Incident 202584 says scanning is being observed and does not repeat that sentence. Incident 202613, at 16:00 UTC on November 12, says N-able has seen no signs of compromise. Neither statement inspects one on-premises server.
+N-able's earlier updates said it had not seen an environment compromised. Incident 202584 says scanning is being observed and does not repeat that sentence. Incident 202613 said at 16:00 UTC on November 12 that N-able had seen no signs of compromise, and at 03:50:42 UTC on November 13 that it had found indicators of compromise and is working with those customers. That update does not say how many servers, whether they were hosted or on premises, or what was found. Huntback's report is separate: 21 servers it identified from a mining pool, 19 of them on 2026.4.1.26. None of these statements inspects one particular server. A server with any indicator above was root-owned, and the upgrade does not remove a miner or undo a script that already ran.
 
 - Review administrator accounts, script and software jobs, remote-control sessions, and configuration changes from November 8 onward.
 - Rotate a credential stored in N-central if that review finds a change you did not make.
@@ -81,12 +90,16 @@ N-able's earlier updates said it had not seen an environment compromised. Incide
 
 - [N-able status, incident 202584][event] — reread 2026-11-12. Start 14:00:00 UTC, status Monitoring. At 01:04:27 UTC on 2026-11-11 every hosted server, all regions, was upgraded. Scanning observed. On-premises servers stay offline until their own upgrade succeeds. Follow-up hotfix still planned. Lists the seven CVEs.
 - [N-able status, incident 202609][event2] — read 2026-11-12. Start 2026-11-12 00:00:00 MST, status Investigating. Claims of more flaws in on-premises 2026.4.1 HF2. N-able's initial review: the server issue needs Legacy API on and exposed to the internet. Hosted is not affected. No CVE and no newer build on that page.
-- [N-able status, incident 202613][event3] — read 2026-11-13. Start 2026-11-12 16:00:00 UTC, status Identified. N-able turned the Intune integration off on hosted servers and, where it could, on on-premises servers. It says it has seen no signs of compromise and names no newer build.
+- [N-able status, incident 202613][event3] — reread 2026-11-13. Start 2026-11-12 16:00:00 UTC, status Identified. N-able turned the Intune integration off on hosted servers and, where it could, on on-premises servers. The 16:00 UTC update said no signs of compromise. The 03:50:42 UTC update on 2026-11-13 says N-able identified indicators of compromise and is working with those customers. No newer build.
 - [Release notes][notes] — posted November 10, 2026. Build 2026.4.1.26. The seven CVEs, the Agent and Probe order, the supported upgrade paths, and the disabled built-in remote control.
 - [CVE-2026-125883](https://www.cve.org/CVERecord?id=CVE-2026-125883), [CVE-2026-125881](https://www.cve.org/CVERecord?id=CVE-2026-125881), [CVE-2026-125878](https://www.cve.org/CVERecord?id=CVE-2026-125878), [CVE-2026-125879](https://www.cve.org/CVERecord?id=CVE-2026-125879), [CVE-2026-125882](https://www.cve.org/CVERecord?id=CVE-2026-125882), [CVE-2026-91000](https://www.cve.org/CVERecord?id=CVE-2026-91000), [CVE-2026-125880](https://www.cve.org/CVERecord?id=CVE-2026-125880) — N-able, published 2026-11-10. Scores in the summary above.
 - [BleepingComputer][bc] — the Able2Shell publication and the pre-release build 2026.4.0.31 the researcher tested.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.10, checked 2026-11-12. None of the seven is listed.
-- [The Hacker News](https://thehackernews.com/2026/11/new-n-central-exploits-work-against.html) — November 12. Quotes incident 202609. Attributes probing of the new claim, from 157.20.241.16, to Presidian, and says there is no evidence of successful exploitation. The researcher names and the proof of concept are the researcher's, not N-able's.
+- [The Hacker News](https://thehackernews.com/2026/11/new-n-central-exploits-work-against.html) — November 12. Quotes incident 202609 and attributes probing from 157.20.241.16 to Previdian. Its November 13 follow-up reports the Huntback finding of 21 compromised servers.
+- [Huntback][huntback] — read 2026-11-13. 21 production servers mining at 12:50 UTC on 2026-11-12, 19 of them on 2026.4.1.26. Indicators in Detection.
+- [Previdian VULN-2026-0009](https://previdian.com/VULN-2026-0009) — read 2026-11-13. Two exploitation attempts against its own sensor, first observed 2026-11-12. Its own CVSS 9.8. Not a compromised customer.
+- [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) — Apache CNA, published 2026-11-06. Axis 1.x through 1.4, unsupported when assigned, no numeric score from Apache. The CISA-ADP score is 9.8.
+- [BleepingComputer, November 12](https://www.bleepingcomputer.com/news/security/new-n-able-4everable2shell-zero-day-exploited-hours-after-poc-released/) — reports both firms. The researcher names and the proof of concept are the researcher's, not N-able's.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.10, checked 2026-11-13. None of the seven, and not CVE-2026-90436, is listed.
 
 [event]: https://uptime.n-able.com/event/202584
 [event2]: https://uptime.n-able.com/event/202609
@@ -94,3 +107,4 @@ N-able's earlier updates said it had not seen an environment compromised. Incide
 [status]: https://uptime.n-able.com/
 [notes]: https://status.n-able.com/2026/11/10/n-central-2026-4-hf2-release-notes/
 [bc]: https://www.bleepingcomputer.com/news/security/n-able-takes-cloud-platform-offline-after-30-plus-zero-days-published/
+[huntback]: https://huntback.io/blog/ncentral-4everable2shell-miners-on-live-servers

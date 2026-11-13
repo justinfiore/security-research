@@ -132,6 +132,10 @@
       "last_checked": "2026-11-12T15:56:21Z",
       "hold": "awaiting-fix"
     },
+    "checkpoint-gaia.md": {
+      "last_checked": "2026-11-13T07:55:50Z",
+      "hold": "none"
+    },
     "chrome-156.md": {
       "last_checked": "2026-11-12T23:55:46Z",
       "hold": "none"
@@ -477,7 +481,7 @@
       "hold": "awaiting-distros"
     },
     "nodejs-november.md": {
-      "last_checked": "2026-11-12T07:55:59Z",
+      "last_checked": "2026-11-13T07:55:50Z",
       "hold": "none"
     },
     "northflank.md": {
@@ -593,7 +597,7 @@
       "hold": "none"
     },
     "sap-november.md": {
-      "last_checked": "2026-11-12T07:55:59Z",
+      "last_checked": "2026-11-13T07:55:50Z",
       "hold": "awaiting-fix"
     },
     "seppmail.md": {
@@ -721,7 +725,7 @@
       "hold": "none"
     },
     "windows-search.md": {
-      "last_checked": "2026-11-12T07:55:59Z",
+      "last_checked": "2026-11-13T07:55:50Z",
       "hold": "none"
     },
     "windows-shell.md": {

@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-13 03:10 EST (UTC−05:00) — N-central
+
+- **N-central:** Hotfix 2 does not close the [November 12 chain](black-october/details/n-central.md#remediation), so confirm Legacy API is off and look for the miner. The build is still **2026.4.1.26**, and N-able has published nothing newer. Huntback reports 21 production servers mining Monero at 12:50 UTC on November 12, 19 of them already on that build. At 03:50:42 UTC on November 13, incident 202613 says N-able found indicators of compromise and is working with those customers. It does not say how many. Check for `/tmp/.xvd/`, an `xvd.service` unit, and connections to `157.20.241.16`. A server with any of those was root-owned, and the upgrade does not remove the miner. It is not in KEV.
+
 ## 2026-11-12 23:01 EST (UTC−05:00) — Check Point Gaia
 
 - **Check Point Gaia:** Install the [November Jumbo](black-october/details/checkpoint-gaia.md#remediation) and reboot. Check Point rates [CVE-2026-123039](https://www.cve.org/CVERecord?id=CVE-2026-123039) CVSS 3.1 7.8: a process already on the appliance sends one request to `/tmp/dynamic_socket`, and the Dynamic CLI daemon runs it as root. Check Point says a couple of dozen customers were exploited this way, chained with PHP2Shell through the Mobile Access Portal, from October 30 to November 4. The floors are R82.20 Take 14, R82.10 Take 52, R82 Take 132, and R81.20 Take 174. R81 and R81.10 are end of support and have no named take. Spark firewalls and Smart-1 Cloud are not affected. It is not in KEV. Until the Jumbo is in, stop `dynamic_server`. The upgrade does not show whether the socket already ran a command, and it does not remove an implant.
