@@ -1,6 +1,6 @@
 # curl and libcurl: use-after-free when a server resets an upload
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-13 (America/New_York)
 
 [Main curl summary](../black-october-2026.md#curl-and-libcurl-use-after-free-when-a-server-resets-an-upload) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -99,7 +99,23 @@ The proven exploit needs very precise conditions, so finding nothing proves noth
 
 ## Remediation
 
-1. **Upgrade** curl and libcurl to **8.23.0** or later, or install your distribution's fixed package (for example Debian trixie **8.14.1-2+deb13u7**, [DSA-6558-1][dsa]). Support customers of commercial rock-solid curl can use 8.20.2, 8.16.2 or 8.14.3. [curl advisory][adv] [Rock-solid curl][rs]
+1. **Upgrade** curl and libcurl to **8.23.0** or later, or install your distribution's fixed package. Checked 2026-11-13:
+
+   | Distribution | Status |
+   |---|---|
+   | Debian trixie | Fixed, `8.14.1-2+deb13u7` ([DSA-6558-1][dsa]) |
+   | Debian bookworm | Not affected. The tracker also lists `7.88.1-10+deb12u15` as fixed |
+   | Debian sid | Fixed, `8.23.0-1` |
+   | Debian forky | Still vulnerable at `8.22.0-1` |
+   | Ubuntu 26.10, 26.04 | Fixed, `8.20.0-2ubuntu11.1` and `8.18.0-1ubuntu2.8` ([USN-8927-1](https://ubuntu.com/security/notices/USN-8927-1)) |
+   | Ubuntu 24.04 and older | Not affected |
+   | RHEL 10 | Fixed, `curl-8.12.1-4.el10_2.8` ([RHSA-2026:96092](https://access.redhat.com/errata/RHSA-2026:96092), 2026-11-09) |
+   | RHEL 6, 7, 8, 9 | Not affected. Red Hat says those builds predate the flawed code |
+   | Amazon Linux 2023 | Fixed, `libcurl-8.21.0-5.amzn2023.0.3` ([ALAS2023-2026-3267](https://alas.aws.amazon.com/AL2023/ALAS2023-2026-3267.html)) |
+   | Amazon Linux 2 | Not affected |
+   | SUSE | Some products are fixed, including SLES 15 SP7 and Tumbleweed. SLES 15 SP6 and openSUSE Leap 16.0 and 16.1 are still affected, and SUSE's overall state is Pending |
+
+   Support customers of commercial rock-solid curl can use 8.20.2, 8.16.2 or 8.14.3. [curl advisory][adv] [Rock-solid curl][rs]
 2. **Rebuild** everything that bundles or statically links libcurl: container images, wheels, Rust and Go-cgo binaries, and vendor software (ask the vendor). Restart long-running processes so they load the patched shared library.
 3. **If you cannot patch yet**, apply curl's own option C: "Do not use HTTP/2". For example, add `--http1.1` to curl commands that upload, or set `CURLOPT_HTTP_VERSION` to `CURL_HTTP_VERSION_1_1` in applications. Alternatively, apply the upstream fix commit `8b0744af` to your own build (option B). [curl advisory][adv]
 4. Keep TLS verification on, and avoid uploading to untrusted or user-supplied URLs from privileged contexts.
