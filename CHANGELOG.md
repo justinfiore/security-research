@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-12 23:01 EST (UTC−05:00) — Check Point Gaia
+
+- **Check Point Gaia:** Install the [November Jumbo](black-october/details/checkpoint-gaia.md#remediation) and reboot. Check Point rates [CVE-2026-123039](https://www.cve.org/CVERecord?id=CVE-2026-123039) CVSS 3.1 7.8: a process already on the appliance sends one request to `/tmp/dynamic_socket`, and the Dynamic CLI daemon runs it as root. Check Point says a couple of dozen customers were exploited this way, chained with PHP2Shell through the Mobile Access Portal, from October 30 to November 4. The floors are R82.20 Take 14, R82.10 Take 52, R82 Take 132, and R81.20 Take 174. R81 and R81.10 are end of support and have no named take. Spark firewalls and Smart-1 Cloud are not affected. It is not in KEV. Until the Jumbo is in, stop `dynamic_server`. The upgrade does not show whether the socket already ran a command, and it does not remove an implant.
+
 ## 2026-11-12 19:05 EST (UTC−05:00) — N-central; Apple HomeView; Siemens IoT2050
 
 - **N-central:** Leave the [Intune integration off](black-october/details/n-central.md#remediation). At 16:00 UTC on November 12, incident 202613 says N-able turned it off on hosted servers and, where it could, on on-premises servers, and that it has seen no signs of compromise. The server build is still **2026.4.1.26**, and Legacy API still has to be off. N-able has published no newer build.
