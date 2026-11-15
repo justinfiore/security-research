@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Apache Shiro: a cached LDAP login accepts any password](#apache-shiro-a-cached-ldap-login-accepts-any-password)
 - [PostgreSQL: a type change runs code as the database user](#postgresql-a-type-change-runs-code-as-the-database-user)
 - [Edito CMS: an unsigned token becomes any account](#edito-cms-an-unsigned-token-becomes-any-account)
 - [ScreenConnect: the RMM+ extension accepts its default secret](#screenconnect-the-rmm-extension-accepts-its-default-secret)
@@ -230,6 +231,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Apache Shiro](#apache-shiro-a-cached-ldap-login-accepts-any-password) to **3.0.2 or later** and restart. Apache rates [CVE-2026-129349](https://www.cve.org/CVERecord?id=CVE-2026-129349) CVSS 4.0 9.1 Critical: with LDAP authentication caching on, a user who has logged in once can log in again with any password. Caching is off by default. 3.0.1 fixes that one and leaves six more, which Apache rates 6.3 or lower. Shiro 2.x is end of life and gets no fix. It is not in KEV.
 - **New this update:** Upgrade [PostgreSQL](#postgresql-a-type-change-runs-code-as-the-database-user) to **18.7, 17.12, 16.16, 15.20, or 14.25** and rebuild every C-language extension. The project rates [CVE-2026-6460](https://www.cve.org/CVERecord?id=CVE-2026-6460) CVSS 3.1 8.8 High: a database user who can create objects changes a composite type and the server runs code as the database's operating system user. The same release fixes 51 more flaws, and 32 of them carry the same 8.8 score. PostgreSQL 14.25 is the last release of that line. It is not in KEV. The upgrade does not show whether a statement already ran code.
 - **New this update:** Upgrade [Edito CMS](#edito-cms-an-unsigned-token-becomes-any-account) to **5.10.2607 or later**. CERT Polska rates [CVE-2026-59074](https://www.cve.org/CVERecord?id=CVE-2026-59074) CVSS 4.0 8.7: a logged-in user submits an unsigned token and gets a session for any account, including an administrator. [CVE-2026-59081](https://www.cve.org/CVERecord?id=CVE-2026-59081) is 8.4 and needs a cache entry the attacker can change. [CVE-2026-59075](https://www.cve.org/CVERecord?id=CVE-2026-59075) is 7.1. On the 5.8 branch, install the hotfix CERT Polska says was released; it names no build. None is in KEV. The upgrade does not expire a session that was already issued.
 - **New this update:** Disable the [RMM+ extension](#screenconnect-the-rmm-extension-accepts-its-default-secret) on an on-premises ScreenConnect server. ConnectWise rates [CVE-2026-127063](https://www.cve.org/CVERecord?id=CVE-2026-127063) CVSS 4.0 9.3: the extension ships with a static API secret, and an installation that keeps it accepts commands to managed agents. ConnectWise has already removed it from cloud environments. No fixed version exists. It is not in KEV. The ScreenConnect client flaw from September, CVE-2026-84869, is a different issue and is already in KEV.
@@ -391,6 +393,28 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
 ---
+
+## Apache Shiro: a cached LDAP login accepts any password
+
+<a id="apache-shiro-a-cached-ldap-login-accepts-any-password"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-shiro.md):** [Detection](details/apache-shiro.md#detection) · [Remediation](details/apache-shiro.md#remediation) · [Verification](details/apache-shiro.md#verification) · [Timeline](details/apache-shiro.md#timeline)
+
+**CVEs:** [CVE-2026-129349](https://www.cve.org/CVERecord?id=CVE-2026-129349)
+
+**Apache rates [CVE-2026-129349](https://www.cve.org/CVERecord?id=CVE-2026-129349) CVSS 4.0 9.1 Critical.** Apache is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N/S:N/AU:Y/R:U/V:C/RE:L/U:Red`. On `DefaultLdapRealm` and `JndiLdapRealm`, turning authentication caching on makes a later login skip the LDAP bind. The realm's default credentials matcher then accepts any password, so anyone who knows a username that has logged in once can log in as that user. Caching is off by default. The same announcement covers seven more flaws. Apache rates them 6.3, 6.0, 5.9, 2.3, 2.3, 2.3, and 2.1, all below this collection's threshold, and all of them are fixed in 3.0.2. Apache does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-15) for CVE-2026-129349 or the seven companions. Apache's notices do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix available | 2026-11-08 06:26:50 UTC | Shiro 3.0.2, which fixes all eight. 3.0.1 already fixed the LDAP flaw and the RememberMe flaw; the project does not publish that release's time. |
+| **Public announcement** | **2026-11-14 05:37:47 UTC** | Lenny Primak posted CVE-2026-129349 to oss-security. The other seven followed from 2026-11-13 23:28:57 UTC. |
+| **Last updated** | **2026-11-15 16:10 EST (UTC−05:00)** | New item. Upgrade to 3.0.2. |
+
+**Patch:** Upgrade every `org.apache.shiro` artifact to **3.0.2 or later**, rebuild, redeploy, and restart. 3.0.1 fixes this flaw and the RememberMe session fixation, and it leaves the other six. Shiro 2.x ended on 2026-06-29 and has no fix. Until the upgrade, turn authentication caching off on the LDAP realm, which is already the default. The upgrade does not show whether a login with the wrong password already happened.
+
+Sources: [oss-security, CVE-2026-129349](https://seclists.org/oss-sec/2026/q4/705), [Shiro 3.0.2](https://github.com/apache/shiro/releases/tag/shiro-root-3.0.2), [detailed guide](details/apache-shiro.md).
 
 ## PostgreSQL: a type change runs code as the database user
 
@@ -2926,7 +2950,7 @@ Sources: [oss-security announcement](https://www.openwall.com/lists/oss-security
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. This is a completed malware distribution through Cursor's marketplace.
 
-**Affected technology:** Cursor on macOS and Windows that installed or auto-updated `Anthropic.claude-code` **2.1.312** or **2.1.313** from the Cursor marketplace. **Worst case:** an attacker-controlled SSH key on the developer machine, plus a reverse tunnel if Cursor was running as administrator. On most hosts Cursor says the tunnel login failed; the key and startup scripts could still be there.
+**Affected technology:** Cursor on macOS and Windows that installed or auto-updated `Anthropic.claude-code` **2.1.312** or **2.1.313** from the Cursor marketplace. **Worst case:** an attacker-controlled SSH key on the developer machine, plus a reverse tunnel if Cursor was running as administrator. On most hosts Cursor says the tunnel login failed; the key and startup scripts could still be there. On November 14 Cursor said the same attacker first copied a key it had issued to Fireworks, then historical agent traces for fewer than 0.05% of users who were not in Privacy Mode, including API credentials for fewer than 0.01%. Cursor says it notified those users. A user who got no notice is outside that copy.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -2934,8 +2958,9 @@ Sources: [oss-security announcement](https://www.openwall.com/lists/oss-security
 | Public notice | 2026-10-29; time/TZ unknown | Cursor's notice is dated October 29 and says "today." |
 | Marketplace rebuilt; attacker server taken down | 2026-10-29, by 13:35 PT | Cursor. The server takedown does not remove keys already written. |
 | Scale and safe version | 2026-10-30; time/TZ unknown | Cursor on X: at most 5,000 users; install 2.1.314 or later. |
+| Investigation update | 2026-11-14; time/TZ unknown | Cursor's update is dated Friday, November 14. The attacker copied a Fireworks key, then historical agent traces for fewer than 0.05% of users not in Privacy Mode, and API credentials for fewer than 0.01%. Last activity Cursor saw was November 1, and it was blocked. |
 | Notice updated | 2026-10-30 11:30 PT (PDT, UTC−07:00) | Both 2.1.312 and 2.1.313 confirmed; indicators expanded. |
-| **Last updated** | **2026-10-31 12:04 EDT (UTC−04:00)** | Added from Cursor's notice and Microsoft's analysis. |
+| **Last updated** | **2026-11-15 16:10 EST (UTC−05:00)** | Cursor's November 14 update: traces copied for fewer than 0.05% of users. |
 
 **Am I impacted?** A Mac or Windows machine that used Cursor on October 29 and could have updated Claude Code during that 11-hour window. As the user who ran Cursor, search `~/.ssh/authorized_keys` (Windows also `C:\ProgramData\ssh\administrators_authorized_keys`) for `svc-telemetry`. The fingerprint Cursor publishes is `SHA256:0Z6R+DF64Do2nwQic8a7kkfDLNNk4IiK+2U2Rci4htk`. Also look for `~/Library/LaunchAgents/com.apple.sysmond.plist` or a Windows scheduled task named `SysMon` whose action runs `%USERPROFILE%\.config\smt.cmd`. No key found is Cursor's own "not impacted" result for that file; it does not clear a host you cannot check.
 
@@ -6200,6 +6225,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Apache Shiro below 3.0.2** | Upgrade every `org.apache.shiro` artifact to 3.0.2 or later and restart. With LDAP authentication caching on, a user who has logged in once can log in again with any password. 3.0.1 fixes that and leaves six more. Shiro 2.x has no fix. [Guide](details/apache-shiro.md#remediation). |
 | **Edito CMS before 5.10.2607** | Upgrade to 5.10.2607 or later. A logged-in user can otherwise turn an unsigned token into a session for any account. On the 5.8 branch, install the hotfix CERT Polska says was released; it names no build. [Guide](details/edito-cms.md#remediation). |
 | **ScreenConnect with the RMM+ extension** | Disable it. ConnectWise rates CVE-2026-127063 9.3: the extension's default API secret accepts commands to agents, and no fixed version exists. Cloud environments already had it removed. Also confirm clients are at 26.6.5 or later for the September flaw, which is a different CVE. [Guide](details/screenconnect-rmm.md#remediation). |
 | **Danfoss AK-SM800A** | Take the management interface off the public internet. Midnight Blue reports six pre-authentication flaws through firmware 5.3.2, and Strict mode does not close them. BSI says package 5.4.0 is not affected; Danfoss had not published it. No CVE is assigned. [Guide](details/danfoss-ak-sm800a.md#remediation). |

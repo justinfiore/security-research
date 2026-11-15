@@ -1,6 +1,6 @@
 # Cursor: malicious Claude Code extension installed an SSH backdoor
 
-**Last updated:** 2026-10-31 (America/New_York)
+**Last updated:** 2026-11-15 (America/New_York)
 
 [Back to Cursor summary](../black-october-2026.md#cursor-malicious-claude-code-extension-installed-an-ssh-backdoor) · [Changelog](../../CHANGELOG.md)
 
@@ -28,6 +28,7 @@ On October 29, 2026, Cursor served two modified builds of the Claude Code VS Cod
 | 2026-10-30 | Cursor posted on X that at most 5,000 users were affected and asked customers to move to Claude Code for VS Code **2.1.314**. [Cursor on X][cursor-x] |
 | 2026-10-30 11:30 PT | Cursor updated the notice: clarified that both 2.1.312 and 2.1.313 are affected, and expanded the indicators. [Cursor][cursor] |
 | 2026-10-30 | Microsoft Threat Intelligence published an analysis of the injected loader. It says the packages were never on the Visual Studio Marketplace or npm `@anthropic-ai/claude-code`, and that Anthropic confirmed its systems were not compromised. [Microsoft][msft] |
+| 2026-11-14; time/TZ unknown | Cursor published an investigation update, dated Friday. The attacker used a key Cursor had issued to Fireworks to copy a read-only bucket of historical agent traces, mostly from 2025, from sessions not in Privacy Mode. Fewer than 0.05% of users had traces copied, and fewer than 0.01% had API credentials in them. From those, the attacker reached Cursor's SaaS tools and, on October 29, the marketplace cache. Cursor says the last activity it saw was November 1 and was blocked, and that it emailed the affected users. [Cursor update][update] |
 
 **Evidence limits:** Cursor says errors in the payload, plus missing administrator rights, stopped the reverse tunnel from letting the attacker log in on most macOS and Windows hosts. The same hosts could still have the SSH key, the persistence files, and a beacon of host details. A missing `svc-telemetry` line does not prove the extension never loaded. Cursor does not publish a per-customer install list in the notice.
 
@@ -86,7 +87,9 @@ Absence of the key is what Cursor's own check calls "not impacted." It does not 
 - [Cursor security notice, published 2026-10-29, updated 2026-10-30 11:30 PT](https://cursor.com/blog/claude-code-extension-security-notice)
 - [Cursor on X, 2026-10-30, at most 5,000 users, update to 2.1.314](https://x.com/cursor_ai/status/2116074289053175808)
 - [Microsoft Threat Intelligence, 2026-10-30](https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/)
+- [Cursor investigation update, 2026-11-14](https://cursor.com/blog/security-incident-update)
 
 [cursor]: https://cursor.com/blog/claude-code-extension-security-notice
+[update]: https://cursor.com/blog/security-incident-update
 [cursor-x]: https://x.com/cursor_ai/status/2116074289053175808
 [msft]: https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/

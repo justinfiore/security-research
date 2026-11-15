@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-15 16:10 EST (UTC−05:00) — Apache Shiro; Cursor
+
+- **Apache Shiro:** Upgrade to [3.0.2 or later](black-october/details/apache-shiro.md#remediation) and restart. Apache rates CVE-2026-129349 CVSS 4.0 9.1: with LDAP authentication caching on, a user who has logged in once can log in again with any password. Caching is off by default. 3.0.1 fixes that one and leaves six more, which Apache rates 6.3 or lower. Shiro 2.x is end of life and gets no fix. It is not in KEV. The upgrade does not show whether a login with the wrong password already happened.
+- **Cursor:** On November 14 Cursor said the same attacker copied historical agent traces for [fewer than 0.05% of users](black-october/details/cursor-claude-code.md#timeline) who were not in Privacy Mode, and API credentials for fewer than 0.01%. Cursor says it emailed those users, and that the last activity it saw was November 1. The extension check is unchanged: look for the `svc-telemetry` key if Claude Code 2.1.312 or 2.1.313 could have installed on October 29.
+
 ## 2026-11-15 12:10 EST (UTC−05:00) — PostgreSQL; ELEX HelpDesk; OPNsense; Check Point Gaia; UnrealIRCd; Danfoss; GoAhead; ScreenConnect; Git; Rails; AO3
 
 - **ELEX HelpDesk:** Update to [3.4.0 or later](black-october/details/wordpress-plugins-nov6.md#remediation). Wordfence rates CVE-2026-119077 CVSS 3.1 9.8: through 3.3.9, the `form` parameter unserializes attacker-controlled input with no login, and Wordfence says that can run code. 3.3.9 fixed the earlier file deletion and not this one. It is not in KEV.

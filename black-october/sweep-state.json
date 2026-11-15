@@ -48,6 +48,10 @@
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
     },
+    "apache-shiro.md": {
+      "last_checked": "2026-11-15T19:55:55Z",
+      "hold": "none"
+    },
     "apache-thrift.md": {
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
@@ -181,7 +185,7 @@
       "hold": "awaiting-distros"
     },
     "cursor-claude-code.md": {
-      "last_checked": "2026-11-15T15:56:05Z",
+      "last_checked": "2026-11-15T19:55:55Z",
       "hold": "none"
     },
     "danfoss-ak-sm800a.md": {
@@ -546,6 +550,10 @@
     },
     "plex2shell.md": {
       "last_checked": "2026-11-15T15:56:05Z",
+      "hold": "none"
+    },
+    "postgresql-november.md": {
+      "last_checked": "2026-11-15T19:55:55Z",
       "hold": "none"
     },
     "prefab-ui.md": {
