@@ -1,6 +1,6 @@
 # Git: a recursive clone of a malicious repository runs code
 
-**Last updated:** 2026-11-11 (America/New_York)
+**Last updated:** 2026-11-15 (America/New_York)
 
 [Main Git summary](../black-october-2026.md#git-a-recursive-clone-of-a-malicious-repository-runs-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -39,7 +39,7 @@ git --version
 - On an older line, `2.55.1`, `2.54.1`, `2.53.1`, `2.52.1`, `2.51.3`, or `2.50.2` is the fix GitHub names for that line. A 2.49 or older build is outside the list GitHub published. GitHub does not say those older lines are unaffected.
 - An application that bundles its own Git, including an IDE, a CI image, or GitHub Desktop, does not use the system `git`. GitHub says Desktop and the Copilot app updates were still being coordinated when the post was written. Read that application's version, not only `git --version`.
 
-Git for Windows is a separate build. This page does not establish whether a Git for Windows installer based on 2.56.1 was published.
+Git for Windows **2.56.1** was published on 2026-11-10 at 22:13:20 UTC as a stable release, not a preview. Its notes say it addresses CVE-2026-111760, CVE-2026-113408, CVE-2026-114466, CVE-2026-114467, CVE-2026-114469, and CVE-2026-105437. [Git for Windows 2.56.1](https://github.com/git-for-windows/git/releases/tag/v2.56.1.windows.1)
 
 ## Remediation
 

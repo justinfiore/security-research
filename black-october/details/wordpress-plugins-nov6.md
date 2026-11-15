@@ -1,6 +1,6 @@
 # WordPress plugins: four unauthenticated Critical flaws
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-15 (America/New_York)
 
 [Main plugin summary](../black-october-2026.md#wordpress-plugins-four-unauthenticated-critical-flaws) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,7 @@ Four plugins, four CVEs, each scored Critical by its CNA. They are not one bug. 
 
 **[CVE-2026-119516](https://www.cve.org/CVERecord?id=CVE-2026-119516): Patchstack rates Radius Booking CVSS 3.1 9.8 Critical**, unauthenticated. Through **1.0.20**, untrusted data is deserialized (CWE-502). Patchstack does not publish the parameter. **Fixed in 1.0.21.** Object injection is not, by itself, code execution. It becomes code execution only if a suitable class is already loadable.
 
-**[CVE-2026-114630](https://www.cve.org/CVERecord?id=CVE-2026-114630): Wordfence rates ELEX WordPress HelpDesk & Customer Ticketing System CVSS 3.1 9.1 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H`. Through **3.3.8**, an unauthenticated caller stores a path on a ticket, then calls a factory-reset URL that deletes that path. Wordfence says deleting `wp-config.php` can lead to code execution. Confidentiality impact is None on the score: the flaw deletes a file, it does not read one. The reset URL is guarded by `is_admin()`, which checks the request type, not a capability. **Fixed in 3.3.9.** The slug is `elex-helpdesk-customer-support-ticket-system`.
+**[CVE-2026-114630](https://www.cve.org/CVERecord?id=CVE-2026-114630): Wordfence rates ELEX WordPress HelpDesk & Customer Ticketing System CVSS 3.1 9.1 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H`. Through **3.3.8**, an unauthenticated caller stores a path on a ticket, then calls a factory-reset URL that deletes that path. Wordfence says deleting `wp-config.php` can lead to code execution. Confidentiality impact is None on the score: the flaw deletes a file, it does not read one. The reset URL is guarded by `is_admin()`, which checks the request type, not a capability. That flaw is fixed in 3.3.9. **3.3.9 is not the floor any more.** Wordfence published [CVE-2026-119077](https://www.cve.org/CVERecord?id=CVE-2026-119077) on November 12 and rates it CVSS 3.1 9.8 Critical: through **3.3.9**, the `form` parameter unserializes attacker-controlled input with no login, and Wordfence says that can run code. **Fixed in 3.4.0.** The slug is `elex-helpdesk-customer-support-ticket-system`.
 
 **CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-06) for any of the four. Wordfence and Patchstack do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -50,7 +50,7 @@ If WP-CLI is not available, read the `Version:` line in each plugin's main file:
 | BuddyForms | `buddyforms` | through 2.10.5 | 2.10.6 |
 | miniOrange OAuth SSO | `miniorange-login-with-eve-online-google-facebook` | through 7.1.3 | 7.1.4 |
 | Radius Booking | `radius-booking` | through 1.0.20 | 1.0.21 |
-| ELEX HelpDesk | `elex-helpdesk-customer-support-ticket-system` | through 3.3.8 | 3.3.9 |
+| ELEX HelpDesk | `elex-helpdesk-customer-support-ticket-system` | through 3.3.9 | 3.4.0 |
 
 A plugin that is installed and inactive can still be reachable if its code loads. Confirm each one. A site with none of the four is outside this entry.
 
@@ -58,7 +58,7 @@ BuddyForms still needs "Anyone can register" and a public form. ELEX still needs
 
 ## Remediation
 
-1. Update BuddyForms to **2.10.6 or later**, miniOrange OAuth SSO to **7.1.4 or later**, Radius Booking to **1.0.21 or later**, and ELEX HelpDesk to **3.3.9 or later**.
+1. Update BuddyForms to **2.10.6 or later**, miniOrange OAuth SSO to **7.1.4 or later**, Radius Booking to **1.0.21 or later**, and ELEX HelpDesk to **3.4.0 or later**. 3.3.9 fixes the file deletion and not the object injection.
 2. If a plugin is unused, remove it instead of leaving an affected copy inactive.
 3. The updates do not delete an administrator account BuddyForms already created, do not restore a file ELEX already deleted, and do not undo an object that Radius Booking already instantiated.
 

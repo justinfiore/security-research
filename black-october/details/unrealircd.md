@@ -1,6 +1,6 @@
 # UnrealIRCd: a label tag runs a server command
 
-**Last updated:** 2026-11-09 (America/New_York)
+**Last updated:** 2026-11-15 (America/New_York)
 
 [Main UnrealIRCd summary](../black-october-2026.md#unrealircd-a-label-tag-runs-a-server-command) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -19,7 +19,7 @@ The same 6.2.7.1 release and the same hot-patch fix eight more issues the projec
 
 The project says it found the set during an internal audit with the help of AI, and it withholds no proof of concept in the advisory itself: the bug is an unescaped tag.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-09). The project says it is seeing attempts to exploit the flaw. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — added 2026-11-13, federal due date 2026-11-16. The feed marks ransomware use Unknown and forensic triage required. The project had already said it was seeing exploitation attempts. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -38,7 +38,7 @@ The project says it found the set during an internal audit with the help of AI, 
 | oss-security | 2026-11-08 07:31 UTC | The same advisory, plus the statement that the CVE record is now published. The mail's Date header is Sun, 8 Nov 2026 08:31:08 +0100. [oss-security][oss] |
 | CVE record | 2026-11-08; time/TZ unknown | MITRE published CVE-2026-114713. CVSS 3.1 8.6. The record does not mention the other eight issues. [CVE-2026-114713][cve] |
 | Exploitation attempts | 2026-11-08 10:59 UTC | The project's X account says it is seeing attempts to exploit the flaw, and tells operators who have not hot-patched or upgraded to do so. The post does not say a network was taken over. [X post][xpost] |
-| CISA KEV | Not listed (catalog 2026.11.06, checked 2026-11-09) | [KEV][kev] |
+| Added to CISA KEV | 2026-11-13 | Federal due date 2026-11-16. Ransomware use Unknown. Forensic triage required. [KEV][kev] |
 
 ## Detection
 
@@ -106,7 +106,7 @@ If any linked server was unpatched after 2026-11-07 15:00 UTC:
 - [oss-security][oss] — the same advisory, 2026-11-08 07:31 UTC, and the note that the CVE record is published.
 - [CVE-2026-114713][cve] — MITRE, published 2026-11-08. CVSS 3.1 8.6. Affected from 0 before 6.2.7.1. Confidentiality and availability are None in the vector.
 - [Project X post][xpost] — 2026-11-08 10:59 UTC. Seeing attempts to exploit CVE-2026-114713. Does not say a network was taken over.
-- [CISA KEV JSON][kev] — catalog 2026.11.06, checked 2026-11-09. CVE-2026-114713 is not listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.13. CVE-2026-114713 added 2026-11-13, due 2026-11-16.
 
 [adv]: https://forums.unrealircd.org/viewtopic.php?t=9487
 [oss]: https://www.openwall.com/lists/oss-security/2026/11/08/1

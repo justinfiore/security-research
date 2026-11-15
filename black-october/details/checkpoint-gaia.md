@@ -1,6 +1,6 @@
 # Check Point Gaia: a local socket runs a command as root
 
-**Last updated:** 2026-11-12 (America/New_York)
+**Last updated:** 2026-11-15 (America/New_York)
 
 [Back to Check Point summary](../black-october-2026.md#check-point-gaia-a-local-socket-runs-a-command-as-root) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,7 @@ Check Point's [November 12 advisory][blog] says the observed attacks chained thi
 
 The same advisory lists two more flaws that are not this one. [CVE-2026-107484](https://www.cve.org/CVERecord?id=CVE-2026-107484) is 7.3, a privilege escalation in the Gaia Portal backend by an authenticated user, and Check Point marks it not exploited. [CVE-2026-120490](https://www.cve.org/CVERecord?id=CVE-2026-120490) is 3.8 and is below the line this collection tracks.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12). Check Point reports exploitation of its own. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — added 2026-11-13, federal due date 2026-11-16. The feed marks ransomware use Unknown and forensic triage required. Check Point had already reported exploitation against a couple of dozen customers. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -32,7 +32,8 @@ The same advisory lists two more flaws that are not this one. [CVE-2026-107484](
 | Second wave | 2026-11-02; time unknown | Organizations in more than one country. Check Point reports no destructive activity in this wave. Activity continued until November 4. [Advisory][blog] |
 | SK created | 2026-11-08; time unknown | sk1000362, last modified 2026-11-12. [SK][sk] |
 | **Public announcement** | **2026-11-12; time unknown** | The CVE record and the research post. Check Point gives no time. [Record][cve] |
-| **Last updated** | **2026-11-12 (America/New_York)** | New item. |
+| Added to CISA KEV | 2026-11-13 | Federal due date 2026-11-16. Ransomware use Unknown. Forensic triage required. [KEV][kev] |
+| **Last updated** | **2026-11-15 (America/New_York)** | Now in KEV. |
 
 ## Detection
 
@@ -82,7 +83,7 @@ Check Point says a couple of dozen unpatched systems in one region were compromi
 - [Check Point advisory, November 12, 2026][blog] — the PHP2Shell chain, the October 30 to November 4 window, and the indicators.
 - [Check Point Research, PHP2Shell exploitation on Check Point gateway][research] — the two waves, the webshells, the implant, the wiper, and the file hashes.
 - [sk1000302](https://support.checkpoint.com/results/sk/sk1000302) — the PHP2Shell hotfix for the gateway web interfaces. Modified 2026-11-11.
-- [CISA KEV][kev] — catalog 2026.11.10, checked 2026-11-12. Not listed.
+- [CISA KEV][kev] — catalog 2026.11.13. CVE-2026-123039 added 2026-11-13, due 2026-11-16.
 
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-123039
 [sk]: https://support.checkpoint.com/results/sk/sk1000362

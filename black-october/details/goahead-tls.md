@@ -1,6 +1,6 @@
 # GoAhead TLS backend flaws: detection and remediation
 
-**Last updated:** 2026-11-12 (America/New_York)
+**Last updated:** 2026-11-15 (America/New_York)
 
 [Main GoAhead summary](../black-october-2026.md#goahead-embedded-web-server-tls-backend-flaws-bypass-revocation-or-expose-sessions) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -28,6 +28,7 @@ The same 6.1.1 release also fixes a Windows-only flaw published November 8. [CVE
 | Vendor advisories | 2026-10-12; GOAHEAD-SA-2026-0004 through -0006. |
 | Public disclosure | 2026-10-26 20:21 UTC; FoxIO analysis and PoCs. |
 | Windows CGI argument injection | 2026-11-08; time unknown | GHSA-mj5c-4rh5-f5pf, CVE-2026-121706, CVSS 3.1 8.1. Fixed in the same 6.1.1. |
+| LibreSSL depth check reported incomplete | 2026-10-30; time unknown | EmbedThis confirms the 6.1.1 depth check does not fire on LibreSSL's legacy verifier. Bitsight published the report on 2026-11-10. No newer release. [Bitsight][bitsight] |
 
 ## Detection
 
@@ -42,7 +43,7 @@ Missing build metadata is **unknown**, not safe. Device firmware may statically 
 ## Remediation
 
 1. Upgrade OpenSSL-compatible and Mbed TLS GoAhead builds to **6.1.1 or later**, using the device vendor's supported firmware path. The same release fixes the Windows CGI argument injection, CVE-2026-121706. On a Windows build that serves an interpreter such as `php-cgi.exe` from a CGI route, that flaw is the reason to move, and until the firmware is in, take that interpreter off the route or turn CGI off.
-2. For legacy LibreSSL builds, set `VERIFY_ISSUER=1` with a trusted CA bundle, or migrate to OpenSSL or LibreSSL 4.x. Confirm the configuration does not lock out required managed clients before rollout.
+2. For legacy LibreSSL builds, set `VERIFY_ISSUER=1` with a trusted CA bundle, or migrate to OpenSSL or LibreSSL 4.x. Do not treat 6.1.1 as the fix for that case. Bitsight reports that 6.1.1, built with LibreSSL 3.3.6, still accepted a 17-certificate chain, and EmbedThis confirmed on October 30 that the new depth comparison never fires because the legacy verifier caps the depth it reports at the limit. EmbedThis says the fix is in the next release, and as of November 10 no such release existed. Confirm the configuration does not lock out required managed clients before rollout.
 3. Until an upgrade is available, confine device management interfaces to a dedicated management network and revoke or remove untrusted client identities through the appliance's supported controls. Do not rely on a configured CRL alone on affected OpenSSL-compatible builds.
 4. Do not disable certificate validation to work around deployment problems; that broadens the affected trust boundary.
 
@@ -60,5 +61,8 @@ For suspected unauthorized management access, preserve appliance audit, TLS and 
 
 - [FoxIO technical disclosure](https://foxio.io/blog/choose-your-backend-three-tls-bugs-in-goahead): affected configurations, proof-of-concept evidence and mitigations.
 - [GOAHEAD-SA-2026-0004 / CVE-2026-115884](https://github.com/embedthis/goahead/security/advisories/GHSA-r392-vqwx-3r4g) and [GOAHEAD-SA-2026-0006 / CVE-2026-115881](https://github.com/embedthis/goahead/security/advisories/GHSA-5m75-xq69-c3c5).
+- [Bitsight][bitsight] — published 2026-11-10. GoAhead 6.1.1 with LibreSSL 3.3.6 accepted a 17-certificate chain. EmbedThis confirmed on 2026-10-30 that the depth check does not work on the legacy verifier and that the fix is in the next release. No newer release as of publication. EmbedThis does not treat it as a new vulnerability.
 - [GOAHEAD-SA-2026-0005](https://github.com/embedthis/goahead/security/advisories/GHSA-fmvx-2xfx-2gq4) and [GoAhead SSL documentation](https://www.embedthis.com/goahead/doc/users/ssl.html).
 - [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), catalog 2026.10.27.
+
+[bitsight]: https://www.bitsight.com/blog/cve-2026-115884-goahead-tls-vulnerabilities-incomplete-fix

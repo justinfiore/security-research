@@ -1,10 +1,10 @@
 # OPNsense: Google Cloud DNS command injection in the ACME client
 
-**Last updated:** 2026-11-05 (America/New_York)
+**Last updated:** 2026-11-15 (America/New_York)
 
 [Back to OPNsense ACME client summary](../black-october-2026.md#opnsense-google-cloud-dns-command-injection-in-the-acme-client) · [Changelog](../../CHANGELOG.md)
 
-The ACME Client plugin for OPNsense, `os-acme-client` through 4.17, interpolates Google Cloud DNS account and project strings into a shell command. MITRE's CVE record scores [CVE-2026-123025](https://www.cve.org/CVERecord?id=CVE-2026-123025) CVSS 4.0 9.4 Critical. A logged-in user who can issue or renew certificates can run commands as root. The fix is in the plugin source as 4.18. The package repository checked on 2026-11-05 still publishes 4.17, and the maintainer has not set a release date.
+The ACME Client plugin for OPNsense, `os-acme-client` through 4.17, interpolates Google Cloud DNS account and project strings into a shell command. MITRE's CVE record scores [CVE-2026-123025](https://www.cve.org/CVERecord?id=CVE-2026-123025) CVSS 4.0 9.4 Critical. A logged-in user who can issue or renew certificates can run commands as root. The 26.7 package repository now publishes **4.18**. The 26.1 repository still publishes 4.16.
 
 **CISA KEV:** Not listed (catalog 2026.11.04, checked 2026-11-05). The CVE record does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -25,7 +25,8 @@ The ACME Client plugin for OPNsense, `os-acme-client` through 4.17, interpolates
 | Maintainer on a CVE | 2026-11-03 16:31 UTC | The maintainer wrote they do not plan to publish a GHSA or CVE, and that 4.18 waits on the next OPNsense release, with no date. |
 | CVE record | 2026-11-05 | MITRE CNA. CVSS 4.0 9.4. Affected from 0 through 4.17.0. The record does not name a fixed version. |
 | Package check | 2026-11-05 | `pkg.opnsense.org` FreeBSD 15 / 26.7 `latest/All` lists `os-acme-client-4.17.pkg` and `os-acme-client-devel-4.17.pkg`. 26.1 lists 4.16. 4.18 is not in either directory. |
-| **Last updated** | **2026-11-05 (America/New_York)** | New item. |
+| 4.18 package published | 2026-11-15; time unknown | The 26.7 repository lists `os-acme-client-4.18.pkg` and `os-acme-client-devel-4.18.pkg`. The 26.1 repository still lists 4.16. [26.7 packages][pkg267] |
+| **Last updated** | **2026-11-15 (America/New_York)** | 4.18 is in the 26.7 repository. |
 
 ## Detection
 
@@ -36,9 +37,9 @@ The ACME Client plugin for OPNsense, `os-acme-client` through 4.17, interpolates
 
 ## Remediation
 
-1. The fixed plugin version in git is **4.18**. Do not install a package that is not in the firmware repository. On 2026-11-05 the 26.7 repository's newest `os-acme-client` and `os-acme-client-devel` packages are both **4.17**. The 26.1 repository is **4.16**.
-2. Until 4.18 is the package the firmware page offers, remove or stop using the Google Cloud DNS challenge. The changelog for 4.18 also changes the Selfhost DNS API to an API key; that is a separate breaking change, not this flaw.
-3. The maintainer said on 2026-11-03 that 4.18 ships with the next OPNsense release and that they will not publish a GHSA. A firewall that only updates plugins from the GUI will not get 4.18 before that package exists.
+1. On OPNsense 26.7, install **os-acme-client 4.18 or later** from System → Firmware → Plugins. The 26.7 repository lists `os-acme-client-4.18.pkg` and `os-acme-client-devel-4.18.pkg`. The changelog for 4.18 also changes the Selfhost DNS API to an API key; that is a separate breaking change, not this flaw.
+2. The 26.1 repository still lists 4.16, so a firewall on that release does not have the package. Until it does, stop using the Google Cloud DNS challenge.
+3. The maintainer said on 2026-11-03 that they will not publish a GHSA. The package is the fix.
 4. Updating later does not undo a command that already ran as root.
 
 ## Verification
@@ -59,7 +60,7 @@ The ACME Client plugin for OPNsense, `os-acme-client` through 4.17, interpolates
 - [Pull 5873][pr] — merged 2026-11-03 by the maintainer. Commit message: fix command injection in Google Cloud DNS validation. Reported by `@cppghoul`. The maintainer's comment the same day: no planned GHSA or CVE, and no release date.
 - [Plugin changelog on master][changelog] — 4.18 lists the Google Cloud DNS command-injection fix. The same section's breaking change is the Selfhost API key.
 - [Plugin Makefile on master][makefile] — `PLUGIN_VERSION=4.18`.
-- [26.7 package directory][pkg267] — `os-acme-client-4.17.pkg` and `os-acme-client-devel-4.17.pkg`, checked 2026-11-05. No 4.18 package.
+- [26.7 package directory][pkg267] — checked 2026-11-15. `os-acme-client-4.18.pkg` and `os-acme-client-devel-4.18.pkg` are listed. The 26.1 directory still lists 4.16.
 - [26.1 package directory][pkg261] — `os-acme-client-4.16_1.pkg`, checked 2026-11-05.
 - [CISA KEV JSON feed][kev] — CVE-2026-123025 not listed (catalog 2026.11.04, checked 2026-11-05).
 

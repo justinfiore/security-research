@@ -1,6 +1,6 @@
 # ScreenConnect: the RMM+ extension accepts its default secret
 
-**Last updated:** 2026-11-13 (America/New_York)
+**Last updated:** 2026-11-15 (America/New_York)
 
 [Main ScreenConnect summary](../black-october-2026.md#screenconnect-the-rmm-extension-accepts-its-default-secret) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -29,7 +29,8 @@ A different ScreenConnect flaw, [CVE-2026-84869](https://www.cve.org/CVERecord?i
 | CVE-2026-84869 added to KEV | 2026-09-11 | Federal due date 2026-09-14. The client flaw, not CVE-2026-127063. [KEV][kev] |
 | **Public announcement** | **2026-11-12; time unknown** | ConnectWise publishes CVE-2026-127063. The disclosure is dated November 12 and gives no clock time. [Disclosure][gh] |
 | Trust-center update | 2026-11-12 18:45 UTC | Investigation ongoing. Five extensions disabled where ConnectWise could. [Trust center][trust] |
-| **Last updated** | **2026-11-13 (America/New_York)** | New item. Disable the extension. |
+| Trust-center update | 2026-11-13 21:15 UTC | Third-party researchers report more activity against on-premises environments that still have the extensions enabled. Disable them now, and confirm every technician client is 26.6.5 or later. [Trust center][trust] |
+| **Last updated** | **2026-11-15 (America/New_York)** | On-premises servers still have to disable the extensions. |
 
 ## Detection
 
@@ -40,7 +41,7 @@ A different ScreenConnect flaw, [CVE-2026-84869](https://www.cve.org/CVERecord?i
 ## Remediation
 
 1. On a cloud-hosted ScreenConnect environment, ConnectWise says it has already disabled and removed the affected extensions. Confirm they are gone. No further action is required for the extension itself.
-2. On an on-premises ScreenConnect server, disable the RMM+ extension and confirm it stays disabled. Do not re-enable it and do not reinstall it. ConnectWise says no fixed version has been announced, and that further guidance is still to come.
+2. On an on-premises ScreenConnect server, disable the RMM+ extension and confirm it stays disabled. Do not re-enable it and do not reinstall it. The November 13 update says third-party researchers are reporting more activity against on-premises environments that still have the extensions enabled, and it tells on-premises partners to disable them immediately. ConnectWise says no fixed version has been announced.
 3. Changing the API secret is what an administrator can do, and the disclosure does not present it as the fix. The instruction ConnectWise gives is to disable the extension.
 4. Separately, confirm the ScreenConnect client on managed endpoints is **26.6.5 or later**. That is the fix for CVE-2026-84869, which is a different flaw. Updating the client does not close CVE-2026-127063.
 
