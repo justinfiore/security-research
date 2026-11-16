@@ -2,6 +2,12 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-16 16:10 EST (UTC−05:00) — NoisyTCP; Batflat; Prime
+
+- **Linux kernel:** Debian and Oracle now have [fixed kernels](black-october/details/linux-noisytcp.md#detection) for CVE-2026-99288. Debian bookworm is 6.1.192-1 (DLA-4906-1) and trixie is 6.12.117-1 (DSA-6628-1). Oracle Linux UEK is fixed on 7, 8, 9, and 10. Debian forky, Red Hat 8, 9, and 10, and Ubuntu still have none. Install the fixed kernel and reboot.
+- **Batflat:** The [affected range](black-october/details/batflat.md#detection) now includes 1.3.7. CERT Polska's page still says through 1.3.6. The CVE record, updated the same day, says through 1.3.7, and the finder's repository says 1.3.7 still lets the template tags through. There is still no fix. Take a public site offline.
+- **Prime:** The command-injection flaw, CVE-2026-129943, is [CVSS 4.0 8.6 and CVSS 3.1 7.2](black-october/details/prime-cms.md#remediation), not 8.7 and 8.6. The 3.1 vector requires high privileges. There is still no fix. Take a public instance offline.
+
 ## 2026-11-16 12:10 EST (UTC−05:00) — NoisyTCP; 3DEXPERIENCE; NodePress; Prime; Tensei; Fastify; Qt; Octopus; httpx; Batflat; Qubes; ScreenConnect; Debian; Thunderbird
 
 - **Linux kernel:** Install a kernel that names [CVE-2026-99288](black-october/details/linux-noisytcp.md#remediation) and reboot. Red Hat rates it CVSS 3.1 7.5: one TCP connection can panic the host, with no login. kernel.org publishes no score. The upstream floors are 6.12.117, 6.18.63, and 7.3.4. Red Hat 8, 9, and 10, Ubuntu, and Debian have no fixed package. It is not in KEV.

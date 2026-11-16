@@ -1,5 +1,9 @@
 {
   "items": {
+    "3dexperience.md": {
+      "last_checked": "2026-11-16T19:56:06Z",
+      "hold": "awaiting-fix"
+    },
     "acf-extended.md": {
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "none"
@@ -53,7 +57,7 @@
       "hold": "none"
     },
     "apache-shiro.md": {
-      "last_checked": "2026-11-15T19:55:55Z",
+      "last_checked": "2026-11-16T19:56:06Z",
       "hold": "none"
     },
     "apache-thrift.md": {
@@ -99,6 +103,10 @@
     "barracuda.md": {
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "none"
+    },
+    "batflat.md": {
+      "last_checked": "2026-11-16T19:56:06Z",
+      "hold": "awaiting-fix"
     },
     "bee-js.md": {
       "last_checked": "2026-11-15T15:56:05Z",
@@ -201,7 +209,7 @@
       "hold": "awaiting-distros"
     },
     "cursor-claude-code.md": {
-      "last_checked": "2026-11-15T19:55:55Z",
+      "last_checked": "2026-11-16T19:56:06Z",
       "hold": "none"
     },
     "cyrus-sasl.md": {
@@ -278,6 +286,10 @@
     },
     "fastify-http-proxy.md": {
       "last_checked": "2026-11-16T15:55:55Z",
+      "hold": "none"
+    },
+    "fastify-multipart.md": {
+      "last_checked": "2026-11-16T19:56:06Z",
       "hold": "none"
     },
     "firefox.md": {
@@ -452,6 +464,10 @@
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
     },
+    "linux-noisytcp.md": {
+      "last_checked": "2026-11-16T19:56:06Z",
+      "hold": "awaiting-distros"
+    },
     "linux-tcp-options.md": {
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "awaiting-distros"
@@ -524,12 +540,20 @@
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "none"
     },
+    "nodepress.md": {
+      "last_checked": "2026-11-16T19:56:06Z",
+      "hold": "awaiting-fix"
+    },
     "northflank.md": {
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
     },
     "nvidia-brev.md": {
       "last_checked": "2026-11-15T15:56:05Z",
+      "hold": "none"
+    },
+    "octopus-deploy.md": {
+      "last_checked": "2026-11-16T19:56:06Z",
       "hold": "none"
     },
     "openam.md": {
@@ -581,7 +605,7 @@
       "hold": "none"
     },
     "postgresql-november.md": {
-      "last_checked": "2026-11-15T19:55:55Z",
+      "last_checked": "2026-11-16T19:56:06Z",
       "hold": "none"
     },
     "prefab-ui.md": {
@@ -591,6 +615,10 @@
     "presenton.md": {
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "none"
+    },
+    "prime-cms.md": {
+      "last_checked": "2026-11-16T19:56:06Z",
+      "hold": "awaiting-fix"
     },
     "privilege-manager.md": {
       "last_checked": "2026-11-15T15:56:05Z",
@@ -607,6 +635,10 @@
     "pwnescape.md": {
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "awaiting-distros"
+    },
+    "qt-qxml.md": {
+      "last_checked": "2026-11-16T19:56:06Z",
+      "hold": "awaiting-fix"
     },
     "rails.md": {
       "last_checked": "2026-11-16T15:55:55Z",
@@ -627,6 +659,10 @@
     "red-hat-quay.md": {
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "awaiting-fix"
+    },
+    "ruby-httpx.md": {
+      "last_checked": "2026-11-16T19:56:06Z",
+      "hold": "none"
     },
     "s2member.md": {
       "last_checked": "2026-11-16T15:55:55Z",
@@ -726,6 +762,10 @@
     },
     "telegram-clients.md": {
       "last_checked": "2026-11-16T15:55:55Z",
+      "hold": "awaiting-fix"
+    },
+    "tensei.md": {
+      "last_checked": "2026-11-16T19:56:06Z",
       "hold": "awaiting-fix"
     },
     "tum.md": {

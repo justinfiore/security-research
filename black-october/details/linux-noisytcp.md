@@ -33,7 +33,9 @@ This is not the [IPv4 TCP options use-after-free](linux-tcp-options.md), the [TC
 | Upstream fix merged | 2026-11-03; time/TZ unknown | Commit `4e2b3ef19e0e`. Kim wrote it; Paolo Abeni merged it. [kernel.org][cve] |
 | CVE record published | 2026-11-10 18:19:08 UTC | kernel.org CNA. No CVSS score. First fixed stable releases: 6.12.117, 6.18.63, 7.3.4. [kernel.org][cve] |
 | **Public technical disclosure** | **2026-11-15 16:00:04 UTC** | Kim posted to oss-security after the linux-distros embargo ended. His message is dated 2026-11-16 01:00:04 +0900. [oss-security][oss] |
-| **Last updated** | **2026-11-16 (America/New_York)** | New item. No distribution has a fixed package on every tracked release. |
+| Debian bookworm and trixie fixed | 2026-11-13 and 2026-11-15; time/TZ unknown | trixie: linux 6.12.117-1, [DSA-6628-1][dsa] (November 13). bookworm: linux 6.1.192-1, [DLA-4906-1][dla] (November 15). The security archive publishes bookworm as 6.1.192-2. [Debian tracker][debian] |
+| Oracle Linux UEK fixed | 2026-11-12 and 2026-11-13; time/TZ unknown | UEK on Oracle Linux 7, 8, 9, and 10. [Oracle][oracle] |
+| **Last updated** | **2026-11-16 (America/New_York)** | Debian bookworm and trixie, and Oracle Linux UEK, now have fixed kernels. Red Hat, Ubuntu, and the RHEL rebuilds do not. |
 
 ## Detection
 
@@ -46,11 +48,11 @@ The listener does not have to be anything special. Nginx, Apache, and SSH at the
 | Upstream stable | 6.12, 6.18, 7.3 | Fixed in 6.12.117, 6.18.63, 7.3.4. No fixed release listed for 5.10, 5.15, 6.1, or 6.6. [kernel.org][cve] |
 | Red Hat Enterprise Linux | 8, 9, 10 | Affected, kernel and kernel-rt. No erratum. RHEL 6 and 7 are not affected. [Red Hat][rh] |
 | Ubuntu | 20.04, 22.04, 24.04, 26.04, 26.10 | `linux` is "Needs evaluation" on each. No fixed package. Priority Medium. [Ubuntu][ubuntu] |
-| Debian | bookworm, trixie, forky, sid | Vulnerable. bookworm security is 6.1.190-1, trixie security is 6.12.116-1, forky is 7.2.15-1, sid is 7.3.3-1. The tracker lists no fixed version. [Debian][debian] |
-| SUSE / SLES | — | No SUSE CVE page (HTTP 404 on 2026-11-16). |
+| Debian | bookworm, trixie, forky, sid | bookworm security is fixed at 6.1.192-2 ([DLA-4906-1][dla] names 6.1.192-1). trixie security is fixed at 6.12.117-1 ([DSA-6628-1][dsa]). sid is fixed at 7.3.4-1. forky 7.2.15-1 is still vulnerable. [Debian][debian] |
+| SUSE / SLES | — | No SUSE CVE page (HTTP 404 on 2026-11-16). The bugzilla page did not load. |
 | Amazon Linux | 2 and 2023 | No Amazon Linux advisory found on 2026-11-16. |
 | AlmaLinux, Rocky Linux | — | No erratum found on 2026-11-16. |
-| Oracle Linux | — | No Oracle erratum read on 2026-11-16. A secondary report says Oracle shipped Unbreakable Enterprise Kernel packages on November 12; that was not confirmed against an Oracle advisory. |
+| Oracle Linux | UEK on 7, 8, 9, 10 | Fixed in the Unbreakable Enterprise Kernel. [ELSA-2026-500630][elsa630] (November 12) covers UEK on 7 and 8. [ELSA-2026-500631][elsa631] (November 13) covers UEK on 8 and 9. [ELSA-2026-500632][elsa632] (November 12) covers UEK on 9 and 10. Oracle's CVE page lists no RHCK erratum. [Oracle][oracle] |
 
 A row that says no advisory was found means **unknown**, not fixed.
 
@@ -58,7 +60,7 @@ A row that says no advisory was found means **unknown**, not fixed.
 
 Install the distribution kernel that names CVE-2026-99288, then reboot into it. Installing the package does not change the kernel that is running.
 
-No tracked distribution has shipped that package on every supported release. Until one does:
+Debian bookworm and trixie, Debian sid, and the Oracle Linux Unbreakable Enterprise Kernel have that package. Red Hat 8, 9, and 10, Ubuntu, Debian forky, and the RHEL rebuilds do not. Until yours does:
 
 1. Prefer the upstream stable floors only where you already build your own kernel: 6.12.117, 6.18.63, or 7.3.4. Do not cherry-pick `4e2b3ef19e0e` into a distribution kernel.
 2. Kim's temporary mitigations, which he says block the race he demonstrated: set `net.ipv4.tcp_syncookies=0` in **each** network namespace, or reduce the exposed interface to one RX queue and disable RPS and RFS. Disabling SYN cookies weakens SYN-flood protection. Neither is a fix, and neither covers a kernel that is still missing the patch.
@@ -79,7 +81,8 @@ The demonstrated result is a kernel panic, which stops the host rather than leav
 - [V4bel/NoisyTCP](https://github.com/V4bel/NoisyTCP) — the same write-up. The repository describes the proof of concept and does not include the code.
 - [Red Hat CVE-2026-99288][rh] — Important, CVSS 3.1 7.5, preliminary. RHEL 8, 9, and 10 affected; RHEL 6 and 7 not affected. No erratum. Red Hat says no data alteration and no code execution.
 - [Ubuntu CVE-2026-99288][ubuntu] — priority Medium. `linux` needs evaluation on 20.04 through 26.10. No fixed package. Last updated 11 November 2026.
-- [Debian security tracker, CVE-2026-99288][debian] — bookworm, trixie, forky, and sid vulnerable. No fixed version listed.
+- [Debian security tracker, CVE-2026-99288][debian] — read 2026-11-16. bookworm security 6.1.192-2 fixed (fixed version 6.1.192-1, [DLA-4906-1][dla], November 15). trixie security 6.12.117-1 fixed ([DSA-6628-1][dsa], November 13). sid 7.3.4-1 fixed. forky 7.2.15-1 vulnerable.
+- [Oracle Linux CVE-2026-99288][oracle] — Important. UEK errata only: ELSA-2026-500630 (November 12, Oracle Linux 7 and 8), ELSA-2026-500631 (November 13, Oracle Linux 8 and 9), ELSA-2026-500632 (November 12, Oracle Linux 9 and 10). Each names CVE-2026-99288. No RHCK erratum is listed. Oracle's own CVSS 3.1 vector scores 8.1 and is marked preliminary.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, released 2026-11-13T20:24:18.3008Z, read 2026-11-16. CVE-2026-99288 is not in it.
 
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-99288
@@ -87,3 +90,9 @@ The demonstrated result is a kernel panic, which stops the host rather than leav
 [rh]: https://access.redhat.com/security/cve/CVE-2026-99288
 [ubuntu]: https://ubuntu.com/security/CVE-2026-99288
 [debian]: https://security-tracker.debian.org/tracker/CVE-2026-99288
+[dsa]: https://lists.debian.org/debian-security-announce/2026/msg00548.html
+[dla]: https://lists.debian.org/debian-lts-announce/2026/11/msg00032.html
+[oracle]: https://linux.oracle.com/cve/CVE-2026-99288.html
+[elsa630]: https://linux.oracle.com/errata/ELSA-2026-500630.html
+[elsa631]: https://linux.oracle.com/errata/ELSA-2026-500631.html
+[elsa632]: https://linux.oracle.com/errata/ELSA-2026-500632.html

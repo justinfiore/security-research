@@ -8,7 +8,7 @@ Prime is a GraphQL CMS, package `@primecms/core`, by birkir. [CVE-2026-129941](h
 
 Affected: every release through **0.4.0-beta.0**. The finder, Ikram-4, opened [GitHub issue 549](https://github.com/birkir/prime/issues/549) on November 16. It is open and has no maintainer reply. npm reports `@primecms/core` **0.3.4-beta.3** as the latest publish, from 2020-09-22, which is inside the affected range. No release fixes it.
 
-A second flaw in the same report, [CVE-2026-129943](https://www.cve.org/CVERecord?id=CVE-2026-129943), is command injection in the `updateSystem` mutation. VulnCheck rates it **CVSS 4.0 8.7 High** and **CVSS 3.1 8.6 High**, and it needs the account the first flaw creates. The same range applies and there is no fix.
+A second flaw in the same report, [CVE-2026-129943](https://www.cve.org/CVERecord?id=CVE-2026-129943), is command injection in the `updateSystem` mutation. VulnCheck rates it **CVSS 4.0 8.6 High** and **CVSS 3.1 7.2 High**. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H`, so it needs high privileges: the account the first flaw creates. The same range applies and there is no fix.
 
 This is not [NodePress](nodepress.md).
 
@@ -55,7 +55,7 @@ No source reports exploitation. If the service was reachable, review users creat
 ## Sources
 
 - [CVE-2026-129941](https://www.cve.org/CVERecord?id=CVE-2026-129941) — VulnCheck, published 2026-11-16. CVSS 4.0 9.3 and CVSS 3.1 9.8. `@primecms/core` through 0.4.0-beta.0.
-- [CVE-2026-129943](https://www.cve.org/CVERecord?id=CVE-2026-129943) — VulnCheck, published 2026-11-16. CVSS 4.0 8.7 and CVSS 3.1 8.6. Command injection in `updateSystem`, same range.
+- [CVE-2026-129943](https://www.cve.org/CVERecord?id=CVE-2026-129943) — VulnCheck, published and updated 2026-11-16. CVSS 4.0 8.6 and CVSS 3.1 7.2. Command injection in `updateSystem`, same range. The 3.1 vector requires high privileges.
 - [GitHub issue 549][issue] — opened 2026-11-16 by Ikram-4. Still open.
 - [npm, `@primecms/core`][npm] — latest 0.3.4-beta.3, published 2020-09-22.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, released 2026-11-13T20:24:18.3008Z, read 2026-11-16. Neither CVE is in it.

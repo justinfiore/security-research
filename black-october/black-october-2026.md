@@ -446,9 +446,10 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 | Upstream fix merged | 2026-11-03; time/TZ unknown | Commit `4e2b3ef19e0e`. |
 | CVE record | 2026-11-10 18:19:08 UTC | kernel.org. No score. Fixed stable floors 6.12.117, 6.18.63, 7.3.4. |
 | **Public technical disclosure** | **2026-11-15 16:00:04 UTC** | oss-security, after the linux-distros embargo. The message is dated 2026-11-16 01:00:04 +0900. |
-| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. No tracked distribution has a fixed package on every supported release. |
+| Debian and Oracle UEK fixed | 2026-11-12 through 2026-11-15; time/TZ unknown | Debian trixie 6.12.117-1 (DSA-6628-1) and bookworm 6.1.192-1 (DLA-4906-1). Oracle Linux UEK on 7, 8, 9, and 10 (ELSA-2026-500630, ELSA-2026-500631, ELSA-2026-500632). |
+| **Last updated** | **2026-11-16 16:10 EST (UTC−05:00)** | Debian bookworm and trixie, and Oracle Linux UEK, now have fixed kernels. |
 
-**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Red Hat 8, 9, and 10 are affected with no erratum. Ubuntu 20.04 through 26.10 says needs evaluation. Debian bookworm, trixie, forky, and sid are vulnerable, with no fixed version listed. No SUSE or Amazon Linux advisory was found. See the [distribution table](details/linux-noisytcp.md#remediation).
+**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1) and trixie at 6.12.117-1 (DSA-6628-1); forky is still vulnerable. Oracle Linux UEK is fixed on 7, 8, 9, and 10. Red Hat 8, 9, and 10 are affected with no erratum. Ubuntu 20.04 through 26.10 says needs evaluation. No SUSE or Amazon Linux advisory was found. See the [distribution table](details/linux-noisytcp.md#detection).
 
 Sources: [oss-security](https://www.openwall.com/lists/oss-security/2026/11/15/2), [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-99288), [detailed guide](details/linux-noisytcp.md).
 
@@ -503,7 +504,7 @@ Sources: [CVE-2026-129955](https://www.cve.org/CVERecord?id=CVE-2026-129955), [G
 
 **CVEs:** [CVE-2026-129941](https://www.cve.org/CVERecord?id=CVE-2026-129941), [CVE-2026-129943](https://www.cve.org/CVERecord?id=CVE-2026-129943)
 
-**VulnCheck rates [CVE-2026-129941](https://www.cve.org/CVERecord?id=CVE-2026-129941) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Prime, a GraphQL CMS (`@primecms/core`) through **0.4.0-beta.0**, accepts `createUser` with no login, and the new account is an administrator. VulnCheck says the login check is commented out. [CVE-2026-129943](https://www.cve.org/CVERecord?id=CVE-2026-129943) is CVSS 4.0 8.7 and CVSS 3.1 8.6: the `updateSystem` mutation runs a command, and it needs the account the first flaw creates. The latest npm publish is **0.3.4-beta.3**, from 2020-09-22, inside the affected range. No release fixes either. The finder's report, opened November 16, has no maintainer reply. This is not [NodePress](#nodepress-the-default-password-and-the-default-signing-key-are-administrator).
+**VulnCheck rates [CVE-2026-129941](https://www.cve.org/CVERecord?id=CVE-2026-129941) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Prime, a GraphQL CMS (`@primecms/core`) through **0.4.0-beta.0**, accepts `createUser` with no login, and the new account is an administrator. VulnCheck says the login check is commented out. [CVE-2026-129943](https://www.cve.org/CVERecord?id=CVE-2026-129943) is CVSS 4.0 8.6 and CVSS 3.1 7.2: the `updateSystem` mutation runs a command, and the 3.1 vector requires high privileges, which is the account the first flaw creates. The latest npm publish is **0.3.4-beta.3**, from 2020-09-22, inside the affected range. No release fixes either. The finder's report, opened November 16, has no maintainer reply. This is not [NodePress](#nodepress-the-default-password-and-the-default-signing-key-are-administrator).
 
 **CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -512,7 +513,7 @@ Sources: [CVE-2026-129955](https://www.cve.org/CVERecord?id=CVE-2026-129955), [G
 | `@primecms/core` 0.3.4-beta.3 | 2020-09-22 14:01:43 UTC | Latest npm publish. Inside the affected range. |
 | Finder's report | 2026-11-16; time/TZ unknown | GitHub issue 549. No maintainer reply. |
 | **Public announcement** | **2026-11-16; NVD published 15:17 UTC** | VulnCheck published both records. |
-| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. No fixed release. |
+| **Last updated** | **2026-11-16 16:10 EST (UTC−05:00)** | CVE-2026-129943 is CVSS 4.0 8.6 and CVSS 3.1 7.2, not 8.7 and 8.6. |
 
 **Patch:** No fixed release. Take a public instance offline. Taking it offline does not remove an account already created.
 
@@ -640,14 +641,15 @@ Sources: [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784), [h
 
 **CVEs:** [CVE-2026-111559](https://www.cve.org/CVERecord?id=CVE-2026-111559)
 
-**CERT Polska rates [CVE-2026-111559](https://www.cve.org/CVERecord?id=CVE-2026-111559) CVSS 4.0 9.3 Critical.** CERT Polska is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:L/SI:L/SA:L`. Batflat CMS **1.2.0 through 1.3.6** does not sanitize the contact form, and a request with no login runs PHP as `www-data`. CERT Polska says the project is no longer maintained and the issue is not fixed.
+**CERT Polska rates [CVE-2026-111559](https://www.cve.org/CVERecord?id=CVE-2026-111559) CVSS 4.0 9.3 Critical.** CERT Polska is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:L/SI:L/SA:L`. Batflat CMS does not sanitize the contact form, and a request with no login runs PHP as `www-data`. CERT Polska's page says **1.2.0 through 1.3.6**. The CVE record, updated the same day, says **through 1.3.7**. The finder's repository says 1.3.7 captures the input and the escaping still lets the template tags through. CERT Polska says the project is no longer maintained and the issue is not fixed.
 
 **CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-16; NVD published 13:17 UTC** | CERT Polska's advisory shows the date and no time. |
-| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. No fix. |
+| CVE record widened | 2026-11-16 15:26:22 UTC | The record now says through 1.3.7. CERT Polska's page still says through 1.3.6. |
+| **Last updated** | **2026-11-16 16:10 EST (UTC−05:00)** | The affected range now includes 1.3.7. Still no fix. |
 
 **Patch:** No fix. Take the site offline and replace it. Do not leave the contact endpoint exposed while you plan the replacement.
 
@@ -6672,7 +6674,7 @@ flowchart TD
 | **Qt 5.0.0 through 6.12.0** | Update to 6.8.10, 6.11.3, or 6.12.1 or later. The Qt Group rates CVE-2026-105925 8.2: `QXmlSimpleReader` can exhaust memory. Qt 5 has no release named. [Guide](details/qt-qxml.md#remediation). |
 | **Self-hosted Octopus Server before 2026.2.13526, or 2026.3 before 2026.3.15909** | Upgrade to 2026.3.16117. Octopus rates CVE-2026-116288 8.6: a role editor can grant itself a deployment. Octopus Cloud is already updated. [Guide](details/octopus-deploy.md#remediation). |
 | **Ruby `httpx` 1.9.0 with `oj` and without `multi_json`** | Upgrade `httpx` to 1.9.1 or later. JFrog rates CVE-2026-129784 8.5: a JSON response can build a Ruby object. Only 1.9.0 is affected. [Guide](details/ruby-httpx.md#remediation). |
-| **Batflat 1.2.0 through 1.3.6** | No fix. Take it offline. CERT Polska rates CVE-2026-111559 9.3: the contact form runs PHP. The project is unmaintained. [Guide](details/batflat.md#remediation). |
+| **Batflat 1.2.0 through 1.3.7** | No fix. Take it offline. CERT Polska rates CVE-2026-111559 9.3: the contact form runs PHP. The project is unmaintained. CERT Polska's page stops at 1.3.6; the CVE record includes 1.3.7. [Guide](details/batflat.md#remediation). |
 | **WordPress with Advanced Form Integration through 2.11.3** | Update `advanced-form-integration` to 2.11.6 or later. Patchstack rates CVE-2026-125769 9.8: a request with no login can become an administrator. The record does not name the request. 2.11.5 is the first version it calls unaffected. The update does not remove an administrator that was already created. This is not the November 6, 8, or 9 plugin set, not Estatik, and not LatePoint. [Guide](details/advanced-form-integration.md#remediation). |
 | **WordPress with Estatik through 4.3.6** | Update `estatik` to 4.3.7 or later. Patchstack rates CVE-2026-125795 9.8: a request with no login can make the site load a file from the server. The record does not name the parameter. The update does not show whether a request already loaded a file. This is not the November 6, 8, or 9 plugin set and not LatePoint. [Guide](details/estatik.md#remediation). |
 | **Cyrus SASL advertising SRP** | Remove SRP from the mechanism list and restart. VulnCheck rates CVE-2026-129483 9.3: a client can otherwise authenticate as any SRP user without the password. The newest release is still 2.1.28, and no distribution has shipped a fix. A server that does not offer SRP is outside it. [Guide](details/cyrus-sasl.md#remediation). |
