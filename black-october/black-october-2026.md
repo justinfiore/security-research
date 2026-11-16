@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Cyrus SASL: the SRP mechanism accepts any password](#cyrus-sasl-the-srp-mechanism-accepts-any-password)
 - [Confluence Data Center: a SOAP fault runs code](#confluence-data-center-a-soap-fault-runs-code)
 - [Apache Shiro: a cached LDAP login accepts any password](#apache-shiro-a-cached-ldap-login-accepts-any-password)
 - [PostgreSQL: a type change runs code as the database user](#postgresql-a-type-change-runs-code-as-the-database-user)
@@ -232,6 +233,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Turn off the [SRP mechanism](#cyrus-sasl-the-srp-mechanism-accepts-any-password) on a server that offers it. VulnCheck rates [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483) CVSS 4.0 9.3 Critical: a client sends one value and Cyrus SASL accepts it as the password for any SRP user. SRP is off unless the library was built with `--enable-srp` and the server advertises it. The newest release is still 2.1.28, from 2022, and the commit that removes the plugin is not a release. Debian marks it open with no fixed package. It is not in KEV. Turning it off does not show whether a login already happened.
 - **New this update:** Upgrade [Confluence Data Center](#confluence-data-center-a-soap-fault-runs-code) to **9.2.28 or later**, or turn off Remote API (XML-RPC & SOAP). Atlassian rates [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) CVSS 4.0 9.3 Critical: a SOAP fault can run code when that API is on. It has been off by default for new installations since Confluence 3.0, and Confluence 10 removed it. Apache Axis 1.x, which Confluence bundles, is end of life and gets no release of its own. Confluence Cloud is not affected. It is not in KEV. The upgrade does not remove an account or an add-on that was already created.
 - **New this update:** Upgrade [Apache Shiro](#apache-shiro-a-cached-ldap-login-accepts-any-password) to **3.0.2 or later** and restart. Apache rates [CVE-2026-129349](https://www.cve.org/CVERecord?id=CVE-2026-129349) CVSS 4.0 9.1 Critical: with LDAP authentication caching on, a user who has logged in once can log in again with any password. Caching is off by default. 3.0.1 fixes that one and leaves six more, which Apache rates 6.3 or lower. Shiro 2.x is end of life and gets no fix. It is not in KEV.
 - **New this update:** Upgrade [PostgreSQL](#postgresql-a-type-change-runs-code-as-the-database-user) to **18.7, 17.12, 16.16, 15.20, or 14.25** and rebuild every C-language extension. The project rates [CVE-2026-6460](https://www.cve.org/CVERecord?id=CVE-2026-6460) CVSS 3.1 8.8 High: a database user who can create objects changes a composite type and the server runs code as the database's operating system user. The same release fixes 51 more flaws, and 32 of them carry the same 8.8 score. PostgreSQL 14.25 is the last release of that line. It is not in KEV. The upgrade does not show whether a statement already ran code.
@@ -418,6 +420,29 @@ Apache, the CNA, rates the Axis flaw critical in text and publishes no number. A
 **Patch:** Upgrade Confluence Data Center to **9.2.28 or later**, or to **10.0 or later**, and restart every node. Until then, clear **Remote API (XML-RPC & SOAP)** under Further Configuration and save. Atlassian says that takes effect without a restart, and that anything using XML-RPC or SOAP stops. Confluence Cloud needs nothing for this advisory. The upgrade does not remove an account or an add-on that was already created.
 
 Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026-90436-remote-code-execution-in-confluence-data-center-1874560038.html), [Apache announcement](https://lists.apache.org/thread/8slf0j9gz35z56t0glt5h0ncwlbn4bdz), [detailed guide](details/confluence-axis.md).
+
+## Cyrus SASL: the SRP mechanism accepts any password
+
+<a id="cyrus-sasl-the-srp-mechanism-accepts-any-password"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cyrus-sasl.md):** [Detection](details/cyrus-sasl.md#detection) · [Remediation](details/cyrus-sasl.md#remediation) · [Verification](details/cyrus-sasl.md#verification) · [Timeline](details/cyrus-sasl.md#timeline)
+
+**CVEs:** [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483)
+
+**VulnCheck rates [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483) CVSS 4.0 9.3 Critical and CVSS 3.1 9.1 Critical.** VulnCheck is the CNA. The 4.0 vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N`. In the SRP server mechanism, a client public value that is a multiple of the modulus makes the shared secret zero, and the client can then prove it is any existing SRP user without the password. SRP is not built unless the build passes `--enable-srp`, and a server that does not advertise `SRP` is outside it. The reporter's issue gives the condition as CVSS 3.1 9.8; the published record is 9.3 and 9.1. NVD has not scored it. The project does not report exploitation. The reporter published a proof of concept on 2026-07-31, and the project did not answer.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). The CISA JSON feed returned HTTP 403 on that check; the catalog version is the one mirrors of the feed still showed. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Reported to the project | 2026-07-31; time/TZ unknown | Issue 896, with a reproducer. No reply. |
+| Plugin removed on master | 2026-11-12 17:52:39 UTC | The commit deletes the SRP plugin. It is not a release, and the message does not mention the bypass. |
+| **Public announcement** | **2026-11-15; NVD published 14:17:27 UTC** | VulnCheck published the record. No fixed version. |
+| **Last updated** | **2026-11-15 23:05 EST (UTC−05:00)** | New item. Stop advertising SRP. |
+
+**Patch:** No release fixes this. Cyrus SASL 2.1.28, published 2022-02-22, is still the newest tag, and it contains the flaw when SRP is built and advertised. Remove `SRP` from the server's mechanism list and restart. Debian's tracker marks the flaw open on bookworm, trixie, forky, and sid, with no fixed version. Ubuntu has no page for the CVE. The November 12 commit removes the plugin on master only. Turning the mechanism off does not show whether a login already happened.
+
+Sources: [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483), [issue 896](https://github.com/cyrusimap/cyrus-sasl/issues/896), [detailed guide](details/cyrus-sasl.md).
 
 ## Apache Shiro: a cached LDAP login accepts any password
 
@@ -6250,6 +6275,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Cyrus SASL advertising SRP** | Remove SRP from the mechanism list and restart. VulnCheck rates CVE-2026-129483 9.3: a client can otherwise authenticate as any SRP user without the password. The newest release is still 2.1.28, and no distribution has shipped a fix. A server that does not offer SRP is outside it. [Guide](details/cyrus-sasl.md#remediation). |
 | **Confluence Data Center below 9.2.28 with Remote API on** | Upgrade to 9.2.28 or later, or to 10.0 or later, and restart. Until then, turn off Remote API (XML-RPC & SOAP). A SOAP fault can run code when that API is on. It is off by default on new installations since 3.0, and Confluence 10 removed it. Cloud is not affected. [Guide](details/confluence-axis.md#remediation). |
 | **Apache Shiro below 3.0.2** | Upgrade every `org.apache.shiro` artifact to 3.0.2 or later and restart. With LDAP authentication caching on, a user who has logged in once can log in again with any password. 3.0.1 fixes that and leaves six more. Shiro 2.x has no fix. [Guide](details/apache-shiro.md#remediation). |
 | **Edito CMS before 5.10.2607** | Upgrade to 5.10.2607 or later. A logged-in user can otherwise turn an unsigned token into a session for any account. On the 5.8 branch, install the hotfix CERT Polska says was released; it names no build. [Guide](details/edito-cms.md#remediation). |

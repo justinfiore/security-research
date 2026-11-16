@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-15 23:05 EST (UTC−05:00) — Cyrus SASL
+
+- **Cyrus SASL:** Stop advertising [SRP](black-october/details/cyrus-sasl.md#remediation). VulnCheck rates [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483) CVSS 4.0 9.3: a client sends one value and the server accepts it as the password for any SRP user. SRP is off unless the build passed `--enable-srp` and the server offers it. The newest release is still 2.1.28, from 2022, and the commit that removes the plugin is not a release. Debian marks it open on bookworm, trixie, forky, and sid, with no fixed package. It is not in KEV. Turning it off does not show whether a login already happened.
+
 ## 2026-11-15 19:04 EST (UTC−05:00) — Confluence Data Center
 
 - **Confluence Data Center:** Upgrade to [9.2.28 or later](black-october/details/confluence-axis.md#remediation), or turn off Remote API (XML-RPC & SOAP). Atlassian rates [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) CVSS 4.0 9.3: a SOAP fault can run code when that API is on. It has been off by default for new installations since Confluence 3.0, and Confluence 10 removed it. Apache Axis 1.x is end of life and gets no release of its own. Confluence Cloud is not affected. It is not in KEV. The same Axis flaw is the first step of the N-central chain, which is a different product. The upgrade does not remove an account or an add-on that was already created.
