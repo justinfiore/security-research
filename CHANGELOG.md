@@ -26,6 +26,7 @@
 - **Danfoss AK-SM800A:** The download page now lists [5.4.0.spk (November 2026)](black-october/details/danfoss-ak-sm800a.md#remediation). Danfoss does not call it a fix, and BSI still says that package cannot be ruled out. Keep the controller off the internet.
 - **Cisco BroadWorks:** Cisco's November 13 advisory revision says it does [not have direct evidence](black-october/details/cisco-broadworks.md#timeline) of exploitation. The November 12 revision had said exploitation was known. The KEV listing and the fix, RI.2026.07, are unchanged.
 - **Apple TV:** tvOS [27.2.1](black-october/details/apple-november.md#remediation), released November 13, fixes CVE-2026-113970, the Bluetooth memory corruption. It does not list the iMessage flaw.
+- **VeloCloud Edge:** Arista's November 12 revision names [fixed builds](black-october/details/velocloud.md#remediation): 7.0.1.1, 6.4.4.2, 6.1.6.2, and 5.2.7.2. Edge was listed as still in triage. Arista says it has not identified an exploit through the edge's packet inspection.
 
 ## 2026-11-16 07:10 EST (UTC−05:00) — VoAPI; CloudPaste; Bolo; Give Peer-to-Peer; Advanced Form Integration
 

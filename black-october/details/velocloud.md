@@ -1,6 +1,6 @@
 # VeloCloud Orchestrator: authenticated SQL injection to superuser operator
 
-**Last updated:** 2026-11-03 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main VeloCloud summary](../black-october-2026.md#velocloud-orchestrator-authenticated-sql-injection-to-superuser-operator-cve-2026-114625) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -87,7 +87,7 @@ Also search firewall, NetFlow and SIEM data for the same IPs and for VCO outboun
 ## Sources
 
 - [Arista Security Advisory 0199][adv]: scores, affected and fixed trains, required privileges, hosted status, IOCs, mitigations.
-- [Arista Security Advisory 0202][adv0202] (2026-11-02): CVE-2026-111497 in the same on-prem trains. Fixed in 5.2.3.20, 6.1.3.12 and 6.4.2.14. Exploitation is an outbound Brotli response from an integration endpoint, not an inbound API request. Arista lists no mitigation. It does not say hosted VCO was already patched for this flaw. VeloCloud Gateway is not affected. VeloCloud Edge is still in triage.
+- [Arista Security Advisory 0202][adv0202] (2026-11-02, revision 1.1 on 2026-11-12): CVE-2026-111497 in the same on-prem trains. Fixed in 5.2.3.20, 6.1.3.12 and 6.4.2.14. Exploitation is an outbound Brotli response from an integration endpoint, not an inbound API request. Arista lists no mitigation. It does not say hosted VCO was already patched for this flaw. VeloCloud Gateway is not affected. Revision 1.1 adds VeloCloud Edge: 7.0.1.0 and below, 6.4.4.1 and below, 6.1.6.1 and below, and 5.2.7 and below are affected, fixed in 7.0.1.1, 6.4.4.2, 6.1.6.2, and 5.2.7.2. Edge exploitation needs deep packet inspection of a crafted stream, and Arista says it has not identified an exploit on that path. DANZ Monitoring Fabric's Analytics Node is also affected, with no patched version.
 - [CVE record (Arista CNA)][cve] and [NVD][nvd]: timestamps and affected ranges.
 - [CISA KEV feed][kev]: dateAdded 2026-10-23, due date 2026-10-26, earlier VCO KEV entries.
 - Secondary: [The Hacker News][thn] (earlier fixes do not cover this flaw), [BleepingComputer][bc], [Canadian Cyber Centre AV26-1080][cccs].
