@@ -1,6 +1,6 @@
 # Apple: an iMessage group accepts an outsider, and a nearby Bluetooth device corrupts memory
 
-**Last updated:** 2026-11-12 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Back to Apple summary](../black-october-2026.md#apple-an-imessage-group-accepts-an-outsider-and-a-nearby-bluetooth-device-corrupts-memory) · [Changelog](../../CHANGELOG.md)
 
@@ -39,7 +39,7 @@ The same updates fix seven more issues. None of those reaches 7.0. [CVE-2026-113
 
 1. Read the installed version. On an iPhone or iPad, Settings, General, About, iOS Version or iPadOS Version. On a Mac, Apple menu, About This Mac. On Apple Watch, the Watch app, General, About. On Apple Vision Pro, Settings, General, About.
 2. The iMessage flaw, CVE-2026-113961, is fixed below these versions: iOS and iPadOS **26.7.3** and **27.2.1**, macOS Sequoia **15.8.3**, macOS Tahoe **26.7.3**, macOS Golden Gate **27.2.1**, visionOS **27.2.1**, and watchOS **27.2.1**. The CVE record does not list iOS 18, and the [iOS 18.7.12 notes][ios18] do not list this CVE. An iPhone XS, XS Max, or XR on 18.7.12 is still inside the range the record calls affected for this flaw.
-3. The Bluetooth flaw, CVE-2026-113970, adds one more line: iOS and iPadOS **18.7.12**. The same notes list it. watchOS **26.6.1** is also a fix line for this flaw only.
+3. The Bluetooth flaw, CVE-2026-113970, adds more lines: iOS and iPadOS **18.7.12**, watchOS **26.6.1**, and tvOS **27.2.1**, released November 13. The [tvOS 27.2.1 notes](https://support.apple.com/en-us/149721) list it for Apple TV 4K (2nd generation) and later.
 4. A version number does not show whether a group was joined or whether a nearby device corrupted memory. Apple names no log line.
 
 ## Remediation

@@ -1,6 +1,6 @@
 # Cisco BroadWorks: an unauthenticated XML message reads a file
 
-**Last updated:** 2026-11-10 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main BroadWorks summary](../black-october-2026.md#cisco-broadworks-an-unauthenticated-xml-message-reads-a-file) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@ Cisco BroadWorks accepts provisioning requests as XML on the Open Client Interfa
 
 **Cisco rates [CVE-2026-20320](https://www.cve.org/CVERecord?id=CVE-2026-20320) CVSS 3.1 7.5 High** (`CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N`). The advisory, first published 2026-08-19 16:00 GMT, says a crafted XML message to the Open Client Interface – Provisioning (OCI-P) service lets the attacker view files with the privileges of the BroadWorks user. There is no workaround. The affected products, on any release earlier than **RI.2026.07**, are the Application Delivery Platform (Open Client Server and OCIOverSoap), the Application Server, the Profile Server, and the Xtended Services Platform. The first fixed release for each is RI.2026.07. Cisco's bug ID is CSCwv48590.
 
-Cisco's advisory says the PSIRT is not aware of any malicious use. That sentence is from the August 19 text. CISA's November 10 listing is the statement that exploitation is known.
+Cisco's advisory, version 1.2, last updated 2026-11-13 17:38 GMT, says the vulnerability was added to KEV in November 2026 and that Cisco does not have direct evidence of active exploitation. Version 1.1, dated November 12, had said exploitation was known. CISA's November 10 listing is unchanged.
 
 **CISA KEV:** Listed — [CVE-2026-20320](https://www.cve.org/CVERecord?id=CVE-2026-20320) added 2026-11-10, federal due date 2026-11-24. Ransomware use Unknown. The feed says an unauthenticated remote attacker can read sensitive configuration information. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 

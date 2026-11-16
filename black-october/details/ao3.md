@@ -1,6 +1,6 @@
 # AO3: possible exposure of hashed passwords
 
-**Last updated:** 2026-11-15 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Back to AO3 summary](../black-october-2026.md#ao3-possible-exposure-of-hashed-passwords) · [Changelog](../../CHANGELOG.md)
 
@@ -28,6 +28,7 @@ Times below are UTC, taken from OTW's status page. The page does not say when un
 | 2026-10-29 17:41 | Restoration estimate of about 2 weeks, up to 4, with a possible degraded return. [Status][status] |
 | 2026-10-30 01:27 | OTW says it detected a security incident, works were not deleted, and it cannot rule out theft of the user database. It recommends changing passwords reused from AO3 on other sites. Expected downtime is at least two weeks and could be four. [Status][status] |
 | 2026-11-06 00:00 | OTW says queued notification emails from before the outage, such as subscription updates and kudos announcements, were released and are genuine. It is working so in-progress drafts are not deleted. The restoration estimate is unchanged. [Status][status] |
+| 2026-11-15 08:00 | OTW says AO3 is back. Icons, external work importing, and non-HTML downloads stay off. No data was deleted. OTW has no reason to believe the user database was compromised and cannot rule it out, and recommends changing the AO3 password and the email on the account, plus any password reused elsewhere. Draft deletion stays paused until November 29. [Status][status] |
 | Local software patch | Not applicable. There is no AO3 release for readers to install. |
 
 **Evidence limits:** OTW has not said how the incident happened, whether any account row was copied, or how long access lasted. "Unable to rule it out" is not a finding that the database was stolen. Donor records are a separate system and are not linked to AO3 accounts, according to OTW. OTW's news post of the same day repeats the status text and does not add a root cause.

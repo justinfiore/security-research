@@ -1,6 +1,6 @@
 # Firefox: a layout bug can run code from a web page
 
-**Last updated:** 2026-11-10 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Back to Firefox summary](../black-october-2026.md#firefox-a-layout-bug-can-run-code-from-a-web-page) · [Changelog](../../CHANGELOG.md)
 
@@ -33,12 +33,12 @@ On 2026-11-10 Mozilla published [MFSA 2026-125][mfsa160], impact high, fixed in 
 
 1. Read the running Firefox version. In the browser, Help, About Firefox, which also starts an update check. From a shell, `firefox --version` prints the version of the binary on `PATH`, which may not be the profile that is open.
 2. Mozilla's record says 159.0.1 is unaffected for CVE-2026-120572 and does not name the first affected version. Treat a Release channel build below 159.0.1 as inside that advisory, and a build below **160** as inside MFSA 2026-125. A build that does not report a version is unknown, not safe.
-3. Firefox ESR is in the November 10 advisories. ESR below **153.7** is inside MFSA 2026-127, and the 115 line below **115.45** is inside MFSA 2026-126. The October 27 ESR 153.6 advisories are a different set. Thunderbird is not in MFSA 2026-125.
+3. Firefox ESR is in the November 10 advisories. ESR below **153.7** is inside MFSA 2026-127, and the 115 line below **115.45** is inside MFSA 2026-126. The October 27 ESR 153.6 advisories are a different set. Thunderbird is not in MFSA 2026-125. [MFSA 2026-128](https://www.mozilla.org/en-US/security/advisories/mfsa2026-128/), also announced November 10, fixes the same high-rated issues in **Thunderbird 160**, plus Thunderbird-only flaws. Mozilla says many of the shared flaws cannot be exploited through email because scripting is off when reading mail, and that they can still apply in browser-like contexts. [CVE-2026-126132](https://www.cve.org/CVERecord?id=CVE-2026-126132) is Thunderbird-only and high: forwarding a crafted link attachment on Linux or Windows can replace it with a local file.
 4. Mozilla publishes no log signature. A quiet crash log does not show the page was not opened.
 
 ## Remediation
 
-1. Update Firefox to **160 or later** on the Release channel, then relaunch. 159.0.1 fixes only CVE-2026-120572. Update ESR to **153.7 or later**, or **115.45 or later** on the 115 line. 115.45 does not list CVE-2026-124917.
+1. Update Firefox to **160 or later** on the Release channel, then relaunch. 159.0.1 fixes only CVE-2026-120572. Update ESR to **153.7 or later**, or **115.45 or later** on the 115 line. 115.45 does not list CVE-2026-124917. Update Thunderbird to **160 or later**.
 2. Mozilla publishes no workaround. Not opening untrusted pages is not a control the advisory states.
 3. The update does not show whether a page already ran code.
 

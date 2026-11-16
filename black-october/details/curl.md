@@ -1,6 +1,6 @@
 # curl and libcurl: use-after-free when a server resets an upload
 
-**Last updated:** 2026-11-13 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main curl summary](../black-october-2026.md#curl-and-libcurl-use-after-free-when-a-server-resets-an-upload) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -106,7 +106,7 @@ The proven exploit needs very precise conditions, so finding nothing proves noth
    | Debian trixie | Fixed, `8.14.1-2+deb13u7` ([DSA-6558-1][dsa]) |
    | Debian bookworm | Not affected. The tracker also lists `7.88.1-10+deb12u15` as fixed |
    | Debian sid | Fixed, `8.23.0-1` |
-   | Debian forky | Still vulnerable at `8.22.0-1` |
+   | Debian forky | Fixed, `8.23.0-2` |
    | Ubuntu 26.10, 26.04 | Fixed, `8.20.0-2ubuntu11.1` and `8.18.0-1ubuntu2.8` ([USN-8927-1](https://ubuntu.com/security/notices/USN-8927-1)) |
    | Ubuntu 24.04 and older | Not affected |
    | RHEL 10 | Fixed, `curl-8.12.1-4.el10_2.8` ([RHSA-2026:96092](https://access.redhat.com/errata/RHSA-2026:96092), 2026-11-09) |

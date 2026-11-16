@@ -1,6 +1,6 @@
 # UnrealIRCd: a label tag runs a server command
 
-**Last updated:** 2026-11-15 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main UnrealIRCd summary](../black-october-2026.md#unrealircd-a-label-tag-runs-a-server-command) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -38,6 +38,7 @@ The project says it found the set during an internal audit with the help of AI, 
 | oss-security | 2026-11-08 07:31 UTC | The same advisory, plus the statement that the CVE record is now published. The mail's Date header is Sun, 8 Nov 2026 08:31:08 +0100. [oss-security][oss] |
 | CVE record | 2026-11-08; time/TZ unknown | MITRE published CVE-2026-114713. CVSS 3.1 8.6. The record does not mention the other eight issues. [CVE-2026-114713][cve] |
 | Exploitation attempts | 2026-11-08 10:59 UTC | The project's X account says it is seeing attempts to exploit the flaw, and tells operators who have not hot-patched or upgraded to do so. The post does not say a network was taken over. [X post][xpost] |
+| Abuse attempts continuing | 2026-11-08 11:43 UTC | The same advisory thread. Syzop wrote that abuse attempts were starting and that he had contacted vulnerable networks with more than 100 users. No new release. [Advisory][adv] |
 | Added to CISA KEV | 2026-11-13 | Federal due date 2026-11-16. Ransomware use Unknown. Forensic triage required. [KEV][kev] |
 
 ## Detection

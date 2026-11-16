@@ -15,6 +15,16 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Linux kernel: NoisyTCP - a TCP packet crashes the host](#linux-kernel-noisytcp---a-tcp-packet-crashes-the-host)
+- [3DEXPERIENCE: the Station Launcher runs a command](#3dexperience-the-station-launcher-runs-a-command)
+- [NodePress: the default password and the default signing key are administrator](#nodepress-the-default-password-and-the-default-signing-key-are-administrator)
+- [Prime: anyone can register an administrator](#prime-anyone-can-register-an-administrator)
+- [Tensei: a missing secret signs in as any user](#tensei-a-missing-secret-signs-in-as-any-user)
+- [Fastify: an upload writes a file, and the parser hangs](#fastify-an-upload-writes-a-file-and-the-parser-hangs)
+- [Qt: a document parsed by QXmlSimpleReader exhausts memory](#qt-a-document-parsed-by-qxmlsimplereader-exhausts-memory)
+- [Octopus Deploy: a role editor grants itself a deployment](#octopus-deploy-a-role-editor-grants-itself-a-deployment)
+- [Ruby httpx: a JSON response builds an object](#ruby-httpx-a-json-response-builds-an-object)
+- [Batflat: the contact form runs PHP](#batflat-the-contact-form-runs-php)
 - [VoAPI: a logged-in user forges the administrator token](#voapi-a-logged-in-user-forges-the-administrator-token)
 - [CloudPaste: a share link returns the WebDAV password](#cloudpaste-a-share-link-returns-the-webdav-password)
 - [Bolo: an article list returns the password that hides a post](#bolo-an-article-list-returns-the-password-that-hides-a-post)
@@ -239,6 +249,16 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Install a kernel that names [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288) and reboot. Red Hat rates it CVSS 3.1 7.5 High: one TCP connection can panic the host, with no login. kernel.org publishes no score. The upstream floors are 6.12.117, 6.18.63, and 7.3.4, and the 5.10, 5.15, 6.1, and 6.6 lines have none. Red Hat 8, 9, and 10, Ubuntu, and Debian bookworm, trixie, forky, and sid have no fixed package. It is not in KEV. The reboot is the fix; installing the package is not.
+- **New this update:** Install the [3DEXPERIENCE](#3dexperience-the-station-launcher-runs-a-command) fix from Dassault support article QA00000522688. Dassault rates [CVE-2026-93664](https://www.cve.org/CVERecord?id=CVE-2026-93664) CVSS 3.1 10.0 Critical: the Station Launcher deserializes untrusted data and can run code with no login. [CVE-2026-77033](https://www.cve.org/CVERecord?id=CVE-2026-77033) and [CVE-2026-19732](https://www.cve.org/CVERecord?id=CVE-2026-19732) are 9.9 and need a login. R2023x through R2026x are affected, and no public page names the fixed level. None is in KEV.
+- **New this update:** Take a public [NodePress](#nodepress-the-default-password-and-the-default-signing-key-are-administrator) through 8.5.1 offline. VulnCheck rates [CVE-2026-129955](https://www.cve.org/CVERecord?id=CVE-2026-129955) and [CVE-2026-129952](https://www.cve.org/CVERecord?id=CVE-2026-129952) CVSS 3.1 9.8 Critical: with the environment unset, the administrator password is `root` and the JWT signing key is `nodepress-secret`. No fixed release exists. Neither is in KEV. Set both secrets, which signs out forged tokens and does not undo a change already made.
+- **New this update:** Take a public [Prime](#prime-anyone-can-register-an-administrator) offline. VulnCheck rates [CVE-2026-129941](https://www.cve.org/CVERecord?id=CVE-2026-129941) CVSS 3.1 9.8 Critical: a request with no login to `createUser` registers an administrator, through `@primecms/core` 0.4.0-beta.0. The latest npm publish is 0.3.4-beta.3, from 2020. No fixed release exists. It is not in KEV. Taking it offline does not remove an account already created.
+- **New this update:** Take a public [Tensei](#tensei-a-missing-secret-signs-in-as-any-user) offline. VulnCheck rates [CVE-2026-129552](https://www.cve.org/CVERecord?id=CVE-2026-129552) CVSS 3.1 9.8 Critical: when `JWT_SECRET` is unset, `@tensei/auth` through 0.11.5 signs tokens with `auth-secret-key`, and anyone can sign in as any user. [CVE-2026-129550](https://www.cve.org/CVERecord?id=CVE-2026-129550) is 9.1: a registration can grant itself administrator. 0.11.5, from 2022, is the newest release. Neither is in KEV.
+- **New this update:** Upgrade [`@fastify/multipart`](#fastify-an-upload-writes-a-file-and-the-parser-hangs) to **10.1.9 or later** and `@fastify/busboy` to **3.2.6 or later**, and restart. OpenJS rates four flaws CVSS 3.1 7.5 High. [CVE-2026-124289](https://www.cve.org/CVERecord?id=CVE-2026-124289) writes a file from a JSON body when `attachFieldsToBody` is on, through 10.1.8. [CVE-2026-110710](https://www.cve.org/CVERecord?id=CVE-2026-110710) leaves files on disk through 10.1.3. The parser hangs or exits before 3.2.6. None is in KEV. 10.1.4 fixes only the leftover files.
+- **New this update:** Update [Qt](#qt-a-document-parsed-by-qxmlsimplereader-exhausts-memory) to **6.8.10, 6.11.3, or 6.12.1** or later. The Qt Group rates [CVE-2026-105925](https://www.cve.org/CVERecord?id=CVE-2026-105925) CVSS 4.0 8.2 High: a document parsed by `QXmlSimpleReader` can exhaust memory. Qt 5 has no release named. It is not in KEV.
+- **New this update:** Upgrade self-hosted [Octopus Server](#octopus-deploy-a-role-editor-grants-itself-a-deployment) to **2026.3.16117**. Octopus rates [CVE-2026-116288](https://www.cve.org/CVERecord?id=CVE-2026-116288) CVSS 4.0 8.6 High: a user who can edit team-scoped roles can grant themselves a deployment. The patch shipped October 9; the advisory is November 16. Octopus Cloud is already updated. It is not in KEV. The upgrade does not remove a permission already granted.
+- **New this update:** Upgrade the Ruby [`httpx`](#ruby-httpx-a-json-response-builds-an-object) gem to **1.9.1 or later**. JFrog rates [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784) CVSS 3.1 8.5 High: with the `oj` gem loaded and `multi_json` absent, a JSON response can build a Ruby object, and JFrog says a gadget chain can run code. Only 1.9.0 is affected. It is not in KEV.
+- **New this update:** Take a public [Batflat](#batflat-the-contact-form-runs-php) offline. CERT Polska rates [CVE-2026-111559](https://www.cve.org/CVERecord?id=CVE-2026-111559) CVSS 4.0 9.3 Critical: the contact form runs PHP with no login, on 1.2.0 through 1.3.6. The project is unmaintained and there is no fix. It is not in KEV.
 - **New this update:** Take a public [VoAPI](#voapi-a-logged-in-user-forges-the-administrator-token) offline. VulnCheck rates [CVE-2026-129540](https://www.cve.org/CVERecord?id=CVE-2026-129540) CVSS 3.1 8.8 High: a logged-in user injects SQL through a search filter, reads the JWT signing secret, and forges a manager token. 1.0.0 through 1.2.0 are affected, v1.2.0 is the newest release, and the project says the public edition is unmaintained. It is not in KEV. Rotate the signing secret. Closing the report is not a fix.
 - **New this update:** Do not expose [CloudPaste](#cloudpaste-a-share-link-returns-the-webdav-password) `/api/proxy/link`, and rotate the WebDAV password. VulnCheck rates [CVE-2026-129494](https://www.cve.org/CVERecord?id=CVE-2026-129494) CVSS 4.0 8.7 High: a request with no login that knows a share slug gets the WebDAV username and password. 1.1.0 through 1.9.1 are affected, and v1.9.1, the newest release, is inside that range. It is not in KEV. Blocking the path also stops the official proxy.
 - **New this update:** Do not rely on a [Bolo](#bolo-an-article-list-returns-the-password-that-hides-a-post) article password. VulnCheck rates [CVE-2026-129493](https://www.cve.org/CVERecord?id=CVE-2026-129493) CVSS 4.0 8.7 High: a request with no login to the article list gets the password in plaintext. 1.7 through 2.6.4 are affected, and v2.6.4 is the newest release. It is not in KEV. Change every article password.
@@ -407,6 +427,231 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Linux kernel: NoisyTCP - a TCP packet crashes the host
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/linux-noisytcp.md):** [Detection](details/linux-noisytcp.md#detection) · [Remediation](details/linux-noisytcp.md#remediation) · [Verification](details/linux-noisytcp.md#verification) · [Timeline](details/linux-noisytcp.md#timeline)
+
+**CVEs:** [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288)
+
+**Red Hat rates [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288) CVSS 3.1 7.5 High.** kernel.org, the CNA, publishes no score, and NVD has not scored it. The vector Red Hat publishes is `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H`, and Red Hat calls the impact Important. A race in the lockless lookup of established TCP sockets lets a stale lookup take a socket that was freed and reused. In the path the finder demonstrated, that socket has no listener, and the receive path panics the kernel. The crash takes down the host, including containers that share its kernel. The finder, Hyunwoo Kim, describes a second nested race that produces a use-after-free and says that path is generally hard to trigger. He does not claim code execution, and Red Hat says the flaw allows neither data alteration nor code execution. It was introduced in 2015 and is present from Linux 4.4. The upstream fix, commit `4e2b3ef19e0e`, is in **6.12.117, 6.18.63, and 7.3.4**. kernel.org lists no fixed release for 5.10, 5.15, 6.1, or 6.6. Triggering it needs more than one receive context. This is not the [IPv4 TCP options use-after-free](#linux-kernel-ipv4-tcp-options-use-after-free) or [FragNesia](#linux-kernel-ipv6-fragment-reassembly-flaw-fragnesia---remote-memory-corruption-and-data-leak).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Introduced | 2015-10-03; time/TZ unknown | Commit `079096f103fa`. Present from Linux 4.4. |
+| Upstream fix merged | 2026-11-03; time/TZ unknown | Commit `4e2b3ef19e0e`. |
+| CVE record | 2026-11-10 18:19:08 UTC | kernel.org. No score. Fixed stable floors 6.12.117, 6.18.63, 7.3.4. |
+| **Public technical disclosure** | **2026-11-15 16:00:04 UTC** | oss-security, after the linux-distros embargo. The message is dated 2026-11-16 01:00:04 +0900. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. No tracked distribution has a fixed package on every supported release. |
+
+**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Red Hat 8, 9, and 10 are affected with no erratum. Ubuntu 20.04 through 26.10 says needs evaluation. Debian bookworm, trixie, forky, and sid are vulnerable, with no fixed version listed. No SUSE or Amazon Linux advisory was found. See the [distribution table](details/linux-noisytcp.md#remediation).
+
+Sources: [oss-security](https://www.openwall.com/lists/oss-security/2026/11/15/2), [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-99288), [detailed guide](details/linux-noisytcp.md).
+
+---
+
+## 3DEXPERIENCE: the Station Launcher runs a command
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/3dexperience.md):** [Detection](details/3dexperience.md#detection) · [Remediation](details/3dexperience.md#remediation) · [Verification](details/3dexperience.md#verification) · [Timeline](details/3dexperience.md#timeline)
+
+**CVEs:** [CVE-2026-93664](https://www.cve.org/CVERecord?id=CVE-2026-93664), [CVE-2026-77033](https://www.cve.org/CVERecord?id=CVE-2026-77033), [CVE-2026-19732](https://www.cve.org/CVERecord?id=CVE-2026-19732)
+
+**Dassault Systèmes rates [CVE-2026-93664](https://www.cve.org/CVERecord?id=CVE-2026-93664) CVSS 3.1 10.0 Critical, and [CVE-2026-77033](https://www.cve.org/CVERecord?id=CVE-2026-77033) and [CVE-2026-19732](https://www.cve.org/CVERecord?id=CVE-2026-19732) CVSS 3.1 9.9 Critical.** Dassault is the CNA. The 10.0 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`: the Station Launcher App deserializes untrusted data, and Dassault says that can run code with no login. The two 9.9 flaws are OS command injection and need a login. The records do not name the request or say how the two command-injection flaws differ. All three cover the same ranges: R2023x Golden through R2023x.FP.CFA.2613, R2024x Golden through R2024x.FP.CFA.2632, R2025x Golden through R2025x.FP.CFA.2637, and R2026x Golden through R2026x.FP.CFA.2635. No record names a fixed release. The public remediation link is a Dassault support article that requires a login, and that article was not read.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-16; NVD published 13:17 UTC** | All three records and the public advisory pages. The pages show the date and no time. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. The fixed level is not public. |
+
+**Patch:** Install the level named in Dassault support article QA00000522688. The public records do not name it. Until then, restrict the Station Launcher to accounts that need it. Dassault publishes no workaround.
+
+Sources: [Dassault, CVE-2026-77033](https://www.3ds.com/trust-center/security/security-advisories/cve-2026-77033), [CVE-2026-93664](https://www.cve.org/CVERecord?id=CVE-2026-93664), [detailed guide](details/3dexperience.md).
+
+---
+
+## NodePress: the default password and the default signing key are administrator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/nodepress.md):** [Detection](details/nodepress.md#detection) · [Remediation](details/nodepress.md#remediation) · [Verification](details/nodepress.md#verification) · [Timeline](details/nodepress.md#timeline)
+
+**CVEs:** [CVE-2026-129955](https://www.cve.org/CVERecord?id=CVE-2026-129955), [CVE-2026-129952](https://www.cve.org/CVERecord?id=CVE-2026-129952)
+
+**VulnCheck rates both CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. NodePress, a Node.js blog API, through **8.5.1**: when `NP_ADMIN_DEFAULT_PASSWORD` is unset, the administrator password is `root`, and a request with no login gets an administrator token. Separately, the JWT fallback key is `nodepress-secret`, and anyone can sign an administrator token. A deployment that sets both does not use the fallbacks. The records name no fixed release. The finder opened the report on November 16 and the project has not answered. This is not [Prime](#prime-anyone-can-register-an-administrator).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Finder's report | 2026-11-16; time/TZ unknown | GitHub issue 143. No maintainer reply. |
+| **Public announcement** | **2026-11-16; NVD published 15:17 UTC** | VulnCheck published both records. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. No fixed release. |
+
+**Patch:** No fixed release. Take a public instance offline. Set `NP_ADMIN_DEFAULT_PASSWORD` and replace the JWT signing secret, which signs out forged tokens. That does not undo a change already made.
+
+Sources: [CVE-2026-129955](https://www.cve.org/CVERecord?id=CVE-2026-129955), [GitHub issue 143](https://github.com/surmon-china/nodepress/issues/143), [detailed guide](details/nodepress.md).
+
+---
+
+## Prime: anyone can register an administrator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/prime-cms.md):** [Detection](details/prime-cms.md#detection) · [Remediation](details/prime-cms.md#remediation) · [Verification](details/prime-cms.md#verification) · [Timeline](details/prime-cms.md#timeline)
+
+**CVEs:** [CVE-2026-129941](https://www.cve.org/CVERecord?id=CVE-2026-129941), [CVE-2026-129943](https://www.cve.org/CVERecord?id=CVE-2026-129943)
+
+**VulnCheck rates [CVE-2026-129941](https://www.cve.org/CVERecord?id=CVE-2026-129941) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Prime, a GraphQL CMS (`@primecms/core`) through **0.4.0-beta.0**, accepts `createUser` with no login, and the new account is an administrator. VulnCheck says the login check is commented out. [CVE-2026-129943](https://www.cve.org/CVERecord?id=CVE-2026-129943) is CVSS 4.0 8.7 and CVSS 3.1 8.6: the `updateSystem` mutation runs a command, and it needs the account the first flaw creates. The latest npm publish is **0.3.4-beta.3**, from 2020-09-22, inside the affected range. No release fixes either. The finder's report, opened November 16, has no maintainer reply. This is not [NodePress](#nodepress-the-default-password-and-the-default-signing-key-are-administrator).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| `@primecms/core` 0.3.4-beta.3 | 2020-09-22 14:01:43 UTC | Latest npm publish. Inside the affected range. |
+| Finder's report | 2026-11-16; time/TZ unknown | GitHub issue 549. No maintainer reply. |
+| **Public announcement** | **2026-11-16; NVD published 15:17 UTC** | VulnCheck published both records. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. No fixed release. |
+
+**Patch:** No fixed release. Take a public instance offline. Taking it offline does not remove an account already created.
+
+Sources: [CVE-2026-129941](https://www.cve.org/CVERecord?id=CVE-2026-129941), [GitHub issue 549](https://github.com/birkir/prime/issues/549), [detailed guide](details/prime-cms.md).
+
+---
+
+## Tensei: a missing secret signs in as any user
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/tensei.md):** [Detection](details/tensei.md#detection) · [Remediation](details/tensei.md#remediation) · [Verification](details/tensei.md#verification) · [Timeline](details/tensei.md#timeline)
+
+**CVEs:** [CVE-2026-129552](https://www.cve.org/CVERecord?id=CVE-2026-129552), [CVE-2026-129550](https://www.cve.org/CVERecord?id=CVE-2026-129550)
+
+**VulnCheck rates [CVE-2026-129552](https://www.cve.org/CVERecord?id=CVE-2026-129552) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. `@tensei/auth` through **0.11.5** signs tokens with the hard-coded key `auth-secret-key` when `JWT_SECRET` is unset, and anyone can sign a token for any user, including an administrator. A deployment that sets `JWT_SECRET` does not use that fallback. [CVE-2026-129550](https://www.cve.org/CVERecord?id=CVE-2026-129550) is CVSS 4.0 9.3 and CVSS 3.1 9.1: the roles field is accepted on registration and on an update of your own account, so a user can grant itself administrator. That one does not depend on the secret. npm reports 0.11.5, published 2022-01-06, as the latest release. The finder's report, opened November 15, lists four more issues with no CVE and no score, and it has no maintainer reply.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| `@tensei/auth` 0.11.5 | 2022-01-06 09:46:48 UTC | The current release. Top of both affected ranges. |
+| Finder's report | 2026-11-15; time/TZ unknown | GitHub issue 398. Six issues. No maintainer reply. |
+| **Public announcement** | **2026-11-16; NVD published 12:17 UTC** | VulnCheck published both records. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. No fixed release. |
+
+**Patch:** No fixed release. Take a public instance offline and set `JWT_SECRET`, which signs out tokens forged with the hard-coded key. Setting it does not fix the role assignment.
+
+Sources: [CVE-2026-129552](https://www.cve.org/CVERecord?id=CVE-2026-129552), [GitHub issue 398](https://github.com/tenseijs/tensei/issues/398), [detailed guide](details/tensei.md).
+
+---
+
+## Fastify: an upload writes a file, and the parser hangs
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/fastify-multipart.md):** [Detection](details/fastify-multipart.md#detection) · [Remediation](details/fastify-multipart.md#remediation) · [Verification](details/fastify-multipart.md#verification) · [Timeline](details/fastify-multipart.md#timeline)
+
+**CVEs:** [CVE-2026-124289](https://www.cve.org/CVERecord?id=CVE-2026-124289), [CVE-2026-110710](https://www.cve.org/CVERecord?id=CVE-2026-110710), [CVE-2026-128835](https://www.cve.org/CVERecord?id=CVE-2026-128835), [CVE-2026-124724](https://www.cve.org/CVERecord?id=CVE-2026-124724)
+
+**OpenJS Foundation rates all four CVSS 3.1 7.5 High.** OpenJS is the CNA. [CVE-2026-124289](https://www.cve.org/CVERecord?id=CVE-2026-124289), vector `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N`: in `@fastify/multipart` **7.4.0 through 10.1.8**, with `attachFieldsToBody` on, a JSON body is treated as an uploaded file, the upload limits are skipped, and the filename is kept verbatim, including `../`. An application that uses that name as the destination writes outside the upload directory. [CVE-2026-110710](https://www.cve.org/CVERecord?id=CVE-2026-110710) leaves saved files on disk when the client disconnects, through **10.1.3**. [CVE-2026-128835](https://www.cve.org/CVERecord?id=CVE-2026-128835) and [CVE-2026-124724](https://www.cve.org/CVERecord?id=CVE-2026-124724) are in `@fastify/busboy` before **3.2.6**: one request hangs the handler, and a truncated part past the part limit exits the process. 10.1.4 fixes only the leftover files. **10.1.9** and busboy **3.2.6** are the current releases. This is not the [http-proxy path rewrite](#fastify-http-proxy-a-route-parameter-rewrites-the-upstream-path).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| `@fastify/multipart` 10.1.4 | 2026-10-15 10:40:04 UTC | Fixes the leftover files. Still inside the file-write range. |
+| `@fastify/busboy` 3.2.6 | 2026-11-16 09:37:49 UTC | Fixes both parser flaws. |
+| `@fastify/multipart` 10.1.9 | 2026-11-16 11:11:17 UTC | First release that fixes the file write. Current release. |
+| **Public announcement** | **2026-11-16; NVD published 13:17 and 14:17 UTC** | Four advisories the same day. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. Update both packages. |
+
+**Patch:** Upgrade `@fastify/multipart` to **10.1.9 or later** and `@fastify/busboy` to **3.2.6 or later**, and restart. The upgrade does not delete files already left behind and does not restore a file already replaced.
+
+Sources: [GHSA-gmhr-r4mc-w935](https://github.com/fastify/fastify-multipart/security/advisories/GHSA-gmhr-r4mc-w935), [CVE-2026-124289](https://www.cve.org/CVERecord?id=CVE-2026-124289), [detailed guide](details/fastify-multipart.md).
+
+---
+
+## Qt: a document parsed by QXmlSimpleReader exhausts memory
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/qt-qxml.md):** [Detection](details/qt-qxml.md#detection) · [Remediation](details/qt-qxml.md#remediation) · [Verification](details/qt-qxml.md#verification) · [Timeline](details/qt-qxml.md#timeline)
+
+**CVEs:** [CVE-2026-105925](https://www.cve.org/CVERecord?id=CVE-2026-105925)
+
+**The Qt Group rates [CVE-2026-105925](https://www.cve.org/CVERecord?id=CVE-2026-105925) CVSS 4.0 8.2 High.** The Qt Group is the CNA. The vector is `CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:N/VI:N/VA:H/SC:N/SI:N/SA:H/R:U/U:Green`. A document parsed with `QXmlSimpleReader::parse()` can allocate without a bound and exhaust memory, stopping the application and possibly the machine. The person at the computer has to get the application to parse the document. Affected: Qt **5.0.0 before 6.8.10**, **6.9.0 before 6.11.3**, and **6.12.0 before 6.12.1**. The fix is **6.8.10, 6.11.3, or 6.12.1** or later. Qt 5 has no release named; the mitigation is to parse only trusted documents. Two earlier advisories the same week, CVE-2026-97845 at 4.3 and CVE-2026-103645 at 1.1, are below this threshold and are fixed in the same 6.8.10 and 6.11.3 releases.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-16; NVD published 08:16 UTC** | The Qt Group's advisory shows the date and no time. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. Update Qt. |
+
+**Patch:** Update to Qt **6.8.10, 6.11.3, or 6.12.1** or later and ship that build. On Qt 5, stop parsing untrusted documents with `QXmlSimpleReader`. No distribution advisory was found on November 16.
+
+Sources: [Qt advisory](https://www.qt.io/blog/security-advisory-cve-2026-105925), [CVE-2026-105925](https://www.cve.org/CVERecord?id=CVE-2026-105925), [detailed guide](details/qt-qxml.md).
+
+---
+
+## Octopus Deploy: a role editor grants itself a deployment
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/octopus-deploy.md):** [Detection](details/octopus-deploy.md#detection) · [Remediation](details/octopus-deploy.md#remediation) · [Verification](details/octopus-deploy.md#verification) · [Timeline](details/octopus-deploy.md#timeline)
+
+**CVEs:** [CVE-2026-116288](https://www.cve.org/CVERecord?id=CVE-2026-116288)
+
+**Octopus Deploy rates [CVE-2026-116288](https://www.cve.org/CVERecord?id=CVE-2026-116288) CVSS 4.0 8.6 High.** Octopus is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. A user who can edit team-scoped roles can grant themselves permission to deploy to projects and environments they were not given. Affected: every 2019 through 2025 release, every 2026 release before **2026.2.13526**, and every 2026.3 release before **2026.3.15909**. The patch shipped on October 9. Octopus recommends **2026.3.16117**. Octopus Cloud is already updated. There is no workaround. Octopus says it knows of no malicious use.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Reported | 2026-10-02; time/TZ unknown | OriGabriel, through Bugcrowd. |
+| Patch released | 2026-10-09; time/TZ unknown | 2026.2.13526 and 2026.3.15909. |
+| **Public announcement** | **2026-11-16; time/TZ unknown** | Security Advisory 2026-28. The page shows the date and no time. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. Upgrade a self-hosted server. |
+
+**Patch:** Upgrade a self-hosted Octopus Server to **2026.3.16117**. A server that cannot move that far goes to **2026.2.13526** or later, and a 2026.3 server goes to **2026.3.15909** or later. Octopus Cloud needs nothing. The upgrade does not remove a permission already granted.
+
+Sources: [Octopus advisory 2026-28](https://advisories.octopus.com/post/2026/sa2026-28/), [CVE-2026-116288](https://www.cve.org/CVERecord?id=CVE-2026-116288), [detailed guide](details/octopus-deploy.md).
+
+---
+
+## Ruby httpx: a JSON response builds an object
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ruby-httpx.md):** [Detection](details/ruby-httpx.md#detection) · [Remediation](details/ruby-httpx.md#remediation) · [Verification](details/ruby-httpx.md#verification) · [Timeline](details/ruby-httpx.md#timeline)
+
+**CVEs:** [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784)
+
+**JFrog rates [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784) CVSS 3.1 8.5 High.** JFrog is the CNA. The vector is `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H`. The Ruby `httpx` gem **1.9.0** decodes a JSON response with `Oj.load` and no mode when the `oj` gem is loaded and `multi_json` is not. Oj's default mode builds a Ruby object from the document, and whoever controls the URL passed to `HTTPX.get(url).json` controls that object. JFrog says a matching gadget chain can run code. **1.9.1**, released 2026-11-13, is the fix. A process without `oj`, or with `multi_json` loaded, does not take this branch.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| httpx 1.9.0 | 2026-10-14 10:15:49 UTC | The affected release. |
+| httpx 1.9.1 | 2026-11-13 16:39:28 UTC | The fix. |
+| **Public announcement** | **2026-11-16; NVD published 11:16 UTC** | JFrog published the record. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. Update httpx. |
+
+**Patch:** Upgrade `httpx` to **1.9.1 or later** and redeploy. The record names no workaround.
+
+Sources: [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784), [httpx 1.9.1](https://github.com/HoneyryderChuck/httpx/releases/tag/v1.9.1), [detailed guide](details/ruby-httpx.md).
+
+---
+
+## Batflat: the contact form runs PHP
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/batflat.md):** [Detection](details/batflat.md#detection) · [Remediation](details/batflat.md#remediation) · [Verification](details/batflat.md#verification) · [Timeline](details/batflat.md#timeline)
+
+**CVEs:** [CVE-2026-111559](https://www.cve.org/CVERecord?id=CVE-2026-111559)
+
+**CERT Polska rates [CVE-2026-111559](https://www.cve.org/CVERecord?id=CVE-2026-111559) CVSS 4.0 9.3 Critical.** CERT Polska is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:L/SI:L/SA:L`. Batflat CMS **1.2.0 through 1.3.6** does not sanitize the contact form, and a request with no login runs PHP as `www-data`. CERT Polska says the project is no longer maintained and the issue is not fixed.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-16; NVD published 13:17 UTC** | CERT Polska's advisory shows the date and no time. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. No fix. |
+
+**Patch:** No fix. Take the site offline and replace it. Do not leave the contact endpoint exposed while you plan the replacement.
+
+Sources: [CERT Polska](https://cert.pl/en/posts/2026/11/CVE-2026-111559), [CVE-2026-111559](https://www.cve.org/CVERecord?id=CVE-2026-111559), [detailed guide](details/batflat.md).
 
 ---
 
@@ -663,7 +908,7 @@ Sources: [CERT Polska](https://cert.pl/en/posts/2026/11/CVE-2026-59074/), [CVE-2
 |---|---|---|
 | **Public announcement** | **2026-11-12; time unknown** | ConnectWise disclosure. No clock time. |
 | Trust-center update | 2026-11-12 18:45 UTC | Five extensions disabled where ConnectWise could. Investigation ongoing. |
-| **Last updated** | **2026-11-13 12:15 EST (UTC−05:00)** | New item. Disable the extension. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | Also disable ITBoost Integration, RepairShopr Integration, and Guest Session Starter. |
 
 **Patch:** On premises, disable the RMM+ extension and do not reinstall it. Cloud environments already had it removed by ConnectWise; confirm it is gone. Changing the API secret is not the fix ConnectWise gives. Separately, confirm managed clients are at **26.6.5 or later** for the September flaw. Disabling the extension does not remove a client that was already pushed.
 
@@ -959,7 +1204,7 @@ Sources: [CVE-2026-118383](https://www.cve.org/CVERecord?id=CVE-2026-118383), [M
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-10 15:28:19 UTC** | CVE-2026-121653 published. CVE-2026-121683 at 15:33:51 UTC the same day. |
-| **Last updated** | **2026-11-11 15:04 EST (UTC−05:00)** | CSA advisory names 5.0.8.1. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | The same advisory also fixes CVE-2026-18128, rated 6.8. The upgrade is unchanged. |
 
 **Patch:** Upgrade Endpoint Manager to **2024 SU8**. For Cloud Services Application 5.0.8, install **5.0.8.1**. Do not treat the CVE record's "unaffected at 5.0.8" as the fixed build. A dual-NIC layout limits exposure to the internal interface and is not a substitute for 5.0.8.1. Until EPM is on 2024 SU8, keep the Core service off untrusted networks. The upgrade does not show whether a query already ran.
 
@@ -1277,7 +1522,7 @@ Sources: [GHSA-hh7j-5m3j-23pf](https://github.com/advisories/GHSA-hh7j-5m3j-23pf
 | CVE record | 2026-11-08; time/TZ unknown | MITRE published CVE-2026-114713. CVSS 3.1 8.6. The record does not mention the other eight issues. |
 | Exploitation attempts | 2026-11-08 10:59 UTC | The project says it is seeing attempts. It does not say a network was taken over. |
 | Added to CISA KEV | 2026-11-13 | Federal due date 2026-11-16. |
-| **Last updated** | **2026-11-15 12:10 EST (UTC−05:00)** | Now in KEV. The fix is unchanged. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | The project says the abuse attempts continued through November 8. The fix is unchanged. |
 
 **Patch:** As an IRC operator, on a network whose servers are all 6.0.4 or newer, add `/SPAMFILTER add -regex T block - Invalid_label ^label=(?![^\r\n;\x20]*\z)`. That blocks the critical flaw only. Then, on every 6.0.0 through 6.2.7 server, run `./unrealircd hot-patch bundle-20261107`, or upgrade to **6.2.7.1** and restart. Windows, and a Unix host where the hot-patch fails, take the upgrade. UnrealIRCd 5 has no hot-patch: add `blacklist-module "labeled-response";` and restart, then move to 6. The patch does not show whether a label already ran a command, and it does not remove a ban that command set.
 
@@ -2164,7 +2409,7 @@ Sources: [cisco-sa-cucs-rce-LzHSFRDQ](https://sec.cloudapps.cisco.com/security/c
 | Public announcement | 2026-11-03 12:00 UTC | XSA-523 version 2. |
 | SUSE, XCP-ng, Qubes, XenServer | 2026-11-03 | SUSE 15 SP7 `xen` 4.20.4_08-150700.3.52.1 at 13:45:04 UTC. XCP-ng 8.3 `xen-4.17.7-4.2.xcpng8.3`. Qubes 4.3 dom0 Xen 4.19.6-3. XenServer 8.4 and 9: updates pushed, no build number. |
 | Debian 12 | 2026-11-04 21:39:04 UTC | DLA-4881-1. `xen` 4.17.7+13-g2445b30a44-0+deb12u1. |
-| **Last updated** | **2026-11-05 03:03 EST (UTC−05:00)** | Debian 13's advisory is DSA-6610-1, dated November 4. The package is unchanged. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | Qubes 4.3 current now has Xen 4.19.6-4. |
 
 **Patch:** Install the fixed build and reboot the host. A guest reboot does not load it. SUSE Linux Enterprise 15 SP7 is `xen` **4.20.4_08-150700.3.52.1**. Debian 13 is **4.20.4+63-g7abfd2bce2-0+deb13u1**. Debian 12 is **4.17.7+13-g2445b30a44-0+deb12u1**. Debian forky has no fixed package. XCP-ng 8.3 is **xen-4.17.7-4.2.xcpng8.3**. Qubes OS 4.3 is dom0 Xen **4.19.6-3**, then restart dom0. XenServer 8.4 and 9 take the channel update CTX697256 already pushed. Xen 4.17 and later from source take the advisory's patches on the stable-branch tip. Xen 4.6 through 4.16 have no patch. Ubuntu has not evaluated it.
 
@@ -4470,7 +4715,7 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | Linux 7.4-rc1 | 2026-11-01 21:26:31 UTC | The tag's `skb_zerocopy()` copies the shared-frag marker. A release candidate, not a kernel to deploy. |
 | RHEL 7 ELS | 2026-11-05; time/TZ unknown | `kernel-3.10.0-1160.169.1.el7` names ZDI-CAN-33367. This is the Extended Lifecycle Support kernel, not CentOS 7. |
 | CVE record | 2026-11-07; time/TZ unknown | kernel.org CNA published CVE-2026-99284. No score. The kernel to install does not change. |
-| **Last updated** | **2026-11-09 11:40 EST (UTC−05:00)** | Debian 13 trixie kernel is fixed. | The bug now has CVE-2026-99284. The kernel to install is unchanged. |
+| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | Debian 12's optional linux-6.12 backport is fixed. The default bookworm kernel is not. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -6418,6 +6663,16 @@ flowchart TD
 | **CloudPaste through 1.9.1** | Keep `/api/proxy/link` off the public internet and rotate the WebDAV password. VulnCheck rates CVE-2026-129494 8.7: a share slug returns the WebDAV username and password. v1.9.1 is the newest release and is affected. [Guide](details/cloudpaste.md#remediation). |
 | **Bolo (bolo-solo) through 2.6.4** | Do not rely on an article password. VulnCheck rates CVE-2026-129493 8.7: the article list returns it in plaintext. v2.6.4 is the newest release and is affected. Change every article password. [Guide](details/bolo.md#remediation). |
 | **WordPress with Give Peer-to-Peer through 2.9.5** | Update `give-peer-to-peer` to 2.9.7 or later. Wordfence rates CVE-2026-82568 and CVE-2026-82663 7.5: a request with no login reads the database through 2.9.3 and changes a team through 2.9.5. The vendor changelog says 2.9.4 fixed both; Wordfence says 2.9.6 fixes the second. [Guide](details/give-peer-to-peer.md#remediation). |
+| **Linux kernel from 4.4, TCP listeners** | Install the kernel that names CVE-2026-99288 and reboot. Red Hat rates it 7.5: one TCP connection can panic the host. Upstream floors are 6.12.117, 6.18.63, and 7.3.4. Red Hat 8, 9, and 10, Ubuntu, and Debian have no fixed package yet. This is not the TCP options flaw and not FragNesia. [Guide](details/linux-noisytcp.md#remediation). |
+| **3DEXPERIENCE R2023x through R2026x** | Install the Station Launcher fix from Dassault support article QA00000522688. Dassault rates CVE-2026-93664 10.0, unauthenticated, and two command-injection flaws 9.9. No public page names the fixed level. [Guide](details/3dexperience.md#remediation). |
+| **NodePress through 8.5.1** | No fixed release. Take it offline. VulnCheck rates two flaws 9.8: the administrator password defaults to `root`, and JWTs fall back to `nodepress-secret`. Set both secrets. [Guide](details/nodepress.md#remediation). |
+| **Prime (`@primecms/core`) through 0.4.0-beta.0** | No fixed release. Take it offline. VulnCheck rates CVE-2026-129941 9.8: `createUser` registers an administrator with no login. [Guide](details/prime-cms.md#remediation). |
+| **Tensei (`@tensei/auth`) through 0.11.5** | No fixed release. Take it offline and set `JWT_SECRET`. VulnCheck rates CVE-2026-129552 9.8: the fallback key signs in as any user. CVE-2026-129550 is 9.1 and lets a registration grant itself administrator. [Guide](details/tensei.md#remediation). |
+| **Node.js with `@fastify/multipart` through 10.1.8** | Upgrade `@fastify/multipart` to 10.1.9 or later and `@fastify/busboy` to 3.2.6 or later, and restart. OpenJS rates four flaws 7.5, including a file write from a JSON body. 10.1.4 fixes only the leftover files. This is not the http-proxy path rewrite. [Guide](details/fastify-multipart.md#remediation). |
+| **Qt 5.0.0 through 6.12.0** | Update to 6.8.10, 6.11.3, or 6.12.1 or later. The Qt Group rates CVE-2026-105925 8.2: `QXmlSimpleReader` can exhaust memory. Qt 5 has no release named. [Guide](details/qt-qxml.md#remediation). |
+| **Self-hosted Octopus Server before 2026.2.13526, or 2026.3 before 2026.3.15909** | Upgrade to 2026.3.16117. Octopus rates CVE-2026-116288 8.6: a role editor can grant itself a deployment. Octopus Cloud is already updated. [Guide](details/octopus-deploy.md#remediation). |
+| **Ruby `httpx` 1.9.0 with `oj` and without `multi_json`** | Upgrade `httpx` to 1.9.1 or later. JFrog rates CVE-2026-129784 8.5: a JSON response can build a Ruby object. Only 1.9.0 is affected. [Guide](details/ruby-httpx.md#remediation). |
+| **Batflat 1.2.0 through 1.3.6** | No fix. Take it offline. CERT Polska rates CVE-2026-111559 9.3: the contact form runs PHP. The project is unmaintained. [Guide](details/batflat.md#remediation). |
 | **WordPress with Advanced Form Integration through 2.11.3** | Update `advanced-form-integration` to 2.11.6 or later. Patchstack rates CVE-2026-125769 9.8: a request with no login can become an administrator. The record does not name the request. 2.11.5 is the first version it calls unaffected. The update does not remove an administrator that was already created. This is not the November 6, 8, or 9 plugin set, not Estatik, and not LatePoint. [Guide](details/advanced-form-integration.md#remediation). |
 | **WordPress with Estatik through 4.3.6** | Update `estatik` to 4.3.7 or later. Patchstack rates CVE-2026-125795 9.8: a request with no login can make the site load a file from the server. The record does not name the parameter. The update does not show whether a request already loaded a file. This is not the November 6, 8, or 9 plugin set and not LatePoint. [Guide](details/estatik.md#remediation). |
 | **Cyrus SASL advertising SRP** | Remove SRP from the mechanism list and restart. VulnCheck rates CVE-2026-129483 9.3: a client can otherwise authenticate as any SRP user without the password. The newest release is still 2.1.28, and no distribution has shipped a fix. A server that does not offer SRP is outside it. [Guide](details/cyrus-sasl.md#remediation). |

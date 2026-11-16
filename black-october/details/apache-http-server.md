@@ -1,6 +1,6 @@
 # Apache HTTP Server: an HTTP/2 request can run code
 
-**Last updated:** 2026-11-13 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main Apache HTTP Server summary](../black-october-2026.md#apache-http-server-an-http2-request-can-run-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -75,7 +75,7 @@ A distribution package does not use the upstream version number. On Red Hat Ente
 | Debian trixie (security) | `apache2` 2.4.71-1~deb13u1, fixed | [DSA-6620-1][dsa] |
 | Debian trixie, the release pocket | `2.4.68-1~deb13u1`, still vulnerable | [Debian][deb] |
 | Debian bookworm (security) | `apache2` 2.4.71-1~deb12u1, fixed | [DLA-4902-1][dla] |
-| Debian forky | `2.4.69-1`, vulnerable, no fixed package | [Debian][deb] |
+| Debian forky | `2.4.71-1`, fixed | [Debian][deb] |
 | Ubuntu 26.10 | `apache2` 2.4.68-1ubuntu6.2 | [USN-9090-1][usn] |
 | Ubuntu 26.04 LTS | `apache2` 2.4.66-2ubuntu2.8 | [USN-9090-1][usn] |
 | Ubuntu 24.04 LTS | `apache2` 2.4.58-1ubuntu8.19 | [USN-9090-1][usn] |

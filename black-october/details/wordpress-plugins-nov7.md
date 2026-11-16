@@ -1,12 +1,12 @@
 # WordPress plugins: unauthenticated upload and role deletion
 
-**Last updated:** 2026-11-07 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main plugin summary](../black-october-2026.md#wordpress-plugins-unauthenticated-upload-and-role-deletion) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 Two plugins, two CVEs, each scored Critical by WPScan. They are not one bug, and they are not the [four plugins from November 6](wordpress-plugins-nov6.md) or the [core upgrade-window](wordpress-upgrade-window.md) flaw. A site is affected only by the plugin it has installed. WPScan says neither has a known fix.
 
-**[CVE-2026-118423](https://www.cve.org/CVERecord?id=CVE-2026-118423): WPScan rates WP Libre Form 1.5.0.1 CVSS 3.1 10.0 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`. The plugin does not check the type of a file uploaded through a form, so a logged-out caller can upload PHP and run it. The record names that one version. WPScan's page says the same, and says there is no known fix. The proof of concept is withheld until 2027-02-01. WordPress.org closed the plugin on 2026-09-08, pending review, and the directory page shows **1.4.3**, last updated nine years ago. The record does not say 1.4.3 is affected, and it does not say it is not.
+**[CVE-2026-118423](https://www.cve.org/CVERecord?id=CVE-2026-118423): WPScan rates WP Libre Form 1.5.0.1 CVSS 3.1 10.0 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`. The plugin does not check the type of a file uploaded through a form, so a logged-out caller can upload PHP and run it. The record names that one version. WPScan's page says the same, and says there is no known fix. The proof of concept is withheld until 2027-02-01. WordPress.org closed the plugin on 2026-09-08 and gives the reason as Security Issue. The directory page shows **1.4.3**, last updated nine years ago. The record does not say 1.4.3 is affected, and it does not say it is not.
 
 **[CVE-2026-88800](https://www.cve.org/CVERecord?id=CVE-2026-88800): WPScan rates MDJM Event Management and Mobile Events Manager through 1.7.8.7 CVSS 3.1 9.1 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H`. On every page load the plugins act on a role-deletion request with no capability check and no nonce. The check meant to protect a role that still has users reads a different part of the request from the one that chooses the role, so a logged-out caller can delete any role, including administrator. WPScan says that strips every user of their capabilities, and that there is no known fix. The proof of concept is withheld until 2027-05-03. Confidentiality impact is None: the flaw deletes a role, it does not read one. WordPress.org still offers MDJM Event Management **1.7.8.7**, updated 2026-09-08, with 50+ active installs. Its changelog does not mention this CVE. Mobile Events Manager was closed on 2022-10-05 at the author's request; the directory page shows 1.4.8.3.
 
@@ -25,7 +25,7 @@ Two plugins, two CVEs, each scored Critical by WPScan. They are not one bug, and
 
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
-| WP Libre Form closed on WordPress.org | 2026-09-08; time/TZ unknown | Directory page says the closure is temporary, pending a full review. The page shows 1.4.3. |
+| WP Libre Form closed on WordPress.org | 2026-09-08; time/TZ unknown | The directory gives the reason as Security Issue. The page shows 1.4.3. |
 | MDJM 1.7.8.7 published | 2026-09-08 21:47 GMT | WordPress.org plugin API. The changelog does not mention CVE-2026-88800. |
 | WPScan page, MDJM | 2026-11-02; time/TZ unknown | Publicly published that day. Last updated 2026-11-05. [WPScan][wpscan-mdjm] |
 | WPScan page, WP Libre Form | 2026-11-03; time/TZ unknown | Publicly published, added, and last updated that day. [WPScan][wpscan-libre] |

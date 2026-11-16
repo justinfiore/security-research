@@ -1,6 +1,6 @@
 # SonicWall GMS: unauthenticated file read, no patch
 
-**Last updated:** 2026-11-04 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Back to SonicWall GMS summary](../black-october-2026.md#sonicwall-gms-unauthenticated-file-read-no-patch) · [Changelog](../../CHANGELOG.md)
 
@@ -54,7 +54,7 @@
 
 ## Sources
 
-- [SNWLID-2026-0019][adv] — 9.1 for CVE-2026-109593, 6.8 for CVE-2026-109594. GMS Virtual Appliance and Windows, 9.5.2 and earlier. Workaround: none. Fixed version: not available, product is end of life. Recommends Network Security Manager. Read on 2026-11-09, the page returned "This security advisory does not exist or has not been published." The CVE record still links it. The claims above are from the page as read on 2026-11-03 and from the CVE record.
+- [SNWLID-2026-0019][adv] — 9.1 for CVE-2026-109593, 6.8 for CVE-2026-109594. GMS Virtual Appliance and Windows, 9.5.2 and earlier. Workaround: none. Fixed version: not available, product is end of life. Recommends Network Security Manager. The page returned "does not exist" on 2026-11-09 and was published again when read on 2026-11-16, still version 1.0, last updated 2026-11-03, with the same content. The advisory's 6.8 vector is `CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:N/A:N`, so integrity is None; the description says the injection can change the database.
 - [CVE-2026-109593][cve593] — published 2026-11-03 16:25:11 UTC. Unauthenticated file read. No CVSS in the CNA container. Tag `unsupported-when-assigned`.
 - [CVE-2026-109594][cve594] — published 2026-11-03 16:28:35 UTC. Authenticated SQL injection, "in specific conditions."
 - [NVD CVE-2026-109593][nvd] — CISA-ADP 9.1 Critical, vector `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:H`. NVD has no score of its own.

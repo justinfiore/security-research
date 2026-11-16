@@ -1,12 +1,12 @@
 # ScreenConnect: the RMM+ extension accepts its default secret
 
-**Last updated:** 2026-11-15 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main ScreenConnect summary](../black-october-2026.md#screenconnect-the-rmm-extension-accepts-its-default-secret) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 RMM+ is a third-party extension for ConnectWise ScreenConnect, written by DataComm, not by ConnectWise. It lets other software send commands to managed agents through an API. [CVE-2026-127063](https://www.cve.org/CVERecord?id=CVE-2026-127063) is the API secret: the extension ships with a static default, an administrator can change it, and an installation that keeps the default accepts requests that were not authorized, including requests that send commands to agents. ConnectWise rates it **CVSS 4.0 9.3 Critical**. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. The record says the flaw is in the extension. The ScreenConnect server and the ScreenConnect client are not affected by it.
 
-ConnectWise's trust-center update, last updated November 12 at 18:45 UTC, says a CVE was assigned to the issue in this independently developed extension. The same update says the campaign that used ScreenConnect partner environments is still under investigation, that the initial access method is not confirmed, and that ConnectWise has found no compromise of its own infrastructure. ConnectWise disabled five extensions where it could: Labtech Plus, RMM Plus, RMM+, RMM Plus Password Link, and RMM+ Password Link. It says about 400 partner environments had at least one of them installed, and that having one installed is not by itself a compromise.
+ConnectWise's trust-center update, last updated November 12 at 18:45 UTC, says a CVE was assigned to the issue in this independently developed extension. The same update says the campaign that used ScreenConnect partner environments is still under investigation, that the initial access method is not confirmed, and that ConnectWise has found no compromise of its own infrastructure. ConnectWise disabled five extensions where it could: Labtech Plus, RMM Plus, RMM+, RMM Plus Password Link, and RMM+ Password Link. The November 13 update adds three more and tells partners to disable them on premises and in the cloud: ITBoost Integration, RepairShopr Integration, and Guest Session Starter. It says about 400 partner environments had at least one of them installed, and that having one installed is not by itself a compromise.
 
 **CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-13). ConnectWise does not say this CVE has been exploited. The campaign it describes is still under investigation, and this record is not that finding. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -30,11 +30,11 @@ A different ScreenConnect flaw, [CVE-2026-84869](https://www.cve.org/CVERecord?i
 | **Public announcement** | **2026-11-12; time unknown** | ConnectWise publishes CVE-2026-127063. The disclosure is dated November 12 and gives no clock time. [Disclosure][gh] |
 | Trust-center update | 2026-11-12 18:45 UTC | Investigation ongoing. Five extensions disabled where ConnectWise could. [Trust center][trust] |
 | Trust-center update | 2026-11-13 21:15 UTC | Third-party researchers report more activity against on-premises environments that still have the extensions enabled. Disable them now, and confirm every technician client is 26.6.5 or later. [Trust center][trust] |
-| **Last updated** | **2026-11-15 (America/New_York)** | On-premises servers still have to disable the extensions. |
+| **Last updated** | **2026-11-16 (America/New_York)** | The November 13 update also names ITBoost Integration, RepairShopr Integration, and Guest Session Starter. |
 
 ## Detection
 
-1. In the ScreenConnect management console, list installed extensions. The names ConnectWise disabled are **Labtech Plus, RMM Plus, RMM+, RMM Plus Password Link, and RMM+ Password Link**. An environment with none of them is outside CVE-2026-127063.
+1. In the ScreenConnect management console, list installed extensions. The names ConnectWise disabled are **Labtech Plus, RMM Plus, RMM+, RMM Plus Password Link, and RMM+ Password Link**, and, from the November 13 update, **ITBoost Integration, RepairShopr Integration, and Guest Session Starter**. An environment with none of the first five is outside CVE-2026-127063. ConnectWise gives the same disable instruction for the other three and does not say they share the CVE.
 2. The CVE record says every version of the RMM+ extension is affected. It does not name a build number, and the disclosure says no fixed version has been announced. A version check cannot clear it.
 3. An extension that is installed and whose API secret was never changed is the configuration the disclosure describes. This guide does not tell you to print that secret to check it.
 
@@ -47,7 +47,7 @@ A different ScreenConnect flaw, [CVE-2026-84869](https://www.cve.org/CVERecord?i
 
 ## Verification
 
-- The five extension names are absent from the cloud environment, or disabled on the on-premises server, and a refresh of the extension list still shows them that way.
+- The eight extension names are absent from the cloud environment, or disabled on the on-premises server, and a refresh of the extension list still shows them that way.
 - Managed endpoints report a ScreenConnect client at **26.6.5 or later**. That check is for CVE-2026-84869 only.
 - Do not send a request to the extension's API to test the default secret.
 

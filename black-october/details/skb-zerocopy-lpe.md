@@ -1,6 +1,6 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-11-10 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skbzerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -152,7 +152,9 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | Oracle Linux 8 | `kernel-4.18.0-553.182.1.el8_10` | [ELSA-2026-93414][elsa8], 2026-11-02. The 4.18.0-553.181.1 changelog line is the marker copy; the same build fixes CVE-2026-98432. | [ELSA-2026-93414][elsa8] |
 | Oracle Linux 10 | `kernel-6.12.0-211.72.1.el10_2` | [ELSA-2026-93413][elsa10] (2026-11-02). The changelog has `net: skbuff: propagate shared-frag marker in skb_zerocopy()` at 6.12.0-211.71.1 and does not name ZDI-CAN-33367. | [ELSA-2026-93413][elsa10] |
 | RHEL 9.2 real-time | `kernel-rt-5.14.0-284.202.1.rt14.487.el9_2` | [RHSA-2026:94558][rhsa92rt], issued 2026-11-03, for 9.2 Update Services for SAP Solutions and Extended Life Cycle. Names ZDI-CAN-33367 with an empty CVE field. Not general RHEL 9 `kernel-rt`. | [RHSA-2026:94558][rhsa92rt] |
-| Debian 13 (trixie) | `linux` 6.12.116-1 (fixed from 6.12.115-1) | trixie security, accepted 2026-11-08. Bookworm security 6.1.190-1 is still vulnerable. | [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99284) |
+| Debian 13 (trixie) | `linux` 6.12.116-1 (fixed from 6.12.115-1) | trixie security, accepted 2026-11-08. | [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99284) |
+| Debian 12 (bookworm), default kernel | `linux` 6.1.192-2, still vulnerable | The default bookworm kernel is not fixed. | [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99284) |
+| Debian 12 (bookworm), optional `linux-6.12` | `linux-6.12` 6.12.117-1~deb12u1 | [DLA-4904-1](https://lists.debian.org/debian-lts-announce/2026/11/msg00029.html), 2026-11-13. Fixed from 6.12.115-2~deb12u1. This is a separate backport, not the default bookworm kernel. | [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99284) |
 | Ubuntu | No fixed kernel | Needs evaluation on 26.04, 24.04, and 22.04, page updated 2026-11-09. No USN. | [Ubuntu](https://ubuntu.com/security/CVE-2026-99284) |
 
 - Install the fixed kernel and **reboot into it**. AlmaLinux's original testing builds are superseded by regular production updates; disable `almalinux-testing` again if it was enabled for this issue (`dnf config-manager --disable almalinux-testing`). [AlmaLinux][alma]
