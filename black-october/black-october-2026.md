@@ -15,6 +15,11 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [VoAPI: a logged-in user forges the administrator token](#voapi-a-logged-in-user-forges-the-administrator-token)
+- [CloudPaste: a share link returns the WebDAV password](#cloudpaste-a-share-link-returns-the-webdav-password)
+- [Bolo: an article list returns the password that hides a post](#bolo-an-article-list-returns-the-password-that-hides-a-post)
+- [WordPress: Give Peer-to-Peer reads the database and changes a team before login](#wordpress-give-peer-to-peer-reads-the-database-and-changes-a-team-before-login)
+- [WordPress: Advanced Form Integration assigns a role before login](#wordpress-advanced-form-integration-assigns-a-role-before-login)
 - [WordPress: Estatik loads a local file before login](#wordpress-estatik-loads-a-local-file-before-login)
 - [Cyrus SASL: the SRP mechanism accepts any password](#cyrus-sasl-the-srp-mechanism-accepts-any-password)
 - [Confluence Data Center: a SOAP fault runs code](#confluence-data-center-a-soap-fault-runs-code)
@@ -234,6 +239,11 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Take a public [VoAPI](#voapi-a-logged-in-user-forges-the-administrator-token) offline. VulnCheck rates [CVE-2026-129540](https://www.cve.org/CVERecord?id=CVE-2026-129540) CVSS 3.1 8.8 High: a logged-in user injects SQL through a search filter, reads the JWT signing secret, and forges a manager token. 1.0.0 through 1.2.0 are affected, v1.2.0 is the newest release, and the project says the public edition is unmaintained. It is not in KEV. Rotate the signing secret. Closing the report is not a fix.
+- **New this update:** Do not expose [CloudPaste](#cloudpaste-a-share-link-returns-the-webdav-password) `/api/proxy/link`, and rotate the WebDAV password. VulnCheck rates [CVE-2026-129494](https://www.cve.org/CVERecord?id=CVE-2026-129494) CVSS 4.0 8.7 High: a request with no login that knows a share slug gets the WebDAV username and password. 1.1.0 through 1.9.1 are affected, and v1.9.1, the newest release, is inside that range. It is not in KEV. Blocking the path also stops the official proxy.
+- **New this update:** Do not rely on a [Bolo](#bolo-an-article-list-returns-the-password-that-hides-a-post) article password. VulnCheck rates [CVE-2026-129493](https://www.cve.org/CVERecord?id=CVE-2026-129493) CVSS 4.0 8.7 High: a request with no login to the article list gets the password in plaintext. 1.7 through 2.6.4 are affected, and v2.6.4 is the newest release. It is not in KEV. Change every article password.
+- **New this update:** Update [Give Peer-to-Peer](#wordpress-give-peer-to-peer-reads-the-database-and-changes-a-team-before-login) to **2.9.7 or later**. Wordfence rates [CVE-2026-82568](https://www.cve.org/CVERecord?id=CVE-2026-82568) and [CVE-2026-82663](https://www.cve.org/CVERecord?id=CVE-2026-82663) CVSS 3.1 7.5 High: through 2.9.3 a request with no login reads the database through the `sort` parameter, and through 2.9.5 someone who knows a campaign and a team can change that team and upload a file. Wordfence says the two together run code. The vendor changelog says 2.9.4 fixed both; Wordfence says 2.9.6 fixes the second. It is not in KEV. The update does not show whether a query already ran.
+- **New this update:** Update [Advanced Form Integration](#wordpress-advanced-form-integration-assigns-a-role-before-login) to **2.11.6 or later**. Patchstack rates [CVE-2026-125769](https://www.cve.org/CVERecord?id=CVE-2026-125769) CVSS 3.1 9.8 Critical: through 2.11.3, a request with no login can become an administrator. The record does not name the request. 2.11.5 is the first version it calls unaffected, and its changelog says user role assignment was hardened. WordPress.org's plugin API reports 2.11.6 and 9,000+ active installs; the directory page still rendered 2.11.3. Patchstack's own page also calls it low priority and unlikely to be exploited. It is not in KEV. The update does not remove an administrator that was already created.
 - **New this update:** Update [Estatik](#wordpress-estatik-loads-a-local-file-before-login) to **4.3.7 or later**. Patchstack rates [CVE-2026-125795](https://www.cve.org/CVERecord?id=CVE-2026-125795) CVSS 3.1 9.8 Critical: through 4.3.6, a request with no login can make the site load a file from the server. The record does not name the parameter. The 4.3.7 changelog says template handling was improved and does not name the CVE. WordPress.org reports 10,000+ active installs. The CVE record carries Patchstack's known-exploited tag and describes no incident. It is not in KEV. The update does not show whether a request already loaded a file.
 - **New this update:** Turn off the [SRP mechanism](#cyrus-sasl-the-srp-mechanism-accepts-any-password) on a server that offers it. VulnCheck rates [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483) CVSS 4.0 9.3 Critical: a client sends one value and Cyrus SASL accepts it as the password for any SRP user. SRP is off unless the library was built with `--enable-srp` and the server advertises it. The newest release is still 2.1.28, from 2022, and the commit that removes the plugin is not a release. Debian marks it open with no fixed package. It is not in KEV. Turning it off does not show whether a login already happened.
 - **New this update:** Upgrade [Confluence Data Center](#confluence-data-center-a-soap-fault-runs-code) to **9.2.28 or later**, or turn off Remote API (XML-RPC & SOAP). Atlassian rates [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) CVSS 4.0 9.3 Critical: a SOAP fault can run code when that API is on. It has been off by default for new installations since Confluence 3.0, and Confluence 10 removed it. Apache Axis 1.x, which Confluence bundles, is end of life and gets no release of its own. Confluence Cloud is not affected. It is not in KEV. The upgrade does not remove an account or an add-on that was already created.
@@ -399,6 +409,112 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
 ---
+
+## VoAPI: a logged-in user forges the administrator token
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/voapi.md):** [Detection](details/voapi.md#detection) · [Remediation](details/voapi.md#remediation) · [Verification](details/voapi.md#verification) · [Timeline](details/voapi.md#timeline)
+
+**CVEs:** [CVE-2026-129540](https://www.cve.org/CVERecord?id=CVE-2026-129540)
+
+**VulnCheck rates [CVE-2026-129540](https://www.cve.org/CVERecord?id=CVE-2026-129540) CVSS 4.0 8.7 High and CVSS 3.1 8.8 High.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`. VoAPI, a self-hosted API gateway, is affected from **1.0.0 through 1.2.0**. A logged-in user sends a column name as a search filter, the injection reads the HS256 JWT signing secret, and the user forges a manager token for the management API. The record names no unaffected version and is tagged unsupported-when-assigned. NVD has not scored it. The newest GitHub release is **v1.2.0**, published January 20, which is inside the affected range. The project closed the finder's report the day it was opened and wrote that the public edition has not been maintained for a long time. This is not [CloudPaste](#cloudpaste-a-share-link-returns-the-webdav-password) or [Bolo](#bolo-an-article-list-returns-the-password-that-hides-a-post).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| VoAPI v1.2.0 | 2026-01-20 01:59:44 UTC | Newest release. The top of the affected range. |
+| Finder's report closed | 2026-11-15; time/TZ unknown | No fix. The project says the public edition is unmaintained. |
+| **Public announcement** | **2026-11-16; NVD published 02:17 UTC** | VulnCheck published the CVE record. The record page shows no time of its own. |
+| **Last updated** | **2026-11-16 07:10 EST (UTC−05:00)** | New item. No fixed release. |
+
+**Patch:** No fixed release. Take a public instance offline. Rotate the JWT signing secret, which signs out every token.
+
+Sources: [CVE-2026-129540](https://www.cve.org/CVERecord?id=CVE-2026-129540), [GitHub issue 78](https://github.com/VoAPI/VoAPI/issues/78), [detailed guide](details/voapi.md).
+
+## CloudPaste: a share link returns the WebDAV password
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cloudpaste.md):** [Detection](details/cloudpaste.md#detection) · [Remediation](details/cloudpaste.md#remediation) · [Verification](details/cloudpaste.md#verification) · [Timeline](details/cloudpaste.md#timeline)
+
+**CVEs:** [CVE-2026-129494](https://www.cve.org/CVERecord?id=CVE-2026-129494)
+
+**VulnCheck rates [CVE-2026-129494](https://www.cve.org/CVERecord?id=CVE-2026-129494) CVSS 4.0 8.7 High and CVSS 3.1 7.5 High.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N`. CloudPaste, a self-hosted paste and file service, is affected from **1.1.0 through 1.9.1**. A request with no login that knows a public share slug gets the WebDAV username and password from `/api/proxy/link`, and can then read, change, or delete files on that WebDAV server. The record names no unaffected version. NVD has not scored it. The newest GitHub release is **v1.9.1**, published January 3, which is inside the affected range. The finder's report is still open, and the project has not answered. Blocking the path stops the leak and also stops the official proxy script.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| CloudPaste v1.9.1 | 2026-01-03 13:26:39 UTC | Newest release. Inside the affected range. |
+| Finder's report | 2026-11-15; time/TZ unknown | GitHub issue 223. Still open. |
+| **Public announcement** | **2026-11-16; NVD published 01:17 UTC** | VulnCheck published the CVE record. The record page shows no time of its own. |
+| **Last updated** | **2026-11-16 07:10 EST (UTC−05:00)** | New item. No fixed release. |
+
+**Patch:** No fixed release. Keep `/api/proxy/link` off the public internet, and rotate the WebDAV username and password. Blocking the path does not take back a password already returned.
+
+Sources: [CVE-2026-129494](https://www.cve.org/CVERecord?id=CVE-2026-129494), [GitHub issue 223](https://github.com/ling-drag0n/CloudPaste/issues/223), [detailed guide](details/cloudpaste.md).
+
+## Bolo: an article list returns the password that hides a post
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/bolo.md):** [Detection](details/bolo.md#detection) · [Remediation](details/bolo.md#remediation) · [Verification](details/bolo.md#verification) · [Timeline](details/bolo.md#timeline)
+
+**CVEs:** [CVE-2026-129493](https://www.cve.org/CVERecord?id=CVE-2026-129493)
+
+**VulnCheck rates [CVE-2026-129493](https://www.cve.org/CVERecord?id=CVE-2026-129493) CVSS 4.0 8.7 High and CVSS 3.1 7.5 High.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N`. Bolo, a self-hosted Java blog, is affected from **1.7 through 2.6.4**. A request with no login to `GET /articles` receives the plaintext password for a protected article, and submitting it reads the article. The record names no unaffected version. NVD has not scored it. The newest GitHub release is **v2.6.4**, published June 2, 2025, which is the top of the affected range. The finder's GitHub issue is still open and describes a second flaw, stored scripting in comments, which has no CVE. The project has not answered.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Bolo v2.6.4 | 2025-06-02 06:34:21 UTC | Newest release. The top of the affected range. |
+| Finder's report | 2026-11-15; time/TZ unknown | GitHub issue 331. Still open. Leads with comment scripting. |
+| **Public announcement** | **2026-11-16; NVD published 01:17 UTC** | VulnCheck published the CVE record. The record page shows no time of its own. |
+| **Last updated** | **2026-11-16 07:10 EST (UTC−05:00)** | New item. No fixed release. |
+
+**Patch:** No fixed release. Do not rely on an article password. Change every one, and remove the protected articles or take the blog off the public internet until a fixed release exists.
+
+Sources: [CVE-2026-129493](https://www.cve.org/CVERecord?id=CVE-2026-129493), [GitHub issue 331](https://github.com/bolo-blog/bolo-solo/issues/331), [detailed guide](details/bolo.md).
+
+## WordPress: Give Peer-to-Peer reads the database and changes a team before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/give-peer-to-peer.md):** [Detection](details/give-peer-to-peer.md#detection) · [Remediation](details/give-peer-to-peer.md#remediation) · [Verification](details/give-peer-to-peer.md#verification) · [Timeline](details/give-peer-to-peer.md#timeline)
+
+**CVEs:** [CVE-2026-82568](https://www.cve.org/CVERecord?id=CVE-2026-82568), [CVE-2026-82663](https://www.cve.org/CVERecord?id=CVE-2026-82663)
+
+**Wordfence rates [CVE-2026-82568](https://www.cve.org/CVERecord?id=CVE-2026-82568) and [CVE-2026-82663](https://www.cve.org/CVERecord?id=CVE-2026-82663) CVSS 3.1 7.5 High.** Wordfence is the CNA. Give - Peer-to-Peer is a paid GiveWP add-on and is not on WordPress.org. Through **2.9.3**, a request with no login appends SQL through the `sort` parameter and reads the database, and Wordfence says that needs at least one campaign. Through **2.9.5**, someone who knows a campaign ID and a team ID can change that team's name, story, goal, and settings and upload a media file, with no login. Wordfence says the two together run code, and it does not describe how. NVD has not scored either. The vendor changelog for **2.9.4**, dated September 8, says it hardened both. Wordfence says 2.9.4 fixes only the SQL injection and **2.9.6** fixes the authorization bypass. The current changelog entry is **2.9.7**, dated October 27, and it does not name either CVE. This is not [Advanced Form Integration](#wordpress-advanced-form-integration-assigns-a-role-before-login) or [Estatik](#wordpress-estatik-loads-a-local-file-before-login).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Neither CVE is in the feed. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Give Peer-to-Peer 2.9.4 | 2026-09-08; time/TZ unknown | Changelog names both CVEs. Wordfence says only the SQL injection is fixed. |
+| Give Peer-to-Peer 2.9.6 | 2026-10-14; time/TZ unknown | Wordfence's fix for the authorization bypass. |
+| **Public announcement** | **2026-11-15 10:16 UTC** | Wordfence published both CVE records. The Wordfence pages say November 14. |
+| **Last updated** | **2026-11-16 07:10 EST (UTC−05:00)** | New item. Update Give Peer-to-Peer. |
+
+**Patch:** Update Give - Peer-to-Peer (`give-peer-to-peer`) to **2.9.7 or later**. 2.9.6 is the first version Wordfence calls fixed for both. The update does not show whether a query already read the database.
+
+Sources: [Wordfence, CVE-2026-82568](https://www.wordfence.com/threat-intel/vulnerabilities/id/8b68d24c-a963-4316-a8f3-8dc6a494e016?source=cve), [Wordfence, CVE-2026-82663](https://www.wordfence.com/threat-intel/vulnerabilities/id/f424258a-367d-43cb-b66b-1f898391a0ea?source=cve), [detailed guide](details/give-peer-to-peer.md).
+
+## WordPress: Advanced Form Integration assigns a role before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/advanced-form-integration.md):** [Detection](details/advanced-form-integration.md#detection) · [Remediation](details/advanced-form-integration.md#remediation) · [Verification](details/advanced-form-integration.md#verification) · [Timeline](details/advanced-form-integration.md#timeline)
+
+**CVEs:** [CVE-2026-125769](https://www.cve.org/CVERecord?id=CVE-2026-125769)
+
+**Patchstack rates [CVE-2026-125769](https://www.cve.org/CVERecord?id=CVE-2026-125769) CVSS 3.1 9.8 Critical.** Patchstack is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Advanced Form Integration, a WordPress plugin that sends form submissions to other services, is affected from the beginning through **2.11.3**. A request with no login can become an administrator. The record classifies it as incorrect privilege assignment and does not name the request or the parameter. NVD has not scored it. The record says the plugin is unaffected from **2.11.5**. That release, dated November 10, says it hardened user role assignment in the WooCommerce, FluentAffiliate, WordPress, and BuddyBoss actions, and it does not name the CVE. 2.11.4, dated November 5, is not named as fixed or affected. WordPress.org's plugin API reports **2.11.6**, last updated 2026-11-14 11:05 GMT, and 9,000+ active installs. The directory page still rendered 2.11.3 on November 16; the plugin header in trunk is 2.11.6. Patchstack's page calls the same flaw low priority and unlikely to be exploited, next to its own 9.8. This is not [Estatik](#wordpress-estatik-loads-a-local-file-before-login), [Frontend Admin](#wordpress-plugins-frontend-admin-privilege-escalation), the [November 9 plugin pair](#wordpress-plugins-userplace-administrator-creation-and-productive-commerce-sql-injection), the [November 6 set](#wordpress-plugins-four-unauthenticated-critical-flaws), [LatePoint](#wordpress-plugins-latepoint-customer-account-takeover), or the [core upgrade-window flaw](#wordpress-unauthenticated-code-execution-during-a-core-upgrade).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Advanced Form Integration 2.11.5 | 2026-11-10; time/TZ unknown | Hardened user role assignment. The changelog does not name the CVE. |
+| Advanced Form Integration 2.11.6 | 2026-11-14; directory last updated 11:05 GMT | The current release. The changelog does not name the CVE. |
+| Patchstack page | 2026-11-13; time/TZ unknown | CVSS 9.8. Required privilege Unauthenticated. The page also says low priority. |
+| **Public announcement** | **2026-11-15; time/TZ unknown** | Patchstack published the CVE record. NVD's published date is the same day and shows no time. |
+| **Last updated** | **2026-11-16 07:10 EST (UTC−05:00)** | New item. Update Advanced Form Integration. |
+
+**Patch:** Update Advanced Form Integration (`advanced-form-integration`) to **2.11.6 or later**. 2.11.5 is the first version the record calls unaffected. If the plugin is unused, remove it. The update does not remove an administrator account that was already created.
+
+Sources: [Patchstack](https://patchstack.com/database/wordpress/plugin/advanced-form-integration/vulnerability/wordpress-advanced-form-integration-plugin-2-11-3-privilege-escalation-vulnerability?_s_id=cve), [CVE-2026-125769](https://www.cve.org/CVERecord?id=CVE-2026-125769), [detailed guide](details/advanced-form-integration.md).
 
 ## WordPress: Estatik loads a local file before login
 
@@ -6298,6 +6414,11 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **VoAPI, any public release** | Take it off the public internet. VulnCheck rates CVE-2026-129540 8.8: a logged-in user reads the JWT signing secret and forges a manager token. v1.2.0 is the newest release and is affected. The project says it is unmaintained. Rotate the signing secret. [Guide](details/voapi.md#remediation). |
+| **CloudPaste through 1.9.1** | Keep `/api/proxy/link` off the public internet and rotate the WebDAV password. VulnCheck rates CVE-2026-129494 8.7: a share slug returns the WebDAV username and password. v1.9.1 is the newest release and is affected. [Guide](details/cloudpaste.md#remediation). |
+| **Bolo (bolo-solo) through 2.6.4** | Do not rely on an article password. VulnCheck rates CVE-2026-129493 8.7: the article list returns it in plaintext. v2.6.4 is the newest release and is affected. Change every article password. [Guide](details/bolo.md#remediation). |
+| **WordPress with Give Peer-to-Peer through 2.9.5** | Update `give-peer-to-peer` to 2.9.7 or later. Wordfence rates CVE-2026-82568 and CVE-2026-82663 7.5: a request with no login reads the database through 2.9.3 and changes a team through 2.9.5. The vendor changelog says 2.9.4 fixed both; Wordfence says 2.9.6 fixes the second. [Guide](details/give-peer-to-peer.md#remediation). |
+| **WordPress with Advanced Form Integration through 2.11.3** | Update `advanced-form-integration` to 2.11.6 or later. Patchstack rates CVE-2026-125769 9.8: a request with no login can become an administrator. The record does not name the request. 2.11.5 is the first version it calls unaffected. The update does not remove an administrator that was already created. This is not the November 6, 8, or 9 plugin set, not Estatik, and not LatePoint. [Guide](details/advanced-form-integration.md#remediation). |
 | **WordPress with Estatik through 4.3.6** | Update `estatik` to 4.3.7 or later. Patchstack rates CVE-2026-125795 9.8: a request with no login can make the site load a file from the server. The record does not name the parameter. The update does not show whether a request already loaded a file. This is not the November 6, 8, or 9 plugin set and not LatePoint. [Guide](details/estatik.md#remediation). |
 | **Cyrus SASL advertising SRP** | Remove SRP from the mechanism list and restart. VulnCheck rates CVE-2026-129483 9.3: a client can otherwise authenticate as any SRP user without the password. The newest release is still 2.1.28, and no distribution has shipped a fix. A server that does not offer SRP is outside it. [Guide](details/cyrus-sasl.md#remediation). |
 | **Confluence Data Center below 9.2.28 with Remote API on** | Upgrade to 9.2.28 or later, or to 10.0 or later, and restart. Until then, turn off Remote API (XML-RPC & SOAP). A SOAP fault can run code when that API is on. It is off by default on new installations since 3.0, and Confluence 10 removed it. Cloud is not affected. [Guide](details/confluence-axis.md#remediation). |
