@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 15, 2026**
+**As of November 16, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [WordPress: Estatik loads a local file before login](#wordpress-estatik-loads-a-local-file-before-login)
 - [Cyrus SASL: the SRP mechanism accepts any password](#cyrus-sasl-the-srp-mechanism-accepts-any-password)
 - [Confluence Data Center: a SOAP fault runs code](#confluence-data-center-a-soap-fault-runs-code)
 - [Apache Shiro: a cached LDAP login accepts any password](#apache-shiro-a-cached-ldap-login-accepts-any-password)
@@ -233,6 +234,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [Estatik](#wordpress-estatik-loads-a-local-file-before-login) to **4.3.7 or later**. Patchstack rates [CVE-2026-125795](https://www.cve.org/CVERecord?id=CVE-2026-125795) CVSS 3.1 9.8 Critical: through 4.3.6, a request with no login can make the site load a file from the server. The record does not name the parameter. The 4.3.7 changelog says template handling was improved and does not name the CVE. WordPress.org reports 10,000+ active installs. The CVE record carries Patchstack's known-exploited tag and describes no incident. It is not in KEV. The update does not show whether a request already loaded a file.
 - **New this update:** Turn off the [SRP mechanism](#cyrus-sasl-the-srp-mechanism-accepts-any-password) on a server that offers it. VulnCheck rates [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483) CVSS 4.0 9.3 Critical: a client sends one value and Cyrus SASL accepts it as the password for any SRP user. SRP is off unless the library was built with `--enable-srp` and the server advertises it. The newest release is still 2.1.28, from 2022, and the commit that removes the plugin is not a release. Debian marks it open with no fixed package. It is not in KEV. Turning it off does not show whether a login already happened.
 - **New this update:** Upgrade [Confluence Data Center](#confluence-data-center-a-soap-fault-runs-code) to **9.2.28 or later**, or turn off Remote API (XML-RPC & SOAP). Atlassian rates [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) CVSS 4.0 9.3 Critical: a SOAP fault can run code when that API is on. It has been off by default for new installations since Confluence 3.0, and Confluence 10 removed it. Apache Axis 1.x, which Confluence bundles, is end of life and gets no release of its own. Confluence Cloud is not affected. It is not in KEV. The upgrade does not remove an account or an add-on that was already created.
 - **New this update:** Upgrade [Apache Shiro](#apache-shiro-a-cached-ldap-login-accepts-any-password) to **3.0.2 or later** and restart. Apache rates [CVE-2026-129349](https://www.cve.org/CVERecord?id=CVE-2026-129349) CVSS 4.0 9.1 Critical: with LDAP authentication caching on, a user who has logged in once can log in again with any password. Caching is off by default. 3.0.1 fixes that one and leaves six more, which Apache rates 6.3 or lower. Shiro 2.x is end of life and gets no fix. It is not in KEV.
@@ -397,6 +399,27 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
 ---
+
+## WordPress: Estatik loads a local file before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/estatik.md):** [Detection](details/estatik.md#detection) · [Remediation](details/estatik.md#remediation) · [Verification](details/estatik.md#verification) · [Timeline](details/estatik.md#timeline)
+
+**CVEs:** [CVE-2026-125795](https://www.cve.org/CVERecord?id=CVE-2026-125795)
+
+**Patchstack rates [CVE-2026-125795](https://www.cve.org/CVERecord?id=CVE-2026-125795) CVSS 3.1 9.8 Critical.** Patchstack is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Estatik, a WordPress real estate plugin, is affected from the beginning through **4.3.6**. A request with no login can make the site load a file from the server. The record classifies it as local file inclusion and does not name the parameter or the file. NVD has not scored it. The fix is **4.3.7**, released November 11. Its changelog says template handling, avatar uploads, and user registration were improved, and it does not name the CVE. WordPress.org reports 10,000+ active installs. This is not [Frontend Admin](#wordpress-plugins-frontend-admin-privilege-escalation), the [November 9 plugin pair](#wordpress-plugins-userplace-administrator-creation-and-productive-commerce-sql-injection), the [November 6 set](#wordpress-plugins-four-unauthenticated-critical-flaws), [LatePoint](#wordpress-plugins-latepoint-customer-account-takeover), or the [core upgrade-window flaw](#wordpress-unauthenticated-code-execution-during-a-core-upgrade).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). The CVE record carries Patchstack's `x_known-exploited-vulnerability` tag and describes no incident. Patchstack's page says a flaw of this kind is expected to be used in mass campaigns, and it names no attack. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Estatik 4.3.7 | 2026-11-11; directory last updated 2026-11-12 05:46 GMT | The changelog does not name the CVE. |
+| Patchstack page | 2026-11-13; the record's public date is 14:28:23 UTC | CVSS 9.8. Required privilege Unauthenticated. |
+| **Public announcement** | **2026-11-15 15:09:10 UTC** | Patchstack published the CVE record. NVD's published time is 15:16:47 UTC. |
+| **Last updated** | **2026-11-16 03:04 EST (UTC−05:00)** | New item. Update Estatik. |
+
+**Patch:** Update Estatik (`estatik`) to **4.3.7 or later**. If the plugin is unused, remove it. The update does not show whether a request already made the site load a file.
+
+Sources: [Patchstack](https://patchstack.com/database/wordpress/plugin/estatik/vulnerability/wordpress-estatik-plugin-4-3-6-local-file-inclusion-vulnerability?_s_id=cve), [CVE-2026-125795](https://www.cve.org/CVERecord?id=CVE-2026-125795), [detailed guide](details/estatik.md).
 
 ## Confluence Data Center: a SOAP fault runs code
 
@@ -6275,6 +6298,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **WordPress with Estatik through 4.3.6** | Update `estatik` to 4.3.7 or later. Patchstack rates CVE-2026-125795 9.8: a request with no login can make the site load a file from the server. The record does not name the parameter. The update does not show whether a request already loaded a file. This is not the November 6, 8, or 9 plugin set and not LatePoint. [Guide](details/estatik.md#remediation). |
 | **Cyrus SASL advertising SRP** | Remove SRP from the mechanism list and restart. VulnCheck rates CVE-2026-129483 9.3: a client can otherwise authenticate as any SRP user without the password. The newest release is still 2.1.28, and no distribution has shipped a fix. A server that does not offer SRP is outside it. [Guide](details/cyrus-sasl.md#remediation). |
 | **Confluence Data Center below 9.2.28 with Remote API on** | Upgrade to 9.2.28 or later, or to 10.0 or later, and restart. Until then, turn off Remote API (XML-RPC & SOAP). A SOAP fault can run code when that API is on. It is off by default on new installations since 3.0, and Confluence 10 removed it. Cloud is not affected. [Guide](details/confluence-axis.md#remediation). |
 | **Apache Shiro below 3.0.2** | Upgrade every `org.apache.shiro` artifact to 3.0.2 or later and restart. With LDAP authentication caching on, a user who has logged in once can log in again with any password. 3.0.1 fixes that and leaves six more. Shiro 2.x has no fix. [Guide](details/apache-shiro.md#remediation). |

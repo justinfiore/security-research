@@ -192,6 +192,10 @@
       "last_checked": "2026-11-15T19:55:55Z",
       "hold": "none"
     },
+    "cyrus-sasl.md": {
+      "last_checked": "2026-11-16T07:56:31Z",
+      "hold": "awaiting-fix"
+    },
     "danfoss-ak-sm800a.md": {
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "awaiting-fix"

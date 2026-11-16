@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-16 03:04 EST (UTC−05:00) — Estatik
+
+- **Estatik:** Update to [4.3.7 or later](black-october/details/estatik.md#remediation). Patchstack rates [CVE-2026-125795](https://www.cve.org/CVERecord?id=CVE-2026-125795) CVSS 3.1 9.8: through 4.3.6, a request with no login can make the site load a file from the server. The record does not name the parameter. The 4.3.7 changelog says template handling was improved and does not name the CVE. WordPress.org reports 10,000+ active installs. The CVE record carries Patchstack's known-exploited tag and describes no incident. It is not in KEV. The update does not show whether a request already loaded a file.
+
 ## 2026-11-15 23:05 EST (UTC−05:00) — Cyrus SASL
 
 - **Cyrus SASL:** Stop advertising [SRP](black-october/details/cyrus-sasl.md#remediation). VulnCheck rates [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483) CVSS 4.0 9.3: a client sends one value and the server accepts it as the password for any SRP user. SRP is off unless the build passed `--enable-srp` and the server offers it. The newest release is still 2.1.28, from 2022, and the commit that removes the plugin is not a release. Debian marks it open on bookworm, trixie, forky, and sid, with no fixed package. It is not in KEV. Turning it off does not show whether a login already happened.
