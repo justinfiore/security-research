@@ -81,7 +81,7 @@
       "hold": "none"
     },
     "atlassian-dc.md": {
-      "last_checked": "2026-11-10T23:55:43Z",
+      "last_checked": "2026-11-15T23:56:12Z",
       "hold": "none"
     },
     "authmask.md": {
@@ -162,6 +162,10 @@
     },
     "cisco-ucs-central.md": {
       "last_checked": "2026-11-15T15:56:05Z",
+      "hold": "none"
+    },
+    "confluence-axis.md": {
+      "last_checked": "2026-11-15T23:56:12Z",
       "hold": "none"
     },
     "control-web-panel.md": {
@@ -321,7 +325,7 @@
       "hold": "none"
     },
     "grafana-mimir.md": {
-      "last_checked": "2026-11-12T23:55:46Z",
+      "last_checked": "2026-11-15T23:56:12Z",
       "hold": "none"
     },
     "gravity-forms.md": {

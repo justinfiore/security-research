@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Confluence Data Center: a SOAP fault runs code](#confluence-data-center-a-soap-fault-runs-code)
 - [Apache Shiro: a cached LDAP login accepts any password](#apache-shiro-a-cached-ldap-login-accepts-any-password)
 - [PostgreSQL: a type change runs code as the database user](#postgresql-a-type-change-runs-code-as-the-database-user)
 - [Edito CMS: an unsigned token becomes any account](#edito-cms-an-unsigned-token-becomes-any-account)
@@ -231,6 +232,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Confluence Data Center](#confluence-data-center-a-soap-fault-runs-code) to **9.2.28 or later**, or turn off Remote API (XML-RPC & SOAP). Atlassian rates [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) CVSS 4.0 9.3 Critical: a SOAP fault can run code when that API is on. It has been off by default for new installations since Confluence 3.0, and Confluence 10 removed it. Apache Axis 1.x, which Confluence bundles, is end of life and gets no release of its own. Confluence Cloud is not affected. It is not in KEV. The upgrade does not remove an account or an add-on that was already created.
 - **New this update:** Upgrade [Apache Shiro](#apache-shiro-a-cached-ldap-login-accepts-any-password) to **3.0.2 or later** and restart. Apache rates [CVE-2026-129349](https://www.cve.org/CVERecord?id=CVE-2026-129349) CVSS 4.0 9.1 Critical: with LDAP authentication caching on, a user who has logged in once can log in again with any password. Caching is off by default. 3.0.1 fixes that one and leaves six more, which Apache rates 6.3 or lower. Shiro 2.x is end of life and gets no fix. It is not in KEV.
 - **New this update:** Upgrade [PostgreSQL](#postgresql-a-type-change-runs-code-as-the-database-user) to **18.7, 17.12, 16.16, 15.20, or 14.25** and rebuild every C-language extension. The project rates [CVE-2026-6460](https://www.cve.org/CVERecord?id=CVE-2026-6460) CVSS 3.1 8.8 High: a database user who can create objects changes a composite type and the server runs code as the database's operating system user. The same release fixes 51 more flaws, and 32 of them carry the same 8.8 score. PostgreSQL 14.25 is the last release of that line. It is not in KEV. The upgrade does not show whether a statement already ran code.
 - **New this update:** Upgrade [Edito CMS](#edito-cms-an-unsigned-token-becomes-any-account) to **5.10.2607 or later**. CERT Polska rates [CVE-2026-59074](https://www.cve.org/CVERecord?id=CVE-2026-59074) CVSS 4.0 8.7: a logged-in user submits an unsigned token and gets a session for any account, including an administrator. [CVE-2026-59081](https://www.cve.org/CVERecord?id=CVE-2026-59081) is 8.4 and needs a cache entry the attacker can change. [CVE-2026-59075](https://www.cve.org/CVERecord?id=CVE-2026-59075) is 7.1. On the 5.8 branch, install the hotfix CERT Polska says was released; it names no build. None is in KEV. The upgrade does not expire a session that was already issued.
@@ -393,6 +395,29 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
 ---
+
+## Confluence Data Center: a SOAP fault runs code
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/confluence-axis.md):** [Detection](details/confluence-axis.md#detection) · [Remediation](details/confluence-axis.md#remediation) · [Verification](details/confluence-axis.md#verification) · [Timeline](details/confluence-axis.md#timeline)
+
+**CVEs:** [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436)
+
+**Atlassian rates [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) CVSS 4.0 9.3 Critical.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. Confluence uses Apache Axis 1.x for its XML-RPC and SOAP APIs. A SOAP fault names a class, Axis loads it before checking that the class is one Axis uses, and Apache says that can run code. The endpoint has to be on. **Remote API (XML-RPC & SOAP)** has been off by default for new installations since Confluence 3.0, and Confluence 10 removed it. Atlassian says Confluence Data Center 1.x through 9.x is affected, and that **9.2.28** is the fix. Confluence Cloud is not affected.
+
+Apache, the CNA, rates the Axis flaw critical in text and publishes no number. Axis 1 is end of life, and Apache says it will not ship a fixed 1.x release. CISA's enrichment of the record scores it CVSS 3.1 9.8. NVD has not scored it. CISA's SSVC record from November 10 says exploitation is none. The same Axis flaw is the first step of the [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet) chain. This is not the [October Confluence file read](#atlassian-data-center-unauthenticated-web-root-file-read).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-15). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Apache announcement | 2026-11-06 15:32 UTC | Critical, no number. Axis 1.x through 1.4. No fixed release. |
+| CVE record published | 2026-11-06 15:37:55 UTC | Apache CNA. The CISA-ADP 9.8 score was added 2026-11-10. |
+| **Public announcement** | **2026-11-09 22:00 PST (UTC−08:00)** | Atlassian advisory. Confluence Data Center, fixed in 9.2.28. |
+| **Last updated** | **2026-11-15 19:04 EST (UTC−05:00)** | New item. Upgrade Confluence, or turn the Remote API off. |
+
+**Patch:** Upgrade Confluence Data Center to **9.2.28 or later**, or to **10.0 or later**, and restart every node. Until then, clear **Remote API (XML-RPC & SOAP)** under Further Configuration and save. Atlassian says that takes effect without a restart, and that anything using XML-RPC or SOAP stops. Confluence Cloud needs nothing for this advisory. The upgrade does not remove an account or an add-on that was already created.
+
+Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026-90436-remote-code-execution-in-confluence-data-center-1874560038.html), [Apache announcement](https://lists.apache.org/thread/8slf0j9gz35z56t0glt5h0ncwlbn4bdz), [detailed guide](details/confluence-axis.md).
 
 ## Apache Shiro: a cached LDAP login accepts any password
 
@@ -6225,6 +6250,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Confluence Data Center below 9.2.28 with Remote API on** | Upgrade to 9.2.28 or later, or to 10.0 or later, and restart. Until then, turn off Remote API (XML-RPC & SOAP). A SOAP fault can run code when that API is on. It is off by default on new installations since 3.0, and Confluence 10 removed it. Cloud is not affected. [Guide](details/confluence-axis.md#remediation). |
 | **Apache Shiro below 3.0.2** | Upgrade every `org.apache.shiro` artifact to 3.0.2 or later and restart. With LDAP authentication caching on, a user who has logged in once can log in again with any password. 3.0.1 fixes that and leaves six more. Shiro 2.x has no fix. [Guide](details/apache-shiro.md#remediation). |
 | **Edito CMS before 5.10.2607** | Upgrade to 5.10.2607 or later. A logged-in user can otherwise turn an unsigned token into a session for any account. On the 5.8 branch, install the hotfix CERT Polska says was released; it names no build. [Guide](details/edito-cms.md#remediation). |
 | **ScreenConnect with the RMM+ extension** | Disable it. ConnectWise rates CVE-2026-127063 9.3: the extension's default API secret accepts commands to agents, and no fixed version exists. Cloud environments already had it removed. Also confirm clients are at 26.6.5 or later for the September flaw, which is a different CVE. [Guide](details/screenconnect-rmm.md#remediation). |

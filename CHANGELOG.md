@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-15 19:04 EST (UTC−05:00) — Confluence Data Center
+
+- **Confluence Data Center:** Upgrade to [9.2.28 or later](black-october/details/confluence-axis.md#remediation), or turn off Remote API (XML-RPC & SOAP). Atlassian rates [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) CVSS 4.0 9.3: a SOAP fault can run code when that API is on. It has been off by default for new installations since Confluence 3.0, and Confluence 10 removed it. Apache Axis 1.x is end of life and gets no release of its own. Confluence Cloud is not affected. It is not in KEV. The same Axis flaw is the first step of the N-central chain, which is a different product. The upgrade does not remove an account or an add-on that was already created.
+
 ## 2026-11-15 16:10 EST (UTC−05:00) — Apache Shiro; Cursor
 
 - **Apache Shiro:** Upgrade to [3.0.2 or later](black-october/details/apache-shiro.md#remediation) and restart. Apache rates CVE-2026-129349 CVSS 4.0 9.1: with LDAP authentication caching on, a user who has logged in once can log in again with any password. Caching is off by default. 3.0.1 fixes that one and leaves six more, which Apache rates 6.3 or lower. Shiro 2.x is end of life and gets no fix. It is not in KEV. The upgrade does not show whether a login with the wrong password already happened.
