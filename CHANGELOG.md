@@ -2,9 +2,15 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-17 08:20 EST (UTC−05:00) — LibreOffice; Libreswan; B3log Solo
+
+- **LibreOffice:** Update to [26.2.7 or 26.8.2 or later](black-october/details/libreoffice.md#remediation) and restart it. The Document Foundation rates eight flaws in that release CVSS 4.0 High. CVE-2026-84443 is 8.5: a Base document runs a macro without the security check. A database document can also run Java. The records were published November 16. None is in KEV.
+- **Libreswan:** Upgrade to [5.4.2 or later](black-october/details/libreswan.md#remediation) and restart `pluto`. The project rates CVE-2026-110339 CVSS 3.1 7.5 and calls it Medium: an empty certificate crashes the VPN daemon, with no login. 3.24 through 5.4.1 are affected. There is no workaround. It is not in KEV.
+- **B3log Solo:** Deploy commit [`4630843`](black-october/details/b3log-solo.md#remediation) and restart. VulnCheck rates CVE-2026-130081 CVSS 4.0 8.7: an article list returns the password that hides a post, with no login. v4.4.0, the newest release, is still affected. It is not Bolo, and it is not in KEV. Change every article password.
+
 ## 2026-11-17 03:40 EST (UTC−05:00) — ooRexx; 7-Zip; CBoard; Silverstripe; N-central; Cyrus SASL
 
-- **ooRexx:** Move to [5.2.0 or later](black-october/details/oorexx.md#remediation) when that release exists, and keep untrusted local users off a host that runs RXAPI. MITRE rates CVE-2026-130327 and CVE-2026-130320 CVSS 3.1 9.3: any local user can talk to RXAPI, and one path injects a macro. CVE-2026-130290 is 7.9. The records cover 4.0.0 before 5.2.0, and no stable 5.2.0 download was found. None is in KEV.
+- **ooRexx:** Install [5.2.0 or later](black-october/details/oorexx.md#remediation). 5.2.0 is the current GA release. MITRE rates CVE-2026-130327 and CVE-2026-130320 CVSS 3.1 9.3: any local user can talk to RXAPI, and one path injects a macro. CVE-2026-130290 is 7.9. The records cover 4.0.0 before 5.2.0. An earlier note that no stable download existed was wrong. None is in KEV.
 - **7-Zip:** Install [26.03 or later](black-october/details/7zip.md#remediation). 26.06 is current. VulnCheck rates CVE-2026-130067 CVSS 4.0 8.5: File Manager before 26.03 misses a file name padded with Unicode spaces, and opening the entry runs a script. The fix shipped September 4. It is not in KEV.
 - **CBoard:** Deploy commit [`7bd8180`](black-october/details/cboard.md#remediation) and restart. VulnCheck rates CVE-2026-130073 CVSS 3.1 8.3: any logged-in user can delete accounts, including the administrator. There is no release, and tag v0.4.1 is still affected. It is not in KEV. The deploy does not restore an account already deleted.
 - **Silverstripe:** Update the framework to [6.2.13 or later](black-october/details/silverstripe.md#remediation). GitHub rates CVE-2026-91115 CVSS 3.1 8.8: a dev-task URL runs code, and a site in dev mode needs no login. The release is from October 28. CMS 5 is not affected. It is not in KEV.

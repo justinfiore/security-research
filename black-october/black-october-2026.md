@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [LibreOffice: a database document runs a macro](#libreoffice-a-database-document-runs-a-macro)
+- [Libreswan: an empty certificate crashes the VPN daemon](#libreswan-an-empty-certificate-crashes-the-vpn-daemon)
+- [B3log Solo: an article list returns the password that hides a post](#b3log-solo-an-article-list-returns-the-password-that-hides-a-post)
 - [ooRexx: a local user injects a macro](#oorexx-a-local-user-injects-a-macro)
 - [7-Zip: a padded file name hides the real extension](#7-zip-a-padded-file-name-hides-the-real-extension)
 - [CBoard: any logged-in user reaches the administrator's functions](#cboard-any-logged-in-user-reaches-the-administrators-functions)
@@ -259,7 +262,10 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
-- **New this update:** Move [ooRexx](#oorexx-a-local-user-injects-a-macro) to **5.2.0 or later** when that release is available, and keep untrusted local users off a host that runs RXAPI. MITRE rates [CVE-2026-130327](https://www.cve.org/CVERecord?id=CVE-2026-130327) and [CVE-2026-130320](https://www.cve.org/CVERecord?id=CVE-2026-130320) CVSS 3.1 9.3 Critical: any local user can talk to RXAPI, and one path injects a macro a REXX script runs. [CVE-2026-130290](https://www.cve.org/CVERecord?id=CVE-2026-130290) is 7.9. The records say 4.0.0 before 5.2.0, and this run found no stable 5.2.0 download. None is in KEV.
+- **New this update:** Update [LibreOffice](#libreoffice-a-database-document-runs-a-macro) to **26.2.7 or 26.8.2 or later** and restart it. The Document Foundation rates eight flaws in that release CVSS 4.0 High, six of them 8.5: a Base document runs a macro without the security check, and a database document can run Java. The records were published November 16. None is in KEV.
+- **New this update:** Upgrade [Libreswan](#libreswan-an-empty-certificate-crashes-the-vpn-daemon) to **5.4.2 or later** and restart `pluto`. The project rates [CVE-2026-110339](https://www.cve.org/CVERecord?id=CVE-2026-110339) CVSS 3.1 7.5 High and calls it Medium: an empty certificate crashes the VPN daemon, with no login. There is no workaround. It is not in KEV.
+- **New this update:** Deploy [B3log Solo](#b3log-solo-an-article-list-returns-the-password-that-hides-a-post) commit `4630843` or later and restart it. VulnCheck rates [CVE-2026-130081](https://www.cve.org/CVERecord?id=CVE-2026-130081) CVSS 4.0 8.7 High: an article list returns the password that hides a post, with no login. v4.4.0, the newest release, is still affected. It is not Bolo. It is not in KEV.
+- **New this update:** Install [ooRexx](#oorexx-a-local-user-injects-a-macro) **5.2.0 or later**. 5.2.0 is the current GA release. MITRE rates [CVE-2026-130327](https://www.cve.org/CVERecord?id=CVE-2026-130327) and [CVE-2026-130320](https://www.cve.org/CVERecord?id=CVE-2026-130320) CVSS 3.1 9.3 Critical: any local user can talk to RXAPI, and one path injects a macro a REXX script runs. [CVE-2026-130290](https://www.cve.org/CVERecord?id=CVE-2026-130290) is 7.9. The records say 4.0.0 before 5.2.0. None is in KEV.
 - **New this update:** Install [7-Zip](#7-zip-a-padded-file-name-hides-the-real-extension) **26.03 or later**. 26.06 is current. VulnCheck rates [CVE-2026-130067](https://www.cve.org/CVERecord?id=CVE-2026-130067) CVSS 4.0 8.5 High: File Manager before 26.03 misses a file name padded with Unicode spaces, and opening the entry runs a script. The fix shipped September 4. It is not in KEV.
 - **New this update:** Deploy [CBoard](#cboard-any-logged-in-user-reaches-the-administrators-functions) commit `7bd8180` or later and restart it. VulnCheck rates [CVE-2026-130073](https://www.cve.org/CVERecord?id=CVE-2026-130073) CVSS 3.1 8.3 High: any logged-in user can delete accounts, including the administrator. There is no release. Tag v0.4.1 is still affected. It is not in KEV. The deploy does not restore an account already deleted.
 - **New this update:** Update [Silverstripe](#silverstripe-a-dev-task-url-runs-code) framework to **6.2.13 or later**. GitHub rates [CVE-2026-91115](https://www.cve.org/CVERecord?id=CVE-2026-91115) CVSS 3.1 8.8 High: a dev-task URL runs code, and a site in dev mode needs no login. The release is from October 28. CMS 5 is not affected. It is not in KEV.
@@ -451,13 +457,78 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## LibreOffice: a database document runs a macro
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/libreoffice.md):** [Detection](details/libreoffice.md#detection) · [Remediation](details/libreoffice.md#remediation) · [Verification](details/libreoffice.md#verification) · [Timeline](details/libreoffice.md#timeline)
+
+**CVEs:** [CVE-2026-84443](https://www.cve.org/CVERecord?id=CVE-2026-84443), [CVE-2026-100101](https://www.cve.org/CVERecord?id=CVE-2026-100101), [CVE-2026-101892](https://www.cve.org/CVERecord?id=CVE-2026-101892), [CVE-2026-101930](https://www.cve.org/CVERecord?id=CVE-2026-101930), [CVE-2026-104007](https://www.cve.org/CVERecord?id=CVE-2026-104007), [CVE-2026-104692](https://www.cve.org/CVERecord?id=CVE-2026-104692), [CVE-2026-104920](https://www.cve.org/CVERecord?id=CVE-2026-104920), [CVE-2026-108169](https://www.cve.org/CVERecord?id=CVE-2026-108169). The same releases fix five more that the Document Foundation scores 6.7 or lower: CVE-2026-101929, CVE-2026-101933, CVE-2026-104933, CVE-2026-18563, and CVE-2026-97892.
+
+**The Document Foundation rates six of these CVSS 4.0 8.5 High, [CVE-2026-100101](https://www.cve.org/CVERecord?id=CVE-2026-100101) 8.4, and [CVE-2026-108169](https://www.cve.org/CVERecord?id=CVE-2026-108169) 7.3.** The Document Foundation is the CNA. The 8.5 vector is `CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. NVD has not scored them. [CVE-2026-84443](https://www.cve.org/CVERecord?id=CVE-2026-84443) runs a macro bound to a Base document event without applying the macro security setting, so opening or converting the document can run any command. The other 8.5 records run code from a form control, an HTML document event, a JDBC driver path, an HSQLDB Java call, or a Calc data link. CVE-2026-100101 runs a command through a file name when a document is emailed, on Linux and other Unix-like systems. The records cover the **26.2 series before 26.2.7** and the **26.8 series before 26.8.2**, and they do not speak to older lines. The download page on November 17 offered 26.8.3 and 26.2.7.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17) for any of the thirteen. The Document Foundation does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-16 16:40:34 UTC** | The Document Foundation published the records and the advisory. |
+| **Last updated** | **2026-11-17 08:20 EST (UTC−05:00)** | New item. Update to 26.2.7 or 26.8.2. |
+
+**Patch:** Install **LibreOffice 26.2.7 or later**, or **26.8.2 or later**, and restart it. A conversion service that runs `soffice` needs the restart too. Until then, do not open a Base document or a spreadsheet data link you did not expect. The update does not show whether a document already ran a command.
+
+Sources: [CVE-2026-84443](https://www.cve.org/CVERecord?id=CVE-2026-84443), [LibreOffice advisories](https://www.libreoffice.org/about-us/security/advisories/), [detailed guide](details/libreoffice.md).
+
+---
+
+## Libreswan: an empty certificate crashes the VPN daemon
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/libreswan.md):** [Detection](details/libreswan.md#detection) · [Remediation](details/libreswan.md#remediation) · [Verification](details/libreswan.md#verification) · [Timeline](details/libreswan.md#timeline)
+
+**CVEs:** [CVE-2026-110339](https://www.cve.org/CVERecord?id=CVE-2026-110339). The same 5.4.2 release fixes [CVE-2026-115846](https://www.cve.org/CVERecord?id=CVE-2026-115846), which the project scores CVSS 3.1 3.7 Low.
+
+**The Libreswan Project rates [CVE-2026-110339](https://www.cve.org/CVERecord?id=CVE-2026-110339) CVSS 3.1 7.5 High.** The project is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H`. Its own advisory calls the same flaw Medium. NVD has not scored it. A CERT payload with an empty PKCS#7 certificate list crashes the `pluto` daemon, and repeating it keeps the VPN down. The advisory says code execution is not possible and that no login is required. Affected is **3.24 through 5.4.1**. **5.4.2**, posted November 16, is the fix. 3.0 through 3.23 are not vulnerable. There is no workaround.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17). The project does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Vendor notified | 2026-10-06; time/TZ unknown | The advisory writes 06-10-2026. |
+| **Public announcement** | **2026-11-16; time unknown** | Advisory and libreswan 5.4.2. The tarball is dated 17:39, timezone not stated. |
+| **Last updated** | **2026-11-17 08:20 EST (UTC−05:00)** | New item. Upgrade to 5.4.2. |
+
+**Patch:** Upgrade to **libreswan 5.4.2 or later** and restart `pluto`. There is no workaround. A distribution build is fixed only when its changelog names CVE-2026-110339. The restart does not show whether the daemon was already being crashed.
+
+Sources: [CVE-2026-110339](https://www.cve.org/CVERecord?id=CVE-2026-110339), [Libreswan advisory](https://libreswan.org/security/CVE-2026-110339/CVE-2026-110339.txt), [detailed guide](details/libreswan.md).
+
+---
+
+## B3log Solo: an article list returns the password that hides a post
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/b3log-solo.md):** [Detection](details/b3log-solo.md#detection) · [Remediation](details/b3log-solo.md#remediation) · [Verification](details/b3log-solo.md#verification) · [Timeline](details/b3log-solo.md#timeline)
+
+**CVEs:** [CVE-2026-130081](https://www.cve.org/CVERecord?id=CVE-2026-130081)
+
+**VulnCheck rates [CVE-2026-130081](https://www.cve.org/CVERecord?id=CVE-2026-130081) CVSS 4.0 8.7 High and CVSS 3.1 7.5 High.** VulnCheck is the CNA. The 4.0 vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N`. NVD has not scored it. Through **4.4.0**, a request with no login to `GET /articles` returns `articleViewPwd`, and that value reads the article it was meant to hide. The newest release is v4.4.0, from 2022. Commit [`4630843`](https://github.com/88250/solo/commit/46308431d479b61d4ac5cc768474efa140c23cc8), from 2026-11-13, removes the field and is the tip of `master`. No release contains it. This is not [Bolo](#bolo-an-article-list-returns-the-password-that-hides-a-post), which has the same symptom and no fix.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17). VulnCheck does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix commit | 2026-11-13 05:14:56 UTC | `4630843` on `master`. No tag. |
+| **Public announcement** | **2026-11-16; time unknown** | VulnCheck published the record. |
+| **Last updated** | **2026-11-17 08:20 EST (UTC−05:00)** | New item. No release contains the fix. |
+
+**Patch:** Deploy commit `4630843` or later and restart. v4.4.0 is still affected. Until then, do not rely on an article password, and change every one: a password already returned still opens the article. The deploy does not show whether one was already read.
+
+Sources: [CVE-2026-130081](https://www.cve.org/CVERecord?id=CVE-2026-130081), [commit 4630843](https://github.com/88250/solo/commit/46308431d479b61d4ac5cc768474efa140c23cc8), [detailed guide](details/b3log-solo.md).
+
+---
+
 ## ooRexx: a local user injects a macro
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/oorexx.md):** [Detection](details/oorexx.md#detection) · [Remediation](details/oorexx.md#remediation) · [Verification](details/oorexx.md#verification) · [Timeline](details/oorexx.md#timeline)
 
 **CVEs:** [CVE-2026-130327](https://www.cve.org/CVERecord?id=CVE-2026-130327), [CVE-2026-130320](https://www.cve.org/CVERecord?id=CVE-2026-130320), [CVE-2026-130290](https://www.cve.org/CVERecord?id=CVE-2026-130290)
 
-**MITRE rates [CVE-2026-130327](https://www.cve.org/CVERecord?id=CVE-2026-130327) and [CVE-2026-130320](https://www.cve.org/CVERecord?id=CVE-2026-130320) CVSS 3.1 9.3 Critical, and [CVE-2026-130290](https://www.cve.org/CVERecord?id=CVE-2026-130290) 7.9 High.** MITRE is the CNA. The 9.3 vector is `CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`. All three are in RXAPI, in Open Object Rexx **4.0.0 before 5.2.0**, and all three need a local user. CVE-2026-130327 is a world-writable file in `/tmp`, unless `XDG_RUNTIME_DIR` is set, or TCP port 10010 on localhost: any local user can send a macro that a REXX script runs. CVE-2026-130320 is a missing bounds check on `nameArg` and `userid` that MITRE says can run code. CVE-2026-130290 reads past a buffer when the client names the size. NVD has not scored them. The records point at SVN commit [r12916](https://sourceforge.net/p/oorexx/code-0/12916/) and name 5.2.0 as the fix. On November 17 the project's files feed showed new uploads only for a 5.3.0 beta, build 13532, and no 5.2.0 file.
+**MITRE rates [CVE-2026-130327](https://www.cve.org/CVERecord?id=CVE-2026-130327) and [CVE-2026-130320](https://www.cve.org/CVERecord?id=CVE-2026-130320) CVSS 3.1 9.3 Critical, and [CVE-2026-130290](https://www.cve.org/CVERecord?id=CVE-2026-130290) 7.9 High.** MITRE is the CNA. The 9.3 vector is `CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`. All three are in RXAPI, in Open Object Rexx **4.0.0 before 5.2.0**, and all three need a local user. CVE-2026-130327 is a world-writable file in `/tmp`, unless `XDG_RUNTIME_DIR` is set, or TCP port 10010 on localhost: any local user can send a macro that a REXX script runs. CVE-2026-130320 is a missing bounds check on `nameArg` and `userid` that MITRE says can run code. CVE-2026-130290 reads past a buffer when the client names the size. NVD has not scored them. The records point at SVN commit [r12916](https://sourceforge.net/p/oorexx/code-0/12916/) and name 5.2.0 as the fix. The project's site lists **5.2.0 (GA)** as a current release. An earlier note that no stable download existed was wrong: the recent-uploads feed does not list that directory.
 
 **CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17) for any of the three. MITRE does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -465,9 +536,9 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 |---|---|---|
 | **Public announcement** | **2026-11-16; time unknown** | MITRE published all three records. |
 | Beta builds uploaded | 2026-11-16 14:39 to 14:45 UT | `oorexx-5.3.0-13532` portable builds. The feed does not say they contain the fix. |
-| **Last updated** | **2026-11-17 03:40 EST (UTC−05:00)** | New item. No stable 5.2.0 download found. |
+| **Last updated** | **2026-11-17 08:20 EST (UTC−05:00)** | 5.2.0 is the current GA release. |
 
-**Patch:** Install **ooRexx 5.2.0 or later** when a release of that version is available. This run found none. Until then, set `XDG_RUNTIME_DIR` so RXAPI does not use the world-writable file, and keep untrusted local users off the host. Setting the variable does not fix the two bounds flaws. The upgrade does not show whether a macro was already injected.
+**Patch:** Install **ooRexx 5.2.0 or later**. 5.2.0 is the current GA release, and the 5.3.0 beta is not required. Until then, set `XDG_RUNTIME_DIR` so RXAPI does not use the world-writable file, and keep untrusted local users off the host. Setting the variable does not fix the two bounds flaws. The upgrade does not show whether a macro was already injected.
 
 Sources: [CVE-2026-130327](https://www.cve.org/CVERecord?id=CVE-2026-130327), [CVE-2026-130320](https://www.cve.org/CVERecord?id=CVE-2026-130320), [CVE-2026-130290](https://www.cve.org/CVERecord?id=CVE-2026-130290), [detailed guide](details/oorexx.md).
 

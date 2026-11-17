@@ -4,6 +4,10 @@
       "last_checked": "2026-11-16T19:56:06Z",
       "hold": "awaiting-fix"
     },
+    "7zip.md": {
+      "last_checked": "2026-11-17T11:56:37Z",
+      "hold": "none"
+    },
     "acf-extended.md": {
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "none"
@@ -143,6 +147,10 @@
     "btcpay-server.md": {
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
+    },
+    "cboard.md": {
+      "last_checked": "2026-11-17T11:56:37Z",
+      "hold": "awaiting-fix"
     },
     "chainalysis.md": {
       "last_checked": "2026-11-16T15:55:55Z",
@@ -289,7 +297,7 @@
       "hold": "none"
     },
     "estatik.md": {
-      "last_checked": "2026-11-16T11:56:18Z",
+      "last_checked": "2026-11-17T11:56:37Z",
       "hold": "none"
     },
     "fastify-http-proxy.md": {
@@ -576,6 +584,10 @@
       "last_checked": "2026-11-16T19:56:06Z",
       "hold": "none"
     },
+    "oorexx.md": {
+      "last_checked": "2026-11-17T11:56:37Z",
+      "hold": "none"
+    },
     "openam.md": {
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
@@ -726,6 +738,10 @@
     },
     "signal.md": {
       "last_checked": "2026-11-15T15:56:05Z",
+      "hold": "none"
+    },
+    "silverstripe.md": {
+      "last_checked": "2026-11-17T11:56:37Z",
       "hold": "none"
     },
     "siteguard.md": {
