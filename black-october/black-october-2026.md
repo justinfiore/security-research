@@ -15,6 +15,10 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Cloud Commander: a rename request moves any file before login](#cloud-commander-a-rename-request-moves-any-file-before-login)
+- [Go1 CMS: a guest request rewrites any record](#go1-cms-a-guest-request-rewrites-any-record)
+- [Frappe Ghost: a guest session becomes any account](#frappe-ghost-a-guest-session-becomes-any-account)
+- [Wiki.js: a user manager takes the administrator account](#wikijs-a-user-manager-takes-the-administrator-account)
 - [Linux kernel: NoisyTCP - a TCP packet crashes the host](#linux-kernel-noisytcp---a-tcp-packet-crashes-the-host)
 - [3DEXPERIENCE: the Station Launcher runs a command](#3dexperience-the-station-launcher-runs-a-command)
 - [NodePress: the default password and the default signing key are administrator](#nodepress-the-default-password-and-the-default-signing-key-are-administrator)
@@ -249,6 +253,10 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Cloud Commander](#cloud-commander-a-rename-request-moves-any-file-before-login) to **19.21.4 or later** and restart it. VulnCheck rates [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072) CVSS 3.1 9.1 Critical: `PUT /rename` runs before login and moves any file the process can reach, so `--auth` and `--root` do not stop it. The fix shipped on October 25. It is not in KEV. The upgrade does not put a moved file back.
+- **New this update:** Deploy [Go1 CMS](#go1-cms-a-guest-request-rewrites-any-record) commit `ead8da3` or later and restart it. VulnCheck rates [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071) CVSS 3.1 9.8 Critical: a guest request rewrites any record, including a user. The commit is from September 17 and there is no release. It is not in KEV. The deploy does not undo a record already changed.
+- **New this update:** Deploy [Frappe Ghost](#frappe-ghost-a-guest-session-becomes-any-account) commit `641db34` or later and restart it. This is the Frappe app by muneeb141, not the Ghost publishing platform. VulnCheck rates [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070) CVSS 4.0 9.3 Critical: a guest session sets `bypass_otp` and receives tokens for any account. The commit is from October 20 and there is no release. It is not in KEV. Revoke tokens you cannot account for.
+- **New this update:** Upgrade [Wiki.js](#wikijs-a-user-manager-takes-the-administrator-account) to **2.5.315 or later** and restart it. GitHub rates [CVE-2026-120698](https://www.cve.org/CVERecord?id=CVE-2026-120698) CVSS 3.1 8.8 High: an account with `manage:users` sets the administrator password and turns off its second factor. [CVE-2026-120697](https://www.cve.org/CVERecord?id=CVE-2026-120697) is 8.7: a page stores script that runs when someone opens it. The release is from September 21. Neither is in KEV. Reset the administrator password.
 - **New this update:** Install a kernel that names [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288) and reboot. Red Hat rates it CVSS 3.1 7.5 High: one TCP connection can panic the host, with no login. kernel.org publishes no score. The upstream floors are 6.12.117, 6.18.63, and 7.3.4, and the 5.10, 5.15, 6.1, and 6.6 lines have none. Red Hat 8, 9, and 10, Ubuntu, and Debian bookworm, trixie, forky, and sid have no fixed package. It is not in KEV. The reboot is the fix; installing the package is not.
 - **New this update:** Install the [3DEXPERIENCE](#3dexperience-the-station-launcher-runs-a-command) fix from Dassault support article QA00000522688. Dassault rates [CVE-2026-93664](https://www.cve.org/CVERecord?id=CVE-2026-93664) CVSS 3.1 10.0 Critical: the Station Launcher deserializes untrusted data and can run code with no login. [CVE-2026-77033](https://www.cve.org/CVERecord?id=CVE-2026-77033) and [CVE-2026-19732](https://www.cve.org/CVERecord?id=CVE-2026-19732) are 9.9 and need a login. R2023x through R2026x are affected, and no public page names the fixed level. None is in KEV.
 - **New this update:** Take a public [NodePress](#nodepress-the-default-password-and-the-default-signing-key-are-administrator) through 8.5.1 offline. VulnCheck rates [CVE-2026-129955](https://www.cve.org/CVERecord?id=CVE-2026-129955) and [CVE-2026-129952](https://www.cve.org/CVERecord?id=CVE-2026-129952) CVSS 3.1 9.8 Critical: with the environment unset, the administrator password is `root` and the JWT signing key is `nodepress-secret`. No fixed release exists. Neither is in KEV. Set both secrets, which signs out forged tokens and does not undo a change already made.
@@ -427,6 +435,95 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Cloud Commander: a rename request moves any file before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cloudcmd.md):** [Detection](details/cloudcmd.md#detection) · [Remediation](details/cloudcmd.md#remediation) · [Verification](details/cloudcmd.md#verification) · [Timeline](details/cloudcmd.md#timeline)
+
+**CVEs:** [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072)
+
+**VulnCheck rates [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072) CVSS 4.0 8.8 High and CVSS 3.1 9.1 Critical.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H`. NVD has not scored it. Cloud Commander (`cloudcmd`) before **19.21.4** handles `PUT /rename` before authentication, so a request with no login moves any file the Node.js process can reach, including paths outside `--root`. The maintainer fixed it in v19.21.4 on October 25. The CVE record was published on November 16. This is not [CloudPaste](#cloudpaste-a-share-link-returns-the-webdav-password).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Finder's report | 2026-10-23; time/TZ unknown | GitHub issue 486, against v19.21.2. |
+| Fix released | 2026-10-25 12:12:08 UTC | v19.21.4. |
+| **Public announcement** | **2026-11-16; time/TZ unknown** | VulnCheck published the CVE record. |
+| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | New item. Fixed in 19.21.4. |
+
+**Patch:** Upgrade `cloudcmd` to 19.21.4 or later and restart it. npm's latest on November 16 is 19.23.2. The upgrade does not put a moved file back.
+
+Sources: [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072), [v19.21.4](https://github.com/coderaiser/cloudcmd/releases/tag/v19.21.4), [detailed guide](details/cloudcmd.md).
+
+---
+
+## Go1 CMS: a guest request rewrites any record
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/go1cms.md):** [Detection](details/go1cms.md#detection) · [Remediation](details/go1cms.md#remediation) · [Verification](details/go1cms.md#verification) · [Timeline](details/go1cms.md#timeline)
+
+**CVEs:** [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071)
+
+**VulnCheck rates [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. NVD has not scored it. Go1 CMS (`go1cms`, a Frappe app) exposed `update_doc` to guests and saved with permissions ignored, so a request with no login rewrites any record, including a user. The fix is commit `ead8da3`, dated September 17, and GitHub lists no release. A checkout that does not contain it is still affected. This is not [Prime](#prime-anyone-can-register-an-administrator).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix committed | 2026-09-17 10:08:44 UTC | Commit `ead8da3`. No release. |
+| **Public announcement** | **2026-11-16; time/TZ unknown** | VulnCheck published the CVE record. |
+| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | New item. The fix is a commit. |
+
+**Patch:** Deploy a tree that contains `ead8da36a9452b961cc5361d6fd853ca68a58b08` and restart it. The deploy does not undo a record that was already changed.
+
+Sources: [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071), [commit ead8da3](https://github.com/TridotsTech/go1cms/commit/ead8da36a9452b961cc5361d6fd853ca68a58b08), [detailed guide](details/go1cms.md).
+
+---
+
+## Frappe Ghost: a guest session becomes any account
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/frappe-ghost.md):** [Detection](details/frappe-ghost.md#detection) · [Remediation](details/frappe-ghost.md#remediation) · [Verification](details/frappe-ghost.md#verification) · [Timeline](details/frappe-ghost.md#timeline)
+
+**CVEs:** [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070)
+
+**VulnCheck rates [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070) CVSS 4.0 9.3 Critical and CVSS 3.1 9.1 Critical.** VulnCheck is the CNA. The 4.0 vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N`. NVD has not scored it. Ghost by muneeb141 is a Frappe app, not the Ghost publishing platform. A guest session calls `convert_to_real_user` with `bypass_otp` and an email, and receives OAuth tokens for that account. The affected range ends at commit `672dfec` (October 13). The fix is commit `641db34`, dated October 20, and GitHub lists no release. This is not [Go1 CMS](#go1-cms-a-guest-request-rewrites-any-record).
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix committed | 2026-10-20 19:16:39 UTC | Commit `641db34`. No release. |
+| **Public announcement** | **2026-11-16; time/TZ unknown** | VulnCheck published the CVE record. |
+| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | New item. The fix is a commit. |
+
+**Patch:** Deploy a tree that contains `641db34f6456c15f381358e2e631df66ea170842` and restart it. Revoke tokens you cannot account for. The Ghost publishing platform is a different product.
+
+Sources: [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070), [commit 641db34](https://github.com/muneeb141/ghost/commit/641db34f6456c15f381358e2e631df66ea170842), [detailed guide](details/frappe-ghost.md).
+
+---
+
+## Wiki.js: a user manager takes the administrator account
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wiki-js.md):** [Detection](details/wiki-js.md#detection) · [Remediation](details/wiki-js.md#remediation) · [Verification](details/wiki-js.md#verification) · [Timeline](details/wiki-js.md#timeline)
+
+**CVEs:** [CVE-2026-120698](https://www.cve.org/CVERecord?id=CVE-2026-120698), [CVE-2026-120697](https://www.cve.org/CVERecord?id=CVE-2026-120697)
+
+**GitHub rates [CVE-2026-120698](https://www.cve.org/CVERecord?id=CVE-2026-120698) CVSS 3.1 8.8 High and [CVE-2026-120697](https://www.cve.org/CVERecord?id=CVE-2026-120697) CVSS 3.1 8.7 High.** GitHub is the CNA. NVD has not scored either. Before **2.5.315**, an account with only `manage:users` sets the password of any local account, including the root administrator, turns off its second factor, and can remove every group from it. Separately, an account with `write:pages` stores a JavaScript expression in a Vue slot attribute, and the expression runs when someone else opens the page. v2.5.315, published September 21, fixes both. The CVE records were published on November 16. The GitHub advisory for the script flaw says versions before 2.5.314; the CVE record says before 2.5.315.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix released | 2026-09-21 06:18:18 UTC | v2.5.315. Both advisories the same day. |
+| **Public announcement** | **2026-11-16; time/TZ unknown** | GitHub published both CVE records. |
+| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | New item. Fixed in 2.5.315. |
+
+**Patch:** Upgrade to 2.5.315 or later and restart. Later 2.x builds are in the `wiki-v2` repository. Reset the administrator password and turn its second factor back on. The upgrade does not remove a page that already stores the expression.
+
+Sources: [GHSA-45cp-v5ph-2jhm](https://github.com/requarks/wiki/security/advisories/GHSA-45cp-v5ph-2jhm), [GHSA-98c8-px3r-68c6](https://github.com/requarks/wiki/security/advisories/GHSA-98c8-px3r-68c6), [detailed guide](details/wiki-js.md).
 
 ---
 
@@ -794,14 +891,15 @@ Sources: [Patchstack](https://patchstack.com/database/wordpress/plugin/estatik/v
 
 Apache, the CNA, rates the Axis flaw critical in text and publishes no number. Axis 1 is end of life, and Apache says it will not ship a fixed 1.x release. CISA's enrichment of the record scores it CVSS 3.1 9.8. NVD has not scored it. CISA's SSVC record from November 10 says exploitation is none. The same Axis flaw is the first step of the [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet) chain. This is not the [October Confluence file read](#atlassian-data-center-unauthenticated-web-root-file-read).
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-15). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Rapid7 says that on November 13 it detected exploitation against Confluence Data Center in a customer environment. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Apache announcement | 2026-11-06 15:32 UTC | Critical, no number. Axis 1.x through 1.4. No fixed release. |
 | CVE record published | 2026-11-06 15:37:55 UTC | Apache CNA. The CISA-ADP 9.8 score was added 2026-11-10. |
 | **Public announcement** | **2026-11-09 22:00 PST (UTC−08:00)** | Atlassian advisory. Confluence Data Center, fixed in 9.2.28. |
-| **Last updated** | **2026-11-15 19:04 EST (UTC−05:00)** | New item. Upgrade Confluence, or turn the Remote API off. |
+| Rapid7 detection | 2026-11-13; time/TZ unknown | One customer environment. Published 2026-11-16. |
+| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | Rapid7 reports exploitation. The fix is unchanged. |
 
 **Patch:** Upgrade Confluence Data Center to **9.2.28 or later**, or to **10.0 or later**, and restart every node. Until then, clear **Remote API (XML-RPC & SOAP)** under Further Configuration and save. Atlassian says that takes effect without a restart, and that anything using XML-RPC or SOAP stops. Confluence Cloud needs nothing for this advisory. The upgrade does not remove an account or an add-on that was already created.
 
@@ -944,9 +1042,9 @@ Sources: [Midnight Blue](https://www.midnightblue.nl/blog/multiple-rce-danfoss-a
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/sogo.md):** [Detection](details/sogo.md#detection) · [Remediation](details/sogo.md#remediation) · [Verification](details/sogo.md#verification) · [Timeline](details/sogo.md#timeline)
 
-**CVEs:** [CVE-2026-127111](https://www.cve.org/CVERecord?id=CVE-2026-127111), [CVE-2026-127131](https://www.cve.org/CVERecord?id=CVE-2026-127131)
+**CVEs:** [CVE-2026-127111](https://www.cve.org/CVERecord?id=CVE-2026-127111), [CVE-2026-127131](https://www.cve.org/CVERecord?id=CVE-2026-127131), [CVE-2026-130066](https://www.cve.org/CVERecord?id=CVE-2026-130066)
 
-**VulnCheck rates both CVEs CVSS 4.0 9.1 Critical and CVSS 3.1 7.4 High.** VulnCheck is the CNA. CVE-2026-127111 lets a remote attacker who is not logged in guess the answers to an account's secret questions with no lockout, then set a new password. The record says this takes over an account that does not have TOTP. CVE-2026-127131 lets someone who already has the password guess the TOTP code, because a wrong code does not count as a failed login. Every version before **5.12.13** is affected. Alinto shipped that release on November 4, called the flaws critical, and named no CVE and no score.
+**VulnCheck rates CVE-2026-127111 and CVE-2026-127131 CVSS 4.0 9.1 Critical and CVSS 3.1 7.4 High, and [CVE-2026-130066](https://www.cve.org/CVERecord?id=CVE-2026-130066) CVSS 4.0 7.1 High.** VulnCheck is the CNA. CVE-2026-127111 lets a remote attacker who is not logged in guess the answers to an account's secret questions with no lockout, then set a new password. The record says this takes over an account that does not have TOTP. CVE-2026-127131 lets someone who already has the password guess the TOTP code, because a wrong code does not count as a failed login. CVE-2026-130066 lets a logged-in user read the user table, including password hashes, through a SQL-backed address book on MySQL or MariaDB. Every version before **5.12.13** is affected, and 5.12.13 fixes this one too. Alinto shipped that release on November 4.
 
 **CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-13) for either CVE. Neither record reports exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -954,7 +1052,8 @@ Sources: [Midnight Blue](https://www.midnightblue.nl/blog/multiple-rce-danfoss-a
 |---|---|---|
 | SOGo 5.12.13 released | 2026-11-04 09:24:58 UTC | Alinto says the CVE identifiers were not assigned yet. |
 | **Public announcement** | **2026-11-12 15:53:16 UTC** | CVE-2026-127111 published. CVE-2026-127131 followed at 15:56:31 UTC. |
-| **Last updated** | **2026-11-13 07:15 EST (UTC−05:00)** | New item. Upgrade SOGo. |
+| SQL injection record | 2026-11-16; time/TZ unknown | CVE-2026-130066. Same fix, 5.12.13. |
+| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | The SQL injection is in the same release. |
 
 **Patch:** Upgrade to **SOGo 5.12.13 or later** and restart it. Until then, turn password recovery off if you do not need it. That does not fix the TOTP guessing. The upgrade does not undo a password that was already changed.
 
@@ -4805,7 +4904,7 @@ Sources: [Rank Math security notice](https://rankmath.com/kb/pro-3-0-123-securit
 
 **[CVE-2026-106173](https://www.cve.org/CVERecord?id=CVE-2026-106173) — Fortinet CVSS 3.1: 9.4 Critical (vector includes temporal metrics `E:H/RL:O/RC:C`; the base metrics alone score 9.8, which NVD shows as Fortinet's secondary score); Fortinet severity: Critical; public PoC; exploitation reported by Canada's Cyber Centre**
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Canada's Cyber Centre said on 2026-10-23 that open-source reporting indicates the flaw is being exploited in the wild, while Fortinet's advisory still shows "Known Exploited: No". Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Canada's Cyber Centre said on 2026-10-23 that open-source reporting indicates the flaw is being exploited in the wild, while Fortinet's advisory still shows "Known Exploited: No". Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -4814,7 +4913,8 @@ Sources: [Rank Math security notice](https://rankmath.com/kb/pro-3-0-123-securit
 | CVE record published | 2026-10-13 17:37:09 UTC | CNA metadata. |
 | Horizon3.ai analysis and public PoC | 2026-10-20 (date only) | Exploitation chain overwrites a script that cron runs every 60 seconds. |
 | Canada Cyber Centre AV26-1037 Update 1 | 2026-10-23 (date only) | Cites open-source reporting of in-the-wild exploitation. Not the exploitation start date, which is unknown. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| Advisory lists 7.0 through 7.4 | 2026-10-27; time/TZ unknown | Fortinet's timeline: "update FortiSIEM affected versions". Migrate; no in-branch fix. |
+| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | 7.0 through 7.4 are affected. Move off them. |
 
 FortiSIEM's phQueryMaster service runs a gRPC server on TCP 27918 that accepts any client without a client certificate. Its `SendQueryResult` method builds a file path from attacker-supplied metadata without validation, so an unauthenticated attacker can write files outside the intended directory. Horizon3 showed that a NUL byte in the same field gives full control of the file name.
 
@@ -4822,9 +4922,9 @@ FortiSIEM's phQueryMaster service runs a gRPC server on TCP 27918 that accepts a
 
 **Exploitation status:** A working public PoC has been available since 2026-10-20. Canada's Cyber Centre reported in-the-wild exploitation on 2026-10-23, citing unnamed open-source reporting. Fortinet's advisory still says "Known Exploited: No", and no Fortinet, honeypot or scanning-service report of attacks was found through 2026-10-26. Horizon3 found no application logs that reveal exploitation, so check file timestamps instead (see the [detail guide](details/fortisiem.md#compromise-indicators)).
 
-**Am I impacted?** Check the version of every FortiSIEM node. Fortinet's advisory lists only **7.5.0** as affected, says 7.6 and FortiSIEM Cloud are not affected, and does not mention other branches. The Fortinet-assigned CVE record also lists **7.0.0–7.4.2** as affected, so treat those branches as unknown, not cleared. The record also names FortiSIEMCloud and FortiSOC fix versions, which conflicts with the advisory's Cloud statement. Nodes are at risk when TCP 27918 is reachable from untrusted networks.
+**Am I impacted?** Check the version of every FortiSIEM node. Fortinet's October 27 advisory update lists **7.5.0** and **every 7.4, 7.3, 7.2, 7.1, and 7.0 release** as affected. 7.5.1 and 7.6 are the fixes, and 6.X is not affected. The older branches have no build of their own. FortiSIEM Cloud is not affected. Nodes are at risk when TCP 27918 is reachable from untrusted networks.
 
-**Patch:** Upgrade 7.5.0 to **7.5.1 or later** (or 7.6). For 7.0–7.4, restrict the port and ask Fortinet about a supported upgrade path to a fixed release. Until patched, allow TCP 27918 only from the FortiSIEM nodes that need it, which Fortinet says "prevents the issue". Patching does not undo overwritten files, so check them first.
+**Patch:** Upgrade 7.5.0 to **7.5.1 or later**, or to 7.6. On 7.0 through 7.4, move to one of those. There is no fixed build inside those branches. Until then, allow TCP 27918 only from the FortiSIEM nodes that need it, which Fortinet says "prevents the issue". Patching does not undo overwritten files, so check them first.
 
 Sources: [Fortinet FG-IR-26-180](https://fortiguard.fortinet.com/psirt/FG-IR-26-180), [Fortinet CNA record](https://cveawg.mitre.org/api/cve/CVE-2026-106173), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-106173), [Horizon3.ai analysis](https://horizon3.ai/attack-research/cve-2026-106173-deep-dive-fortisiem-grpc-path-traversal-file-write-rce/), [Canada Cyber Centre AV26-1037](https://www.cyber.gc.ca/en/alerts-advisories/fortinet-security-advisory-av26-1037), [The Hacker News](https://thehackernews.com/2026/10/critical-fortisiem-flaw-gets-public.html), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -6661,6 +6761,10 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Cloud Commander (`cloudcmd`) before 19.21.4** | Upgrade to 19.21.4 or later and restart. VulnCheck rates CVE-2026-130072 9.1: `PUT /rename` moves any file the process can reach, with no login. `--auth` does not stop it. [Guide](details/cloudcmd.md#remediation). |
+| **Go1 CMS (`go1cms`) without commit `ead8da3`** | Deploy that commit and restart. VulnCheck rates CVE-2026-130071 9.8: a guest request rewrites any record. There is no release. [Guide](details/go1cms.md#remediation). |
+| **Frappe Ghost (muneeb141) without commit `641db34`** | Deploy that commit and restart. VulnCheck rates CVE-2026-130070 9.3: a guest session receives tokens for any account. This is not the Ghost publishing platform. There is no release. [Guide](details/frappe-ghost.md#remediation). |
+| **Wiki.js before 2.5.315** | Upgrade to 2.5.315 or later and restart. GitHub rates CVE-2026-120698 8.8: a user manager takes the administrator account. CVE-2026-120697 is 8.7: a page stores script. Reset the administrator password. [Guide](details/wiki-js.md#remediation). |
 | **VoAPI, any public release** | Take it off the public internet. VulnCheck rates CVE-2026-129540 8.8: a logged-in user reads the JWT signing secret and forges a manager token. v1.2.0 is the newest release and is affected. The project says it is unmaintained. Rotate the signing secret. [Guide](details/voapi.md#remediation). |
 | **CloudPaste through 1.9.1** | Keep `/api/proxy/link` off the public internet and rotate the WebDAV password. VulnCheck rates CVE-2026-129494 8.7: a share slug returns the WebDAV username and password. v1.9.1 is the newest release and is affected. [Guide](details/cloudpaste.md#remediation). |
 | **Bolo (bolo-solo) through 2.6.4** | Do not rely on an article password. VulnCheck rates CVE-2026-129493 8.7: the article list returns it in plaintext. v2.6.4 is the newest release and is affected. Change every article password. [Guide](details/bolo.md#remediation). |

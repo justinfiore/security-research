@@ -1,14 +1,14 @@
 # FortiSIEM: unauthenticated gRPC path traversal to remote code execution
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main FortiSIEM summary](../black-october-2026.md#fortisiem-unauthenticated-grpc-path-traversal-to-remote-code-execution) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**[CVE-2026-106173](https://www.cve.org/CVERecord?id=CVE-2026-106173) — Fortinet CVSS 3.1: 9.4 Critical (vector `AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:H/RL:O/RC:C`); Fortinet severity: Critical.** A path traversal (CWE-22) in the **phQueryMaster** gRPC service lets an **unauthenticated** attacker who can reach **TCP 27918** write files on a FortiSIEM appliance. Fortinet classifies the impact as "Execute unauthorized code or commands". Horizon3.ai published a technical analysis and a working proof of concept on 2026-10-20. It shows how to overwrite a script that cron runs every 60 seconds, which turns the file write into command execution. Fortinet's advisory lists only **FortiSIEM 7.5.0** as affected. The Fortinet-assigned CVE record also lists **7.0.0 through 7.4.2** (see [the version discrepancy](#which-versions-are-affected)).
+**[CVE-2026-106173](https://www.cve.org/CVERecord?id=CVE-2026-106173) — Fortinet CVSS 3.1: 9.4 Critical (vector `AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:H/RL:O/RC:C`); Fortinet severity: Critical.** A path traversal (CWE-22) in the **phQueryMaster** gRPC service lets an **unauthenticated** attacker who can reach **TCP 27918** write files on a FortiSIEM appliance. Fortinet classifies the impact as "Execute unauthorized code or commands". Horizon3.ai published a technical analysis and a working proof of concept on 2026-10-20. It shows how to overwrite a script that cron runs every 60 seconds, which turns the file write into command execution. Fortinet's advisory, updated October 27, lists **7.5.0** and **every 7.4, 7.3, 7.2, 7.1, and 7.0 release** as affected. 7.5.1 and 7.6 are the fixes. The older branches have no build of their own: Fortinet says to migrate (see [which versions are affected](#which-versions-are-affected)).
 
 **Scoring attribution:** Fortinet's advisory and CNA record give 9.4 for a vector that includes temporal metrics (`E:H/RL:O/RC:C`). The record labels 9.4 the `baseScore`. However, the vector's base metrics alone score **9.8**, and 9.4 is what CVSS 3.1 yields after applying those temporal metrics (9.8 × 0.95 for `RL:O`, rounded up; this guide's calculation). NVD shows Fortinet as a secondary source with **9.8** for the base vector without temporal metrics. As of 2026-10-26, NVD has not published its own score (status "Awaiting Analysis"). CISA's ADP SSVC entry records Exploitation: poc, Automatable: yes, Technical impact: total.
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Canada's Cyber Centre said on 2026-10-23 that open-source reporting indicates [CVE-2026-106173](https://www.cve.org/CVERecord?id=CVE-2026-106173) is being exploited in the wild, while Fortinet's advisory still shows "Known Exploited: No". Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Canada's Cyber Centre said on 2026-10-23 that open-source reporting indicates [CVE-2026-106173](https://www.cve.org/CVERecord?id=CVE-2026-106173) is being exploited in the wild, while Fortinet's advisory still shows "Known Exploited: No". Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -37,22 +37,21 @@
 | Cyber Security Agency of Singapore alert AL-2026-153 | 2026-10-22 (date only) | Says a PoC is public. It reports no exploitation. [CSA][csa] |
 | Canada Cyber Centre AV26-1037 Update 1 | 2026-10-23 (date only) | "Open-source reporting indicates that CVE-2026-106173 is being exploited in the wild." The centre does not name the reporting or give indicators. [Cyber Centre][cccs] |
 | Exploitation start | Unknown; reported by 2026-10-23 | Only the Cyber Centre's update reports exploitation. No vendor, honeypot or scanning-service report was found (see [Compromise indicators](#compromise-indicators)). |
-| Fortinet advisory status | As checked 2026-10-26 | The advisory still shows only "Initial publication" and "Known Exploited: No". [Advisory][fortinet] |
-| CISA KEV | Not listed; checked 2026-10-26 | Catalog 2026.10.23. [KEV JSON][kev] |
+| Fortinet advisory update | 2026-10-27; time/TZ unknown | The advisory's timeline adds "update FortiSIEM affected versions". 7.4, 7.3, 7.2, 7.1, and 7.0, all versions, with "Migrate to a fixed release". The CSAF product status matches. Its revision history still lists only the October 13 publication. [Advisory][fortinet] [CSAF][csaf] |
+| CISA KEV | Not listed; checked 2026-11-16 | Catalog 2026.11.13. [KEV JSON][kev] |
 
 ## Detection
 
 ### Which versions are affected
 
-The vendor sources disagree:
+Fortinet's October 27 update closed the earlier disagreement. The advisory, the CSAF, and the CNA record now agree on the branches:
 
 | Source | Affected | Fixed / not affected |
 |---|---|---|
-| [Fortinet advisory FG-IR-26-180][fortinet] and [CSAF][csaf] | 7.5.0 only | 7.5.1 or later; 7.6 not affected; "FortiSIEM Cloud is NOT affected". No other branch is listed. |
-| [Fortinet CNA record][cve], `affected` list (also shown by [NVD][nvd]) | 7.5.0, 7.4.0–7.4.2, 7.3.0–7.3.5, 7.2.0–7.2.7, 7.1.0–7.1.9, 7.0.0–7.0.4 | `solutions` text: "Upgrade to FortiSIEM version 7.6.0 or above", "7.5.1 or above", "upcoming FortiSIEMCloud version 25.4.1 or above" and "FortiSOC version 26.2.2 or above". |
-| CNA record description | "FortiSIEM 7.5.0" | — |
+| [Fortinet advisory FG-IR-26-180][fortinet] and [CSAF][csaf], read 2026-11-16 | 7.5.0; 7.4, 7.3, 7.2, 7.1, and 7.0, all versions | 7.5.1 or later; 7.6 not affected; 6.X not affected. The older branches say "Migrate to a fixed release". |
+| [Fortinet CNA record][cve], updated 2026-11-10 | 7.5.0, 7.4.0–7.4.2, 7.3.0–7.3.5, 7.2.0–7.2.7, 7.1.0–7.1.9, 7.0.0–7.0.4 | Solutions name 7.6.0 and 7.5.1. The earlier lines naming FortiSIEMCloud 25.4.1 and FortiSOC 26.2.2 are gone. |
 
-The disagreement is not resolved by any reviewed source. Fortinet has not updated the advisory since publication. The CNA record conflicts with its own description, and its mention of FortiSIEMCloud and FortiSOC fixes conflicts with the advisory's statement that FortiSIEM Cloud is not affected. Horizon3's analysis does not state which versions it tested. This guide therefore treats **7.5.0 as affected**, and **7.0.x through 7.4.x as unknown, not cleared**, until Fortinet clarifies. Ask Fortinet support about any unit on those branches. If you use FortiSIEM Cloud or FortiSOC, ask Fortinet to confirm whether your tenant is affected and when it was updated.
+The CNA record's version ceilings (7.4.2, 7.3.5, 7.2.7, 7.1.9, 7.0.4) are narrower than the advisory's "all versions". Treat a later build on those branches as affected too, because the advisory says so and names no fix inside the branch. Horizon3's analysis does not state which versions it tested. The advisory still says FortiSIEM Cloud is not affected.
 
 ### Inventory and exposure
 
@@ -81,9 +80,9 @@ Exploitation evidence outside the Cyber Centre's statement: searches through 202
 ## Remediation
 
 1. **7.5.0:** Upgrade to **7.5.1 or later**, or to a 7.6 release, which Fortinet lists as not affected. Follow Fortinet's upgrade guide and release notes for your topology. Download firmware only from Fortinet support, back up the configuration first, and expect service interruption while nodes upgrade.
-2. **7.0.x through 7.4.x:** Fortinet's advisory does not cover these branches, but the CNA record lists them as affected, and its only fixed versions are 7.5.1 and 7.6.0. Restrict TCP 27918 now. Then ask Fortinet support whether your version is affected and plan a supported upgrade to a fixed release.
+2. **7.0 through 7.4:** Fortinet now lists every version of these branches as affected and says to migrate. There is no fixed build inside the branch. Restrict TCP 27918 now, then move to 7.5.1 or later, or to 7.6.
 3. **Workaround until upgraded:** Fortinet says "Restricting access on tcp port 27918 prevents the issue." Allow the port only from the FortiSIEM nodes that need it, and test collection, correlation and queries after the change, because a rule that blocks legitimate inter-node traffic can break them. Keeping the restriction after patching reduces exposure to future bugs in this service.
-4. **FortiSIEM Cloud / FortiSOC:** Fortinet's advisory says FortiSIEM Cloud is not affected. The CNA record nevertheless names FortiSIEMCloud 25.4.1 and FortiSOC 26.2.2 as fixed versions. Get a tenant-specific answer from Fortinet.
+4. **FortiSIEM Cloud:** Fortinet's advisory says it is not affected. The CNA record's earlier mention of a FortiSIEMCloud fix and a FortiSOC fix is gone from the November 10 record.
 5. Upgrading and restricting the port prevent new exploitation. They do not restore files that an attacker already overwrote. If a node may be compromised, preserve evidence before you upgrade or reboot it.
 
 ## Verification

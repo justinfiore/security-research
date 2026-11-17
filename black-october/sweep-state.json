@@ -37,7 +37,7 @@
       "hold": "none"
     },
     "apache-camel-saxon.md": {
-      "last_checked": "2026-11-11T23:55:42Z",
+      "last_checked": "2026-11-16T23:55:58Z",
       "hold": "none"
     },
     "apache-http-server.md": {
@@ -185,8 +185,8 @@
       "hold": "awaiting-fix"
     },
     "confluence-axis.md": {
-      "last_checked": "2026-11-15T23:56:12Z",
-      "hold": "none"
+      "last_checked": "2026-11-16T23:55:58Z",
+      "hold": "awaiting-fix"
     },
     "control-web-panel.md": {
       "last_checked": "2026-11-15T15:56:05Z",
@@ -313,12 +313,12 @@
       "hold": "awaiting-fix"
     },
     "fortisandbox.md": {
-      "last_checked": "2026-11-11T23:55:42Z",
-      "hold": "none"
+      "last_checked": "2026-11-16T23:55:58Z",
+      "hold": "awaiting-fix"
     },
     "fortisiem.md": {
-      "last_checked": "2026-11-11T23:55:42Z",
-      "hold": "none"
+      "last_checked": "2026-11-16T23:55:58Z",
+      "hold": "awaiting-fix"
     },
     "freeswitch.md": {
       "last_checked": "2026-11-15T15:56:05Z",
@@ -833,8 +833,8 @@
       "hold": "none"
     },
     "wolfvision-cynap.md": {
-      "last_checked": "2026-11-11T23:55:42Z",
-      "hold": "none"
+      "last_checked": "2026-11-16T23:55:58Z",
+      "hold": "awaiting-fix"
     },
     "wordpress-plugins-frontend-admin.md": {
       "last_checked": "2026-11-15T15:56:05Z",

@@ -2,6 +2,16 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-16 19:10 EST (UTC−05:00) — Cloud Commander; Go1 CMS; Frappe Ghost; Wiki.js
+
+- **Cloud Commander:** Upgrade to [19.21.4 or later](black-october/details/cloudcmd.md#remediation) and restart. VulnCheck rates CVE-2026-130072 CVSS 3.1 9.1: `PUT /rename` runs before login and moves any file the process can reach. The fix shipped October 25. It is not in KEV. The upgrade does not put a moved file back.
+- **Go1 CMS:** Deploy commit [`ead8da3`](black-october/details/go1cms.md#remediation) and restart. VulnCheck rates CVE-2026-130071 CVSS 3.1 9.8: a guest request rewrites any record, including a user. The commit is from September 17 and there is no release. It is not in KEV.
+- **Frappe Ghost:** Deploy commit [`641db34`](black-october/details/frappe-ghost.md#remediation) and restart. This is the Frappe app by muneeb141, not the Ghost publishing platform. VulnCheck rates CVE-2026-130070 CVSS 4.0 9.3: a guest session receives tokens for any account. The commit is from October 20 and there is no release. It is not in KEV. Revoke tokens you cannot account for.
+- **Confluence Data Center:** Rapid7 says it [detected exploitation](black-october/details/confluence-axis.md#compromise-response) on November 13 in one customer environment. Look for 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. Not seeing them does not clear the instance. The fix is unchanged: 9.2.28, or turn off Remote API (XML-RPC & SOAP). It is not in KEV.
+- **FortiSIEM:** Fortinet's October 27 update lists [7.0 through 7.4, all versions](black-october/details/fortisiem.md#which-versions-are-affected), as affected by CVE-2026-106173. There is no fixed build on those branches. Move to 7.5.1 or 7.6, and restrict TCP 27918 until then. 7.6 and 6.X are not affected.
+- **SOGo:** [CVE-2026-130066](black-october/details/sogo.md#remediation) is SQL injection, CVSS 4.0 7.1, fixed in the same 5.12.13. A logged-in user can read password hashes from a SQL-backed address book on MySQL or MariaDB. Upgrade if you have not.
+- **Wiki.js:** Upgrade to [2.5.315 or later](black-october/details/wiki-js.md#remediation) and restart. GitHub rates CVE-2026-120698 CVSS 3.1 8.8: an account with `manage:users` sets the administrator password and turns off its second factor. CVE-2026-120697 is 8.7: a page stores script that runs when someone opens it. The release is from September 21. Neither is in KEV. Reset the administrator password.
+
 ## 2026-11-16 16:10 EST (UTC−05:00) — NoisyTCP; Batflat; Prime
 
 - **Linux kernel:** Debian and Oracle now have [fixed kernels](black-october/details/linux-noisytcp.md#detection) for CVE-2026-99288. Debian bookworm is 6.1.192-1 (DLA-4906-1) and trixie is 6.12.117-1 (DSA-6628-1). Oracle Linux UEK is fixed on 7, 8, 9, and 10. Debian forky, Red Hat 8, 9, and 10, and Ubuntu still have none. Install the fixed kernel and reboot.

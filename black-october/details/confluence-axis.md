@@ -1,6 +1,6 @@
 # Confluence Data Center: a SOAP fault runs code
 
-**Last updated:** 2026-11-15 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main Confluence summary](../black-october-2026.md#confluence-data-center-a-soap-fault-runs-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,7 @@ Atlassian rates the same flaw **CVSS 4.0 9.3 Critical** for Confluence (`CVSS:4.
 
 This is not the [October file-read](atlassian-dc.md), CVE-2026-21589. The N-central chain that starts from the same Axis flaw is tracked with [N-central](n-central.md).
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-15). CISA's SSVC record, dated 2026-11-10, says exploitation is none. Huntback's November 12 report of N-central servers mining Monero is about N-central, not a Confluence site. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Rapid7 says that on November 13 its MDR service detected exploitation of this flaw against Confluence Data Center in a customer environment, from 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. Rapid7 says not seeing those addresses does not clear an environment. CISA's SSVC record, dated 2026-11-10, says exploitation is none, and that record predates Rapid7's detection. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -30,7 +30,8 @@ This is not the [October file-read](atlassian-dc.md), CVE-2026-21589. The N-cent
 | Apache announcement | 2026-11-06 15:32 UTC | Robert Lazarski posted the notice to java-user. Severity: critical. Axis 1.x through 1.4. No fixed release. Credit: José Apari-Pantigozo, OKIOK. [Announce][announce] |
 | CVE record published | 2026-11-06 15:37:55 UTC | Apache CNA. Updated 2026-11-10 18:37:36 UTC, which is the CISA-ADP score and SSVC, not a new description. [CVE][cve] |
 | Atlassian advisory | 2026-11-09 22:00 PST (UTC−08:00) | Confluence Data Center only. Fixed version 9.2.28. Page last modified 2026-11-10. [Advisory][adv] |
-| **Last updated** | **2026-11-15 (America/New_York)** | New item. Upgrade Confluence, or turn the Remote API off. |
+| Rapid7 detection | 2026-11-13; time/TZ unknown | Exploitation against Confluence Data Center in one customer environment. Published 2026-11-16. [Rapid7][r7] |
+| **Last updated** | **2026-11-16 (America/New_York)** | Rapid7 reports exploitation. The fix is unchanged. |
 
 ## Detection
 
@@ -55,15 +56,17 @@ This is not the [October file-read](atlassian-dc.md), CVE-2026-21589. The N-cent
 
 ## Compromise response
 
-Atlassian publishes no indicator for this flaw and says to have the local security team check affected instances. If the Remote API was on and reachable while the build was below 9.2.28, review administrator accounts, add-ons, and scheduled jobs for changes nobody made, and rotate credentials stored in Confluence. The upgrade does not remove an add-on or an account that was already created. The N-central miner paths in the [N-central guide](n-central.md#detection) are for that product, not for Confluence.
+Atlassian publishes no indicator for this flaw and says to have the local security team check affected instances. Rapid7 names four source addresses from the November 13 detection: 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. A hit in the access log is a reason to investigate. No hit is not a clean result. If the Remote API was on and reachable while the build was below 9.2.28, review administrator accounts, add-ons, and scheduled jobs for changes nobody made, and rotate credentials stored in Confluence. The upgrade does not remove an add-on or an account that was already created. The N-central miner paths in the [N-central guide](n-central.md#detection) are for that product, not for Confluence.
 
 ## Sources
 
 - [Atlassian advisory][adv] — release date Tue, Nov 9 2026 22:00 PST. CVSS 4.0 9.3. Confluence Data Center 1.x through 9.x when the Remote API is on. Fixed in 9.2.28. Removed in 10.0. Cloud is not affected. Last modified Nov 10, 2026.
 - [Apache announcement][announce] — 2026-11-06 15:32 UTC. Critical, no number. Axis 1.x through 1.4, unsupported when assigned. No fixed release.
 - [CVE-2026-90436][cve] — Apache CNA, published 2026-11-06 15:37:55 UTC. CISA-ADP CVSS 3.1 9.8, added 2026-11-10. SSVC exploitation: none.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, checked 2026-11-15. CVE-2026-90436 is not listed.
+- [Rapid7][r7] — published 2026-11-16. On November 13, Rapid7 MDR detected exploitation against Confluence Data Center in a customer environment. Four source addresses. Absence of those addresses does not clear an environment.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, checked 2026-11-16. CVE-2026-90436 is not listed.
 
+[r7]: https://www.rapid7.com/blog/post/etr-rapid7-detected-exploitation-of-cve-2026-90436-against-atlassian-confluence-data-center-n-able-n-central-also-exploited/
 [adv]: https://confluence.atlassian.com/security/cve-2026-90436-remote-code-execution-in-confluence-data-center-1874560038.html
 [announce]: https://lists.apache.org/thread/8slf0j9gz35z56t0glt5h0ncwlbn4bdz
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-90436

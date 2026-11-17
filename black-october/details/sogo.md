@@ -1,6 +1,6 @@
 # SOGo: a password-recovery question resets the account
 
-**Last updated:** 2026-11-13 (America/New_York)
+**Last updated:** 2026-11-16 (America/New_York)
 
 [Main SOGo summary](../black-october-2026.md#sogo-a-password-recovery-question-resets-the-account) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -37,7 +37,7 @@ The same release fixes [CVE-2026-127131](https://www.cve.org/CVERecord?id=CVE-20
 
 1. Upgrade to **SOGo 5.12.13 or later** and restart the service. Alinto says every earlier version is affected.
 2. Until the upgrade, turn password recovery off if the deployment does not need it. That does not fix CVE-2026-127131, which needs the password and then guesses the TOTP code.
-3. The project's release notes list more fixes in 5.12.13 than these two records: two SQL injections, a buffer overflow, LDAP filter injection, path traversal, impersonation, and unsafe HTML. VulnCheck has not published scores for those in these two records, so this guide does not assign them. The upgrade is the same either way.
+3. The project's release notes list more fixes in 5.12.13 than the first two records. One of them now has a record. [CVE-2026-130066](https://www.cve.org/CVERecord?id=CVE-2026-130066), published 2026-11-16, is SQL injection in SQLSource contact lookup. VulnCheck rates it **CVSS 4.0 7.1 High** and **CVSS 3.1 6.5 Medium**. A logged-in user places a backslash before a quote in the object name and, on MySQL or MariaDB, reads the user-source table, including password hashes. Every version before 5.12.13 is affected, so the upgrade already covers it. The release notes also name a second SQL injection, a buffer overflow, LDAP filter injection, path traversal, impersonation, and unsafe HTML. Those still have no scores here, and this guide does not assign them.
 
 ## Verification
 
