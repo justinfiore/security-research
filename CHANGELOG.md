@@ -2,6 +2,12 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-17 15:10 EST (UTC−05:00) — Puppet; NoisyTCP; Batflat
+
+- **Puppet:** CISA added [CVE-2026-115731](black-october/details/puppet.md#timeline) on November 17, due December 1. Upgrade Puppet Enterprise to [2023.8.13, 2025.12.1, or 2026.0.1](black-october/details/puppet.md#remediation), or Puppet Core to 8.22.2 or 9.1.3, and restart Puppet Server. Perforce rates it CVSS 4.0 9.4: a signed agent certificate can run code on the server. If an agent you do not trust could reach the server before the upgrade, rebuild the CA. CVE-2026-115732 is not in KEV. The upgrade does not replace a CA key that was copied.
+- **Linux kernel:** Debian forky now has a [fixed kernel](black-october/details/linux-noisytcp.md#detection) for CVE-2026-99288, at 7.3.4-1, with sid. Amazon Linux 2023's default kernel is fixed at 6.1.190-237.442 and `kernel6.12` at 6.12.115-140.210; `kernel6.18` and Amazon Linux 2 are still pending. Ubuntu marks `linux` Vulnerable on 16.04 through 26.10 and names no package. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. Red Hat 8, 9, and 10 still have none. Install the fixed kernel and reboot.
+- **Batflat:** CERT Polska's page, updated November 17, now says [1.2.0 through 1.3.7](black-october/details/batflat.md#detection), matching the CVE record. On November 16 it stopped at 1.3.6. There is still no fix. Take a public site offline.
+
 ## 2026-11-17 11:15 EST (UTC−05:00) — N-central; Gitea; GitLab; Ahsay
 
 - **N-central:** Upgrade on-premises servers, and every Agent and Probe, to [2026.4 HF3, build 2026.4.1.39](black-october/details/n-central.md#remediation), and the Patch Management Engine to 2.14.4.5829 or later. N-able published seventeen more flaws in that build on November 17. Three are CVSS 4.0 Critical. CVE-2026-129272 is 9.3: an Agent left on an older build can still be impersonated, with no login. CVE-2026-129280 is 9.3: a SOAP call skips the session check. CVE-2026-129286 is 9.2 and needs the attacker to change update metadata. None is in KEV. Treat a secret stored in an Automation Manager policy as disclosed. The upgrade does not remove a miner.

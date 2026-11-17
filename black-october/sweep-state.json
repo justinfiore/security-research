@@ -1,7 +1,7 @@
 {
   "items": {
     "3dexperience.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "awaiting-fix"
     },
     "7zip.md": {
@@ -61,7 +61,7 @@
       "hold": "none"
     },
     "apache-shiro.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "none"
     },
     "apache-thrift.md": {
@@ -113,7 +113,7 @@
       "hold": "none"
     },
     "batflat.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "awaiting-fix"
     },
     "bee-js.md": {
@@ -225,7 +225,7 @@
       "hold": "awaiting-distros"
     },
     "cursor-claude-code.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "none"
     },
     "cyrus-sasl.md": {
@@ -309,7 +309,7 @@
       "hold": "none"
     },
     "fastify-multipart.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "none"
     },
     "firefox.md": {
@@ -501,7 +501,7 @@
       "hold": "none"
     },
     "linux-noisytcp.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "awaiting-distros"
     },
     "linux-tcp-options.md": {
@@ -581,7 +581,7 @@
       "hold": "none"
     },
     "nodepress.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "awaiting-fix"
     },
     "northflank.md": {
@@ -593,7 +593,7 @@
       "hold": "none"
     },
     "octopus-deploy.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "none"
     },
     "oorexx.md": {
@@ -649,7 +649,7 @@
       "hold": "none"
     },
     "postgresql-november.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "none"
     },
     "prefab-ui.md": {
@@ -661,7 +661,7 @@
       "hold": "none"
     },
     "prime-cms.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "awaiting-fix"
     },
     "privilege-manager.md": {
@@ -681,7 +681,7 @@
       "hold": "awaiting-distros"
     },
     "qt-qxml.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "awaiting-fix"
     },
     "rails.md": {
@@ -705,7 +705,7 @@
       "hold": "awaiting-fix"
     },
     "ruby-httpx.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "none"
     },
     "s2member.md": {
@@ -813,7 +813,7 @@
       "hold": "awaiting-fix"
     },
     "tensei.md": {
-      "last_checked": "2026-11-16T19:56:06Z",
+      "last_checked": "2026-11-17T19:56:07Z",
       "hold": "awaiting-fix"
     },
     "tum.md": {

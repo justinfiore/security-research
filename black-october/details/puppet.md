@@ -1,6 +1,6 @@
 # Puppet: report deserialization runs code on the server
 
-**Last updated:** 2026-11-07 (America/New_York)
+**Last updated:** 2026-11-17 (America/New_York)
 
 [Main Puppet summary](../black-october-2026.md#puppet-report-deserialization-runs-code-on-the-server) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@
 
 The same updates fix [CVE-2026-115732](https://www.cve.org/CVERecord?id=CVE-2026-115732), which Perforce scores CVSS 4.0 9.0 Critical. A certificate whose name is longer or shorter than an authorized hostname can be treated as that host.
 
-**CISA KEV:** Not listed (catalog 2026.11.03, checked 2026-11-04). Perforce and OpenVox do not report exploitation in the wild. A public proof of concept is not the same as observed exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731) added 2026-11-17, federal due date 2026-12-01. Ransomware use Unknown. Forensic triage is not required. [CVE-2026-115732](https://www.cve.org/CVERecord?id=CVE-2026-115732) is not listed (catalog 2026.11.17, released 2026-11-17T17:53:15.5664Z). Perforce's November 3 notice said it was not aware of exploitation. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -27,6 +27,7 @@ The same updates fix [CVE-2026-115732](https://www.cve.org/CVERecord?id=CVE-2026
 | CVE records published | 2026-11-03; time/TZ unknown | CVE-2026-115731 published 2026-11-03. CVE-2026-115732 published 2026-11-03. [CVE record][cve] [CVE-2026-115732][cve732] |
 | OpenVox advisory | 2026-11-03; time/TZ unknown | GHSA-ffr6-rwpm-p5wq. Includes a report body that runs a shell command. OpenVox's own GHSA page says "No known CVE" even while the text names CVE-2026-115731. [OpenVox][openvox] |
 | Puppet Core 9.1.3 notes | 2026-11-06; time/TZ unknown | The page says "November 06, 2026" and "Released in November 2026." It names CVE-2026-115731 and CVE-2026-115732. It does not give a clock time. An earlier reading said last published 2026-10-30. [Puppet Core 9.1.3][core913] |
+| **CISA KEV** | **2026-11-17; time/TZ unknown** | CVE-2026-115731 added. Federal due date 2026-12-01. Catalog 2026.11.17, released 2026-11-17T17:53:15.5664Z. CVE-2026-115732 is not listed. [KEV][kev] |
 
 ## Detection
 
@@ -84,7 +85,8 @@ The advisory describes code execution as the `puppet` user and access to the CA 
 - [OpenVox GHSA-ffr6-rwpm-p5wq][openvox] — published 2026-11-03. Includes the report JSON. Server 8.18.0 / 9.2.0 and agent 8.32.0 / 9.3.0.
 - [Puppet Core 9.1.3 release notes][core913] — "November 06, 2026" and "Released in November 2026." Names both CVEs. An earlier reading said last published 2026-10-30. The fixed builds are unchanged.
 - [Perforce CVE dashboard](https://portal.perforce.com/s/cve-dashboard) — both CVEs dated 2026-11-03, with Puppet Core 8.22.2 and 9.1.3 in the fixed list. The per-CVE portal page did not render the advisory text when checked.
-- [CISA KEV JSON feed][kev] — catalog 2026.11.03, neither CVE listed.
+- [CISA KEV JSON feed][kev] — catalog 2026.11.17, released 2026-11-17T17:53:15.5664Z. CVE-2026-115731 added 2026-11-17, due 2026-12-01. Ransomware use Unknown. Forensic triage No. CVE-2026-115732 is not listed.
+- [Perforce trust center](https://trust.perforce.com/updates) — "Critical Vulnerabilities Affecting Puppet," published November 3, 2026. CVSS 9.4 and 9.0. "At this time, Perforce is not aware of active exploitation." Fixed builds match the table above.
 
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-115731
 [cve732]: https://www.cve.org/CVERecord?id=CVE-2026-115732
