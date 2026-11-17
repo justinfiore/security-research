@@ -10,7 +10,7 @@ Wiki.js (requarks) is a Node.js wiki. Two flaws fixed in **2.5.315** are rated H
 
 [CVE-2026-120697](https://www.cve.org/CVERecord?id=CVE-2026-120697) is stored script in a page. An account with `write:pages` stores a JavaScript expression in a `v-slot:tabs` or `v-slot:content` attribute. The sanitizer allows those attributes, and the page is compiled as a Vue template, so the expression runs when someone else opens the page, including an administrator. GitHub rates it **CVSS 3.1 8.7 High**, vector `CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:N`. [GHSA-98c8-px3r-68c6](https://github.com/requarks/wiki/security/advisories/GHSA-98c8-px3r-68c6) says versions before 2.5.314 are affected, and the CVE record says everything before 2.5.315. The release that fixes both is 2.5.315, so a site on 2.5.314 should move too. NVD has not scored either record.
 
-[v2.5.315](https://github.com/requarks/wiki/releases/tag/v2.5.315) was published 2026-09-21 06:18:18 UTC. The release note says 2.x releases have moved to the `wiki-v2` repository and that this is the last 2.x release posted in `requarks/wiki`. The CVE records were published 2026-11-16. Neither record describes exploitation.
+[v2.5.315](https://github.com/requarks/wiki/releases/tag/v2.5.315) was published 2026-09-21 06:18:18 UTC. The release note says 2.x releases have moved to the `wiki-v2` repository and that this is the last 2.x release posted in `requarks/wiki`. The CVE records were published 2026-11-16. CISA's enrichment of the CVE-2026-120698 record, timestamped 2026-11-16 21:28 UTC, marks exploitation `poc`. That is a public proof of concept, not a report of use in the wild, and CVE-2026-120697 has no such mark. Neither record describes an incident.
 
 **CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -29,7 +29,8 @@ Wiki.js (requarks) is a Node.js wiki. Two flaws fixed in **2.5.315** are rated H
 |---|---|---|
 | Advisories and fix | 2026-09-21 06:18:18 UTC | v2.5.315. Both GitHub advisories published the same day. [Release][rel] |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | GitHub published both CVE records. |
-| **Last updated** | **2026-11-16 (America/New_York)** | New item. Fixed in 2.5.315. |
+| Proof of concept marked | 2026-11-16 21:28 UTC | CISA's enrichment of CVE-2026-120698 says `poc`. Not a report of use in the wild. |
+| **Last updated** | **2026-11-16 (America/New_York)** | A proof of concept is public. The fix is unchanged. |
 
 ## Detection
 
@@ -48,7 +49,7 @@ Read the Wiki.js version the running process reports, or the image tag. Anything
 
 ## Compromise response
 
-No source publishes an indicator or a confirmed compromise. A takeover replaces the administrator password and can disable the second factor, so a login to the root account that the owner did not make is the thing to look for. A stored expression runs as whoever opens the page. If either happened, reset the administrator credentials, remove the page content, and review changes made with that session.
+CISA's enrichment marks a proof of concept for the takeover and names no incident. A takeover replaces the administrator password and can disable the second factor, so a login to the root account that the owner did not make is the thing to look for. A stored expression runs as whoever opens the page. If either happened, reset the administrator credentials, remove the page content, and review changes made with that session.
 
 ## Sources
 

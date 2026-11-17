@@ -6,7 +6,7 @@
 
 Ghost by muneeb141 is a Frappe app for anonymous sessions. It is not the Ghost publishing platform. [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070) lets a request with no login take over an existing account. VulnCheck is the CNA and rates it **CVSS 4.0 9.3 Critical** and **CVSS 3.1 9.1 Critical**. The 4.0 vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N`. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N`. NVD has not scored it. Availability is not in either score.
 
-The affected range is the main branch from commit `c731cdf0d0fbcf4fe67ee27199a48ffbbaf3e66b` through commit `672dfec` (2026-10-13 12:39:19 UTC). `create_ghost_session` is guest-accessible. `convert_to_real_user` then accepts a caller-supplied `bypass_otp` and a caller-supplied `real_email`, and returns OAuth tokens for that account. Commit `641db34f6456c15f381358e2e631df66ea170842`, dated 2026-10-20 19:16:39 UTC, generates the anonymous identity on the server and removes the public OTP bypass. GitHub lists no release. A checkout that has not pulled that commit is still inside the range.
+The affected range is the main branch from commit `c731cdf0d0fbcf4fe67ee27199a48ffbbaf3e66b` through commit `672dfec` (2026-10-13 12:39:19 UTC). `create_ghost_session` is guest-accessible. `convert_to_real_user` then accepts a caller-supplied `bypass_otp` and a caller-supplied `real_email`, and returns OAuth tokens for that account. Commit `641db34f6456c15f381358e2e631df66ea170842`, dated 2026-10-20 19:16:39 UTC, generates the anonymous identity on the server and removes the public OTP bypass. GitHub lists no release. On November 17 the default branch `main` was still at `672dfec`, and a compare of `main` to `641db34` showed the fix one commit ahead and zero behind. Pulling `main` does not bring the fix. The same commit is an ancestor of `develop` and of `fix/auth-boundaries`. The only tag, `v1.0.0`, points at a January 18 commit and is behind the fix.
 
 The finder credited by VulnCheck is Behruz Chilmatov. The record names no exploitation.
 
@@ -30,7 +30,8 @@ This is not [Go1 CMS](go1cms.md).
 | Last affected commit | 2026-10-13 12:39:19 UTC | Commit `672dfec`. |
 | Fix committed | 2026-10-20 19:16:39 UTC | Commit `641db34`. No release tag. [Commit][fix] |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | VulnCheck published the CVE record. |
-| **Last updated** | **2026-11-16 (America/New_York)** | New item. The fix is a commit, not a release. |
+| Fix still off `main` | 2026-11-17; time unknown | `main` tip is still `672dfec`. The fix is on `develop` and `fix/auth-boundaries`. |
+| **Last updated** | **2026-11-16 (America/New_York)** | The fix is not on the default branch. |
 
 ## Detection
 
@@ -38,7 +39,7 @@ Read the commit the deployed app is built from. A tree whose history contains `6
 
 ## Remediation
 
-1. Deploy a tree that contains commit `641db34f6456c15f381358e2e631df66ea170842` and restart the Frappe workers and web process. There is no release to install.
+1. Deploy a tree that contains commit `641db34f6456c15f381358e2e631df66ea170842` and restart the Frappe workers and web process. There is no release to install, and the default branch does not contain the commit. `develop` and `fix/auth-boundaries` do.
 2. The commit does not expire a token that was already issued. Revoke OAuth tokens issued to accounts you cannot account for, and reset those passwords.
 
 ## Verification
@@ -54,7 +55,7 @@ No source publishes an indicator or a confirmed compromise. A request that succe
 
 - [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070) — VulnCheck, published 2026-11-16. CVSS 4.0 9.3 and CVSS 3.1 9.1. `bypass_otp` through commit `672dfec`.
 - [VulnCheck advisory](https://www.vulncheck.com/advisories/ghost-muneeb141-authentication-bypass-via-bypass-otp-in-convert-to-real-user) — same facts, dated 2026-11-16.
-- [Commit 641db34][fix] — 2026-10-20 19:16:39 UTC. Removes the public OTP bypass.
+- [Commit 641db34][fix] — 2026-10-20 19:16:39 UTC. Removes the public OTP bypass. On 2026-11-17 it was an ancestor of `develop` and `fix/auth-boundaries`, and not of `main`.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, released 2026-11-13T20:24:18.3008Z, read 2026-11-16. This CVE is not in it.
 
 [fix]: https://github.com/muneeb141/ghost/commit/641db34f6456c15f381358e2e631df66ea170842

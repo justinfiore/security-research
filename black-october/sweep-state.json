@@ -180,6 +180,10 @@
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
     },
+    "cloudcmd.md": {
+      "last_checked": "2026-11-17T03:56:19Z",
+      "hold": "none"
+    },
     "cloudpaste.md": {
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "awaiting-fix"
@@ -320,6 +324,10 @@
       "last_checked": "2026-11-16T23:55:58Z",
       "hold": "awaiting-fix"
     },
+    "frappe-ghost.md": {
+      "last_checked": "2026-11-17T03:56:19Z",
+      "hold": "awaiting-fix"
+    },
     "freeswitch.md": {
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
@@ -347,6 +355,10 @@
     "give-peer-to-peer.md": {
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "none"
+    },
+    "go1cms.md": {
+      "last_checked": "2026-11-17T03:56:19Z",
+      "hold": "awaiting-fix"
     },
     "goahead-tls.md": {
       "last_checked": "2026-11-16T15:55:55Z",
@@ -810,6 +822,10 @@
     },
     "watchguard-authpoint-gateway.md": {
       "last_checked": "2026-11-15T15:56:05Z",
+      "hold": "none"
+    },
+    "wiki-js.md": {
+      "last_checked": "2026-11-17T03:56:19Z",
       "hold": "none"
     },
     "windchill.md": {

@@ -2,6 +2,13 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-16 23:10 EST (UTC−05:00) — Dell PowerStore; macOS
+
+- **Dell PowerStore:** Upgrade to PowerStoreT OS [5.1.0.0-2798105 or later](black-october/details/dell-powerstore.md#remediation). Dell rates DSA-2026-479 Critical and seven of its flaws CVSS 3.1 9.8. CVE-2026-116443 is a TFTP overflow that needs no login. The advisory is dated October 30 and covers 5.1.x before that build. None is in KEV. The upgrade does not show whether a request already ran code.
+- **macOS:** Update Deno to [2.7.14 or later](black-october/details/macos-unicode-paths.md#remediation) on a Mac. Deno rates CVE-2026-49401 CVSS 3.1 7.3: a `--deny-read` rule misses a file whose name is spelled another way, because APFS treats the two as one file. CERT/CC published the note on November 16. Linux and Windows are not affected. It is not in KEV.
+- **Frappe Ghost:** The fix commit [`641db34`](black-october/details/frappe-ghost.md#remediation) is not on the default branch. Pulling `main` leaves the app at `672dfec`, which is affected. Deploy `develop` or `fix/auth-boundaries`, which contain the commit, and restart.
+- **Wiki.js:** CISA's enrichment of [CVE-2026-120698](black-october/details/wiki-js.md#timeline) now marks a public proof of concept. That is not a report of use in the wild, and it is not in KEV. The fix is unchanged: 2.5.315 or later. Reset the administrator password.
+
 ## 2026-11-16 19:10 EST (UTC−05:00) — Cloud Commander; Go1 CMS; Frappe Ghost; Wiki.js
 
 - **Cloud Commander:** Upgrade to [19.21.4 or later](black-october/details/cloudcmd.md#remediation) and restart. VulnCheck rates CVE-2026-130072 CVSS 3.1 9.1: `PUT /rename` runs before login and moves any file the process can reach. The fix shipped October 25. It is not in KEV. The upgrade does not put a moved file back.

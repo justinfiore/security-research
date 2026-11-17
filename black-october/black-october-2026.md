@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Dell PowerStore: a file-service request runs code before login](#dell-powerstore-a-file-service-request-runs-code-before-login)
+- [macOS: a different spelling of a file name passes a deny rule](#macos-a-different-spelling-of-a-file-name-passes-a-deny-rule)
 - [Cloud Commander: a rename request moves any file before login](#cloud-commander-a-rename-request-moves-any-file-before-login)
 - [Go1 CMS: a guest request rewrites any record](#go1-cms-a-guest-request-rewrites-any-record)
 - [Frappe Ghost: a guest session becomes any account](#frappe-ghost-a-guest-session-becomes-any-account)
@@ -253,6 +255,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Dell PowerStore](#dell-powerstore-a-file-service-request-runs-code-before-login) to PowerStoreT OS **5.1.0.0-2798105 or later**. Dell rates [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) Critical and seven of its flaws CVSS 3.1 9.8: [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443) is a TFTP overflow that needs no login. The advisory is dated October 30 and covers 5.1.x before that build. None is in KEV. The upgrade does not show whether a request already ran code.
+- **New this update:** Update [Deno](#macos-a-different-spelling-of-a-file-name-passes-a-deny-rule) to **2.7.14 or later** on a Mac. Deno rates [CVE-2026-49401](https://www.cve.org/CVERecord?id=CVE-2026-49401) CVSS 3.1 7.3 High: a `--deny-read` rule misses a file whose name is spelled another way, because APFS treats the two as one file. CERT/CC published the note on November 16. Linux and Windows are not affected. It is not in KEV.
 - **New this update:** Upgrade [Cloud Commander](#cloud-commander-a-rename-request-moves-any-file-before-login) to **19.21.4 or later** and restart it. VulnCheck rates [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072) CVSS 3.1 9.1 Critical: `PUT /rename` runs before login and moves any file the process can reach, so `--auth` and `--root` do not stop it. The fix shipped on October 25. It is not in KEV. The upgrade does not put a moved file back.
 - **New this update:** Deploy [Go1 CMS](#go1-cms-a-guest-request-rewrites-any-record) commit `ead8da3` or later and restart it. VulnCheck rates [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071) CVSS 3.1 9.8 Critical: a guest request rewrites any record, including a user. The commit is from September 17 and there is no release. It is not in KEV. The deploy does not undo a record already changed.
 - **New this update:** Deploy [Frappe Ghost](#frappe-ghost-a-guest-session-becomes-any-account) commit `641db34` or later and restart it. This is the Frappe app by muneeb141, not the Ghost publishing platform. VulnCheck rates [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070) CVSS 4.0 9.3 Critical: a guest session sets `bypass_otp` and receives tokens for any account. The commit is from October 20 and there is no release. It is not in KEV. Revoke tokens you cannot account for.
@@ -438,6 +442,49 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Dell PowerStore: a file-service request runs code before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/dell-powerstore.md):** [Detection](details/dell-powerstore.md#detection) · [Remediation](details/dell-powerstore.md#remediation) · [Verification](details/dell-powerstore.md#verification) · [Timeline](details/dell-powerstore.md#timeline)
+
+**CVEs:** [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443), [CVE-2026-116440](https://www.cve.org/CVERecord?id=CVE-2026-116440), [CVE-2026-116448](https://www.cve.org/CVERecord?id=CVE-2026-116448), [CVE-2026-116449](https://www.cve.org/CVERecord?id=CVE-2026-116449), [CVE-2026-116439](https://www.cve.org/CVERecord?id=CVE-2026-116439), [CVE-2026-116446](https://www.cve.org/CVERecord?id=CVE-2026-116446), [CVE-2026-67271](https://www.cve.org/CVERecord?id=CVE-2026-67271), [CVE-2026-116441](https://www.cve.org/CVERecord?id=CVE-2026-116441). [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) lists 36 more, and the detailed guide names the ones Dell rates 8.8 or higher.
+
+**Dell rates [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) Critical, and seven of its flaws CVSS 3.1 9.8.** Dell is the CNA. [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443) is a stack-based buffer overflow in the NAS TFTP service: Dell says an unauthenticated remote attacker can cause a denial of service or potential code execution. [CVE-2026-116448](https://www.cve.org/CVERecord?id=CVE-2026-116448) and [CVE-2026-116449](https://www.cve.org/CVERecord?id=CVE-2026-116449) are command injection that needs internal network access and runs commands as root. [CVE-2026-116439](https://www.cve.org/CVERecord?id=CVE-2026-116439) reads, modifies, or deletes files. The rest of the 9.8 rows are buffer overflows and an out-of-bounds read in the same file-services layer. [CVE-2026-116441](https://www.cve.org/CVERecord?id=CVE-2026-116441) is 9.6 and needs a peer on the storage-processor interconnect. PowerStoreT OS **5.1.x before 5.1.0.0-2798105** is affected, and that build is the fix. The 9.8 CVE records were not published on November 16, so these scores are Dell's. NVD has not scored them.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17) for any CVE in the advisory. Dell does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-10-30; time/TZ unknown** | DSA-2026-479 revision 1.0. Dell's article says last modified 30 Oct 2026. |
+| **Last updated** | **2026-11-16 23:10 EST (UTC−05:00)** | New item. Upgrade PowerStoreT OS. |
+
+**Patch:** Upgrade PowerStoreT OS to **5.1.0.0-2798105 or later**. Until then, keep TFTP, NFS, and the management interface off untrusted networks. The upgrade does not show whether a request already ran code.
+
+Sources: [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities), [detailed guide](details/dell-powerstore.md).
+
+---
+
+## macOS: a different spelling of a file name passes a deny rule
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/macos-unicode-paths.md):** [Detection](details/macos-unicode-paths.md#detection) · [Remediation](details/macos-unicode-paths.md#remediation) · [Verification](details/macos-unicode-paths.md#verification) · [Timeline](details/macos-unicode-paths.md#timeline)
+
+**CVEs:** [CVE-2026-49401](https://www.cve.org/CVERecord?id=CVE-2026-49401). The same CERT/CC note also lists [CVE-2026-59890](https://www.cve.org/CVERecord?id=CVE-2026-59890) at 6.1, [CVE-2026-14978](https://www.cve.org/CVERecord?id=CVE-2026-14978) at 5.5, and [CVE-2026-45110](https://www.cve.org/CVERecord?id=CVE-2026-45110), which has no published score.
+
+**Deno rates [CVE-2026-49401](https://www.cve.org/CVERecord?id=CVE-2026-49401) CVSS 3.1 7.3 High.** The vector is `CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:L/I:H/A:N`. On macOS, APFS treats a German `ß` and `ss`, or two Unicode forms of the same accented letter, as one file. Deno compared the bytes, so a `--deny-read`, `--deny-write`, `--deny-run`, or `--deny-ffi` rule missed the other spelling. Deno says Linux and Windows are not affected. The fix is **Deno 2.7.14**, shipped in May; CERT/CC published [VU#604762](https://kb.cert.org/vuls/id/604762) on November 16 and grouped the four. setuptools 83.0.0 fixes the 6.1 flaw. libarchive's fix is still a pull request, and the finder says the extraction stays inside the output directory.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17) for CVE-2026-49401. CERT/CC does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Deno fix | 2026-05-27; time/TZ unknown | Deno 2.7.14. The advisory carries no clock time. |
+| **Public announcement** | **2026-11-16; last revised 16:17 UTC** | CERT/CC VU#604762. |
+| **Last updated** | **2026-11-16 23:10 EST (UTC−05:00)** | New item. Update Deno on macOS. |
+
+**Patch:** Update Deno to **2.7.14 or later** on a Mac that uses a `--deny-*` rule as a boundary. Update setuptools to **83.0.0 or later** before building a source distribution on macOS. libarchive has no fixed release. The update does not show whether a denied file was already read.
+
+Sources: [VU#604762](https://kb.cert.org/vuls/id/604762), [Deno advisory](https://github.com/denoland/deno/security/advisories/GHSA-8xpq-cjcf-3wh9), [detailed guide](details/macos-unicode-paths.md).
+
+---
+
 ## Cloud Commander: a rename request moves any file before login
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/cloudcmd.md):** [Detection](details/cloudcmd.md#detection) · [Remediation](details/cloudcmd.md#remediation) · [Verification](details/cloudcmd.md#verification) · [Timeline](details/cloudcmd.md#timeline)
@@ -489,7 +536,7 @@ Sources: [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071), [c
 
 **CVEs:** [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070)
 
-**VulnCheck rates [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070) CVSS 4.0 9.3 Critical and CVSS 3.1 9.1 Critical.** VulnCheck is the CNA. The 4.0 vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N`. NVD has not scored it. Ghost by muneeb141 is a Frappe app, not the Ghost publishing platform. A guest session calls `convert_to_real_user` with `bypass_otp` and an email, and receives OAuth tokens for that account. The affected range ends at commit `672dfec` (October 13). The fix is commit `641db34`, dated October 20, and GitHub lists no release. This is not [Go1 CMS](#go1-cms-a-guest-request-rewrites-any-record).
+**VulnCheck rates [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070) CVSS 4.0 9.3 Critical and CVSS 3.1 9.1 Critical.** VulnCheck is the CNA. The 4.0 vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N`. NVD has not scored it. Ghost by muneeb141 is a Frappe app, not the Ghost publishing platform. A guest session calls `convert_to_real_user` with `bypass_otp` and an email, and receives OAuth tokens for that account. The affected range ends at commit `672dfec` (October 13). The fix is commit `641db34`, dated October 20, and GitHub lists no release. On November 17 the default branch was still `672dfec`, so pulling it does not bring the fix. The commit is on `develop` and `fix/auth-boundaries`. This is not [Go1 CMS](#go1-cms-a-guest-request-rewrites-any-record).
 
 **CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -497,9 +544,9 @@ Sources: [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071), [c
 |---|---|---|
 | Fix committed | 2026-10-20 19:16:39 UTC | Commit `641db34`. No release. |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | VulnCheck published the CVE record. |
-| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | New item. The fix is a commit. |
+| **Last updated** | **2026-11-16 23:10 EST (UTC−05:00)** | The fix is not on the default branch. |
 
-**Patch:** Deploy a tree that contains `641db34f6456c15f381358e2e631df66ea170842` and restart it. Revoke tokens you cannot account for. The Ghost publishing platform is a different product.
+**Patch:** Deploy a tree that contains `641db34f6456c15f381358e2e631df66ea170842` and restart it. Pulling the default branch does not do that. Revoke tokens you cannot account for. The Ghost publishing platform is a different product.
 
 Sources: [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070), [commit 641db34](https://github.com/muneeb141/ghost/commit/641db34f6456c15f381358e2e631df66ea170842), [detailed guide](details/frappe-ghost.md).
 
@@ -513,13 +560,13 @@ Sources: [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070), [c
 
 **GitHub rates [CVE-2026-120698](https://www.cve.org/CVERecord?id=CVE-2026-120698) CVSS 3.1 8.8 High and [CVE-2026-120697](https://www.cve.org/CVERecord?id=CVE-2026-120697) CVSS 3.1 8.7 High.** GitHub is the CNA. NVD has not scored either. Before **2.5.315**, an account with only `manage:users` sets the password of any local account, including the root administrator, turns off its second factor, and can remove every group from it. Separately, an account with `write:pages` stores a JavaScript expression in a Vue slot attribute, and the expression runs when someone else opens the page. v2.5.315, published September 21, fixes both. The CVE records were published on November 16. The GitHub advisory for the script flaw says versions before 2.5.314; the CVE record says before 2.5.315.
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). CISA's enrichment of the CVE-2026-120698 record, timestamped 2026-11-16 21:28 UTC, marks exploitation `poc`: a public proof of concept, not a report of use in the wild. CVE-2026-120697 has no such mark. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Fix released | 2026-09-21 06:18:18 UTC | v2.5.315. Both advisories the same day. |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | GitHub published both CVE records. |
-| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | New item. Fixed in 2.5.315. |
+| **Last updated** | **2026-11-16 23:10 EST (UTC−05:00)** | A proof of concept is public. The fix is unchanged. |
 
 **Patch:** Upgrade to 2.5.315 or later and restart. Later 2.x builds are in the `wiki-v2` repository. Reset the administrator password and turn its second factor back on. The upgrade does not remove a page that already stores the expression.
 
@@ -6761,9 +6808,11 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Dell PowerStore, PowerStoreT OS 5.1.x before 5.1.0.0-2798105** | Upgrade to 5.1.0.0-2798105 or later. Dell rates seven flaws 9.8, including a TFTP overflow that needs no login. Until then, keep TFTP, NFS, and management off untrusted networks. [Guide](details/dell-powerstore.md#remediation). |
+| **Deno before 2.7.14 on macOS** | Update to 2.7.14 or later. Deno rates CVE-2026-49401 7.3: a `--deny-*` rule misses a file whose name is spelled another way. Linux and Windows are outside it. [Guide](details/macos-unicode-paths.md#remediation). |
 | **Cloud Commander (`cloudcmd`) before 19.21.4** | Upgrade to 19.21.4 or later and restart. VulnCheck rates CVE-2026-130072 9.1: `PUT /rename` moves any file the process can reach, with no login. `--auth` does not stop it. [Guide](details/cloudcmd.md#remediation). |
 | **Go1 CMS (`go1cms`) without commit `ead8da3`** | Deploy that commit and restart. VulnCheck rates CVE-2026-130071 9.8: a guest request rewrites any record. There is no release. [Guide](details/go1cms.md#remediation). |
-| **Frappe Ghost (muneeb141) without commit `641db34`** | Deploy that commit and restart. VulnCheck rates CVE-2026-130070 9.3: a guest session receives tokens for any account. This is not the Ghost publishing platform. There is no release. [Guide](details/frappe-ghost.md#remediation). |
+| **Frappe Ghost (muneeb141) without commit `641db34`** | Deploy that commit and restart. The default branch does not contain it; `develop` and `fix/auth-boundaries` do. VulnCheck rates CVE-2026-130070 9.3: a guest session receives tokens for any account. This is not the Ghost publishing platform. There is no release. [Guide](details/frappe-ghost.md#remediation). |
 | **Wiki.js before 2.5.315** | Upgrade to 2.5.315 or later and restart. GitHub rates CVE-2026-120698 8.8: a user manager takes the administrator account. CVE-2026-120697 is 8.7: a page stores script. Reset the administrator password. [Guide](details/wiki-js.md#remediation). |
 | **VoAPI, any public release** | Take it off the public internet. VulnCheck rates CVE-2026-129540 8.8: a logged-in user reads the JWT signing secret and forges a manager token. v1.2.0 is the newest release and is affected. The project says it is unmaintained. Rotate the signing secret. [Guide](details/voapi.md#remediation). |
 | **CloudPaste through 1.9.1** | Keep `/api/proxy/link` off the public internet and rotate the WebDAV password. VulnCheck rates CVE-2026-129494 8.7: a share slug returns the WebDAV username and password. v1.9.1 is the newest release and is affected. [Guide](details/cloudpaste.md#remediation). |
