@@ -2,6 +2,15 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-17 03:40 EST (UTC−05:00) — ooRexx; 7-Zip; CBoard; Silverstripe; N-central; Cyrus SASL
+
+- **ooRexx:** Move to [5.2.0 or later](black-october/details/oorexx.md#remediation) when that release exists, and keep untrusted local users off a host that runs RXAPI. MITRE rates CVE-2026-130327 and CVE-2026-130320 CVSS 3.1 9.3: any local user can talk to RXAPI, and one path injects a macro. CVE-2026-130290 is 7.9. The records cover 4.0.0 before 5.2.0, and no stable 5.2.0 download was found. None is in KEV.
+- **7-Zip:** Install [26.03 or later](black-october/details/7zip.md#remediation). 26.06 is current. VulnCheck rates CVE-2026-130067 CVSS 4.0 8.5: File Manager before 26.03 misses a file name padded with Unicode spaces, and opening the entry runs a script. The fix shipped September 4. It is not in KEV.
+- **CBoard:** Deploy commit [`7bd8180`](black-october/details/cboard.md#remediation) and restart. VulnCheck rates CVE-2026-130073 CVSS 3.1 8.3: any logged-in user can delete accounts, including the administrator. There is no release, and tag v0.4.1 is still affected. It is not in KEV. The deploy does not restore an account already deleted.
+- **Silverstripe:** Update the framework to [6.2.13 or later](black-october/details/silverstripe.md#remediation). GitHub rates CVE-2026-91115 CVSS 3.1 8.8: a dev-task URL runs code, and a site in dev mode needs no login. The release is from October 28. CMS 5 is not affected. It is not in KEV.
+- **N-central:** Upgrade on-premises servers, and every Agent and Probe, to [2026.4 HF3, build 2026.4.1.39](black-october/details/n-central.md#remediation). HF3 permanently removes the Legacy API, which is the condition N-able named for the November 12 chain. An Agent left on an older build can still be impersonated. Remote control other than Take Control stays off, and the Intune integration stays blocked. The upgrade does not remove a miner.
+- **Cyrus SASL:** Debian's tracker now says [its build passes `--disable-srp`](black-october/details/cyrus-sasl.md#remediation), so a stock Debian package does not offer the mechanism. Ubuntu published a page on November 16 and marks every release Needs evaluation, with no package. There is still no upstream release. A server that advertises SRP should stop.
+
 ## 2026-11-16 23:10 EST (UTC−05:00) — Dell PowerStore; macOS
 
 - **Dell PowerStore:** Upgrade to PowerStoreT OS [5.1.0.0-2798105 or later](black-october/details/dell-powerstore.md#remediation). Dell rates DSA-2026-479 Critical and seven of its flaws CVSS 3.1 9.8. CVE-2026-116443 is a TFTP overflow that needs no login. The advisory is dated October 30 and covers 5.1.x before that build. None is in KEV. The upgrade does not show whether a request already ran code.

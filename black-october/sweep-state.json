@@ -217,7 +217,7 @@
       "hold": "none"
     },
     "cyrus-sasl.md": {
-      "last_checked": "2026-11-16T07:56:31Z",
+      "last_checked": "2026-11-17T07:56:01Z",
       "hold": "awaiting-fix"
     },
     "danfoss-ak-sm800a.md": {
@@ -238,6 +238,10 @@
     },
     "delinea-secret-server.md": {
       "last_checked": "2026-11-15T15:56:05Z",
+      "hold": "none"
+    },
+    "dell-powerstore.md": {
+      "last_checked": "2026-11-17T07:56:01Z",
       "hold": "none"
     },
     "docker-hub-ghostpat.md": {
@@ -499,6 +503,10 @@
     "lxd-mtls.md": {
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
+    },
+    "macos-unicode-paths.md": {
+      "last_checked": "2026-11-17T07:56:01Z",
+      "hold": "awaiting-fix"
     },
     "magento-blockstrap.md": {
       "last_checked": "2026-11-12T15:56:21Z",

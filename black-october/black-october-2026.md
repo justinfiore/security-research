@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 16, 2026**
+**As of November 17, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,10 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [ooRexx: a local user injects a macro](#oorexx-a-local-user-injects-a-macro)
+- [7-Zip: a padded file name hides the real extension](#7-zip-a-padded-file-name-hides-the-real-extension)
+- [CBoard: any logged-in user reaches the administrator's functions](#cboard-any-logged-in-user-reaches-the-administrators-functions)
+- [Silverstripe: a dev task URL runs code](#silverstripe-a-dev-task-url-runs-code)
 - [Dell PowerStore: a file-service request runs code before login](#dell-powerstore-a-file-service-request-runs-code-before-login)
 - [macOS: a different spelling of a file name passes a deny rule](#macos-a-different-spelling-of-a-file-name-passes-a-deny-rule)
 - [Cloud Commander: a rename request moves any file before login](#cloud-commander-a-rename-request-moves-any-file-before-login)
@@ -255,6 +259,11 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Move [ooRexx](#oorexx-a-local-user-injects-a-macro) to **5.2.0 or later** when that release is available, and keep untrusted local users off a host that runs RXAPI. MITRE rates [CVE-2026-130327](https://www.cve.org/CVERecord?id=CVE-2026-130327) and [CVE-2026-130320](https://www.cve.org/CVERecord?id=CVE-2026-130320) CVSS 3.1 9.3 Critical: any local user can talk to RXAPI, and one path injects a macro a REXX script runs. [CVE-2026-130290](https://www.cve.org/CVERecord?id=CVE-2026-130290) is 7.9. The records say 4.0.0 before 5.2.0, and this run found no stable 5.2.0 download. None is in KEV.
+- **New this update:** Install [7-Zip](#7-zip-a-padded-file-name-hides-the-real-extension) **26.03 or later**. 26.06 is current. VulnCheck rates [CVE-2026-130067](https://www.cve.org/CVERecord?id=CVE-2026-130067) CVSS 4.0 8.5 High: File Manager before 26.03 misses a file name padded with Unicode spaces, and opening the entry runs a script. The fix shipped September 4. It is not in KEV.
+- **New this update:** Deploy [CBoard](#cboard-any-logged-in-user-reaches-the-administrators-functions) commit `7bd8180` or later and restart it. VulnCheck rates [CVE-2026-130073](https://www.cve.org/CVERecord?id=CVE-2026-130073) CVSS 3.1 8.3 High: any logged-in user can delete accounts, including the administrator. There is no release. Tag v0.4.1 is still affected. It is not in KEV. The deploy does not restore an account already deleted.
+- **New this update:** Update [Silverstripe](#silverstripe-a-dev-task-url-runs-code) framework to **6.2.13 or later**. GitHub rates [CVE-2026-91115](https://www.cve.org/CVERecord?id=CVE-2026-91115) CVSS 3.1 8.8 High: a dev-task URL runs code, and a site in dev mode needs no login. The release is from October 28. CMS 5 is not affected. It is not in KEV.
+- **New this update:** Upgrade on-premises [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) to **2026.4 HF3, build 2026.4.1.39**, and upgrade every Agent and Probe to that build. HF3 permanently removes the Legacy API, which is the condition N-able named for the November 12 chain. Agents and Probes that stay on an older build can still be impersonated. Remote control other than Take Control stays off, and the Intune integration stays blocked. The upgrade does not remove a miner.
 - **New this update:** Upgrade [Dell PowerStore](#dell-powerstore-a-file-service-request-runs-code-before-login) to PowerStoreT OS **5.1.0.0-2798105 or later**. Dell rates [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) Critical and seven of its flaws CVSS 3.1 9.8: [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443) is a TFTP overflow that needs no login. The advisory is dated October 30 and covers 5.1.x before that build. None is in KEV. The upgrade does not show whether a request already ran code.
 - **New this update:** Update [Deno](#macos-a-different-spelling-of-a-file-name-passes-a-deny-rule) to **2.7.14 or later** on a Mac. Deno rates [CVE-2026-49401](https://www.cve.org/CVERecord?id=CVE-2026-49401) CVSS 3.1 7.3 High: a `--deny-read` rule misses a file whose name is spelled another way, because APFS treats the two as one file. CERT/CC published the note on November 16. Linux and Windows are not affected. It is not in KEV.
 - **New this update:** Upgrade [Cloud Commander](#cloud-commander-a-rename-request-moves-any-file-before-login) to **19.21.4 or later** and restart it. VulnCheck rates [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072) CVSS 3.1 9.1 Critical: `PUT /rename` runs before login and moves any file the process can reach, so `--auth` and `--root` do not stop it. The fix shipped on October 25. It is not in KEV. The upgrade does not put a moved file back.
@@ -277,7 +286,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Update [Give Peer-to-Peer](#wordpress-give-peer-to-peer-reads-the-database-and-changes-a-team-before-login) to **2.9.7 or later**. Wordfence rates [CVE-2026-82568](https://www.cve.org/CVERecord?id=CVE-2026-82568) and [CVE-2026-82663](https://www.cve.org/CVERecord?id=CVE-2026-82663) CVSS 3.1 7.5 High: through 2.9.3 a request with no login reads the database through the `sort` parameter, and through 2.9.5 someone who knows a campaign and a team can change that team and upload a file. Wordfence says the two together run code. The vendor changelog says 2.9.4 fixed both; Wordfence says 2.9.6 fixes the second. It is not in KEV. The update does not show whether a query already ran.
 - **New this update:** Update [Advanced Form Integration](#wordpress-advanced-form-integration-assigns-a-role-before-login) to **2.11.6 or later**. Patchstack rates [CVE-2026-125769](https://www.cve.org/CVERecord?id=CVE-2026-125769) CVSS 3.1 9.8 Critical: through 2.11.3, a request with no login can become an administrator. The record does not name the request. 2.11.5 is the first version it calls unaffected, and its changelog says user role assignment was hardened. WordPress.org's plugin API reports 2.11.6 and 9,000+ active installs; the directory page still rendered 2.11.3. Patchstack's own page also calls it low priority and unlikely to be exploited. It is not in KEV. The update does not remove an administrator that was already created.
 - **New this update:** Update [Estatik](#wordpress-estatik-loads-a-local-file-before-login) to **4.3.7 or later**. Patchstack rates [CVE-2026-125795](https://www.cve.org/CVERecord?id=CVE-2026-125795) CVSS 3.1 9.8 Critical: through 4.3.6, a request with no login can make the site load a file from the server. The record does not name the parameter. The 4.3.7 changelog says template handling was improved and does not name the CVE. WordPress.org reports 10,000+ active installs. The CVE record carries Patchstack's known-exploited tag and describes no incident. It is not in KEV. The update does not show whether a request already loaded a file.
-- **New this update:** Turn off the [SRP mechanism](#cyrus-sasl-the-srp-mechanism-accepts-any-password) on a server that offers it. VulnCheck rates [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483) CVSS 4.0 9.3 Critical: a client sends one value and Cyrus SASL accepts it as the password for any SRP user. SRP is off unless the library was built with `--enable-srp` and the server advertises it. The newest release is still 2.1.28, from 2022, and the commit that removes the plugin is not a release. Debian marks it open with no fixed package. It is not in KEV. Turning it off does not show whether a login already happened.
+- **New this update:** Turn off the [SRP mechanism](#cyrus-sasl-the-srp-mechanism-accepts-any-password) on a server that offers it. VulnCheck rates [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483) CVSS 4.0 9.3 Critical: a client sends one value and Cyrus SASL accepts it as the password for any SRP user. SRP is off unless the library was built with `--enable-srp` and the server advertises it. The newest release is still 2.1.28, from 2022. Debian's tracker now says the Debian build passes `--disable-srp`, so a stock Debian package does not offer it, and still names no fixed version. Ubuntu's page, dated November 16, marks every release Needs evaluation. It is not in KEV. Turning it off does not show whether a login already happened.
 - **New this update:** Upgrade [Confluence Data Center](#confluence-data-center-a-soap-fault-runs-code) to **9.2.28 or later**, or turn off Remote API (XML-RPC & SOAP). Atlassian rates [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) CVSS 4.0 9.3 Critical: a SOAP fault can run code when that API is on. It has been off by default for new installations since Confluence 3.0, and Confluence 10 removed it. Apache Axis 1.x, which Confluence bundles, is end of life and gets no release of its own. Confluence Cloud is not affected. It is not in KEV. The upgrade does not remove an account or an add-on that was already created.
 - **New this update:** Upgrade [Apache Shiro](#apache-shiro-a-cached-ldap-login-accepts-any-password) to **3.0.2 or later** and restart. Apache rates [CVE-2026-129349](https://www.cve.org/CVERecord?id=CVE-2026-129349) CVSS 4.0 9.1 Critical: with LDAP authentication caching on, a user who has logged in once can log in again with any password. Caching is off by default. 3.0.1 fixes that one and leaves six more, which Apache rates 6.3 or lower. Shiro 2.x is end of life and gets no fix. It is not in KEV.
 - **New this update:** Upgrade [PostgreSQL](#postgresql-a-type-change-runs-code-as-the-database-user) to **18.7, 17.12, 16.16, 15.20, or 14.25** and rebuild every C-language extension. The project rates [CVE-2026-6460](https://www.cve.org/CVERecord?id=CVE-2026-6460) CVSS 3.1 8.8 High: a database user who can create objects changes a composite type and the server runs code as the database's operating system user. The same release fixes 51 more flaws, and 32 of them carry the same 8.8 score. PostgreSQL 14.25 is the last release of that line. It is not in KEV. The upgrade does not show whether a statement already ran code.
@@ -439,6 +448,94 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## ooRexx: a local user injects a macro
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/oorexx.md):** [Detection](details/oorexx.md#detection) · [Remediation](details/oorexx.md#remediation) · [Verification](details/oorexx.md#verification) · [Timeline](details/oorexx.md#timeline)
+
+**CVEs:** [CVE-2026-130327](https://www.cve.org/CVERecord?id=CVE-2026-130327), [CVE-2026-130320](https://www.cve.org/CVERecord?id=CVE-2026-130320), [CVE-2026-130290](https://www.cve.org/CVERecord?id=CVE-2026-130290)
+
+**MITRE rates [CVE-2026-130327](https://www.cve.org/CVERecord?id=CVE-2026-130327) and [CVE-2026-130320](https://www.cve.org/CVERecord?id=CVE-2026-130320) CVSS 3.1 9.3 Critical, and [CVE-2026-130290](https://www.cve.org/CVERecord?id=CVE-2026-130290) 7.9 High.** MITRE is the CNA. The 9.3 vector is `CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`. All three are in RXAPI, in Open Object Rexx **4.0.0 before 5.2.0**, and all three need a local user. CVE-2026-130327 is a world-writable file in `/tmp`, unless `XDG_RUNTIME_DIR` is set, or TCP port 10010 on localhost: any local user can send a macro that a REXX script runs. CVE-2026-130320 is a missing bounds check on `nameArg` and `userid` that MITRE says can run code. CVE-2026-130290 reads past a buffer when the client names the size. NVD has not scored them. The records point at SVN commit [r12916](https://sourceforge.net/p/oorexx/code-0/12916/) and name 5.2.0 as the fix. On November 17 the project's files feed showed new uploads only for a 5.3.0 beta, build 13532, and no 5.2.0 file.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17) for any of the three. MITRE does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-16; time unknown** | MITRE published all three records. |
+| Beta builds uploaded | 2026-11-16 14:39 to 14:45 UT | `oorexx-5.3.0-13532` portable builds. The feed does not say they contain the fix. |
+| **Last updated** | **2026-11-17 03:40 EST (UTC−05:00)** | New item. No stable 5.2.0 download found. |
+
+**Patch:** Install **ooRexx 5.2.0 or later** when a release of that version is available. This run found none. Until then, set `XDG_RUNTIME_DIR` so RXAPI does not use the world-writable file, and keep untrusted local users off the host. Setting the variable does not fix the two bounds flaws. The upgrade does not show whether a macro was already injected.
+
+Sources: [CVE-2026-130327](https://www.cve.org/CVERecord?id=CVE-2026-130327), [CVE-2026-130320](https://www.cve.org/CVERecord?id=CVE-2026-130320), [CVE-2026-130290](https://www.cve.org/CVERecord?id=CVE-2026-130290), [detailed guide](details/oorexx.md).
+
+---
+
+## 7-Zip: a padded file name hides the real extension
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/7zip.md):** [Detection](details/7zip.md#detection) · [Remediation](details/7zip.md#remediation) · [Verification](details/7zip.md#verification) · [Timeline](details/7zip.md#timeline)
+
+**CVEs:** [CVE-2026-130067](https://www.cve.org/CVERecord?id=CVE-2026-130067)
+
+**VulnCheck rates [CVE-2026-130067](https://www.cve.org/CVERecord?id=CVE-2026-130067) CVSS 4.0 8.5 High and CVSS 3.1 7.8 High.** VulnCheck is the CNA. The 4.0 vector is `CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. NVD has not scored it. 7-Zip File Manager before **26.03** does not treat Unicode spaces as padding, so an archive entry whose name looks like a PDF, then ideographic spaces, then `.hta`, gets past the deceptive-name warning. Opening it runs the script through `ShellExecuteExW`. The person at the computer has to open the entry. The fix commit is from 2026-09-04, and 26.03 shipped the same day. The current release is **26.06**, dated 2026-11-06.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17). VulnCheck does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix released | 2026-09-04 07:34:42 UTC | 7-Zip 26.03. The history file dates it 2026-09-03 and names a different CVE. |
+| **Public announcement** | **2026-11-16; time unknown** | VulnCheck published the record. |
+| **Last updated** | **2026-11-17 03:40 EST (UTC−05:00)** | New item. Install 26.03 or later. |
+
+**Patch:** Install **7-Zip 26.03 or later**. 26.06 is the newest release the history file lists. Until then, do not open an archive entry whose name contains a long run of spaces. The update does not show whether an entry was already opened.
+
+Sources: [CVE-2026-130067](https://www.cve.org/CVERecord?id=CVE-2026-130067), [7-Zip history](https://www.7-zip.org/history.txt), [detailed guide](details/7zip.md).
+
+---
+
+## CBoard: any logged-in user reaches the administrator's functions
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cboard.md):** [Detection](details/cboard.md#detection) · [Remediation](details/cboard.md#remediation) · [Verification](details/cboard.md#verification) · [Timeline](details/cboard.md#timeline)
+
+**CVEs:** [CVE-2026-130073](https://www.cve.org/CVERecord?id=CVE-2026-130073)
+
+**VulnCheck rates [CVE-2026-130073](https://www.cve.org/CVERecord?id=CVE-2026-130073) CVSS 4.0 7.2 High and CVSS 3.1 8.3 High.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:H/A:H`. NVD has not scored it. Before commit [`7bd8180`](https://github.com/TuiQiao/CBoard/commit/7bd8180d8423a36b29a803433078bd66f94a81ed), a user who has logged in and holds no role grant can call `deleteUser`, `deleteRole`, `getUserList`, `getAllWidgetList`, and `getAllDatasetList`. That reads query configurations and can delete the administrator. The commit is from 2026-11-16 and sits on `branch-0.4.2`, the default branch. There is no release. Tag `v0.4.1` does not contain it.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17). VulnCheck does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix commit | 2026-11-16 03:32:45 UTC | `7bd8180`, one commit behind the tip of `branch-0.4.2`. |
+| **Public announcement** | **2026-11-16; time unknown** | VulnCheck published the record. |
+| **Last updated** | **2026-11-17 03:40 EST (UTC−05:00)** | New item. No release contains the fix. |
+
+**Patch:** Deploy commit `7bd8180` or later and restart. `v0.4.1`, the newest tag, is still affected. Until then, do not give an account to anyone who should not be an administrator. The deploy does not restore an account that was already deleted.
+
+Sources: [CVE-2026-130073](https://www.cve.org/CVERecord?id=CVE-2026-130073), [commit 7bd8180](https://github.com/TuiQiao/CBoard/commit/7bd8180d8423a36b29a803433078bd66f94a81ed), [detailed guide](details/cboard.md).
+
+---
+
+## Silverstripe: a dev task URL runs code
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/silverstripe.md):** [Detection](details/silverstripe.md#detection) · [Remediation](details/silverstripe.md#remediation) · [Verification](details/silverstripe.md#verification) · [Timeline](details/silverstripe.md#timeline)
+
+**CVEs:** [CVE-2026-91115](https://www.cve.org/CVERecord?id=CVE-2026-91115). The same 6.2.13 release fixes six more that GitHub rates 6.8 or lower: CVE-2026-91112, CVE-2026-91110, CVE-2026-88987, CVE-2026-88988, CVE-2026-91114, and CVE-2026-88989.
+
+**GitHub rates [CVE-2026-91115](https://www.cve.org/CVERecord?id=CVE-2026-91115) CVSS 3.1 8.8 High.** GitHub is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H`. Silverstripe's own page gives the same score. NVD has not scored it. `silverstripe/framework` from **6.0.0 before 6.2.13** passes the `writer` option of the `i18nTextCollectorTask` dev task to the injector without checking it, so a crafted URL creates an object and runs code. The task did not ask for confirmation, so an administrator can be led into it by a link. A site in dev mode needs no login. CMS 5 is not affected. **6.2.13** shipped on 2026-10-28. The CVE record was published on November 16.
+
+**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17). Silverstripe does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix released | 2026-10-28 02:24:33 UTC | `silverstripe/framework` 6.2.13. |
+| **Public announcement** | **2026-11-16; time unknown** | GitHub published the CVE record. The vendor page is dated October 28. |
+| **Last updated** | **2026-11-17 03:40 EST (UTC−05:00)** | New item. Update the framework. |
+
+**Patch:** Update `silverstripe/framework` to **6.2.13 or later** and redeploy. Until then, do not leave a production site in dev mode, and do not open a dev-task link you did not expect. Neither is the fix. The update does not show whether a task URL already ran code.
+
+Sources: [CVE-2026-91115](https://www.cve.org/CVERecord?id=CVE-2026-91115), [Silverstripe](https://www.silverstripe.org/download/security-releases/cve-2026-91115), [detailed guide](details/silverstripe.md).
 
 ---
 
@@ -969,9 +1066,10 @@ Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026
 | Reported to the project | 2026-07-31; time/TZ unknown | Issue 896, with a reproducer. No reply. |
 | Plugin removed on master | 2026-11-12 17:52:39 UTC | The commit deletes the SRP plugin. It is not a release, and the message does not mention the bypass. |
 | **Public announcement** | **2026-11-15; NVD published 14:17:27 UTC** | VulnCheck published the record. No fixed version. |
-| **Last updated** | **2026-11-15 23:05 EST (UTC−05:00)** | New item. Stop advertising SRP. |
+| Debian and Ubuntu | 2026-11-16; time unknown | Debian's tracker says its build passes `--disable-srp`. Ubuntu's new page marks every release Needs evaluation. |
+| **Last updated** | **2026-11-17 03:40 EST (UTC−05:00)** | A stock Debian build does not include the plugin. Ubuntu has no fix. |
 
-**Patch:** No release fixes this. Cyrus SASL 2.1.28, published 2022-02-22, is still the newest tag, and it contains the flaw when SRP is built and advertised. Remove `SRP` from the server's mechanism list and restart. Debian's tracker marks the flaw open on bookworm, trixie, forky, and sid, with no fixed version. Ubuntu has no page for the CVE. The November 12 commit removes the plugin on master only. Turning the mechanism off does not show whether a login already happened.
+**Patch:** No release fixes this. Cyrus SASL 2.1.28, published 2022-02-22, is still the newest tag, and it contains the flaw when SRP is built and advertised. Remove `SRP` from the server's mechanism list and restart. Debian's tracker still marks bookworm, trixie, forky, and sid vulnerable with no fixed version, and it notes the Debian build passes `--disable-srp`, so a stock Debian package does not offer the mechanism. Ubuntu's page, dated November 16, marks 26.10, 26.04 LTS, 24.04 LTS, 22.04 LTS, and 20.04 LTS as Needs evaluation and names no package. The November 12 commit removes the plugin on master only. Turning the mechanism off does not show whether a login already happened.
 
 Sources: [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483), [issue 896](https://github.com/cyrusimap/cyrus-sasl/issues/896), [detailed guide](details/cyrus-sasl.md).
 
@@ -1557,7 +1655,9 @@ Sources: [CVE-2026-120017](https://cveawg.mitre.org/api/cve/CVE-2026-120017), [C
 
 N-able's current status page says it is observing scanning that matches the published proof of concept, and that on-premises servers should stay offline until the upgrade has succeeded. At 01:04:27 UTC on 2026-11-11 N-able said every hosted server, in every region, had been upgraded. A follow-up hotfix is still planned. Built-in remote control is off in this build. Take Control still works. Ecoverse stays up at `https://n-able.app`. This is not the November 3 notice about AlmaLinux updates.
 
-On November 12 a second disclosure, which the researcher calls 4EverAble2Shell, claims an unauthenticated path to root that still works on 2026.4.1.26 when Legacy API is turned on and reachable from the internet. N-able's [incident 202609](https://uptime.n-able.com/event/202609) says that API is off by default and not recommended, and that hosted servers are not affected by the claim. N-able has published no CVE and no newer build for it. The chain starts with [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436), an end-of-life Apache Axis flaw that Apache rates critical in text, with no numeric score, and that CISA's enrichment scores 9.8. At 16:00 UTC [incident 202613](https://uptime.n-able.com/event/202613) says N-able turned the Intune integration off. At 03:50:42 UTC on November 13 the same incident says N-able found indicators of compromise and is working with those customers.
+On November 12 a second disclosure, which the researcher calls 4EverAble2Shell, claims an unauthenticated path to root that still works on 2026.4.1.26 when Legacy API is turned on and reachable from the internet. N-able's [incident 202609](https://uptime.n-able.com/event/202609) says that API is off by default and not recommended, and that hosted servers are not affected by the claim. The chain starts with [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436), an end-of-life Apache Axis flaw that Apache rates critical in text, with no numeric score, and that CISA's enrichment scores 9.8. At 16:00 UTC [incident 202613](https://uptime.n-able.com/event/202613) says N-able turned the Intune integration off. At 03:50:42 UTC on November 13 the same incident says N-able found indicators of compromise and is working with those customers.
+
+On November 16 N-able posted **2026.4 HF3, build 2026.4.1.39**. The [release notes](https://status.n-able.com/2026/11/16/n-central-2026-4-hf3-release-notes/) say it supersedes HF2, permanently removes the Legacy API, and adds checks so an Agent that has not been upgraded can no longer impersonate one that has. Remote control other than Take Control stays off, and the Intune integration stays blocked. The notes list seventeen more CVEs, CVE-2026-129271 through CVE-2026-129287. Those records were not published on November 17, so there is no score to quote. N-able's blog the same day says the data-leakage issues that need an already-privileged account are still open. Hosted servers are upgraded by N-able. On-premises servers, and every customer's Agents and Probes, are not.
 
 **CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-13) for any of the seven or for CVE-2026-90436. Huntback reports 21 production servers mining Monero at 12:50 UTC on November 12, 19 of them already on 2026.4.1.26. That report is Huntback's, from a public mining pool, not N-able's count. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -1571,9 +1671,10 @@ On November 12 a second disclosure, which the researcher calls 4EverAble2Shell, 
 | Precautionary restrictions | 2026-11-12 16:00:00 UTC | Incident 202613. Intune integration turned off. That update reported no signs of compromise. |
 | Exploitation reported | 2026-11-12 12:50 UTC | Huntback: 21 servers mining, 19 on 2026.4.1.26. |
 | N-able finds indicators | 2026-11-13 03:50:42 UTC | Incident 202613. N-able is working with the customers where it found indicators. |
-| **Last updated** | **2026-11-13 03:10 EST (UTC−05:00)** | Hotfix 2 does not close 4EverAble2Shell. Check for the miner. |
+| **HF3** | **2026-11-16; time/TZ unknown** | Build 2026.4.1.39. Legacy API permanently removed. Agents and Probes must move too. |
+| **Last updated** | **2026-11-17 03:40 EST (UTC−05:00)** | HF3 is the build to install. The seventeen new CVE records are not published. |
 
-**Patch:** On premises, upgrade to **2026.4.1.26** while the server is still offline, then confirm Legacy API is off before bringing it back. If it is on, [turn it off](https://me.n-able.com/s/article/How-to-Disable-Legacy-API-settings-on-On-premise-N-central-servers). That build does not fix the November 12 chain, so a server with Legacy API exposed stays vulnerable until N-able ships the next build. Leave the Intune integration off until N-able says otherwise. Upgrade Agents before Probes, both to 2026.4.1.26. A Probe on the new build stops talking to an older Agent. Hosted servers were upgraded by N-able on 2026-11-11. The download is [SD-000143](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LUHIA2/sd-000143). Supported paths start at 2025.4. Check for `/tmp/.xvd/`, an `xvd.service` unit, and connections to `157.20.241.16`. The upgrade does not remove a miner or undo a script that already ran.
+**Patch:** On premises, upgrade to **2026.4.1.39** and upgrade every Agent and Probe to that build. HF3 removes the Legacy API, so the setting the November 12 chain needed is gone, and an Agent left on an older build can still be impersonated. Upgrade Agents before Probes: a Probe on the new build stops talking to an older Agent. Leave the Intune integration off and expect built-in remote control to stay disabled. Take Control still works. Hosted servers are upgraded by N-able; their Agents and Probes are still the customer's. Check for `/tmp/.xvd/`, an `xvd.service` unit, and connections to `157.20.241.16`. The upgrade does not remove a miner or undo a script that already ran.
 
 Sources: [N-able status, incident 202584](https://uptime.n-able.com/event/202584), [release notes](https://status.n-able.com/2026/11/10/n-central-2026-4-hf2-release-notes/), [detailed guide](details/n-central.md).
 
