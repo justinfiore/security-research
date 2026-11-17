@@ -1,6 +1,6 @@
 # Danfoss AK-SM800A: six flaws run code before login
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-17 (America/New_York)
 
 [Main Danfoss summary](../black-october-2026.md#danfoss-ak-sm800a-six-flaws-run-code-before-login) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,7 @@ No CVE is assigned. Midnight Blue says the identifiers are pending and that coor
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. BSI says it knows of no exploitation of these six flaws. The refrigeration attacks that began on October 11 are a separate campaign against exposed controllers, and no source ties those attacks to these six flaws. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
-Germany's BSI said on November 13 that firmware through at least 5.3.2 is affected, and that it knows of no exploitation of these six. The same day, at 13:25, BSI withdrew an earlier sentence that said package **5.4.0** was not affected: BSI now says that cannot be ruled out. Danfoss's download page, read 2026-11-16, lists **AK-SM 800A 5.4.0.spk (November 2026)** as the latest package. The page does not call it a fix for these six flaws, and Danfoss has published no advisory. BSI still says 5.4.0 cannot be ruled out.
+Germany's BSI said on November 13 that firmware through at least 5.3.2 is affected, and that it knows of no exploitation of these six. The same day, at 13:25, BSI withdrew an earlier sentence that said package **5.4.0** was not affected: BSI now says that cannot be ruled out. Danfoss's download page, reread 2026-11-17, lists **AK-SM 800A 5.3.x.spk (October 2026)** and no 5.4.0 package. An earlier read of the same page on 2026-11-16 reported a 5.4.0 package; that listing is not there now. Danfoss has published no advisory for these six flaws.
 
 ## Table of contents
 
@@ -43,7 +43,7 @@ There is no CVE to match in a scanner, and neither Midnight Blue nor Danfoss pub
 
 1. Remove the management interface from the public internet. Put remote access behind a VPN or a private network, as the CCB and BSI both say. IP allow-listing of a refrigeration provider is a stopgap, not the fix.
 2. Do not treat an upgrade to 5.3.2, a password change, or Strict mode as the remedy. Midnight Blue found the six flaws in 5.3.2, and one of them is in the process that enforces Strict mode.
-3. Danfoss now lists package **5.4.0.spk (November 2026)**. Do not install it on the strength of the withdrawn BSI sentence: BSI says it cannot rule that package out, and Danfoss's page does not call it a fix. Keep the controller off the internet either way. The researcher says the codebase yields flaws of this kind quickly, and an implant can outlast a firmware update.
+3. Danfoss's download page, reread 2026-11-17, lists **5.3.x.spk (October 2026)** and no 5.4.0 package. Do not install a package on the strength of the withdrawn BSI sentence: BSI says it cannot rule 5.4.0 out, and Danfoss's page does not call any package a fix. Keep the controller off the internet either way. The researcher says the codebase yields flaws of this kind quickly, and an implant can outlast a firmware update.
 4. The AK-SM 800 and AK-SC 355 are older products, end of life, and are not these six flaws. Danfoss tells operators to replace them. This guide does not cover them.
 
 ## Verification
@@ -63,7 +63,7 @@ Midnight Blue says the platform has no secure boot, so a factory reset and a fir
 - [Midnight Blue][mb] — November 2026. Six stack-based buffer overflows, pre-authentication, through firmware 5.3.2. One is in the session-control process, so Strict mode does not close it. CVEs pending. No numeric score. Endpoints withheld while disclosure with Danfoss is open.
 - [CCB advisory][ccb] — published and last updated 2026-11-12. Same product, versions, and impact. Says no patch was available at publication, and that removing internet exposure comes before waiting for one.
 - [BSI press release][bsi] — Bonn, 2026-11-13, updated the same day at 13:25. Firmware through at least 5.3.2 is affected. The first version said package 5.4.0 was not; the update says that can no longer be ruled out. No known exploitation of these flaws. Recommends a VPN when remote maintenance is required.
-- [Danfoss AK-SM 800A downloads][dl] — read 2026-11-13. The listed package is still 5.3.x, dated October 2026. No 5.4.0 package and no advisory for these six flaws.
+- [Danfoss AK-SM 800A downloads][dl] — reread 2026-11-17. The listed package is 5.3.x, dated October 2026. No 5.4.0 package and no advisory for these six flaws. A 2026-11-16 read of the same page reported a 5.4.0 listing; it is not there now.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.10, checked 2026-11-13. Not applicable: no CVE is assigned.
 
 [mb]: https://www.midnightblue.nl/blog/multiple-rce-danfoss-aksm800a

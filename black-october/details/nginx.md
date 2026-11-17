@@ -1,6 +1,6 @@
 # NGINX: configuration-dependent memory corruption and TLS session forgery
 
-**Last updated:** 2026-11-08 (America/New_York)
+**Last updated:** 2026-11-17 (America/New_York)
 
 [Main NGINX summary](../black-october-2026.md#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -125,7 +125,7 @@ Sources: [K000162416][k15176], [K000162607][k93479], [K000162608][k97205], [K000
 
 - **Debian:** [DSA-6575-1][dsa] (2026-10-21) fixes trixie in **1.26.3-3+deb13u10**, and sid/forky has 1.30.6-2. When checked, the Debian tracker still showed **bookworm as vulnerable**. [Debian tracker][deb]
 - **Ubuntu:** [USN-8955-1][usn] (published 2026-10-26) fixes CVE-2026-15176, CVE-2026-93479, CVE-2026-95101, CVE-2026-97205 and CVE-2026-97629 in **1.30.4-7ubuntu1.1** (26.10), **1.28.3-2ubuntu1.12** (26.04 LTS), **1.24.0-2ubuntu7.19** (24.04 LTS) and **1.18.0-6ubuntu14.22** (22.04 LTS). CVE-2026-15176's HTTP/3 issue is limited to 26.04 and 26.10, and CVE-2026-97629's session-ticket issue to 24.04, 26.04 and 26.10. [USN-8955-2][usn2] (published 2026-11-05) adds Ubuntu Pro builds for three of those CVEs, CVE-2026-15176, CVE-2026-93479, and CVE-2026-97205: **1.18.0-0ubuntu1.7+esm4** (20.04), **1.14.0-0ubuntu1.11+esm5** (18.04), **1.10.3-0ubuntu0.16.04.5+esm10** (16.04), and **1.4.6-1ubuntu3.9+esm9** (14.04). CVE-2026-97629 and CVE-2026-95101 are not in that notice. [Ubuntu][ubuntu]
-- For other distributions (Red Hat, SUSE, Alpine and so on), check their trackers. Their status was not reviewed here. Remember that backports can make an old version number either safe or, as Debian found for CVE-2026-93479, vulnerable.
+- **Red Hat:** [RHSA-2026:98634](https://access.redhat.com/errata/RHSA-2026:98634), issued 2026-11-11, fixes CVE-2026-15176 and CVE-2026-97205 in `nginx` **1.26.3-16.el10_3.1** on Red Hat Enterprise Linux 10. This review did not find a matching erratum for RHEL 8 or 9. SUSE and Alpine were not rechecked. Remember that backports can make an old version number either safe or, as Debian found for CVE-2026-93479, vulnerable.
 
 ### Temporary mitigations
 

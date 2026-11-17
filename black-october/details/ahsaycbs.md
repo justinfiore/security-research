@@ -1,6 +1,6 @@
 # AhsayCBS: authentication bypass and command injection chain
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-17 (America/New_York)
 
 [Main AhsayCBS summary](../black-october-2026.md#ahsaycbs-authentication-bypass-and-command-injection-chain-cve-2026-105133-and-cve-2026-105134) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -43,6 +43,7 @@ Attackers **chain the two flaws**. CVE-2026-105133 bypasses authentication throu
 | Ahsay v9.17.0 | 2026-11-12 (date only) | Ahsay's announcement lists "Ahsay Security Patchset for CVE-2026-105133 and CVE-2026-105134" as the first item, plus the Q4 2026 patchset. It also disables remote API access by default and disables the JSP engine. It does not say 9.17.0 replaces 9.15.2.70 as the first fix. [Ahsay v9.17.0](https://www.ahsay.com/en/company/announcements/release-9170) |
 | v10.3.6 released | 2026-11-02 (date only) | The release Ahsay had scheduled for the week after October 22. Its notes include "Ahsay Security Patchset for CVE-2026-105133 and CVE-2026-105134", disabling the JSP engine, disabling remote API access by default, and removing access tokens. Ahsay does not say this replaces 10.3.4.45 as the CVE boundary. [Ahsay v10.3.6][ahsay-1036] [v10.3.6 notes][rel1036] |
 | v10.3.6.1 released | 2026-11-03 (date only) | Ahsay says it "now supports: AhsayCBS security hardening updates" and "Enhance CBS authentication system to improve security." It does not name CVE-2026-105133 or CVE-2026-105134, and it does not say this replaces 10.3.4.45. [Ahsay v10.3.6.1][ahsay-10361] |
+| v10.3.6.14 released | 2026-11-13 (date only) | The notes list a security fix: "Redirector logged CBS password in the access log in readable form." Ahsay does not name CVE-2026-105133 or CVE-2026-105134, and does not say this replaces 10.3.4.45. [v10.3.6.14 notes][rel103614] |
 
 ## Detection
 
@@ -77,7 +78,7 @@ Finding no indicators does not prove the server is clean. Huntress warns that at
 ## Remediation
 
 1. **v10:** apply the **AhsayCBS 10.3.4.45** hotfix or later (partner portal login required) and **reboot the server**, as Ahsay instructs. **v7, v8, v9:** v8 and v7 must first upgrade to **9.15.0.0**; then apply **9.15.2.70** and reboot. Ahsay states these hotfixes "fully address" both CVEs. This review could not access the partner-only download pages to inspect the builds.
-2. After the CVE hotfix, move a v10 server to **v10.3.6.1** (released 2026-11-03) or, if that build is not what you installed, to **v10.3.6** (released 2026-11-02). On the v9 line, **v9.17.0** (announced 2026-11-12) lists a patchset for both CVEs, disables remote API access by default, and disables the JSP engine. Ahsay does not say any of these replaces 10.3.4.45 or 9.15.2.70 as the version that first fixes the CVEs. The earlier hardening builds remain v9.15.2.78 (2026-10-27) and the v10 build Ahsay named both 10.3.5.54 and 10.3.4.54 (2026-10-22), then v10.3.4.55 (2026-10-27, a license-key console fix).
+2. After the CVE hotfix, move a v10 server to **v10.3.6.14** (released 2026-11-13). Its notes say the redirector wrote the CBS password into the access log in readable form, and that build stops doing so. Ahsay does not say it replaces 10.3.4.45 as the CVE fix. The earlier builds remain v10.3.6.1 (2026-11-03) and v10.3.6 (2026-11-02). Treat an access log from before this build as containing the password, and rotate it. On the v9 line, **v9.17.0** (announced 2026-11-12) lists a patchset for both CVEs, disables remote API access by default, and disables the JSP engine. Ahsay does not say any of these replaces 10.3.4.45 or 9.15.2.70 as the version that first fixes the CVEs. The earlier hardening builds remain v9.15.2.78 (2026-10-27) and the v10 build Ahsay named both 10.3.5.54 and 10.3.4.54 (2026-10-22), then v10.3.4.55 (2026-10-27, a license-key console fix).
 3. Do **not** rely on 10.3.4.0 or 9.15.2.59. Ahsay says neither fully fixed the CVEs.
 4. Whatever the patch status, restrict web console and API access to trusted IPs or a VPN, as Huntress recommends. If the replication-receiver function is unused, block external access to `/rps/` paths at a reverse proxy or firewall. That is a defensive network control; Ahsay has not documented it as a supported workaround.
 5. If the server shows any indicator, follow **Compromise response** instead of only patching it in place.
@@ -123,5 +124,6 @@ Before rebuilding, preserve disk and memory evidence, logs and the webshell file
 [ahsay-1036]: https://www.ahsay.com/en/company/announcements/release-1036
 [ahsay-10361]: https://www.ahsay.com/en/company/announcements/release-1036
 [rel1036]: https://www.ahsay.com/en/support/help-centre/release-notes/cbs/v10.3.6
+[rel103614]: https://www.ahsay.com/en/support/help-centre/release-notes/cbs/v10.3.6.14
 [huntress]: https://www.huntress.com/blog/ahsaycbs-flaws-exploit
 [sigma]: https://github.com/huntresslabs/threat-intel/tree/main/2026/2026-10/AhsayCBS_XMRig_Miner

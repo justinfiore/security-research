@@ -2,6 +2,13 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-17 11:15 EST (UTC−05:00) — N-central; Gitea; GitLab; Ahsay
+
+- **N-central:** Upgrade on-premises servers, and every Agent and Probe, to [2026.4 HF3, build 2026.4.1.39](black-october/details/n-central.md#remediation), and the Patch Management Engine to 2.14.4.5829 or later. N-able published seventeen more flaws in that build on November 17. Three are CVSS 4.0 Critical. CVE-2026-129272 is 9.3: an Agent left on an older build can still be impersonated, with no login. CVE-2026-129280 is 9.3: a SOAP call skips the session check. CVE-2026-129286 is 9.2 and needs the attacker to change update metadata. None is in KEV. Treat a secret stored in an Automation Manager policy as disclosed. The upgrade does not remove a miner.
+- **Gitea:** Upgrade to [28.4.0 or later](black-october/details/gitea-28-3.md#remediation) and restart. GitHub rates CVE-2026-125423 CVSS 3.1 8.5: a user who can create a repository overwrites a git hook during setup and runs commands as the Gitea user. The same release stops the repository search from returning an owner's password hash. 28.3.0 leaves both in place. Reset a password whose hash may have been read. Neither is in KEV.
+- **GitLab:** Upgrade self-managed GitLab to [19.5.6, 19.4.8, or 19.3.9](black-october/details/gitlab-ruby.md#remediation). GitLab released those on November 16. CVE-2026-105739 and CVE-2026-108153 are both CVSS 3.1 8.7: stored script in a wiki page and in Error Tracking. CVE-2026-18241 is 8.2: a race lets a signed-in user read protected CI/CD variables. The November 10 builds do not include these.
+- **Ahsay:** Move a v10 server to [10.3.6.14](black-october/details/ahsaycbs.md#remediation). Its notes say the redirector wrote the CBS password into the access log in readable form. Rotate that password and treat an older access log as containing it. This does not replace the 10.3.4.45 hotfix.
+
 ## 2026-11-17 08:20 EST (UTC−05:00) — LibreOffice; Libreswan; B3log Solo
 
 - **LibreOffice:** Update to [26.2.7 or 26.8.2 or later](black-october/details/libreoffice.md#remediation) and restart it. The Document Foundation rates eight flaws in that release CVSS 4.0 High. CVE-2026-84443 is 8.5: a Base document runs a macro without the security check. A database document can also run Java. The records were published November 16. None is in KEV.

@@ -1,6 +1,6 @@
 # ScreenConnect: the RMM+ extension accepts its default secret
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-17 (America/New_York)
 
 [Main ScreenConnect summary](../black-october-2026.md#screenconnect-the-rmm-extension-accepts-its-default-secret) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -30,7 +30,8 @@ A different ScreenConnect flaw, [CVE-2026-84869](https://www.cve.org/CVERecord?i
 | **Public announcement** | **2026-11-12; time unknown** | ConnectWise publishes CVE-2026-127063. The disclosure is dated November 12 and gives no clock time. [Disclosure][gh] |
 | Trust-center update | 2026-11-12 18:45 UTC | Investigation ongoing. Five extensions disabled where ConnectWise could. [Trust center][trust] |
 | Trust-center update | 2026-11-13 21:15 UTC | Third-party researchers report more activity against on-premises environments that still have the extensions enabled. Disable them now, and confirm every technician client is 26.6.5 or later. [Trust center][trust] |
-| **Last updated** | **2026-11-16 (America/New_York)** | The November 13 update also names ITBoost Integration, RepairShopr Integration, and Guest Session Starter. |
+| Investigation complete | 2026-11-16 20:00 UTC | ConnectWise says the investigation is complete and partner action is still required. Researchers continue to report activity against on-premises environments where the extensions stay enabled. The update names the original five extensions, not the three added on November 13. [Trust center][trust] |
+| **Last updated** | **2026-11-17 (America/New_York)** | The investigation is complete. The five extensions stay off, and there is still no fixed RMM+ build. |
 
 ## Detection
 

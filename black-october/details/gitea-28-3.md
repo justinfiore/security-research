@@ -1,6 +1,6 @@
 # Gitea 28.3.0: Actions secret theft, archived-repo writes, and stored XSS
 
-**Last updated:** 2026-11-07 (America/New_York)
+**Last updated:** 2026-11-17 (America/New_York)
 
 [Back to Gitea 28.3.0 summary](../black-october-2026.md#gitea-actions-secret-theft-archived-repo-writes-and-stored-xss) · [Changelog](../../CHANGELOG.md)
 
@@ -36,6 +36,8 @@ The same 28.3.0 tag also fixes more Medium flaws, all patched in 28.3.0. They do
 
 The numbers are GitHub's CVSS 3.1 scores where the blog states one. CVE-2026-116474, CVE-2026-116289, CVE-2026-117677, and CVE-2026-117649 have no numeric score on the blog. The five rows added on 2026-11-07 come from that blog, reread that day. They do not change the upgrade: 28.3.0 already covers them. The same binaries are built with Go 1.27.3, so outgoing certificate checks no longer trust the eMudhra intermediates ([CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943)). That is the [certificate-authority incident](emudhra.md), not a new Gitea flaw.
 
+**28.4.0, released 2026-11-15, is now the release to install.** The [28.4.0 blog post](https://blog.gitea.com/release-of-28.4.0) says it fixes command execution through repository auto-initialization and disclosure of password hashes through repository search. GitHub rates [CVE-2026-125423](https://www.cve.org/CVERecord?id=CVE-2026-125423) CVSS 3.1 8.5 High: a user allowed to create a repository can push during the auto-init window so the README write follows a symbolic link, overwrites a git hook, and runs commands as the Gitea system user. Affected through 28.3.0. [CVE-2026-123006](https://www.cve.org/CVERecord?id=CVE-2026-123006) lets any signed-in user read the password hash, salt, and email address of the owner of a visible repository that has a commit status, since 28.0.0. The same post says 28.4.0 is built with Go 1.27.4, which fixes [CVE-2026-97054](https://www.cve.org/CVERecord?id=CVE-2026-97054), a crash of an HTTP/1 server. It also discloses [CVE-2026-118389](https://www.cve.org/CVERecord?id=CVE-2026-118389) as fixed already in 28.3.0: a RubyGems compact-index newline injection. The other advisories in that post are below High and do not change the upgrade.
+
 **CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for any CVE in this release. No exploitation report was found. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
@@ -67,14 +69,14 @@ The numbers are GitHub's CVSS 3.1 scores where the blog states one. CVE-2026-116
 
 ## Remediation
 
-1. Upgrade to **Gitea 28.3.0 or later** and restart. Back up first. This is the same upgrade that covers the [built-in SSH bypass](gitea.md#remediation) if you have not installed 28.0.0 yet.
+1. Upgrade to **Gitea 28.4.0 or later** and restart. Back up first. 28.3.0 fixes the seven High flaws above and leaves [CVE-2026-125423](https://www.cve.org/CVERecord?id=CVE-2026-125423) and [CVE-2026-123006](https://www.cve.org/CVERecord?id=CVE-2026-123006) in place. This is also the upgrade that covers the [built-in SSH bypass](gitea.md#remediation) if you have not installed 28.0.0 yet. Reset the password of any account whose hash may have been read.
 2. There is no configuration workaround in the advisories for the Actions secret theft. Until 28.3.0 is running, do not treat a read-only account as unable to start a trusted workflow.
 3. For the archived-repository gap, removing write collaborators is the only reduction the advisory supports, and it does not fix the missing check.
 4. For the XSS, do not send users direct artifact links from untrusted runs until the upgrade is in place.
 
 ## Verification
 
-- `/api/v1/version` reports 28.3.0 or later on every instance.
+- `/api/v1/version` reports 28.4.0 or later on every instance.
 - After the upgrade, a review whose `commit_id` is not the pull request's head must not start a workflow with `IsForkPullRequest = false`. The advisory's fix is that check; do not post an exploit payload to confirm it.
 - An archived repository must reject release, milestone, and label changes from a write collaborator.
 
