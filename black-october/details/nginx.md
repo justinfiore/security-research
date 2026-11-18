@@ -1,10 +1,12 @@
 # NGINX: configuration-dependent memory corruption and TLS session forgery
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-18 (America/New_York)
 
 [Main NGINX summary](../black-october-2026.md#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**NGINX Open Source 1.30.6 (stable) and 1.31.7 (mainline), released 2026-10-14, fix four flaws that qualify as High or Critical under F5's scores: three heap memory-corruption bugs in worker processes and one TLS session-forgery bug. For the three memory-corruption bugs, F5 (the CNA) gives CVSS 4.0 9.2 Critical and CVSS 3.1 8.1 High. For the session forgery, F5 gives CVSS 4.0 8.3 High and CVSS 3.1 6.5 Medium. nginx.org rates all four "medium". NVD has added no score of its own. None is listed in CISA KEV (catalog 2026.10.23, checked 2026-10-26).** Each flaw needs a **specific configuration**, so check the configuration as well as the version. [nginx.org advisories][ngx-adv] [nginx.org news][ngx-news]
+**NGINX Open Source 1.30.7 and 1.31.9, released 2026-11-18, fix a new HTTP/2 flow-control flaw on top of the October set.** F5 rates [CVE-2026-123007](https://www.cve.org/CVERecord?id=CVE-2026-123007) **CVSS 3.1 8.1 High and CVSS 4.0 9.2 Critical**. nginx.org rates it major. The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`. It affects **1.9.5 through 1.31.8**, including 1.30.6 and 1.31.7. F5 says undisclosed HTTP/2 traffic can push the flow-control window past its limit, overflow a heap buffer, and crash the worker, and that code execution needs ASLR off or bypassed. NGINX Plus is fixed in **37.3.0.1 and 37.0.8.1**. F5 lists no fix for R34 through R36 and names no mitigation. Debian's tracker has no page for this CVE yet, and its newest nginx is still 1.30.6-3. [K000163926](https://my.f5.com/manage/s/article/K000163926)
+
+**1.30.6 and 1.31.7, released 2026-10-14, fix four earlier flaws.** For the three memory-corruption bugs, F5 gives CVSS 4.0 9.2 and CVSS 3.1 8.1. For the session forgery, F5 gives CVSS 4.0 8.3 and CVSS 3.1 6.5. nginx.org rates all four medium. Each of those four needs a specific configuration. 1.30.6 and 1.31.7 do not fix CVE-2026-123007. [nginx.org advisories][ngx-adv]
 
 | CVE | Trigger configuration (F5 description) | nginx.org vulnerable range | F5 CNA score | Worst case |
 |---|---|---|---|---|

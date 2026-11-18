@@ -41,7 +41,7 @@ The GitHub `mod_h2` repository was archived on June 9 and its release list ends 
 | Amazon Linux packages | 2026-11-12; time/TZ unknown | ALAS2-2026-4114 and ALAS2023-2026-3458. Both ship `httpd` 2.4.71. [AL2][alas2] [AL2023][alas2023] |
 | CISA KEV | Not listed (catalog 2026.11.17, checked 2026-11-18) | [KEV][kev] |
 | Singapore CSA alert | 2026-11-17; time unknown | Says attackers are exploiting CVE-2026-119618. Scores it 8.1. Names no victim. [AL-2026-164][csa] |
-| **Last updated** | **2026-11-18 (America/New_York)** | Exploitation alert. The fix is unchanged. |
+| **Last updated** | **2026-11-18 (America/New_York)** | Rocky and Alma published the RHEL `mod_http2` builds. Oracle still has none. |
 
 ## Detection
 
@@ -90,7 +90,7 @@ A distribution package does not use the upstream version number. On Red Hat Ente
 | SLES 16.0 | `apache2` 2.4.71-160000.1.1 | [SUSE][suse] |
 | SLES 15 SP4, SP5, and SP6 LTSS, and 12 SP5 LTSS | `apache2` 2.4.66 builds, released | [SUSE][suse] |
 
-Red Hat lists **JBoss Core Services** (`jbcs-httpd24-mod_http2`) and **Red Hat Hardened Images** (`httpd`) as Affected, with no released package. Trixie's release pocket is still `2.4.68-1~deb13u1`; the security pocket is the fixed one. SUSE's page, last modified 2026-11-16, now marks SLES 15 SP7 and SLES 16.0 Released. SLES 16.1, SUSE Linux Enterprise Server for NVIDIA 16.1, and openSUSE Leap 16.0 and 16.1 are still Affected, and SUSE's overall state for the issue is still Pending. AlmaLinux, Rocky Linux, and Oracle Linux had no released erratum for this CVE on November 13.
+Red Hat lists **JBoss Core Services** (`jbcs-httpd24-mod_http2`) and **Red Hat Hardened Images** (`httpd`) as Affected, with no released package. Trixie's release pocket is still `2.4.68-1~deb13u1`; the security pocket is the fixed one. SUSE's page, last modified 2026-11-16, marks SLES 15 SP7 and SLES 16.0 Released. SLES 16.1, SUSE Linux Enterprise Server for NVIDIA 16.1, and openSUSE Leap 16.0 and 16.1 are still Affected, and SUSE's overall state for the issue is still Pending. Rocky Linux published [RLSA-2026:98981](https://errata.rockylinux.org/RLSA-2026:98981) on November 13 (`mod_http2-2.0.26-7.el9_9.1` on Rocky 9) and [RLSA-2026:98978](https://errata.rockylinux.org/RLSA-2026:98978) the same day (`mod_http2-2.0.29-5.el10_3.1` on Rocky 10). AlmaLinux published [ALSA-2026:98981](https://errata.almalinux.org/9/ALSA-2026-98981.html) and [ALSA-2026:98978](https://errata.almalinux.org/10/ALSA-2026-98978.html) on November 16, with the same package versions. Oracle's CVE page returned HTTP 404 on November 18, and no Oracle erratum was found.
 
 ## Remediation
 

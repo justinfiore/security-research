@@ -1,6 +1,6 @@
 # Firefox: a layout bug can run code from a web page
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-18 (America/New_York)
 
 [Back to Firefox summary](../black-october-2026.md#firefox-a-layout-bug-can-run-code-from-a-web-page) · [Changelog](../../CHANGELOG.md)
 
@@ -38,7 +38,7 @@ On 2026-11-10 Mozilla published [MFSA 2026-125][mfsa160], impact high, fixed in 
 
 ## Remediation
 
-1. Update Firefox to **160 or later** on the Release channel, then relaunch. 159.0.1 fixes only CVE-2026-120572. Update ESR to **153.7 or later**, or **115.45 or later** on the 115 line. 115.45 does not list CVE-2026-124917. Update Thunderbird to **160 or later**.
+1. Update Firefox to **160.0.1 or later** on the Release channel, then relaunch. 160 fixes the November 10 set and leaves the two November 17 flaws. 159.0.1 fixes only CVE-2026-120572. Update ESR to **153.7 or later**, or **115.45 or later** on the 115 line. 115.45 does not list CVE-2026-124917. Update Thunderbird to **160 or later**.
 2. Mozilla publishes no workaround. Not opening untrusted pages is not a control the advisory states.
 3. The update does not show whether a page already ran code.
 
@@ -53,6 +53,7 @@ Mozilla does not report exploitation, and the bug is not public. If a host shows
 ## Sources
 
 - [MFSA 2026-123][mfsa] — announced 2026-11-03. Impact high. One issue, CVE-2026-120572, impact high. Fixed in Firefox 159.0.1.
+- [MFSA 2026-130](https://www.mozilla.org/en-US/security/advisories/mfsa2026-130/) — announced 2026-11-17. Impact high. Fixed in Firefox 160.0.1 only. CVE-2026-130020, high, CanvasWebGL privilege escalation on Android. CVE-2026-130021, high, use-after-free in audio and video playback. No ESR or Thunderbird advisory that day.
 - [Firefox 159.0.1 release notes][notes] — first offered to Release channel users on November 3, 2026. Lists the advisory as a security fix and does not describe the bug.
 - [CVE-2026-120572][cve] — Mozilla CNA, published 2026-11-03 14:17:35 UTC. No CVSS in the CNA container. Unaffected at 159.0.1. No affected range below that.
 - [NVD][nvd] — CISA-ADP CVSS 3.1 8.8 High, CWE-119. Published 2026-11-03.

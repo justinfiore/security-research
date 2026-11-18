@@ -26,6 +26,7 @@ Optimizely Web Experimentation is a script that customer sites load from Optimiz
 | Malicious scripts served | 2026-11-16, from early morning; time/TZ unknown | Helme's earliest hijacked script. [Report URI][helme] |
 | One script still malicious | 2026-11-16 21:52 UTC | Helme, of 188 scripts. |
 | **Optimizely statement** | **2026-11-17 01:02 UTC** | Status page: vulnerability fixed, code removed, accounts secured. [Status][status] |
+| Optimizely update | 2026-11-18 14:49 UTC | The flaw was in the Web Experimentation account signup flow. Optimizely says it was detected and closed within three hours, that fewer than 5% of customers were affected, and that it contacted every Web Experimentation customer. [Status][status] |
 | **Last updated** | **2026-11-18 (America/New_York)** | New item. Check what the site served on November 16. |
 
 ## Detection

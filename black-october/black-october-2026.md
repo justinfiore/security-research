@@ -15,6 +15,10 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [TYPO3: a marker file reopens the installer](#typo3-a-marker-file-reopens-the-installer)
+- [CIRCUTOR PowerStudio: an unsigned token is any user](#circutor-powerstudio-an-unsigned-token-is-any-user)
+- [Zyxel CPE: a request writes past the buffer before login](#zyxel-cpe-a-request-writes-past-the-buffer-before-login)
+- [Eclipse Zenoh: a timestamp corrupts memory](#eclipse-zenoh-a-timestamp-corrupts-memory)
 - [Oracle November 2026 Critical Security Patch Update](#oracle-november-2026-critical-security-patch-update)
 - [Optimizely: a flaw in Experimentation served malware to customer sites](#optimizely-a-flaw-in-experimentation-served-malware-to-customer-sites)
 - [PyPI: agent-framework 1.26.1 and 1.26.2 steal credentials](#pypi-agent-framework-1261-and-1262-steal-credentials)
@@ -376,6 +380,10 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Reboot [Xen](#xen-a-guest-can-read-and-write-other-guests-memory) hosts onto a build with the XSA-523 patches. SUSE rates both flaws CVSS 4.0 8.4: a guest can read and write other guests' memory, including Dom0. Xen 4.6 and later are affected, and Xen says there is no mitigation. Xen 4.6 through 4.16 get no patch. It is not in KEV.
 - **New this update:** Upgrade [Rails](#rails-active-storage-file-write-and-read) to **8.0.5.2 or 8.1.4.1**. MITRE rates the Active Storage ImageMagick issue [CVE-2026-122006](https://www.cve.org/CVERecord?id=CVE-2026-122006) CVSS 3.1 9.8 Critical. Rails scores the same issue 9.8. The GitHub advisory now shows CVE-2026-126082, which the CVE Program rejected on November 12 as a duplicate of CVE-2026-122006. An unauthenticated upload can write files, and can read secrets when attachments use the Disk service. The same gems fix four more High issues that still have no CVE. Rails 7 and older get no fix. It is not in KEV.
 - **New this update:** Upgrade self-managed [Airbyte](#airbyte-connector-builder-runs-attacker-chosen-code) to **2.2.0 or later**. Airbyte rates the Connector Builder flaw 9.9 Critical, and no CVE is assigned. JPCERT/CC says exploitation is confirmed and scores it 8.8. Airbyte 1.x gets no fix. Airbyte Cloud needs no action. The 2.2 upgrade cannot be rolled back.
+- **New this update:** Update [TYPO3](#typo3-a-marker-file-reopens-the-installer) to **14.3.12, 13.4.40, 12.4.52, 11.5.57, or 10.4.63**. TYPO3 rates [CVE-2026-119623](https://www.cve.org/CVERecord?id=CVE-2026-119623) Critical, CVSS 4.0 9.4: a file whose name starts with `FIRST_INSTALL` reopens the installer with no login, and a low-privileged backend user can create that file. Delete leftover marker files and review administrator accounts. It is not in KEV.
+- **New this update:** Install [PowerStudio SCADA WAVE 24.11.17.0](#circutor-powerstudio-an-unsigned-token-is-any-user). CIRCUTOR rates [CVE-2026-120387](https://www.cve.org/CVERecord?id=CVE-2026-120387) CVSS 4.0 10.0: an unsigned token is accepted as any user, on 24.8.0 before that build. Keep the service ports off untrusted networks until then. The vendor PDF needs a login. It is not in KEV.
+- **New this update:** Install the November 17 firmware on [listed Zyxel CPE, fiber ONTs, and wireless extenders](#zyxel-cpe-a-request-writes-past-the-buffer-before-login). Zyxel rates [CVE-2026-79614](https://www.cve.org/CVERecord?id=CVE-2026-79614) CVSS 3.1 9.8: a request with no login can run a command. WAN access is off by default. The patch is not a public download. This is not the GS1900 or access-point flaws. It is not in KEV.
+- **New this update:** Upgrade [zenoh-pico](#eclipse-zenoh-a-timestamp-corrupts-memory) to **1.10.2 or later** and restart. Eclipse rates [CVE-2026-130603](https://www.cve.org/CVERecord?id=CVE-2026-130603) CVSS 4.0 9.3: a crafted timestamp writes past a fixed buffer. 0.7.2-rc before 1.10.2 is affected. The full Zenoh implementation is not this flaw. It is not in KEV.
 - **New this update:** Apply [Oracle's November 17 Critical Security Patch Update](#oracle-november-2026-critical-security-patch-update). Oracle rates two APEX flaws and one REST Data Services flaw CVSS 3.1 9.8, and six flaws in Access Manager, WebLogic Server, Platform Security for Java, and Business Intelligence 10.0. All of them need no login. The October CPU does not include them. None is in KEV.
 - **New this update:** If a site loads [Optimizely](#optimizely-a-flaw-in-experimentation-served-malware-to-customer-sites) Web Experimentation, check what it served on November 16. Optimizely says an attacker used a flaw in Experimentation to add JavaScript to some customer projects, and that it has fixed the flaw and removed the code. Scott Helme counted 178 organizations. The script skimmed cards and swapped wallet addresses. No CVE is assigned.
 - **New this update:** If a Python environment installed [`agent-framework` 1.26.1 or 1.26.2](#pypi-agent-framework-1261-and-1262-steal-credentials), pin **1.26.0**, delete the cached wheels, and rotate the credentials that environment could read. GitHub lists both as critical malware, with no CVE. A `.pth` file runs at every Python start. Both versions are gone from PyPI, and a cache can still install them. `agent-framework-core` is not this package.
@@ -468,6 +476,93 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## TYPO3: a marker file reopens the installer
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/typo3.md):** [Detection](details/typo3.md#detection) · [Remediation](details/typo3.md#remediation) · [Verification](details/typo3.md#verification) · [Timeline](details/typo3.md#timeline)
+
+**CVEs:** [CVE-2026-119623](https://www.cve.org/CVERecord?id=CVE-2026-119623). The same release also fixes [CVE-2026-119622](https://www.cve.org/CVERecord?id=CVE-2026-119622) and [CVE-2026-119621](https://www.cve.org/CVERecord?id=CVE-2026-119621), both High, and [CVE-2026-125159](https://www.cve.org/CVERecord?id=CVE-2026-125159) and [CVE-2026-125162](https://www.cve.org/CVERecord?id=CVE-2026-125162), both High. Five more in the batch are below 7.0.
+
+**TYPO3 rates [CVE-2026-119623](https://www.cve.org/CVERecord?id=CVE-2026-119623) Critical.** The suggested vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`, which scores **9.4**. TYPO3 is the CNA. A file whose name starts with `FIRST_INSTALL`, in the public web root or the project root, reopens the first-install wizard on a site that is already configured. The wizard then has no login and can change the database connection and create an administrator, which TYPO3 says leads to code execution. [TYPO3-CORE-SA-2026-026](https://news.typo3.com/security/advisory/typo3-core-sa-2026-026) says a low-privileged backend user can create that file. Affected ranges are **10.0.0–10.4.62, 11.0.0–11.5.56, 12.0.0–12.4.51, 13.0.0–13.4.39, and 14.0.0–14.3.11**. The fixes are **10.4.63 ELTS, 11.5.57 ELTS, 12.4.52 ELTS, 13.4.40 LTS, and 14.3.12 LTS**. 12.4, 11.5, and 10.4 are extended long-term support. NVD has not scored it.
+
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). TYPO3 does not report exploitation of this flaw. The same day's Form Framework advisory, which is below the admission line, says that one is known to be exploited. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-17; time unknown** | TYPO3-CORE-SA-2026-027. The page date is November 17. |
+| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | New item. Update TYPO3 and delete marker files. |
+
+**Patch:** Update to **14.3.12, 13.4.40, 12.4.52, 11.5.57, or 10.4.63** on the line you run, and flush caches. Delete every file whose name starts with `FIRST_INSTALL` from the web root and the project root. Review administrator and system-maintainer accounts. Blocking `/typo3/install.php` does not fix the file-write flaws in the same release.
+
+Sources: [TYPO3-CORE-SA-2026-027](https://news.typo3.com/security/advisory/typo3-core-sa-2026-027), [TYPO3-CORE-SA-2026-026](https://news.typo3.com/security/advisory/typo3-core-sa-2026-026), [detailed guide](details/typo3.md).
+
+---
+
+## CIRCUTOR PowerStudio: an unsigned token is any user
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/circutor-powerstudio.md):** [Detection](details/circutor-powerstudio.md#detection) · [Remediation](details/circutor-powerstudio.md#remediation) · [Verification](details/circutor-powerstudio.md#verification) · [Timeline](details/circutor-powerstudio.md#timeline)
+
+**CVEs:** [CVE-2026-120387](https://www.cve.org/CVERecord?id=CVE-2026-120387)
+
+**CIRCUTOR rates [CVE-2026-120387](https://www.cve.org/CVERecord?id=CVE-2026-120387) CVSS 4.0 10.0 Critical.** CIRCUTOR is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`. PowerStudio SCADA WAVE for Windows, from **24.8.0 before 24.11.17.0**, accepts a JSON Web Token with the algorithm set to `none` and does not check a signature. The record says that token impersonates another user. CIRCUTOR's product page, dated 16/11/2026, calls the same flaw Critical and names the fixed version **24.11.17**. The vendor PDF behind that row needs a login, so this entry does not use it. The researcher's August 3 write-up tested **24.11.6.0**, scores the same behavior CVSS 3.1 8.6, and says a reachable service port is enough to stop the engine or change configuration. It says that write-up is not itself code execution. NVD has not published its own score.
+
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Researcher write-up | 2026-08-03; time/TZ unknown | Tested 24.11.6.0. Researcher score 8.6. |
+| CIRCUTOR product page | 2026-11-16; time/TZ unknown | Critical. Fixed in 24.11.17. |
+| **Public announcement** | **2026-11-17; time unknown** | CVE record published. NVD published 2026-11-17 05:18:33 UTC. |
+| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | New item. Install 24.11.17.0. |
+
+**Patch:** Install **24.11.17.0 or later**. Until then, keep the product's service ports off untrusted networks. The update does not show whether a request already changed the configuration.
+
+Sources: [CVE-2026-120387](https://www.cve.org/CVERecord?id=CVE-2026-120387), [CIRCUTOR cybersecurity](https://circutor.com/soporte/ciberseguridad/), [detailed guide](details/circutor-powerstudio.md).
+
+---
+
+## Zyxel CPE: a request writes past the buffer before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/zyxel-cpe-nov17.md):** [Detection](details/zyxel-cpe-nov17.md#detection) · [Remediation](details/zyxel-cpe-nov17.md#remediation) · [Verification](details/zyxel-cpe-nov17.md#verification) · [Timeline](details/zyxel-cpe-nov17.md#timeline)
+
+**CVEs:** [CVE-2026-79614](https://www.cve.org/CVERecord?id=CVE-2026-79614). The same advisory also covers [CVE-2026-86676](https://www.cve.org/CVERecord?id=CVE-2026-86676), which Zyxel rates 7.2 and which needs an administrator password.
+
+**Zyxel rates [CVE-2026-79614](https://www.cve.org/CVERecord?id=CVE-2026-79614) CVSS 3.1 9.8 Critical.** Zyxel is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. An out-of-bounds write in `libclinkc.so` lets a request with no login raise privileges and potentially run a command. Zyxel says **WAN access is disabled by default**. The advisory, initial release **2026-11-17**, lists the affected DSL/Ethernet CPE, fiber ONTs, and wireless extenders that are still in their support window, and a fixed build for each. A model that is on sale and not in that table is not affected. ISP-customized builds are not in the table. The patch file is not a public download: Zyxel says to ask its sales or support team, or the ISP that supplied the device. This is not the [GS1900](#zyxel-gs1900-unauthenticated-command-execution-from-the-lan) flaw and not the [access-point](#zyxel-access-points-lan-buffer-overflow-in-zdp_wtp) flaw.
+
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-17; time unknown** | Zyxel advisory, initial release. NVD published 2026-11-17 02:17:22 UTC. |
+| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | New item. Install the listed firmware. |
+
+**Patch:** Install the fixed build named for the model in the advisory. DX3301-T0 and EX3301-T0, the two models the CVE record names, move from 5.50(ABVY.8.3)C0 and earlier to **5.50(ABVY.8.4)C0**. WAN access stays off until that build is running. The update does not show whether a request already ran a command.
+
+Sources: [Zyxel advisory, 2026-11-17](https://www.zyxel.com/service-provider/emea/en/security-advisories/zyxel-security-advisory-out-of-bounds-write-post-authentication-command-injection-vulnerabilities-cpe-onts-extenders-11-17-2026), [CVE-2026-79614](https://www.cve.org/CVERecord?id=CVE-2026-79614), [detailed guide](details/zyxel-cpe-nov17.md).
+
+---
+
+## Eclipse Zenoh: a timestamp corrupts memory
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/zenoh-pico.md):** [Detection](details/zenoh-pico.md#detection) · [Remediation](details/zenoh-pico.md#remediation) · [Verification](details/zenoh-pico.md#verification) · [Timeline](details/zenoh-pico.md#timeline)
+
+**CVEs:** [CVE-2026-130603](https://www.cve.org/CVERecord?id=CVE-2026-130603)
+
+**The Eclipse Foundation rates [CVE-2026-130603](https://www.cve.org/CVERecord?id=CVE-2026-130603) CVSS 4.0 9.3 Critical.** Eclipse is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. zenoh-pico from **0.7.2-rc before 1.10.2** does not check the length of a Zenoh identifier inside a timestamp. A length over 16 writes past a 16-byte buffer, and a short timestamp can read past it. Eclipse says a remote sender of a crafted message can corrupt memory and crash the process, with code execution possible in a build that lacks the usual binary protections. The fix is **1.10.2**, released **2026-10-28**. The CVE record was published **2026-11-17**. The full Zenoh implementation is not this library.
+
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix released | 2026-10-28 10:26:09 UTC | zenoh-pico 1.10.2. The notes do not name the CVE. |
+| **Public announcement** | **2026-11-17; time unknown** | CVE record published. NVD published 2026-11-17 14:17:47 UTC. |
+| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | New item. Upgrade zenoh-pico. |
+
+**Patch:** Upgrade zenoh-pico to **1.10.2 or later** and restart every process that loaded the old library. Eclipse publishes no workaround. The upgrade does not show whether a message already corrupted memory.
+
+Sources: [CVE-2026-130603](https://www.cve.org/CVERecord?id=CVE-2026-130603), [zenoh-pico 1.10.2](https://github.com/eclipse-zenoh/zenoh-pico/releases/tag/1.10.2), [detailed guide](details/zenoh-pico.md).
+
+---
+
 ## Oracle: November 2026 Critical Security Patch Update
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/oracle-cspu-november.md):** [Detection](details/oracle-cspu-november.md#detection) · [Remediation](details/oracle-cspu-november.md#remediation) · [Verification](details/oracle-cspu-november.md#verification) · [Timeline](details/oracle-cspu-november.md#timeline)
@@ -495,7 +590,7 @@ Sources: [Oracle CSPU, November 2026](https://www.oracle.com/security-alerts/csp
 
 **CVEs:** No CVE is assigned.
 
-**No vendor or CNA has published a CVSS score.** Optimizely's status page, posted November 17 at 01:02 UTC, says an unauthorized party exploited a vulnerability in Experimentation and used it to add malicious JavaScript to some customer projects. Optimizely says it has fixed the vulnerability, removed the code, and secured the affected accounts. Scott Helme of Report URI counted **188 infected scripts across 178 organizations**, including Zoom, the BBC, CNN, Salesforce, and GitLab. The script loaded `1688360[.]cc`, replaced cryptocurrency wallet addresses, captured card numbers, and on iPhones and iPads loaded the Coruna and DarkSword exploit kits. He says one script was still malicious at 21:52 UTC on November 16. The Hacker News says Smartsheet's snippet was reinfected after the cleanup.
+**No vendor or CNA has published a CVSS score.** Optimizely's status page, posted November 17 at 01:02 UTC, says an unauthorized party exploited a vulnerability in Experimentation and used it to add malicious JavaScript to some customer projects. Optimizely says it has fixed the vulnerability, removed the code, and secured the affected accounts. An update at 14:49 UTC on November 18 says the flaw was in the account signup flow, that it was closed within three hours, and that fewer than 5% of customers were affected. Scott Helme of Report URI counted **188 infected scripts across 178 organizations**, including Zoom, the BBC, CNN, Salesforce, and GitLab. The script loaded `1688360[.]cc`, replaced cryptocurrency wallet addresses, captured card numbers, and on iPhones and iPads loaded the Coruna and DarkSword exploit kits. He says one script was still malicious at 21:52 UTC on November 16. The Hacker News says Smartsheet's snippet was reinfected after the cleanup.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
 
@@ -1562,9 +1657,9 @@ Sources: [CVE-2026-105153 advisory](https://lists.apache.org/thread/w7dsz19261my
 | Debian trixie package | 2026-11-12 09:54:11 UTC | DSA-6620-1, `apache2` 2.4.71-1~deb13u1. |
 | Debian bookworm, Ubuntu, Amazon Linux | 2026-11-12; time/TZ unknown | DLA-4902-1 for bookworm. USN-9090-1 for Ubuntu. ALAS advisories for Amazon Linux 2 and 2023. |
 | Singapore CSA alert | 2026-11-17; time unknown | Says attackers are exploiting it. Names no victim. [AL-2026-164](https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-164/) |
-| **Last updated** | **2026-11-18 03:30 EST (UTC−05:00)** | Exploitation alert. The fix is unchanged. |
+| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | Rocky and Alma published the RHEL `mod_http2` builds. |
 
-**Patch:** Upgrade to **2.4.71 or later** and restart the server. On Red Hat Enterprise Linux 9 and 10, install the November 11 `mod_http2` erratum instead of the upstream tarball. On Debian bookworm, install `apache2` **2.4.71-1~deb12u1**; on trixie, **2.4.71-1~deb13u1** from the security pocket; sid is fixed at 2.4.71-1. Ubuntu 22.04 through 26.10 and Amazon Linux 2 and 2023 have fixed packages. Forky and SUSE do not. Until a package is in, remove `h2` and `h2c` from `Protocols`. That does not fix the `mod_md` crash, CVE-2026-106023, which does not need HTTP/2. The upgrade does not show whether a request already ran code.
+**Patch:** Upgrade to **2.4.71 or later** and restart the server. On Red Hat Enterprise Linux 9 and 10, install the November 11 `mod_http2` erratum instead of the upstream tarball. Rocky Linux and AlmaLinux published those same builds on November 13 and November 16. On Debian bookworm, install `apache2` **2.4.71-1~deb12u1**; on trixie, **2.4.71-1~deb13u1** from the security pocket; sid and forky are fixed at 2.4.71-1. Ubuntu 22.04 through 26.10 and Amazon Linux 2 and 2023 have fixed packages. SLES 16.1 and openSUSE Leap 16.0 and 16.1 do not, and Oracle Linux has no erratum. Until a package is in, remove `h2` and `h2c` from `Protocols`. That does not fix the `mod_md` crash, CVE-2026-106023, which does not need HTTP/2. The upgrade does not show whether a request already ran code.
 
 Sources: [Apache 2.4 vulnerabilities](https://httpd.apache.org/security/vulnerabilities_24.html), [Red Hat](https://access.redhat.com/security/cve/cve-2026-119618), [detailed guide](details/apache-http-server.md).
 
@@ -1746,7 +1841,7 @@ Sources: [VSA-2026-062](https://docs.vates.tech/security-advisories/advisories/2
 
 **CVEs:** [CVE-2026-111760](https://www.cve.org/CVERecord?id=CVE-2026-111760), [CVE-2026-105437](https://www.cve.org/CVERecord?id=CVE-2026-105437)
 
-**GitHub rates CVE-2026-111760 CVSS 3.1 8.0 High. GitLab rates CVE-2026-105437 CVSS 3.1 7.5 High.** An integer truncation in Git's index lets a very long path pass the check that refuses to overwrite Git's own metadata, and Git then writes it under a shorter name. A repository built for this replaces a submodule's `.git` file with a link to a directory of hooks, which run during `git clone --recurse-submodules`. The fix is Git **2.56.1**, and **2.55.1, 2.54.1, 2.53.1, 2.52.1, 2.51.3, and 2.50.2** on the older lines. The same releases fix four more flaws GitHub describes without a numeric score. This guide does not treat those four as High. GitHub's advisory page still says the patched-versions field is none. The release post is the list of versions.
+**GitHub rates CVE-2026-111760 CVSS 3.1 8.3 High. GitLab rates CVE-2026-105437 CVSS 3.1 7.5 High.** An earlier reading of the GitHub page showed 8.0. An integer truncation in Git's index lets a very long path pass the check that refuses to overwrite Git's own metadata, and Git then writes it under a shorter name. A repository built for this replaces a submodule's `.git` file with a link to a directory of hooks, which run during `git clone --recurse-submodules`. The advisory now also says a non-recursive clone can replace the top-level `.git` directory, and that the `git status` Git then recommends can run code. Skipping `--recurse-submodules` is not a sufficient workaround. The fix is Git **2.56.1**, and **2.55.1, 2.54.1, 2.53.1, 2.52.1, 2.51.3, and 2.50.2** on the older lines. The same releases fix four more flaws GitHub describes without a numeric score. This guide does not treat those four as High. GitHub's advisory page still says the patched-versions field is none. The release post is the list of versions.
 
 **CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-10). GitHub does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -1754,9 +1849,9 @@ Sources: [VSA-2026-062](https://docs.vates.tech/security-advisories/advisories/2
 |---|---|---|
 | **Public announcement and fix** | **2026-11-10; time/TZ unknown** | GitHub advisory and the 2.56.1 release note, the same day. |
 | GitLab packages | 2026-11-10; time/TZ unknown | 19.5.4, 19.4.6, and 19.3.8 update the bundled Git for CVE-2026-105437. GitLab calls that path Critical. |
-| **Last updated** | **2026-11-11 12:15 EST (UTC−05:00)** | GitLab's packages now carry the merge fix. |
+| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | The score is 8.3, and a non-recursive clone is also affected. |
 
-**Patch:** Upgrade to **2.56.1**, or to the patched release on the line you run. Upgrade an application that ships its own Git. On GitHub Enterprise Server the builds are 3.19.15, 3.20.11, 3.21.9, and 3.22.4. Self-managed GitLab needs **19.5.6, 19.4.8, or 19.3.9**. 19.5.4, 19.4.6, and 19.3.8 carry the bundled Git fix, and GitLab rates that path Critical. The November 16 builds add two CVSS 8.7 issues. Until `git --version` prints a fixed build, do not recursively clone a repository you do not trust. The upgrade does not show whether a hook already ran.
+**Patch:** Upgrade to **2.56.1**, or to the patched release on the line you run. Upgrade an application that ships its own Git. On GitHub Enterprise Server the November 17 builds are 3.19.16, 3.20.12, 3.21.10, and 3.22.5. Self-managed GitLab needs **19.5.6, 19.4.8, or 19.3.9**. 19.5.4, 19.4.6, and 19.3.8 carry the bundled Git fix, and GitLab rates that path Critical. The November 16 builds add two CVSS 8.7 issues. Until `git --version` prints a fixed build, do not clone a repository you do not trust, and do not run `git status` in a checkout whose clone failed. The upgrade does not show whether a hook already ran.
 
 Sources: [GHSA-vp2w-7xxj-jvxr](https://github.com/git/git/security/advisories/GHSA-vp2w-7xxj-jvxr), [GitHub release post](https://github.blog/open-source/git/git-security-vulnerabilities-announced-7), [detailed guide](details/git-recursive-clone.md).
 
@@ -2302,9 +2397,10 @@ On November 10 Mozilla published [MFSA 2026-125](https://www.mozilla.org/en-US/s
 | Public announcement and fix | 2026-11-03; time/TZ unknown | MFSA 2026-123. Firefox 159.0.1 first offered to Release channel users the same day. |
 | CVE record | 2026-11-03 14:17:35 UTC | Mozilla CNA. No numeric score. Unaffected at 159.0.1. |
 | **Firefox 160** | **2026-11-10; time/TZ unknown** | MFSA 2026-125. 57 issues Mozilla rates high. |
-| **Last updated** | **2026-11-10 19:04 EST (UTC−05:00)** | 159.0.1 is no longer the current fix. |
+| Firefox 160.0.1 | 2026-11-17; time/TZ unknown | MFSA 2026-130. Two issues Mozilla rates high. Firefox only. |
+| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | 160.0.1 is the current fix. |
 
-**Patch:** Update Firefox to **160 or later** and relaunch. Update ESR to **153.7 or later**, or **115.45 or later** on the 115 line. 159.0.1 fixes only the November 3 layout bug. The update does not show whether a page already ran code.
+**Patch:** Update Firefox to **160.0.1 or later** and relaunch. Update ESR to **153.7 or later**, or **115.45 or later** on the 115 line. 160 fixes the November 10 set and leaves the two November 17 flaws. 159.0.1 fixes only the November 3 layout bug. The update does not show whether a page already ran code.
 
 Sources: [MFSA 2026-123](https://www.mozilla.org/en-US/security/advisories/mfsa2026-123/), [Firefox 159.0.1 release notes](https://www.firefox.com/firefox/159.0.1/releasenotes/), [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572), [detailed guide](details/firefox.md).
 
@@ -5568,7 +5664,8 @@ Sources: [SA-CORE-2026-014](https://www.drupal.org/sa-core-2026-014), [SA-CONTRI
 | nginx 1.30.6 and 1.31.7, NGINX Plus fixes, F5 K articles | 2026-10-14; time/TZ unknown | Plus 37.0.5.1 and 37.1.0.1. |
 | Debian DSA-6575-1 | 2026-10-21 15:28 UTC | trixie 1.26.3-3+deb13u10. |
 | Ubuntu USN-8955-1 | 2026-10-26; time/TZ unknown | Fixed nginx packages for 22.04, 24.04, 26.04 and 26.10. |
-| **Last updated** | **2026-10-30 12:05 EDT (UTC−04:00)** | Ubuntu fixed packages for the October NGINX CVEs. |
+| nginx 1.30.7 and 1.31.9 | 2026-11-18; time unknown | CVE-2026-123007. F5 8.1 and 9.2. No distribution package yet. |
+| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | 1.30.7 and 1.31.9 fix the HTTP/2 flow-control flaw. |
 
 Each flaw needs a specific configuration:
 
@@ -5590,7 +5687,7 @@ Each flaw needs a specific configuration:
 
 Then check the running configuration with `nginx -T`, piped to `grep` because the dump can contain secrets. Distribution backports change the picture: Debian found CVE-2026-93479 in its 1.26.3 package. F5 products such as Ingress Controller, Gateway Fabric, Instance Manager and F5 WAF for NGINX are also affected.
 
-**Patch:** Upgrade to **1.30.6** or **1.31.7+**, NGINX Plus **37.0.5.1** or **37.1.0.1** (R33–R36 have no fix), or your vendor's fixed package, then restart. F5's per-CVE configuration mitigations are a stopgap only.
+**Patch:** Upgrade to **1.30.7** or **1.31.9** and restart. F5 rates [CVE-2026-123007](https://www.cve.org/CVERecord?id=CVE-2026-123007) CVSS 3.1 8.1 and CVSS 4.0 9.2: HTTP/2 flow control can overflow a heap buffer, on 1.9.5 through 1.31.8. 1.30.6 and 1.31.7 leave it in place. NGINX Plus is **37.3.0.1 or 37.0.8.1**; R34 through R36 have no fix. No distribution package names this CVE yet. The October flaws stay fixed at 1.30.6 and 1.31.7, and their configuration mitigations do not cover this one.
 
 Sources: [nginx.org advisories](https://nginx.org/en/security_advisories.html), [F5 K000162416](https://my.f5.com/manage/s/article/K000162416), [K000162607](https://my.f5.com/manage/s/article/K000162607), [K000162608](https://my.f5.com/manage/s/article/K000162608), [K000162606](https://my.f5.com/manage/s/article/K000162606), [Debian DSA-6575-1](https://lists.debian.org/debian-security-announce/2026/msg00490.html).
 
@@ -7110,6 +7207,10 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **TYPO3 10.0.0–10.4.62, 11.0.0–11.5.56, 12.0.0–12.4.51, 13.0.0–13.4.39, or 14.0.0–14.3.11** | Update to 14.3.12, 13.4.40, 12.4.52, 11.5.57, or 10.4.63. TYPO3 rates CVE-2026-119623 9.4: a `FIRST_INSTALL` file reopens the installer with no login. Delete those files and review administrator accounts. [Guide](details/typo3.md#remediation). |
+| **CIRCUTOR PowerStudio SCADA WAVE 24.8.0 before 24.11.17.0** | Install 24.11.17.0 or later. CIRCUTOR rates CVE-2026-120387 10.0: an unsigned token is any user. Keep the service ports off untrusted networks until then. [Guide](details/circutor-powerstudio.md#remediation). |
+| **Zyxel DSL/Ethernet CPE, fiber ONT, or wireless extender in the November 17 advisory** | Install the fixed build the advisory names for that model. Zyxel rates CVE-2026-79614 9.8, and WAN access is off by default. The file comes from Zyxel or the ISP, not a public download. [Guide](details/zyxel-cpe-nov17.md#remediation). |
+| **zenoh-pico 0.7.2-rc before 1.10.2** | Upgrade to 1.10.2 or later and restart. Eclipse rates CVE-2026-130603 9.3: a crafted timestamp writes past a buffer. The full Zenoh library is not this flaw. [Guide](details/zenoh-pico.md#remediation). |
 | **Python `agent-framework` 1.26.1 or 1.26.2** | Pin 1.26.0, delete cached wheels, and rebuild. GitHub lists both as critical malware: a `.pth` file steals cloud and CI credentials at every Python start. Rotate credentials that environment could read. `agent-framework-core` is not this package. [Guide](details/agent-framework.md#remediation). |
 | **NVIDIA Linux GPU driver before 615.71.09** | Install 615.71.09 or later and reboot. NVIDIA rates two flaws 7.8: an unprivileged GPU container can reach root on the host. 610.57.04 fixes only the first, on Stealthium's account. Do not pass `/dev/nvidia*` to an untrusted tenant until the reboot. [Guide](details/nvidia-linux-driver.md#remediation). |
 | **Java 17, 21, 25, or 27, or the Java 8 performance pack, on x86-64** | Install Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, 27.0.1.1, or 8u513, and restart. Oracle rates CVE-2026-114938 8.1; Calif rates it 9.2 and calls it Java4Shell. A CPU without AVX-512 VBMI, and ARM64, are outside this one flaw. A bundled JVM does not move with the system JDK. [Guide](details/java4shell.md#remediation). |
