@@ -2,6 +2,12 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-18 03:30 EST (UTC−05:00) — Oracle November CSPU; Optimizely; Apache HTTP Server
+
+- **Oracle:** Apply the [November 17 Critical Security Patch Update](black-october/details/oracle-cspu-november.md#remediation). Oracle rates two APEX flaws and one REST Data Services flaw CVSS 3.1 9.8, and six flaws in Access Manager, WebLogic Server, Platform Security for Java, and Business Intelligence 10.0. All of them need no login, and Oracle says a successful attack takes over the product. The October CPU does not include them. Java is separate: install the November 17 JDK as well. None is in KEV.
+- **Optimizely:** If a site loads [Optimizely Web Experimentation](black-october/details/optimizely.md#detection), check what it served on November 16. Optimizely says an attacker used a flaw in Experimentation to add JavaScript to some customer projects, and that it has fixed the flaw and removed the code. Scott Helme counted 178 organizations. The script skimmed cards and swapped wallet addresses. No CVE is assigned. A visitor who entered a card number or copied a wallet address that day should check the statement and the transaction.
+- **Apache HTTP Server:** Singapore's Cyber Security Agency said on November 17 that attackers are [exploiting CVE-2026-119618](black-october/details/apache-http-server.md#timeline). It names no victim. The fix is unchanged: 2.4.71 or later, and restart. It is not in KEV.
+
 ## 2026-11-17 23:40 EST (UTC−05:00) — agent-framework; NVIDIA driver; Java4Shell; Apache Roller
 
 - **PyPI:** Pin [`agent-framework` to 1.26.0](black-october/details/agent-framework.md#remediation) and delete cached wheels of 1.26.1 and 1.26.2. GitHub lists both, uploaded November 17, as critical malware with no CVE: a `.pth` file runs at every Python start and posts cloud and CI credentials to `webhook.site`. Both are gone from PyPI, and a cache can still install them. The project's issue says the upload credential's revocation is unconfirmed, so do not upgrade to "latest." Rotate every credential that environment could read. `agent-framework-core` 1.26.0 is not the malicious package.

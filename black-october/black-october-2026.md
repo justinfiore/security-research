@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Oracle November 2026 Critical Security Patch Update](#oracle-november-2026-critical-security-patch-update)
+- [Optimizely: a flaw in Experimentation served malware to customer sites](#optimizely-a-flaw-in-experimentation-served-malware-to-customer-sites)
 - [PyPI: agent-framework 1.26.1 and 1.26.2 steal credentials](#pypi-agent-framework-1261-and-1262-steal-credentials)
 - [NVIDIA Linux driver: a GPU container reaches root on the host](#nvidia-linux-driver-a-gpu-container-reaches-root-on-the-host)
 - [OpenJDK: Java4Shell - a Base64 string corrupts memory](#openjdk-java4shell---a-base64-string-corrupts-memory)
@@ -374,6 +376,8 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Reboot [Xen](#xen-a-guest-can-read-and-write-other-guests-memory) hosts onto a build with the XSA-523 patches. SUSE rates both flaws CVSS 4.0 8.4: a guest can read and write other guests' memory, including Dom0. Xen 4.6 and later are affected, and Xen says there is no mitigation. Xen 4.6 through 4.16 get no patch. It is not in KEV.
 - **New this update:** Upgrade [Rails](#rails-active-storage-file-write-and-read) to **8.0.5.2 or 8.1.4.1**. MITRE rates the Active Storage ImageMagick issue [CVE-2026-122006](https://www.cve.org/CVERecord?id=CVE-2026-122006) CVSS 3.1 9.8 Critical. Rails scores the same issue 9.8. The GitHub advisory now shows CVE-2026-126082, which the CVE Program rejected on November 12 as a duplicate of CVE-2026-122006. An unauthenticated upload can write files, and can read secrets when attachments use the Disk service. The same gems fix four more High issues that still have no CVE. Rails 7 and older get no fix. It is not in KEV.
 - **New this update:** Upgrade self-managed [Airbyte](#airbyte-connector-builder-runs-attacker-chosen-code) to **2.2.0 or later**. Airbyte rates the Connector Builder flaw 9.9 Critical, and no CVE is assigned. JPCERT/CC says exploitation is confirmed and scores it 8.8. Airbyte 1.x gets no fix. Airbyte Cloud needs no action. The 2.2 upgrade cannot be rolled back.
+- **New this update:** Apply [Oracle's November 17 Critical Security Patch Update](#oracle-november-2026-critical-security-patch-update). Oracle rates two APEX flaws and one REST Data Services flaw CVSS 3.1 9.8, and six flaws in Access Manager, WebLogic Server, Platform Security for Java, and Business Intelligence 10.0. All of them need no login. The October CPU does not include them. None is in KEV.
+- **New this update:** If a site loads [Optimizely](#optimizely-a-flaw-in-experimentation-served-malware-to-customer-sites) Web Experimentation, check what it served on November 16. Optimizely says an attacker used a flaw in Experimentation to add JavaScript to some customer projects, and that it has fixed the flaw and removed the code. Scott Helme counted 178 organizations. The script skimmed cards and swapped wallet addresses. No CVE is assigned.
 - **New this update:** If a Python environment installed [`agent-framework` 1.26.1 or 1.26.2](#pypi-agent-framework-1261-and-1262-steal-credentials), pin **1.26.0**, delete the cached wheels, and rotate the credentials that environment could read. GitHub lists both as critical malware, with no CVE. A `.pth` file runs at every Python start. Both versions are gone from PyPI, and a cache can still install them. `agent-framework-core` is not this package.
 - **New this update:** Install the [NVIDIA Linux driver](#nvidia-linux-driver-a-gpu-container-reaches-root-on-the-host) **615.71.09 or later** and reboot. NVIDIA rates CVE-2026-47591 and CVE-2026-47501 CVSS 3.1 7.8: an unprivileged container with the GPU passed through can reach root on the host. Stealthium says 610.57.04 fixes only the first. Neither is in KEV.
 - **New this update:** Install [Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, or 27.0.1.1](#openjdk-java4shell---a-base64-string-corrupts-memory), or 8u513 for the Java 8 performance pack, and restart. Oracle rates CVE-2026-114938 CVSS 3.1 8.1. Calif rates the same flaw, Java4Shell, CVSS 4.0 9.2: a Base64 string corrupts memory in the hardware decoder, on x86-64 with AVX-512 VBMI. CISA published an alert and did not add it to KEV. A bundled JVM does not move with the system JDK.
@@ -461,6 +465,49 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Oracle: November 2026 Critical Security Patch Update
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/oracle-cspu-november.md):** [Detection](details/oracle-cspu-november.md#detection) · [Remediation](details/oracle-cspu-november.md#remediation) · [Verification](details/oracle-cspu-november.md#verification) · [Timeline](details/oracle-cspu-november.md#timeline)
+
+**CVEs:** [CVE-2026-114849](https://www.cve.org/CVERecord?id=CVE-2026-114849), [CVE-2026-114850](https://www.cve.org/CVERecord?id=CVE-2026-114850), [CVE-2026-114835](https://www.cve.org/CVERecord?id=CVE-2026-114835), [CVE-2026-91500](https://www.cve.org/CVERecord?id=CVE-2026-91500), [CVE-2026-91510](https://www.cve.org/CVERecord?id=CVE-2026-91510), [CVE-2026-91569](https://www.cve.org/CVERecord?id=CVE-2026-91569), [CVE-2026-114824](https://www.cve.org/CVERecord?id=CVE-2026-114824), [CVE-2026-114784](https://www.cve.org/CVERecord?id=CVE-2026-114784). The Java SE flaws in the same release, including [CVE-2026-114938](https://www.cve.org/CVERecord?id=CVE-2026-114938), are the [Java4Shell](#openjdk-java4shell---a-base64-string-corrupts-memory) entry.
+
+**Oracle rates the two APEX flaws and the REST Data Services flaw CVSS 3.1 9.8 Critical, and the other six 10.0.** Oracle is the CNA. Every one is remotely exploitable with no authentication, and Oracle says a successful attack takes over the product. APEX **24.1.22, 24.2.21, 26.1.5, and 26.2.0** are inside both 9.8 records. REST Data Services **24.2.0 through 26.3.0** is inside CVE-2026-114849. The 10.0 rows are Access Manager 12.2.1.4.0 and 14.1.2.1.0, WebLogic Server through 15.1.1.0.0, Platform Security for Java 12.2.1.4.0 and 14.1.2.0.0, and Business Intelligence 8.2.0.0.0 and 26.01.0.0.0. The same advisory counts 71 new Fusion Middleware patches, 71 for E-Business Suite, and 267 for Hyperion. The [October CPU](#oracle-fusion-middleware-e-business-suite-database-and-mysql-october-2026-critical-patch-update) does not include these.
+
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18) for any of the eight. Oracle does not report exploitation of this release. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-17; time unknown** | Oracle's November CSPU, Rev 1. |
+| **Last updated** | **2026-11-18 03:30 EST (UTC−05:00)** | New item. Apply the November CSPU. |
+
+**Patch:** Apply the November 17 Critical Security Patch Update from My Oracle Support and restart the services the patch notes name. APEX and REST Data Services are the two with a short version list and an unauthenticated 9.8. Java is separate: install the [November 17 JDK](#openjdk-java4shell---a-base64-string-corrupts-memory) as well. Oracle publishes no workaround. The patch does not show whether a request already took the product over.
+
+Sources: [Oracle CSPU, November 2026](https://www.oracle.com/security-alerts/cspunov2026.html), [risk matrices](https://www.oracle.com/security-alerts/cspunov2026verbose.html), [detailed guide](details/oracle-cspu-november.md).
+
+---
+
+## Optimizely: a flaw in Experimentation served malware to customer sites
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/optimizely.md):** [Detection](details/optimizely.md#detection) · [Remediation](details/optimizely.md#remediation) · [Verification](details/optimizely.md#verification) · [Timeline](details/optimizely.md#timeline)
+
+**CVEs:** No CVE is assigned.
+
+**No vendor or CNA has published a CVSS score.** Optimizely's status page, posted November 17 at 01:02 UTC, says an unauthorized party exploited a vulnerability in Experimentation and used it to add malicious JavaScript to some customer projects. Optimizely says it has fixed the vulnerability, removed the code, and secured the affected accounts. Scott Helme of Report URI counted **188 infected scripts across 178 organizations**, including Zoom, the BBC, CNN, Salesforce, and GitLab. The script loaded `1688360[.]cc`, replaced cryptocurrency wallet addresses, captured card numbers, and on iPhones and iPads loaded the Coruna and DarkSword exploit kits. He says one script was still malicious at 21:52 UTC on November 16. The Hacker News says Smartsheet's snippet was reinfected after the cleanup.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Malicious scripts served | 2026-11-16, from early morning; time/TZ unknown | Helme's earliest hijacked script. |
+| **Optimizely statement** | **2026-11-17 01:02 UTC** | Vulnerability fixed, code removed. |
+| **Last updated** | **2026-11-18 03:30 EST (UTC−05:00)** | New item. Check what the site served on November 16. |
+
+**Patch:** There is no customer-side update. Optimizely says the fix is deployed. If Optimizely contacted you, follow that notice. A visitor who entered a card number or copied a wallet address on an affected site on November 16 should check the statement and the transaction. Removing the script does not undo either.
+
+Sources: [Optimizely status](https://status.optimizely.com/incidents/ftw0fh9wx43z), [Report URI](https://blog.report-uri.com/worlds-largest-brands-infected-with-malware-via-optimizely/), [detailed guide](details/optimizely.md).
 
 ---
 
@@ -1507,14 +1554,15 @@ Sources: [CVE-2026-105153 advisory](https://lists.apache.org/thread/w7dsz19261my
 
 **Apache rates CVE-2026-119618 critical and publishes no number. Red Hat rates it CVSS 3.1 9.8 Critical.** A race in `mod_http2` lets a request with no login corrupt heap memory and run code, on **2.4.55 through 2.4.70**. Red Hat says it needs HTTP/2 (`h2` or `h2c`). A server that serves only HTTP/1.1 is not affected. NVD had not scored it on November 12. Red Hat says public research demonstrated a reliable exploit and does not link it. Wiz says no exploit is available and no exploitation in the wild has been reported. Those two disagree. Red Hat rates its own Enterprise Linux 9 and 10 packages Important rather than Critical, because each HTTP/2 stream has its own allocator. Enterprise Linux 8 and earlier do not contain the code.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-13). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). Singapore's Cyber Security Agency said on November 17 that attackers are exploiting it, and it cites a public proof of concept without naming a victim. CISA has not added it. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement and fix** | **2026-11-11 14:54:08 UTC** | CVE-2026-119618 published. Fixed the same day in Apache HTTP Server 2.4.71. |
 | Debian trixie package | 2026-11-12 09:54:11 UTC | DSA-6620-1, `apache2` 2.4.71-1~deb13u1. |
 | Debian bookworm, Ubuntu, Amazon Linux | 2026-11-12; time/TZ unknown | DLA-4902-1 for bookworm. USN-9090-1 for Ubuntu. ALAS advisories for Amazon Linux 2 and 2023. |
-| **Last updated** | **2026-11-13 07:15 EST (UTC−05:00)** | Bookworm, Ubuntu, and Amazon Linux have fixed packages. |
+| Singapore CSA alert | 2026-11-17; time unknown | Says attackers are exploiting it. Names no victim. [AL-2026-164](https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-164/) |
+| **Last updated** | **2026-11-18 03:30 EST (UTC−05:00)** | Exploitation alert. The fix is unchanged. |
 
 **Patch:** Upgrade to **2.4.71 or later** and restart the server. On Red Hat Enterprise Linux 9 and 10, install the November 11 `mod_http2` erratum instead of the upstream tarball. On Debian bookworm, install `apache2` **2.4.71-1~deb12u1**; on trixie, **2.4.71-1~deb13u1** from the security pocket; sid is fixed at 2.4.71-1. Ubuntu 22.04 through 26.10 and Amazon Linux 2 and 2023 have fixed packages. Forky and SUSE do not. Until a package is in, remove `h2` and `h2c` from `Protocols`. That does not fix the `mod_md` crash, CVE-2026-106023, which does not need HTTP/2. The upgrade does not show whether a request already ran code.
 

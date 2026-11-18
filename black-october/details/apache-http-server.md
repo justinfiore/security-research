@@ -1,6 +1,6 @@
 # Apache HTTP Server: an HTTP/2 request can run code
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-18 (America/New_York)
 
 [Main Apache HTTP Server summary](../black-october-2026.md#apache-http-server-an-http2-request-can-run-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,11 +10,13 @@ The same release, **2.4.71**, fixes two more flaws. Apache rates [CVE-2026-10602
 
 Red Hat's own `mod_http2` on Enterprise Linux 9 and 10 gives each HTTP/2 stream its own allocator, and Red Hat rates those products **Important** rather than Critical for that reason. Its overall score stays 9.8. It says versions of `mod_http2` before 2.0.8 do not contain the code, and **Enterprise Linux 8, 7, and 6 are not affected**.
 
-Red Hat's statement says public research has demonstrated a reliable exploit against a default-configured server with `mod_http2` enabled, and it does not name or link that research. Wiz, writing the same day, says no exploit is available and no exploitation in the wild has been reported. Those two statements disagree. This guide does not treat either as a confirmed in-the-wild compromise.
+Red Hat's statement says public research has demonstrated a reliable exploit against a default-configured server with `mod_http2` enabled, and it does not name or link that research. Wiz, writing the same day, says no exploit is available and no exploitation in the wild has been reported. Those two statements disagree.
+
+On November 17 Singapore's Cyber Security Agency published [AL-2026-164](https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-164/) and said attackers are exploiting the flaw to run code. It scores the flaw CVSS 3.1 8.1, lower than Red Hat's 9.8, and it says a public proof of concept exists. It names no victim and no scale. CISA has not added the CVE. The alert is a report of exploitation, and it is not a list of indicators.
 
 The GitHub `mod_h2` repository was archived on June 9 and its release list ends at 2.0.42, the last affected version. A server built against that standalone module has no newer release to install. The Apache HTTP Server 2.4.71 tree contains the fix.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-13) for any of the three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18) for any of the three. Singapore's Cyber Security Agency said on November 17 that attackers are exploiting CVE-2026-119618. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -37,8 +39,9 @@ The GitHub `mod_h2` repository was archived on June 9 and its release list ends 
 | Debian bookworm package | 2026-11-12 20:52:26 UTC | DLA-4902-1, `apache2` 2.4.71-1~deb12u1. Forky still has no fixed package. [DLA-4902-1][dla] |
 | Ubuntu packages | 2026-11-12; time/TZ unknown | USN-9090-1. Fixed `apache2` on 22.04, 24.04, 26.04, and 26.10, and on 20.04 through Ubuntu Pro. [USN-9090-1][usn] |
 | Amazon Linux packages | 2026-11-12; time/TZ unknown | ALAS2-2026-4114 and ALAS2023-2026-3458. Both ship `httpd` 2.4.71. [AL2][alas2] [AL2023][alas2023] |
-| CISA KEV | Not listed (catalog 2026.11.10, checked 2026-11-13) | [KEV][kev] |
-| **Last updated** | **2026-11-13 (America/New_York)** | Bookworm, Ubuntu, and Amazon Linux have fixed packages. |
+| CISA KEV | Not listed (catalog 2026.11.17, checked 2026-11-18) | [KEV][kev] |
+| Singapore CSA alert | 2026-11-17; time unknown | Says attackers are exploiting CVE-2026-119618. Scores it 8.1. Names no victim. [AL-2026-164][csa] |
+| **Last updated** | **2026-11-18 (America/New_York)** | Exploitation alert. The fix is unchanged. |
 
 ## Detection
 
@@ -125,7 +128,8 @@ Neither Apache nor Red Hat publishes an indicator. If a server inside the affect
 - [ALAS2-2026-4114][alas2] and [ALAS2023-2026-3458][alas2023] — both released 2026-11-12, severity Critical. Amazon Linux 2 fixes all three CVEs. Amazon Linux 2023 lists CVE-2026-119618 and CVE-2026-109163 and does not list CVE-2026-106023.
 - [SUSE CVE-2026-119618][suse] — reread 2026-11-17. Last modified 2026-11-16. SLES 15 SP7 and 16.0 are Released, as are the 15 SP4 through SP6 and 12 SP5 LTSS lines. SLES 16.1 and openSUSE Leap 16.0 and 16.1 are still Affected. Overall state Pending.
 - [Wiz][wiz] — November 11. Says no exploit is available and no in-the-wild exploitation has been reported. Recommends `Protocols http/1.1` until the upgrade. Its standalone `mod_h2` fixed version does not match the Apache advisory; follow Apache.
-- [CISA KEV][kev] — catalog 2026.11.10, checked 2026-11-13. None of the three is listed.
+- [Singapore CSA, AL-2026-164][csa] — November 17, 2026. Says attackers are exploiting CVE-2026-119618. Scores it CVSS 3.1 8.1. Names no victim.
+- [CISA KEV][kev] — catalog 2026.11.17, released 2026-11-17T17:53:15.5664Z, checked 2026-11-18. None of the three is listed.
 
 [adv]: https://httpd.apache.org/security/vulnerabilities_24.html
 [changes]: https://downloads.apache.org/httpd/CHANGES_2.4
@@ -141,4 +145,5 @@ Neither Apache nor Red Hat publishes an indicator. If a server inside the affect
 [suse]: https://www.suse.com/security/cve/CVE-2026-119618.html
 [ubu]: https://ubuntu.com/security/CVE-2026-119618
 [wiz]: https://www.wiz.io/blog/cve-2026-119618-rce-apache-http-server-vulnerability
+[csa]: https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-164/
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
