@@ -1,6 +1,6 @@
 # Ruby httpx: a JSON response builds an object
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-18 (America/New_York)
 
 [Main httpx summary](../black-october-2026.md#ruby-httpx-a-json-response-builds-an-object) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@ The Ruby `httpx` gem decodes a JSON response body. [CVE-2026-129784](https://www
 
 Only **1.9.0** is affected. **1.9.1**, released 2026-11-13, is the fix. An application that does not have `oj` loaded, or that has `multi_json` loaded, does not take this branch.
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-18). JFrog published a proof of concept on November 16. That is not a report of use in the wild. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -26,7 +26,8 @@ Only **1.9.0** is affected. **1.9.1**, released 2026-11-13, is the fix. An appli
 | httpx 1.9.0 | 2026-10-14 10:15:49 UTC | The affected release. [RubyGems][gem] |
 | httpx 1.9.1 | 2026-11-13 16:39:28 UTC | The fix. Commit `eeb785d3250e`. [RubyGems][gem] |
 | **Public announcement** | **2026-11-16; NVD published 11:16 UTC** | JFrog published the CVE record. |
-| **Last updated** | **2026-11-16 (America/New_York)** | New item. Update httpx. |
+| Proof of concept | 2026-11-16; time unknown | JFrog's research page. A lab service, an ActiveSupport gadget, and a result of code execution. [JFrog][poc] |
+| **Last updated** | **2026-11-18 (America/New_York)** | The proof of concept and the named workarounds. The fix is unchanged. |
 
 ## Detection
 
@@ -40,7 +41,7 @@ httpx 1.9.0 together with `oj` and without `multi_json` is the affected combinat
 ## Remediation
 
 1. Upgrade `httpx` to **1.9.1 or later** and redeploy.
-2. The record names no workaround. Removing `oj`, or loading `multi_json`, avoids the branch, and that is an inference from the description rather than a vendor workaround.
+2. Until the upgrade, JFrog names three workarounds: call `response.json(mode: :strict)`, set `Oj.default_options = { mode: :strict }` before untrusted JSON is parsed, or keep `multi_json` loaded so the Oj branch is not taken. The CVE record itself names none of these.
 3. The upgrade does not show whether a response already built an object.
 
 ## Verification
@@ -49,7 +50,7 @@ httpx 1.9.0 together with `oj` and without `multi_json` is the affected combinat
 
 ## Compromise response
 
-No source reports exploitation. The condition is a server the application already fetches. If that server is not yours and the application was on 1.9.0 with `oj`, review what the process could have run and rotate credentials it could read. The upgrade does not undo that.
+JFrog's page shows the flaw working in a lab. It does not report an attack. The condition is a server the application already fetches, and a Rails application has the gadget JFrog uses. If that server is not yours and the application was on 1.9.0 with `oj` and ActiveSupport, review what the process could have run and rotate credentials it could read. The upgrade does not undo that.
 
 ## Sources
 
@@ -57,6 +58,8 @@ No source reports exploitation. The condition is a server the application alread
 - [httpx 1.9.1](https://github.com/HoneyryderChuck/httpx/releases/tag/v1.9.1) — published 2026-11-13 16:38:57 UTC.
 - [Fix commit eeb785d3250e](https://github.com/HoneyryderChuck/httpx/commit/eeb785d3250eee9379494fb62c37c315a31e327c) — "json: fix oj integration to avoid RCE mode."
 - [RubyGems, httpx][gem] — 1.9.0 created 2026-10-14, 1.9.1 created 2026-11-13.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, released 2026-11-13T20:24:18.3008Z, read 2026-11-16. CVE-2026-129784 is not in it.
+- [JFrog research page][poc] — published and last updated 2026-11-16. The proof of concept and the three workarounds. It does not report an attack.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z, read 2026-11-18. CVE-2026-129784 is not in it.
 
 [gem]: https://rubygems.org/gems/httpx
+[poc]: https://research.jfrog.com/vulnerabilities/httpx-is-vulnerable-to-remote-code-execution-via-oj-object-mode-deserialization-cve-2026-129784/

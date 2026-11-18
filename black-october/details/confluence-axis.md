@@ -12,7 +12,7 @@ Atlassian rates the same flaw **CVSS 4.0 9.3 Critical** for Confluence (`CVSS:4.
 
 This is not the [October file-read](atlassian-dc.md), CVE-2026-21589. The N-central chain that starts from the same Axis flaw is tracked with [N-central](n-central.md).
 
-**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). Rapid7 says that on November 13 its MDR service detected exploitation of this flaw against Confluence Data Center in a customer environment, from 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. Its November 17 update also names `*.trycloudflare.com`, `wpefh-192-238-253-176.free.pinggy.net`, and `webhook.site`. Rapid7 says not seeing those does not clear an environment. CISA's SSVC record, dated 2026-11-10, says exploitation is none, and that record predates Rapid7's detection. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z. Rapid7 says that on November 13 its MDR service detected exploitation of this flaw against Confluence Data Center in a customer environment, from 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. Its November 17 update also names `*.trycloudflare.com`, `wpefh-192-238-253-176.free.pinggy.net`, and `webhook.site`. Rapid7 says not seeing those does not clear an environment. CISA's SSVC record, dated 2026-11-10, says exploitation is none, and that record predates both the detection and the listing. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -32,7 +32,8 @@ This is not the [October file-read](atlassian-dc.md), CVE-2026-21589. The N-cent
 | Atlassian advisory | 2026-11-09 22:00 PST (UTC−08:00) | Confluence Data Center only. Fixed version 9.2.28. Page last modified 2026-11-10. [Advisory][adv] |
 | Rapid7 detection | 2026-11-13; time/TZ unknown | Exploitation against Confluence Data Center in one customer environment. Published 2026-11-16. [Rapid7][r7] |
 | Rapid7 indicator update | 2026-11-17; time/TZ unknown | Adds `*.trycloudflare.com`, a pinggy.net host, and `webhook.site` to the four addresses. [Rapid7][r7] |
-| **Last updated** | **2026-11-18 (America/New_York)** | The new indicators. The fix is unchanged. |
+| **CISA KEV** | **2026-11-18; time/TZ unknown** | Added. Federal due date 2026-11-21. Forensic triage required. [KEV][kev] |
+| **Last updated** | **2026-11-18 (America/New_York)** | CISA listed it. The fix is unchanged. |
 
 ## Detection
 
@@ -65,9 +66,10 @@ Atlassian publishes no indicator for this flaw and says to have the local securi
 - [Apache announcement][announce] — 2026-11-06 15:32 UTC. Critical, no number. Axis 1.x through 1.4, unsupported when assigned. No fixed release.
 - [CVE-2026-90436][cve] — Apache CNA, published 2026-11-06 15:37:55 UTC. CISA-ADP CVSS 3.1 9.8, added 2026-11-10. SSVC exploitation: none.
 - [Rapid7][r7] — published 2026-11-16. On November 13, Rapid7 MDR detected exploitation against Confluence Data Center in a customer environment. Four source addresses. Absence of those addresses does not clear an environment.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, checked 2026-11-16. CVE-2026-90436 is not listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z. CVE-2026-90436 added 2026-11-18, due 2026-11-21. Forensic triage Yes.
 
 [r7]: https://www.rapid7.com/blog/post/etr-rapid7-detected-exploitation-of-cve-2026-90436-against-atlassian-confluence-data-center-n-able-n-central-also-exploited/
+[kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
 [adv]: https://confluence.atlassian.com/security/cve-2026-90436-remote-code-execution-in-confluence-data-center-1874560038.html
 [announce]: https://lists.apache.org/thread/8slf0j9gz35z56t0glt5h0ncwlbn4bdz
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-90436

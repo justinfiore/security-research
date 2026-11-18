@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [F5 BIG-IP: six flaws crash the traffic process](#f5-big-ip-six-flaws-crash-the-traffic-process)
+- [REDCap: a public survey runs code](#redcap-a-public-survey-runs-code)
+- [LiteLLM: a custom-code guardrail runs code](#litellm-a-custom-code-guardrail-runs-code)
 - [TYPO3: a marker file reopens the installer](#typo3-a-marker-file-reopens-the-installer)
 - [CIRCUTOR PowerStudio: an unsigned token is any user](#circutor-powerstudio-an-unsigned-token-is-any-user)
 - [Zyxel CPE: a request writes past the buffer before login](#zyxel-cpe-a-request-writes-past-the-buffer-before-login)
@@ -271,6 +274,11 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Install the [F5 engineering hotfix](#f5-big-ip-six-flaws-crash-the-traffic-process) for the iRule or APM policy you run. F5 rates six flaws CVSS 3.1 9.8 and CVSS 4.0 9.3: a request with no login crashes the traffic process and may run code, on BIG-IP 21.1.0, 17.5.0–17.5.1, and 17.1.0–17.1.3 when that configuration is present. There is no workaround and no scheduled release. None is in KEV. This is not the September APM flaw.
+- **New this update (CISA KEV):** Upgrade [REDCap](#redcap-a-public-survey-runs-code) to **16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard** or later. Securifera rates [CVE-2026-90817](https://www.cve.org/CVERecord?id=CVE-2026-90817) CVSS 3.1 9.8 Critical: a request that knows one public survey hash reaches Data Import and runs code. CISA added it on November 18, due November 21, and requires forensic triage. The record says 13.3.0 and higher, and its version list marks only 13.3.0 affected.
+- **New this update (CISA KEV):** Upgrade the [LiteLLM proxy](#litellm-a-custom-code-guardrail-runs-code) to **v1.83.14-stable or later** and restart it. MITRE rates [CVE-2026-40217](https://www.cve.org/CVERecord?id=CVE-2026-40217) CVSS 3.1 8.8 High: bytecode sent to the custom-code guardrail runs in the proxy, which is root in the default image. CISA added it on November 18, due December 2. The vendor page says 1.83.11, and that tag does not exist. This is not the 1.107.0 malicious release.
+- **New this update (CISA KEV):** [Confluence Data Center](#confluence-data-center-a-soap-fault-runs-code), [Apache Axis](#confluence-data-center-a-soap-fault-runs-code), and the [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet) chain that starts there are now listed. CISA added [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) on November 18, due November 21, and requires forensic triage. The fix is unchanged: Confluence **9.2.28 or later**, or turn off Remote API. Axis 1.x gets no release of its own.
+- **New this update (CISA KEV):** CISA added [Synology DSM CVE-2024-10441](#synology-dsm-unauthenticated-file-read-and-write) on November 18, due November 21, and requires forensic triage. Synology's advisory for it is SA-24:20. The September and November 2026 DSM flaws are separate records and are not in this listing.
 - **New this update:** Update [LibreOffice](#libreoffice-a-database-document-runs-a-macro) to **26.2.7 or 26.8.2 or later** and restart it. The Document Foundation rates eight flaws in that release CVSS 4.0 High, six of them 8.5: a Base document runs a macro without the security check, and a database document can run Java. The records were published November 16. None is in KEV.
 - **New this update:** Upgrade [Libreswan](#libreswan-an-empty-certificate-crashes-the-vpn-daemon) to **5.4.2 or later** and restart `pluto`. The project rates [CVE-2026-110339](https://www.cve.org/CVERecord?id=CVE-2026-110339) CVSS 3.1 7.5 High and calls it Medium: an empty certificate crashes the VPN daemon, with no login. There is no workaround. It is not in KEV.
 - **New this update:** Deploy [B3log Solo](#b3log-solo-an-article-list-returns-the-password-that-hides-a-post) commit `4630843` or later and restart it. VulnCheck rates [CVE-2026-130081](https://www.cve.org/CVERecord?id=CVE-2026-130081) CVSS 4.0 8.7 High: an article list returns the password that hides a post, with no login. v4.4.0, the newest release, is still affected. It is not Bolo. It is not in KEV.
@@ -473,6 +481,76 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## F5 BIG-IP: six flaws crash the traffic process
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/f5-bigip-nov18.md):** [Detection](details/f5-bigip-nov18.md#detection) · [Remediation](details/f5-bigip-nov18.md#remediation) · [Verification](details/f5-bigip-nov18.md#verification) · [Timeline](details/f5-bigip-nov18.md#timeline)
+
+**CVEs:** [CVE-2026-123637](https://www.cve.org/CVERecord?id=CVE-2026-123637), [CVE-2026-116953](https://www.cve.org/CVERecord?id=CVE-2026-116953), [CVE-2026-120285](https://www.cve.org/CVERecord?id=CVE-2026-120285), [CVE-2026-120292](https://www.cve.org/CVERecord?id=CVE-2026-120292), [CVE-2026-120722](https://www.cve.org/CVERecord?id=CVE-2026-120722), [CVE-2026-121805](https://www.cve.org/CVERecord?id=CVE-2026-121805)
+
+**F5 rates all six CVSS 3.1 9.8 Critical and CVSS 4.0 9.3 Critical.** F5 is the CNA. A request with no login terminates the Traffic Management Microkernel, and F5 says it may run code. Each flaw needs its own configuration: an APM per-request policy that has both the Client Information and Endpoint Security agents, or an iRule that uses `GENERICMESSAGE::route`, `PSC::ip_address`, `MR::message route`, `DNS::scrape`, or `PEM::subscriber`. A virtual server without that configuration is outside that flaw. F5 lists no workaround. The fixes are engineering hotfixes, not a scheduled release, and F5 says those builds do not get the testing of one. BIG-IP 21.1.0, 17.5.0–17.5.1, and 17.1.0–17.1.3 are the branches F5 names for the APM flaw. A version past the end of technical support was not evaluated. This is not CVE-2026-94127, the September APM flaw F5 says has been exploited.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-18). CISA's enrichment the same day says exploitation of CVE-2026-123637 is none. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-18 15:00 UTC** | K000164058. Twenty-two articles, six of them these. |
+| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | New item. Install the hotfix for the configuration you run. |
+
+**Patch:** Install the engineering hotfix the article for that CVE names, and restart the traffic process. A system already on a custom hotfix needs a new build from F5 support. There is no mitigation. The hotfix does not show whether a request already ran code.
+
+Sources: [K000164058](https://my.f5.com/manage/s/article/K000164058), [CVE-2026-123637](https://www.cve.org/CVERecord?id=CVE-2026-123637), [detailed guide](details/f5-bigip-nov18.md).
+
+---
+
+## REDCap: a public survey runs code
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/redcap.md):** [Detection](details/redcap.md#detection) · [Remediation](details/redcap.md#remediation) · [Verification](details/redcap.md#verification) · [Timeline](details/redcap.md#timeline)
+
+**CVEs:** [CVE-2026-90817](https://www.cve.org/CVERecord?id=CVE-2026-90817)
+
+**Securifera rates [CVE-2026-90817](https://www.cve.org/CVERecord?id=CVE-2026-90817) CVSS 3.1 9.8 Critical.** Securifera is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. REDCap's public survey handler decodes a parameter twice for one check and once for another, so a request that knows a survey hash reaches the Data Import path. That path writes a file the application later includes, and the request runs code. The finder says the hash is the only precondition: no account and no CSRF token. The record says the flaw exists in REDCap 13.3.0 and higher. The same record's version list marks only 13.3.0 affected, leaves every other version unknown, and names **16.0.49**, **17.3.10**, and **17.4.4** as unaffected. NVD has not scored it.
+
+**CISA KEV:** Listed — added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. CISA's enrichment of the CVE record, dated 2026-09-21, says exploitation was none. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| CVE reserved | 2026-09-13 17:35:41 UTC | Securifera. |
+| **Public announcement** | **2026-09-20 12:05:32 UTC** | The record names the three fixed builds. |
+| Finder's write-up | 2026-09-27 20:19:02 UTC | The survey hash, the Data Import write, and the template include. |
+| **CISA KEV** | **2026-11-18; time/TZ unknown** | Added. Federal due date 2026-11-21. Catalog 2026.11.18. Forensic triage required. |
+| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | New item. Upgrade REDCap. |
+
+**Patch:** Upgrade to **16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard** or later on that line. The consortium distributes the build. Until then, turn off public surveys. The upgrade does not restore a template the chain already wrote.
+
+Sources: [CVE-2026-90817](https://www.cve.org/CVERecord?id=CVE-2026-90817), [Securifera](https://www.securifera.com/blog/2026/09/27/survey-says-remote-code-execution-cve-2026-90817/), [detailed guide](details/redcap.md).
+
+---
+
+## LiteLLM: a custom-code guardrail runs code
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/litellm-guardrail.md):** [Detection](details/litellm-guardrail.md#detection) · [Remediation](details/litellm-guardrail.md#remediation) · [Verification](details/litellm-guardrail.md#verification) · [Timeline](details/litellm-guardrail.md#timeline)
+
+**CVEs:** [CVE-2026-40217](https://www.cve.org/CVERecord?id=CVE-2026-40217)
+
+**MITRE rates [CVE-2026-40217](https://www.cve.org/CVERecord?id=CVE-2026-40217) CVSS 3.1 8.8 High.** MITRE is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`. `POST /guardrails/test_custom_code` runs Python the caller sends, and rewriting the bytecode gets past the filter. X41's proof returns `uid=0` on the default image. The vendor advisory says the endpoint needs a proxy-admin credential. X41's proof uses the master key. NVD has not scored it. GitHub's database scores the same advisory CVSS 4.0 7.5, and the vendor's own page scores it 5.9. This is not the [1.107.0 malicious release](#litellm-malicious-release-and-credential-theft) and not the [Enterprise file read](#litellm-enterprise-proxy-unauthenticated-file-read-leaks-the-master-key).
+
+**CISA KEV:** Listed — added 2026-11-18, federal due date 2026-12-02. Ransomware use Unknown. Forensic triage is not required. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| X41 public advisory | 2026-04-08; time unknown | X41-2026-001. X41 rates it CVSS 4.0 8.7 and says no patch existed that day. |
+| CVE record published | 2026-04-10; time unknown | MITRE. 8.8 High. |
+| Sandbox replaced | 2026-04-15 23:50:10 UTC | Pull request 25818. RestrictedPython. |
+| v1.83.10-stable | 2026-04-27 17:01:01 UTC | First stable tag after that change. The vendor text says 1.83.11, and that tag does not exist. |
+| **CISA KEV** | **2026-11-18; time/TZ unknown** | Added. Federal due date 2026-12-02. Catalog 2026.11.18. |
+| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | New item. Upgrade the proxy. |
+
+**Patch:** Upgrade to **v1.83.14-stable or later** and restart. That release is after the sandbox change and is the one Obsidian says also closes the two related flaws, CVE-2026-47101 and CVE-2026-47102, which are not this CVE and are not in KEV. v1.83.10-stable already contains the sandbox replacement. Until the restart, deny `POST /guardrails/test_custom_code` at the reverse proxy. The upgrade does not remove a process that is already running.
+
+Sources: [GHSA-wxxx-gvqv-xp7p](https://github.com/BerriAI/litellm/security/advisories/GHSA-wxxx-gvqv-xp7p), [X41-2026-001](https://www.x41-dsec.de/lab/advisories/x41-2026-001-litellm/), [detailed guide](details/litellm-guardrail.md).
 
 ---
 
@@ -975,9 +1053,11 @@ Sources: [GHSA-45cp-v5ph-2jhm](https://github.com/requarks/wiki/security/advisor
 | **Public technical disclosure** | **2026-11-15 16:00:04 UTC** | oss-security, after the linux-distros embargo. The message is dated 2026-11-16 01:00:04 +0900. |
 | Debian and Oracle UEK fixed | 2026-11-12 through 2026-11-15; time/TZ unknown | Debian trixie 6.12.117-1 (DSA-6628-1) and bookworm 6.1.192-1 (DLA-4906-1). Oracle Linux UEK on 7, 8, 9, and 10 (ELSA-2026-500630, ELSA-2026-500631, ELSA-2026-500632). |
 | Debian forky fixed; Ubuntu marks Vulnerable | Tracker and Ubuntu page read 2026-11-17 | Debian forky is 7.3.4-1 fixed, with sid. Ubuntu `linux` is Vulnerable on 16.04 through 26.10, with no package. On November 16 Ubuntu said Needs evaluation and forky was still vulnerable. |
-| **Last updated** | **2026-11-17 15:10 EST (UTC−05:00)** | Debian forky is fixed. Ubuntu now says Vulnerable and still has no package. |
+| Amazon Linux fixed | 2026-11-17; time unknown | ALAS2-2026-4124 at 4.14.355-287.769. ALAS2023-2026-3477 fixes `kernel6.18` at 6.18.62-127.179. |
+| Ubuntu priority High | 2026-11-18; time unknown | Still no package. Ubuntu scores CVSS 4.0 8.2 and CVSS 3.1 5.9. |
+| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | Amazon Linux 2 and `kernel6.18` are fixed. Ubuntu still has no package. |
 
-**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1), trixie at 6.12.117-1 (DSA-6628-1), and forky and sid at 7.3.4-1. Amazon Linux 2023's default kernel is 6.1.190-237.442 and `kernel6.12` is 6.12.115-140.210; `kernel6.18` and Amazon Linux 2 are still pending. Oracle Linux UEK is fixed on 7, 8, 9, and 10. Red Hat 8, 9, and 10 have no erratum. Ubuntu 16.04 through 26.10 is Vulnerable, with no package. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. See the [distribution table](details/linux-noisytcp.md#detection).
+**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1), trixie at 6.12.117-1 (DSA-6628-1), and forky and sid at 7.3.4-1. Amazon Linux 2 is fixed at 4.14.355-287.769, and Amazon Linux 2023's `kernel6.18` at 6.18.62-127.179, both released November 17. Oracle Linux UEK is fixed on 7, 8, 9, and 10. Red Hat 8, 9, and 10 have no erratum. Ubuntu 16.04 through 26.10 is Vulnerable, with no package; Ubuntu now rates the priority High. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. See the [distribution table](details/linux-noisytcp.md#detection).
 
 Sources: [oss-security](https://www.openwall.com/lists/oss-security/2026/11/15/2), [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-99288), [detailed guide](details/linux-noisytcp.md).
 
@@ -1146,18 +1226,19 @@ Sources: [Octopus advisory 2026-28](https://advisories.octopus.com/post/2026/sa2
 
 **CVEs:** [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784)
 
-**JFrog rates [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784) CVSS 3.1 8.5 High.** JFrog is the CNA. The vector is `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H`. The Ruby `httpx` gem **1.9.0** decodes a JSON response with `Oj.load` and no mode when the `oj` gem is loaded and `multi_json` is not. Oj's default mode builds a Ruby object from the document, and whoever controls the URL passed to `HTTPX.get(url).json` controls that object. JFrog says a matching gadget chain can run code. **1.9.1**, released 2026-11-13, is the fix. A process without `oj`, or with `multi_json` loaded, does not take this branch.
+**JFrog rates [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784) CVSS 3.1 8.5 High.** JFrog is the CNA. The vector is `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H`. The Ruby `httpx` gem **1.9.0** decodes a JSON response with `Oj.load` and no mode when the `oj` gem is loaded and `multi_json` is not. Oj's default mode builds a Ruby object from the document, and whoever controls the URL passed to `HTTPX.get(url).json` controls that object. JFrog says a matching gadget chain can run code, and on November 16 it published the chain: with ActiveSupport loaded, the response reaches `Kernel.load`. **1.9.1**, released 2026-11-13, is the fix. A process without `oj`, or with `multi_json` loaded, does not take this branch.
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-18). JFrog's proof of concept is a lab, not a report of an attack. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | httpx 1.9.0 | 2026-10-14 10:15:49 UTC | The affected release. |
 | httpx 1.9.1 | 2026-11-13 16:39:28 UTC | The fix. |
 | **Public announcement** | **2026-11-16; NVD published 11:16 UTC** | JFrog published the record. |
-| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. Update httpx. |
+| Proof of concept | 2026-11-16; time unknown | JFrog's research page. A lab only. It names three workarounds the record does not. |
+| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | The proof of concept. The fix is unchanged. |
 
-**Patch:** Upgrade `httpx` to **1.9.1 or later** and redeploy. The record names no workaround.
+**Patch:** Upgrade `httpx` to **1.9.1 or later** and redeploy. Until then, call `response.json(mode: :strict)`, set Oj's default mode to `:strict`, or keep `multi_json` loaded. The CVE record names none of those.
 
 Sources: [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784), [httpx 1.9.1](https://github.com/HoneyryderChuck/httpx/releases/tag/v1.9.1), [detailed guide](details/ruby-httpx.md).
 
@@ -1169,7 +1250,7 @@ Sources: [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784), [h
 
 **CVEs:** [CVE-2026-111559](https://www.cve.org/CVERecord?id=CVE-2026-111559)
 
-**CERT Polska rates [CVE-2026-111559](https://www.cve.org/CVERecord?id=CVE-2026-111559) CVSS 4.0 9.3 Critical.** CERT Polska is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:L/SI:L/SA:L`. Batflat CMS does not sanitize the contact form, and a request with no login runs PHP as `www-data`. CERT Polska's page, updated 17 November 2026, and the CVE record both say **1.2.0 through 1.3.7**. On November 16 the advisory still stopped at 1.3.6. The finder's repository says 1.3.7 captures the input and the escaping still lets the template tags through. CERT Polska says the project is no longer maintained and the issue is not fixed.
+**CERT Polska rates [CVE-2026-111559](https://www.cve.org/CVERecord?id=CVE-2026-111559) CVSS 4.0 9.3 Critical.** CERT Polska is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:L/SI:L/SA:L`. Batflat CMS does not sanitize the contact form, and a request with no login runs PHP as `www-data`. The CVE record, updated 2026-11-17, says **1.2.0 through 1.3.7**. CERT Polska's page, read 2026-11-18, says **1.2.0 through 1.3.6**, and the note that widened it is gone. Treat 1.3.7 as affected until they agree. The finder's repository says 1.3.7 captures the input and the escaping still lets the template tags through. CERT Polska says the project is no longer maintained and the issue is not fixed.
 
 **CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -1177,8 +1258,9 @@ Sources: [CVE-2026-129784](https://www.cve.org/CVERecord?id=CVE-2026-129784), [h
 |---|---|---|
 | **Public announcement** | **2026-11-16; NVD published 13:17 UTC** | CERT Polska's advisory shows the date and no time. |
 | CVE record widened | 2026-11-16 15:26:22 UTC | The record now says through 1.3.7. CERT Polska's page still said through 1.3.6 that day. |
-| CERT Polska range updated | 2026-11-17; time/TZ unknown | The advisory now says the affected range was updated and lists 1.2.0 through 1.3.7. Still no fix. |
-| **Last updated** | **2026-11-17 15:10 EST (UTC−05:00)** | CERT Polska now matches the CVE record. Still no fix. |
+| CERT Polska range updated | 2026-11-17; time/TZ unknown | The advisory said the range was updated and listed 1.2.0 through 1.3.7. |
+| CERT Polska page reread | 2026-11-18; time unknown | The page again says through 1.3.6. The record still says through 1.3.7. |
+| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | The page and the record disagree. Still no fix. |
 
 **Patch:** No fix. Take the site offline and replace it. Do not leave the contact endpoint exposed while you plan the replacement.
 
@@ -1323,7 +1405,7 @@ Sources: [Patchstack](https://patchstack.com/database/wordpress/plugin/estatik/v
 
 Apache, the CNA, rates the Axis flaw critical in text and publishes no number. Axis 1 is end of life, and Apache says it will not ship a fixed 1.x release. CISA's enrichment of the record scores it CVSS 3.1 9.8. NVD has not scored it. CISA's SSVC record from November 10 says exploitation is none. The same Axis flaw is the first step of the [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet) chain. This is not the [October Confluence file read](#atlassian-data-center-unauthenticated-web-root-file-read).
 
-**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). Rapid7 says that on November 13 it detected exploitation against Confluence Data Center in a customer environment. Its November 17 update adds `trycloudflare.com`, a pinggy.net host, and `webhook.site` to the four addresses. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.18. Rapid7 says that on November 13 it detected exploitation against Confluence Data Center in a customer environment. Its November 17 update adds `trycloudflare.com`, a pinggy.net host, and `webhook.site` to the four addresses. CISA's SSVC record from November 10 says exploitation was none, and that record predates both. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1332,7 +1414,8 @@ Apache, the CNA, rates the Axis flaw critical in text and publishes no number. A
 | **Public announcement** | **2026-11-09 22:00 PST (UTC−08:00)** | Atlassian advisory. Confluence Data Center, fixed in 9.2.28. |
 | Rapid7 detection | 2026-11-13; time/TZ unknown | One customer environment. Published 2026-11-16. |
 | Rapid7 indicator update | 2026-11-17; time/TZ unknown | Adds three hosts to the four addresses. |
-| **Last updated** | **2026-11-18 00:20 EST (UTC−05:00)** | The new indicators. The fix is unchanged. |
+| **CISA KEV** | **2026-11-18; time/TZ unknown** | Added. Federal due date 2026-11-21. Forensic triage required. |
+| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | CISA listed it. The fix is unchanged. |
 
 **Patch:** Upgrade Confluence Data Center to **9.2.28 or later**, or to **10.0 or later**, and restart every node. Until then, clear **Remote API (XML-RPC & SOAP)** under Further Configuration and save. Atlassian says that takes effect without a restart, and that anything using XML-RPC or SOAP stops. Confluence Cloud needs nothing for this advisory. The upgrade does not remove an account or an add-on that was already created.
 
@@ -1952,7 +2035,7 @@ On November 16 N-able posted **2026.4 HF3, build 2026.4.1.39**. The [release not
 
 On November 17 N-able published the seventeen records the notes listed, CVE-2026-129271 through CVE-2026-129287. **Three are CVSS 4.0 Critical.** [CVE-2026-129272](https://www.cve.org/CVERecord?id=CVE-2026-129272) is 9.3: a predictable appliance passcode lets an attacker with no login impersonate an Agent or Probe, which is why an Agent left on an older build is still exposed. [CVE-2026-129280](https://www.cve.org/CVERecord?id=CVE-2026-129280) is 9.3: SOAP operations skip the session check and, in some cases with no login, read another customer's data and test user passwords. [CVE-2026-129286](https://www.cve.org/CVERecord?id=CVE-2026-129286) is 9.2: software-update metadata writes a file outside the download directory, and the attacker has to be able to change that metadata. Eight more are High, from 8.7 down to 7.1, and six are Medium. All seventeen say "before 2026.4.1 HF3," except [CVE-2026-129271](https://www.cve.org/CVERecord?id=CVE-2026-129271), which is the Patch Management Engine before 2.14.4.5829. Huntress says proof-of-concept code for all seventeen appeared the evening of November 16, and that it has not seen them used.
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17) for any of the seven, any of the seventeen, or CVE-2026-90436. Huntback reports 21 production servers mining Monero at 12:50 UTC on November 12, 19 of them already on 2026.4.1.26. That report is Huntback's, from a public mining pool, not N-able's count. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. The seven November 10 CVEs and the seventeen November 17 CVEs are not listed (catalog 2026.11.18). Huntback reports 21 production servers mining Monero at 12:50 UTC on November 12, 19 of them already on 2026.4.1.26. That report is Huntback's, from a public mining pool, not N-able's count. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1966,7 +2049,8 @@ On November 17 N-able published the seventeen records the notes listed, CVE-2026
 | N-able finds indicators | 2026-11-13 03:50:42 UTC | Incident 202613. N-able is working with the customers where it found indicators. |
 | **HF3** | **2026-11-16; time/TZ unknown** | Build 2026.4.1.39. Legacy API permanently removed. Agents and Probes must move too. |
 | Seventeen more CVE records | 2026-11-17 11:44 to 11:48 UTC | Three CVSS 4.0 Critical: 9.3, 9.3, and 9.2. |
-| **Last updated** | **2026-11-17 11:15 EST (UTC−05:00)** | The seventeen records are published. HF3 remains the build to install. |
+| **CISA KEV** | **2026-11-18; time/TZ unknown** | CVE-2026-90436 added. Federal due date 2026-11-21. The seven and the seventeen are not listed. |
+| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | CISA listed the Axis flaw this chain starts from. The build is unchanged. |
 
 **Patch:** On premises, upgrade to **2026.4.1.39** and upgrade every Agent and Probe to that build, and the Patch Management Engine to 2.14.4.5829 or later. HF3 removes the Legacy API, so the setting the November 12 chain needed is gone. An Agent left on an older build can still be impersonated: that is CVE-2026-129272, scored 9.3. Upgrade Agents before Probes: a Probe on the new build stops talking to an older Agent. Leave the Intune integration off and expect built-in remote control to stay disabled. Take Control still works. Hosted servers are upgraded by N-able; their Agents and Probes are still the customer's. Treat a secret stored in an Automation Manager policy as disclosed, and do not trust Take Control audit records from before the upgrade. Check for `/tmp/.xvd/`, an `xvd.service` unit, and connections to `157.20.241.16`. The upgrade does not remove a miner or undo a script that already ran.
 
@@ -4082,14 +4166,15 @@ Sources: [Wordfence](https://www.wordfence.com/threat-intel/vulnerabilities/id/e
 
 **Synology (CNA) rates CVE-2026-13639 and CVE-2026-13684 CVSS 3.1 9.8 Critical each.** NVD has no score of its own. Either flaw lets a remote unauthenticated attacker read or write arbitrary files and cause a denial of service. Synology lists no workaround. The High CVEs in the same advisory require an authenticated user.
 
-**CISA KEV:** Not listed (catalog 2026.11.03, checked 2026-11-04). CISA's September 18 ADP assessment records Exploitation "none" for both Critical CVEs. 360 later reported ransomware it attributes to them. November 2–3 reporting repeats the same disagreement and names no new CVE. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — [CVE-2024-10441](https://www.cve.org/CVERecord?id=CVE-2024-10441) added 2026-11-18, federal due date 2026-11-21. Forensic triage is required. [CVE-2026-13639](https://www.cve.org/CVERecord?id=CVE-2026-13639) and [CVE-2026-13684](https://www.cve.org/CVERecord?id=CVE-2026-13684) are not listed (catalog 2026.11.18). CISA's September 18 ADP assessment records Exploitation "none" for both of those. 360 later reported ransomware it attributes to them. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Advisory and fixes | 2026-09-18 16:17:35 UTC+8 | [Synology-SA-26:13](https://www.synology.com/en-global/security/advisory/Synology_SA_26_13). |
 | 360 ransomware report | 2026-10-29; time/TZ unknown | Attributes C3RB3R encryption to the two September CVEs. |
 | Synology statement | 2026-10-29; time/TZ unknown | Attributes attacks on outdated DSM to a vulnerability patched in December 2024 ([SA-24:20](https://www.synology.com/en-global/security/advisory/Synology_SA_24_20), CVE-2024-10441). |
-| **Last updated** | **2026-10-30 16:15 EDT (UTC−04:00)** | Added from Synology's advisories and 360's report. |
+| **CISA KEV** | **2026-11-18; time/TZ unknown** | CVE-2024-10441 added. Federal due date 2026-11-21. The September CVEs are not listed. |
+| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | CISA listed the 2024 flaw. The September flaws are still not listed. |
 
 **Exploitation:** 360 says that since early October 2026 it has handled Synology NAS cases encrypted by C3RB3R, which it calls a Cerber variant, and that the entry was CVE-2026-13639 and CVE-2026-13684. Synology's same-day statement instead says attackers are using a vulnerability patched in December 2024. The two accounts do not name the same CVE. Updating to a current DSM build is the action both support.
 
@@ -7207,6 +7292,9 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **F5 BIG-IP 21.1.0, 17.5.0–17.5.1, or 17.1.0–17.1.3 with one of six iRules or an APM policy** | Install the engineering hotfix F5 names for that flaw. F5 rates all six 9.8: a request with no login crashes the traffic process. A virtual server without that configuration is outside that flaw. There is no workaround. [Guide](details/f5-bigip-nov18.md#remediation). |
+| **REDCap 13.3.0 or higher** | Upgrade to 16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard or later. Securifera rates CVE-2026-90817 9.8: one public survey hash reaches Data Import and runs code. CISA listed it on November 18, due November 21. [Guide](details/redcap.md#remediation). |
+| **LiteLLM proxy before v1.83.14-stable** | Upgrade to v1.83.14-stable or later and restart. MITRE rates CVE-2026-40217 8.8: the custom-code guardrail runs caller code. CISA listed it on November 18, due December 2. Until then, deny `POST /guardrails/test_custom_code`. This is not the 1.107.0 release. [Guide](details/litellm-guardrail.md#remediation). |
 | **TYPO3 10.0.0–10.4.62, 11.0.0–11.5.56, 12.0.0–12.4.51, 13.0.0–13.4.39, or 14.0.0–14.3.11** | Update to 14.3.12, 13.4.40, 12.4.52, 11.5.57, or 10.4.63. TYPO3 rates CVE-2026-119623 9.4: a `FIRST_INSTALL` file reopens the installer with no login. Delete those files and review administrator accounts. [Guide](details/typo3.md#remediation). |
 | **CIRCUTOR PowerStudio SCADA WAVE 24.8.0 before 24.11.17.0** | Install 24.11.17.0 or later. CIRCUTOR rates CVE-2026-120387 10.0: an unsigned token is any user. Keep the service ports off untrusted networks until then. [Guide](details/circutor-powerstudio.md#remediation). |
 | **Zyxel DSL/Ethernet CPE, fiber ONT, or wireless extender in the November 17 advisory** | Install the fixed build the advisory names for that model. Zyxel rates CVE-2026-79614 9.8, and WAN access is off by default. The file comes from Zyxel or the ISP, not a public download. [Guide](details/zyxel-cpe-nov17.md#remediation). |
@@ -7233,7 +7321,7 @@ flowchart TD
 | **Qt 5.0.0 through 6.12.0** | Update to 6.8.10, 6.11.3, or 6.12.1 or later. The Qt Group rates CVE-2026-105925 8.2: `QXmlSimpleReader` can exhaust memory. Qt 5 has no release named. [Guide](details/qt-qxml.md#remediation). |
 | **Self-hosted Octopus Server before 2026.2.13526, or 2026.3 before 2026.3.15909** | Upgrade to 2026.3.16117. Octopus rates CVE-2026-116288 8.6: a role editor can grant itself a deployment. Octopus Cloud is already updated. [Guide](details/octopus-deploy.md#remediation). |
 | **Ruby `httpx` 1.9.0 with `oj` and without `multi_json`** | Upgrade `httpx` to 1.9.1 or later. JFrog rates CVE-2026-129784 8.5: a JSON response can build a Ruby object. Only 1.9.0 is affected. [Guide](details/ruby-httpx.md#remediation). |
-| **Batflat 1.2.0 through 1.3.7** | No fix. Take it offline. CERT Polska rates CVE-2026-111559 9.3: the contact form runs PHP. The project is unmaintained. CERT Polska's page, updated 17 November 2026, now matches the CVE record through 1.3.7. [Guide](details/batflat.md#remediation). |
+| **Batflat 1.2.0 through 1.3.7** | No fix. Take it offline. CERT Polska rates CVE-2026-111559 9.3: the contact form runs PHP. The project is unmaintained. The CVE record says through 1.3.7; CERT Polska's page, read November 18, says through 1.3.6. [Guide](details/batflat.md#remediation). |
 | **WordPress with Advanced Form Integration through 2.11.3** | Update `advanced-form-integration` to 2.11.6 or later. Patchstack rates CVE-2026-125769 9.8: a request with no login can become an administrator. The record does not name the request. 2.11.5 is the first version it calls unaffected. The update does not remove an administrator that was already created. This is not the November 6, 8, or 9 plugin set, not Estatik, and not LatePoint. [Guide](details/advanced-form-integration.md#remediation). |
 | **WordPress with Estatik through 4.3.6** | Update `estatik` to 4.3.7 or later. Patchstack rates CVE-2026-125795 9.8: a request with no login can make the site load a file from the server. The record does not name the parameter. The update does not show whether a request already loaded a file. This is not the November 6, 8, or 9 plugin set and not LatePoint. [Guide](details/estatik.md#remediation). |
 | **Cyrus SASL advertising SRP** | Remove SRP from the mechanism list and restart. VulnCheck rates CVE-2026-129483 9.3: a client can otherwise authenticate as any SRP user without the password. The newest release is still 2.1.28, and no distribution has shipped a fix. A server that does not offer SRP is outside it. [Guide](details/cyrus-sasl.md#remediation). |

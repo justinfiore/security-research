@@ -1,6 +1,6 @@
 # N-central: critical vulnerabilities, hotfix 2026.4.1.26
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-18 (America/New_York)
 
 [Back to N-central summary](../black-october-2026.md#n-central-critical-vulnerabilities-hotfix-20264126) · [Changelog](../../CHANGELOG.md)
 
@@ -42,7 +42,7 @@ N-central deploys software, runs scripts, and opens remote-control sessions on t
 
 The November 12 chain has no CVE of its own. The published proof of concept starts with [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436), an unauthenticated class instantiation in Apache Axis 1.x, which Apache says is end of life and will not release a fix for. Apache rates it critical in text and publishes no numeric score. CISA's enrichment of that record scores it CVSS 3.1 9.8. The second step is an N-central privilege escalation that no vendor has scored. Previdian tracks the chain as VULN-2026-0009 and scores it 9.8 itself. That score is Previdian's, not N-able's and not Apache's.
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17) for any of the seven November 10 CVEs, the seventeen November 17 CVEs, or CVE-2026-90436. N-able's November 13 update says it has identified indicators of compromise and is working with those customers. It does not say how many, or whether they were hosted or on premises. Huntback reports 21 production N-central servers mining Monero at 12:50 UTC on November 12, 19 of them on build 2026.4.1.26, identified from a public mining pool and checked by requesting each server's login page. Previdian reports exploitation attempts against its own honeypot, which is not a compromised customer. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z. The seven November 10 CVEs and the seventeen November 17 CVEs are not listed. N-able's November 13 update says it has identified indicators of compromise and is working with those customers. It does not say how many, or whether they were hosted or on premises. Huntback reports 21 production N-central servers mining Monero at 12:50 UTC on November 12, 19 of them on build 2026.4.1.26, identified from a public mining pool and checked by requesting each server's login page. Previdian reports exploitation attempts against its own honeypot, which is not a compromised customer. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -71,7 +71,8 @@ The November 12 chain has no CVE of its own. The published proof of concept star
 | N-able finds indicators | 2026-11-13 03:50:42 UTC | Incident 202613. N-able says it identified indicators of compromise and is working with those customers. It names no count and no build. [Event 202613][event3] |
 | **HF3** | **2026-11-16; time/TZ unknown** | Build 2026.4.1.39. The notes say the Legacy API is permanently removed and that Agents and Probes must be upgraded. [HF3 notes][hf3] |
 | Seventeen more CVE records | 2026-11-17 11:44 to 11:48 UTC | N-able published CVE-2026-129271 through CVE-2026-129287. Three are CVSS 4.0 Critical: 9.3, 9.3, and 9.2. |
-| **Last updated** | **2026-11-17 (America/New_York)** | The seventeen records are published. HF3 remains the build to install. |
+| **CISA KEV** | **2026-11-18; time/TZ unknown** | CVE-2026-90436 added. Federal due date 2026-11-21. The seven and the seventeen are not listed. |
+| **Last updated** | **2026-11-18 (America/New_York)** | CISA listed the Axis flaw this chain starts from. The build is unchanged. |
 
 ## Detection
 
@@ -124,7 +125,7 @@ N-able's earlier updates said it had not seen an environment compromised. Incide
 - [Previdian VULN-2026-0009](https://previdian.com/VULN-2026-0009) — read 2026-11-13. Two exploitation attempts against its own sensor, first observed 2026-11-12. Its own CVSS 9.8. Not a compromised customer.
 - [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) — Apache CNA, published 2026-11-06. Axis 1.x through 1.4, unsupported when assigned, no numeric score from Apache. The CISA-ADP score is 9.8.
 - [BleepingComputer, November 12](https://www.bleepingcomputer.com/news/security/new-n-able-4everable2shell-zero-day-exploited-hours-after-poc-released/) — reports both firms. The researcher names and the proof of concept are the researcher's, not N-able's.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, checked 2026-11-17. None of the seven, none of the seventeen, and not CVE-2026-90436, is listed.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z. CVE-2026-90436 added 2026-11-18, due 2026-11-21. Forensic triage Yes. None of the seven and none of the seventeen is listed.
 
 [event]: https://uptime.n-able.com/event/202584
 [event2]: https://uptime.n-able.com/event/202609

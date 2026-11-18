@@ -2,6 +2,17 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-18 16:10 EST (UTC−05:00) — F5 BIG-IP; REDCap; LiteLLM; Confluence; Synology; httpx
+
+- **F5 BIG-IP:** Install the [engineering hotfix](black-october/details/f5-bigip-nov18.md#remediation) for the iRule or APM policy you run. F5 rates six flaws CVSS 3.1 9.8: a request with no login crashes the traffic process and may run code. Each one needs its own configuration, and there is no workaround and no scheduled release. None is in KEV. This is not the September APM flaw.
+- **REDCap:** Upgrade to [16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard](black-october/details/redcap.md#remediation) or later. Securifera rates CVE-2026-90817 CVSS 3.1 9.8: one public survey hash reaches Data Import and runs code. CISA added it on November 18, due November 21, and requires forensic triage.
+- **LiteLLM:** Upgrade the proxy to [v1.83.14-stable or later](black-october/details/litellm-guardrail.md#remediation) and restart it. MITRE rates CVE-2026-40217 CVSS 3.1 8.8: the custom-code guardrail runs caller code, as root in the default image. CISA added it on November 18, due December 2. The vendor page says 1.83.11, and that tag does not exist. This is not the 1.107.0 malicious release.
+- **Confluence and N-central:** CISA added [CVE-2026-90436](black-october/details/confluence-axis.md#timeline) on November 18, due November 21, and requires forensic triage. Upgrade Confluence Data Center to 9.2.28 or later, or turn off Remote API. The same flaw starts the N-central chain. The N-central build is unchanged.
+- **Synology:** CISA added [CVE-2024-10441](black-october/details/synology-dsm.md#timeline) on November 18, due November 21. SA-24:20 is the advisory. The September DSM flaws are not in this listing. A current DSM build covers both.
+- **Ruby httpx:** JFrog published a [proof of concept](black-october/details/ruby-httpx.md#remediation) for CVE-2026-129784 and named three workarounds. The fix is unchanged: 1.9.1 or later. It is a lab, and it is not in KEV.
+- **Linux kernel:** Amazon Linux now has the [NoisyTCP kernel](black-october/details/linux-noisytcp.md#detection). Amazon Linux 2 is 4.14.355-287.769 and Amazon Linux 2023's `kernel6.18` is 6.18.62-127.179, both released November 17. Install it and reboot. Ubuntu raised the priority to High and still has no package. Red Hat 8, 9, and 10 still have none.
+- **Batflat:** CERT Polska's page, read November 18, again says [1.2.0 through 1.3.6](black-october/details/batflat.md#detection). The CVE record, updated November 17, still says through 1.3.7. Treat 1.3.7 as affected. There is still no fix.
+
 ## 2026-11-18 12:30 EST (UTC−05:00) — NGINX; TYPO3; PowerStudio; Zyxel CPE; Zenoh; Firefox; Git
 
 - **NGINX:** Upgrade to [1.30.7 or 1.31.9](black-october/details/nginx.md#remediation) and restart. F5 rates CVE-2026-123007 CVSS 3.1 8.1 and CVSS 4.0 9.2: HTTP/2 flow control can overflow a heap buffer and crash the worker, on 1.9.5 through 1.31.8. Code execution needs ASLR off or bypassed. 1.30.6 and 1.31.7 leave it in place. NGINX Plus is 37.3.0.1 or 37.0.8.1. R34 through R36 have no fix, and no distribution package names it yet. It is not in KEV.
