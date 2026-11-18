@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 17, 2026**
+**As of November 18, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [PyPI: agent-framework 1.26.1 and 1.26.2 steal credentials](#pypi-agent-framework-1261-and-1262-steal-credentials)
+- [NVIDIA Linux driver: a GPU container reaches root on the host](#nvidia-linux-driver-a-gpu-container-reaches-root-on-the-host)
+- [OpenJDK: Java4Shell - a Base64 string corrupts memory](#openjdk-java4shell---a-base64-string-corrupts-memory)
 - [LibreOffice: a database document runs a macro](#libreoffice-a-database-document-runs-a-macro)
 - [Libreswan: an empty certificate crashes the VPN daemon](#libreswan-an-empty-certificate-crashes-the-vpn-daemon)
 - [B3log Solo: an article list returns the password that hides a post](#b3log-solo-an-article-list-returns-the-password-that-hides-a-post)
@@ -371,6 +374,10 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Reboot [Xen](#xen-a-guest-can-read-and-write-other-guests-memory) hosts onto a build with the XSA-523 patches. SUSE rates both flaws CVSS 4.0 8.4: a guest can read and write other guests' memory, including Dom0. Xen 4.6 and later are affected, and Xen says there is no mitigation. Xen 4.6 through 4.16 get no patch. It is not in KEV.
 - **New this update:** Upgrade [Rails](#rails-active-storage-file-write-and-read) to **8.0.5.2 or 8.1.4.1**. MITRE rates the Active Storage ImageMagick issue [CVE-2026-122006](https://www.cve.org/CVERecord?id=CVE-2026-122006) CVSS 3.1 9.8 Critical. Rails scores the same issue 9.8. The GitHub advisory now shows CVE-2026-126082, which the CVE Program rejected on November 12 as a duplicate of CVE-2026-122006. An unauthenticated upload can write files, and can read secrets when attachments use the Disk service. The same gems fix four more High issues that still have no CVE. Rails 7 and older get no fix. It is not in KEV.
 - **New this update:** Upgrade self-managed [Airbyte](#airbyte-connector-builder-runs-attacker-chosen-code) to **2.2.0 or later**. Airbyte rates the Connector Builder flaw 9.9 Critical, and no CVE is assigned. JPCERT/CC says exploitation is confirmed and scores it 8.8. Airbyte 1.x gets no fix. Airbyte Cloud needs no action. The 2.2 upgrade cannot be rolled back.
+- **New this update:** If a Python environment installed [`agent-framework` 1.26.1 or 1.26.2](#pypi-agent-framework-1261-and-1262-steal-credentials), pin **1.26.0**, delete the cached wheels, and rotate the credentials that environment could read. GitHub lists both as critical malware, with no CVE. A `.pth` file runs at every Python start. Both versions are gone from PyPI, and a cache can still install them. `agent-framework-core` is not this package.
+- **New this update:** Install the [NVIDIA Linux driver](#nvidia-linux-driver-a-gpu-container-reaches-root-on-the-host) **615.71.09 or later** and reboot. NVIDIA rates CVE-2026-47591 and CVE-2026-47501 CVSS 3.1 7.8: an unprivileged container with the GPU passed through can reach root on the host. Stealthium says 610.57.04 fixes only the first. Neither is in KEV.
+- **New this update:** Install [Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, or 27.0.1.1](#openjdk-java4shell---a-base64-string-corrupts-memory), or 8u513 for the Java 8 performance pack, and restart. Oracle rates CVE-2026-114938 CVSS 3.1 8.1. Calif rates the same flaw, Java4Shell, CVSS 4.0 9.2: a Base64 string corrupts memory in the hardware decoder, on x86-64 with AVX-512 VBMI. CISA published an alert and did not add it to KEV. A bundled JVM does not move with the system JDK.
+- **New this update:** Upgrade [Apache Roller](#apache-roller-an-atom-entry-reads-a-file-and-a-link-creates-an-administrator) to **6.1.7 or later** if it is not there already. Apache says CVE-2026-129448, CVSS 3.1 9.8, is being exploited. It is the same flaw as CVE-2026-82384 and covers 4.0.0 through 6.1.5. Turning XML-RPC off in the admin UI does not close it. It is not in KEV.
 - **New this update (CISA KEV):** Upgrade [Puppet](#puppet-report-deserialization-runs-code-on-the-server) Enterprise to **2023.8.13, 2025.12.1, or 2026.0.1**, and restart Puppet Server. Perforce rates [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731) 9.4 Critical: a signed agent certificate can run code on the server. CISA added it on November 17, due December 1. A second flaw, 9.0, lets a colliding certificate name impersonate another node, and that one is not in KEV. OpenVox published a proof of concept. The upgrade does not replace a CA key that was copied.
 - **New this update:** Upgrade `apt` on [Debian and Ubuntu](#debian-apt-a-resumed-download-can-install-a-different-package-as-root) before the rest of the system. Ubuntu rates [CVE-2026-109518](https://www.cve.org/CVERecord?id=CVE-2026-109518) 7.7 High: an on-path attacker can replace a package after verification, and the substitute installs as root. Debian 13 is fixed in `apt` **3.0.4**. Debian 12 is fixed in **2.6.2**. Ubuntu 26.10 is **3.3.3ubuntu0.1**, 26.04 is **3.2.1ubuntu0.1**, 24.04 is **2.8.4ubuntu0.1**, and 22.04 is **2.4.15ubuntu0.1**. Older Ubuntu releases are Ubuntu Pro. Debian forky is **3.3.6** fixed and sid is **3.3.7** fixed. An earlier read on November 9 had listed both at 3.3.6. The fix is still 3.3.6 or later. It is not in KEV.
 - **New this update:** Update [ASUS routers](#asus-routers-aicloud-root-command-from-the-lan) on the 3.0.0.4_386, 3.0.0.4_388, and 3.0.0.6_102 firmware to the current build for that model. ASUS rates [CVE-2026-84730](https://www.cve.org/CVERecord?id=CVE-2026-84730) 8.7 High: from the LAN, with no login, a crafted device name runs commands as root through AiCloud. A second flaw, 7.2, is a nearby denial of service. ASUS prints no firmware build number. Turn AiCloud off until the update is installed. Neither CVE is in KEV.
@@ -454,6 +461,72 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## PyPI: agent-framework 1.26.1 and 1.26.2 steal credentials
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/agent-framework.md):** [Detection](details/agent-framework.md#detection) · [Remediation](details/agent-framework.md#remediation) · [Verification](details/agent-framework.md#verification) · [Timeline](details/agent-framework.md#timeline)
+
+**CVEs:** No CVE is assigned.
+
+**GitHub lists [GHSA-764m-3ppc-5m73](https://github.com/advisories/GHSA-764m-3ppc-5m73) as critical malware and publishes no CVSS number.** Versions **1.26.1** and **1.26.2** of the Microsoft Agent Framework package `agent-framework` add a credential stealer that is not in **1.26.0**. 1.26.1 was uploaded on 2026-11-17 at 20:35 UTC and 1.26.2 at 21:08 UTC. Both have been removed from PyPI. A `.pth` file runs at every Python start, so the code runs without anyone importing the package. It reads environment variables, credential files, Azure managed-identity tokens, and, in 1.26.2, GitHub Actions OIDC tokens, and posts them to `webhook.site`. A pip cache or an internal mirror can still install either wheel. Upwind's report on the project's issue tracker says the upload was outside the release pipeline and that revocation of the upload credential is unconfirmed. `agent-framework-core` 1.26.0 is not the malicious package.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Malicious releases** | **2026-11-17 20:35:20 UTC** | 1.26.1. 1.26.2 followed at 21:08:39 UTC. Both removed from PyPI the same evening. |
+| **Last updated** | **2026-11-17 23:40 EST (UTC−05:00)** | New item. Pin 1.26.0 and rotate credentials. |
+
+**Patch:** Pin `agent-framework==1.26.0`, delete cached wheels of 1.26.1 and 1.26.2, and rebuild the environment. Do not upgrade to "latest" while the upload credential's revocation is unconfirmed. Rotating the credentials that environment could read is the rest of the fix. Reinstalling does not expire a token that already left.
+
+Sources: [GHSA-764m-3ppc-5m73](https://github.com/advisories/GHSA-764m-3ppc-5m73), [project issue](https://github.com/microsoft/agent-framework/issues/10411), [detailed guide](details/agent-framework.md).
+
+---
+
+## NVIDIA Linux driver: a GPU container reaches root on the host
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/nvidia-linux-driver.md):** [Detection](details/nvidia-linux-driver.md#detection) · [Remediation](details/nvidia-linux-driver.md#remediation) · [Verification](details/nvidia-linux-driver.md#verification) · [Timeline](details/nvidia-linux-driver.md#timeline)
+
+**CVEs:** [CVE-2026-47591](https://www.cve.org/CVERecord?id=CVE-2026-47591), [CVE-2026-47501](https://www.cve.org/CVERecord?id=CVE-2026-47501)
+
+**NVIDIA rates both CVSS 3.1 7.8 High. Stealthium rates CVE-2026-47591 CVSS 4.0 9.3.** NVIDIA is the CNA. The vector is `CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`. CVE-2026-47591 (NvRoot) lets an unprivileged user write memory the Linux driver marked read-only. CVE-2026-47501 (ForgePtr) is an out-of-bounds write during event buffer setup. Stealthium says an unprivileged container with the GPU passed through reaches root on the host, and that it confirmed ForgePtr on **610.57.04**, the build that fixes NvRoot. NVIDIA's CVE record lists 610.57.04 as the R610 fix for both. The build both sides name for both flaws is **615.71.09**. NVIDIA's September 30 bulletin also lists 595.91.07 and 580.178.04 on older branches. Stealthium says R590, R575, R570, and R565 and earlier have no NvRoot fix, and NVIDIA says an unlisted earlier branch should move to the latest. There is no workaround.
+
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18) for either CVE. Stealthium does not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **NVIDIA bulletin** | **2026-09-30; time unknown** | Both CVEs, both 7.8. The fixes had already shipped. |
+| Stealthium write-ups | 2026-11 (exact day not on the page) | News coverage says November 12. No proof of concept. |
+| **Last updated** | **2026-11-17 23:40 EST (UTC−05:00)** | New item. Install 615.71.09 or later and reboot. |
+
+**Patch:** Install NVIDIA Linux driver **615.71.09 or later** and reboot. A host left on 610.57.04 is inside Stealthium's account of ForgePtr even though NVIDIA lists that build as the R610 fix. Until the reboot, do not pass `/dev/nvidia*` to a tenant you do not trust. The reboot does not show whether a file was already rewritten.
+
+Sources: [NVIDIA bulletin](https://nvidia.custhelp.com/app/answers/detail/a_id/5861), [Stealthium, NvRoot](https://stealthium.io/blog/nvroot), [detailed guide](details/nvidia-linux-driver.md).
+
+---
+
+## OpenJDK: Java4Shell - a Base64 string corrupts memory
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/java4shell.md):** [Detection](details/java4shell.md#detection) · [Remediation](details/java4shell.md#remediation) · [Verification](details/java4shell.md#verification) · [Timeline](details/java4shell.md#timeline)
+
+Vulnerability Info Site: [calif.io](https://calif.io/java4shell/)
+
+**CVEs:** [CVE-2026-114938](https://www.cve.org/CVERecord?id=CVE-2026-114938). The same OpenJDK advisory lists four more at 7.0 or higher, [CVE-2026-114939](https://www.cve.org/CVERecord?id=CVE-2026-114939) and [CVE-2026-114940](https://www.cve.org/CVERecord?id=CVE-2026-114940) at 7.4 and [CVE-2026-114941](https://www.cve.org/CVERecord?id=CVE-2026-114941) and [CVE-2026-114942](https://www.cve.org/CVERecord?id=CVE-2026-114942) at 7.0, plus OpenJFX [CVE-2026-86144](https://www.cve.org/CVERecord?id=CVE-2026-86144) at 7.5.
+
+**Oracle and the OpenJDK Vulnerability Group rate [CVE-2026-114938](https://www.cve.org/CVERecord?id=CVE-2026-114938) CVSS 3.1 8.1 High. Calif rates it CVSS 4.0 9.2 Critical.** Oracle is the CNA. The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`. The flaw is in HotSpot's x86-64 Base64 decoder. Calif says a string of 64 `A` characters and one `=` writes past the output array, on OpenJDK **17.0.6 and newer** and only on a CPU with AVX-512 VBMI. ARM64 is not affected. Calif says that overwrite can leak heap memory and run code, and that it showed unauthenticated code execution in Keycloak, Jira, Confluence, Artifactory, Jenkins, and PingFederate. It is withholding those exploits. CISA's alert calls the flaw critical and says crafted Base64 could crash the JVM and allow unauthenticated remote code execution. The OpenJDK matrix marks 17, 21, 25, and 27. Oracle also lists the Java 8 Enterprise Performance Pack, **8u511b33-perf**, and GraalVM. Standard Java 8 and Java 11 are outside this CVE and inside the two 7.4 flaws. Oracle's download page lists **17.0.21.1, 21.0.13.1, 25.0.5.1, 27.0.1.1, and 8u513**.
+
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). CISA published an alert on November 17 and did not add the CVE. Calif and CISA do not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and Oracle fix** | **2026-11-17; time unknown** | Oracle's November CSPU, Rev 1, and the OpenJDK advisory. The advisory's last update is 17:44 UTC. |
+| **Last updated** | **2026-11-17 23:40 EST (UTC−05:00)** | New item. Install the November 17 Java build. |
+
+**Patch:** Install **Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, or 27.0.1.1**, or **8u513** for the performance pack, and restart every process that loaded the old runtime. Rebuild an image that bundles Java. For Corretto, Temurin, Microsoft, Zulu, Liberica, SapMachine, and Red Hat OpenJDK, install that vendor's November 17 build; this run did not find those numbers. Until then, Calif says start the JVM with `-XX:-UseBASE64Intrinsics`. `-XX:UseAVX=2` is x86-64 only and stops OpenJDK from starting on ARM. The restart does not show whether a request already ran code.
+
+Sources: [OpenJDK advisory](https://openjdk.org/groups/vulnerability/advisories/2026-11-17), [Oracle CSPU](https://www.oracle.com/security-alerts/cspunov2026.html), [Calif](https://calif.io/java4shell/), [CISA alert](https://www.cisa.gov/news-events/alerts/2026/11/17/critical-java-vulnerability-requires-immediate-patching), [detailed guide](details/java4shell.md).
 
 ---
 
@@ -712,9 +785,9 @@ Sources: [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071), [c
 |---|---|---|
 | Fix committed | 2026-10-20 19:16:39 UTC | Commit `641db34`. No release. |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | VulnCheck published the CVE record. |
-| **Last updated** | **2026-11-16 23:10 EST (UTC−05:00)** | The fix is not on the default branch. |
+| **Last updated** | **2026-11-18 00:20 EST (UTC−05:00)** | The record also cites `7023a4a`. `main` is still behind. |
 
-**Patch:** Deploy a tree that contains `641db34f6456c15f381358e2e631df66ea170842` and restart it. Pulling the default branch does not do that. Revoke tokens you cannot account for. The Ghost publishing platform is a different product.
+**Patch:** Deploy a tree that contains `7023a4a9275e9f359116337fee40651d0165bc34` and restart it. That commit includes `641db34`. Pulling the default branch does not do that: on November 18 `main` was still `672dfec`. Revoke tokens you cannot account for. The Ghost publishing platform is a different product.
 
 Sources: [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070), [commit 641db34](https://github.com/muneeb141/ghost/commit/641db34f6456c15f381358e2e631df66ea170842), [detailed guide](details/frappe-ghost.md).
 
@@ -1108,7 +1181,7 @@ Sources: [Patchstack](https://patchstack.com/database/wordpress/plugin/estatik/v
 
 Apache, the CNA, rates the Axis flaw critical in text and publishes no number. Axis 1 is end of life, and Apache says it will not ship a fixed 1.x release. CISA's enrichment of the record scores it CVSS 3.1 9.8. NVD has not scored it. CISA's SSVC record from November 10 says exploitation is none. The same Axis flaw is the first step of the [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet) chain. This is not the [October Confluence file read](#atlassian-data-center-unauthenticated-web-root-file-read).
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Rapid7 says that on November 13 it detected exploitation against Confluence Data Center in a customer environment. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). Rapid7 says that on November 13 it detected exploitation against Confluence Data Center in a customer environment. Its November 17 update adds `trycloudflare.com`, a pinggy.net host, and `webhook.site` to the four addresses. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1116,7 +1189,8 @@ Apache, the CNA, rates the Axis flaw critical in text and publishes no number. A
 | CVE record published | 2026-11-06 15:37:55 UTC | Apache CNA. The CISA-ADP 9.8 score was added 2026-11-10. |
 | **Public announcement** | **2026-11-09 22:00 PST (UTC−08:00)** | Atlassian advisory. Confluence Data Center, fixed in 9.2.28. |
 | Rapid7 detection | 2026-11-13; time/TZ unknown | One customer environment. Published 2026-11-16. |
-| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | Rapid7 reports exploitation. The fix is unchanged. |
+| Rapid7 indicator update | 2026-11-17; time/TZ unknown | Adds three hosts to the four addresses. |
+| **Last updated** | **2026-11-18 00:20 EST (UTC−05:00)** | The new indicators. The fix is unchanged. |
 
 **Patch:** Upgrade Confluence Data Center to **9.2.28 or later**, or to **10.0 or later**, and restart every node. Until then, clear **Remote API (XML-RPC & SOAP)** under Further Configuration and save. Atlassian says that takes effect without a restart, and that anything using XML-RPC or SOAP stops. Confluence Cloud needs nothing for this advisory. The upgrade does not remove an account or an add-on that was already created.
 
@@ -1404,19 +1478,20 @@ Sources: [Werk 22624](https://checkmk.com/werk/22624), [CVE-2026-120495](https:/
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-roller.md):** [Detection](details/apache-roller.md#detection) · [Remediation](details/apache-roller.md#remediation) · [Verification](details/apache-roller.md#verification) · [Timeline](details/apache-roller.md#timeline)
 
-**CVEs:** [CVE-2026-105153](https://www.cve.org/CVERecord?id=CVE-2026-105153), [CVE-2026-118411](https://www.cve.org/CVERecord?id=CVE-2026-118411). The same release fixes thirteen more. Apache rates three of the fifteen Important and the rest Moderate or Low, and the two above are the ones at 7.0 or higher.
+**CVEs:** [CVE-2026-105153](https://www.cve.org/CVERecord?id=CVE-2026-105153), [CVE-2026-118411](https://www.cve.org/CVERecord?id=CVE-2026-118411), [CVE-2026-129448](https://www.cve.org/CVERecord?id=CVE-2026-129448), [CVE-2026-82384](https://www.cve.org/CVERecord?id=CVE-2026-82384). The November 11 release fixes thirteen more. Apache rates three of those fifteen Important and the rest Moderate or Low.
 
-**Apache rates CVE-2026-105153 CVSS 3.1 7.7 High and CVE-2026-118411 CVSS 3.1 8.8 High.** Both advisories say Important. The 7.7 flaw is in 4.0 through 6.1.6: an account with no weblog permissions submits an Atom entry, the parser follows an external entity, and the server reads a file or makes a request. The parse happens before the feature check, so AtomPub does not have to be turned on. The 8.8 flaw is in 5.0.1 through 6.1.6: the token check covered POST only, and a logged-in administrator who opens a link runs an administrative action, including creating an administrator. [CVE-2026-123374](https://www.cve.org/CVERecord?id=CVE-2026-123374), deserialization of a weblog-update ping response, is the third one Apache rates Important, and that advisory gives no number.
+**Apache rates [CVE-2026-129448](https://www.cve.org/CVERecord?id=CVE-2026-129448) CVSS 3.1 9.8 Critical, CVE-2026-105153 CVSS 3.1 7.7 High, and CVE-2026-118411 CVSS 3.1 8.8 High.** The 9.8 advisory, dated November 17, says it is the same flaw as CVE-2026-82384 and that it is being actively exploited. The XML-RPC endpoint deserializes a request before checking who sent it. CVE-2026-82384 listed only 6.1.5. CVE-2026-129448 covers 4.0.0 through 6.1.4, so every release through 6.1.5 is inside it. 6.1.6 is the floor Apache names, and 6.1.7 is the release that also fixes the November 11 flaws. Turning XML-RPC off in the administration UI does not close it. The 7.7 flaw is in 4.0 through 6.1.6: an account with no weblog permissions submits an Atom entry, the parser follows an external entity, and the server reads a file or makes a request. The 8.8 flaw is in 5.0.1 through 6.1.6: the token check covered POST only, and a logged-in administrator who opens a link runs an administrative action, including creating an administrator. [CVE-2026-123374](https://www.cve.org/CVERecord?id=CVE-2026-123374), deserialization of a weblog-update ping response, is the third one Apache rates Important, and that advisory gives no number.
 
-**CISA KEV:** Not listed (catalog 2026.11.10, checked 2026-11-12) for either CVE. The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18) for any of the four. Apache says the deserialization flaw is being actively exploited. That statement is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Project post | 2026-11-10; time unknown | Dave Johnson. The advisories came the next day. |
-| **Public announcement and fix** | **2026-11-11 03:14 UTC** | The CVE-2026-105153 advisory. 6.1.7 is the fix. |
-| **Last updated** | **2026-11-12 07:55 EST (UTC−05:00)** | New item. |
+| **Public announcement and fix** | **2026-11-11 03:14 UTC** | The CVE-2026-105153 advisory. 6.1.7 is the fix for that batch. |
+| **CVE-2026-129448** | **2026-11-17 11:02:58 UTC** | Apache says the same flaw as CVE-2026-82384 covers 4.0.0 through 6.1.4 and is being actively exploited. |
+| **Last updated** | **2026-11-17 23:40 EST (UTC−05:00)** | Exploitation statement. The upgrade stays 6.1.7. |
 
-**Patch:** Upgrade to **6.1.7 or later**. Read the release notes first: Planet is off by default after the upgrade, and the entry editor applies the Limited role to each entry. Rebuild the search index so it no longer holds commenter email addresses. The upgrade does not show whether an entry already read a file.
+**Patch:** Upgrade to **6.1.7 or later**. 6.1.6 fixes the deserialization flaw and leaves the November 11 flaws. Until the upgrade, set `enabledForExtensions` to `false` in `WEB-INF/web.xml`, or remove the `/roller-services/xmlrpc` mapping, and restart. That does not close the Atom flaw. Read the release notes first: Planet is off by default after the upgrade, and the entry editor applies the Limited role to each entry. Rebuild the search index so it no longer holds commenter email addresses. The upgrade does not show whether a request already ran code.
 
 Sources: [CVE-2026-105153 advisory](https://lists.apache.org/thread/w7dsz19261myrcwx8ssbwr67hc1wfosj), [project post](https://rollerweblogger.org/project/entry/apache-roller-6-1-7), [detailed guide](details/apache-roller.md).
 
@@ -6987,11 +7062,14 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Python `agent-framework` 1.26.1 or 1.26.2** | Pin 1.26.0, delete cached wheels, and rebuild. GitHub lists both as critical malware: a `.pth` file steals cloud and CI credentials at every Python start. Rotate credentials that environment could read. `agent-framework-core` is not this package. [Guide](details/agent-framework.md#remediation). |
+| **NVIDIA Linux GPU driver before 615.71.09** | Install 615.71.09 or later and reboot. NVIDIA rates two flaws 7.8: an unprivileged GPU container can reach root on the host. 610.57.04 fixes only the first, on Stealthium's account. Do not pass `/dev/nvidia*` to an untrusted tenant until the reboot. [Guide](details/nvidia-linux-driver.md#remediation). |
+| **Java 17, 21, 25, or 27, or the Java 8 performance pack, on x86-64** | Install Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, 27.0.1.1, or 8u513, and restart. Oracle rates CVE-2026-114938 8.1; Calif rates it 9.2 and calls it Java4Shell. A CPU without AVX-512 VBMI, and ARM64, are outside this one flaw. A bundled JVM does not move with the system JDK. [Guide](details/java4shell.md#remediation). |
 | **Dell PowerStore, PowerStoreT OS 5.1.x before 5.1.0.0-2798105** | Upgrade to 5.1.0.0-2798105 or later. Dell rates seven flaws 9.8, including a TFTP overflow that needs no login. Until then, keep TFTP, NFS, and management off untrusted networks. [Guide](details/dell-powerstore.md#remediation). |
 | **Deno before 2.7.14 on macOS** | Update to 2.7.14 or later. Deno rates CVE-2026-49401 7.3: a `--deny-*` rule misses a file whose name is spelled another way. Linux and Windows are outside it. [Guide](details/macos-unicode-paths.md#remediation). |
 | **Cloud Commander (`cloudcmd`) before 19.21.4** | Upgrade to 19.21.4 or later and restart. VulnCheck rates CVE-2026-130072 9.1: `PUT /rename` moves any file the process can reach, with no login. `--auth` does not stop it. [Guide](details/cloudcmd.md#remediation). |
 | **Go1 CMS (`go1cms`) without commit `ead8da3`** | Deploy that commit and restart. VulnCheck rates CVE-2026-130071 9.8: a guest request rewrites any record. There is no release. [Guide](details/go1cms.md#remediation). |
-| **Frappe Ghost (muneeb141) without commit `641db34`** | Deploy that commit and restart. The default branch does not contain it; `develop` and `fix/auth-boundaries` do. VulnCheck rates CVE-2026-130070 9.3: a guest session receives tokens for any account. This is not the Ghost publishing platform. There is no release. [Guide](details/frappe-ghost.md#remediation). |
+| **Frappe Ghost (muneeb141) without commit `7023a4a`** | Deploy that commit and restart. It includes `641db34`. The default branch does not contain it; `develop` and `fix/auth-boundaries` do. VulnCheck rates CVE-2026-130070 9.3: a guest session receives tokens for any account. This is not the Ghost publishing platform. There is no release. [Guide](details/frappe-ghost.md#remediation). |
 | **Wiki.js before 2.5.315** | Upgrade to 2.5.315 or later and restart. GitHub rates CVE-2026-120698 8.8: a user manager takes the administrator account. CVE-2026-120697 is 8.7: a page stores script. Reset the administrator password. [Guide](details/wiki-js.md#remediation). |
 | **VoAPI, any public release** | Take it off the public internet. VulnCheck rates CVE-2026-129540 8.8: a logged-in user reads the JWT signing secret and forges a manager token. v1.2.0 is the newest release and is affected. The project says it is unmaintained. Rotate the signing secret. [Guide](details/voapi.md#remediation). |
 | **CloudPaste through 1.9.1** | Keep `/api/proxy/link` off the public internet and rotate the WebDAV password. VulnCheck rates CVE-2026-129494 8.7: a share slug returns the WebDAV username and password. v1.9.1 is the newest release and is affected. [Guide](details/cloudpaste.md#remediation). |
@@ -7021,7 +7099,7 @@ flowchart TD
 | **Self-managed Red Hat Quay** | Upgrade to 3.18.3, 3.17.7, 3.16.7, 3.15.9, 3.14.10, 3.12.24, 3.10.28, or 3.9.28 on the line you run. Red Hat's CVE-2026-123710 data now lists an erratum for each of those lines. Also block `/keys` from anything outside the registry's own components. Quay.io is already fixed for the robot-token flaw. Quay 5 has no named fix. [Guide](details/red-hat-quay.md#remediation). |
 | **PTC Windchill or FlexPLM, not hosted by PTC** | Install the CVE-2026-126325 patch from support article CS483249. PTC-hosted systems are already patched. The article needs a PTC login and is the only place that names the fixed build. [Guide](details/windchill.md#remediation). |
 | **Checkmk 2.4 or 2.5** | Upgrade to 2.4.0p40 or 2.5.0p19 or later. A monitored host that can write its own agent output can otherwise place a file the server runs. 2.3.0 is end of life and has no fix. [Guide](details/checkmk.md#remediation). |
-| **Apache Roller through 6.1.6** | Upgrade to 6.1.7 or later. Any account can otherwise submit an Atom entry that reads a file, and a link an administrator opens can create an administrator. Rebuild the search index after the upgrade. [Guide](details/apache-roller.md#remediation). |
+| **Apache Roller through 6.1.6** | Upgrade to 6.1.7 or later. Apache says the XML-RPC deserialization flaw, CVE-2026-129448, is being exploited on 4.0.0 through 6.1.5, and turning XML-RPC off in the admin UI does not close it. Any account can also submit an Atom entry that reads a file. Rebuild the search index after the upgrade. [Guide](details/apache-roller.md#remediation). |
 | **Zoom Workplace for Windows** | Update to 7.1.8 or later and relaunch. Zoom rates CVE-2026-108186 9.6: a network request can raise privileges, and the person at the computer has to act. 7.1.5 fixes only the 8.1 flaw. Zoom lists no workaround. [Guide](details/zoom-workplace.md#remediation). |
 | **Synology DSM 7.2.1, 7.2.2, 7.3, or 7.4** | Upgrade to 7.4.1-90080-1, 7.3.2-86009-5, 7.2.2-72806-10, or 7.2.1-69057-13 or later, and reboot. A login request can otherwise read or write any file, and rsync has a second flaw that skips the login. The September build is not this fix. Synology lists no workaround. [Guide](details/synology-dsm-nov11.md#remediation). |
 | **FortiClient Windows, FortiClient Mac 7.4, or FortiClient Windows PAM** | Upgrade to 7.4.8 or later, or to 7.2.15 or later on the 7.2 Windows line. A web page can otherwise run code through the agent's local API. The 8.0 builds and FortiClient Mac 7.2 are not affected. There is no virtual patch. [Guide](details/forticlient-nov11.md#remediation). |

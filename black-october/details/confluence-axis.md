@@ -1,6 +1,6 @@
 # Confluence Data Center: a SOAP fault runs code
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-18 (America/New_York)
 
 [Main Confluence summary](../black-october-2026.md#confluence-data-center-a-soap-fault-runs-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,7 @@ Atlassian rates the same flaw **CVSS 4.0 9.3 Critical** for Confluence (`CVSS:4.
 
 This is not the [October file-read](atlassian-dc.md), CVE-2026-21589. The N-central chain that starts from the same Axis flaw is tracked with [N-central](n-central.md).
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Rapid7 says that on November 13 its MDR service detected exploitation of this flaw against Confluence Data Center in a customer environment, from 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. Rapid7 says not seeing those addresses does not clear an environment. CISA's SSVC record, dated 2026-11-10, says exploitation is none, and that record predates Rapid7's detection. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). Rapid7 says that on November 13 its MDR service detected exploitation of this flaw against Confluence Data Center in a customer environment, from 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. Its November 17 update also names `*.trycloudflare.com`, `wpefh-192-238-253-176.free.pinggy.net`, and `webhook.site`. Rapid7 says not seeing those does not clear an environment. CISA's SSVC record, dated 2026-11-10, says exploitation is none, and that record predates Rapid7's detection. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -31,7 +31,8 @@ This is not the [October file-read](atlassian-dc.md), CVE-2026-21589. The N-cent
 | CVE record published | 2026-11-06 15:37:55 UTC | Apache CNA. Updated 2026-11-10 18:37:36 UTC, which is the CISA-ADP score and SSVC, not a new description. [CVE][cve] |
 | Atlassian advisory | 2026-11-09 22:00 PST (UTC−08:00) | Confluence Data Center only. Fixed version 9.2.28. Page last modified 2026-11-10. [Advisory][adv] |
 | Rapid7 detection | 2026-11-13; time/TZ unknown | Exploitation against Confluence Data Center in one customer environment. Published 2026-11-16. [Rapid7][r7] |
-| **Last updated** | **2026-11-16 (America/New_York)** | Rapid7 reports exploitation. The fix is unchanged. |
+| Rapid7 indicator update | 2026-11-17; time/TZ unknown | Adds `*.trycloudflare.com`, a pinggy.net host, and `webhook.site` to the four addresses. [Rapid7][r7] |
+| **Last updated** | **2026-11-18 (America/New_York)** | The new indicators. The fix is unchanged. |
 
 ## Detection
 
@@ -56,7 +57,7 @@ This is not the [October file-read](atlassian-dc.md), CVE-2026-21589. The N-cent
 
 ## Compromise response
 
-Atlassian publishes no indicator for this flaw and says to have the local security team check affected instances. Rapid7 names four source addresses from the November 13 detection: 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. A hit in the access log is a reason to investigate. No hit is not a clean result. If the Remote API was on and reachable while the build was below 9.2.28, review administrator accounts, add-ons, and scheduled jobs for changes nobody made, and rotate credentials stored in Confluence. The upgrade does not remove an add-on or an account that was already created. The N-central miner paths in the [N-central guide](n-central.md#detection) are for that product, not for Confluence.
+Atlassian publishes no indicator for this flaw and says to have the local security team check affected instances. Rapid7 names four source addresses from the November 13 detection: 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. Its November 17 update adds three more: any host under `trycloudflare.com`, `wpefh-192-238-253-176.free.pinggy.net`, and `webhook.site`. A hit in the access log is a reason to investigate. No hit is not a clean result. If the Remote API was on and reachable while the build was below 9.2.28, review administrator accounts, add-ons, and scheduled jobs for changes nobody made, and rotate credentials stored in Confluence. The upgrade does not remove an add-on or an account that was already created. The N-central miner paths in the [N-central guide](n-central.md#detection) are for that product, not for Confluence.
 
 ## Sources
 
