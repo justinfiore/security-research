@@ -497,9 +497,9 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-18 15:00 UTC** | K000164058. Twenty-two articles, six of them these. |
-| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | New item. Install the hotfix for the configuration you run. |
+| **Last updated** | **2026-11-18 19:40 EST (UTC−05:00)** | F5's CNA added BIG-IP Next CNF to three of the six. The K articles still say CNF is not vulnerable. |
 
-**Patch:** Install the engineering hotfix the article for that CVE names, and restart the traffic process. A system already on a custom hotfix needs a new build from F5 support. There is no mitigation. The hotfix does not show whether a request already ran code.
+**Patch:** Install the engineering hotfix the article for that CVE names, and restart the traffic process. A system already on a custom hotfix needs a new build from F5 support. There is no mitigation. The hotfix does not show whether a request already ran code. F5's CNA records, updated 2026-11-18 at 22:56 UTC, add BIG-IP Next CNF at 2.4.0, 2.3.0, and 2.2.0 to CVE-2026-120285, CVE-2026-120722, and CVE-2026-121805, fixed in the same BNK engineering hotfixes. The K articles still say CNF is not vulnerable. Treat Next CNF as affected.
 
 Sources: [K000164058](https://my.f5.com/manage/s/article/K000164058), [CVE-2026-123637](https://www.cve.org/CVERecord?id=CVE-2026-123637), [detailed guide](details/f5-bigip-nov18.md).
 
@@ -3585,16 +3585,16 @@ Sources: [GHSA-h3vp-4jfr-v364](https://github.com/fastify/fastify-http-proxy/sec
 
 **Grafana (CNA) rates the flaw CVSS 3.1 7.7 High. NVD has not scored it.** Mimir's Alertmanager blocks tenant receiver configuration that names local files, except two HTTP client settings: `http_headers.<name>.files` and `basic_auth.username_file`. A tenant who can upload that configuration can point either at a file the process can read. The file's contents go into a header when a notification is sent. Grafana Enterprise Metrics is affected. GEM 2.11 through 2.16 will not be fixed. Grafana's own advisory page returned "can't find this page" when checked. These claims are from the CNA record and the release notes.
 
-**CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). The record does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-18). The record does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Mimir 3.1.7 | 2026-10-06 20:59 UTC | Release notes name CVE-2026-81938. |
 | Mimir 3.2.2 | 2026-10-07 17:35 UTC | Same fix on the 3.2 line. |
 | CVE record | 2026-11-02 18:23 UTC | Grafana CNA. The record's public date is 2026-09-27. |
-| **Last updated** | **2026-11-02 23:10 EST (UTC−05:00)** | New item. GEM 2.11–2.16 have no fix. |
+| **Last updated** | **2026-11-18 19:40 EST (UTC−05:00)** | Mimir 2.17.12, from November 13, also fixes this. The CNA record does not list that line. |
 
-**Patch:** Upgrade Mimir to **3.1.7 or later** on the 3.1 line, or **3.2.2 or later** on the 3.2 line. Upgrade GEM to **2.17.20 or later**.
+**Patch:** Upgrade Mimir to **3.1.7 or later** on the 3.1 line, **3.2.2 or later** on the 3.2 line, or **2.17.12 or later** on the 2.17 line. The CNA record does not list 2.17. Mimir 2.17.12, published November 13, says it resolves this CVE. Upgrade GEM to **2.17.20 or later**.
 
 Sources: [CVE-2026-81938](https://www.cve.org/CVERecord?id=CVE-2026-81938), [Mimir 3.2.2](https://github.com/grafana/mimir/releases/tag/mimir-3.2.2), [Mimir 3.1.7](https://github.com/grafana/mimir/releases/tag/mimir-3.1.7), [detailed guide](details/grafana-mimir.md).
 
@@ -5736,11 +5736,11 @@ Sources: [SA-CORE-2026-014](https://www.drupal.org/sa-core-2026-014), [SA-CONTRI
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/nginx.md):** [Detection](details/nginx.md#detection) · [Remediation](details/nginx.md#remediation) · [Verification](details/nginx.md#verification) · [Timeline](details/nginx.md#timeline)
 
-**CVEs:** [CVE-2026-15176](https://www.cve.org/CVERecord?id=CVE-2026-15176), [CVE-2026-93479](https://www.cve.org/CVERecord?id=CVE-2026-93479), [CVE-2026-97205](https://www.cve.org/CVERecord?id=CVE-2026-97205), [CVE-2026-97629](https://www.cve.org/CVERecord?id=CVE-2026-97629)
+**CVEs:** [CVE-2026-123007](https://www.cve.org/CVERecord?id=CVE-2026-123007), [CVE-2026-123633](https://www.cve.org/CVERecord?id=CVE-2026-123633), [CVE-2026-123634](https://www.cve.org/CVERecord?id=CVE-2026-123634), [CVE-2026-121810](https://www.cve.org/CVERecord?id=CVE-2026-121810), [CVE-2026-113425](https://www.cve.org/CVERecord?id=CVE-2026-113425), [CVE-2026-118899](https://www.cve.org/CVERecord?id=CVE-2026-118899), [CVE-2026-15176](https://www.cve.org/CVERecord?id=CVE-2026-15176), [CVE-2026-93479](https://www.cve.org/CVERecord?id=CVE-2026-93479), [CVE-2026-97205](https://www.cve.org/CVERecord?id=CVE-2026-97205), [CVE-2026-97629](https://www.cve.org/CVERecord?id=CVE-2026-97629)
 
-**[CVE-2026-15176](https://www.cve.org/CVERecord?id=CVE-2026-15176), [CVE-2026-93479](https://www.cve.org/CVERecord?id=CVE-2026-93479), [CVE-2026-97205](https://www.cve.org/CVERecord?id=CVE-2026-97205): F5 (CNA) CVSS 4.0 9.2 Critical, CVSS 3.1 8.1 High. [CVE-2026-97629](https://www.cve.org/CVERecord?id=CVE-2026-97629): F5 CVSS 4.0 8.3 High, CVSS 3.1 6.5 Medium. nginx.org rates all four "medium".**
+**F5 rates five November 18 flaws CVSS 3.1 8.1 High and CVSS 4.0 9.2 Critical, and the TLS 1.3 worker loop CVSS 3.1 7.5 High and CVSS 4.0 8.7 High.** nginx.org rates [CVE-2026-123007](https://www.cve.org/CVERecord?id=CVE-2026-123007), [CVE-2026-113425](https://www.cve.org/CVERecord?id=CVE-2026-113425), and [CVE-2026-118899](https://www.cve.org/CVERecord?id=CVE-2026-118899) major, and the other three medium. The October memory bugs stay at F5's 9.2 and 8.1. [CVE-2026-97629](https://www.cve.org/CVERecord?id=CVE-2026-97629) stays at 8.3 and 6.5, and nginx.org rates it medium.
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-18). Rapid7 published a proof of concept for CVE-2026-123007. The sources reviewed report no exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -5749,8 +5749,8 @@ Sources: [SA-CORE-2026-014](https://www.drupal.org/sa-core-2026-014), [SA-CONTRI
 | nginx 1.30.6 and 1.31.7, NGINX Plus fixes, F5 K articles | 2026-10-14; time/TZ unknown | Plus 37.0.5.1 and 37.1.0.1. |
 | Debian DSA-6575-1 | 2026-10-21 15:28 UTC | trixie 1.26.3-3+deb13u10. |
 | Ubuntu USN-8955-1 | 2026-10-26; time/TZ unknown | Fixed nginx packages for 22.04, 24.04, 26.04 and 26.10. |
-| nginx 1.30.7 and 1.31.9 | 2026-11-18; time unknown | CVE-2026-123007. F5 8.1 and 9.2. No distribution package yet. |
-| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | 1.30.7 and 1.31.9 fix the HTTP/2 flow-control flaw. |
+| nginx 1.30.7 and 1.31.9 | 2026-11-18; time unknown | Ten flaws. Five are 8.1 and 9.2. The TLS 1.3 loop is 7.5 and 8.7. No distribution package yet. |
+| **Last updated** | **2026-11-18 19:40 EST (UTC−05:00)** | The same release fixes five more High or Critical flaws, not only the flow-control one. |
 
 Each flaw needs a specific configuration:
 
@@ -5772,9 +5772,20 @@ Each flaw needs a specific configuration:
 
 Then check the running configuration with `nginx -T`, piped to `grep` because the dump can contain secrets. Distribution backports change the picture: Debian found CVE-2026-93479 in its 1.26.3 package. F5 products such as Ingress Controller, Gateway Fabric, Instance Manager and F5 WAF for NGINX are also affected.
 
-**Patch:** Upgrade to **1.30.7** or **1.31.9** and restart. F5 rates [CVE-2026-123007](https://www.cve.org/CVERecord?id=CVE-2026-123007) CVSS 3.1 8.1 and CVSS 4.0 9.2: HTTP/2 flow control can overflow a heap buffer, on 1.9.5 through 1.31.8. 1.30.6 and 1.31.7 leave it in place. NGINX Plus is **37.3.0.1 or 37.0.8.1**; R34 through R36 have no fix. No distribution package names this CVE yet. The October flaws stay fixed at 1.30.6 and 1.31.7, and their configuration mitigations do not cover this one.
+**Patch:** Upgrade to **1.30.7** or **1.31.9** and restart. 1.30.6 and 1.31.7 leave the November 18 flaws in place. NGINX Plus is **37.3.0.1 or 37.0.8.1**; R34 through R36 have no fix. CVE-2026-123633 is fixed one Plus build earlier, in 37.2.0.1 and 37.0.7.1. Debian still lists bookworm, trixie, forky, and sid as vulnerable to CVE-2026-123007, with no fixed package. Turning HTTP/2 off blocks only CVE-2026-123007 and CVE-2026-123633. The mail proxy, the resolver, HTTP/3, and the TLS 1.3 loop stay open. The October flaws stay fixed at 1.30.6 and 1.31.7.
 
-Sources: [nginx.org advisories](https://nginx.org/en/security_advisories.html), [F5 K000162416](https://my.f5.com/manage/s/article/K000162416), [K000162607](https://my.f5.com/manage/s/article/K000162607), [K000162608](https://my.f5.com/manage/s/article/K000162608), [K000162606](https://my.f5.com/manage/s/article/K000162606), [Debian DSA-6575-1](https://lists.debian.org/debian-security-announce/2026/msg00490.html).
+The November 18 flaws, each one independent:
+
+- **CVE-2026-123007:** HTTP/2 flow control overflows a heap buffer, on 1.9.5 through 1.31.8. Rapid7 published a proof of concept. F5 says code execution needs ASLR off or bypassed.
+- **CVE-2026-123633:** HTTP/2 plus a proxy, when the worker is low on `worker_connections`, on 1.19.7 through 1.31.8.
+- **CVE-2026-123634:** `proxy_pass` with a variable, and an SSI or `mirror` subrequest that resolves the same name, on 0.6.18 through 1.31.8.
+- **CVE-2026-121810:** HTTP/3, on 1.25.0 through 1.31.8. F5 says exploitation also depends on conditions beyond the attacker's control.
+- **CVE-2026-113425:** a mail proxy, on 0.5.33 through 1.31.8. Restrict the listener to trusted networks until the upgrade.
+- **CVE-2026-118899:** `listen … ssl` with TLS 1.3 loops the worker while it reads a request body, on 1.13.0 through 1.31.8. Denial of service only. F5 lists no mitigation.
+
+Four more flaws in the same release are below 7.0. Xint says it chained CVE-2026-123007 with an unfixed Linux SCTP flaw to reach root from a container, and it is withholding that chain. That flaw has no CVE, so it is not tracked here.
+
+Sources: [nginx.org advisories](https://nginx.org/en/security_advisories.html), [F5 K000164058](https://my.f5.com/manage/s/article/K000164058), [K000163926](https://my.f5.com/manage/s/article/K000163926), [detailed guide](details/nginx.md).
 
 <a name="curl-and-libcurl-use-after-free-when-a-server-resets-an-upload-cve-2026-92392"></a>
 
@@ -7447,7 +7458,7 @@ flowchart TD
 | **Laravel apps using a `token` driver guard** | Update `laravel/framework` to 12.68.0+ or 13.29.0+ (move off 11.x and older), reload PHP-FPM, Octane and queue workers, and rotate `api_token` values if abuse is suspected. [Guide](details/laravel.md#remediation). |
 | **Next.js (self-hosted or Vercel)** | Upgrade `next` to 16.4.5 (16.x) or 15.5.29 (15.x), confirm the resolved `sharp` is 0.35.5+, rebuild and redeploy every artifact. 16.4.1 and 15.5.28 fix the October RCE only. Lines before 15.5 have no listed fix. [Guide](details/nextjs.md#remediation). |
 | **Drupal** | Update core to 11.4.10, 11.3.19 or 10.6.19 (or later) and Entity List to 3.0.10; until then uninstall `field_ui`; EOL branches get no fix. [Guide](details/drupal.md#remediation). |
-| **NGINX Open Source / NGINX Plus / F5 NGINX products** | Upgrade to 1.30.6 or 1.31.7+ (Plus 37.0.5.1 or 37.1.0.1; distro packages per vendor tracker) and restart; check `nginx -T` for alias+rewrite+$request_filename, regex map captures, aio+SSI and shared session cache without ticket keys. [Guide](details/nginx.md#remediation). |
+| **NGINX Open Source / NGINX Plus / F5 NGINX products** | Upgrade to 1.30.7 or 1.31.9 (Plus 37.3.0.1 or 37.0.8.1) and restart. 1.30.6 and 1.31.7 leave the November 18 flaws in place. Turning HTTP/2 off does not cover the mail proxy, the resolver, HTTP/3, or the TLS 1.3 loop. [Guide](details/nginx.md#remediation). |
 | **curl / libcurl (system, containers, bundled copies)** | Upgrade to curl 8.23.0 or a vendor-fixed package (e.g. Debian 8.14.1-2+deb13u7), rebuild images and binaries that bundle libcurl, restart; stopgap: force HTTP/1.1 for uploads. [Guide](details/curl.md#remediation). |
 | **Amazon Linux and other Linux hosts accepting untrusted IPv4 TCP** | Install the kernel package that names CVE-2026-98432 and reboot. Amazon Linux 2 core is `kernel-4.14.355-287.758.amzn2`; Amazon Linux 2023 is `kernel-6.1.189-236.400.amzn2023` or `kernel6.12-6.12.113-138.209.amzn2023`, depending on the booted kernel. Debian already has fixed packages. Red Hat's November 1 kernels are RHEL 8 `kernel-4.18.0-553.182.1.el8_10`, RHEL 9 `kernel-5.14.0-687.64.1.el9_8`, and RHEL 10 `kernel-6.12.0-211.72.1.el10_2`. NVIDIA on RHEL 10 ARM uses `kernel-6.12.0-265.31.el10nv` instead. Ubuntu 26.10 generic `linux` is fixed in `7.3.0-10.10`. 26.04, 24.04, and 22.04 are still work in progress and do not install on a normal upgrade. On ElastiCache apply `elasticache-20261106-arm` or `elasticache-20261106-intel`. On MemoryDB apply `memorydb-20261106-arm` where it is offered. [Guide](details/linux-tcp-options.md#remediation). |
 | **Linux VM and sandbox hosts** | Boot a kernel with the CVE-2026-99999 fix (5.10.272, 5.15.223, 6.1.190, 6.6.159, 6.12.113, 6.18.57, 7.2.11, 7.3 or a vendor backport such as RHEL 9 `5.14.0-687.59.1.el9_8`, RHEL 8 `4.18.0-553.178.1.el8_10`, RHEL 10 `6.12.0-211.67.1.el10_2`) plus the CVE-2026-74580 vhost fix; remove world access to /dev/vhost-*. [Guide](details/pwnescape.md#remediation). |

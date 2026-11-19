@@ -4,7 +4,18 @@
 
 [Main NGINX summary](../black-october-2026.md#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**NGINX Open Source 1.30.7 and 1.31.9, released 2026-11-18, fix a new HTTP/2 flow-control flaw on top of the October set.** F5 rates [CVE-2026-123007](https://www.cve.org/CVERecord?id=CVE-2026-123007) **CVSS 3.1 8.1 High and CVSS 4.0 9.2 Critical**. nginx.org rates it major. The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`. It affects **1.9.5 through 1.31.8**, including 1.30.6 and 1.31.7. F5 says undisclosed HTTP/2 traffic can push the flow-control window past its limit, overflow a heap buffer, and crash the worker, and that code execution needs ASLR off or bypassed. NGINX Plus is fixed in **37.3.0.1 and 37.0.8.1**. F5 lists no fix for R34 through R36 and names no mitigation. Debian's tracker has no page for this CVE yet, and its newest nginx is still 1.30.6-3. [K000163926](https://my.f5.com/manage/s/article/K000163926)
+**NGINX Open Source 1.30.7 and 1.31.9, released 2026-11-18, fix ten flaws.** F5's [November 18 index](https://my.f5.com/manage/s/article/K000164058) lists them. Five are High or Critical. Researchers call the set nginx2root. Turning HTTP/2 off blocks only two of them.
+
+| CVE | nginx.org | F5 score | What it needs | Range (nginx.org / F5) |
+|---|---|---|---|---|
+| [CVE-2026-123007](https://www.cve.org/CVERecord?id=CVE-2026-123007) | major | 3.1 8.1 / 4.0 9.2 | HTTP/2 on. Flow control overflows a heap buffer. Rapid7 published a proof of concept. | 1.9.5–1.31.8 |
+| [CVE-2026-123633](https://www.cve.org/CVERecord?id=CVE-2026-123633) | medium | 3.1 8.1 / 4.0 9.2 | HTTP/2 plus a proxy, and the worker is low on `worker_connections`. Use after free. | 1.19.7–1.31.8 |
+| [CVE-2026-123634](https://www.cve.org/CVERecord?id=CVE-2026-123634) | medium | 3.1 8.1 / 4.0 9.2 | `proxy_pass` with a variable, and an SSI or `mirror` subrequest that resolves the same name. Use after free. | 0.6.18–1.31.8 |
+| [CVE-2026-121810](https://www.cve.org/CVERecord?id=CVE-2026-121810) | medium | 3.1 8.1 / 4.0 9.2 | HTTP/3. Use after free. F5 says exploitation also depends on conditions beyond the attacker's control. | 1.25.0–1.31.8 |
+| [CVE-2026-113425](https://www.cve.org/CVERecord?id=CVE-2026-113425) | major | 3.1 8.1 / 4.0 9.2 | Configured as a mail proxy. A crafted mail session is a use after free. | 0.5.33–1.31.8 |
+| [CVE-2026-118899](https://www.cve.org/CVERecord?id=CVE-2026-118899) | major | 3.1 7.5 / 4.0 8.7 | `listen … ssl` with TLS 1.3. A crafted connection loops the worker while it reads the request body. Denial of service only. | 1.13.0–1.31.8 |
+
+The 8.1 vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`. F5 says code execution on the five memory flaws needs ASLR off or bypassed. Xint says it leaked addresses and ran commands, and it is withholding a Linux SCTP chain it used to reach root from a container. That kernel flaw has no CVE and no public fix, so it is not tracked here. NGINX Plus is **37.3.0.1 and 37.0.8.1** for five of the six. CVE-2026-123633 is fixed one build earlier, in **37.2.0.1 and 37.0.7.1**. R34 through R36 have no fix. F5 names no mitigation for the HTTP/2, HTTP/3, or TLS 1.3 flaws. For the mail proxy, restrict the listener to trusted networks. Four more flaws in the same release are below 7.0, including a stream client-certificate bypass, [CVE-2026-120967](https://www.cve.org/CVERecord?id=CVE-2026-120967), which F5 rates 4.8 and 6.3. Debian's tracker still lists bookworm, trixie, forky, and sid as vulnerable to CVE-2026-123007, with no fixed version. [K000163926](https://my.f5.com/manage/s/article/K000163926)
 
 **1.30.6 and 1.31.7, released 2026-10-14, fix four earlier flaws.** For the three memory-corruption bugs, F5 gives CVSS 4.0 9.2 and CVSS 3.1 8.1. For the session forgery, F5 gives CVSS 4.0 8.3 and CVSS 3.1 6.5. nginx.org rates all four medium. Each of those four needs a specific configuration. 1.30.6 and 1.31.7 do not fix CVE-2026-123007. [nginx.org advisories][ngx-adv]
 
@@ -19,7 +30,7 @@ All four are data-plane issues reachable by an unauthenticated remote client. F5
 
 The same release also fixed [CVE-2026-95101](https://www.cve.org/CVERecord?id=CVE-2026-95101) (HTTP/3 request-body injection with `proxy_request_buffering on`). F5 scores it CVSS 3.1 5.3 and CVSS 4.0 6.9, below this collection's High threshold, but upgrading to the same releases fixes it too. [CVE-2026-95101 record][cve-95101]
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-18). None of the November 18 CVEs is in the feed. Rapid7 published a proof of concept for CVE-2026-123007. The sources reviewed report no exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -49,8 +60,9 @@ The same release also fixed [CVE-2026-95101](https://www.cve.org/CVERecord?id=CV
 | Debian DSA-6575-1 | 2026-10-21 15:28:43 +0000 | Fixes trixie (1.26.3-3+deb13u10). Debian says the CVE-2026-93479 code reached trixie through an earlier security backport. [DSA-6575-1][dsa] [Debian tracker][deb] |
 | nginx 1.31.8 (mainline) | 2026-10-21 | Not a security release. [nginx.org news][ngx-news] |
 | K000162607 (CVE-2026-93479) updated | 2026-10-23 | Credits expanded; the CVE record was updated 21:51 UTC. [K000162607][k93479] |
-| CISA KEV | Not listed | Catalog 2026.10.23 checked on 2026-10-26. [KEV][kev] |
-| Exploitation evidence | None found | No public exploitation reports in the reviewed sources. |
+| nginx 1.30.7 and 1.31.9; F5 out-of-band notice | 2026-11-18; time/TZ unknown | Ten flaws. F5 rates five CVSS 3.1 8.1 and 4.0 9.2, and the TLS 1.3 loop 7.5 and 8.7. [K000164058][k-index] [nginx.org advisories][ngx-adv] |
+| CISA KEV | Not listed | Catalog 2026.11.18 checked on 2026-11-18. [KEV][kev] |
+| Exploitation evidence | Proof of concept, no in-the-wild report | Rapid7 published a proof of concept for CVE-2026-123007. Xint and Wiz describe code execution in a lab. Neither reports use in the wild. |
 
 **Range discrepancies:** nginx.org lists CVE-2026-97205 as 0.8.11–1.31.6. F5's CVE record and K article list only branches still under technical support (1.30.0–1.30.5 and 1.31.0–1.31.6), because "End of Technical Support" versions are not evaluated. For CVE-2026-15176, F5's K article marks 0.1.29–0.9.9 as vulnerable with no fix. **Treat all older builds as vulnerable.**
 
@@ -66,9 +78,9 @@ nginx -V 2>&1       # version, build options and modules (e.g. --with-threads, -
 ps -eo pid,args | grep '[n]ginx: master'   # which binary and config are actually running
 ```
 
-- **Open source builds from nginx.org or your own builds:** vulnerable below 1.30.6 (stable) or 1.31.7 (mainline).
+- **Open source builds from nginx.org or your own builds:** the October flaws are fixed at 1.30.6 or 1.31.7. The November 18 flaws are fixed at **1.30.7 or 1.31.9**. A build on 1.30.6 or 1.31.7 still has all ten.
 - **Distribution packages** use backports, so the upstream version number alone does **not** tell you whether a package is vulnerable. Check your distribution's tracker (see [Distribution packages](#distribution-packages)).
-- **NGINX Plus:** run `nginx -v`. R33–R36 and 37.0.0–37.0.4 (and 37.1.0) are listed as vulnerable. [K000162416][k15176]
+- **NGINX Plus:** run `nginx -v`. For the November 18 set, 37.x before **37.3.0.1 and 37.0.8.1** is vulnerable, and R34 through R36 have no fix. CVE-2026-123633 is fixed in 37.2.0.1 and 37.0.7.1. [K000163926][k123007]
 - Do not forget NGINX inside containers, Kubernetes ingress and gateway controllers, appliances, and F5 products (see the table under [Remediation](#f5-products-that-embed-nginx)). The community **ingress-nginx** project is not covered by F5's advisories, and its status was not established in this review.
 
 ### Configuration check with nginx -T (read-only)
@@ -104,8 +116,8 @@ For CVE-2026-97629, compare successful mTLS-protected requests with expected cli
 
 ## Remediation
 
-1. **Upgrade NGINX Open Source** to **1.30.6** (stable) or **1.31.7** or later (mainline, now 1.31.8). Then restart, or do a binary upgrade, so every worker runs the new binary. A `reload` alone keeps running the old binary. [nginx.org advisories][ngx-adv]
-2. **NGINX Plus:** upgrade to **37.0.5.1** or **37.1.0.1**. F5 lists **no fix for R33–R36**, so move to a fixed 37.x release. [K000162416][k15176]
+1. **Upgrade NGINX Open Source** to **1.30.7** (stable) or **1.31.9** (mainline). Then restart, or do a binary upgrade, so every worker runs the new binary. A `reload` alone keeps running the old binary. 1.30.6 and 1.31.7 fix only the October flaws. [nginx.org advisories][ngx-adv]
+2. **NGINX Plus:** upgrade to **37.3.0.1** or **37.0.8.1**. F5 lists **no fix for R34 through R36**, so move to a fixed 37.x release. The October floors, 37.0.5.1 and 37.1.0.1, leave the November flaws in place. [K000163926][k123007]
 
 ### F5 products that embed NGINX
 
@@ -125,7 +137,7 @@ Sources: [K000162416][k15176], [K000162607][k93479], [K000162608][k97205], [K000
 
 ### Distribution packages
 
-- **Debian:** [DSA-6575-1][dsa] (2026-10-21) fixes trixie in **1.26.3-3+deb13u10**, and sid/forky has 1.30.6-2. When checked, the Debian tracker still showed **bookworm as vulnerable**. [Debian tracker][deb]
+- **Debian:** [DSA-6575-1][dsa] (2026-10-21) fixes the October flaws on trixie in **1.26.3-3+deb13u10**. The tracker for [CVE-2026-123007](https://security-tracker.debian.org/tracker/CVE-2026-123007), read 2026-11-18, lists bookworm, trixie, forky, and sid as vulnerable, and unstable as unfixed. The newest package shown is sid 1.30.6-4. [Debian tracker][deb]
 - **Ubuntu:** [USN-8955-1][usn] (published 2026-10-26) fixes CVE-2026-15176, CVE-2026-93479, CVE-2026-95101, CVE-2026-97205 and CVE-2026-97629 in **1.30.4-7ubuntu1.1** (26.10), **1.28.3-2ubuntu1.12** (26.04 LTS), **1.24.0-2ubuntu7.19** (24.04 LTS) and **1.18.0-6ubuntu14.22** (22.04 LTS). CVE-2026-15176's HTTP/3 issue is limited to 26.04 and 26.10, and CVE-2026-97629's session-ticket issue to 24.04, 26.04 and 26.10. [USN-8955-2][usn2] (published 2026-11-05) adds Ubuntu Pro builds for three of those CVEs, CVE-2026-15176, CVE-2026-93479, and CVE-2026-97205: **1.18.0-0ubuntu1.7+esm4** (20.04), **1.14.0-0ubuntu1.11+esm5** (18.04), **1.10.3-0ubuntu0.16.04.5+esm10** (16.04), and **1.4.6-1ubuntu3.9+esm9** (14.04). CVE-2026-97629 and CVE-2026-95101 are not in that notice. [Ubuntu][ubuntu]
 - **Red Hat:** [RHSA-2026:98634](https://access.redhat.com/errata/RHSA-2026:98634), issued 2026-11-11, fixes CVE-2026-15176 and CVE-2026-97205 in `nginx` **1.26.3-16.el10_3.1** on Red Hat Enterprise Linux 10. This review did not find a matching erratum for RHEL 8 or 9. SUSE and Alpine were not rechecked. Remember that backports can make an old version number either safe or, as Debian found for CVE-2026-93479, vulnerable.
 
@@ -138,11 +150,19 @@ F5's mitigations remove the trigger without fixing the code. Test each one, then
 - **CVE-2026-97205:** Set `aio off` (the default), or `ssi off`. F5 notes that disabling AIO can slow down large static or media serving.
 - **CVE-2026-97629:** Set `ssl_session_tickets off`, load static keys with `ssl_session_ticket_key`, or remove `ssl_session_cache shared:...`. If you use static keys, protect and rotate the key files yourself.
 
+The November 18 configuration mitigations do not replace the upgrade:
+
+- **CVE-2026-123007 and CVE-2026-123633:** turn HTTP/2 off. F5 lists no mitigation of its own.
+- **CVE-2026-121810:** turn HTTP/3 off. F5 lists no mitigation.
+- **CVE-2026-123634:** do not resolve an upstream name from a variable inside an SSI or `mirror` subrequest.
+- **CVE-2026-113425:** restrict the mail-proxy listener to trusted networks. F5 names that as the mitigation.
+- **CVE-2026-118899:** F5 lists no mitigation. TLS 1.3 on an `ssl` listener is the trigger.
+
 **Rollback caution:** Reinstalling an older package or image brings back every affected CVE. Pin the fixed versions in image builds.
 
 ## Verification
 
-- `nginx -v` on every running instance (and `docker exec ... nginx -v` in containers) shows 1.30.6+, 1.31.7+, NGINX Plus 37.0.5.1 or 37.1.0.1, or a distribution package version the vendor lists as fixed.
+- `nginx -v` on every running instance (and `docker exec ... nginx -v` in containers) shows 1.30.7 or later, 1.31.9 or later, NGINX Plus 37.3.0.1 or 37.0.8.1, or a distribution package version the vendor lists as fixed for CVE-2026-123007. 1.30.6 and 1.31.7 are not enough.
 - The running master process started after the upgrade. Compare `ps -o lstart= -p <master-pid>` with the upgrade time, replacing `<master-pid>`.
 - If you applied mitigations instead, re-run the read-only `nginx -T | grep` check above and confirm the trigger patterns are gone.
 - Benign functional check: request a normal page, an SSI page and an `alias`-served file on an instance you own, and confirm they behave as expected. Run an mTLS-protected request with and without a valid client certificate. Do not send crafted overflow payloads.
@@ -157,7 +177,8 @@ F5's mitigations remove the trigger without fixing the code. Test each one, then
 ## Sources
 
 - [nginx.org security advisories][ngx-adv], [nginx.org news][ngx-news], [CHANGES for 1.30.x][changes]: nginx.org severities, ranges, credits and release dates.
-- F5: [K000162416][k15176] (CVE-2026-15176), [K000162607][k93479] (CVE-2026-93479), [K000162608][k97205] (CVE-2026-97205), [K000162606][k97629] (CVE-2026-97629): scores, product tables and mitigations.
+- F5, November 18: [K000164058][k-index], [K000163926][k123007] (CVE-2026-123007), [K000163928][k123633] (CVE-2026-123633), [K000163925][k123634] (CVE-2026-123634), [K000163927][k121810] (CVE-2026-121810), [K000163931][k113425] (CVE-2026-113425), [K000163930][k118899] (CVE-2026-118899).
+- F5, October 14: [K000162416][k15176] (CVE-2026-15176), [K000162607][k93479] (CVE-2026-93479), [K000162608][k97205] (CVE-2026-97205), [K000162606][k97629] (CVE-2026-97629).
 - CVE records: [CVE-2026-15176][cve-15176], [CVE-2026-93479][cve-93479], [CVE-2026-97205][cve-97205], [CVE-2026-97629][cve-97629], [CVE-2026-95101][cve-95101]. [NVD CVE-2026-15176][nvd-15176].
 - [Debian DSA-6575-1][dsa], [Debian security tracker][deb], [Ubuntu CVE-2026-93479][ubuntu].
 - [CISA KEV feed][kev] (no entries).
@@ -165,6 +186,13 @@ F5's mitigations remove the trigger without fixing the code. Test each one, then
 [ngx-adv]: https://nginx.org/en/security_advisories.html
 [ngx-news]: https://nginx.org/
 [changes]: https://nginx.org/en/CHANGES-1.30
+[k-index]: https://my.f5.com/manage/s/article/K000164058
+[k123007]: https://my.f5.com/manage/s/article/K000163926
+[k123633]: https://my.f5.com/manage/s/article/K000163928
+[k123634]: https://my.f5.com/manage/s/article/K000163925
+[k121810]: https://my.f5.com/manage/s/article/K000163927
+[k113425]: https://my.f5.com/manage/s/article/K000163931
+[k118899]: https://my.f5.com/manage/s/article/K000163930
 [k15176]: https://my.f5.com/manage/s/article/K000162416
 [k93479]: https://my.f5.com/manage/s/article/K000162607
 [k97205]: https://my.f5.com/manage/s/article/K000162608
@@ -176,7 +204,7 @@ F5's mitigations remove the trigger without fixing the code. Test each one, then
 [cve-95101]: https://cveawg.mitre.org/api/cve/CVE-2026-95101
 [nvd-15176]: https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-15176
 [dsa]: https://lists.debian.org/debian-security-announce/2026/msg00490.html
-[deb]: https://security-tracker.debian.org/tracker/CVE-2026-93479
+[deb]: https://security-tracker.debian.org/tracker/CVE-2026-123007
 [ubuntu]: https://ubuntu.com/security/CVE-2026-93479
 [usn]: https://ubuntu.com/security/notices/USN-8955-1
 [usn2]: https://ubuntu.com/security/notices/USN-8955-2

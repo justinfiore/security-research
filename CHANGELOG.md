@@ -2,6 +2,12 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-18 19:40 EST (UTC−05:00) — NGINX; F5 BIG-IP; Grafana Mimir
+
+- **NGINX:** Upgrade to [1.30.7 or 1.31.9](black-october/details/nginx.md#remediation) and restart. The same release fixes five more flaws F5 rates CVSS 3.1 8.1 and CVSS 4.0 9.2, not only the HTTP/2 flow-control one. A mail proxy, a resolver used from an SSI or mirror subrequest, and HTTP/3 each have their own. Turning HTTP/2 off does not close those. A sixth, the TLS 1.3 request-body loop, is 7.5 and 8.7 and only stalls a worker. Rapid7 published a proof of concept for the flow-control flaw. None is in KEV. NGINX Plus is 37.3.0.1 or 37.0.8.1. Debian still has no fixed package. 1.30.6 and 1.31.7 leave all of these in place.
+- **F5 BIG-IP:** The [engineering hotfixes](black-october/details/f5-bigip-nov18.md#remediation) are unchanged. F5's CNA now also lists BIG-IP Next CNF 2.4.0, 2.3.0, and 2.2.0 as affected by three of the six, fixed in the same BNK hotfixes. The K articles still say CNF is not vulnerable. Treat Next CNF as affected.
+- **Grafana Mimir:** On the 2.17 line, upgrade to [2.17.12 or later](black-october/details/grafana-mimir.md#remediation). The November 13 notes say that build resolves CVE-2026-81938. The CNA record does not list 2.17. The 3.1 and 3.2 floors, 3.1.7 and 3.2.2, are unchanged. GEM 2.11 through 2.16 still have no fix.
+
 ## 2026-11-18 16:10 EST (UTC−05:00) — F5 BIG-IP; REDCap; LiteLLM; Confluence; Synology; httpx
 
 - **F5 BIG-IP:** Install the [engineering hotfix](black-october/details/f5-bigip-nov18.md#remediation) for the iRule or APM policy you run. F5 rates six flaws CVSS 3.1 9.8: a request with no login crashes the traffic process and may run code. Each one needs its own configuration, and there is no workaround and no scheduled release. None is in KEV. This is not the September APM flaw.

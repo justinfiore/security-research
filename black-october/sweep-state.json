@@ -312,6 +312,10 @@
       "last_checked": "2026-11-18T15:56:29Z",
       "hold": "none"
     },
+    "f5-bigip-nov18.md": {
+      "last_checked": "2026-11-18T23:55:53Z",
+      "hold": "none"
+    },
     "fastify-http-proxy.md": {
       "last_checked": "2026-11-16T15:55:55Z",
       "hold": "none"
@@ -397,7 +401,7 @@
       "hold": "none"
     },
     "grafana-mimir.md": {
-      "last_checked": "2026-11-15T23:56:12Z",
+      "last_checked": "2026-11-18T23:55:53Z",
       "hold": "none"
     },
     "gravity-forms.md": {
@@ -526,6 +530,10 @@
     },
     "litellm-enterprise-file-read.md": {
       "last_checked": "2026-11-18T15:56:29Z",
+      "hold": "none"
+    },
+    "litellm-guardrail.md": {
+      "last_checked": "2026-11-18T23:55:53Z",
       "hold": "none"
     },
     "litellm.md": {
@@ -728,6 +736,10 @@
       "last_checked": "2026-11-18T15:56:29Z",
       "hold": "awaiting-fix"
     },
+    "redcap.md": {
+      "last_checked": "2026-11-18T23:55:53Z",
+      "hold": "none"
+    },
     "ruby-httpx.md": {
       "last_checked": "2026-11-18T19:56:00Z",
       "hold": "none"
@@ -817,7 +829,7 @@
       "hold": "none"
     },
     "synology-dsm.md": {
-      "last_checked": "2026-11-15T15:56:05Z",
+      "last_checked": "2026-11-18T23:55:53Z",
       "hold": "none"
     },
     "tabularis.md": {
