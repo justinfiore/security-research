@@ -2,6 +2,13 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-19 03:01 EST (UTC−05:00) — Java; agent-framework; ChromeOS; Dell PowerStore
+
+- **OpenJDK:** Install the [build your vendor names](black-october/details/java4shell.md#remediation) and restart. Corretto is 17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, or 27.0.1.1.4. Microsoft is 17.0.21.1, 21.0.13.1, or 25.0.5.1. Temurin is 17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, or 27.0.1.1+4. Red Hat rates CVE-2026-114938 Critical, CVSS 3.0 9.8, and still has no package. GreyNoise saw exploit-shaped requests and no successful intrusion. It is not in KEV. The Oracle floors are unchanged.
+- **PyPI:** Wiz says the [agent-framework upload](black-october/details/agent-framework.md#timeline) used a client certificate for Microsoft's release pipeline, and that the stored webhook requests include three unique cases of victim data. Pin 1.26.0, delete the cached wheels, and rotate credentials that environment could read. Revocation of the upload credential is still unconfirmed.
+- **ChromeOS:** Update to [OS 16868.24.0, browser 158.0.8127.65](black-october/details/chrome-156.md#remediation). Google's November 18 post lists twelve Critical browser fixes and does not list CVE-2026-130963. Desktop Chrome is unchanged.
+- **Dell PowerStore:** On the 4.3 LTS line, install [4.3.1.3-2800620](black-october/details/dell-powerstore.md#remediation). It covers a subset, including CVE-2026-116446, and not CVE-2026-116443. The 5.1 fix is still 5.1.0.0-2798105. Dell says the rest of the 4.3 fixes come later. None is in KEV.
+
 ## 2026-11-19 02:01 EST (UTC−05:00) — Linux kernel
 
 - **Linux kernel:** Install a kernel that names the [November 2–3 High fixes](black-october/details/linux-november-batch.md#remediation) you run, and reboot. kernel.org scores thirteen flaws CVSS 3.1 High. [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270) is 8.1 and needs TCP request-socket migration, which is off by default. [CVE-2026-99246](https://www.cve.org/CVERecord?id=CVE-2026-99246) is 8.1 and needs TIPC. The other eleven are local. Debian trixie 6.12.117-1 covers the set. Red Hat, Ubuntu, and Amazon Linux have no package for CVE-2026-99270. None is in KEV. This is not NoisyTCP.

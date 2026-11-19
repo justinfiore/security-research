@@ -1,6 +1,6 @@
 # Google Chrome 156: Critical browser memory-safety fixes
 
-**Last updated:** 2026-11-18 (America/New_York)
+**Last updated:** 2026-11-19 (America/New_York)
 
 [Main summary](../black-october-2026.md#google-chrome-critical-browser-security-fixes) · [Main TOC](../black-october-2026.md#table-of-contents)
 
@@ -13,6 +13,8 @@ On 2026-11-09 Google updated the Stable channel again. Windows and Mac are **157
 On 2026-11-11 Google updated Stable again, to **157.0.8103.78/.79** for Windows and Mac and **157.0.8103.78** for Linux. The post says the update includes 83 security fixes, five of them Critical: [CVE-2026-126885](https://www.cve.org/CVERecord?id=CVE-2026-126885), [CVE-2026-126895](https://www.cve.org/CVERecord?id=CVE-2026-126895), [CVE-2026-126879](https://www.cve.org/CVERecord?id=CVE-2026-126879), [CVE-2026-126846](https://www.cve.org/CVERecord?id=CVE-2026-126846), and [CVE-2026-126911](https://www.cve.org/CVERecord?id=CVE-2026-126911). The same day's Extended Stable update is **156.0.8078.100** for Windows and Mac, with 72 security fixes and four of those Critical CVEs. Neither post reports exploitation. The November 9 builds, 157.0.8103.50/.51 and 156.0.8078.96, do not contain these fixes.
 
 On 2026-11-17 Google promoted Chrome 158. Linux is **158.0.8127.36**. Windows and Mac are **158.0.8127.36/.37**. Google says the update includes 204 security fixes. Six are rated Critical: [CVE-2026-130963](https://www.cve.org/CVERecord?id=CVE-2026-130963) (use after free in WebView), [CVE-2026-131031](https://www.cve.org/CVERecord?id=CVE-2026-131031) (out of bounds write in GPU), [CVE-2026-131060](https://www.cve.org/CVERecord?id=CVE-2026-131060) (buffer overflow in Media), [CVE-2026-131008](https://www.cve.org/CVERecord?id=CVE-2026-131008) (use after free in GarbageCollection), [CVE-2026-131054](https://www.cve.org/CVERecord?id=CVE-2026-131054) (out of bounds write in ANGLE), and [CVE-2026-130975](https://www.cve.org/CVERecord?id=CVE-2026-130975) (use after free in WebAudio). The post lists 62 High, 82 Medium, and 54 Low. It does not say an exploit exists for any of them. Google publishes no numeric score. A Chrome 157 build, including 157.0.8103.78/.79, does not contain these fixes. The same day's Android release, **158.0.8127.42**, says Android carries the same security fixes as that desktop release unless otherwise noted. The same day's Extended Stable update is **156.0.8078.108/.109** for Windows and Mac, with 79 security fixes. It lists three Critical CVEs from the October 27 set, [CVE-2026-118331](https://www.cve.org/CVERecord?id=CVE-2026-118331), [CVE-2026-118344](https://www.cve.org/CVERecord?id=CVE-2026-118344), and [CVE-2026-118348](https://www.cve.org/CVERecord?id=CVE-2026-118348), and it does not list the six Chrome 158 Critical CVEs. 156.0.8078.100 does not contain those 79 fixes.
+
+On 2026-11-18 Google updated ChromeOS Stable to OS **16868.24.0**, browser **158.0.8127.65**, for most devices. The post's browser list rates twelve flaws Critical. Eleven of them are in the desktop 157 and 158 posts. It does not list [CVE-2026-130963](https://www.cve.org/CVERecord?id=CVE-2026-130963), the WebView flaw from the desktop 158 post. It does list High [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350). The post does not say an exploit exists. A ChromeOS browser older than 158.0.8127.65 does not contain that list. Desktop 158.0.8127.36 is a different build.
 
 **CISA KEV:** Listed — [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) added 2026-11-10, federal due date 2026-11-24. Ransomware use Unknown. The feed says a crafted page can run code inside the sandbox. The Chrome 156 CVEs, the seven Chrome 157 Critical CVEs from November 3, and the six Chrome 158 Critical CVEs are not listed (catalog 2026.11.18, checked 2026-11-18). CISA-ADP scores CVE-2026-125350 CVSS 3.1 8.8 High, which is not Google's rating. Google publishes no numeric score. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -36,13 +38,14 @@ On 2026-11-17 Google promoted Chrome 158. Linux is **158.0.8127.36**. Windows an
 | **Stable update** | **2026-11-11; time/TZ unknown** | 157.0.8103.78/.79 for Windows and Mac and 157.0.8103.78 for Linux. 83 fixes, five Critical. Extended Stable 156.0.8078.100. No exploitation reported. [Release][chrome157c] |
 | **Chrome 158 stable** | **2026-11-17; time/TZ unknown** | 158.0.8127.36 for Linux and 158.0.8127.36/.37 for Windows and Mac. 204 fixes, six Critical. Android 158.0.8127.42 the same day. No exploitation reported. [Release][chrome158] |
 | **Extended Stable** | **2026-11-17; time/TZ unknown** | 156.0.8078.108/.109 for Windows and Mac. 79 fixes, including three Critical CVEs from October 27. [Release][chrome156d] |
+| **ChromeOS Stable** | **2026-11-18 21:16 PST (UTC−08:00)** | OS 16868.24.0, browser 158.0.8127.65. Twelve Critical browser fixes. CVE-2026-130963 is not in the list. [Release][chromeos158] |
 | Extended Stable update | 2026-11-09; time/TZ unknown | 156.0.8078.96 for Windows and Mac, including CVE-2026-125350. [Release][chrome156ext] |
 | CVE record | 2026-11-10 17:20 UTC | Published. Chromium severity High. No CNA numeric score. [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) |
 | **CISA KEV** | **2026-11-10; time/TZ unknown** | CVE-2026-125350 added. Federal due date 2026-11-24. CISA-ADP CVSS 3.1 8.8. [KEV][kev] |
 
 ## Detection
 
-Use Chrome's **About Google Chrome** page or managed-browser inventory to identify the installed full version on every desktop. Do not treat the major version alone as fixed: a browser can be on Chrome 158 before 158.0.8127.36 has installed. On Android, the Play listing is **158.0.8127.42**. ChromeOS and iOS are separate channels. The iOS post of November 12 is Chrome Stable 158 (**158.0.8127.35**) and lists no security fixes.
+Use Chrome's **About Google Chrome** page or managed-browser inventory to identify the installed full version on every desktop. Do not treat the major version alone as fixed: a browser can be on Chrome 158 before 158.0.8127.36 has installed. On Android, the Play listing is **158.0.8127.42**. ChromeOS Stable of November 18 is OS **16868.24.0** and browser **158.0.8127.65**. iOS is a separate channel. The iOS post of November 12 is Chrome Stable 158 (**158.0.8127.35**) and lists no security fixes.
 
 ## Remediation
 
@@ -70,6 +73,7 @@ If browser compromise is suspected, preserve relevant endpoint/browser telemetry
 - [Google Chrome 158 desktop stable release, November 17][chrome158] — 158.0.8127.36 for Linux and 158.0.8127.36/.37 for Windows and Mac. 204 fixes: six Critical, 62 High, 82 Medium, 54 Low. The post does not report exploitation.
 - [Google Chrome for Android, November 17][chrome158a] — 158.0.8127.42. Same security fixes as the desktop release unless otherwise noted.
 - [Google Chrome Extended Stable, November 17][chrome156d] — 156.0.8078.108/.109 for Windows and Mac. 79 fixes, including CVE-2026-118331, CVE-2026-118344, and CVE-2026-118348.
+- [ChromeOS Stable, November 18][chromeos158] — posted 2026-11-18 21:16 PST. OS 16868.24.0, browser 158.0.8127.65. Twelve Critical browser fixes. CVE-2026-130963 is not in that list. CVE-2026-125350 is, as High. The post does not report an exploit.
 - [CISA KEV feed][kev] — catalog 2026.11.18, checked 2026-11-18. CVE-2026-125350 added 2026-11-10, due 2026-11-24. The Chrome 156 CVEs, the seven November 3 Critical CVEs, and the six Chrome 158 Critical CVEs are not listed.
 
 [chrome157]: https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop.html
@@ -80,4 +84,5 @@ If browser compromise is suspected, preserve relevant endpoint/browser telemetry
 [chrome158]: https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_01699533288.html
 [chrome158a]: https://chromereleases.googleblog.com/2026/11/chrome-for-android-update_0281314271.html
 [chrome156d]: https://chromereleases.googleblog.com/2026/11/extended-stable-update-for-desktop_01061812727.html
+[chromeos158]: https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-chromeos_01891834105.html
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

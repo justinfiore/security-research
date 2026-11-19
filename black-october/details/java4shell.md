@@ -1,6 +1,6 @@
 # OpenJDK: Java4Shell - a Base64 string corrupts memory
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-19 (America/New_York)
 
 [Main Java4Shell summary](../black-october-2026.md#openjdk-java4shell---a-base64-string-corrupts-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -14,9 +14,11 @@ Calif says the bug is in HotSpot's x86-64 Base64 intrinsic, from OpenJDK **17.0.
 
 The same OpenJDK advisory lists four more flaws at 7.0 or higher: [CVE-2026-114939](https://www.cve.org/CVERecord?id=CVE-2026-114939) and [CVE-2026-114940](https://www.cve.org/CVERecord?id=CVE-2026-114940) at 7.4, and [CVE-2026-114941](https://www.cve.org/CVERecord?id=CVE-2026-114941) and [CVE-2026-114942](https://www.cve.org/CVERecord?id=CVE-2026-114942) at 7.0. OpenJFX [CVE-2026-86144](https://www.cve.org/CVERecord?id=CVE-2026-86144) is 7.5. Oracle's Java matrix gives 7.5 to CVE-2026-86144 and 7.4 to CVE-2026-114939, and it does not print a row for the other three.
 
-Oracle's download page lists the replacement builds **17.0.21.1**, **21.0.13.1**, **25.0.5.1**, **27.0.1.1**, and **8u513**. The 17.0.21.1 release notes are dated November 17, 2026, and the security baseline for the 17 family is `17.0.21.1+4`. Calif says other distributions built from the same OpenJDK code carry the flaw: Amazon Corretto, Eclipse Temurin, Microsoft Build of OpenJDK, Azul Zulu, BellSoft Liberica, SAP SapMachine, and Red Hat OpenJDK. This run did not find a fixed build number for those. A runtime bundled inside an application or a container image does not move when the system JDK does.
+Oracle's download page lists the replacement builds **17.0.21.1**, **21.0.13.1**, **25.0.5.1**, **27.0.1.1**, and **8u513**. The 17.0.21.1 release notes are dated November 17, 2026, and the security baseline for the 17 family is `17.0.21.1+4`. A runtime bundled inside an application or a container image does not move when the system JDK does.
 
-**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18). CISA published an alert the same day and did not add the CVE. Calif and CISA do not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+Other distributions now name their own builds. Amazon Corretto's changelogs, dated November 17, list **17.0.21.1.2**, **21.0.13.1.2**, **25.0.5.1.2**, and **27.0.1.1.4**, and each table includes CVE-2026-114938. Microsoft's November 18 post says **17.0.21.1**, **21.0.13.1**, and **25.0.5.1** contain the fix; Microsoft does not ship 27. Adoptium says the Temurin builds with the fix are **17.0.21.1+2**, **21.0.13.1+2**, **25.0.5.1+2**, and **27.0.1.1+4**, and that binaries are published as testing completes. Azul says the November 17 Zulu builds fix it in 17, 21, 25, and 27, and names Prime **26.08.110.0** and **26.02.510.0**. Red Hat rates the same flaw Critical, CVSS 3.0 **9.8** (`CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`), and RHSB-2026-018, updated November 18, still says fixes are being expedited. RHEL 8, 9, and 10, and Red Hat build of OpenJDK 17, 21, and 25, have no erratum yet. OpenJDK 8 and 11 do not contain the path.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). CISA published an alert on November 17 and did not add the CVE. GreyNoise, as of November 18, reports Java4Shell-shaped requests and no successful intrusion on its sensors. Cloudflare's blog, published November 18, says it has seen no indication the flaw was exploited on Cloudflare's own Java. Cloudforce One said on November 18 that one address sent both ARTEX traffic and a Java4Shell attempt; that post does not say the attempt succeeded. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -34,11 +36,14 @@ Oracle's download page lists the replacement builds **17.0.21.1**, **21.0.13.1**
 | **Public announcement and Oracle fix** | **2026-11-17; time unknown** | Oracle CSPU Rev 1 and the OpenJDK advisory. The advisory's last update is 2026-11-17 17:44 UTC. [OpenJDK][openjdk] |
 | Calif write-up | 2026-11-17; time unknown | After the patch. CVSS 4.0 9.2. Product-specific exploits withheld. [Calif][calif] |
 | CISA alert | 2026-11-17; time unknown | "Critical Java Vulnerability Requires Immediate Patching." Not a KEV addition. [CISA][cisa] |
-| **Last updated** | **2026-11-17 (America/New_York)** | New item. Install the November 17 Java build. |
+| Corretto, Microsoft, Temurin, and Zulu builds | 2026-11-17 and 2026-11-18 | Corretto 17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, and 27.0.1.1.4. Microsoft 17.0.21.1, 21.0.13.1, and 25.0.5.1. Temurin 17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, and 27.0.1.1+4. [Corretto][corretto] [Microsoft][ms] [Temurin][temurin] |
+| Red Hat bulletin | 2026-11-18 13:53 UTC | RHSB-2026-018. Critical, CVSS 3.0 9.8. No erratum yet. [Red Hat][rh] |
+| Exploit-shaped requests | 2026-11-18 | GreyNoise reports attempts and no successful intrusion. Cloudforce One reports one address sending ARTEX and a Java4Shell attempt. Neither is a KEV listing. [GreyNoise][grey] |
+| **Last updated** | **2026-11-19 (America/New_York)** | Vendor builds are out. Red Hat still has none. Attempts reported, none confirmed. |
 
 ## Detection
 
-1. **Build.** `java -version` on Oracle JDK. 17.0.21.0.3, 21.0.13.0.3, 25.0.5.0.3, 27.0.1.0.3, and 8u511-perf are the builds Oracle names. The replacement builds end in `.1` (8u513 for the performance pack and for standard Java 8). A build older than 17.0.6 is outside Calif's range. Standard Java 8 and Java 11 are outside the OpenJDK matrix for this CVE. They are inside CVE-2026-114939 and CVE-2026-114940.
+1. **Build.** `java -version` on Oracle JDK. 17.0.21.0.3, 21.0.13.0.3, 25.0.5.0.3, 27.0.1.0.3, and 8u511-perf are the builds Oracle names. The replacement builds end in `.1` (8u513 for the performance pack and for standard Java 8). A build older than 17.0.6 is outside Calif's range. Standard Java 8 and Java 11 are outside the OpenJDK matrix for this CVE. They are inside CVE-2026-114939 and CVE-2026-114940. Corretto's fixed builds are 17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, and 27.0.1.1.4. Microsoft's are 17.0.21.1, 21.0.13.1, and 25.0.5.1. Temurin's are 17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, and 27.0.1.1+4. A Red Hat OpenJDK package on RHEL 8, 9, or 10 has no fixed erratum yet.
 2. **CPU.** On Linux, the four flags `avx512f`, `avx512bw`, `avx512vbmi`, and `bmi2` all have to be present. ARM64 is not affected. A container inherits the host CPU.
 3. **Bundled runtimes.** A product that ships its own JVM does not show up as a system JDK. CISA names container images and appliances. Keycloak, Jira, Confluence, Artifactory, Jenkins, and PingFederate are the products Calif says it reached without a login. That list is Calif's, not Oracle's.
 4. A host missing one of the four flags is outside the decoder bug. It can still be inside the other November 17 Java flaws.
@@ -46,7 +51,7 @@ Oracle's download page lists the replacement builds **17.0.21.1**, **21.0.13.1**
 ## Remediation
 
 1. Install Oracle JDK **17.0.21.1, 21.0.13.1, 25.0.5.1, or 27.0.1.1**, or **8u513** for the Enterprise Performance Pack, and restart every process that loaded the old runtime. Rebuild a container image that bundles Java.
-2. For Corretto, Temurin, Microsoft, Zulu, Liberica, SapMachine, and Red Hat OpenJDK, install that vendor's build of the November 17 fix. This run did not find those build numbers. Do not treat the Oracle build number as theirs.
+2. For the other distributions, install the build that vendor names: Corretto **17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, or 27.0.1.1.4**; Microsoft **17.0.21.1, 21.0.13.1, or 25.0.5.1**; Temurin **17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, or 27.0.1.1+4**; Azul's November 17 Zulu build, or Prime **26.08.110.0** or **26.02.510.0**. Red Hat has no erratum yet. Do not treat the Oracle build number as another vendor's.
 3. Until that build is running, Calif says start the JVM with `-XX:-UseBASE64Intrinsics`, or with `-XX:UseAVX=2` on x86-64 only. OpenJDK on ARM does not recognize the second flag and fails to start. Oracle's advisory and the OpenJDK advisory do not mention either flag.
 4. CISA's temporary control is to restrict and validate Base64 at the application boundary and limit unauthenticated access. That is not the fix.
 5. The restart does not show whether a request already corrupted memory.
@@ -59,7 +64,7 @@ Oracle's download page lists the replacement builds **17.0.21.1**, **21.0.13.1**
 
 ## Compromise response
 
-CISA says to look for rogue runtimes, unexpected JVM crashes, and suspicious Java processes. It publishes no indicator. Calif does not report exploitation in the wild.
+CISA says to look for rogue runtimes, unexpected JVM crashes, and suspicious Java processes. It publishes no indicator. GreyNoise reports exploit-shaped requests and no successful intrusion. A Chrome User-Agent on a request is not evidence the request came from a browser, and a shared address is not evidence the attempt succeeded.
 
 The update does not show whether a request already ran code. A service Calif lists, on an affected JVM and an AVX-512 VBMI host, that crashed or spawned a process before the update needs a review of what ran afterward.
 
@@ -72,10 +77,28 @@ The update does not show whether a request already ran code. A service Calif lis
 - [CISA alert][cisa] — November 17, 2026. Calls the flaw critical. Points at Oracle's advisory. Not a KEV listing.
 - [JDK 17.0.21.1 release notes](https://www.oracle.com/java/technologies/javase/17-0-21-1-relnotes.html) — release date November 17, 2026. Full version 17.0.21.1+4. Security baseline for the 17 family is that build. The 11 baseline listed there is 11.0.33.1+4 and the 8 baseline is 1.8.0_513-b04.
 - [Oracle Java downloads](https://www.oracle.com/java/technologies/downloads/) — read 2026-11-18. Lists 27.0.1.1, 25.0.5.1, 21.0.13.1, 17.0.21.1, and 8u513.
-- [CISA KEV JSON][kev] — catalog 2026.11.17, released 2026-11-17T17:53:15.5664Z, checked 2026-11-18. CVE-2026-114938 is not listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z, checked 2026-11-19. CVE-2026-114938 is not listed.
+- [Amazon Corretto 17 changelog][corretto] — 17.0.21.1.2, November 17, 2026. The CVE table includes CVE-2026-114938 at 8.1. The 21, 25, and 27 changelogs name 21.0.13.1.2, 25.0.5.1.2, and 27.0.1.1.4.
+- [Microsoft Build of OpenJDK, November 2026][ms] — November 18, 2026. 17.0.21.1, 21.0.13.1, and 25.0.5.1 contain the fix.
+- [Eclipse Temurin guidance][temurin] — 17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, and 27.0.1.1+4. Binaries publish as testing completes.
+- [Azul, Java4Shell][azul] — November 17 Zulu builds for 17, 21, 25, and 27. Prime 26.08.110.0 and 26.02.510.0.
+- [Red Hat RHSB-2026-018][rh] — updated 2026-11-18 13:53. Critical. No erratum. RHEL 8, 9, and 10, and Red Hat build of OpenJDK 17, 21, and 25.
+- [Keycloak, Java4Shell][kc] — November 18, 2026. Images 26.8.2-1 and 26.8.2-2 bundle an affected OpenJDK 21.0.13. Start with `-XX:-UseBASE64Intrinsics`. No fixed image yet.
+- [GreyNoise Java4Shell activity][grey] — read 2026-11-19. Exploit-shaped requests, no successful intrusion.
+- [Cloudflare WAF][cf] — published 2026-11-18. Six managed rules, Log by default. No indication of exploitation on Cloudflare's Java.
+- [Cloudforce One][cfo] — 2026-11-18 16:56 UTC. One address sent ARTEX traffic and a Java4Shell attempt. The post does not say the attempt succeeded.
 
 [openjdk]: https://openjdk.org/groups/vulnerability/advisories/2026-11-17
 [oracle]: https://www.oracle.com/security-alerts/cspunov2026.html
 [calif]: https://calif.io/java4shell/
 [cisa]: https://www.cisa.gov/news-events/alerts/2026/11/17/critical-java-vulnerability-requires-immediate-patching
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+[corretto]: https://github.com/corretto/corretto-17/blob/develop/CHANGELOG.md
+[ms]: https://devblogs.microsoft.com/java/java-openjdk-november-2026-critical-patch-update
+[temurin]: https://adoptium.net/news/2026/11/temurin-november-2026-cspu-java4shell
+[azul]: https://www.azul.com/blog/java4shell-cve-2026-114938-what-it-is-who-is-affected-and-what-to-do-now/
+[rh]: https://access.redhat.com/security/vulnerabilities/RHSB-2026-018
+[kc]: https://www.keycloak.org/2026/11/java4shell-vulnerability-cve-2026-114938
+[grey]: https://java4shell.events.greynoise.io/
+[cf]: https://blog.cloudflare.com/java4shell-waf-protection
+[cfo]: https://x.com/Cloudforce_One/status/2123098021596725484

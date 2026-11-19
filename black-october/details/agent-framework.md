@@ -1,6 +1,6 @@
 # PyPI: agent-framework 1.26.1 and 1.26.2 steal credentials
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-19 (America/New_York)
 
 [Main summary](../black-october-2026.md#pypi-agent-framework-1261-and-1262-steal-credentials) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,9 @@ Each wheel adds a `.pth` file. Python runs `.pth` files at every interpreter sta
 
 Microsoft's issue, opened by Upwind, says the upload was outside the release pipeline and that whether the upload credential has been revoked is unconfirmed. Wiz says there is no `python-1.26.1` tag in `microsoft/agent-framework` and that the main branch does not contain the code. This run did not find a statement from Microsoft confirming the credential was revoked.
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. GitHub and the reporters do not report a confirmed install count. A cache that still holds the wheel can still install it.
+Wiz updated the same post on November 18 at 14:00 UTC. It says the attacker used a client certificate and private key for Microsoft's Engineering System Release Pipeline, the service that signs and publishes this package. A first publish from AWS was rejected by that service's IP filter. A second attempt from Microsoft-owned address space succeeded. Wiz says how the certificate was obtained is not known. The same update says the webhook token was on the free tier, which stores at most 50 requests, and that 17 of those are three unique cases where victim data left. A stored request is not a count of every install.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. A cache that still holds the wheel can still install it.
 
 ## Table of contents
 
@@ -32,7 +34,8 @@ Microsoft's issue, opened by Upwind, says the upload was outside the release pip
 | Malicious 1.26.2 | 2026-11-17 21:08:39 UTC | Uploaded after 1.26.1 was removed. [Microsoft issue][issue] |
 | Removed from PyPI | 2026-11-17, by about 21:30 UTC | Wiz. A cache can still install either wheel. |
 | GitHub advisory | 2026-11-18 00:31:26 UTC | Critical malware. No patched version. [GHSA][ghsa] |
-| **Last updated** | **2026-11-17 (America/New_York)** | New item. Pin 1.26.0 and rotate what a malicious install could read. |
+| Wiz update | 2026-11-18 14:00 UTC | ESRP client certificate. Three unique exfiltrations in the 50 stored requests. [Wiz][wiz] |
+| **Last updated** | **2026-11-19 (America/New_York)** | Root cause and the stored-request count. Pin 1.26.0 and rotate what a malicious install could read. |
 
 ## Detection
 
@@ -58,13 +61,13 @@ Microsoft's issue, opened by Upwind, says the upload was outside the release pip
 
 GitHub's instruction is to treat an environment that installed either version as exposed and rotate the credentials reachable from it, including CI and GitHub Actions secrets.
 
-That includes Azure tokens requested from the instance metadata service, Azure DevOps tokens, GitHub Actions OIDC tokens on 1.26.2, and anything in the credential files the advisory names. The posted data went to `webhook.site`. The advisory publishes no further indicator. This run did not confirm how many installs resolved to either version.
+That includes Azure tokens requested from the instance metadata service, Azure DevOps tokens, GitHub Actions OIDC tokens on 1.26.2, and anything in the credential files the advisory names. The posted data went to `webhook.site`. Wiz says that host stored 50 requests on the free tier and that 17 of them are three unique cases of victim data. A request the free tier did not store is not in that count. The advisory publishes no further indicator.
 
 ## Sources
 
 - [GHSA-764m-3ppc-5m73][ghsa] — GitHub Advisory Database, published 2026-11-18 00:31:26 UTC. Malware, critical, no CVSS number. Affected `= 1.26.1` and `= 1.26.2`. No patched version. Removed from PyPI. Wheel hashes and the webhook host.
 - [microsoft/agent-framework issue 10411][issue] — opened 2026-11-17 by Lidor Machluf, Upwind. Upload times, the second version, and the note that credential revocation is unconfirmed. Pin 1.26.0.
-- [Wiz][wiz] — November 17, 2026. No matching tag in the repository. Both versions gone from PyPI by about 21:30 UTC. About 41,000 downloads a week for the package, which is not a count of the malicious versions.
+- [Wiz][wiz] — November 17, 2026, updated 2026-11-18 14:00 UTC. No matching tag in the repository. Both versions gone from PyPI by about 21:30 UTC. The November 18 update says an ESRP client certificate was used, a publish from AWS was rejected, and a publish from Microsoft-owned address space succeeded. Of 50 stored webhook requests, 17 are three unique cases of victim data.
 - [OpenSSF malicious-packages, MAL-2026-20101](https://github.com/ossf/malicious-packages/blob/5f547b67f2daa8aa50d74a937b4c2077cccc495b/osv/malicious/pypi/agent-framework/MAL-2026-20101.json) — the OSV record GitHub cites.
 
 [ghsa]: https://github.com/advisories/GHSA-764m-3ppc-5m73
