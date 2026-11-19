@@ -201,7 +201,7 @@
       "hold": "none"
     },
     "cloudcmd.md": {
-      "last_checked": "2026-11-18T03:56:09Z",
+      "last_checked": "2026-11-19T03:56:04Z",
       "hold": "none"
     },
     "cloudpaste.md": {
@@ -209,7 +209,7 @@
       "hold": "awaiting-fix"
     },
     "confluence-axis.md": {
-      "last_checked": "2026-11-18T03:56:09Z",
+      "last_checked": "2026-11-19T03:56:04Z",
       "hold": "awaiting-fix"
     },
     "control-web-panel.md": {
@@ -345,16 +345,16 @@
       "hold": "awaiting-fix"
     },
     "fortisandbox.md": {
-      "last_checked": "2026-11-18T03:56:09Z",
+      "last_checked": "2026-11-19T03:56:04Z",
       "hold": "awaiting-fix"
     },
     "fortisiem.md": {
-      "last_checked": "2026-11-18T03:56:09Z",
-      "hold": "none"
+      "last_checked": "2026-11-19T03:56:04Z",
+      "hold": "awaiting-fix"
     },
     "frappe-ghost.md": {
-      "last_checked": "2026-11-18T03:56:09Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-19T03:56:04Z",
+      "hold": "none"
     },
     "freeswitch.md": {
       "last_checked": "2026-11-17T15:56:20Z",
@@ -385,7 +385,7 @@
       "hold": "none"
     },
     "go1cms.md": {
-      "last_checked": "2026-11-18T03:56:09Z",
+      "last_checked": "2026-11-19T03:56:04Z",
       "hold": "awaiting-fix"
     },
     "goahead-tls.md": {
@@ -901,7 +901,7 @@
       "hold": "none"
     },
     "wiki-js.md": {
-      "last_checked": "2026-11-18T03:56:09Z",
+      "last_checked": "2026-11-19T03:56:04Z",
       "hold": "none"
     },
     "windchill.md": {
@@ -925,7 +925,7 @@
       "hold": "none"
     },
     "wolfvision-cynap.md": {
-      "last_checked": "2026-11-18T03:56:09Z",
+      "last_checked": "2026-11-19T03:56:04Z",
       "hold": "awaiting-fix"
     },
     "wordpress-plugins-frontend-admin.md": {

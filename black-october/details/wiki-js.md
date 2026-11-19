@@ -1,6 +1,6 @@
 # Wiki.js: a user manager takes the administrator account
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-18 (America/New_York)
 
 [Main Wiki.js summary](../black-october-2026.md#wikijs-a-user-manager-takes-the-administrator-account) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,9 +10,9 @@ Wiki.js (requarks) is a Node.js wiki. Two flaws fixed in **2.5.315** are rated H
 
 [CVE-2026-120697](https://www.cve.org/CVERecord?id=CVE-2026-120697) is stored script in a page. An account with `write:pages` stores a JavaScript expression in a `v-slot:tabs` or `v-slot:content` attribute. The sanitizer allows those attributes, and the page is compiled as a Vue template, so the expression runs when someone else opens the page, including an administrator. GitHub rates it **CVSS 3.1 8.7 High**, vector `CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:N`. [GHSA-98c8-px3r-68c6](https://github.com/requarks/wiki/security/advisories/GHSA-98c8-px3r-68c6) says versions before 2.5.314 are affected, and the CVE record says everything before 2.5.315. The release that fixes both is 2.5.315, so a site on 2.5.314 should move too. NVD has not scored either record.
 
-[v2.5.315](https://github.com/requarks/wiki/releases/tag/v2.5.315) was published 2026-09-21 06:18:18 UTC. The release note says 2.x releases have moved to the `wiki-v2` repository and that this is the last 2.x release posted in `requarks/wiki`. The CVE records were published 2026-11-16. CISA's enrichment of the CVE-2026-120698 record, timestamped 2026-11-16 21:28 UTC, marks exploitation `poc`. That is a public proof of concept, not a report of use in the wild, and CVE-2026-120697 has no such mark. Neither record describes an incident.
+[v2.5.315](https://github.com/requarks/wiki/releases/tag/v2.5.315) was published 2026-09-21 06:18:18 UTC. The release note says 2.x releases have moved to the `wiki-v2` repository and that this is the last 2.x release posted in `requarks/wiki`. The CVE records were published 2026-11-16. CISA's enrichment of the CVE-2026-120698 record, timestamped 2026-11-16 21:28 UTC, marks exploitation `poc`. The same mark was added to CVE-2026-120697 on 2026-11-18 17:59 UTC, citing the GitHub advisory. Both are a public proof of concept, not a report of use in the wild. Neither record describes an incident. `requarks/wiki-v2` has later builds, v2.5.316 (2026-10-02) and v2.5.317 (2026-10-23). Both contain the fix commits, and neither release note names these CVEs.
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-18). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -30,7 +30,8 @@ Wiki.js (requarks) is a Node.js wiki. Two flaws fixed in **2.5.315** are rated H
 | Advisories and fix | 2026-09-21 06:18:18 UTC | v2.5.315. Both GitHub advisories published the same day. [Release][rel] |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | GitHub published both CVE records. |
 | Proof of concept marked | 2026-11-16 21:28 UTC | CISA's enrichment of CVE-2026-120698 says `poc`. Not a report of use in the wild. |
-| **Last updated** | **2026-11-16 (America/New_York)** | A proof of concept is public. The fix is unchanged. |
+| **Proof of concept marked** | **2026-11-18 17:59 UTC** | CISA's enrichment of CVE-2026-120697 now says `poc`, citing the GitHub advisory. Not a report of use in the wild. |
+| **Last updated** | **2026-11-18 (America/New_York)** | Both CVEs now have a public proof of concept. The fix is unchanged. |
 
 ## Detection
 
@@ -58,6 +59,6 @@ CISA's enrichment marks a proof of concept for the takeover and names no inciden
 - [CVE-2026-120697](https://www.cve.org/CVERecord?id=CVE-2026-120697) — GitHub, published 2026-11-16. CVSS 3.1 8.7. Slot attributes run script. Fixed in 2.5.315.
 - [GHSA-98c8-px3r-68c6](https://github.com/requarks/wiki/security/advisories/GHSA-98c8-px3r-68c6) — published 2026-09-21. The advisory's affected line says before 2.5.314; the CVE record says before 2.5.315.
 - [v2.5.315][rel] — published 2026-09-21 06:18:18 UTC. Last 2.x release in this repository.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, released 2026-11-13T20:24:18.3008Z, read 2026-11-16. Neither CVE is in it.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z, read 2026-11-18. Neither CVE is in it.
 
 [rel]: https://github.com/requarks/wiki/releases/tag/v2.5.315
