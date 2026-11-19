@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Ruby: a string or a pattern corrupts memory](#ruby-a-string-or-a-pattern-corrupts-memory)
 - [F5 BIG-IP: six flaws crash the traffic process](#f5-big-ip-six-flaws-crash-the-traffic-process)
 - [REDCap: a public survey runs code](#redcap-a-public-survey-runs-code)
 - [LiteLLM: a custom-code guardrail runs code](#litellm-a-custom-code-guardrail-runs-code)
@@ -275,6 +276,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Ruby](#ruby-a-string-or-a-pattern-corrupts-memory) to **4.0.10, 3.4.13, or 3.3.14** and restart every process. Ruby's repository rates three of seven flaws Critical, and MITRE rates [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) CVSS 3.1 7.4 High. The six others have no CVE yet. Ruby knows of proofs of concept that run code. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. Ruby 3.2 and earlier get no fix. None is in KEV.
 - **New this update:** Install the [F5 engineering hotfix](#f5-big-ip-six-flaws-crash-the-traffic-process) for the iRule or APM policy you run. F5 rates six flaws CVSS 3.1 9.8 and CVSS 4.0 9.3: a request with no login crashes the traffic process and may run code, on BIG-IP 21.1.0, 17.5.0–17.5.1, and 17.1.0–17.1.3 when that configuration is present. There is no workaround and no scheduled release. None is in KEV. This is not the September APM flaw.
 - **New this update (CISA KEV):** Upgrade [REDCap](#redcap-a-public-survey-runs-code) to **16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard** or later. Securifera rates [CVE-2026-90817](https://www.cve.org/CVERecord?id=CVE-2026-90817) CVSS 3.1 9.8 Critical: a request that knows one public survey hash reaches Data Import and runs code. CISA added it on November 18, due November 21, and requires forensic triage. The record says 13.3.0 and higher, and its version list marks only 13.3.0 affected.
 - **New this update (CISA KEV):** Upgrade the [LiteLLM proxy](#litellm-a-custom-code-guardrail-runs-code) to **v1.83.14-stable or later** and restart it. MITRE rates [CVE-2026-40217](https://www.cve.org/CVERecord?id=CVE-2026-40217) CVSS 3.1 8.8 High: bytecode sent to the custom-code guardrail runs in the proxy, which is root in the default image. CISA added it on November 18, due December 2. The vendor page says 1.83.11, and that tag does not exist. This is not the 1.107.0 malicious release.
@@ -483,6 +485,28 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Ruby: a string or a pattern corrupts memory
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ruby-november.md):** [Detection](details/ruby-november.md#detection) · [Remediation](details/ruby-november.md#remediation) · [Verification](details/ruby-november.md#verification) · [Timeline](details/ruby-november.md#timeline)
+
+**CVEs:** [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) is the only one assigned. Ruby's advisory still says identifiers have been requested and not assigned, and it tracks the seven by GitHub advisory. The other six are [GHSA-7x2q-68qv-6p8x](https://github.com/ruby/ruby/security/advisories/GHSA-7x2q-68qv-6p8x), [GHSA-3p8q-wmhx-vm2w](https://github.com/ruby/ruby/security/advisories/GHSA-3p8q-wmhx-vm2w), [GHSA-87fm-7w84-j2px](https://github.com/ruby/ruby/security/advisories/GHSA-87fm-7w84-j2px), [GHSA-7whj-cfh7-xgm4](https://github.com/ruby/ruby/security/advisories/GHSA-7whj-cfh7-xgm4), [GHSA-wpqw-5qxg-m68r](https://github.com/ruby/ruby/security/advisories/GHSA-wpqw-5qxg-m68r), and [GHSA-pvgc-g7gj-pv6h](https://github.com/ruby/ruby/security/advisories/GHSA-pvgc-g7gj-pv6h).
+
+**Ruby's repository rates three Critical and three High. MITRE rates [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) CVSS 3.1 7.4 High.** The vector is `CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`. Ruby's advisory for that one, [GHSA-34m4-m9fh-gqp5](https://github.com/ruby/ruby/security/advisories/GHSA-34m4-m9fh-gqp5), still says Critical and that no CVE is known. It is a one-byte write past the end of a buffer when Ruby changes the case of a string in a single-byte encoding such as ISO-8859-1 or Windows-1252. The other two Critical advisories are a double free while compiling a pattern that uses `&&`, and a heap overflow when the compiled pattern's size wraps. The three High advisories are a case change whose result exceeds 4 GiB, a heap overflow in `Regexp#to_s`, and an out-of-bounds read during case-insensitive matching. The seventh, an out-of-bounds read of a case-insensitive backreference, is Moderate and can disclose memory or crash the process. Ruby says it knows of proofs of concept that run code for some of them, and that the case-insensitive read's proof corrupts memory without showing code execution. None of the seven has a numeric score from Ruby. Affected ranges are **3.3.13 and earlier, 3.4.0 through 3.4.12, and 4.0.0 through 4.0.9**. This is not the [October regex set](#gitlab-and-ruby-regex-compilation-becomes-code-execution) and not the [`httpx` gem](#ruby-httpx-a-json-response-builds-an-object).
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). Ruby does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-19 00:00 UTC** | Ruby's advisory. The page date is November 18. |
+| CVE record | 2026-11-19; time unknown | MITRE published CVE-2026-132825 at 7.4. Ruby's advisory still says no CVE is assigned. |
+| **Last updated** | **2026-11-19 08:01 EST (UTC−05:00)** | New item. Upgrade Ruby and restart. |
+
+**Patch:** Upgrade to **4.0.10, 3.4.13, or 3.3.14** and restart every process that loaded the old interpreter, including workers and containers. Updating gems does not replace the interpreter. Ruby 3.3 is in security maintenance. Ruby 3.2 and earlier are end of life and get no fix. Ruby publishes no workaround. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. The restart does not show whether a request already ran code.
+
+Sources: [Ruby advisory](https://www.ruby-lang.org/en/news/2026/11/18/multiple-vulnerabilities-in-regexp-and-string/), [GHSA-34m4-m9fh-gqp5](https://github.com/ruby/ruby/security/advisories/GHSA-34m4-m9fh-gqp5), [detailed guide](details/ruby-november.md).
 
 ---
 
@@ -6756,7 +6780,7 @@ For these fixes, use **19.3.6, 19.4.3, or 19.5.1**, or later supported releases.
 
 The underlying Onigmo bugs are not exclusive to GitLab. Ruby applications are exposed when they compile **attacker-controlled regex patterns**, rather than merely matching attacker-controlled text against developer-written patterns.
 
-**Patch:** Ruby **4.0.9, 3.4.12, or 3.3.13**. Ruby 4.0.8 is insufficient for the complete set. Neither regex timeouts nor pattern-length limits reliably mitigate compilation bugs.
+**Patch:** Ruby **4.0.10, 3.4.13, or 3.3.14**. Those builds also fix the [November 19 set](#ruby-a-string-or-a-pattern-corrupts-memory). 4.0.9, 3.4.12, and 3.3.13 fix the October set and leave the November one. Ruby 4.0.8 is insufficient for the October set. Neither regex timeouts nor pattern-length limits reliably mitigate compilation bugs.
 
 **Am I impacted?** For self-managed GitLab, obtain the deployed CE/EE version from the instance's Help page or, on a Linux-package installation:
 
@@ -7358,6 +7382,7 @@ flowchart TD
 | **Node.js with `@fastify/multipart` through 10.1.8** | Upgrade `@fastify/multipart` to 10.1.9 or later and `@fastify/busboy` to 3.2.6 or later, and restart. OpenJS rates four flaws 7.5, including a file write from a JSON body. 10.1.4 fixes only the leftover files. This is not the http-proxy path rewrite. [Guide](details/fastify-multipart.md#remediation). |
 | **Qt 5.0.0 through 6.12.0** | Update to 6.8.10, 6.11.3, or 6.12.1 or later. The Qt Group rates CVE-2026-105925 8.2: `QXmlSimpleReader` can exhaust memory. Qt 5 has no release named. [Guide](details/qt-qxml.md#remediation). |
 | **Self-hosted Octopus Server before 2026.2.13526, or 2026.3 before 2026.3.15909** | Upgrade to 2026.3.16117. Octopus rates CVE-2026-116288 8.6: a role editor can grant itself a deployment. Octopus Cloud is already updated. [Guide](details/octopus-deploy.md#remediation). |
+| **Ruby before 4.0.10, 3.4.13, or 3.3.14** | Upgrade the interpreter to one of those and restart every process. Ruby's repository rates three of seven November 19 flaws Critical. MITRE rates CVE-2026-132825 7.4, and Ruby's advisory for it still says Critical. Updating gems does not replace the interpreter. 3.2 and earlier get no fix. This is not the October regex set and not the `httpx` gem. [Guide](details/ruby-november.md#remediation). |
 | **Ruby `httpx` 1.9.0 with `oj` and without `multi_json`** | Upgrade `httpx` to 1.9.1 or later. JFrog rates CVE-2026-129784 8.5: a JSON response can build a Ruby object. Only 1.9.0 is affected. [Guide](details/ruby-httpx.md#remediation). |
 | **Batflat 1.2.0 through 1.3.7** | No fix. Take it offline. CERT Polska rates CVE-2026-111559 9.3: the contact form runs PHP. The project is unmaintained. The CVE record says through 1.3.7; CERT Polska's page, read November 18, says through 1.3.6. [Guide](details/batflat.md#remediation). |
 | **WordPress with Advanced Form Integration through 2.11.3** | Update `advanced-form-integration` to 2.11.6 or later. Patchstack rates CVE-2026-125769 9.8: a request with no login can become an administrator. The record does not name the request. 2.11.5 is the first version it calls unaffected. The update does not remove an administrator that was already created. This is not the November 6, 8, or 9 plugin set, not Estatik, and not LatePoint. [Guide](details/advanced-form-integration.md#remediation). |

@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-19 08:01 EST (UTC−05:00) — Ruby
+
+- **Ruby:** Upgrade to [4.0.10, 3.4.13, or 3.3.14](black-october/details/ruby-november.md#remediation) and restart every process. Ruby's repository rates three of seven flaws Critical. MITRE rates CVE-2026-132825 CVSS 3.1 7.4, and Ruby's advisory for it still says Critical and that no CVE is known. The six others have no CVE yet. Ruby knows of proofs of concept that run code. The October builds leave all seven in place. Ruby 3.2 and earlier get no fix. It is not in KEV. Updating gems does not replace the interpreter.
+
 ## 2026-11-19 03:01 EST (UTC−05:00) — Java; agent-framework; ChromeOS; Dell PowerStore
 
 - **OpenJDK:** Install the [build your vendor names](black-october/details/java4shell.md#remediation) and restart. Corretto is 17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, or 27.0.1.1.4. Microsoft is 17.0.21.1, 21.0.13.1, or 25.0.5.1. Temurin is 17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, or 27.0.1.1+4. Red Hat rates CVE-2026-114938 Critical, CVSS 3.0 9.8, and still has no package. GreyNoise saw exploit-shaped requests and no successful intrusion. It is not in KEV. The Oracle floors are unchanged.
