@@ -2,6 +2,14 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-19 15:01 EST (UTC−05:00) — VMware vCenter; Synology DSM; Batflat; Linux kernel; OpenJDK
+
+- **VMware vCenter:** Update to [9.1.1.0200, 9.0.2.0200, or 8.0 U3m](black-october/details/vcenter.md#remediation). Broadcom rates CVE-2026-123890 CVSS 3.1 9.8: a network request skips login and opens a session as `administrator@vsphere.local`. Google says ARMORY CASTLE used it in early September, before the patch. These builds are not a Quick Patch. 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1. vCenter 7.0 has no public fix. ESX does not need an update. It is not in KEV. A vCenter that was unpatched in September should be checked for an SSO account you did not create. The update does not remove one.
+- **Synology DSM:** Deactivate the OAuth Service package, then install [7.4.1-90080-2 or 7.3.2-86009-6](black-october/details/synology-dsm-nov11.md#remediation) when Synology ships them on November 20. Synology rates CVE-2026-120382 CVSS 3.1 9.8: the OAuth API lets a remote attacker read or write any file, with no login. The November 10 builds leave it in place. DSM 7.2, 7.1, and BeeStation OS 1.5 have no build yet. It is not in KEV. This is not the September pair and not CVE-2024-10441.
+- **Batflat:** CERT Polska's page, reread November 19, again says [1.2.0 through 1.3.7](black-october/details/batflat.md#detection), matching the CVE record. A reading on November 18 showed 1.3.6. There is still no fix.
+- **Linux kernel:** On Amazon Linux 2, the [5.10 extra kernel](black-october/details/linux-noisytcp.md#detection) for NoisyTCP is `kernel-5.10.273-275.1133`, ALAS2KERNEL-5.10-2026-139, released November 12. The 5.15 extra was released that day too, not November 17. Ubuntu's page was updated November 19 and still has no package. Red Hat, SUSE, Alma, and Rocky still have none.
+- **OpenJDK:** The [Java4Shell](black-october/details/java4shell.md#compromise-response) builds are unchanged. GreyNoise now counts more than 150 exploit-shaped requests from five addresses and still reports no successful intrusion. Previdian counts nine attempts from six addresses and says that does not show a compromise. It is still not in KEV.
+
 ## 2026-11-19 11:01 EST (UTC−05:00) — PHP; SmarterMail; TeamCity; Emacs; Drupal; NGINX; Git
 
 - **PHP:** Upgrade to [8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36](black-october/details/php-november-19.md#remediation) and restart every worker. PHP rates seven flaws CVSS 4.0 9.2 Critical. Two of them are fixed only in 8.5.13 and 8.6.0. Depthfirst says the interrupted session write is still present in those builds. PHP's advisory says the fix truncates the file before the write. The October 21 builds leave all seven in place. PHP 8.1 and earlier get no build. None is in KEV. This is not PHP2Shell. The PHP2Shell follow-up, CVE-2026-115560, is one of the seven and is fixed in the same builds.

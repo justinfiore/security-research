@@ -18,7 +18,7 @@ Oracle's download page lists the replacement builds **17.0.21.1**, **21.0.13.1**
 
 Other distributions now name their own builds. Amazon Corretto's changelogs, dated November 17, list **17.0.21.1.2**, **21.0.13.1.2**, **25.0.5.1.2**, and **27.0.1.1.4**, and each table includes CVE-2026-114938. Microsoft's November 18 post says **17.0.21.1**, **21.0.13.1**, and **25.0.5.1** contain the fix; Microsoft does not ship 27. Adoptium says the Temurin builds with the fix are **17.0.21.1+2**, **21.0.13.1+2**, **25.0.5.1+2**, and **27.0.1.1+4**, and that binaries are published as testing completes. Azul says the November 17 Zulu builds fix it in 17, 21, 25, and 27, and names Prime **26.08.110.0** and **26.02.510.0**. Red Hat rates the same flaw Critical, CVSS 3.0 **9.8** (`CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`), and RHSB-2026-018, updated November 18, still says fixes are being expedited. RHEL 8, 9, and 10, and Red Hat build of OpenJDK 17, 21, and 25, have no erratum yet. OpenJDK 8 and 11 do not contain the path.
 
-**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). CISA published an alert on November 17 and did not add the CVE. GreyNoise, as of November 18, reports Java4Shell-shaped requests and no successful intrusion on its sensors. Cloudflare's blog, published November 18, says it has seen no indication the flaw was exploited on Cloudflare's own Java. Cloudforce One said on November 18 that one address sent both ARTEX traffic and a Java4Shell attempt; that post does not say the attempt succeeded. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). CISA published an alert on November 17 and did not add the CVE. GreyNoise, as of early November 19, reports more than 150 Java4Shell-shaped requests from five addresses and no successful intrusion on its sensors. Previdian reports nine attempts from six addresses, in China, Germany, Romania, and the United States, on November 18 and 19, and says its sensors cannot show that a target was compromised. Cloudflare's blog, published November 18, says it has seen no indication the flaw was exploited on Cloudflare's own Java. Cloudforce One said on November 18 that one address sent both ARTEX traffic and a Java4Shell attempt, and later that one address returned with a Chrome User-Agent; neither post says the attempt succeeded. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -38,8 +38,8 @@ Other distributions now name their own builds. Amazon Corretto's changelogs, dat
 | CISA alert | 2026-11-17; time unknown | "Critical Java Vulnerability Requires Immediate Patching." Not a KEV addition. [CISA][cisa] |
 | Corretto, Microsoft, Temurin, and Zulu builds | 2026-11-17 and 2026-11-18 | Corretto 17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, and 27.0.1.1.4. Microsoft 17.0.21.1, 21.0.13.1, and 25.0.5.1. Temurin 17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, and 27.0.1.1+4. [Corretto][corretto] [Microsoft][ms] [Temurin][temurin] |
 | Red Hat bulletin | 2026-11-18 13:53 UTC | RHSB-2026-018. Critical, CVSS 3.0 9.8. No erratum yet. [Red Hat][rh] |
-| Exploit-shaped requests | 2026-11-18 | GreyNoise reports attempts and no successful intrusion. Cloudforce One reports one address sending ARTEX and a Java4Shell attempt. Neither is a KEV listing. [GreyNoise][grey] |
-| **Last updated** | **2026-11-19 (America/New_York)** | Vendor builds are out. Red Hat still has none. Attempts reported, none confirmed. |
+| Exploit-shaped requests | 2026-11-18 through 2026-11-19 | GreyNoise reports more than 150 requests from five addresses and no successful intrusion. Previdian reports nine attempts from six addresses and says that does not show a compromise. Cloudforce One reports one address sending ARTEX and a Java4Shell attempt. None of this is a KEV listing. [GreyNoise][grey] |
+| **Last updated** | **2026-11-19 (America/New_York)** | Attempt counts are in. No confirmed intrusion. Red Hat still has no package. |
 
 ## Detection
 
@@ -64,7 +64,7 @@ Other distributions now name their own builds. Amazon Corretto's changelogs, dat
 
 ## Compromise response
 
-CISA says to look for rogue runtimes, unexpected JVM crashes, and suspicious Java processes. It publishes no indicator. GreyNoise reports exploit-shaped requests and no successful intrusion. A Chrome User-Agent on a request is not evidence the request came from a browser, and a shared address is not evidence the attempt succeeded.
+CISA says to look for rogue runtimes, unexpected JVM crashes, and suspicious Java processes. It publishes no indicator. GreyNoise reports more than 150 exploit-shaped requests and no successful intrusion. Previdian reports nine attempts and says that count does not show a compromise. A Chrome User-Agent on a request is not evidence the request came from a browser, and a shared address is not evidence the attempt succeeded.
 
 The update does not show whether a request already ran code. A service Calif lists, on an affected JVM and an AVX-512 VBMI host, that crashed or spawned a process before the update needs a review of what ran afterward.
 
@@ -84,7 +84,8 @@ The update does not show whether a request already ran code. A service Calif lis
 - [Azul, Java4Shell][azul] — November 17 Zulu builds for 17, 21, 25, and 27. Prime 26.08.110.0 and 26.02.510.0.
 - [Red Hat RHSB-2026-018][rh] — updated 2026-11-18 13:53. Critical. No erratum. RHEL 8, 9, and 10, and Red Hat build of OpenJDK 17, 21, and 25.
 - [Keycloak, Java4Shell][kc] — November 18, 2026. Images 26.8.2-1 and 26.8.2-2 bundle an affected OpenJDK 21.0.13. Start with `-XX:-UseBASE64Intrinsics`. No fixed image yet.
-- [GreyNoise Java4Shell activity][grey] — read 2026-11-19. Exploit-shaped requests, no successful intrusion.
+- [GreyNoise Java4Shell activity][grey] — read 2026-11-19. More than 150 exploit-shaped requests from five addresses, no successful intrusion. SecurityWeek's November 19 report is the count.
+- [Previdian, CVE-2026-114938](https://previdian.com/CVE-2026-114938) — nine attempts from six addresses on November 18 and 19. The page says the sensors cannot show that a target was compromised.
 - [Cloudflare WAF][cf] — published 2026-11-18. Six managed rules, Log by default. No indication of exploitation on Cloudflare's Java.
 - [Cloudforce One][cfo] — 2026-11-18 16:56 UTC. One address sent ARTEX traffic and a Java4Shell attempt. The post does not say the attempt succeeded.
 
