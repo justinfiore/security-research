@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-19 02:01 EST (UTC−05:00) — Linux kernel
+
+- **Linux kernel:** Install a kernel that names the [November 2–3 High fixes](black-october/details/linux-november-batch.md#remediation) you run, and reboot. kernel.org scores thirteen flaws CVSS 3.1 High. [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270) is 8.1 and needs TCP request-socket migration, which is off by default. [CVE-2026-99246](https://www.cve.org/CVERecord?id=CVE-2026-99246) is 8.1 and needs TIPC. The other eleven are local. Debian trixie 6.12.117-1 covers the set. Red Hat, Ubuntu, and Amazon Linux have no package for CVE-2026-99270. None is in KEV. This is not NoisyTCP.
+
 ## 2026-11-18 23:04 EST (UTC−05:00) — Chrome; PHP; Wiki.js
 
 - **Chrome:** Update to [158.0.8127.36 or later](black-october/details/chrome-156.md#remediation) and relaunch. Windows and Mac are 158.0.8127.36/.37, Linux is 158.0.8127.36, and Android is 158.0.8127.42. Google rates six flaws Critical in that November 17 release, out of 204 security fixes, and does not report exploitation. A Chrome 157 build, including 157.0.8103.78/.79, leaves all six in place. Extended Stable on Windows and Mac goes to 156.0.8078.108/.109, and that channel does not list those six. None of the six is in KEV. The exploited XML flaw from November 9 is unchanged.
