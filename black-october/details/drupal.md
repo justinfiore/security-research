@@ -1,6 +1,6 @@
 # Drupal core: Field UI remote code execution
 
-**Last updated:** 2026-11-09 (America/New_York)
+**Last updated:** 2026-11-19 (America/New_York)
 
 [Main Drupal summary](../black-october-2026.md#drupal-core-field-ui-remote-code-execution) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -24,6 +24,8 @@ The advisory does not name the contributed modules. [SA-CORE-2026-014][sa-core]
 | Drupal core 11.3.x | 11.0.0 up to but not including 11.3.19 | **11.3.19** | 11.2.x and older are end-of-life: **no fix** |
 | Drupal core 10.6.x | 8.9.0 up to but not including 10.6.19 | **10.6.19** | 10.5.x and older, Drupal 8 and Drupal 9 are end-of-life: **no fix** |
 | Drupal core 12 pre-release | 12.0.0-alpha1 up to but not including 12.0.0-beta2 | **12.0.0-beta2** | Pre-release |
+
+**A second flaw shipped on November 18 and is not this one.** [SA-CORE-2026-017](https://www.drupal.org/sa-core-2026-017) / [CVE-2026-132165](https://www.cve.org/CVERecord?id=CVE-2026-132165): Drupal rates it Critical, 18/25 (`AC:Complex/A:None/CI:All/II:All/E:Proof/TD:Uncommon`). The CVE record is still reserved, so there is no CNA CVSS score. Under specific conditions the installer can be used to reinstall Drupal, and Drupal says that can take over the site or run code. A web server that cannot write `settings.php` blocks some of the paths and not all of them. Affected is before **10.6.22**, 11.0.0 before **11.3.22**, and 11.4.0 before **11.4.13**. Drupal says a proof of concept exists. The October Field UI floors do not include this fix. Until the upgrade, [secure the installer](https://www.drupal.org/docs/administering-a-drupal-site/security-in-drupal/securing-the-installer-installphp). Drupal Steward covers some known paths and not all of them.
 | Entity List (`entity_list`) | below 3.0.10 | **3.0.10** | SA-CONTRIB-2026-218 |
 
 The affected range is the advisory's: `>= 8.9.0 < 10.6.19 || >= 11.0.0 < 11.3.19 || >= 11.4.0 < 11.4.10 || >= 12.0.0-alpha1 < 12.0.0-beta2`. [SA-CORE-2026-014][sa-core]

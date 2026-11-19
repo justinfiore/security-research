@@ -15,6 +15,10 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [PHP: the November 19 security releases](#php-the-november-19-security-releases)
+- [SmarterMail: an application password is guessable](#smartermail-an-application-password-is-guessable)
+- [TeamCity: a signed-in user runs code on the server](#teamcity-a-signed-in-user-runs-code-on-the-server)
+- [Emacs: a project file runs code when a file opens](#emacs-a-project-file-runs-code-when-a-file-opens)
 - [Ruby: a string or a pattern corrupts memory](#ruby-a-string-or-a-pattern-corrupts-memory)
 - [F5 BIG-IP: six flaws crash the traffic process](#f5-big-ip-six-flaws-crash-the-traffic-process)
 - [REDCap: a public survey runs code](#redcap-a-public-survey-runs-code)
@@ -276,6 +280,12 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [PHP](#php-the-november-19-security-releases) to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** and restart every worker. PHP rates seven flaws CVSS 4.0 9.2 Critical. Two are fixed only on 8.5 and 8.6. The October 21 builds leave all seven in place. Depthfirst says one of them, the interrupted session write, is still present. PHP's advisory says the fix truncates the file first. None of the seven is in KEV. This is not PHP2Shell.
+- **New this update:** Upgrade [SmarterMail](#smartermail-an-application-password-is-guessable) to a current build. **9817** is the installer. The Zero Day Initiative rates [CVE-2026-126969](https://www.cve.org/CVERecord?id=CVE-2026-126969) CVSS 3.0 9.1 Critical: application passwords were guessable, with no login. Two more are 8.8 and need a login. ZDI says Build 9735, from August 27, is the fix. Do not stop there. Application passwords from before 9735 have to be reissued. None is in KEV.
+- **New this update:** Upgrade on-premises [TeamCity](#teamcity-a-signed-in-user-runs-code-on-the-server) to **2026.1.3 or later**, or to **2025.11.8 or later** on the older line. JetBrains rates [CVE-2026-132234](https://www.cve.org/CVERecord?id=CVE-2026-132234) CVSS 3.1 9.9 Critical: a signed-in user runs code through a Mercurial root. Eight more are High. 2025.11.7 leaves the password-parameter flaw. TeamCity Cloud is already patched. None is in KEV. This is not the July flaw.
+- **New this update:** [Emacs](#emacs-a-project-file-runs-code-when-a-file-opens) 31.1 runs code from a project's `.dir-locals.el` when a matching file is opened. MITRE rates [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959) CVSS 3.1 7.8 High. Emacs 30.2 is not affected. The fix is marked for 31.2, and that release is not out. Until then, open an untrusted project with directory-local variables off. It is not in KEV.
+- **New this update:** Upgrade [Drupal](#drupal-core-field-ui-remote-code-execution) to **11.4.13, 11.3.22, or 10.6.22**. Drupal rates [SA-CORE-2026-017](https://www.drupal.org/sa-core-2026-017) Critical, 18/25: the installer can be used to reinstall the site and run code. The CVE record is still reserved and has no CVSS score. The October floors leave it in place. Until the upgrade, secure `install.php`. It is not in KEV.
+- **New this update:** On Ubuntu, install the [NGINX package in USN-9159-1](#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) and restart. Debian bookworm, trixie, and forky still have no package for CVE-2026-123007. The upstream floors, 1.30.7 and 1.31.9, are unchanged.
 - **New this update:** Upgrade [Ruby](#ruby-a-string-or-a-pattern-corrupts-memory) to **4.0.10, 3.4.13, or 3.3.14** and restart every process. Ruby's repository rates three of seven flaws Critical, and MITRE rates [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) CVSS 3.1 7.4 High. The six others have no CVE yet. Ruby knows of proofs of concept that run code. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. Ruby 3.2 and earlier get no fix. None is in KEV.
 - **New this update:** Install the [F5 engineering hotfix](#f5-big-ip-six-flaws-crash-the-traffic-process) for the iRule or APM policy you run. F5 rates six flaws CVSS 3.1 9.8 and CVSS 4.0 9.3: a request with no login crashes the traffic process and may run code, on BIG-IP 21.1.0, 17.5.0–17.5.1, and 17.1.0–17.1.3 when that configuration is present. There is no workaround and no scheduled release. None is in KEV. This is not the September APM flaw.
 - **New this update (CISA KEV):** Upgrade [REDCap](#redcap-a-public-survey-runs-code) to **16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard** or later. Securifera rates [CVE-2026-90817](https://www.cve.org/CVERecord?id=CVE-2026-90817) CVSS 3.1 9.8 Critical: a request that knows one public survey hash reaches Data Import and runs code. CISA added it on November 18, due November 21, and requires forensic triage. The record says 13.3.0 and higher, and its version list marks only 13.3.0 affected.
@@ -485,6 +495,93 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## PHP: the November 19 security releases
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/php-november-19.md):** [Detection](details/php-november-19.md#detection) · [Remediation](details/php-november-19.md#remediation) · [Verification](details/php-november-19.md#verification) · [Timeline](details/php-november-19.md#timeline)
+
+**CVEs:** [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560), [CVE-2026-126714](https://www.cve.org/CVERecord?id=CVE-2026-126714), [CVE-2026-129289](https://www.cve.org/CVERecord?id=CVE-2026-129289), [CVE-2026-129182](https://www.cve.org/CVERecord?id=CVE-2026-129182), [CVE-2026-129474](https://www.cve.org/CVERecord?id=CVE-2026-129474), [CVE-2026-129481](https://www.cve.org/CVERecord?id=CVE-2026-129481), [CVE-2026-129496](https://www.cve.org/CVERecord?id=CVE-2026-129496). Three more are High: [CVE-2026-129291](https://www.cve.org/CVERecord?id=CVE-2026-129291), [CVE-2026-128064](https://www.cve.org/CVERecord?id=CVE-2026-128064), and [CVE-2026-127960](https://www.cve.org/CVERecord?id=CVE-2026-127960).
+
+**PHP's GitHub advisories rate the seven CVSS 4.0 9.2 Critical.** Six use `CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. [CVE-2026-126714](https://www.cve.org/CVERecord?id=CVE-2026-126714) and [CVE-2026-129289](https://www.cve.org/CVERecord?id=CVE-2026-129289) are the same with attack complexity Low. The builds are **8.6.0, 8.5.13, 8.4.28, 8.3.37, and 8.2.36**, released November 19. Two of the seven, the backtrace flaws, are fixed only in 8.5.13 and 8.6.0. One, the interrupted session shutdown, starts at 8.3. Depthfirst says the session-file fix does not close CVE-2026-126714 and that the current trees are still vulnerable. PHP's advisory says the fix truncates the file before the write and names those builds. This is not [PHP2Shell](#php-php2shell---unauthenticated-execution-below-your-application). The October 21 builds leave all of these in place.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any of the ten. The two October CVEs stay listed under PHP2Shell. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Advance notice | 2026-11-18; time/TZ unknown | Scheduled for November 19, 14:00 to 14:30 UTC. Highest severity Critical. |
+| **Public announcement and fixes** | **2026-11-19; advisories from 14:05:55 UTC** | The five builds. |
+| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | New item. Upgrade PHP and restart. |
+
+**Patch:** Upgrade to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** and restart every worker. PHP 8.1 and earlier get no build. Keep `session.upload_progress.enabled=0` where you do not need it. PHP says that removes one input and is not the fix. The upgrade does not show whether a request already ran code.
+
+Sources: [PHP changelog](https://www.php.net/ChangeLog-8.php), [GHSA-fm2m-fjf5-v3cp](https://github.com/php/php-src/security/advisories/GHSA-fm2m-fjf5-v3cp), [detailed guide](details/php-november-19.md).
+
+---
+
+## SmarterMail: an application password is guessable
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/smartermail.md):** [Detection](details/smartermail.md#detection) · [Remediation](details/smartermail.md#remediation) · [Verification](details/smartermail.md#verification) · [Timeline](details/smartermail.md#timeline)
+
+**CVEs:** [CVE-2026-126969](https://www.cve.org/CVERecord?id=CVE-2026-126969), [CVE-2026-126967](https://www.cve.org/CVERecord?id=CVE-2026-126967), [CVE-2026-126966](https://www.cve.org/CVERecord?id=CVE-2026-126966). [CVE-2026-126968](https://www.cve.org/CVERecord?id=CVE-2026-126968) is 6.5 and is not one of these three.
+
+**The Zero Day Initiative rates [CVE-2026-126969](https://www.cve.org/CVERecord?id=CVE-2026-126969) CVSS 3.0 9.1 Critical.** ZDI is the CNA. The vector is `CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N`. Application passwords were generated with too little entropy, and a remote attacker can produce one. The other two are 8.8 and need a login: the file API runs code as SYSTEM, and a domain-admin endpoint skips its authorization check. ZDI says all three are fixed in **Build 9735**, released August 27, 2026, and published the advisories on November 13. The CVE record names build 100.0.9693.29286 and no other. Current installers are past that: Build 9817 is November 17. Canada's notice of November 18 says before 9817 and names no CVE.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any of the three. ZDI does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Build 9735 | 2026-08-27; time/TZ unknown | SmarterTools regenerated application passwords. |
+| **Public announcement** | **2026-11-13; time/TZ unknown** | ZDI-26-997, ZDI-26-994, and ZDI-26-995. |
+| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | New item. Upgrade SmarterMail. |
+
+**Patch:** Upgrade to a current build. **9817** is the current installer. Do not install 9735 to get the fix and then stop. Application passwords created before 9735 stop working, and each desktop or mobile client needs a new one. Keep two-factor authentication on. The upgrade does not show whether a password was already guessed.
+
+Sources: [ZDI-26-997](https://www.zerodayinitiative.com/advisories/ZDI-26-997), [release notes](https://www.smartertools.com/smartermail/release-notes/current), [detailed guide](details/smartermail.md).
+
+---
+
+## TeamCity: a signed-in user runs code on the server
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/teamcity.md):** [Detection](details/teamcity.md#detection) · [Remediation](details/teamcity.md#remediation) · [Verification](details/teamcity.md#verification) · [Timeline](details/teamcity.md#timeline)
+
+**CVEs:** [CVE-2026-132234](https://www.cve.org/CVERecord?id=CVE-2026-132234), [CVE-2026-132237](https://www.cve.org/CVERecord?id=CVE-2026-132237), [CVE-2026-132244](https://www.cve.org/CVERecord?id=CVE-2026-132244), [CVE-2026-132238](https://www.cve.org/CVERecord?id=CVE-2026-132238), [CVE-2026-132240](https://www.cve.org/CVERecord?id=CVE-2026-132240), [CVE-2026-132239](https://www.cve.org/CVERecord?id=CVE-2026-132239), [CVE-2026-132242](https://www.cve.org/CVERecord?id=CVE-2026-132242), [CVE-2026-132243](https://www.cve.org/CVERecord?id=CVE-2026-132243), [CVE-2026-132245](https://www.cve.org/CVERecord?id=CVE-2026-132245)
+
+**JetBrains rates [CVE-2026-132234](https://www.cve.org/CVERecord?id=CVE-2026-132234) CVSS 3.1 9.9 Critical.** JetBrains is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H`. A signed-in user injects an argument through a Mercurial VCS root and runs code on the server. Eight more are High, from 7.5 to 8.8: the artifact cache, stored script on three pages, an XML upload, a Kubernetes credential, and an agent result that stops the server. The records were published November 18. The fixes are **2026.1.3** and **2025.11.7**, except the password-parameter flaw, [CVE-2026-132238](https://www.cve.org/CVERecord?id=CVE-2026-132238) at 7.7, which on the older line needs **2025.11.8**. This is not CVE-2026-63077, the unauthenticated flaw from July. TeamCity Cloud is JetBrains' to patch.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any of the nine. JetBrains does not report exploitation of this set. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-18; time unknown** | Fixed before 2026.1.3 and 2025.11.7. |
+| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | New item. Upgrade TeamCity. |
+
+**Patch:** Upgrade on-premises TeamCity to **2026.1.3 or later**. On the 2025.11 line, go to **2025.11.8 or later**. 2025.11.7 leaves the password-parameter flaw. The upgrade does not show whether a build already ran code.
+
+Sources: [CVE-2026-132234](https://www.cve.org/CVERecord?id=CVE-2026-132234), [JetBrains issues fixed](https://www.jetbrains.com/privacy-security/issues-fixed/), [detailed guide](details/teamcity.md).
+
+---
+
+## Emacs: a project file runs code when a file opens
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/emacs.md):** [Detection](details/emacs.md#detection) · [Remediation](details/emacs.md#remediation) · [Verification](details/emacs.md#verification) · [Timeline](details/emacs.md#timeline)
+
+**CVEs:** [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959)
+
+**MITRE rates [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959) CVSS 3.1 7.8 High.** The vector is `CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H`. Emacs 31.1 reads `auto-mode-alist` from a project's `.dir-locals.el` and calls the function before it checks that the function is a mode. Opening a matching file runs that function as the user, with no prompt. Emacs 30.2 and older do not have the call. The GNU project marked it fixed in **31.2** on November 11, and 31.2 is not yet a release. The reporter's workaround is `(setq enable-dir-local-variables nil)`, which also turns off legitimate directory-local variables.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). The GNU mail does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix marked | 2026-11-11 10:15:28 UTC | Bug 82213, fixed in version 31.2. |
+| **Public announcement** | **2026-11-18; time unknown** | The CVE record. Affected at 31.1. |
+| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | New item. Emacs 31.2 is not out yet. |
+
+**Patch:** Install **31.2 or later** when it ships. Until `emacs --version` prints it, open an untrusted project with directory-local variables off. Opening the file is what reaches the check.
+
+Sources: [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959), [bug 82213](https://debbugs.gnu.org/cgi/bugreport.cgi?bug=82213), [detailed guide](details/emacs.md).
 
 ---
 
@@ -789,9 +886,10 @@ Sources: [OpenJDK advisory](https://openjdk.org/groups/vulnerability/advisories/
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-16 16:40:34 UTC** | The Document Foundation published the records and the advisory. |
-| **Last updated** | **2026-11-17 08:20 EST (UTC−05:00)** | New item. Update to 26.2.7 or 26.8.2. |
+| Debian trixie | 2026-11-18; time/TZ unknown | DSA-6635-1. `4:25.2.3-2+deb13u12`. Bookworm is still vulnerable. |
+| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | Debian trixie has a package. Bookworm and Ubuntu do not. |
 
-**Patch:** Install **LibreOffice 26.2.7 or later**, or **26.8.2 or later**, and restart it. A conversion service that runs `soffice` needs the restart too. Until then, do not open a Base document or a spreadsheet data link you did not expect. The update does not show whether a document already ran a command.
+**Patch:** Install **LibreOffice 26.2.7 or later**, or **26.8.2 or later**, and restart it. On Debian trixie, `4:25.2.3-2+deb13u12` names the batch. Bookworm does not have a package yet. A conversion service that runs `soffice` needs the restart too. Until then, do not open a Base document or a spreadsheet data link you did not expect. The update does not show whether a document already ran a command.
 
 Sources: [CVE-2026-84443](https://www.cve.org/CVERecord?id=CVE-2026-84443), [LibreOffice advisories](https://www.libreoffice.org/about-us/security/advisories/), [detailed guide](details/libreoffice.md).
 
@@ -1980,9 +2078,10 @@ Sources: [VSA-2026-062](https://docs.vates.tech/security-advisories/advisories/2
 |---|---|---|
 | **Public announcement and fix** | **2026-11-10; time/TZ unknown** | GitHub advisory and the 2.56.1 release note, the same day. |
 | GitLab packages | 2026-11-10; time/TZ unknown | 19.5.4, 19.4.6, and 19.3.8 update the bundled Git for CVE-2026-105437. GitLab calls that path Critical. |
-| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | The score is 8.3, and a non-recursive clone is also affected. |
+| Enterprise Server correction | 2026-11-17; time/TZ unknown | 3.19.16, 3.20.12, 3.21.10, and 3.22.5 carry the Git fixes. The notes for the previous builds say those fixes were incomplete. |
+| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | The November 17 Enterprise Server builds are the ones that carry the Git fix. |
 
-**Patch:** Upgrade to **2.56.1**, or to the patched release on the line you run. Upgrade an application that ships its own Git. On GitHub Enterprise Server the November 17 builds are 3.19.16, 3.20.12, 3.21.10, and 3.22.5. Self-managed GitLab needs **19.5.6, 19.4.8, or 19.3.9**. 19.5.4, 19.4.6, and 19.3.8 carry the bundled Git fix, and GitLab rates that path Critical. The November 16 builds add two CVSS 8.7 issues. Until `git --version` prints a fixed build, do not clone a repository you do not trust, and do not run `git status` in a checkout whose clone failed. The upgrade does not show whether a hook already ran.
+**Patch:** Upgrade to **2.56.1**, or to the patched release on the line you run. Upgrade an application that ships its own Git. On GitHub Enterprise Server the November 17 builds are 3.19.16, 3.20.12, 3.21.10, and 3.22.5, and GitHub says the Git fixes in 3.19.15, 3.20.11, 3.21.9, and 3.22.4 were incomplete. Self-managed GitLab needs **19.5.6, 19.4.8, or 19.3.9**. 19.5.4, 19.4.6, and 19.3.8 carry the bundled Git fix, and GitLab rates that path Critical. The November 16 builds add two CVSS 8.7 issues. Until `git --version` prints a fixed build, do not clone a repository you do not trust, and do not run `git status` in a checkout whose clone failed. The upgrade does not show whether a hook already ran.
 
 Sources: [GHSA-vp2w-7xxj-jvxr](https://github.com/git/git/security/advisories/GHSA-vp2w-7xxj-jvxr), [GitHub release post](https://github.blog/open-source/git/git-security-vulnerabilities-announced-7), [detailed guide](details/git-recursive-clone.md).
 
@@ -2220,7 +2319,8 @@ Sources: [forum advisory](https://forums.unrealircd.org/viewtopic.php?t=9487), [
 | Contact Form 7 6.2.4 | 2026-10-29; time/TZ unknown | The vendor post. The directory build the same day is 6.2.4.1. |
 | WPScan pages | 2026-11-05 and 2026-11-06; time/TZ unknown | Contact Form 7 on November 5. The other two on November 6. |
 | **Public announcement** | **2026-11-08 06:17 UTC** | WPScan published all three CVE records. None prints a score. |
-| **Last updated** | **2026-11-09 03:05 EST (UTC−05:00)** | New item. Update Contact Form 7. Remove the other two. |
+| Proof of concept public | 2026-11-19; time/TZ unknown | WPScan's page now prints the Contact Form 7 request. |
+| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | The withheld proof of concept is now on the WPScan page. |
 
 **Patch:** Update Contact Form 7 to **6.2.4 or later**. Remove Ecommerce Affiliate and Turisbook Booking System. There is no fixed version for either. The Contact Form 7 update does not delete a file already left in the uploads directory.
 
@@ -2458,9 +2558,10 @@ Sources: [GHSA-hff9-5pqw-6w9f](https://github.com/imgproxy/imgproxy/security/adv
 | Keycloak 26.8.2 | 2026-11-05 16:00 UTC | The community release that contains the SAML fix. It does not list CVE-2026-120984. |
 | Red Hat packages | 2026-11-07; time/TZ unknown | RHSA-2026:96040. Red Hat build of Keycloak 26.6.9, for the SAML flaw only. |
 | CVE-2026-120984 | 2026-11-07; time/TZ unknown | Red Hat published the record. RHSA-2026:96037 says Red Hat build of Keycloak 26.4.18 fixes it. Bug 2565599 is still NEW. |
-| **Last updated** | **2026-11-09 11:40 EST (UTC−05:00)** | Red Hat build of Keycloak 26.4.18 fixes CVE-2026-120984. |
+| Container images | 2026-11-19 08:00 UTC | `latest`, `26.8`, `26.8.2`, and `26.8.2-3` bundle OpenJDK 21.0.13.1. `26.8.2-1` and `26.8.2-2` do not. |
+| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | The 26.8.2 image tag now includes the Java4Shell JDK fix. |
 
-**Patch:** Community **26.8.2 or later** for the SAML flaw. Recreate the container after pulling the image. Red Hat build of Keycloak takes the **26.6.9** packages in [RHSA-2026:96040](https://access.redhat.com/errata/RHSA-2026:96040), not the community git tag of the same number. The community tags 26.6.9 and 26.4.18 do not contain the SAML fix commit, and no later community release on those lines was published. Red Hat Single Sign-On 7 is not affected by the SAML flaw. That upgrade does not fix CVE-2026-120984. Red Hat build of Keycloak 26.4.18 does, per [RHSA-2026:96037](https://access.redhat.com/errata/RHSA-2026:96037). No community release names a fixed build. The SAML upgrade does not show whether a broker login already succeeded as another user.
+**Patch:** Community **26.8.2 or later** for the SAML flaw. Pull the image again: tags `26.8.2-1` and `26.8.2-2` still bundle OpenJDK 21.0.13, and `26.8.2-3` bundles 21.0.13.1. Recreate the container after pulling the image. Red Hat build of Keycloak takes the **26.6.9** packages in [RHSA-2026:96040](https://access.redhat.com/errata/RHSA-2026:96040), not the community git tag of the same number. The community tags 26.6.9 and 26.4.18 do not contain the SAML fix commit, and no later community release on those lines was published. Red Hat Single Sign-On 7 is not affected by the SAML flaw. That upgrade does not fix CVE-2026-120984. Red Hat build of Keycloak 26.4.18 does, per [RHSA-2026:96037](https://access.redhat.com/errata/RHSA-2026:96037). No community release names a fixed build. The SAML upgrade does not show whether a broker login already succeeded as another user.
 
 Sources: [CVE-2026-117691](https://www.cve.org/CVERecord?id=CVE-2026-117691), [RHSA-2026:96040](https://access.redhat.com/errata/RHSA-2026:96040), [Keycloak 26.8.2](https://github.com/keycloak/keycloak/releases/tag/26.8.2), [detailed guide](details/keycloak.md).
 
@@ -2664,7 +2765,7 @@ Sources: [CVE-2026-123279](https://www.cve.org/CVERecord?id=CVE-2026-123279), [D
 | CVE records | 2026-11-06 07:30 UTC | WPScan CNA. Both say no fixed version. |
 | **Last updated** | **2026-11-07 03:55 EST (UTC−05:00)** | New item. Remove the plugin. There is no update. |
 
-**Patch:** No fixed version. Remove WP Libre Form 1.5.0.1, and remove MDJM Event Management and Mobile Events Manager through 1.7.8.7. Removing the plugin does not delete a PHP file already uploaded or restore a role already deleted.
+**Patch:** Remove WP Libre Form 1.5.0.1. There is still no fixed version. Update MDJM Event Management to **1.7.9 or later**. The directory changelog, dated 2026-11-19, says role deletion now runs only in the admin, with a nonce and `manage_options`. WPScan's page still says there is no known fix. Mobile Events Manager has no 1.7.9. Removing a plugin does not delete a PHP file already uploaded or restore a role already deleted.
 
 Sources: [WPScan, WP Libre Form](https://wpscan.com/vulnerability/35149a79-aee1-4f13-ba29-583c2224c5da/), [WPScan, MDJM](https://wpscan.com/vulnerability/f39f77ac-1885-4021-a4d2-5a2b7c5260b5/), [detailed guide](details/wordpress-plugins-nov7.md).
 
@@ -5767,7 +5868,8 @@ Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/adviso
 | Fortbridge lab reconstruction | 2026-10-18; time/TZ unknown | File disclosure and command execution on 11.4.9 with a synthetic writer module; fails on 11.4.10. Not in-the-wild exploitation. |
 | CVE records published | 2026-10-30 03:09 UTC | Drupal CNA. No CVSS score in either record. Affected bounds match the advisories. |
 | CISA-ADP score | 2026-11-06 | CVSS 3.1 8.1 High on both records. Exploitation none. Drupal's 19/25 is unchanged. |
-| **Last updated** | **2026-11-09 07:25 EST (UTC−05:00)** | The ADP score is recorded. The versions to install are unchanged. |
+| Installer flaw | 2026-11-18; time/TZ unknown | SA-CORE-2026-017. Drupal rates it Critical, 18/25. Fixed in 11.4.13, 11.3.22, and 10.6.22. |
+| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | The installer flaw is a second upgrade. The October floors do not include it. |
 
 The flaw is in core's Field UI module. Drupal says core alone cannot be exploited, but "multiple serious exploit paths exist with contributed modules", and at least one of them needs no login. Custom code may also expose it. The contributed modules are not named. Entity List has its own separate RCE with the same pattern.
 
@@ -5777,7 +5879,7 @@ The flaw is in core's Field UI module. Drupal says core alone cannot be exploite
 
 **Am I impacted?** Drupal core 8.9.0 up to but not including 10.6.19, 11.0.0 up to 11.3.19, 11.4.0 up to 11.4.10, and 12.0.0-alpha1 up to 12.0.0-beta2 are affected. Entity List below 3.0.10 is affected separately. End-of-life branches (11.2 and older, 10.5 and older, Drupal 8 and 9) have **no fix**.
 
-**Patch:** Update core to **11.4.10**, **11.3.19** or **10.6.19** (or later), or **12.0.0-beta2**. Update Entity List to **3.0.10**, then run `drush updatedb`. Until then, uninstall `field_ui`. Drupal Steward covers only some attack vectors.
+**Patch:** Update core to **11.4.13**, **11.3.22**, or **10.6.22** (or later). Those builds include the October Field UI fix and the November 18 installer flaw, [SA-CORE-2026-017](https://www.drupal.org/sa-core-2026-017). Drupal rates that one Critical, 18/25, and says a proof of concept exists. The CVE record, CVE-2026-132165, is still reserved and has no CVSS score. A server that cannot write `settings.php` blocks some paths and not all of them. Until the upgrade, [secure the installer](https://www.drupal.org/docs/administering-a-drupal-site/security-in-drupal/securing-the-installer-installphp). The October floors, 11.4.10, 11.3.19, and 10.6.19, leave the installer flaw in place. Update Entity List to **3.0.10**, then run `drush updatedb`. Drupal Steward covers only some attack vectors.
 
 Sources: [SA-CORE-2026-014](https://www.drupal.org/sa-core-2026-014), [SA-CONTRIB-2026-218](https://www.drupal.org/sa-contrib-2026-218), [PSA-2026-10-12](https://www.drupal.org/psa-2026-10-12), [Drupal release history](https://updates.drupal.org/release-history/drupal/current).
 
@@ -5823,7 +5925,7 @@ Each flaw needs a specific configuration:
 
 Then check the running configuration with `nginx -T`, piped to `grep` because the dump can contain secrets. Distribution backports change the picture: Debian found CVE-2026-93479 in its 1.26.3 package. F5 products such as Ingress Controller, Gateway Fabric, Instance Manager and F5 WAF for NGINX are also affected.
 
-**Patch:** Upgrade to **1.30.7** or **1.31.9** and restart. 1.30.6 and 1.31.7 leave the November 18 flaws in place. NGINX Plus is **37.3.0.1 or 37.0.8.1**; R34 through R36 have no fix. CVE-2026-123633 is fixed one Plus build earlier, in 37.2.0.1 and 37.0.7.1. Debian still lists bookworm, trixie, forky, and sid as vulnerable to CVE-2026-123007, with no fixed package. Turning HTTP/2 off blocks only CVE-2026-123007 and CVE-2026-123633. The mail proxy, the resolver, HTTP/3, and the TLS 1.3 loop stay open. The October flaws stay fixed at 1.30.6 and 1.31.7.
+**Patch:** Upgrade to **1.30.7** or **1.31.9** and restart. 1.30.6 and 1.31.7 leave the November 18 flaws in place. NGINX Plus is **37.3.0.1 or 37.0.8.1**; R34 through R36 have no fix. CVE-2026-123633 is fixed one Plus build earlier, in 37.2.0.1 and 37.0.7.1. Debian still lists bookworm, trixie, and forky as vulnerable to CVE-2026-123007. Sid is marked fixed, and that is unstable. Ubuntu's November 19 notice, USN-9159-1, names a package for 22.04, 24.04, 26.04, and 26.10. Turning HTTP/2 off blocks only CVE-2026-123007 and CVE-2026-123633. The mail proxy, the resolver, HTTP/3, and the TLS 1.3 loop stay open. The October flaws stay fixed at 1.30.6 and 1.31.7.
 
 The November 18 flaws, each one independent:
 
@@ -6562,7 +6664,8 @@ Sources: [Microsoft advisory](https://msrc.microsoft.com/update-guide/vulnerabil
 | Windows IIS / PHP-CGI report (Morphisec) | 2026-10-28; publication date, attack date not stated | Blocked post-exploitation on one customer server; attribution to PHP2Shell not independently verified. |
 | Remaining PAN-OS hotfixes released | 2026-10-28 and 2026-10-29; time/TZ unknown | Palo Alto removed the remaining ETAs; every supported branch in the matrix now has a released hotfix. |
 | PAN-OS severity raised | 2026-10-27; time/TZ unknown | Palo Alto's changelog: "Severity Updated to Critical and Urgency updated as Highest." The page now shows CVSS-B 9.2 (CVSS-B 7.7 and CVSS-BT 5.2 Medium behind a jump box). The hotfix list did not change. |
-| **Last updated** | **2026-11-18 23:04 EST (UTC−05:00)** | PHP scheduled the next security releases for November 19. CVE-2026-115560 still has no published fix or score. |
+| CVE-2026-115560 fix | 2026-11-19; advisories from 14:05:55 UTC | Critical, CVSS 4.0 9.2. Fixed in 8.2.36, 8.3.37, 8.4.28, 8.5.13, and 8.6.0. |
+| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | The follow-up fix shipped. The October 21 builds do not include it. |
 
 These are PHP runtime flaws, not WordPress plugins or Laravel application bugs.
 
@@ -6589,7 +6692,7 @@ PHP recommends:
 session.upload_progress.enabled=0
 ```
 
-Apply it in the effective server/PHP configuration and restart workers. **Keep this mitigation even after installing the October 21 emergency releases** until the follow-up fix is available. On 2026-11-18 PHP scheduled the next security releases for 2026-11-19, 14:00 to 14:30 UTC, and said the highest severity is Critical and needs a non-default configuration or an uncommon setup. It did not publish the CVE list, a score, or the fixed versions. The October 23 note says the full advisory for this issue comes with that release.
+Apply it in the effective server/PHP configuration and restart workers. The follow-up fix shipped on 2026-11-19 in **8.6.0, 8.5.13, 8.4.28, 8.3.37, and 8.2.36**. PHP rates it Critical, CVSS 4.0 9.2. The October 21 builds do not include it. The rest of that release is [the November 19 entry](#php-the-november-19-security-releases). Keep the mitigation until those builds are what the web runtime runs.
 
 **Am I impacted?** Inventory the PHP version and server integration used by each website. If it serves requests with an affected, unpatched PHP build, treat it as a patch candidate even when the application requires login. For a first local inventory:
 

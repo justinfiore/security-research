@@ -1,6 +1,6 @@
 # LibreOffice: a database document runs a macro
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-19 (America/New_York)
 
 [Main LibreOffice summary](../black-october-2026.md#libreoffice-a-database-document-runs-a-macro) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -26,11 +26,12 @@ The CVE records say the 26.2 series before 26.2.7 and the 26.8 series before 26.
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
 | **Public announcement** | **2026-11-16 16:40:34 UTC** | The Document Foundation published the CVE records and the advisory. [CVE-2026-84443](https://www.cve.org/CVERecord?id=CVE-2026-84443) |
-| **Last updated** | **2026-11-17 (America/New_York)** | New item. Update to 26.2.7 or 26.8.2. |
+| Debian trixie | 2026-11-18; time/TZ unknown | DSA-6635-1 fixes the batch in `4:25.2.3-2+deb13u12`. Bookworm is still vulnerable. |
+| **Last updated** | **2026-11-19 (America/New_York)** | Debian trixie has a package. Bookworm and Ubuntu do not. |
 
 ## Detection
 
-Read **Help, About LibreOffice**. The version string starts with the release, such as 26.2.6 or 26.8.1. A 26.2 build before 26.2.7 and a 26.8 build before 26.8.2 are inside the records. A build that is not LibreOffice is outside this entry. A Linux package can carry a fix under an older number; the package changelog has to name these CVEs, and this run did not find a distribution advisory.
+Read **Help, About LibreOffice**. The version string starts with the release, such as 26.2.6 or 26.8.1. A 26.2 build before 26.2.7 and a 26.8 build before 26.8.2 are inside the records. A build that is not LibreOffice is outside this entry. A Linux package can carry a fix under an older number. Debian published [DSA-6635-1](https://www.debian.org/security/2026/dsa-6635) on 2026-11-18: trixie is fixed in `4:25.2.3-2+deb13u12`. The tracker still lists bookworm `4:7.4.7-1+deb12u14` as vulnerable. Ubuntu's page, last updated November 17, still says every release needs evaluation.
 
 ## Remediation
 

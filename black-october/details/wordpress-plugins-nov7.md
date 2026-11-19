@@ -1,14 +1,14 @@
 # WordPress plugins: unauthenticated upload and role deletion
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-19 (America/New_York)
 
 [Main plugin summary](../black-october-2026.md#wordpress-plugins-unauthenticated-upload-and-role-deletion) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-Two plugins, two CVEs, each scored Critical by WPScan. They are not one bug, and they are not the [four plugins from November 6](wordpress-plugins-nov6.md) or the [core upgrade-window](wordpress-upgrade-window.md) flaw. A site is affected only by the plugin it has installed. WPScan says neither has a known fix.
+Two plugins, two CVEs, each scored Critical by WPScan. They are not one bug, and they are not the [four plugins from November 6](wordpress-plugins-nov6.md) or the [core upgrade-window](wordpress-upgrade-window.md) flaw. A site is affected only by the plugin it has installed. WP Libre Form still has no known fix. MDJM 1.7.9 names its fix in the directory changelog.
 
 **[CVE-2026-118423](https://www.cve.org/CVERecord?id=CVE-2026-118423): WPScan rates WP Libre Form 1.5.0.1 CVSS 3.1 10.0 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`. The plugin does not check the type of a file uploaded through a form, so a logged-out caller can upload PHP and run it. The record names that one version. WPScan's page says the same, and says there is no known fix. The proof of concept is withheld until 2027-02-01. WordPress.org closed the plugin on 2026-09-08 and gives the reason as Security Issue. The directory page shows **1.4.3**, last updated nine years ago. The record does not say 1.4.3 is affected, and it does not say it is not.
 
-**[CVE-2026-88800](https://www.cve.org/CVERecord?id=CVE-2026-88800): WPScan rates MDJM Event Management and Mobile Events Manager through 1.7.8.7 CVSS 3.1 9.1 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H`. On every page load the plugins act on a role-deletion request with no capability check and no nonce. The check meant to protect a role that still has users reads a different part of the request from the one that chooses the role, so a logged-out caller can delete any role, including administrator. WPScan says that strips every user of their capabilities, and that there is no known fix. The proof of concept is withheld until 2027-05-03. Confidentiality impact is None: the flaw deletes a role, it does not read one. WordPress.org still offers MDJM Event Management **1.7.8.7**, updated 2026-09-08, with 50+ active installs. Its changelog does not mention this CVE. Mobile Events Manager was closed on 2022-10-05 at the author's request; the directory page shows 1.4.8.3.
+**[CVE-2026-88800](https://www.cve.org/CVERecord?id=CVE-2026-88800): WPScan rates MDJM Event Management and Mobile Events Manager through 1.7.8.7 CVSS 3.1 9.1 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H`. On every page load the plugins act on a role-deletion request with no capability check and no nonce. The check meant to protect a role that still has users reads a different part of the request from the one that chooses the role, so a logged-out caller can delete any role, including administrator. WPScan says that strips every user of their capabilities. Confidentiality impact is None: the flaw deletes a role, it does not read one. WordPress.org now offers MDJM Event Management **1.7.9**, last updated 2026-11-19 11:20am GMT. Its changelog says role deletion now only runs in the admin, requires a nonce, and requires `manage_options`. WPScan's page, last updated 2026-11-18, still says there is no known fix. The directory changelog is the newer of the two. The proof of concept is withheld until 2027-05-03. Mobile Events Manager was closed on 2022-10-05 at the author's request; the directory page shows 1.4.8.3.
 
 **CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07) for either CVE. WPScan does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -44,15 +44,15 @@ If WP-CLI is not available, read the `Version:` line in each plugin's main file:
 | Plugin | Slug | Affected | Fixed |
 |---|---|---|---|
 | WP Libre Form | `wp-libre-form` | 1.5.0.1 | No known fix |
-| MDJM Event Management | `mobile-dj-manager` | through 1.7.8.7 | No known fix |
+| MDJM Event Management | `mobile-dj-manager` | through 1.7.8.7 | 1.7.9, published 2026-11-19. The changelog names CVE-2026-88800. WPScan's page still says no known fix. |
 | Mobile Events Manager | `mobile-events-manager` | through 1.7.8.7 | No known fix |
 
 A plugin that is installed and inactive can still be reachable if its code loads. Confirm each one. A site with none of the three is outside this entry. The directory copy of WP Libre Form is 1.4.3, which the CVE record does not list. An installed 1.5.0.1 did not come from the current directory page.
 
 ## Remediation
 
-1. There is no fixed version. Remove WP Libre Form **1.5.0.1**, and remove MDJM Event Management and Mobile Events Manager through **1.7.8.7**, if the site does not need them.
-2. If the site needs MDJM, take the forms and the public pages that load the plugin offline until the vendor publishes a version above 1.7.8.7. WPScan's page, read 2026-11-07, still says no known fix. Leaving 1.7.8.7 active is not a mitigation.
+1. Remove WP Libre Form **1.5.0.1** if the site does not need it. There is still no fixed version of that plugin. Remove Mobile Events Manager through **1.7.8.7** as well: its directory listing is closed and it has no 1.7.9.
+2. If the site needs MDJM, update it to **1.7.9 or later**. The changelog says the role deletion now runs only in the admin, with a nonce and `manage_options`. Leaving 1.7.8.7 active is not a mitigation. WPScan's page has not caught up and still says there is no known fix.
 3. Removing the plugin does not delete a PHP file WP Libre Form already saved, and it does not restore a role MDJM already deleted.
 
 ## Verification

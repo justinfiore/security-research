@@ -1,6 +1,6 @@
 # Keycloak: a signed SAML message covers a different message than the one processed
 
-**Last updated:** 2026-11-09 (America/New_York)
+**Last updated:** 2026-11-19 (America/New_York)
 
 [Main Keycloak summary](../black-october-2026.md#keycloak-a-signed-saml-message-covers-a-different-message-than-the-one-processed) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -67,7 +67,7 @@ A realm export is the way to see the binding and the "Want Assertions Signed" fl
 
 ## Remediation
 
-1. Upgrade community Keycloak to **26.8.2 or later**. Pull `quay.io/keycloak/keycloak:26.8.2` and recreate the container. A running container keeps the old image. For a ZIP install, back up the configuration and the database, then replace the installation and follow the [migration guide](https://www.keycloak.org/docs/latest/upgrading/).
+1. Upgrade community Keycloak to **26.8.2 or later**, and pull an image built on or after November 19, 2026. Keycloak's Java4Shell note, updated 2026-11-19 08:00 UTC, says the tags `latest`, `26.8`, `26.8.2`, and `26.8.2-3` now bundle Red Hat OpenJDK 21.0.13.1, which includes the fix for [CVE-2026-114938](https://www.cve.org/CVERecord?id=CVE-2026-114938). The tags `26.8.2-1` and `26.8.2-2` still bundle OpenJDK 21.0.13, which does not. Recreate the container. A running container keeps the old image. That image change is the [Java4Shell](../black-october-2026.md#openjdk-java4shell---a-base64-string-corrupts-memory) runtime, not a new Keycloak version, and it does not change the SAML or JavaScript-policy fixes. For a ZIP install, back up the configuration and the database, then replace the installation and follow the [migration guide](https://www.keycloak.org/docs/latest/upgrading/).
 2. On Red Hat build of Keycloak, install the **26.6.9** packages from [RHSA-2026:96040](https://access.redhat.com/errata/RHSA-2026:96040). Back up the installation first, as the advisory says. Do not treat the community git tag `26.6.9` as that package.
 3. Red Hat Single Sign-On 7 needs no change for the SAML flaw. The record says that code is not present. CVE-2026-120984 lists it as affected, and no fixed build was named.
 4. Red Hat lists no workaround that meets its criteria. Turning on "Want Assertions Signed" rejects the unsigned crafted assertion only when the identity provider signs assertions. Rejecting a repeated or percent-encoded `SAMLResponse`, `SAMLRequest`, `RelayState`, `SigAlg`, or `Signature` at a reverse proxy is the same idea as the fix, and it can break a client that encodes those names. Neither replaces the upgrade.

@@ -1,6 +1,6 @@
 # Apache HTTP Server: an HTTP/2 request can run code
 
-**Last updated:** 2026-11-18 (America/New_York)
+**Last updated:** 2026-11-19 (America/New_York)
 
 [Main Apache HTTP Server summary](../black-october-2026.md#apache-http-server-an-http2-request-can-run-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -41,7 +41,8 @@ The GitHub `mod_h2` repository was archived on June 9 and its release list ends 
 | Amazon Linux packages | 2026-11-12; time/TZ unknown | ALAS2-2026-4114 and ALAS2023-2026-3458. Both ship `httpd` 2.4.71. [AL2][alas2] [AL2023][alas2023] |
 | CISA KEV | Not listed (catalog 2026.11.17, checked 2026-11-18) | [KEV][kev] |
 | Singapore CSA alert | 2026-11-17; time unknown | Says attackers are exploiting CVE-2026-119618. Scores it 8.1. Names no victim. [AL-2026-164][csa] |
-| **Last updated** | **2026-11-18 (America/New_York)** | Rocky and Alma published the RHEL `mod_http2` builds. Oracle still has none. |
+| SUSE, Debian testing, Oracle | 2026-11-18 and 2026-11-16 | SUSE-SU-2026:24742-1 names SLES 16.1. Debian forky is fixed at 2.4.71-1. Oracle Linux 9 has ELSA-2026-98981 for `mod_http2`. |
+| **Last updated** | **2026-11-19 (America/New_York)** | SUSE 16.1, Debian testing, and Oracle Linux 9 have packages. |
 
 ## Detection
 
@@ -90,12 +91,12 @@ A distribution package does not use the upstream version number. On Red Hat Ente
 | SLES 16.0 | `apache2` 2.4.71-160000.1.1 | [SUSE][suse] |
 | SLES 15 SP4, SP5, and SP6 LTSS, and 12 SP5 LTSS | `apache2` 2.4.66 builds, released | [SUSE][suse] |
 
-Red Hat lists **JBoss Core Services** (`jbcs-httpd24-mod_http2`) and **Red Hat Hardened Images** (`httpd`) as Affected, with no released package. Trixie's release pocket is still `2.4.68-1~deb13u1`; the security pocket is the fixed one. SUSE's page, last modified 2026-11-16, marks SLES 15 SP7 and SLES 16.0 Released. SLES 16.1, SUSE Linux Enterprise Server for NVIDIA 16.1, and openSUSE Leap 16.0 and 16.1 are still Affected, and SUSE's overall state for the issue is still Pending. Rocky Linux published [RLSA-2026:98981](https://errata.rockylinux.org/RLSA-2026:98981) on November 13 (`mod_http2-2.0.26-7.el9_9.1` on Rocky 9) and [RLSA-2026:98978](https://errata.rockylinux.org/RLSA-2026:98978) the same day (`mod_http2-2.0.29-5.el10_3.1` on Rocky 10). AlmaLinux published [ALSA-2026:98981](https://errata.almalinux.org/9/ALSA-2026-98981.html) and [ALSA-2026:98978](https://errata.almalinux.org/10/ALSA-2026-98978.html) on November 16, with the same package versions. Oracle's CVE page returned HTTP 404 on November 18, and no Oracle erratum was found.
+Red Hat lists **JBoss Core Services** (`jbcs-httpd24-mod_http2`) and **Red Hat Hardened Images** (`httpd`) as Affected, with no released package. Trixie's release pocket is still `2.4.68-1~deb13u1`; the security pocket is the fixed one. SUSE's page, last modified 2026-11-16, marks SLES 15 SP7 and SLES 16.0 Released. SUSE-SU-2026:24742-1, mailed 2026-11-18, names `apache2-2.4.71-160100.1.1` for SLES 16.1 and lists this CVE. SUSE's CVE page, last modified 2026-11-16, still marks 16.1 Affected. openSUSE Leap 16.0 and 16.1 are still Affected. Rocky Linux published [RLSA-2026:98981](https://errata.rockylinux.org/RLSA-2026:98981) on November 13 (`mod_http2-2.0.26-7.el9_9.1` on Rocky 9) and [RLSA-2026:98978](https://errata.rockylinux.org/RLSA-2026:98978) the same day (`mod_http2-2.0.29-5.el10_3.1` on Rocky 10). AlmaLinux published [ALSA-2026:98981](https://errata.almalinux.org/9/ALSA-2026-98981.html) and [ALSA-2026:98978](https://errata.almalinux.org/10/ALSA-2026-98978.html) on November 16, with the same package versions. Oracle Linux 9 has ELSA-2026-98981, released 2026-11-18, for `mod_http2`. No other Oracle Linux version is listed. Debian's tracker now marks forky fixed at `2.4.71-1`, migrated to testing on 2026-11-16.
 
 ## Remediation
 
 1. Upgrade the Apache HTTP Server project's own build to **2.4.71 or later**, or install the `mod_http2` package in the table for the Red Hat release you run. Restart `httpd` or `apache2`. A running process keeps the module it loaded.
-2. On Debian bookworm, install `apache2` **2.4.71-1~deb12u1** or later. On Debian trixie, install **2.4.71-1~deb13u1** or later from the security pocket. On Debian sid and forky, install **2.4.71-1** or later. On Ubuntu, install the `apache2` build in the table. On Amazon Linux, install `httpd` **2.4.71-1.amzn2.0.1** or **2.4.71-1.amzn2023.0.1**. On SLES 15 SP7, install `apache2` **2.4.71-150700.4.30.1** or later (SUSE-SU-2026:5231-1, 2026-11-13). SLES 16.0 and the 15 SP4 through SP6 and 12 SP5 LTSS lines are also Released. SLES 16.1 and openSUSE Leap 16.0 and 16.1 are not: until a package ships there, take HTTP/2 off.
+2. On Debian bookworm, install `apache2` **2.4.71-1~deb12u1** or later. On Debian trixie, install **2.4.71-1~deb13u1** or later from the security pocket. On Debian sid and forky, install **2.4.71-1** or later. On Ubuntu, install the `apache2` build in the table. On Amazon Linux, install `httpd` **2.4.71-1.amzn2.0.1** or **2.4.71-1.amzn2023.0.1**. On SLES 15 SP7, install `apache2` **2.4.71-150700.4.30.1** or later (SUSE-SU-2026:5231-1, 2026-11-13). SLES 16.0, SLES 16.1, and the 15 SP4 through SP6 and 12 SP5 LTSS lines are also Released. openSUSE Leap 16.0 and 16.1 are not: until a package ships there, take HTTP/2 off.
 3. Until the package is in, remove `h2` and `h2c` from every `Protocols` line and leave `http/1.1`. Wiz describes that step. Apache's advisory names no workaround. Turning HTTP/2 off is not a substitute for the upgrade, and it does not fix CVE-2026-106023, which is in `mod_md` and does not need HTTP/2.
 4. A server built from the archived GitHub `mod_h2` has no release after 2.0.42. Rebuild it from the 2.4.71 tree, or turn HTTP/2 off.
 5. Red Hat Enterprise Linux 8 and earlier do not contain this code. Do not treat a scanner finding there as this flaw without checking the package.

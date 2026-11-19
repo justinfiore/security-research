@@ -5,11 +5,11 @@
       "hold": "awaiting-fix"
     },
     "7zip.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "acf-extended.md": {
-      "last_checked": "2026-11-16T15:55:55Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "adobe-campaign-classic.md": {
@@ -25,7 +25,7 @@
       "hold": "none"
     },
     "advanced-form-integration.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "agent-framework.md": {
@@ -33,7 +33,7 @@
       "hold": "none"
     },
     "ahsaycbs.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "airbyte.md": {
@@ -41,7 +41,7 @@
       "hold": "none"
     },
     "ao3.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "apache-camel-saxon.md": {
@@ -49,19 +49,19 @@
       "hold": "none"
     },
     "apache-http-server.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "apache-mina.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "apache-ofbiz.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "apache-roller.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "apache-shiro.md": {
@@ -77,7 +77,7 @@
       "hold": "none"
     },
     "apple-november.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "aruba-aos.md": {
@@ -85,7 +85,7 @@
       "hold": "none"
     },
     "aspera-faspex.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "assent-apple.md": {
@@ -105,11 +105,11 @@
       "hold": "none"
     },
     "b3log-solo.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "babelfish.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "barracuda.md": {
@@ -121,7 +121,7 @@
       "hold": "awaiting-fix"
     },
     "bee-js.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "beta9.md": {
@@ -137,11 +137,11 @@
       "hold": "none"
     },
     "bolo.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "bookit.md": {
-      "last_checked": "2026-11-16T15:55:55Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "bricksforge.md": {
@@ -149,7 +149,7 @@
       "hold": "none"
     },
     "brotli.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "btcpay-server.md": {
@@ -157,7 +157,7 @@
       "hold": "none"
     },
     "cboard.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "chainalysis.md": {
@@ -169,7 +169,7 @@
       "hold": "none"
     },
     "checkpoint-gaia.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "chrome-156.md": {
@@ -177,11 +177,11 @@
       "hold": "none"
     },
     "circutor-powerstudio.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "cisco-broadworks.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "cisco-sdwan-keydrift.md": {
@@ -205,7 +205,7 @@
       "hold": "none"
     },
     "cloudpaste.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "confluence-axis.md": {
@@ -217,7 +217,7 @@
       "hold": "none"
     },
     "cpguard.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "craft-cms.md": {
@@ -225,11 +225,11 @@
       "hold": "none"
     },
     "cryptopayment-gateway.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "curl.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "cursor-claude-code.md": {
@@ -241,15 +241,15 @@
       "hold": "awaiting-fix"
     },
     "danfoss-ak-sm800a.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "datalore.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "debian-apt.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "debugbear.md": {
@@ -277,7 +277,7 @@
       "hold": "none"
     },
     "drupal.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "edge-pwn2own.md": {
@@ -285,11 +285,11 @@
       "hold": "none"
     },
     "edito-cms.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "edk2-pxe.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "electrum.md": {
@@ -300,8 +300,12 @@
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
     },
+    "emacs.md": {
+      "last_checked": "2026-11-19T15:56:19Z",
+      "hold": "none"
+    },
     "emudhra.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "epics-base.md": {
@@ -309,7 +313,7 @@
       "hold": "none"
     },
     "estatik.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "f5-bigip-nov18.md": {
@@ -317,7 +321,7 @@
       "hold": "none"
     },
     "fastify-http-proxy.md": {
-      "last_checked": "2026-11-16T15:55:55Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "fastify-multipart.md": {
@@ -325,7 +329,7 @@
       "hold": "none"
     },
     "firefox.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "foglight.md": {
@@ -333,15 +337,15 @@
       "hold": "none"
     },
     "forticlient-nov11.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "fortimail.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "fortinet-october.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "fortisandbox.md": {
@@ -357,15 +361,15 @@
       "hold": "none"
     },
     "freeswitch.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "git-recursive-clone.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "gitea-28-3.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "gitea.md": {
@@ -377,11 +381,11 @@
       "hold": "none"
     },
     "gitlab-ruby.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "give-peer-to-peer.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "go1cms.md": {
@@ -389,7 +393,7 @@
       "hold": "awaiting-fix"
     },
     "goahead-tls.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "google-mcp-toolbox.md": {
@@ -397,7 +401,7 @@
       "hold": "none"
     },
     "gpustack.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "grafana-mimir.md": {
@@ -405,15 +409,15 @@
       "hold": "none"
     },
     "gravity-forms.md": {
-      "last_checked": "2026-11-16T15:55:55Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "header-accordions.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "hickory-dns.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "ibm-api-connect.md": {
@@ -421,11 +425,11 @@
       "hold": "none"
     },
     "imagemagick.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "imgproxy.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "incus.md": {
@@ -437,7 +441,7 @@
       "hold": "none"
     },
     "ivanti-epm.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "java4shell.md": {
@@ -449,11 +453,11 @@
       "hold": "none"
     },
     "jetbrains-hub.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "jetbrains-ides.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "jumis.md": {
@@ -465,15 +469,15 @@
       "hold": "none"
     },
     "kaniko.md": {
-      "last_checked": "2026-11-16T15:55:55Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "keycloak.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "ksmbd.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "kubeflow-pipelines.md": {
@@ -481,7 +485,7 @@
       "hold": "none"
     },
     "kyverno.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "langflow-ibm.md": {
@@ -489,7 +493,7 @@
       "hold": "none"
     },
     "langflow.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "laravel.md": {
@@ -497,19 +501,19 @@
       "hold": "none"
     },
     "lenovo-xcc.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "libreoffice.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "libreswan.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "libslirp.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "linux-fragnesia.md": {
@@ -525,11 +529,11 @@
       "hold": "awaiting-distros"
     },
     "linux-tcp-options.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "linux-tcp-rcu.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "litellm-enterprise-file-read.md": {
@@ -545,7 +549,7 @@
       "hold": "none"
     },
     "lxd-mtls.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "macos-unicode-paths.md": {
@@ -565,7 +569,7 @@
       "hold": "none"
     },
     "mitsubishi-iconics-genesis.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "mongodb.md": {
@@ -573,15 +577,15 @@
       "hold": "none"
     },
     "n-central.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
-      "hold": "none"
+      "last_checked": "2026-11-19T15:56:19Z",
+      "hold": "awaiting-fix"
     },
     "n8n-credential-guard.md": {
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
     },
     "netscaler-november.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "netscaler.md": {
@@ -593,15 +597,15 @@
       "hold": "none"
     },
     "nextjs.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "nginx.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "nodejs-november.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "nodepress.md": {
@@ -625,15 +629,15 @@
       "hold": "none"
     },
     "oorexx.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "openam.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "openemr.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "opengear-console.md": {
@@ -641,15 +645,15 @@
       "hold": "none"
     },
     "openssh-musl.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "opnsense-acme-client.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "optimizely.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "oracle-cpu-october.md": {
@@ -657,7 +661,7 @@
       "hold": "none"
     },
     "oracle-cspu-november.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "ovhcloud-cli.md": {
@@ -669,19 +673,23 @@
       "hold": "none"
     },
     "penpot.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
+      "hold": "none"
+    },
+    "php-november-19.md": {
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "php2shell.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-19T15:56:19Z",
+      "hold": "awaiting-distros"
     },
     "pillow.md": {
       "last_checked": "2026-11-17T15:56:20Z",
       "hold": "none"
     },
     "plex2shell.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "postgresql-november.md": {
@@ -693,7 +701,7 @@
       "hold": "none"
     },
     "presenton.md": {
-      "last_checked": "2026-11-16T15:55:55Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "prime-cms.md": {
@@ -709,11 +717,11 @@
       "hold": "none"
     },
     "puppet.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "pwnescape.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "qt-qxml.md": {
@@ -721,15 +729,15 @@
       "hold": "awaiting-fix"
     },
     "rails.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "railway.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "rancher-fleet.md": {
-      "last_checked": "2026-11-16T15:55:55Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "rankmath-pro.md": {
@@ -737,7 +745,7 @@
       "hold": "none"
     },
     "red-hat-quay.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "redcap.md": {
@@ -748,12 +756,16 @@
       "last_checked": "2026-11-18T19:56:00Z",
       "hold": "none"
     },
+    "ruby-november.md": {
+      "last_checked": "2026-11-19T15:56:19Z",
+      "hold": "none"
+    },
     "s2member.md": {
-      "last_checked": "2026-11-16T15:55:55Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "sap-cloud-sdk-python.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "sap-netweaver-visual-composer.md": {
@@ -761,11 +773,11 @@
       "hold": "none"
     },
     "sap-november.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "screenconnect-rmm.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "seppmail.md": {
@@ -781,7 +793,7 @@
       "hold": "none"
     },
     "siemens-iot2050.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "siemens-software-center.md": {
@@ -793,7 +805,7 @@
       "hold": "none"
     },
     "silverstripe.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "siteguard.md": {
@@ -801,11 +813,15 @@
       "hold": "none"
     },
     "skb-zerocopy-lpe.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
+    "smartermail.md": {
+      "last_checked": "2026-11-19T15:56:19Z",
+      "hold": "none"
+    },
     "sogo.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "sonicos.md": {
@@ -813,7 +829,7 @@
       "hold": "none"
     },
     "sonicwall-gms.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "sophos-utm.md": {
@@ -821,15 +837,15 @@
       "hold": "none"
     },
     "supermicro-bmc.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "symfony.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "synology-dsm-nov11.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "synology-dsm.md": {
@@ -844,12 +860,16 @@
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
     },
+    "teamcity.md": {
+      "last_checked": "2026-11-19T15:56:19Z",
+      "hold": "none"
+    },
     "teamviewer.md": {
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"
     },
     "telegram-clients.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "tensei.md": {
@@ -857,11 +877,11 @@
       "hold": "awaiting-fix"
     },
     "tum.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "typo3.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "ugcs.md": {
@@ -869,15 +889,15 @@
       "hold": "none"
     },
     "ultra-addons-cf7.md": {
-      "last_checked": "2026-11-16T15:55:55Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "ultralytics-parse-model.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "unrealircd.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "veeam-backup.md": {
@@ -885,15 +905,15 @@
       "hold": "none"
     },
     "velocloud.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "vertiv-avocent-acs.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "voapi.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "wasmtime.md": {
@@ -909,7 +929,7 @@
       "hold": "none"
     },
     "windchill.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "windows-paint.md": {
@@ -933,7 +953,7 @@
       "hold": "awaiting-fix"
     },
     "wordpress-plugins-frontend-admin.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "wordpress-plugins-latepoint.md": {
@@ -941,23 +961,23 @@
       "hold": "none"
     },
     "wordpress-plugins-nov6.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "wordpress-plugins-nov7.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "wordpress-plugins-nov8.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "wordpress-plugins-nov9.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "wordpress-plugins-nov9b.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "wordpress-upgrade-window.md": {
@@ -965,7 +985,7 @@
       "hold": "none"
     },
     "wpsplinter.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-fix"
     },
     "wso2-api-manager.md": {
@@ -977,7 +997,7 @@
       "hold": "none"
     },
     "xen.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "awaiting-distros"
     },
     "yootheme-pro.md": {
@@ -989,11 +1009,11 @@
       "hold": "none"
     },
     "zenoh-pico.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "zoom-workplace.md": {
-      "last_checked": "2026-11-17T15:56:20Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "zyxel-aps.md": {
@@ -1001,7 +1021,7 @@
       "hold": "none"
     },
     "zyxel-cpe-nov17.md": {
-      "last_checked": "2026-11-18T15:56:29Z",
+      "last_checked": "2026-11-19T15:56:19Z",
       "hold": "none"
     },
     "zyxel-gs1900.md": {
