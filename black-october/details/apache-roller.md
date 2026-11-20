@@ -1,6 +1,6 @@
 # Apache Roller: an Atom entry reads a file, and a link creates an administrator
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Back to Roller summary](../black-october-2026.md#apache-roller-an-atom-entry-reads-a-file-and-a-link-creates-an-administrator) · [Changelog](../../CHANGELOG.md)
 
@@ -12,11 +12,11 @@ Apache Roller is a Java blog server. Release 6.1.7, announced November 11, fixes
 
 A third flaw, [CVE-2026-123374](https://www.cve.org/CVERecord?id=CVE-2026-123374), is the other one Apache rates Important: the XML-RPC client deserializes a weblog-update ping response, so the ping target can run code. The advisory gives no number. It affects 4.0 through 6.1.6. David Joudelat reported it.
 
-On November 17 Apache published [CVE-2026-129448](https://www.cve.org/CVERecord?id=CVE-2026-129448) and rates it **CVSS 3.1 9.8 Critical** (`CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`). The advisory says it is the same vulnerability as [CVE-2026-82384](https://www.cve.org/CVERecord?id=CVE-2026-82384), which listed only 6.1.5. The new record covers **4.0.0 through 6.1.4**: the XML-RPC endpoint accepts vendor extension types and deserializes them before authenticating the requester, so a remote attacker with no account can run code. Apache writes: "This issue is being actively exploited." The fix it names is **6.1.6 or later**, which disables the extension types and rejects XML-RPC requests when the feature is disabled. 6.1.7, the release this guide already recommends, is past that floor. Turning XML-RPC off in the administration UI is not enough on an older build, because the request is deserialized before that setting is checked. Until the upgrade, set `enabledForExtensions` to `false` in `WEB-INF/web.xml`, or remove the `/roller-services/xmlrpc` servlet mapping, and restart. n0mi1k found it and Matt Raible reported the wider range. It is not in KEV.
+On November 17 Apache published [CVE-2026-129448](https://www.cve.org/CVERecord?id=CVE-2026-129448) and rates it **CVSS 3.1 9.8 Critical** (`CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`). The advisory says it is the same vulnerability as [CVE-2026-82384](https://www.cve.org/CVERecord?id=CVE-2026-82384), which listed only 6.1.5. The new record covers **4.0.0 through 6.1.4**: the XML-RPC endpoint accepts vendor extension types and deserializes them before authenticating the requester, so a remote attacker with no account can run code. Apache writes: "This issue is being actively exploited." The fix it names is **6.1.6 or later**, which disables the extension types and rejects XML-RPC requests when the feature is disabled. 6.1.7, the release this guide already recommends, is past that floor. Turning XML-RPC off in the administration UI is not enough on an older build, because the request is deserialized before that setting is checked. Until the upgrade, set `enabledForExtensions` to `false` in `WEB-INF/web.xml`, or remove the `/roller-services/xmlrpc` servlet mapping, and restart. n0mi1k found it and Matt Raible reported the wider range. CISA added it to KEV on 2026-11-20.
 
 The project lists twelve more, nine Moderate and three Low. None of those is 7.0 or higher. 6.1.7 is the fix for all fifteen. Planet is off by default after the upgrade, and the entry editor applies the Limited role to each entry.
 
-**CISA KEV:** Not listed (catalog 2026.11.17, checked 2026-11-18) for CVE-2026-105153, CVE-2026-118411, CVE-2026-82384, or CVE-2026-129448. Apache says CVE-2026-129448, the same flaw as CVE-2026-82384, is being actively exploited. That statement is Apache's, not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-129448](https://www.cve.org/CVERecord?id=CVE-2026-129448) was added 2026-11-20, federal due date 2026-11-23. CISA requires mitigations per the vendor and forensic triage under BOD 26-04. Ransomware use is Unknown. [CVE-2026-82384](https://www.cve.org/CVERecord?id=CVE-2026-82384) is the same flaw on 6.1.5 and is not listed separately. [CVE-2026-105153](https://www.cve.org/CVERecord?id=CVE-2026-105153) and [CVE-2026-118411](https://www.cve.org/CVERecord?id=CVE-2026-118411) are not listed (catalog 2026.11.20, checked 2026-11-20). [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -34,7 +34,8 @@ The project lists twelve more, nine Moderate and three Low. None of those is 7.0
 | Project post | 2026-11-10; time unknown | Dave Johnson says 6.1.7 fixes fifteen flaws and to upgrade now. The advisories were not up yet. [Post][post] |
 | **Public announcement and fix** | **2026-11-11 03:14 UTC** | The CVE-2026-105153 advisory. The 8.8 advisory is timestamped 03:17 UTC and the deserialization advisory 03:18 UTC the same day. [Advisory][adv105153] |
 | **CVE-2026-129448** | **2026-11-17 11:02:58 UTC** | Apache says the XML-RPC deserialization flaw, the same one as CVE-2026-82384, covers 4.0.0 through 6.1.4 and is being actively exploited. Fixed in 6.1.6. [Advisory][adv129448] |
-| **Last updated** | **2026-11-17 (America/New_York)** | Exploitation statement and the wider range. The upgrade stays 6.1.7. |
+| **CISA KEV** | **2026-11-20; catalog released 17:48:39 UTC** | CVE-2026-129448 added. Federal due date 2026-11-23. CVE-2026-82384 is not listed separately. [KEV][kev] |
+| **Last updated** | **2026-11-20 (America/New_York)** | KEV listing. The upgrade stays 6.1.7. |
 
 ## Detection
 
@@ -71,7 +72,7 @@ Apache says CVE-2026-129448 is being actively exploited and publishes no indicat
 - [Project post][post] — November 10, 2026. Lists all fifteen with the project's severity and the behavior changes.
 - [CVE-2026-105153](https://www.cve.org/CVERecord?id=CVE-2026-105153) — Apache CNA, published 2026-11-11. Same 7.7 score.
 - [CVE-2026-129448 advisory][adv129448] — Arnout Engelen, 2026-11-17 11:02:58 UTC. Critical, CVSS 3.1 9.8. Same flaw as CVE-2026-82384. Affected 4.0.0 through 6.1.4. "This issue is being actively exploited." Fixed in 6.1.6.
-- [CISA KEV][kev] — catalog 2026.11.17, released 2026-11-17T17:53:15.5664Z, checked 2026-11-18. None of the four is listed.
+- [CISA KEV][kev] — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z. CVE-2026-129448 was added 2026-11-20, due 2026-11-23. CVE-2026-82384, CVE-2026-105153, and CVE-2026-118411 are not listed.
 
 [adv105153]: https://lists.apache.org/thread/w7dsz19261myrcwx8ssbwr67hc1wfosj
 [adv129448]: https://seclists.org/oss-sec/2026/q4/731

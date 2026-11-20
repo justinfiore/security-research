@@ -1,6 +1,6 @@
 # VMware vCenter: a network request skips login
 
-**Last updated:** 2026-11-19 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main vCenter summary](../black-october-2026.md#vmware-vcenter-a-network-request-skips-login) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -14,11 +14,11 @@ The same advisory fixes four more flaws. Two are High and need a login on SDDC M
 | [CVE-2026-123891](https://www.cve.org/CVERecord?id=CVE-2026-123891) | Important, 8.1. `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N` | SQL injection. A logged-in user reads and writes the SDDC Manager database. | SDDC Manager 9.1.1.0200, 9.0.2.0100, 5.2.5. |
 | [CVE-2026-123892](https://www.cve.org/CVERecord?id=CVE-2026-123892) | Important, 7.2. `CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H` | Command injection. A logged-in user runs a command on the appliance. | the same three SDDC Manager builds. |
 | [CVE-2026-123893](https://www.cve.org/CVERecord?id=CVE-2026-123893) | Moderate, 6.7. `CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H` | A local administrator on SDDC Manager becomes root. | the same three SDDC Manager builds. |
-| [CVE-2026-123894](https://www.cve.org/CVERecord?id=CVE-2026-123894) | Moderate, 6.7. `CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H` | VMware Tools for Windows accepts a SAML token. The attacker already has a privileged process in a Windows guest that uses guest alias mapping. The escalation stays inside that guest. | Tools 13.1.5.0, or 12.5.5 on the 12.3 line. 12.4.10, inside 12.5.5, covers Windows 32-bit. |
+| [CVE-2026-123894](https://www.cve.org/CVERecord?id=CVE-2026-123894) | Moderate, 6.7. `CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H` | VMware Tools for Windows accepts a SAML token. The attacker already has a privileged process in a Windows guest that uses guest alias mapping. The escalation stays inside that guest. | Tools 13.1.5.0 for 13.x, and 12.5.5 for 12.x and 11.x. 12.4.10, inside 12.5.5, covers Windows 32-bit. |
 
 GTIG describes CVE-2026-123890 as an unauthenticated Secure Remote Password session-key disclosure over DCE/RPC on TCP 2012. With the administrator session, the attacker can run commands and copy `data.mdb` through the `vmdird` interface `vmdirdbcp`. Broadcom's FAQ says this is not the July flaw, [CVE-2026-59309](https://www.cve.org/CVERecord?id=CVE-2026-59309), and that a system patched for that one still needs this update. Mandiant says BONESAW ran in early September against a vCenter that was already patched for the July flaw. None of the five is a guest-to-host escape. ESX does not need an update for this advisory.
 
-**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any of the five. GTIG and Mandiant report exploitation of CVE-2026-123890 in early September 2026. That report is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-123890](https://www.cve.org/CVERecord?id=CVE-2026-123890) was added 2026-11-20, federal due date 2026-11-23. CISA requires mitigations per the vendor and forensic triage under BOD 26-04. Ransomware use is Unknown. The other four are not listed (catalog 2026.11.20, checked 2026-11-20). [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -37,6 +37,9 @@ GTIG describes CVE-2026-123890 as an unauthenticated Secure Remote Password sess
 | Exploitation | early September 2026; day and time unknown | ARMORY CASTLE used BONESAW against a vCenter already patched for CVE-2026-59309. [GTIG][gtig] |
 | **Public announcement and fixes** | **2026-11-19; CVE records from 14:02:38 UTC** | VMSA-2026-0009, initial advisory. [VMSA][vmsa] |
 | GTIG write-up | 2026-11-19; time/TZ unknown | Names the actor, the session, and the tooling. [GTIG][gtig] |
+| **CISA KEV** | **2026-11-20; catalog released 17:48:39 UTC** | CVE-2026-123890 added. Federal due date 2026-11-23. The other four are not listed. [KEV][kev] |
+| VMSA update | 2026-11-20; time/TZ unknown | VMSA-2026-0009.1. Tools 11.x and 12.x are fixed in 12.5.5, and 13.x in 13.1.5.0. [VMSA][vmsa] |
+| **Last updated** | **2026-11-20 (America/New_York)** | KEV listing, and the Tools range now includes 11.x. |
 
 ## Detection
 
@@ -44,7 +47,7 @@ Read the build from the appliance, not from a plan.
 
 - vCenter 9.1 below 9.1.1.0200, 9.0 below 9.0.2.0200, and 8.0 below 8.0 U3m are inside CVE-2026-123890. Cloud Foundation 5.x below 5.2.5 is inside it. vCenter 7.0 has no public build.
 - SDDC Manager 9.1 below 9.1.1.0200, 9.0 below 9.0.2.0100, and 5.x below 5.2.5 are inside the three SDDC Manager flaws. The 9.0 floor is 9.0.2.0100, one build behind the vCenter floor.
-- Windows guests with VMware Tools 13.x below 13.1.5.0, or 12.3.x below 12.5.5, are inside CVE-2026-123894 only where guest alias mapping is configured. `VGAuthCLI.exe list`, run as an administrator in the guest, lists aliases. Turning guest operations off in vSphere does not close this flaw.
+- Windows guests with VMware Tools 13.x below 13.1.5.0, or 11.x or 12.x below 12.5.5, are inside CVE-2026-123894. The advisory says the attack needs guest alias mapping, and it lists no workaround, so update Tools either way. `VGAuthCLI.exe list`, run as an administrator in the guest, lists aliases. Turning guest operations off in vSphere does not close this flaw.
 
 GTIG's reconnaissance hit TCP 443, 2012, 389, 5480, and 9080. Port 2012 is the Directory Service RPC. A scan of that port is a lead, and a closed port today does not show whether it was open in September.
 
@@ -64,7 +67,7 @@ On vCenter, Mandiant saw SSH enabled through a PUT to `/rest/appliance/access/ss
 2. These vCenter updates are **not eligible for vCenter Quick Patch**. Use the ordinary update, including the VAMI. vSphere 8 has to be on Update 3 before 8.0 U3m applies.
 3. **vCenter 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1.** Broadcom says to wait for 9.1.2, or to move vCenter to 9.1.1 first and apply the security update there. [KB 67077][kb670] is the back-in-time note.
 4. Update SDDC Manager to **9.1.1.0200**, **9.0.2.0100**, or **5.2.5**. That update does not stop virtual machines.
-5. Update VMware Tools for Windows to **13.1.5.0**, or **12.5.5** on the 12.3 line, on guests that use guest alias mapping.
+5. Update VMware Tools for Windows to **13.1.5.0** on 13.x, and to **12.5.5** on 12.x and 11.x. VMSA-2026-0009.1, dated 2026-11-20, adds 11.x and the rest of 12.x to the range the earlier text limited to 12.3. 12.4.10, inside 12.5.5, covers Windows 32-bit.
 6. ESX hosts do not need an update for this advisory. Updating vCenter does not update them, and they do not have to move first.
 7. There is no workaround. A firewall in front of TCP 2012, 443, and 5480 is not a substitute for the build.
 
@@ -72,7 +75,7 @@ On vCenter, Mandiant saw SSH enabled through a PUT to `/rest/appliance/access/ss
 
 - The vCenter build is 9.1.1.0200, 9.0.2.0200, or 8.0 U3m, and the appliance has been restarted onto it.
 - SDDC Manager, where you run it, is 9.1.1.0200, 9.0.2.0100, or 5.2.5.
-- Windows guests that use guest aliases report Tools 13.1.5.0 or 12.5.5.
+- Windows guests report Tools 13.1.5.0, or 12.5.5 on 12.x and 11.x.
 - Do not send an SRP exchange to port 2012.
 
 ## Compromise response
@@ -88,7 +91,7 @@ Look for an SSO account you did not create, SSH enabled through the VAMI, a copy
 - [CVE-2026-123890](https://www.cve.org/CVERecord?id=CVE-2026-123890) — Broadcom, published 2026-11-19 14:02:38 UTC. CVSS 3.1 9.8.
 - [CVE-2026-123891](https://www.cve.org/CVERecord?id=CVE-2026-123891), [CVE-2026-123892](https://www.cve.org/CVERecord?id=CVE-2026-123892), [CVE-2026-123893](https://www.cve.org/CVERecord?id=CVE-2026-123893), [CVE-2026-123894](https://www.cve.org/CVERecord?id=CVE-2026-123894) — the four others, published the same minute.
 - [GTIG and Mandiant, ARMORY CASTLE][gtig] — published 2026-11-19. Exploitation in early September, the session name, TCP 2012, and the tool names.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.18, checked 2026-11-19. None of the five is listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z. CVE-2026-123890 was added 2026-11-20, due 2026-11-23. The other four are not listed.
 
 [vmsa]: https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39495
 [faq]: https://github.com/vmware/vcf-security-and-compliance-guidelines/blob/main/security-advisories/vmsa-2026-0009/README.md
@@ -96,3 +99,4 @@ Look for an SSO account you did not create, SSH enabled through the VAMI, a copy
 [kb882]: https://knowledge.broadcom.com/external/article?legacyId=88287
 [kb463]: https://knowledge.broadcom.com/external/article/463116
 [kb670]: https://knowledge.broadcom.com/external/article?legacyId=67077
+[kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

@@ -2,6 +2,12 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-20 15:10 EST (UTC−05:00) — Moxa; KEV; Synology; VMware Tools
+
+- **Moxa:** On an [Ethernet switch](black-october/details/moxa-switches.md#remediation) in the series MPSA-268140 lists, regenerate the SSL certificate and the SSH key, and keep management off the internet. Moxa rates CVE-2026-130493 CVSS 4.0 7.7: every affected switch ships the same RSA-1024 key, and the firmware that holds it is public. CVE-2026-130494 is 8.6 and needs an administrator: the switch does not check a signature on firmware. There is no firmware fix. Neither is in KEV.
+- **CISA KEV:** [vCenter CVE-2026-123890](black-october/details/vcenter.md#timeline), [Cisco Expressway CVE-2026-76466](black-october/details/cisco-expressway.md#timeline), and [Apache Roller CVE-2026-129448](black-october/details/apache-roller.md#timeline) were added November 20, due November 23. CISA requires forensic triage. The fixes are unchanged. VMware Tools for Windows 11.x and 12.x are now fixed in 12.5.5, and 13.x in 13.1.5.0.
+- **Synology DSM:** The [OAuth builds](black-october/details/synology-dsm-nov11.md#remediation) shipped. Install 7.4.1-90080-2 or 7.3.2-86009-6 and reboot. DSM 7.2, 7.1, and BeeStation OS 1.5 still have none, so the OAuth Service package stays off there. The November 10 builds leave CVE-2026-120382 in place. It is not in KEV.
+
 ## 2026-11-20 11:10 EST (UTC−05:00) — Apache Tomcat
 - **NGINX:** On Debian, install [1.26.3-3+deb13u11 or 1.22.1-9+deb12u11](black-october/details/nginx.md#distribution-packages) and restart. DSA-6642-1 and DLA-4918-1, both November 19, cover CVE-2026-123007 and CVE-2026-123633 on trixie and bookworm. Forky still has no package. On Red Hat Enterprise Linux, install the November 20 erratum: RHSA-2026:100744 on RHEL 10, RHSA-2026:100748 for the RHEL 9 base package, or RHSA-2026:100750 for the RHEL 9.8 `nginx:1.24` module. RHEL 8 and the RHEL 9 `nginx:1.26` stream still have none.
 - **SonicWall Gen 6:** [Replace it](black-october/details/sonicos.md#gen-6-and-gen-65). SonicWall's November 18 advisory says Gen 6 and Gen 6.5, including Gen 6 NSv, are end of support and will get no security patch, whatever the severity. Until the replacement, take WAN management and SSL VPN off. That is not a fix. The Gen 7 and Gen 8 builds are unchanged.
