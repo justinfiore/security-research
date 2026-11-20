@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Cisco Expressway: a cluster cookie runs commands as root](#cisco-expressway-a-cluster-cookie-runs-commands-as-root)
 - [WatchGuard Dimension: a log request runs code before login](#watchguard-dimension-a-log-request-runs-code-before-login)
 - [IBM Guardium: a request runs code before login](#ibm-guardium-a-request-runs-code-before-login)
 - [Splunk: an empty secret runs a search before login](#splunk-an-empty-secret-runs-a-search-before-login)
@@ -289,7 +290,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
-- **New this update:** On Debian, install [pam-mysql](#pam-mysql-a-passwordless-account-accepts-any-password) **0.8.2-2.1+deb13u1** (trixie) or **0.8.2-2+deb12u1** (bookworm) and restart `sshd`. The researcher rates [CVE-2026-124749](https://www.cve.org/CVERecord?id=CVE-2026-124749) CVSS 3.1 9.8: a stock SSH server lets anyone in as an account whose stored password is SQL NULL. The CVE record is still reserved. Do not set `PermitEmptyPasswords yes`. Ubuntu and the 1.0 betas have no package. It is not in KEV.
+- **New this update:** Upgrade a clustered [Cisco Expressway](#cisco-expressway-a-cluster-cookie-runs-commands-as-root) to **X15.5.20 or later**. Cisco rates [CVE-2026-76466](https://www.cve.org/CVERecord?id=CVE-2026-76466) CVSS 3.1 9.8 Critical: the cluster database service accepts a persistent cookie and runs commands as root. X14 and earlier have to move to a fixed release. A device that is not in a cluster is outside the condition Cisco names. F6 says a company in Russia was attacked on X15.5.3 after a proof of concept was published. Cisco's October 21 advisory still says it knows of no malicious use. It is not in KEV. If the upgrade has to wait, block TCP 4371 and 4372 except from the cluster nodes you trust.
+- **New this update:** On Debian, install [pam-mysql](#pam-mysql-a-passwordless-account-accepts-any-password) **0.8.2-2.1+deb13u1** (trixie) or **0.8.2-2+deb12u1** (bookworm) and restart `sshd`. The researcher rates [CVE-2026-124749](https://www.cve.org/CVERecord?id=CVE-2026-124749) CVSS 3.1 9.8: a stock SSH server lets anyone in as an account whose stored password is SQL NULL. The CVE record is still reserved. Do not set `PermitEmptyPasswords yes`. Ubuntu's page, dated November 20, marks every release Needs evaluation and names no package. The 1.0 betas have none either. It is not in KEV.
 - **New this update:** [Mail Assure and SpamExperts](#n-able-someone-reached-a-server-behind-mail-assure-and-spamexperts) had unauthorized access to one server in N-able's hosted cloud, disclosed at 03:05 UTC on November 18. No CVE is assigned and no score is published. Mail still flows and is still filtered. The portal, API, quarantine, and logs are still offline as of 04:00 UTC on November 20. Read the partner email. This is not the N-central incident.
 - **New this update:** Upgrade [WatchGuard Dimension](#watchguard-dimension-a-log-request-runs-code-before-login) to **2.3.2 or later**. WatchGuard rates [CVE-2026-86130](https://www.cve.org/CVERecord?id=CVE-2026-86130) CVSS 4.0 9.3 Critical: the log collection service runs code with no login. Two more, both 9.3, need an administrator login and expose a Super Administrator session. Dimension 2.0 before 2.3.2 is affected. This is not the AuthPoint gateway. None is in KEV.
 - **New this update:** Install [IBM Guardium Data Protection 12.2.4](#ibm-guardium-a-request-runs-code-before-login). IBM rates [CVE-2026-84236](https://www.cve.org/CVERecord?id=CVE-2026-84236) and [CVE-2026-87977](https://www.cve.org/CVERecord?id=CVE-2026-87977) CVSS 3.1 9.8: a request with no login runs code in the SharePoint Tap, and another reads the database. 12.2 is the line. There is no workaround. None is in KEV.
@@ -304,7 +306,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** [Emacs](#emacs-a-project-file-runs-code-when-a-file-opens) 31.1 runs code from a project's `.dir-locals.el` when a matching file is opened. MITRE rates [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959) CVSS 3.1 7.8 High. Emacs 30.2 is not affected. The fix is marked for 31.2, and that release is not out. Until then, open an untrusted project with directory-local variables off. It is not in KEV.
 - **New this update:** Upgrade [Drupal](#drupal-core-field-ui-remote-code-execution) to **11.4.13, 11.3.22, or 10.6.22**. Drupal rates [SA-CORE-2026-017](https://www.drupal.org/sa-core-2026-017) Critical, 18/25: the installer can be used to reinstall the site and run code. The CVE record is still reserved and has no CVSS score. The October floors leave it in place. Until the upgrade, secure `install.php`. It is not in KEV.
 - **New this update:** On Ubuntu, install the [NGINX package in USN-9159-1](#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) and restart. Debian bookworm, trixie, and forky still have no package for CVE-2026-123007. The upstream floors, 1.30.7 and 1.31.9, are unchanged.
-- **New this update:** Upgrade [Ruby](#ruby-a-string-or-a-pattern-corrupts-memory) to **4.0.10, 3.4.13, or 3.3.14** and restart every process. Ruby's repository rates three of seven flaws Critical, and MITRE rates [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) CVSS 3.1 7.4 High. The six others have no CVE yet. Ruby knows of proofs of concept that run code. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. Ruby 3.2 and earlier get no fix. None is in KEV.
+- **New this update:** Upgrade [Ruby](#ruby-a-string-or-a-pattern-corrupts-memory) to **4.0.10, 3.4.13, or 3.3.14** and restart every process. Ruby's repository rates three of seven flaws Critical, and MITRE rates [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) CVSS 3.1 7.4 High. The six others have no CVE yet. Ruby knows of proofs of concept that run code. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. Ruby 3.2 and earlier get no fix. Self-managed GitLab's packages that include the fixed Ruby are **19.6.1, 19.5.8, and 19.4.10**. A self-compiled GitLab still has to be rebuilt on Ruby 3.3.14 or 3.4.13. None is in KEV.
 - **New this update:** Install the [F5 engineering hotfix](#f5-big-ip-six-flaws-crash-the-traffic-process) for the iRule or APM policy you run. F5 rates six flaws CVSS 3.1 9.8 and CVSS 4.0 9.3: a request with no login crashes the traffic process and may run code, on BIG-IP 21.1.0, 17.5.0–17.5.1, and 17.1.0–17.1.3 when that configuration is present. There is no workaround and no scheduled release. None is in KEV. This is not the September APM flaw.
 - **New this update (CISA KEV):** Upgrade [REDCap](#redcap-a-public-survey-runs-code) to **16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard** or later. Securifera rates [CVE-2026-90817](https://www.cve.org/CVERecord?id=CVE-2026-90817) CVSS 3.1 9.8 Critical: a request that knows one public survey hash reaches Data Import and runs code. CISA added it on November 18, due November 21, and requires forensic triage. The record says 13.3.0 and higher, and its version list marks only 13.3.0 affected.
 - **New this update (CISA KEV):** Upgrade the [LiteLLM proxy](#litellm-a-custom-code-guardrail-runs-code) to **v1.83.14-stable or later** and restart it. MITRE rates [CVE-2026-40217](https://www.cve.org/CVERecord?id=CVE-2026-40217) CVSS 3.1 8.8 High: bytecode sent to the custom-code guardrail runs in the proxy, which is root in the default image. CISA added it on November 18, due December 2. The vendor page says 1.83.11, and that tag does not exist. This is not the 1.107.0 malicious release.
@@ -516,6 +518,29 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Cisco Expressway: a cluster cookie runs commands as root
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cisco-expressway.md):** [Detection](details/cisco-expressway.md#detection) · [Remediation](details/cisco-expressway.md#remediation) · [Verification](details/cisco-expressway.md#verification) · [Timeline](details/cisco-expressway.md#timeline)
+
+**CVEs:** [CVE-2026-76466](https://www.cve.org/CVERecord?id=CVE-2026-76466)
+
+**Cisco rates [CVE-2026-76466](https://www.cve.org/CVERecord?id=CVE-2026-76466) CVSS 3.1 9.8 Critical.** Cisco is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. On a clustered Expressway-C or Expressway-E, appliance or virtual, the database service uses persistent cookies and does not check the client certificate when **TLS Verify Mode** is **Enabled**. Someone who has the cookies runs commands as root. **X15.5.3 and earlier** are fixed in **X15.5.20**. **X14 and earlier** have no fix on that train. A device that is not in a cluster is outside the condition Cisco names. Cisco publishes no workaround. The advisory, still version 1.0 from October 21, says the PSIRT knows of no public announcement or malicious use. F6 says otherwise: on November 18 it reported an attack on Expressway X15.5.3 at a company in Russia, shortly after a proof of concept was published, that moved from two internet-facing devices to two internal cluster nodes.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-20). F6's report is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-10-21 16:00 GMT** | cisco-sa-vcs-static-cred-hr7EWZ8t, version 1.0. Fixed in X15.5.20. |
+| F6 report | 2026-11-18; time/TZ unknown | Says this is the first exploitation it investigated. X15.5.3. |
+| SecurityWeek account | 2026-11-19 08:12 ET | Says the advisory still denies malicious use. |
+| **Last updated** | **2026-11-20 07:04 EST (UTC−05:00)** | New item. Upgrade a clustered Expressway. |
+
+**Patch:** Upgrade every clustered Expressway to **X15.5.20 or later**. Move X14 and earlier to a fixed release. If the upgrade has to wait, F6 says to block TCP **4371** and **4372** except from the cluster nodes you trust. That is not Cisco's workaround, and the attack F6 saw used a trusted node to reach the inside of the cluster. The upgrade does not remove a script already written on the device.
+
+Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-vcs-static-cred-hr7EWZ8t), [detailed guide](details/cisco-expressway.md).
+
+---
+
 ## WatchGuard Dimension: a log request runs code before login
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/watchguard-dimension.md):** [Detection](details/watchguard-dimension.md#detection) · [Remediation](details/watchguard-dimension.md#remediation) · [Verification](details/watchguard-dimension.md#verification) · [Timeline](details/watchguard-dimension.md#timeline)
@@ -658,9 +683,10 @@ Sources: [JTL note](https://www.jtl-software.com/de/security/sicherheitshinweis-
 | **Public announcement** | **2026-11-19 14:00 UTC** | Embargo lift. [oss-security](https://www.openwall.com/lists/oss-security/2026/11/19/7). |
 | Debian trixie | 2026-11-19 20:18:29 UTC | DSA-6643-1, 0.8.2-2.1+deb13u1. |
 | Debian bookworm | 2026-11-19 22:25:05 UTC | DLA-4919-1, 0.8.2-2+deb12u1. |
-| **Last updated** | **2026-11-20 03:08 EST (UTC−05:00)** | New item. Install the package and restart `sshd`. |
+| Ubuntu CVE page | 2026-11-20; time/TZ unknown | Priority Medium. Needs evaluation. No package. |
+| **Last updated** | **2026-11-20 07:04 EST (UTC−05:00)** | Ubuntu published a page and no package. |
 
-**Patch:** On Debian 13, install `pam-mysql` **0.8.2-2.1+deb13u1** or later. On Debian 12, install **0.8.2-2+deb12u1** or later. Restart `sshd` and any other service that loaded the module. Do not set `PermitEmptyPasswords yes`: it trades this bypass for OpenSSH's own empty-password path. Delete rows whose password is NULL, and on a 1.0 beta delete empty ones too. Ubuntu has no page for this CVE, and Fedora, Nix, Mageia, Rosa, and ALT ship a 1.0 beta with no fixed release. The package update does not end a session that already exists.
+**Patch:** On Debian 13, install `pam-mysql` **0.8.2-2.1+deb13u1** or later. On Debian 12, install **0.8.2-2+deb12u1** or later. Restart `sshd` and any other service that loaded the module. Do not set `PermitEmptyPasswords yes`: it trades this bypass for OpenSSH's own empty-password path. Delete rows whose password is NULL, and on a 1.0 beta delete empty ones too. Ubuntu's page marks every release Needs evaluation and names no version. Fedora, Nix, Mageia, Rosa, and ALT ship a 1.0 beta with no fixed release. The package update does not end a session that already exists.
 
 Sources: [oss-security](https://www.openwall.com/lists/oss-security/2026/11/19/7), [DSA-6643-1](https://www.debian.org/security/2026/dsa-6643), [detailed guide](details/pam-mysql.md).
 
@@ -790,9 +816,10 @@ Sources: [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959), [b
 |---|---|---|
 | **Public announcement** | **2026-11-19 00:00 UTC** | Ruby's advisory. The page date is November 18. |
 | CVE record | 2026-11-19; time unknown | MITRE published CVE-2026-132825 at 7.4. Ruby's advisory still says no CVE is assigned. |
-| **Last updated** | **2026-11-19 08:01 EST (UTC−05:00)** | New item. Upgrade Ruby and restart. |
+| GitLab packages | 2026-11-20; time/TZ unknown | 19.6.1, 19.5.8, and 19.4.10 bundle the patched Ruby. |
+| **Last updated** | **2026-11-20 07:04 EST (UTC−05:00)** | GitLab shipped the fixed interpreter. The Ruby floors are unchanged. |
 
-**Patch:** Upgrade to **4.0.10, 3.4.13, or 3.3.14** and restart every process that loaded the old interpreter, including workers and containers. Updating gems does not replace the interpreter. Ruby 3.3 is in security maintenance. Ruby 3.2 and earlier are end of life and get no fix. Ruby publishes no workaround. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. The restart does not show whether a request already ran code.
+**Patch:** Upgrade to **4.0.10, 3.4.13, or 3.3.14** and restart every process that loaded the old interpreter, including workers and containers. Updating gems does not replace the interpreter. On self-managed GitLab, upgrade to **19.6.1, 19.5.8, or 19.4.10**, which already contain that Ruby. A self-compiled GitLab has to be rebuilt on Ruby 3.3.14 or 3.4.13. Ruby 3.3 is in security maintenance. Ruby 3.2 and earlier are end of life and get no fix. Ruby publishes no workaround. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. The restart does not show whether a request already ran code.
 
 Sources: [Ruby advisory](https://www.ruby-lang.org/en/news/2026/11/18/multiple-vulnerabilities-in-regexp-and-string/), [GHSA-34m4-m9fh-gqp5](https://github.com/ruby/ruby/security/advisories/GHSA-34m4-m9fh-gqp5), [detailed guide](details/ruby-november.md).
 
@@ -7682,7 +7709,7 @@ flowchart TD
 | **OpenPLC Runtime 4.2.4 or earlier** | Update to 4.3.0 or later. CISA rates CVE-2026-126088 9.2: a race creates administrator accounts with no login. [Guide](details/openplc.md#remediation). |
 | **Eclipse Ditto gateway before 3.8.15 or 3.9.9, with pre-authentication on** | Upgrade to 3.8.15 or 3.9.9. Eclipse rates CVE-2026-120753 9.1: a query parameter picks the user. [Guide](details/eclipse-ditto.md#remediation). |
 | **JTL-Shop 5.8.0–5.8.3, or 5.7, 5.6, or 5.5 below the November floors** | Update to 5.8.4, 5.7.6, 5.6.6, or 5.5.5. JTL rates CVE-2026-123058 9.2: the installer still runs after the shop is installed. [Guide](details/jtl-shop.md#remediation). |
-| **pam-mysql, any released version** | On Debian 13 install 0.8.2-2.1+deb13u1, on Debian 12 install 0.8.2-2+deb12u1, and restart `sshd`. The researcher rates CVE-2026-124749 9.8: a NULL password row accepts any password. Do not set `PermitEmptyPasswords yes`. Ubuntu and the 1.0 betas have no package. [Guide](details/pam-mysql.md#remediation). |
+| **pam-mysql, any released version** | On Debian 13 install 0.8.2-2.1+deb13u1, on Debian 12 install 0.8.2-2+deb12u1, and restart `sshd`. The researcher rates CVE-2026-124749 9.8: a NULL password row accepts any password. Do not set `PermitEmptyPasswords yes`. Ubuntu's page names no package, and the 1.0 betas have none. [Guide](details/pam-mysql.md#remediation). |
 | **F5 BIG-IP 21.1.0, 17.5.0–17.5.1, or 17.1.0–17.1.3 with one of six iRules or an APM policy** | Install the engineering hotfix F5 names for that flaw. F5 rates all six 9.8: a request with no login crashes the traffic process. A virtual server without that configuration is outside that flaw. There is no workaround. [Guide](details/f5-bigip-nov18.md#remediation). |
 | **REDCap 13.3.0 or higher** | Upgrade to 16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard or later. Securifera rates CVE-2026-90817 9.8: one public survey hash reaches Data Import and runs code. CISA listed it on November 18, due November 21. [Guide](details/redcap.md#remediation). |
 | **LiteLLM proxy before v1.83.14-stable** | Upgrade to v1.83.14-stable or later and restart. MITRE rates CVE-2026-40217 8.8: the custom-code guardrail runs caller code. CISA listed it on November 18, due December 2. Until then, deny `POST /guardrails/test_custom_code`. This is not the 1.107.0 release. [Guide](details/litellm-guardrail.md#remediation). |

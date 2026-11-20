@@ -688,6 +688,10 @@
       "last_checked": "2026-11-17T15:56:20Z",
       "hold": "none"
     },
+    "pam-mysql.md": {
+      "last_checked": "2026-11-20T11:55:55Z",
+      "hold": "awaiting-distros"
+    },
     "pan-os.md": {
       "last_checked": "2026-11-15T15:56:05Z",
       "hold": "none"

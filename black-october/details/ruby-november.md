@@ -1,6 +1,6 @@
 # Ruby: a string or a pattern corrupts memory
 
-**Last updated:** 2026-11-19 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main Ruby summary](../black-october-2026.md#ruby-a-string-or-a-pattern-corrupts-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -25,7 +25,8 @@ On November 19 Ruby published seven flaws in the regular expression engine and i
 | **Public announcement** | **2026-11-19 00:00 UTC.** The news page is dated November 18. [Ruby advisory][ruby] |
 | Releases | 2026-11-18, page date. Ruby 4.0.10, 3.4.13, and 3.3.14. [4.0.10][r40] |
 | CVE record | 2026-11-19; time unknown. MITRE published [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) at CVSS 3.1 7.4. Ruby's advisory for that flaw still says a CVE has been requested. |
-| **Last updated** | **2026-11-19 (America/New_York).** New item. |
+| GitLab packages | 2026-11-20; time/TZ unknown | 19.6.1, 19.5.8, and 19.4.10 bundle the patched Ruby. GitLab.com and Dedicated were already patched. [GitLab][gl] |
+| **Last updated** | **2026-11-20 (America/New_York).** GitLab shipped the fixed interpreter in its own packages. |
 
 ## The seven flaws
 
@@ -58,13 +59,13 @@ That prints `ruby -v` for the runtime on `PATH`. A container, a worker, and a ve
 - **Affected:** 3.3.13 and earlier, 3.4.0 through 3.4.12, and 4.0.0 through 4.0.9.
 - **Fixed:** 3.3.14, 3.4.13, and 4.0.10.
 - **No fix:** Ruby 3.2 and earlier are end of life. Ruby says they will not receive these fixes.
-- A GitLab package that bundles its own Ruby is not settled by the host's `ruby -v`. GitLab's October floors are a different set. See the [GitLab guide](gitlab-ruby.md).
+- A GitLab package that bundles its own Ruby is not settled by the host's `ruby -v`. GitLab's packages that include the November 18 Ruby fixes are **19.6.1, 19.5.8, and 19.4.10**. Anything before 19.4.10, 19.5 before 19.5.8, and 19.6 before 19.6.1 does not. GitLab.com and GitLab Dedicated were already running a patched version. A self-compiled install is not covered by those packages: rebuild it on Ruby **3.3.14 or 3.4.13** or later in that minor series. The [October regex floors](gitlab-ruby.md) are a different set.
 
 Ruby does not say which encodings besides ISO-8859-1 and Windows-1252 take the one-byte path, and it does not say a UTF-8 string is safe. Do not treat an encoding setting as proof the process is outside the flaw.
 
 ## Remediation
 
-1. Upgrade to **4.0.10, 3.4.13, or 3.3.14** and restart every process that loaded the old interpreter. Rebuild an image that bakes Ruby in.
+1. Upgrade to **4.0.10, 3.4.13, or 3.3.14** and restart every process that loaded the old interpreter. Rebuild an image that bakes Ruby in. On self-managed GitLab, upgrade to **19.6.1, 19.5.8, or 19.4.10**. Those packages already contain the patched Ruby. A self-compiled GitLab has to be rebuilt on Ruby 3.3.14 or 3.4.13. GitLab.com and Dedicated need nothing from you.
 2. Updating gems, Rails, or the application does not replace the interpreter.
 3. Ruby 3.3 is in security maintenance. Move a 3.2 or earlier runtime to a supported line. There is no backport.
 4. Ruby publishes no workaround. Avoiding untrusted patterns and untrusted case conversion is a reduction, not a fix.
@@ -90,7 +91,9 @@ Ruby publishes no indicator and does not report exploitation. A crash in a Ruby 
 - [GHSA-7whj-cfh7-xgm4](https://github.com/ruby/ruby/security/advisories/GHSA-7whj-cfh7-xgm4) — High. `Regexp#to_s`.
 - [GHSA-wpqw-5qxg-m68r](https://github.com/ruby/ruby/security/advisories/GHSA-wpqw-5qxg-m68r) — High. Case-insensitive match.
 - [GHSA-pvgc-g7gj-pv6h](https://github.com/ruby/ruby/security/advisories/GHSA-pvgc-g7gj-pv6h) — Moderate. Backreference read.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.18, checked 2026-11-19. CVE-2026-132825 is not listed.
+- [GitLab 19.6.1, 19.5.8, and 19.4.10][gl] — published 2026-11-20. The only security fix in the release is the bundled Ruby update for CVE-2026-132825 and the rest of the November 18 Ruby advisory. GitLab shows Ruby's Critical rating and notes MITRE's 7.4. Impacted: all versions before 19.4.10, 19.5 before 19.5.8, and 19.6 before 19.6.1. These releases add no new database migrations.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.18, checked 2026-11-20. CVE-2026-132825 is not listed.
 
 [ruby]: https://www.ruby-lang.org/en/news/2026/11/18/multiple-vulnerabilities-in-regexp-and-string/
 [r40]: https://www.ruby-lang.org/en/news/2026/11/18/ruby-4-0-10-released/
+[gl]: https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-6-1-released/

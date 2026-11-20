@@ -2,6 +2,12 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-20 07:04 EST (UTC−05:00) — Cisco Expressway; GitLab; pam-mysql
+
+- **Cisco Expressway:** Upgrade a clustered Expressway to [X15.5.20 or later](black-october/details/cisco-expressway.md#remediation). Cisco rates CVE-2026-76466 CVSS 3.1 9.8: the cluster database service accepts a persistent cookie and runs commands as root. X14 and earlier have to move to a fixed release. A device that is not in a cluster is outside the condition Cisco names. F6 says a company in Russia was attacked on X15.5.3 after a proof of concept was published. Cisco's October 21 advisory still says it knows of no malicious use. It is not in KEV. If the upgrade has to wait, block TCP 4371 and 4372 except from the cluster nodes you trust. The upgrade does not remove a script already written on the device.
+- **GitLab:** Upgrade a self-managed server to [19.6.1, 19.5.8, or 19.4.10](black-october/details/ruby-november.md#remediation). Those packages contain the Ruby that fixes CVE-2026-132825 and the rest of the November 18 set. A self-compiled install has to be rebuilt on Ruby 3.3.14 or 3.4.13. GitLab.com and Dedicated were already patched. The Ruby floors are unchanged.
+- **pam-mysql:** Ubuntu now has a [page for CVE-2026-124749](black-october/details/pam-mysql.md#remediation) and no package. Priority is Medium, and every listed release is Needs evaluation. The Debian packages are unchanged: 0.8.2-2.1+deb13u1 on trixie and 0.8.2-2+deb12u1 on bookworm. Restart `sshd` after installing one.
+
 ## 2026-11-20 03:08 EST (UTC−05:00) — pam-mysql; VMware; Bitwarden; Cyrus SASL
 
 - **pam-mysql:** On Debian, install [0.8.2-2.1+deb13u1 or 0.8.2-2+deb12u1](black-october/details/pam-mysql.md#remediation) and restart `sshd`. The researcher rates CVE-2026-124749 CVSS 3.1 9.8: a stock SSH server lets anyone in as an account whose stored password is SQL NULL. The CVE record is still reserved. Do not set `PermitEmptyPasswords yes`. Ubuntu and the 1.0 betas have no package. It is not in KEV.

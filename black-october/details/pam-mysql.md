@@ -35,7 +35,8 @@ On 0.8.x the exploitable row is a nullable password column. On the 1.0 betas the
 | **Public announcement** | **2026-11-19 14:00 UTC** | Embargo lift. Upstream pushed to master at 16:37 UTC. [oss-security][oss] |
 | Debian trixie advisory | 2026-11-19 20:18:29 UTC | DSA-6643-1, `pam-mysql` 0.8.2-2.1+deb13u1. [DSA-6643-1][dsa] |
 | Debian bookworm advisory | 2026-11-19 22:25:05 UTC | DLA-4919-1, `pam-mysql` 0.8.2-2+deb12u1. [DLA-4919-1][dla] |
-| **Last updated** | **2026-11-20 (America/New_York)** | New item. Install the Debian package, or stop using a NULL password row. |
+| Ubuntu CVE page | 2026-11-20; time/TZ unknown | Priority Medium. Needs evaluation on every listed release. No package and no USN. [Ubuntu CVE][ubu] |
+| **Last updated** | **2026-11-20 (America/New_York)** | Ubuntu published a page and no package. The Debian packages are unchanged. |
 
 ## Detection
 
@@ -69,14 +70,14 @@ On 0.8.x a NULL row is the exposed one. On a 1.0 beta an empty string is exposed
 | Debian testing and unstable | No package. 0.8.2-3 is still vulnerable. | [Debian tracker][deb] |
 | Upstream 1.0 line | No tag. Commits `6e2c52eb` and `46175520` are on master. The newest tag is 1.0.0-beta3. | [oss-security][oss] |
 | Upstream 0.8 branch | Not updated. Its head still dates from 2021. | [oss-security][oss] |
-| Ubuntu | No page. The researcher's survey lists 18.04, 20.04, and 22.04 as shipping 0.8.x. | [Ubuntu search][ubu] |
+| Ubuntu | A page, and no package. Priority Medium. Every listed release is Needs evaluation, including 26.10, 26.04, 24.04, 22.04, 20.04, 18.04, and 16.04. No USN. | [Ubuntu CVE][ubu] |
 | Fedora, Nix, Mageia, Rosa, ALT | Ship a 1.0 beta. No fixed release. | [oss-security][oss] |
 
 1. On Debian trixie, install `pam-mysql` **0.8.2-2.1+deb13u1** or later. On Debian bookworm, install **0.8.2-2+deb12u1** or later. The package is a shared library; a long-running daemon keeps the copy it loaded, so restart `sshd` and every other service that loaded it.
 2. Do not set `PermitEmptyPasswords yes`. OpenSSH sets the flag that this bug inverts only when that option is `no`, which is the default. Turning it on makes this module deny a NULL row and turns off OpenSSH's own empty-password check.
 3. Delete credential-less rows, then make the password column `NOT NULL` with no empty-string default. On 0.8.x that column shape is outside the flaw. On a 1.0 beta it is the exposed one, so the package still has to be fixed there.
 4. Leave `nullok` off. The Debian update adds it, default off. Turning it on restores NULL-password authentication unless the caller sets the flag. `pam_unix` uses the same name for the same idea.
-5. Debian testing and unstable, Ubuntu, and the distributions that ship a 1.0 beta have no fixed package. Until one exists, the rows are the mitigation. Do not build master and call it a release: the two commits are the fix, and the tree carries everything else that has landed since 1.0.0-beta3.
+5. Debian testing and unstable, Ubuntu, and the distributions that ship a 1.0 beta have no fixed package. Ubuntu's page, dated November 20, marks every release Needs evaluation and names no version. Until a package exists, the rows are the mitigation. Do not build master and call it a release: the two commits are the fix, and the tree carries everything else that has landed since 1.0.0-beta3.
 
 ## Verification
 
@@ -101,7 +102,7 @@ Expire sessions for any account that shows such a login, and set a real password
 - [DLA-4919-1][dla] — Emilio Pozuelo Monfort, 2026-11-19 22:25:05 UTC. Debian 12 bookworm, `pam-mysql` 0.8.2-2+deb12u1.
 - [Debian security tracker][deb] — read 2026-11-20. trixie (security) fixed at 0.8.2-2.1+deb13u1. bookworm and bookworm (security) both listed vulnerable, including at 0.8.2-2+deb12u1. forky and sid vulnerable at 0.8.2-3. The bookworm row disagrees with DLA-4919-1.
 - [CVE-2026-124749](https://www.cve.org/CVERecord?id=CVE-2026-124749) — reserved. No description and no score.
-- [Ubuntu CVE search][ubu] — searched 2026-11-20. No page for CVE-2026-124749.
+- [Ubuntu CVE-2026-124749][ubu] — published and updated 2026-11-20. Priority Medium. `pam-mysql` is Needs evaluation on 26.10, 26.04 LTS, 24.04 LTS, 22.04 LTS, 20.04 LTS, 18.04 LTS, and 16.04 LTS. No fixed version and no USN. The search page still returns no match.
 - [Red Hat CVE API](https://access.redhat.com/hydra/rest/securitydata/cve/CVE-2026-124749.json) — 404 on 2026-11-20. No published score.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.18, checked 2026-11-20. CVE-2026-124749 is not listed.
 
@@ -109,4 +110,4 @@ Expire sessions for any account that shows such a login, and set a real password
 [dsa]: https://www.debian.org/security/2026/dsa-6643
 [dla]: https://lists.debian.org/debian-lts-announce/2026/11/msg00045.html
 [deb]: https://security-tracker.debian.org/tracker/CVE-2026-124749
-[ubu]: https://ubuntu.com/security/cves?q=CVE-2026-124749
+[ubu]: https://ubuntu.com/security/CVE-2026-124749
