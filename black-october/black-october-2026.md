@@ -15,6 +15,12 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [WatchGuard Dimension: a log request runs code before login](#watchguard-dimension-a-log-request-runs-code-before-login)
+- [IBM Guardium: a request runs code before login](#ibm-guardium-a-request-runs-code-before-login)
+- [Splunk: an empty secret runs a search before login](#splunk-an-empty-secret-runs-a-search-before-login)
+- [OpenPLC: a race creates an administrator before login](#openplc-a-race-creates-an-administrator-before-login)
+- [Eclipse Ditto: a query parameter picks the user](#eclipse-ditto-a-query-parameter-picks-the-user)
+- [JTL-Shop: the installer still runs after the shop is installed](#jtl-shop-the-installer-still-runs-after-the-shop-is-installed)
 - [VMware vCenter: a network request skips login](#vmware-vcenter-a-network-request-skips-login)
 - [PHP: the November 19 security releases](#php-the-november-19-security-releases)
 - [SmarterMail: an application password is guessable](#smartermail-an-application-password-is-guessable)
@@ -281,10 +287,16 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [WatchGuard Dimension](#watchguard-dimension-a-log-request-runs-code-before-login) to **2.3.2 or later**. WatchGuard rates [CVE-2026-86130](https://www.cve.org/CVERecord?id=CVE-2026-86130) CVSS 4.0 9.3 Critical: the log collection service runs code with no login. Two more, both 9.3, need an administrator login and expose a Super Administrator session. Dimension 2.0 before 2.3.2 is affected. This is not the AuthPoint gateway. None is in KEV.
+- **New this update:** Install [IBM Guardium Data Protection 12.2.4](#ibm-guardium-a-request-runs-code-before-login). IBM rates [CVE-2026-84236](https://www.cve.org/CVERecord?id=CVE-2026-84236) and [CVE-2026-87977](https://www.cve.org/CVERecord?id=CVE-2026-87977) CVSS 3.1 9.8: a request with no login runs code in the SharePoint Tap, and another reads the database. 12.2 is the line. There is no workaround. None is in KEV.
+- **New this update:** Upgrade [Splunk Enterprise](#splunk-an-empty-secret-runs-a-search-before-login) to **10.6.1, 10.4.5, 10.2.9, 10.0.12, or 9.4.17**. Splunk rates [CVE-2026-76536](https://www.cve.org/CVERecord?id=CVE-2026-76536) CVSS 3.1 9.4: an empty clustering secret lets a request with no login change the configuration. A second, 9.1, runs searches. SOAR goes to **8.8.0** and Enterprise Security to **8.7.0**. None is in KEV.
+- **New this update:** Update [OpenPLC Runtime](#openplc-a-race-creates-an-administrator-before-login) to **4.3.0 or later**. CISA rates [CVE-2026-126088](https://www.cve.org/CVERecord?id=CVE-2026-126088) CVSS 4.0 9.2: two requests at once create administrator accounts, with no login. 4.2.4 and earlier are affected. It is not in KEV.
+- **New this update:** Upgrade [Eclipse Ditto](#eclipse-ditto-a-query-parameter-picks-the-user) to **3.8.15 or 3.9.9**. Eclipse rates [CVE-2026-120753](https://www.cve.org/CVERecord?id=CVE-2026-120753) CVSS 4.0 9.1: a query parameter picks the user, and the default chart lets a Bearer request through with no login. It is not in KEV.
+- **New this update:** Update [JTL-Shop](#jtl-shop-the-installer-still-runs-after-the-shop-is-installed) to **5.8.4, 5.7.6, 5.6.6, or 5.5.5**. JTL rates [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058) CVSS 4.0 9.2: the web installer still runs after the shop is installed. The note is November 12. The record is November 19. It is not in KEV.
 - **New this update:** Update [vCenter](#vmware-vcenter-a-network-request-skips-login) to **9.1.1.0200, 9.0.2.0200, or 8.0 U3m**. Broadcom rates [CVE-2026-123890](https://www.cve.org/CVERecord?id=CVE-2026-123890) CVSS 3.1 9.8 Critical: a network request skips login and opens a session as `administrator@vsphere.local`. Google says ARMORY CASTLE used it in early September, before the patch. These builds are not a Quick Patch, and 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1. vCenter 7.0 has no public fix. ESX does not need an update. It is not in KEV. A vCenter that was unpatched in September should be checked for an SSO account you did not create.
 - **New this update:** Upgrade [PHP](#php-the-november-19-security-releases) to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** and restart every worker. PHP rates seven flaws CVSS 4.0 9.2 Critical. Two are fixed only on 8.5 and 8.6. The October 21 builds leave all seven in place. Depthfirst says one of them, the interrupted session write, is still present. PHP's advisory says the fix truncates the file first. None of the seven is in KEV. This is not PHP2Shell.
 - **New this update:** Upgrade [SmarterMail](#smartermail-an-application-password-is-guessable) to a current build. **9817** is the installer. The Zero Day Initiative rates [CVE-2026-126969](https://www.cve.org/CVERecord?id=CVE-2026-126969) CVSS 3.0 9.1 Critical: application passwords were guessable, with no login. Two more are 8.8 and need a login. ZDI says Build 9735, from August 27, is the fix. Do not stop there. Application passwords from before 9735 have to be reissued. None is in KEV.
-- **New this update:** Upgrade on-premises [TeamCity](#teamcity-a-signed-in-user-runs-code-on-the-server) to **2026.1.3 or later**, or to **2025.11.8 or later** on the older line. JetBrains rates [CVE-2026-132234](https://www.cve.org/CVERecord?id=CVE-2026-132234) CVSS 3.1 9.9 Critical: a signed-in user runs code through a Mercurial root. Eight more are High. 2025.11.7 leaves the password-parameter flaw. TeamCity Cloud is already patched. None is in KEV. This is not the July flaw.
+- **New this update:** Upgrade on-premises [TeamCity](#teamcity-a-signed-in-user-runs-code-on-the-server) to **2026.2**, or to **2026.1.4**, or to **2025.11.8**. JetBrains' November 19 page adds [CVE-2026-132891](https://www.cve.org/CVERecord?id=CVE-2026-132891), which the CVE record rates 9.8: an external pull request runs code. 2026.1.3 and 2025.11.7 leave it in place. The Mercurial flaw from November 18 is unchanged. None is in KEV.
 - **New this update:** [Emacs](#emacs-a-project-file-runs-code-when-a-file-opens) 31.1 runs code from a project's `.dir-locals.el` when a matching file is opened. MITRE rates [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959) CVSS 3.1 7.8 High. Emacs 30.2 is not affected. The fix is marked for 31.2, and that release is not out. Until then, open an untrusted project with directory-local variables off. It is not in KEV.
 - **New this update:** Upgrade [Drupal](#drupal-core-field-ui-remote-code-execution) to **11.4.13, 11.3.22, or 10.6.22**. Drupal rates [SA-CORE-2026-017](https://www.drupal.org/sa-core-2026-017) Critical, 18/25: the installer can be used to reinstall the site and run code. The CVE record is still reserved and has no CVSS score. The October floors leave it in place. Until the upgrade, secure `install.php`. It is not in KEV.
 - **New this update:** On Ubuntu, install the [NGINX package in USN-9159-1](#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) and restart. Debian bookworm, trixie, and forky still have no package for CVE-2026-123007. The upstream floors, 1.30.7 and 1.31.9, are unchanged.
@@ -500,6 +512,133 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## WatchGuard Dimension: a log request runs code before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/watchguard-dimension.md):** [Detection](details/watchguard-dimension.md#detection) · [Remediation](details/watchguard-dimension.md#remediation) · [Verification](details/watchguard-dimension.md#verification) · [Timeline](details/watchguard-dimension.md#timeline)
+
+**CVEs:** [CVE-2026-86130](https://www.cve.org/CVERecord?id=CVE-2026-86130), [CVE-2026-86094](https://www.cve.org/CVERecord?id=CVE-2026-86094), [CVE-2026-84322](https://www.cve.org/CVERecord?id=CVE-2026-84322)
+
+**WatchGuard rates [CVE-2026-86130](https://www.cve.org/CVERecord?id=CVE-2026-86130) CVSS 4.0 9.3 Critical.** WatchGuard is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. The Dimension log collection service accepts a request with no login, runs SQL, and then runs code as the WebUI process user. Dimension **2.0 before 2.3.2** is affected, and **2.3.2** is the fix. Two more are 9.3 and need a Dimension Administrator login: a diagnostic log keeps a Super Administrator's session token, and a management API returns session identifiers. This is the logging server, not the AuthPoint gateway. WatchGuard says it knows of no exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any of the three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-19; time/TZ unknown** | Dimension 2.3.2. |
+| **Last updated** | **2026-11-19 19:01 EST (UTC−05:00)** | New item. Upgrade Dimension. |
+
+**Patch:** Upgrade Dimension to **2.3.2 or later** and restart it. There is no workaround for the log-collection flaw. End administrator sessions that were open on an older build. The upgrade does not invalidate a token already copied from the diagnostic log.
+
+Sources: [CVE-2026-86130](https://psirt.watchguard.com/CVE-2026-86130/), [detailed guide](details/watchguard-dimension.md).
+
+---
+
+## IBM Guardium: a request runs code before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ibm-guardium.md):** [Detection](details/ibm-guardium.md#detection) · [Remediation](details/ibm-guardium.md#remediation) · [Verification](details/ibm-guardium.md#verification) · [Timeline](details/ibm-guardium.md#timeline)
+
+**CVEs:** [CVE-2026-84236](https://www.cve.org/CVERecord?id=CVE-2026-84236), [CVE-2026-87977](https://www.cve.org/CVERecord?id=CVE-2026-87977), [CVE-2026-82339](https://www.cve.org/CVERecord?id=CVE-2026-82339)
+
+**IBM rates [CVE-2026-84236](https://www.cve.org/CVERecord?id=CVE-2026-84236) and [CVE-2026-87977](https://www.cve.org/CVERecord?id=CVE-2026-87977) CVSS 3.1 9.8 Critical.** IBM is the CNA. The vector for both is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. One is insecure deserialization in the SharePoint Tap, and a request with no login runs code. The other is SQL injection in the edge controller, and a request with no login reads or changes the database. [CVE-2026-82339](https://www.cve.org/CVERecord?id=CVE-2026-82339) is 9.1: the SharePoint S-TAP relay has no authentication. Guardium Data Protection **12.2** is the line IBM names, and the fix is **12.2.4**. IBM publishes no workaround and does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any CVE in the bulletin. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-19; time/TZ unknown** | Bulletin 7297484. The GPU build name says October 2026. |
+| **Last updated** | **2026-11-19 19:01 EST (UTC−05:00)** | New item. Install 12.2.4. |
+
+**Patch:** Install **Guardium Data Protection 12.2.4** and restart. There is no workaround. The update does not show whether a request already ran code or changed an audit record.
+
+Sources: [IBM bulletin](https://www.ibm.com/support/pages/node/7297484), [detailed guide](details/ibm-guardium.md).
+
+---
+
+## Splunk: an empty secret runs a search before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/splunk-november.md):** [Detection](details/splunk-november.md#detection) · [Remediation](details/splunk-november.md#remediation) · [Verification](details/splunk-november.md#verification) · [Timeline](details/splunk-november.md#timeline)
+
+**CVEs:** [CVE-2026-76536](https://www.cve.org/CVERecord?id=CVE-2026-76536), [CVE-2026-76535](https://www.cve.org/CVERecord?id=CVE-2026-76535), [CVE-2026-131253](https://www.cve.org/CVERecord?id=CVE-2026-131253), [CVE-2026-131287](https://www.cve.org/CVERecord?id=CVE-2026-131287), [CVE-2026-131202](https://www.cve.org/CVERecord?id=CVE-2026-131202)
+
+**Splunk rates [CVE-2026-76536](https://www.cve.org/CVERecord?id=CVE-2026-76536) CVSS 3.1 9.4 Critical.** Splunk is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:H/A:H`. On a standalone Splunk Enterprise instance, an empty clustering secret lets a request with no login read and change the cluster configuration. [CVE-2026-76535](https://www.cve.org/CVERecord?id=CVE-2026-76535) is 9.1: the same empty secret runs arbitrary searches through RapidDiag. The Enterprise floors are **10.6.1, 10.4.5, 10.2.9, 10.0.12, and 9.4.17**. Splunk SOAR below **8.8.0** has two more: the App Wizard at 9.9, and a reused repository name at 9.6, both needing a signed-in role. Splunk Enterprise Security below **8.7.0** has a 9.1 flaw that needs the `ess_admin` role. Splunk does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any CVE in the three advisories. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fixes** | **2026-11-18; time/TZ unknown** | SVD-2026-1103, SVD-2026-1106, and SVD-2026-1108. |
+| **Last updated** | **2026-11-19 19:01 EST (UTC−05:00)** | New item. Upgrade Enterprise, SOAR, and Enterprise Security. |
+
+**Patch:** Upgrade Splunk Enterprise to **10.6.1, 10.4.5, 10.2.9, 10.0.12, or 9.4.17** and restart. Until then, set a non-empty `pass4SymmKey` of at least 12 characters under `[clustering]` in `server.conf`, including on a standalone instance. Upgrade SOAR to **8.8.0** and Enterprise Security to **8.7.0**. Splunk Cloud is Splunk's to patch. The upgrade does not remove a search or a playbook that was already added.
+
+Sources: [SVD-2026-1103](https://advisory.splunk.com/advisories/SVD-2026-1103), [detailed guide](details/splunk-november.md).
+
+---
+
+## OpenPLC: a race creates an administrator before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/openplc.md):** [Detection](details/openplc.md#detection) · [Remediation](details/openplc.md#remediation) · [Verification](details/openplc.md#verification) · [Timeline](details/openplc.md#timeline)
+
+**CVEs:** [CVE-2026-126088](https://www.cve.org/CVERecord?id=CVE-2026-126088)
+
+**CISA rates [CVE-2026-126088](https://www.cve.org/CVERecord?id=CVE-2026-126088) CVSS 4.0 9.2 Critical and CVSS 3.1 8.1 High.** CISA is the CNA. The 4.0 vector is `CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. OpenPLC Runtime **4.2.4 and earlier** lets two requests at the same time both pass the "no user yet" check, and the runtime creates administrator accounts with no login. The fix is **4.3.0 or later**. CISA names critical manufacturing, energy, transportation, and water. CISA says no known exploitation has been reported to CISA.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). The ICS advisory is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-19; time/TZ unknown** | ICSA-26-323-01. Fixed in 4.3.0. |
+| **Last updated** | **2026-11-19 19:01 EST (UTC−05:00)** | New item. Update OpenPLC. |
+
+**Patch:** Update OpenPLC Runtime to **4.3.0 or later** and restart it. Until then, keep it off the internet. The update does not remove an administrator account the race already created.
+
+Sources: [ICSA-26-323-01](https://www.cisa.gov/news-events/ics-advisories/icsa-26-323-01), [detailed guide](details/openplc.md).
+
+---
+
+## Eclipse Ditto: a query parameter picks the user
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/eclipse-ditto.md):** [Detection](details/eclipse-ditto.md#detection) · [Remediation](details/eclipse-ditto.md#remediation) · [Verification](details/eclipse-ditto.md#verification) · [Timeline](details/eclipse-ditto.md#timeline)
+
+**CVEs:** [CVE-2026-120753](https://www.cve.org/CVERecord?id=CVE-2026-120753)
+
+**Eclipse rates [CVE-2026-120753](https://www.cve.org/CVERecord?id=CVE-2026-120753) CVSS 4.0 9.1 Critical.** Eclipse is the CNA. When pre-authentication is on, the Ditto gateway reads the subject from a query parameter as well as from the header a trusted proxy sets. The default Helm chart turns pre-authentication on and lets any `Authorization: Bearer` request through. A request with an invalid token and `?x-ditto-pre-authenticated=<subject>` is treated as that subject, and the token is not checked. Affected builds are **1.1.0 before 3.8.15** and **3.9.0 before 3.9.9**. The fixes are **3.8.15** and **3.9.9**. The project does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fixes** | **2026-11-19; time/TZ unknown** | GHSA-chwq-wg27-qvfr. |
+| **Last updated** | **2026-11-19 19:01 EST (UTC−05:00)** | New item. Upgrade the gateway. |
+
+**Patch:** Upgrade the gateway to **3.8.15 or 3.9.9** or later and roll the pods. A proxy that overwrites the header does not stop the query parameter. The upgrade does not show whether a request already acted as another subject.
+
+Sources: [GHSA-chwq-wg27-qvfr](https://github.com/eclipse-ditto/ditto/security/advisories/GHSA-chwq-wg27-qvfr), [detailed guide](details/eclipse-ditto.md).
+
+---
+
+## JTL-Shop: the installer still runs after the shop is installed
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/jtl-shop.md):** [Detection](details/jtl-shop.md#detection) · [Remediation](details/jtl-shop.md#remediation) · [Verification](details/jtl-shop.md#verification) · [Timeline](details/jtl-shop.md#timeline)
+
+**CVEs:** [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058)
+
+**JTL rates [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058) CVSS 4.0 9.2 Critical and CVSS 3.1 9.0.** JTL's note, dated November 12, says the web installer keeps running after the shop is installed and is not locked. A request with no login can take the shop over. The fixes are **Shop 5.8.4, 5.7.6, 5.6.6, and 5.5.5**. The 5.8 line is affected from 5.8.0 through 5.8.3. The CVE record was published November 19. The note is in German. JTL's reference is SHOP-9985.
+
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| JTL note | 2026-11-12; page modified 09:29:30 UTC | Fixed in the four builds. |
+| **CVE record** | **2026-11-19 12:18:39 UTC** | Published. |
+| **Last updated** | **2026-11-19 19:01 EST (UTC−05:00)** | New item. Update Shop. |
+
+**Patch:** Update Shop to **5.8.4, 5.7.6, 5.6.6, or 5.5.5** or later. Until then, remove or block the web installer. The update does not show whether a request already changed an administrator.
+
+Sources: [JTL note](https://www.jtl-software.com/de/security/sicherheitshinweis-web-installer_nicht_gesperrt/), [detailed guide](details/jtl-shop.md).
+
+---
+
 ## VMware vCenter: a network request skips login
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/vcenter.md):** [Detection](details/vcenter.md#detection) · [Remediation](details/vcenter.md#remediation) · [Verification](details/vcenter.md#verification) · [Timeline](details/vcenter.md#timeline)
@@ -579,9 +718,10 @@ Sources: [ZDI-26-997](https://www.zerodayinitiative.com/advisories/ZDI-26-997), 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-18; time unknown** | Fixed before 2026.1.3 and 2025.11.7. |
-| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | New item. Upgrade TeamCity. |
+| Pull-request flaw | 2026-11-19; time/TZ unknown | CVE-2026-132891. Fixed in 2026.2, 2026.1.4, and 2025.11.8. |
+| **Last updated** | **2026-11-19 19:01 EST (UTC−05:00)** | The November 18 floors leave the pull-request flaw. |
 
-**Patch:** Upgrade on-premises TeamCity to **2026.1.3 or later**. On the 2025.11 line, go to **2025.11.8 or later**. 2025.11.7 leaves the password-parameter flaw. The upgrade does not show whether a build already ran code.
+**Patch:** Upgrade on-premises TeamCity to **2026.2**, or to **2026.1.4** on the 2026.1 line, or to **2025.11.8** on the 2025.11 line. JetBrains' November 19 page adds [CVE-2026-132891](https://www.cve.org/CVERecord?id=CVE-2026-132891), which the CVE record rates 9.8: an external pull request runs code. 2026.1.3 and 2025.11.7 leave it in place. The upgrade does not show whether a build already ran code.
 
 Sources: [CVE-2026-132234](https://www.cve.org/CVERecord?id=CVE-2026-132234), [JetBrains issues fixed](https://www.jetbrains.com/privacy-security/issues-fixed/), [detailed guide](details/teamcity.md).
 
@@ -1057,7 +1197,7 @@ Sources: [CVE-2026-91115](https://www.cve.org/CVERecord?id=CVE-2026-91115), [Sil
 
 **CVEs:** [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443), [CVE-2026-116440](https://www.cve.org/CVERecord?id=CVE-2026-116440), [CVE-2026-116448](https://www.cve.org/CVERecord?id=CVE-2026-116448), [CVE-2026-116449](https://www.cve.org/CVERecord?id=CVE-2026-116449), [CVE-2026-116439](https://www.cve.org/CVERecord?id=CVE-2026-116439), [CVE-2026-116446](https://www.cve.org/CVERecord?id=CVE-2026-116446), [CVE-2026-67271](https://www.cve.org/CVERecord?id=CVE-2026-67271), [CVE-2026-116441](https://www.cve.org/CVERecord?id=CVE-2026-116441). [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) lists 36 more, and the detailed guide names the ones Dell rates 8.8 or higher.
 
-**Dell rates [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) Critical, and seven of its flaws CVSS 3.1 9.8.** Dell is the CNA. [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443) is a stack-based buffer overflow in the NAS TFTP service: Dell says an unauthenticated remote attacker can cause a denial of service or potential code execution. [CVE-2026-116448](https://www.cve.org/CVERecord?id=CVE-2026-116448) and [CVE-2026-116449](https://www.cve.org/CVERecord?id=CVE-2026-116449) are command injection that needs internal network access and runs commands as root. [CVE-2026-116439](https://www.cve.org/CVERecord?id=CVE-2026-116439) reads, modifies, or deletes files. The rest of the 9.8 rows are buffer overflows and an out-of-bounds read in the same file-services layer. [CVE-2026-116441](https://www.cve.org/CVERecord?id=CVE-2026-116441) is 9.6 and needs a peer on the storage-processor interconnect. PowerStoreT OS **5.1.x before 5.1.0.0-2798105** is affected, and that build is the fix for the 5.1 line. Revision 2.0, dated November 17, adds **4.3.1.3-2800620** for a subset of the 4.3 LTS flaws. That build does not include CVE-2026-116443. Dell's CNA published the 9.8 records on November 18. CVE-2026-116440 and CVE-2026-116439 were still unpublished on November 19.
+**Dell rates [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) Critical, and seven of its flaws CVSS 3.1 9.8.** Dell is the CNA. [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443) is a stack-based buffer overflow in the NAS TFTP service: Dell says an unauthenticated remote attacker can cause a denial of service or potential code execution. [CVE-2026-116448](https://www.cve.org/CVERecord?id=CVE-2026-116448) and [CVE-2026-116449](https://www.cve.org/CVERecord?id=CVE-2026-116449) are command injection that needs internal network access and runs commands as root. [CVE-2026-116439](https://www.cve.org/CVERecord?id=CVE-2026-116439) reads, modifies, or deletes files. The rest of the 9.8 rows are buffer overflows and an out-of-bounds read in the same file-services layer. [CVE-2026-116441](https://www.cve.org/CVERecord?id=CVE-2026-116441) is 9.6 and needs a peer on the storage-processor interconnect. PowerStoreT OS **5.1.x before 5.1.0.0-2798105** is affected, and that build is the fix for the 5.1 line. Revision 2.0, dated November 17, adds **4.3.1.3-2800620** for a subset of the 4.3 LTS flaws. That build does not include CVE-2026-116443. Dell's CNA published the 9.8 records on November 18. On November 19 it published [CVE-2026-111509](https://www.cve.org/CVERecord?id=CVE-2026-111509) at 9.1, a weak random-number generator on NAS SSH and SFTP, and [CVE-2026-111506](https://www.cve.org/CVERecord?id=CVE-2026-111506) at 8.8. The 5.1 build covers both. The 4.3 build covers the 8.8 and not the 9.1. The build numbers are unchanged.
 
 **CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any CVE in the advisory. Dell does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -4526,13 +4666,13 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/wing-ftp.md):** [Detection](details/wing-ftp.md#detection) · [Remediation](details/wing-ftp.md#remediation) · [Verification](details/wing-ftp.md#verification) · [Timeline](details/wing-ftp.md#timeline)
 
-**CVEs:** [CVE-2026-105420](https://www.cve.org/CVERecord?id=CVE-2026-105420)
+**CVEs:** [CVE-2026-105420](https://www.cve.org/CVERecord?id=CVE-2026-105420), [CVE-2026-133310](https://www.cve.org/CVERecord?id=CVE-2026-133310)
 
-**CERT.PL CNA CVSS 4.0 9.4 Critical.** An administrator can escape user directory bases and execute code as the service account, potentially root on `sudo`-based installations.
+**CERT.PL CNA CVSS 4.0 9.4 Critical.** An administrator can escape user directory bases and execute code as the service account, potentially root on `sudo`-based installations. VulnCheck rates [CVE-2026-133310](https://www.cve.org/CVERecord?id=CVE-2026-133310) CVSS 4.0 9.2, published November 19: an upload-link file name with a NUL byte gets past the mask, before **8.2.8**. The vendor history page stops at 8.2.7 and does not list 8.2.8.
 
-**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No exploitation is reported by the CNA. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for either. Absence from KEV is not evidence that exploitation has not occurred.
 
-**Patch:** upgrade to **8.2.6+**, restrict administration and confirm the service does not run as root. [Guide](details/wing-ftp.md#remediation).
+**Patch:** upgrade to **8.2.6 or later** for the path traversal. That build leaves CVE-2026-133310. Turn upload links off until 8.2.8 is the running build. [Guide](details/wing-ftp.md#remediation).
 
 ## Juniper Session Smart Router: pre-onboarding administrator access
 
@@ -7482,6 +7622,12 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **WatchGuard Dimension 2.0 before 2.3.2** | Upgrade to 2.3.2 or later. WatchGuard rates CVE-2026-86130 9.3: the log collection service runs code with no login. This is not the AuthPoint gateway. [Guide](details/watchguard-dimension.md#remediation). |
+| **IBM Guardium Data Protection 12.2** | Install 12.2.4. IBM rates two flaws 9.8: a request with no login runs code, and another reads the database. There is no workaround. [Guide](details/ibm-guardium.md#remediation). |
+| **Splunk Enterprise below 10.6.1, 10.4.5, 10.2.9, 10.0.12, or 9.4.17; SOAR below 8.8.0; Enterprise Security below 8.7.0** | Upgrade to those builds. Splunk rates CVE-2026-76536 9.4: an empty clustering secret changes the configuration with no login. Until the upgrade, set a non-empty `pass4SymmKey`. [Guide](details/splunk-november.md#remediation). |
+| **OpenPLC Runtime 4.2.4 or earlier** | Update to 4.3.0 or later. CISA rates CVE-2026-126088 9.2: a race creates administrator accounts with no login. [Guide](details/openplc.md#remediation). |
+| **Eclipse Ditto gateway before 3.8.15 or 3.9.9, with pre-authentication on** | Upgrade to 3.8.15 or 3.9.9. Eclipse rates CVE-2026-120753 9.1: a query parameter picks the user. [Guide](details/eclipse-ditto.md#remediation). |
+| **JTL-Shop 5.8.0–5.8.3, or 5.7, 5.6, or 5.5 below the November floors** | Update to 5.8.4, 5.7.6, 5.6.6, or 5.5.5. JTL rates CVE-2026-123058 9.2: the installer still runs after the shop is installed. [Guide](details/jtl-shop.md#remediation). |
 | **F5 BIG-IP 21.1.0, 17.5.0–17.5.1, or 17.1.0–17.1.3 with one of six iRules or an APM policy** | Install the engineering hotfix F5 names for that flaw. F5 rates all six 9.8: a request with no login crashes the traffic process. A virtual server without that configuration is outside that flaw. There is no workaround. [Guide](details/f5-bigip-nov18.md#remediation). |
 | **REDCap 13.3.0 or higher** | Upgrade to 16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard or later. Securifera rates CVE-2026-90817 9.8: one public survey hash reaches Data Import and runs code. CISA listed it on November 18, due November 21. [Guide](details/redcap.md#remediation). |
 | **LiteLLM proxy before v1.83.14-stable** | Upgrade to v1.83.14-stable or later and restart. MITRE rates CVE-2026-40217 8.8: the custom-code guardrail runs caller code. CISA listed it on November 18, due December 2. Until then, deny `POST /guardrails/test_custom_code`. This is not the 1.107.0 release. [Guide](details/litellm-guardrail.md#remediation). |

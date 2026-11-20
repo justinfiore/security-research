@@ -1,12 +1,12 @@
 # REDCap: a public survey runs code
 
-**Last updated:** 2026-11-18 (America/New_York)
+**Last updated:** 2026-11-19 (America/New_York)
 
 [Main REDCap summary](../black-october-2026.md#redcap-a-public-survey-runs-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 [CVE-2026-90817](https://www.cve.org/CVERecord?id=CVE-2026-90817) lets a request that knows one public survey hash reach REDCap's Data Import path and run code. Securifera, the CNA, rates it **CVSS 3.1 9.8 Critical**, `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. NVD has not scored it. The record says the flaw exists in REDCap 13.3.0 and higher. The structured versions list only 13.3.0 as affected, with `defaultStatus` unknown, and name 16.0.49, 17.3.10, and 17.4.4 as unaffected.
 
-**CISA KEV:** Listed — added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z. CISA's own enrichment of the CVE record, dated 2026-09-21, says exploitation was none. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z. CISA's enrichment of the CVE record, updated 2026-11-19, now says exploitation is active. The September 21 enrichment had said none. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -24,9 +24,10 @@
 | CVE reserved | 2026-09-13 17:35:41 UTC | Securifera. [CVE JSON][json] |
 | **Public announcement** | **2026-09-20 12:05:32 UTC** | CVE record. 9.8 Critical. Solution: 16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard. [CVE JSON][json] |
 | CISA SSVC | 2026-09-21 14:15:50 UTC | Exploitation none. Automatable yes. Technical impact total. [CVE JSON][json] |
+| CISA SSVC updated | 2026-11-19 04:55:26 UTC | Exploitation active. The record's ADP dateUpdated is 2026-11-19T16:45:03Z. [CVE JSON][json] |
 | Finder's write-up | 2026-09-27 20:19:02 UTC | The survey hash reaches Data Import, which writes a compiled template. [Securifera][blog] |
 | **CISA KEV** | **2026-11-18; time/TZ unknown** | Added. Federal due date 2026-11-21. Forensic triage required. [KEV][kev] |
-| **Last updated** | **2026-11-18 (America/New_York)** | New item. Upgrade REDCap. |
+| **Last updated** | **2026-11-19 (America/New_York)** | CISA's enrichment now says exploitation is active. The floors are unchanged. |
 
 ## Detection
 
