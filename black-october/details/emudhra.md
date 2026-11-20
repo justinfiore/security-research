@@ -1,6 +1,6 @@
 # eMudhra / emSign: compromised intermediate CA keys
 
-**Last updated:** 2026-11-11 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Back to eMudhra summary](../black-october-2026.md#emudhra--emsign) · [Changelog](../../CHANGELOG.md)
 
@@ -59,7 +59,7 @@ Times below are UTC where specified; release dates without times follow the publ
 | 2026-10-22 | eMudhra announced withdrawal from global TLS issuance and offered Sectigo replacement certificates. This is a transition announcement, not universal root removal. |
 | 2026-10-23 02:02:06 UTC | Bun published [GHSA-26q8-h657-pf84](https://github.com/oven-sh/bun/security/advisories/GHSA-26q8-h657-pf84) (High): Bun **1.4.4** removes the root and rejects chains containing any of the eight keys; `bun build --compile` executables stay affected until rebuilt. |
 | 2026-10-23; time/TZ not stated | Apple began blocking `emSign ECC Root CA - G3`; its article separately warns that macOS tools using `/etc/ssl/cert.pem` still need a bundle update or administrator workaround. |
-| 2026-10-23 16:00 GMT; updated through 2026-11-06 20:40 GMT | Cisco published Informational advisory [cisco-sa-emudhra-info-ScS22A1r][cisco-sa]. Version 1.8, interim, last updated 2026-11-06 20:40 GMT. Version 1.7 (2026-11-05) listed **IOS XE Software** as impacted, with remediation [CSCwx51613](https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwx51613). Version 1.8 moves **MDS 9000**, **Nexus 3000**, and **Nexus 9000** from under investigation to impacted, with the ranges in [Remediation](#remediation). Several other target releases remain dated November 2026 to April 2027. Cisco PSIRT says it is not aware of malicious use. [Cisco][cisco-sa] |
+| 2026-10-23 16:00 GMT; updated through 2026-11-20 15:13 GMT | Cisco published Informational advisory [cisco-sa-emudhra-info-ScS22A1r][cisco-sa]. Version 1.13, interim, last updated 2026-11-20 15:13:54 GMT. Version 1.8, last updated 2026-11-06 20:40 GMT, is no longer current. Version 1.7 (2026-11-05) listed **IOS XE Software** as impacted, with remediation [CSCwx51613](https://bst.cloudapps.cisco.com/bugsearch/bug/CSCwx51613). Version 1.8 moves **MDS 9000**, **Nexus 3000**, and **Nexus 9000** from under investigation to impacted, with the ranges in [Remediation](#remediation). Several other target releases remain dated November 2026 to April 2027. Cisco PSIRT says it is not aware of malicious use. [Cisco][cisco-sa] |
 | 2026-10-24 | Oracle published **CVE-2026-114820**, CVSS 3.1 **9.1**, with further Java root-removal updates. OpenJDK guidance, updated 19:24 UTC, requires release-note evidence for **JDK-8395690 / CVE-2026-114820** even after recent Java updates. |
 | 2026-10-26 | eMudhra leadership acknowledged a script error and promised full root-cause analysis and independent review. Completion dates for that review and universal client protection remain **unknown**. |
 | 2026-10-24 14:15:14 UTC; updated 2026-10-27 00:36:07 UTC | [CVE-2026-115557](https://cveawg.mitre.org/api/cve/CVE-2026-115557) published by the PSF CNA: CVSS 4.0 **9.4 Critical** (`AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`). The updated record now gives branch-specific affected ranges ending before the released fixed versions. |

@@ -1,10 +1,10 @@
 # Northflank: environment variables treated as decrypted
 
-**Last updated:** 2026-11-06 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Back to Northflank summary](../black-october-2026.md#northflank-environment-secret-exposure) · [Changelog](../../CHANGELOG.md)
 
-Northflank told every customer to assume environment variables stored on the platform were decrypted and to rotate them. Users then reported unauthorized use of AI API keys they had supplied to the platform. **This is a platform-side secret exposure, not a local package vulnerability.** There is no CVE, no CVSS score, and no customer-side software patch. Northflank has not published a root cause or a count of affected customers. On 2026-11-02 it said the attacker was gone within an hour of the first alert.
+Northflank told every customer to assume environment variables stored on the platform were decrypted and to rotate them. Users then reported unauthorized use of AI API keys they had supplied to the platform. **This is a platform-side secret exposure, not a local package vulnerability.** There is no CVE, no CVSS score, and no customer-side software patch. On November 17 Northflank published the report: an unknown API vulnerability gave remote code execution on one API component, **1.5% of customer teams** and **1.8% of secret values** were exfiltrated, and the vulnerability was fixed at 13:05 UTC on October 30. It still says to rotate every secret.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. This is a platform-side incident; the vendor's status page is the instruction to rotate. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -35,6 +35,7 @@ Times below are UTC, taken from Northflank's status page. On November 6 Northfla
 | 2026-10-31 13:34 | Secret rotation for MySQL and Redis enabled for all customers. Northflank again said to rotate all secrets that had not been rotated. [Status][status] |
 | 2026-10-31 22:32 | Secret rotation for Minio addons enabled for all customers. The incident remained Identified. [Status][status] |
 | 2026-10-31 23:31 | Secret rotation for RabbitMQ addons enabled for all customers. Northflank again said to rotate all secrets that had not been rotated. The incident remained Identified. [Status][status] |
+| 2026-11-17; time/TZ unknown | Incident report published and the status page moved to Resolved. Northflank says an unknown API vulnerability gave remote code execution on one API component, that 1.5% of customer teams and 1.8% of secret values were exfiltrated, and that the vulnerability was fixed at 13:05 UTC on October 30. It reports no evidence of access to workloads or workload data, and it still says to rotate every secret. [Report][report] |
 | 2026-11-06 10:09 | Northflank says the first known decryption was 02:39–03:08 UTC on October 30, that the exploit was patched within 60 minutes of the 11:43 alert, and that customers were notified within two hours. Workloads and workload data still show no access. No root cause. [Status][status] |
 | 2026-11-02 11:09 | Status moved to Monitoring. Northflank says the attack vector was contained within an hour of the first alert and that its investigation shows no sign the attacker remained after the attack. Running workloads were unaffected, and it has seen no sign that workload data was accessed. Customers on forward-deployed or dedicated control planes are unaffected. It still says to rotate every secret, and it has not published a root cause. Independent forensic auditors were still reviewing it. Separately, Northflank says it patched CVE-2026-98432 across its fleet, including BYOC clusters it still manages; a BYOC cluster no longer connected to Northflank is the customer's to patch. [Status][status] |
 | 2026-10-30 | Wiz listed Northflank as the ninth AI developer platform to disclose an incident in October, alongside Railway and others. Wiz says the incidents share a pattern of hunting stored environment variables for AI access, and that there is no single vulnerability linking them. [Wiz][wiz] |
@@ -74,7 +75,9 @@ Times below are UTC, taken from Northflank's status page. On November 6 Northfla
 ## Sources
 
 - [Northflank status: Security incident](https://status.northflank.com/cmvv0rn5a092f14rutwccodpp)
+- [Incident report, published 2026-11-17](https://northflank.com/blog/incident-report-october-30-security-incident) — names the API remote-code-execution path, 1.5% of teams, 1.8% of secret values, and the 13:05 UTC fix.
 - [Wiz, "Black October" for AI Developer Platforms, 2026-10-30](https://www.wiz.io/blog/black-october-for-ai-developer-platforms)
 
 [status]: https://status.northflank.com/cmvv0rn5a092f14rutwccodpp
+[report]: https://northflank.com/blog/incident-report-october-30-security-incident
 [wiz]: https://www.wiz.io/blog/black-october-for-ai-developer-platforms

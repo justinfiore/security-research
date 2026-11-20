@@ -1,6 +1,6 @@
 # AO3: possible exposure of hashed passwords
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Back to AO3 summary](../black-october-2026.md#ao3-possible-exposure-of-hashed-passwords) · [Changelog](../../CHANGELOG.md)
 
@@ -35,7 +35,7 @@ Times below are UTC, taken from OTW's status page. The page does not say when un
 
 ## Detection
 
-1. List accounts where the password is the same as the AO3 password, including older accounts you no longer use. AO3 came back on November 15, 2026, at 08:00 UTC, with icons, external work import, and non-HTML downloads turned off. OTW says no data was deleted, that it has no reason to believe the user database was compromised and cannot rule that out, and that it recommends changing the AO3 password and the email on the account. Draft deletion stays paused until November 29, then drafts 30 days old are deleted. [Status][status]
+1. List accounts where the password is the same as the AO3 password, including older accounts you no longer use. AO3 came back on November 15, 2026, at 08:00 UTC, and again at 23:47 UTC on November 19 after a maintenance window that started at 11:27 UTC that day. Icons, external work import, and non-HTML downloads are still turned off. OTW says no data was deleted, that it has no reason to believe the user database was compromised and cannot rule that out, and that it recommends changing the AO3 password and the email on the account. Draft deletion stays paused until November 29, then drafts 30 days old are deleted. [Status][status]
 2. The database fields OTW names are username, email address, IP address, and a hashed password. AO3 does not collect real names. A match on another site is the reused password, not a copied session.
 3. There is no local package, file, or log on a reader's computer that shows whether OTW's database was copied. Absence of a phishing email is not evidence the hash was not taken.
 

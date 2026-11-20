@@ -1,6 +1,6 @@
 # Chainalysis: password hashes and live tokens exposed
 
-**Last updated:** 2026-11-10 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main Chainalysis summary](../black-october-2026.md#chainalysis-password-hashes-and-live-tokens-exposed) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -68,6 +68,8 @@ Chainalysis says it has no evidence that investigation content was accessed or t
 - Reset any other account that reused a Chainalysis password. The notice says some passwords were exposed in a form an on-path attacker could read, and that the hashes and live tokens cover all users.
 - Review Chainalysis audit history for searches and cases you did not run, once the product is back. Absence of a mail from Chainalysis is not proof your account was untouched.
 
+
+Chainalysis's [incident update](https://www.chainalysis.com/incident-update/), dated November 13, 2026, adds dates the earlier posts did not: the campaign began on 2026-08-20 through an unnamed third-party zero-day, a Data Solutions API endpoint returned folder metadata on 2026-10-15, and the internal system named in the October posts was reached on 2026-10-24. It says no unauthorized actor access has been seen since November 4, 2026, and that it has no evidence the actor modified attribution data, investigation content, transaction data, or query results. It also asks customers to enable MFA and review workspace access.
 ## Sources
 
 - [Chainalysis security incident notice][notice] — the vendor's page. Updates on 2026-10-30, 2026-11-02, 2026-11-04 (three), 2026-11-06 03:30 EST, and 2026-11-07 13:50 EST. Read 2026-11-07.

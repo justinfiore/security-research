@@ -1,6 +1,6 @@
 # SonicOS: SSLVPN SAML bypass, and two management-interface flaws
 
-**Last updated:** 2026-11-10 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main SonicOS summary](../black-october-2026.md#sonicos-sslvpn-saml-bypass-and-management-interface-flaws) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -14,6 +14,8 @@ SonicWall published [SNWLID-2026-0014][adv] on 2026-11-06 with seven CVEs. The a
 
 Three more flaws in the same advisory are below 7.0 and are not the reason for this entry. [CVE-2026-77708](https://www.cve.org/CVERecord?id=CVE-2026-77708) and [CVE-2026-77709](https://www.cve.org/CVERecord?id=CVE-2026-77709) are 5.9: pre-authentication buffer overflows in the TACACS+ client, denial of service only. [CVE-2026-19703](https://www.cve.org/CVERecord?id=CVE-2026-19703) is 5.2 on the advisory and 5.1 from CISA-ADP: weak password hashing on virtual appliances, and it needs existing local access. The same fixed builds cover them.
 
+**Gen 6 and Gen 6.5 get no patch.** SonicWall's product advisory "Retire Unsupported Gen 6 Firewalls," published and last updated November 18, 2026, covers every Gen 6 and Gen 6.5 firewall running SonicOS 6.x, including Gen 6 NSv. It says SonicWall no longer releases firmware updates or security patches for Gen 6, whatever the severity of a newly found vulnerability, including Critical, and that it will not make an exception. End-of-support dates on that page run from March 8, 2024 to October 1, 2026, depending on the model. SNWLID-2026-0014 does not list Gen 6. The seven CVEs in it are Gen 7 and Gen 8.
+
 **Fixed in Gen7 7.3.4-7013 and later, and Gen8 8.2.3-8015 and later.** Affected is Gen7 **7.3.3-7015 and older**, and Gen8 **8.2.2-8015 and older**, hardware and NSv. Revision 1.1, dated 2026-11-09, adds a workaround for CVE-2026-19868 only: if SAML is in use and the firmware cannot be upgraded yet, disable or delete any active LDAP, RADIUS, and TACACS+ server on the firewall. The other flaws in this advisory still have no workaround.
 
 **CISA KEV:** [CVE-2026-19868](https://www.cve.org/CVERecord?id=CVE-2026-19868) is listed — added 2026-11-06, federal due date 2026-11-20. Ransomware use is Unknown. Forensic triage is No. The other six CVEs in SNWLID-2026-0014 are not listed (catalog 2026.11.06, checked 2026-11-06). [What KEV means](../black-october-2026.md#what-cisa-kev-means).
@@ -22,6 +24,7 @@ Three more flaws in the same advisory are below 7.0 and are not the reason for t
 
 - [Timeline](#timeline)
 - [Detection](#detection)
+- [Gen 6 and Gen 6.5](#gen-6-and-gen-65)
 - [Remediation](#remediation)
 - [Verification](#verification)
 - [Compromise response](#compromise-response)
@@ -35,6 +38,7 @@ Three more flaws in the same advisory are below 7.0 and are not the reason for t
 | **Public announcement** | **2026-11-06; time/TZ unknown** | SNWLID-2026-0014, revision 1.0. [Advisory][adv] |
 | CVE records | 2026-11-06 19:17 UTC | NVD published times are 19:17:06 through 19:17:57 UTC. SonicWall is the CNA. The CNA records carry no CVSS; the scores above are the advisory and CISA-ADP. |
 | CISA KEV | 2026-11-06 | Catalog 2026.11.06, released 2026-11-06 19:44:45 UTC. Only CVE-2026-19868. Due 2026-11-20. [KEV][kev] |
+| Gen 6 end of fixes | 2026-11-18; time/TZ unknown | Product advisory says no security patch will ship for Gen 6 or Gen 6.5, including for a Critical flaw. [SonicWall][gen6] |
 
 ## Detection
 
@@ -49,12 +53,19 @@ The SSLVPN bypass applies only when SAML is enabled for SSLVPN logins. A firewal
 
 SonicWall publishes no log signature and no indicator for any of the seven. A quiet log does not show the SAML bypass was not used.
 
+## Gen 6 and Gen 6.5
+
+SonicWall's November 18 advisory says these firewalls are End of Support and will not receive a security patch for a new vulnerability, including a Critical one. The models it lists are TZ350, TZ350W, TZ500, TZ500W, SOHO 250, SOHO 250W, NSA 4600, NSA 5600, NSA 6600, NSa 4650, NSa 5650, NSa 6650 (October 1, 2026); TZ400, TZ400W, TZ600, TZ600P, NSA 3600, NSa 3650 (August 1, 2026); NSa 2650 (May 1, 2026); SOHO, SOHO W, TZ300P, NSa 9250, NSa 9450, NSa 9650, and NSv 10 to NSv 1600 (April 16, 2026); SuperMassive 9200, 9400, 9600, 9800 and NSsp 12800, NSsp 12400 (February 20, 2026); TZ300, TZ300W (January 23, 2025); and NSA 2600 (March 8, 2024).
+
+Replace them with a Gen 8 firewall running SonicOS 8. SonicWall says support for Gen 6 can no longer be purchased or renewed. Until the replacement, take WAN management and SSL VPN off. SonicWall says those steps reduce exposure and do not make the firewall secure. This is separate from SNWLID-2026-0014, which names Gen 7 and Gen 8 only.
+
 ## Remediation
 
 1. Upgrade Gen7 to **7.3.4-7013 or later**, and Gen8 to **8.2.3-8015 or later**. For CVE-2026-19868 only, until that upgrade, disable or delete any active LDAP, RADIUS, and TACACS+ server if SAML is in use. That does not fix the other flaws in this advisory.
 2. If SAML is enabled for SSLVPN and the firewall is still on an affected build, treat a VPN login that did not pass the SAML identity provider as possible. The upgrade does not expire a session that login already created.
 3. Restrict the management interface to networks that should administer the firewall. That reduces who can be asked to load a page against it. It is not a fix for the 8.8 flaws, and it does not fix the SSLVPN bypass.
 4. The three flaws below 7.0 are fixed by the same builds. Do not stay on an affected build because only those remain.
+5. A Gen 6 or Gen 6.5 firewall is not fixed by either build. Replace it. See [Gen 6 and Gen 6.5](#gen-6-and-gen-65).
 
 ## Verification
 
@@ -76,9 +87,12 @@ SonicWall says it investigated a report of potential exploitation of CVE-2026-19
 - [CVE-2026-19868][cve19868] — SonicWall CNA, published 2026-11-06. Description matches the advisory. No CVSS in the CNA container. CISA-ADP 7.5, exploitation active.
 - [CVE-2026-107155][cve107155] and [CVE-2026-107154][cve107154] — published 2026-11-06 19:17 UTC. CISA-ADP 8.8, exploitation none.
 - [CISA KEV][kev] — catalog 2026.11.06. CVE-2026-19868 added 2026-11-06, due 2026-11-20, ransomware Unknown, forensic triage No.
+- [Retire Unsupported Gen 6 Firewalls][gen6] — published and last updated November 18, 2026. Gen 6 and Gen 6.5 on SonicOS 6.x, including Gen 6 NSv, are End of Support. No firmware update or security patch will be released, including for a Critical vulnerability.
 
 [adv]: https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2026-0014
 [cve19868]: https://www.cve.org/CVERecord?id=CVE-2026-19868
 [cve107155]: https://www.cve.org/CVERecord?id=CVE-2026-107155
 [cve107154]: https://www.cve.org/CVERecord?id=CVE-2026-107154
 [kev]: https://www.cisa.gov/known-exploited-vulnerabilities-catalog
+
+[gen6]: https://www.sonicwall.com/support/notices/product-advisory-retire-unsupported-gen-6-firewalls/kA1VN000002iouP0AQ

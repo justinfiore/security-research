@@ -1,6 +1,6 @@
 # TeamCity: a signed-in user runs code on the server
 
-**Last updated:** 2026-11-19 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 On November 19 JetBrains' fixed-issues page added a second set. [CVE-2026-132891](https://www.cve.org/CVERecord?id=CVE-2026-132891) is Critical: an external pull request runs code on the server. JetBrains marks it fixed in **2026.2, 2026.1.4, and 2025.11.8**. The November 18 floors, 2026.1.3 and 2025.11.7, leave it in place. The same page lists more than twenty further High flaws in those builds, including Mercurial repository contents, the Kotlin DSL sandbox, and an unauthenticated denial of service through the agent protocol. The CVE record rates CVE-2026-132891 CVSS 3.1 9.8. JetBrains' page says Critical and does not print a number.
 
@@ -45,13 +45,13 @@ The build is on the server's Administration page. A 2026.1 build before 2026.1.4
 
 ## Remediation
 
-1. Upgrade TeamCity On-Premises to **2026.2 or later**, or to **2026.1.4 or later** on the 2026.1 line, or to **2025.11.8 or later** on the 2025.11 line. 2026.1.3 and 2025.11.7 fix the November 18 set and leave the pull-request flaw, CVE-2026-132891. 2025.11.7 also leaves the password-parameter flaw.
+1. Upgrade TeamCity On-Premises to **2026.2 or later**. 2026.1.4 and 2025.11.8 fix the pull-request flaw, CVE-2026-132891, and leave [CVE-2026-132892](https://www.cve.org/CVERecord?id=CVE-2026-132892), which JetBrains marks High and resolved only in 2026.2. The CVE record rates it CVSS 3.1 8.1: a privilege escalation through the authorization flow, in every build before 2026.2. 2026.1.3 and 2025.11.7 also leave the pull-request flaw. 2025.11.7 also leaves the password-parameter flaw.
 2. TeamCity Cloud needs nothing from you.
 3. JetBrains publishes no workaround for this set.
 
 ## Verification
 
-- The Administration page shows 2026.2 or later, 2026.1.4 or later, or 2025.11.8 or later.
+- The Administration page shows 2026.2 or later. 2026.1.4 and 2025.11.8 still contain CVE-2026-132892.
 - A project still builds. Do not send a Mercurial root built to inject an argument.
 
 ## Compromise response
@@ -62,7 +62,8 @@ JetBrains does not report exploitation. A VCS root or an artifact-cache setting 
 
 - [CVE-2026-132234][cve] — JetBrains, published 2026-11-18. CVSS 3.1 9.9. Fixed before 2026.1.3 and 2025.11.7.
 - [CVE-2026-132891](https://www.cve.org/CVERecord?id=CVE-2026-132891) — JetBrains, published 2026-11-19. CVSS 3.1 9.8. The fixed-issues page says Critical and names 2026.2, 2026.1.4, and 2025.11.8. External pull requests.
-- [JetBrains, fixed security issues](https://www.jetbrains.com/privacy-security/issues-fixed/) — the vendor's list of resolved issues and versions.
+- [JetBrains, fixed security issues](https://www.jetbrains.com/privacy-security/issues-fixed/) — the vendor's list of resolved issues and versions. CVE-2026-132892 is resolved only in 2026.2.
+- [CVE-2026-132892](https://www.cve.org/CVERecord?id=CVE-2026-132892) — JetBrains, published 2026-11-19. CVSS 3.1 8.1. Affected from 0 before 2026.2.
 - [Canadian Centre AV26-1176][ccc] — November 18, 2026. TeamCity before 2025.11.7 and before 2026.1.3.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.18, checked 2026-11-19. None of this set is listed.
 
