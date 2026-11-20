@@ -35,6 +35,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [Zyxel CPE: a request writes past the buffer before login](#zyxel-cpe-a-request-writes-past-the-buffer-before-login)
 - [Eclipse Zenoh: a timestamp corrupts memory](#eclipse-zenoh-a-timestamp-corrupts-memory)
 - [Oracle November 2026 Critical Security Patch Update](#oracle-november-2026-critical-security-patch-update)
+- [N-able: someone reached a server behind Mail Assure and SpamExperts](#n-able-someone-reached-a-server-behind-mail-assure-and-spamexperts)
 - [Optimizely: a flaw in Experimentation served malware to customer sites](#optimizely-a-flaw-in-experimentation-served-malware-to-customer-sites)
 - [PyPI: agent-framework 1.26.1 and 1.26.2 steal credentials](#pypi-agent-framework-1261-and-1262-steal-credentials)
 - [NVIDIA Linux driver: a GPU container reaches root on the host](#nvidia-linux-driver-a-gpu-container-reaches-root-on-the-host)
@@ -287,6 +288,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** [Mail Assure and SpamExperts](#n-able-someone-reached-a-server-behind-mail-assure-and-spamexperts) had unauthorized access to one server in N-able's hosted cloud, disclosed at 03:05 UTC on November 18. No CVE is assigned and no score is published. Mail still flows and is still filtered. The portal, API, quarantine, and logs are still offline as of 04:00 UTC on November 20. Read the partner email. This is not the N-central incident.
 - **New this update:** Upgrade [WatchGuard Dimension](#watchguard-dimension-a-log-request-runs-code-before-login) to **2.3.2 or later**. WatchGuard rates [CVE-2026-86130](https://www.cve.org/CVERecord?id=CVE-2026-86130) CVSS 4.0 9.3 Critical: the log collection service runs code with no login. Two more, both 9.3, need an administrator login and expose a Super Administrator session. Dimension 2.0 before 2.3.2 is affected. This is not the AuthPoint gateway. None is in KEV.
 - **New this update:** Install [IBM Guardium Data Protection 12.2.4](#ibm-guardium-a-request-runs-code-before-login). IBM rates [CVE-2026-84236](https://www.cve.org/CVERecord?id=CVE-2026-84236) and [CVE-2026-87977](https://www.cve.org/CVERecord?id=CVE-2026-87977) CVSS 3.1 9.8: a request with no login runs code in the SharePoint Tap, and another reads the database. 12.2 is the line. There is no workaround. None is in KEV.
 - **New this update:** Upgrade [Splunk Enterprise](#splunk-an-empty-secret-runs-a-search-before-login) to **10.6.1, 10.4.5, 10.2.9, 10.0.12, or 9.4.17**. Splunk rates [CVE-2026-76536](https://www.cve.org/CVERecord?id=CVE-2026-76536) CVSS 3.1 9.4: an empty clustering secret lets a request with no login change the configuration. A second, 9.1, runs searches. SOAR goes to **8.8.0** and Enterprise Security to **8.7.0**. None is in KEV.
@@ -946,6 +948,28 @@ Sources: [CVE-2026-130603](https://www.cve.org/CVERecord?id=CVE-2026-130603), [z
 **Patch:** Apply the November 17 Critical Security Patch Update from My Oracle Support and restart the services the patch notes name. APEX and REST Data Services are the two with a short version list and an unauthenticated 9.8. Java is separate: install the [November 17 JDK](#openjdk-java4shell---a-base64-string-corrupts-memory) as well. Oracle publishes no workaround. The patch does not show whether a request already took the product over.
 
 Sources: [Oracle CSPU, November 2026](https://www.oracle.com/security-alerts/cspunov2026.html), [risk matrices](https://www.oracle.com/security-alerts/cspunov2026verbose.html), [detailed guide](details/oracle-cspu-november.md).
+
+---
+
+## N-able: someone reached a server behind Mail Assure and SpamExperts
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/nable-mail.md):** [Detection](details/nable-mail.md#detection) · [Remediation](details/nable-mail.md#remediation) · [Verification](details/nable-mail.md#verification) · [Timeline](details/nable-mail.md#timeline)
+
+**CVEs:** No CVE is assigned.
+
+**No vendor or CNA has published a CVSS score.** N-able's status page, incident 202672, says someone had unauthorized access to one server in the Mail Assure and SpamExperts Hosted Cloud. N-able said that at 03:05 UTC on November 18, and said it did not then have evidence that customer data was compromised, including access to tenants' mailboxes. Mail still flows and is still filtered. The management portal, the API, quarantine, and logging are still offline: the latest update, 04:00:24 UTC on November 20, says they stay disabled while N-able hardens the service. N-able says this is unrelated to the [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) incident. It has not said how the server was reached.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Customers told of a disruption | 2026-11-16; time unknown | N-able's later update says it informed customers that day. |
+| **Security incident** | **2026-11-18 03:05:09 UTC** | Unauthorized access to one server. No evidence then of compromised customer data. |
+| **Last updated** | **2026-11-19 23:01 EST (UTC−05:00)** | New item. Read the partner email. The portal is still offline. |
+
+**Patch:** There is no customer-side update. N-able says it mitigated the threat. Read the partner email, and contact N-able Technical Support if it did not arrive. Quarantined mail cannot be reviewed or released until the portal comes back. Mail arriving does not show that the portal is healthy.
+
+Sources: [N-able status, incident 202672](https://uptime.n-able.com/event/202672), [detailed guide](details/nable-mail.md).
 
 ---
 
@@ -4668,7 +4692,7 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 
 **CVEs:** [CVE-2026-105420](https://www.cve.org/CVERecord?id=CVE-2026-105420), [CVE-2026-133310](https://www.cve.org/CVERecord?id=CVE-2026-133310)
 
-**CERT.PL CNA CVSS 4.0 9.4 Critical.** An administrator can escape user directory bases and execute code as the service account, potentially root on `sudo`-based installations. VulnCheck rates [CVE-2026-133310](https://www.cve.org/CVERecord?id=CVE-2026-133310) CVSS 4.0 9.2, published November 19: an upload-link file name with a NUL byte gets past the mask, before **8.2.8**. The vendor history page stops at 8.2.7 and does not list 8.2.8.
+**CERT.PL CNA CVSS 4.0 9.4 Critical.** An administrator can escape user directory bases and execute code as the service account, potentially root on `sudo`-based installations. VulnCheck rates [CVE-2026-133310](https://www.cve.org/CVERecord?id=CVE-2026-133310) CVSS 4.0 9.2, published November 19: an upload-link file name with a NUL byte gets past the mask, before **8.2.8**. The vendor history page now lists **8.2.8, released 19/Nov/2026**, and says it fixed a potential vulnerability in the upload link interface. That line does not name the CVE.
 
 **CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for either. Absence from KEV is not evidence that exploitation has not occurred.
 
@@ -7681,6 +7705,7 @@ flowchart TD
 | **iPhone, iPad, Mac, Apple Watch, or Apple Vision Pro** | Install the November 9 update and restart. CISA-ADP scores an iMessage group-join flaw 7.5 and a Bluetooth memory-corruption flaw 8.8. Apple publishes no score. iOS 18.7.12 fixes the Bluetooth flaw only. [Guide](details/apple-november.md#remediation). |
 | **SAP NetWeaver, Web Dispatcher, SAP Gateway, or BusinessObjects** | Apply the November 10 SAP Security Notes, starting with the four 10.0 notes on anything reachable from the internet. The notes need an SAP login and name the correction. Until then, restrict access to Gateway, Web Dispatcher, and ICM ports. Restart the component after a kernel update. [Guide](details/sap-november.md#remediation). |
 | **N-central, hosted or on premises** | Upgrade on premises to 2026.4.1.39, and upgrade every Agent, Probe, and the Patch Management Engine (2.14.4.5829 or later). N-able rates three of the seventeen November 17 flaws CVSS 4.0 Critical, including a 9.3 impersonation of an Agent that has not moved. HF3 removes the Legacy API. Leave the Intune integration off. Hosted servers are upgraded by N-able. [Guide](details/n-central.md#remediation). |
+| **Mail Assure or SpamExperts Hosted Cloud** | There is no customer-side update. N-able says someone reached one server in that cloud, disclosed at 03:05 UTC on November 18. Mail still flows. The portal, API, quarantine, and logs are still offline. Read the partner email. This is not the N-central incident. [Guide](details/nable-mail.md#remediation). |
 | **GPUStack below 2.3.1** | Upgrade the server and every worker to 2.3.1 or later and restart. 2.3.0 leaves a Critical flaw (repository Python running on the server) and a High proxy bypass. 2.2.0 fixes only the loopback administrator bypass, which CISA listed on November 9. 2.2.2 is the floor for the SAML callback and the cluster proxy, and it leaves a worker-management flaw. Until then, set `force_auth_localhost=true` and block `/auth/saml/callback`. The upgrade does not delete an administrator key already created. [Guide](details/gpustack.md#remediation). |
 | **FreeSWITCH before 1.11.3** | Upgrade to 1.11.3 or later and restart. CISA listed CVE-2026-116779 on November 9, due November 12. An inbound SIP MESSAGE can run an API command, and chat is on by default. Until then, set `enable-chat=false` on profiles that do not need it. Turning off the `system` API does not close the path. [Guide](details/freeswitch.md#remediation). |
 | **@ethersphere/bee-js, or Swarm Desktop** | Pin bee-js to 13.2.0. Install Swarm Desktop 0.56.3. 13.3.0 and 0.56.2 were malicious releases published November 9 with the project's own CI. If either ran, rebuild the machine or remove the persistence it left, and rotate credentials from a different computer. Move the node's funds to a new key. [Guide](details/bee-js.md#remediation). |

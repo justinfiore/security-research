@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-19 23:01 EST (UTC−05:00) — N-able; Wing FTP
+
+- **N-able:** [Mail Assure and SpamExperts](black-october/details/nable-mail.md#remediation) had unauthorized access to one server in the hosted cloud, disclosed at 03:05 UTC on November 18. No CVE is assigned. Mail still flows and is still filtered. The portal, API, quarantine, and logs are still offline as of 04:00 UTC on November 20. Read the partner email, and contact N-able Technical Support if it did not arrive. This is not the N-central incident.
+- **Wing FTP:** The [vendor history page](black-october/details/wing-ftp.md#remediation) now lists 8.2.8, released 19/Nov/2026, and says it fixed a potential vulnerability in the upload link interface. That line does not name CVE-2026-133310. Until 8.2.8 is the running build, turn upload links off. 8.2.6 still fixes only the administrator path traversal.
+
 ## 2026-11-19 19:01 EST (UTC−05:00) — WatchGuard; IBM; Splunk; OpenPLC; Eclipse; JTL; TeamCity; REDCap; Wing FTP; Dell
 
 - **WatchGuard Dimension:** Upgrade to [2.3.2 or later](black-october/details/watchguard-dimension.md#remediation). WatchGuard rates CVE-2026-86130 CVSS 4.0 9.3: the log collection service runs code with no login. Two more, both 9.3, need an administrator login and expose a Super Administrator session. Dimension 2.0 before 2.3.2 is affected. This is not the AuthPoint gateway. None is in KEV.

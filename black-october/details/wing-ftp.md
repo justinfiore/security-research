@@ -1,6 +1,6 @@
 # Wing FTP Server: administrator path traversal to code execution
 
-**Last updated:** 2026-11-19 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main summary](../black-october-2026.md#wing-ftp-server-administrator-path-traversal-to-code-execution) · [Main TOC](../black-october-2026.md#table-of-contents)
 
@@ -8,7 +8,7 @@
 
 **CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for CVE-2026-105420 or CVE-2026-133310. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
-VulnCheck published [CVE-2026-133310](https://www.cve.org/CVERecord?id=CVE-2026-133310) on November 19 and rates it **CVSS 4.0 9.2**. Wing FTP Server before **8.2.8** accepts an upload-link file name with an embedded NUL byte, which gets past the file-type mask, and an attacker can plant a Lua session file. The vendor history page lists **8.2.7**, released October 28, and does not mention this flaw. 8.2.6, the fix for the administrator path traversal, leaves this one in place. No 8.2.8 build is on that page.
+VulnCheck published [CVE-2026-133310](https://www.cve.org/CVERecord?id=CVE-2026-133310) on November 19 and rates it **CVSS 4.0 9.2**. Wing FTP Server before **8.2.8** accepts an upload-link file name with an embedded NUL byte, which gets past the file-type mask, and an attacker can plant a Lua session file. The vendor history page now lists **8.2.8, released 19/Nov/2026**, and one of its lines is "Fixed a potential vulnerability in the upload link interface." That line does not name CVE-2026-133310, so it is the vendor's release, not the vendor's confirmation of this CVE. 8.2.6, the fix for the administrator path traversal, leaves this one in place.
 
 ## Table of contents
 - [Timeline](#timeline)
@@ -22,13 +22,14 @@ VulnCheck published [CVE-2026-133310](https://www.cve.org/CVERecord?id=CVE-2026-
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Public CVE | 2026-10-28; time/TZ unknown | CERT.PL CNA record. |
-| Fixed release | 2026-10-28; time/TZ unknown | Wing FTP Server 8.2.6. |
+| Fixed release | 2026-10-28; time/TZ unknown | Wing FTP Server 8.2.6. CVE-2026-105420 only. |
+| Upload-link release | 2026-11-19; time/TZ unknown | Wing FTP Server 8.2.8. The history line says "Fixed a potential vulnerability in the upload link interface" and does not name CVE-2026-133310. |
 
 ## Detection
 Inventory Wing FTP Server version, service account and who has administrator access. Versions before 8.2.6 are affected. Review scripted directory changes and service-owned files outside configured user roots; absent evidence does not establish safety.
 
 ## Remediation
-Upgrade to **8.2.6 or later** for the administrator path traversal, and do not treat that build as the fix for CVE-2026-133310. VulnCheck says that one is fixed in **8.2.8**, and the vendor history page, read November 19, stops at 8.2.7 and does not list 8.2.8. Until 8.2.8 is the running build, turn upload links off. Run the service with the least privilege compatible with vendor guidance. Restrict administration to trusted operators and review any `sudo`-based deployment. These controls reduce impact but do not replace the upgrade.
+Upgrade to **8.2.6 or later** for the administrator path traversal, and do not treat that build as the fix for CVE-2026-133310. VulnCheck says that one is fixed in **8.2.8**. The vendor history page, read November 20, lists 8.2.8, released 19/Nov/2026, and says it fixed a potential vulnerability in the upload link interface. That line does not name the CVE. Until 8.2.8 is the running build, turn upload links off. Run the service with the least privilege compatible with vendor guidance. Restrict administration to trusted operators and review any `sudo`-based deployment. These controls reduce impact but do not replace the upgrade.
 
 ## Verification
 Confirm the installed and running version is 8.2.6 or later, check normal user-directory provisioning with a benign test account, and verify the process runs under the expected non-root identity. Do not attempt path traversal.
@@ -40,3 +41,4 @@ Review writable paths, user-directory changes and process logs; isolate systems 
 - [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-105420)
 - [CERT.PL advisory](https://cert.pl/en/posts/2026/10/CVE-2026-105420)
 - [Wing FTP Server](https://www.wftpserver.com/)
+- [Wing FTP release history](https://www.wftpserver.com/serverhistory.htm) — read 2026-11-20. 8.2.8 released 19/Nov/2026.
