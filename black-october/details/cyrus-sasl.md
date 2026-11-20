@@ -1,6 +1,6 @@
 # Cyrus SASL: the SRP mechanism accepts any password
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main Cyrus SASL summary](../black-october-2026.md#cyrus-sasl-the-srp-mechanism-accepts-any-password) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -28,7 +28,8 @@ SRP is not a default mechanism. Upstream builds it only with `--enable-srp`, and
 | Plugin removed on master | 2026-11-12 17:52:39 UTC | Ken Murchison deleted `plugins/srp.c` and the `--enable-srp` option. The commit message does not mention the bypass. It is not a release. [commit][commit] |
 | **Public announcement** | **2026-11-15** | VulnCheck published [CVE-2026-129483](https://www.cve.org/CVERecord?id=CVE-2026-129483). NVD's published time is 2026-11-15 14:17:27 UTC. The record names no fixed version. |
 | Debian and Ubuntu status | 2026-11-16; time unknown | Debian's tracker now says its build passes `--disable-srp`. Ubuntu published a page the same day and marks every release Needs evaluation. Neither ships a fixed package. |
-| **Last updated** | **2026-11-17 (America/New_York)** | Debian builds with SRP off. Ubuntu's page exists and has no fix. |
+| SUSE | 2026-11-19 17:04:14; timezone not stated | SUSE's page now says Resolved and marks every listed line Not affected. It names no announcement. [SUSE][suse] |
+| **Last updated** | **2026-11-20 (America/New_York)** | SUSE no longer lists the flaw as pending. |
 
 ## Detection
 
@@ -40,7 +41,7 @@ SRP is not a default mechanism. Upstream builds it only with `--enable-srp`, and
 
 1. Stop advertising SRP. Remove `SRP` from `mech_list`, `sasl_mech_list`, or the equivalent setting, and restart the service. A client that was using SRP has to move to a mechanism the server still offers, such as SCRAM or GSSAPI.
 2. Where the package split allows it, remove the SRP plugin. On Debian and Ubuntu that file ships inside `libsasl2-modules` together with the other modules, so removing the package removes PLAIN, LOGIN, and the rest. Do not do that to close this one mechanism. Removing `libsrp.so` by hand is undone by the next package update.
-3. Do not wait for a 2.1.28 update that contains the fix. Upstream has not tagged a release since 2.1.28, and the November 12 commit removes the plugin instead of correcting the check. Debian's tracker still lists the flaw as vulnerable on bookworm, trixie, forky, and sid, with urgency unimportant and no fixed version. Its note that the Debian build passes `--disable-srp` means a stock Debian build never offered the mechanism. Ubuntu's page, updated 2026-11-16, marks every listed release Needs evaluation and links no notice. SUSE marks its supported lines Affected, state Pending, and has published no announcement. Red Hat's CVE page redirected to a login. Amazon Linux's page returned no erratum.
+3. Do not wait for a 2.1.28 update that contains the fix. Upstream has not tagged a release since 2.1.28, and the November 12 commit removes the plugin instead of correcting the check. Debian's tracker still lists the flaw as vulnerable on bookworm, trixie, forky, and sid, with urgency unimportant and no fixed version. Its note that the Debian build passes `--disable-srp` means a stock Debian build never offered the mechanism. Ubuntu's page, updated 2026-11-16, marks every listed release Needs evaluation and links no notice. SUSE's page, last modified 2026-11-19 17:04:14, now says Resolved and marks every listed line Not affected. It names no announcement, so that is SUSE's statement rather than a package to install. Red Hat's CVE page redirected to a login. Amazon Linux's page returned no erratum.
 4. Building current master drops the plugin, which also closes it. That tree is not a release, and it carries other unreleased changes. Treat it as a source change you review, not as a vendor fix.
 
 ## Verification
@@ -64,9 +65,10 @@ A server that advertised SRP accepted a proof computed with no password, and the
 - [Debian security tracker, cyrus-sasl2](https://security-tracker.debian.org/tracker/CVE-2026-129483) — read 2026-11-17. Vulnerable, unfixed, urgency unimportant, on bookworm, trixie, forky, and sid. The page notes the Debian build passes `--disable-srp`. No fixed version.
 - [Debian packaging rules](https://sources.debian.org/src/cyrus-sasl2/2.1.28+dfsg1-12/debian/rules/) — sid `2.1.28+dfsg1-12` and bookworm `2.1.28+dfsg-10` pass `--disable-srp` and `--disable-srp-setpass`. Read 2026-11-17.
 - [Ubuntu CVE-2026-129483](https://ubuntu.com/security/CVE-2026-129483) — published and last updated 2026-11-16. Priority Medium. 26.10, 26.04 LTS, 24.04 LTS, 22.04 LTS, and 20.04 LTS are Needs evaluation. No notice and no package.
-- [SUSE CVE-2026-129483](https://www.suse.com/security/cve/CVE-2026-129483.html) — read 2026-11-17. Supported `cyrus-sasl` lines Affected, state Pending. No announcement. The page shows no date.
+- [SUSE CVE-2026-129483][suse] — reread 2026-11-20. Last modified Thu Nov 19 17:04:14 2026. Overall state Resolved. Every listed line is Not affected, and the page names no announcement. On November 17 the same page said Affected, state Pending.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, released 2026-11-13T20:24:18.3008Z, checked 2026-11-17. CVE-2026-129483 is not listed.
 
 [issue]: https://github.com/cyrusimap/cyrus-sasl/issues/896
 [commit]: https://github.com/cyrusimap/cyrus-sasl/commit/fb3724f43dc50247ff2bf02135457d6d77031654
 [rel]: https://github.com/cyrusimap/cyrus-sasl/releases/tag/cyrus-sasl-2.1.28
+[suse]: https://www.suse.com/security/cve/CVE-2026-129483.html

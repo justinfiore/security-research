@@ -2,6 +2,16 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-20 03:08 EST (UTC−05:00) — pam-mysql; VMware; Bitwarden; Cyrus SASL
+
+- **pam-mysql:** On Debian, install [0.8.2-2.1+deb13u1 or 0.8.2-2+deb12u1](black-october/details/pam-mysql.md#remediation) and restart `sshd`. The researcher rates CVE-2026-124749 CVSS 3.1 9.8: a stock SSH server lets anyone in as an account whose stored password is SQL NULL. The CVE record is still reserved. Do not set `PermitEmptyPasswords yes`. Ubuntu and the 1.0 betas have no package. It is not in KEV.
+- **VMware Aria Operations and HCX:** [VMSA-2026-0010](black-october/details/apache-http-server.md#remediation) says the HTTP/2 flaw, CVE-2026-119618, is in Operations 9.x and 8.18.x and in HCX 9.1.x, and that no patch exists yet. Turn HTTP/2 off with the Broadcom article for that product, and check again after every upgrade. The Apache upgrade to 2.4.71 does not reach these appliances.
+- **Bitwarden:** Update a self-hosted server to [v2026.11.0](black-october/details/nginx.md#distribution-packages). Bitwarden says the nginx it ships is inside CVE-2026-123007 and CVE-2026-123633. The host kernel is separate.
+- **Cyrus SASL:** SUSE's page, updated November 19, now says [CVE-2026-129483](black-october/details/cyrus-sasl.md#remediation) is resolved and that its lines are not affected. It names no package. The action is unchanged: stop advertising SRP. Debian and Ubuntu still have no fix.
+- **OpenJDK:** On Red Hat Enterprise Linux, install the [November 18 OpenJDK erratum](black-october/details/java4shell.md#remediation) and restart. Red Hat's CVE page now marks `java-17-openjdk`, `java-21-openjdk`, and `java-25-openjdk` Fixed. The bulletin text still says fixes are being expedited. Red Hat build of Keycloak and the JBoss EAP images are still listed without a package. The Oracle floors are unchanged.
+- **Dell PowerStore:** Revision 4.0 of [DSA-2026-479](black-october/details/dell-powerstore.md#remediation) removes CVE-2026-67271. The builds are unchanged: 5.1.0.0-2798105 on the 5.1 line, and 4.3.1.3-2800620 for a subset of the 4.3 line.
+- **Linux kernel:** On Ubuntu, install the [November 19 kernel](black-october/details/linux-november-batch.md#remediation) and reboot. It covers several of the November 2–3 High fixes and does not list CVE-2026-99270. Red Hat and Amazon Linux still have no package for that one.
+
 ## 2026-11-19 23:01 EST (UTC−05:00) — N-able; Wing FTP
 
 - **N-able:** [Mail Assure and SpamExperts](black-october/details/nable-mail.md#remediation) had unauthorized access to one server in the hosted cloud, disclosed at 03:05 UTC on November 18. No CVE is assigned. Mail still flows and is still filtered. The portal, API, quarantine, and logs are still offline as of 04:00 UTC on November 20. Read the partner email, and contact N-able Technical Support if it did not arrive. This is not the N-central incident.

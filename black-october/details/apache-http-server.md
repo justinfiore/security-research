@@ -1,6 +1,6 @@
 # Apache HTTP Server: an HTTP/2 request can run code
 
-**Last updated:** 2026-11-19 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main Apache HTTP Server summary](../black-october-2026.md#apache-http-server-an-http2-request-can-run-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -11,6 +11,8 @@ The same release, **2.4.71**, fixes two more flaws. Apache rates [CVE-2026-10602
 Red Hat's own `mod_http2` on Enterprise Linux 9 and 10 gives each HTTP/2 stream its own allocator, and Red Hat rates those products **Important** rather than Critical for that reason. Its overall score stays 9.8. It says versions of `mod_http2` before 2.0.8 do not contain the code, and **Enterprise Linux 8, 7, and 6 are not affected**.
 
 Red Hat's statement says public research has demonstrated a reliable exploit against a default-configured server with `mod_http2` enabled, and it does not name or link that research. Wiz, writing the same day, says no exploit is available and no exploitation in the wild has been reported. Those two statements disagree.
+
+On November 19 Broadcom published [VMSA-2026-0010](https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39625) and rated this same flaw **CVSS 3.1 9.8 Critical** in three of its products. A request with network access to VMware Aria Operations or VCF Operations HCX can run code. The affected lines are VMware Cloud Foundation Operations 9.x, VMware Aria Operations 8.18.x, VMware Aria Operations on Cloud Foundation 5.x, and VCF Operations HCX 9.1.x. Every row says **patch pending**. The workaround is to turn HTTP/2 off: [KB463005](https://knowledge.broadcom.com/external/article/463005) for Operations and [KB463022](https://knowledge.broadcom.com/external/article/463022) for HCX. KB463005 says each node runs Apache 2.4.68, that the scripted workaround does not touch collectors, agents, or the API, and that an upgrade replaces the configuration and turns HTTP/2 back on. Google Cloud bulletin GCP-2026-086, the same day, repeats the advisory and names no Google-built fix. This is not [VMSA-2026-0009](vcenter.md), the vCenter authentication bypass.
 
 On November 17 Singapore's Cyber Security Agency published [AL-2026-164](https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-164/) and said attackers are exploiting the flaw to run code. It scores the flaw CVSS 3.1 8.1, lower than Red Hat's 9.8, and it says a public proof of concept exists. It names no victim and no scale. CISA has not added the CVE. The alert is a report of exploitation, and it is not a list of indicators.
 
@@ -42,7 +44,8 @@ The GitHub `mod_h2` repository was archived on June 9 and its release list ends 
 | CISA KEV | Not listed (catalog 2026.11.17, checked 2026-11-18) | [KEV][kev] |
 | Singapore CSA alert | 2026-11-17; time unknown | Says attackers are exploiting CVE-2026-119618. Scores it 8.1. Names no victim. [AL-2026-164][csa] |
 | SUSE, Debian testing, Oracle | 2026-11-18 and 2026-11-16 | SUSE-SU-2026:24742-1 names SLES 16.1. Debian forky is fixed at 2.4.71-1. Oracle Linux 9 has ELSA-2026-98981 for `mod_http2`. |
-| **Last updated** | **2026-11-19 (America/New_York)** | SUSE 16.1, Debian testing, and Oracle Linux 9 have packages. |
+| VMware Aria Operations and HCX | 2026-11-19; time/TZ unknown | VMSA-2026-0010. Patch pending on Operations 9.x and 8.18.x, Cloud Foundation 5.x, and HCX 9.1.x. [VMSA][vmsa] |
+| **Last updated** | **2026-11-20 (America/New_York)** | VMware products that bundle Apache have no patch. |
 
 ## Detection
 
@@ -100,7 +103,8 @@ Red Hat lists **JBoss Core Services** (`jbcs-httpd24-mod_http2`) and **Red Hat H
 3. Until the package is in, remove `h2` and `h2c` from every `Protocols` line and leave `http/1.1`. Wiz describes that step. Apache's advisory names no workaround. Turning HTTP/2 off is not a substitute for the upgrade, and it does not fix CVE-2026-106023, which is in `mod_md` and does not need HTTP/2.
 4. A server built from the archived GitHub `mod_h2` has no release after 2.0.42. Rebuild it from the 2.4.71 tree, or turn HTTP/2 off.
 5. Red Hat Enterprise Linux 8 and earlier do not contain this code. Do not treat a scanner finding there as this flaw without checking the package.
-6. The upgrade does not show whether a request already ran code.
+6. On VMware Aria Operations 8.18.x, VMware Cloud Foundation Operations 9.x, Aria Operations on Cloud Foundation 5.x, and VCF Operations HCX 9.1.x, there is no build yet. Apply [KB463005](https://knowledge.broadcom.com/external/article/463005) or [KB463022](https://knowledge.broadcom.com/external/article/463022), which turn HTTP/2 off, and run the check again after every upgrade. Those appliances are not fixed by installing a distribution `apache2` package.
+7. The upgrade does not show whether a request already ran code.
 
 ## Verification
 
@@ -130,6 +134,8 @@ Neither Apache nor Red Hat publishes an indicator. If a server inside the affect
 - [SUSE CVE-2026-119618][suse] — reread 2026-11-17. Last modified 2026-11-16. SLES 15 SP7 and 16.0 are Released, as are the 15 SP4 through SP6 and 12 SP5 LTSS lines. SLES 16.1 and openSUSE Leap 16.0 and 16.1 are still Affected. Overall state Pending.
 - [Wiz][wiz] — November 11. Says no exploit is available and no in-the-wild exploitation has been reported. Recommends `Protocols http/1.1` until the upgrade. Its standalone `mod_h2` fixed version does not match the Apache advisory; follow Apache.
 - [Singapore CSA, AL-2026-164][csa] — November 17, 2026. Says attackers are exploiting CVE-2026-119618. Scores it CVSS 3.1 8.1. Names no victim.
+- [VMSA-2026-0010][vmsa] — Broadcom, 2026-11-19. CVSS 3.1 9.8. Aria Operations, Cloud Foundation Operations, and VCF Operations HCX. Patch pending. Workaround in KB463005 and KB463022.
+- [Google Cloud GCP-2026-086](https://docs.cloud.google.com/support/bulletins#gcp-2026-086) — published 2026-11-19. Points at VMSA-2026-0010 and names no Google-built fix.
 - [CISA KEV][kev] — catalog 2026.11.17, released 2026-11-17T17:53:15.5664Z, checked 2026-11-18. None of the three is listed.
 
 [adv]: https://httpd.apache.org/security/vulnerabilities_24.html
@@ -147,4 +153,5 @@ Neither Apache nor Red Hat publishes an indicator. If a server inside the affect
 [ubu]: https://ubuntu.com/security/CVE-2026-119618
 [wiz]: https://www.wiz.io/blog/cve-2026-119618-rce-apache-http-server-vulnerability
 [csa]: https://www.csa.gov.sg/alerts-and-advisories/alerts/al-2026-164/
+[vmsa]: https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39625
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

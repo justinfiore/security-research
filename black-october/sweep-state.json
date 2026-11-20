@@ -29,7 +29,7 @@
       "hold": "none"
     },
     "agent-framework.md": {
-      "last_checked": "2026-11-19T07:56:23Z",
+      "last_checked": "2026-11-20T07:56:07Z",
       "hold": "none"
     },
     "ahsaycbs.md": {
@@ -173,7 +173,7 @@
       "hold": "awaiting-fix"
     },
     "chrome-156.md": {
-      "last_checked": "2026-11-19T07:56:23Z",
+      "last_checked": "2026-11-20T07:56:07Z",
       "hold": "none"
     },
     "circutor-powerstudio.md": {
@@ -237,7 +237,7 @@
       "hold": "none"
     },
     "cyrus-sasl.md": {
-      "last_checked": "2026-11-19T07:56:23Z",
+      "last_checked": "2026-11-20T07:56:07Z",
       "hold": "awaiting-fix"
     },
     "danfoss-ak-sm800a.md": {
@@ -261,7 +261,7 @@
       "hold": "none"
     },
     "dell-powerstore.md": {
-      "last_checked": "2026-11-19T07:56:23Z",
+      "last_checked": "2026-11-20T07:56:07Z",
       "hold": "awaiting-fix"
     },
     "docker-hub-ghostpat.md": {
@@ -453,8 +453,8 @@
       "hold": "none"
     },
     "java4shell.md": {
-      "last_checked": "2026-11-19T07:56:23Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-20T07:56:07Z",
+      "hold": "awaiting-distros"
     },
     "jenkins-october.md": {
       "last_checked": "2026-11-17T15:56:20Z",
@@ -537,7 +537,7 @@
       "hold": "awaiting-distros"
     },
     "linux-november-batch.md": {
-      "last_checked": "2026-11-19T07:01:18Z",
+      "last_checked": "2026-11-20T07:56:07Z",
       "hold": "awaiting-distros"
     },
     "linux-tcp-options.md": {
@@ -565,7 +565,7 @@
       "hold": "none"
     },
     "macos-unicode-paths.md": {
-      "last_checked": "2026-11-19T07:56:23Z",
+      "last_checked": "2026-11-20T07:56:07Z",
       "hold": "awaiting-fix"
     },
     "magento-blockstrap.md": {
@@ -594,6 +594,10 @@
     },
     "n8n-credential-guard.md": {
       "last_checked": "2026-11-15T15:56:05Z",
+      "hold": "none"
+    },
+    "nable-mail.md": {
+      "last_checked": "2026-11-20T07:56:07Z",
       "hold": "none"
     },
     "netscaler-november.md": {
@@ -633,7 +637,7 @@
       "hold": "none"
     },
     "nvidia-linux-driver.md": {
-      "last_checked": "2026-11-19T07:56:23Z",
+      "last_checked": "2026-11-20T07:56:07Z",
       "hold": "awaiting-fix"
     },
     "octopus-deploy.md": {

@@ -1,6 +1,6 @@
 # NGINX: configuration-dependent memory corruption and TLS session forgery
 
-**Last updated:** 2026-11-19 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main NGINX summary](../black-october-2026.md#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -140,6 +140,7 @@ Sources: [K000162416][k15176], [K000162607][k93479], [K000162608][k97205], [K000
 - **Debian:** [DSA-6575-1][dsa] (2026-10-21) fixes the October flaws on trixie in **1.26.3-3+deb13u10**. The tracker for [CVE-2026-123007](https://security-tracker.debian.org/tracker/CVE-2026-123007), read 2026-11-19, lists bookworm `1.22.1-9+deb12u10`, trixie `1.26.3-3+deb13u10`, and forky `1.30.6-3` as vulnerable. Sid `1.30.6-4` is marked fixed, and that is unstable. [Debian tracker][deb]
 - **Ubuntu:** [USN-9159-1][usn9159] (published 2026-11-19) fixes CVE-2026-123007 and the other November flaws: **1.30.4-7ubuntu1.2** (26.10), **1.28.3-2ubuntu1.13** (26.04 LTS), **1.24.0-2ubuntu7.20** (24.04 LTS), and **1.18.0-6ubuntu14.23** (22.04 LTS). Ubuntu Pro is **1.18.0-0ubuntu1.7+esm5** (20.04), **1.14.0-0ubuntu1.11+esm6** (18.04), **1.10.3-0ubuntu0.16.04.5+esm11** (16.04), and **1.4.6-1ubuntu3.9+esm10** (14.04). Ubuntu's CVE page says 14.04 is not affected by CVE-2026-123007. [USN-8955-1][usn] (published 2026-10-26) is the earlier notice for the October flaws and does not list CVE-2026-123007. [Ubuntu][ubuntu]
 - **Red Hat:** [RHSA-2026:98634](https://access.redhat.com/errata/RHSA-2026:98634), issued 2026-11-11, fixes CVE-2026-15176 and CVE-2026-97205 in `nginx` **1.26.3-16.el10_3.1** on Red Hat Enterprise Linux 10. This review did not find a matching erratum for RHEL 8 or 9. SUSE and Alpine were not rechecked. Remember that backports can make an old version number either safe or, as Debian found for CVE-2026-93479, vulnerable.
+- **Bitwarden self-hosted:** Bitwarden's notice, posted 2026-11-19, says the bundled nginx is inside CVE-2026-123007 and CVE-2026-123633 and tells operators to update the instance to **v2026.11.0**. It names a kernel flaw, CVE-2026-72447, that Bitwarden does not ship, so the host still needs its own kernel update. [Bitwarden](https://community.bitwarden.com/t/bitwarden-self-host-patch-available-for-nginx-cve-2026-123007-and-cve-2026-123633/104165)
 
 ### Temporary mitigations
 

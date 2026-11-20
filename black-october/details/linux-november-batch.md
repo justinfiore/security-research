@@ -1,6 +1,6 @@
 # Linux kernel: November 2–3 High fixes
 
-**Last updated:** 2026-11-19 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main summary](../black-october-2026.md#linux-kernel-thirteen-high-fixes-from-november-2-and-3) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -48,7 +48,8 @@ The CNA's own scenario text says code execution is not established for these rec
 | Upstream stable tags | 2026-11-02 and 2026-11-03; per-tag time not rechecked | The unaffected versions in the table above are the CNA's. A later tag contains an earlier fix. |
 | Debian security kernels | 2026-11-13; DSA time not rechecked for each CVE | DSA-6628-1 fixes trixie `linux` at 6.12.117-1 and names CVE-2026-99270. The Debian tracker, read 2026-11-19, also marks bookworm security fixed for the local flaws that bookworm contains. |
 | Amazon Linux partial fixes | 2026-11-12; time unknown | ALAS2KERNEL-5.10-2026-139 and ALAS2023-2026-3448 name CVE-2026-99246 and CVE-2026-99236. CVE-2026-99270 is still pending on every Amazon Linux kernel listed. |
-| **Last updated** | **2026-11-19 (America/New_York)** | New item. Red Hat 8, 9, and 10 have no erratum. |
+| Ubuntu kernels | 2026-11-19; time/TZ unknown | USN-9165-1, USN-9166-1, USN-9167-1, and USN-9173-1. They do not list CVE-2026-99270. |
+| **Last updated** | **2026-11-20 (America/New_York)** | Ubuntu has packages for part of the set. CVE-2026-99270 is still open there. |
 
 ## Detection
 
@@ -66,10 +67,10 @@ No public proof of concept was found for these thirteen records. Do not send pac
 
 Install a distribution kernel that names the CVE and reboot into it. Installing the package does not fix a running host. Do not copy an upstream commit into a production kernel.
 
-| Distribution | Status checked 2026-11-19 | What to install |
+| Distribution | Status checked 2026-11-20 | What to install |
 |---|---|---|
 | Debian | trixie security `linux` 6.12.117-1 is fixed for the rows the tracker lists, including CVE-2026-99270 (DSA-6628-1). bookworm security 6.1.192-2 is fixed for CVE-2026-99246, CVE-2026-99239, CVE-2026-99236, and the other local rows bookworm contains. bookworm security is still vulnerable for CVE-2026-99270. forky 7.3.4-1 and sid 7.3.5-1 are fixed. CVE-2026-99227 and CVE-2026-99269 do not affect bookworm's 6.1 kernel. CVE-2026-99237 and CVE-2026-99238 do not affect bookworm or the trixie base the tracker marks fixed. | The security kernel for the release you boot, then reboot. |
-| Ubuntu | Generic `linux` has no released fix. CVE-2026-99270 is Vulnerable on 16.04 through 26.04 and Not affected on 26.10; priority Medium, page updated 2026-11-04. CVE-2026-99246 is Vulnerable, work in progress, on 22.04 (`5.15.0-204.214`), 24.04 (`6.8.0-150.150`), and 26.04 (`7.0.0-44.44`), and Not affected on 26.10. CVE-2026-99236 is the same work-in-progress set; priority Medium. A work-in-progress build is not a package a normal upgrade installs. | No package yet. |
+| Ubuntu | USN-9165-1, USN-9166-1, USN-9167-1, and USN-9173-1, all 2026-11-19, ship generic kernels for several of the thirteen: 22.04 `5.15.0-204.214`, 24.04 `6.8.0-151.151`, 26.04 `7.0.0-44.44`, and 26.10 `7.3.0-11.12`. Those notices do not list CVE-2026-99270 or CVE-2026-99239. Ubuntu's page for CVE-2026-99270, updated 2026-11-18, now rates it High and still marks 16.04 through 26.04 Vulnerable with no package. 26.10 is Not affected for that one. | Install the USN kernel for the release you boot and reboot. That does not close CVE-2026-99270. |
 | Red Hat | CVE-2026-99270: RHEL 8, 9, and 10 `kernel` Affected, and RHEL 8 and 9 `kernel-rt` Affected. No `affected_release`. Red Hat scores it CVSS 3.1 5.9, availability only, and says the CNA's High/High/High impact is not what it has demonstrated. CVE-2026-99246: the same RHEL 8, 9, and 10 kernel rows are Affected, with no erratum. Red Hat scores that one 8.1 and says TIPC is not loaded by default. | No erratum yet. Do not load TIPC, and leave `tcp_migrate_req` at 0 unless you need it. Neither is a fix. |
 | SUSE | CVE-2026-99270: SLES 15 SP7 `kernel-default` Affected. SLES 16.1 `kernel-default` Affected. Real Time 15 SP7 `kernel-source-rt` Affected. SLES 12 SP5-LTSS and SLES 16.0 are Not affected. SUSE scores it 7.0, local, not the CNA's 8.1. | No released package found for the Affected products. |
 | Amazon Linux | CVE-2026-99270 is Pending Fix on Amazon Linux 2 core, the 5.4, 5.10, and 5.15 extras, and Amazon Linux 2023 `kernel`, `kernel6.12`, and `kernel6.18`. Amazon scores it 5.9. CVE-2026-99246 is fixed on the Amazon Linux 2 5.10 extra (ALAS2KERNEL-5.10-2026-139, 2026-11-12) and on Amazon Linux 2023 `kernel6.12` (ALAS2023-2026-3448, 2026-11-12). Amazon Linux 2 core is Not Affected for that one. CVE-2026-99236 has those same two fixed advisories, plus the Amazon Linux 2 5.15 extra (ALAS2KERNEL-5.15-2026-121, 2026-11-12). Amazon Linux 2023's default `kernel` is still Pending Fix for both. | Install the ALAS package only for the flavor it names, then reboot. A fixed `kernel6.12` does not fix the default 6.1 kernel. |
