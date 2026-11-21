@@ -29,7 +29,7 @@
       "hold": "none"
     },
     "agent-framework.md": {
-      "last_checked": "2026-11-20T07:56:07Z",
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "none"
     },
     "ahsaycbs.md": {
@@ -94,6 +94,10 @@
     },
     "assent-apple.md": {
       "last_checked": "2026-11-18T15:56:29Z",
+      "hold": "none"
+    },
+    "asus-control-center.md": {
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "none"
     },
     "asus-routers.md": {
@@ -177,7 +181,7 @@
       "hold": "awaiting-fix"
     },
     "chrome-156.md": {
-      "last_checked": "2026-11-20T07:56:07Z",
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "none"
     },
     "circutor-powerstudio.md": {
@@ -245,7 +249,7 @@
       "hold": "none"
     },
     "cyrus-sasl.md": {
-      "last_checked": "2026-11-20T07:56:07Z",
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "awaiting-fix"
     },
     "danfoss-ak-sm800a.md": {
@@ -269,7 +273,7 @@
       "hold": "none"
     },
     "dell-powerstore.md": {
-      "last_checked": "2026-11-20T07:56:07Z",
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "awaiting-fix"
     },
     "docker-hub-ghostpat.md": {
@@ -368,6 +372,10 @@
       "last_checked": "2026-11-21T04:02:16Z",
       "hold": "awaiting-fix"
     },
+    "frappe-framework-mail.md": {
+      "last_checked": "2026-11-21T08:02:16Z",
+      "hold": "none"
+    },
     "frappe-ghost.md": {
       "last_checked": "2026-11-21T04:02:16Z",
       "hold": "awaiting-fix"
@@ -461,7 +469,7 @@
       "hold": "none"
     },
     "java4shell.md": {
-      "last_checked": "2026-11-20T07:56:07Z",
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "awaiting-distros"
     },
     "jenkins-october.md": {
@@ -549,7 +557,7 @@
       "hold": "awaiting-distros"
     },
     "linux-november-batch.md": {
-      "last_checked": "2026-11-20T07:56:07Z",
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "awaiting-distros"
     },
     "linux-tcp-options.md": {
@@ -577,7 +585,7 @@
       "hold": "none"
     },
     "macos-unicode-paths.md": {
-      "last_checked": "2026-11-20T07:56:07Z",
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "awaiting-fix"
     },
     "magento-blockstrap.md": {
@@ -594,6 +602,10 @@
     },
     "mitsubishi-iconics-genesis.md": {
       "last_checked": "2026-11-20T15:56:01Z",
+      "hold": "awaiting-fix"
+    },
+    "monai-label.md": {
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "awaiting-fix"
     },
     "mongodb.md": {
@@ -613,7 +625,7 @@
       "hold": "none"
     },
     "nable-mail.md": {
-      "last_checked": "2026-11-20T07:56:07Z",
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "none"
     },
     "netscaler-november.md": {
@@ -653,7 +665,7 @@
       "hold": "none"
     },
     "nvidia-linux-driver.md": {
-      "last_checked": "2026-11-20T07:56:07Z",
+      "last_checked": "2026-11-21T08:02:16Z",
       "hold": "awaiting-fix"
     },
     "octopus-deploy.md": {
@@ -880,6 +892,10 @@
       "last_checked": "2026-11-21T04:02:16Z",
       "hold": "none"
     },
+    "spring-november.md": {
+      "last_checked": "2026-11-21T08:02:16Z",
+      "hold": "none"
+    },
     "supermicro-bmc.md": {
       "last_checked": "2026-11-20T15:56:01Z",
       "hold": "awaiting-fix"
@@ -1035,6 +1051,10 @@
     "wordpress-upgrade-window.md": {
       "last_checked": "2026-11-20T15:56:01Z",
       "hold": "none"
+    },
+    "wordpress-user-registration-aide.md": {
+      "last_checked": "2026-11-21T08:02:16Z",
+      "hold": "awaiting-fix"
     },
     "wpsplinter.md": {
       "last_checked": "2026-11-20T15:56:01Z",

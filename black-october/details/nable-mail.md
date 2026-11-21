@@ -1,12 +1,12 @@
 # N-able: someone reached a server behind Mail Assure and SpamExperts
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-21 (America/New_York)
 
 [Main summary](../black-october-2026.md#n-able-someone-reached-a-server-behind-mail-assure-and-spamexperts) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 Mail Assure and SpamExperts Hosted Cloud filter email for N-able's customers. On November 18 N-able said someone had unauthorized access to one server in that cloud. Mail still flows and is still filtered. The management portal, the API, quarantine, and logging are still offline.
 
-**No CVE is assigned, and no vendor or CNA has published a CVSS score.** N-able's status page, incident 202672, says the investigation is ongoing and that, at 03:05 UTC on November 18, it did not have evidence that customer data was compromised, including access to tenants' mailboxes. The same update says this is unrelated to the [N-central](../black-october-2026.md#n-central-critical-vulnerabilities-hotfix-20264126) incident. N-able has not said how the server was reached or what was done on it. The latest update, 04:00:24 UTC on November 20, says restoration is still in progress and that the portal and API stay disabled.
+**No CVE is assigned, and no vendor or CNA has published a CVSS score.** N-able's status page, incident 202672, says the investigation is ongoing and that, at 03:05 UTC on November 18, it did not have evidence that customer data was compromised, including access to tenants' mailboxes. The same update says this is unrelated to the [N-central](../black-october-2026.md#n-central-critical-vulnerabilities-hotfix-20264126) incident. N-able has not said how the server was reached or what was done on it. The latest update, 17:45:37 UTC on November 20, says remediation has advanced and N-able is preparing to restore the service. The portal and API stay disabled until restoration begins. Mail filtering is still running.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -27,8 +27,9 @@ Mail Assure and SpamExperts Hosted Cloud filter email for N-able's customers. On
 | Status page opens | 2026-11-17 03:00:00 UTC | Incident 202672. Dashboard access affected. Mail filtering still running. |
 | First explanation | 2026-11-17 13:33:42 UTC | Traced to platform configuration and service dependencies. |
 | **Security incident** | **2026-11-18 03:05:09 UTC** | Unauthorized access to one server. No evidence then of compromised customer data. Unrelated to N-central. |
-| **Last update read** | **2026-11-20 04:00:24 UTC** | Portal and API still disabled. Mail filtering still running. |
-| **Last updated** | **2026-11-20 (America/New_York)** | New item. Read the partner email and treat quarantine as unavailable. |
+| Status | 2026-11-20 04:00:24 UTC | Portal and API still disabled. Mail filtering still running. |
+| **Last update read** | **2026-11-20 17:45:37 UTC** | Remediation has advanced. Restoration has not started. Portal and API stay disabled. |
+| **Last updated** | **2026-11-21 (America/New_York)** | N-able is preparing to restore the service. There is still nothing to install. |
 
 ## Detection
 
@@ -49,11 +50,11 @@ Mail Assure and SpamExperts Hosted Cloud filter email for N-able's customers. On
 
 ## Compromise response
 
-N-able's statement from 03:05 UTC on November 18 is that it had no evidence then of compromised customer data, including tenant mailboxes. The investigation was still continuing at 04:00 UTC on November 20, so that statement is not a final clearance. A message that sat in quarantine during the outage is not readable from the portal until the service returns. This incident is not the N-central compromise, and the checks for that one do not apply here.
+N-able's statement from 03:05 UTC on November 18 is that it had no evidence then of compromised customer data, including tenant mailboxes. The 17:45 UTC update on November 20 says remediation has advanced and does not say the investigation is finished, so that statement is not a final clearance. A message that sat in quarantine during the outage is not readable from the portal until the service returns. This incident is not the N-central compromise, and the checks for that one do not apply here.
 
 ## Sources
 
-- [N-able status, incident 202672][status] — read 2026-11-20. Unauthorized access to one server, disclosed 2026-11-18 03:05:09 UTC. Portal and API still disabled at 2026-11-20 04:00:24 UTC.
+- [N-able status, incident 202672][status] — read 2026-11-21. Unauthorized access to one server, disclosed 2026-11-18 03:05:09 UTC. At 2026-11-20 17:45:37 UTC N-able said it is preparing to restore the service and that the portal and API stay disabled until then.
 - [CISA KEV JSON][kev] — catalog 2026.11.18, checked 2026-11-20. No CVE to match.
 
 [status]: https://uptime.n-able.com/event/202672

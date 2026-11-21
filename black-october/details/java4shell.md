@@ -1,6 +1,6 @@
 # OpenJDK: Java4Shell - a Base64 string corrupts memory
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-21 (America/New_York)
 
 [Main Java4Shell summary](../black-october-2026.md#openjdk-java4shell---a-base64-string-corrupts-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -18,7 +18,7 @@ Oracle's download page lists the replacement builds **17.0.21.1**, **21.0.13.1**
 
 Other distributions now name their own builds. Amazon Corretto's changelogs, dated November 17, list **17.0.21.1.2**, **21.0.13.1.2**, **25.0.5.1.2**, and **27.0.1.1.4**, and each table includes CVE-2026-114938. Microsoft's November 18 post says **17.0.21.1**, **21.0.13.1**, and **25.0.5.1** contain the fix; Microsoft does not ship 27. Adoptium says the Temurin builds with the fix are **17.0.21.1+2**, **21.0.13.1+2**, **25.0.5.1+2**, and **27.0.1.1+4**, and that binaries are published as testing completes. Azul says the November 17 Zulu builds fix it in 17, 21, 25, and 27, and names Prime **26.08.110.0** and **26.02.510.0**. Red Hat rates the same flaw Critical, CVSS 3.0 **9.8** (`CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`). Its CVE page, read November 20, marks the RHEL OpenJDK packages Fixed, with errata issued November 18: RHEL 8 `java-17-openjdk` **17.0.21.1.2-2.1.el8** and `java-21-openjdk` ([RHSA-2026:100563](https://access.redhat.com/errata/RHSA-2026:100563)); RHEL 9 `java-17-openjdk` **17.0.21.1.2-2.2.el9**, `java-21-openjdk`, and `java-25-openjdk` **25.0.5.1.2** ([RHSA-2026:100564](https://access.redhat.com/errata/RHSA-2026:100564)); RHEL 10 `java-21-openjdk` **21.0.13.1.2-1.2.el10** and `java-25-openjdk` **25.0.5.1.2-1.1.el10** ([RHSA-2026:100568](https://access.redhat.com/errata/RHSA-2026:100568)). RHEL 8 has no `java-25` package and RHEL 10 has no `java-17` package. RHSB-2026-018, updated November 20, still says fixes are being expedited and does not name these errata. Red Hat build of Keycloak, JBoss EAP 7 and 8 images, and the Hardened Images are still listed Affected. OpenJDK 8 and 11 do not contain the path.
 
-**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). CISA published an alert on November 17 and did not add the CVE. GreyNoise, as of early November 19, reports more than 150 Java4Shell-shaped requests from five addresses and no successful intrusion on its sensors. Previdian reports nine attempts from six addresses, in China, Germany, Romania, and the United States, on November 18 and 19, and says its sensors cannot show that a target was compromised. Cloudflare's blog, published November 18, says it has seen no indication the flaw was exploited on Cloudflare's own Java. Cloudforce One said on November 18 that one address sent both ARTEX traffic and a Java4Shell attempt, and later that one address returned with a Chrome User-Agent; neither post says the attempt succeeded. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21). CISA published an alert on November 17 and did not add the CVE. GreyNoise, as of early November 19, reports more than 150 Java4Shell-shaped requests from five addresses and no successful intrusion on its sensors. Previdian reports nine attempts from six addresses, in China, Germany, Romania, and the United States, on November 18 and 19, and says its sensors cannot show that a target was compromised. Cloudflare's blog, published November 18, says it has seen no indication the flaw was exploited on Cloudflare's own Java. Cloudforce One said on November 18 that one address sent both ARTEX traffic and a Java4Shell attempt, and later that one address returned with a Chrome User-Agent; neither post says the attempt succeeded. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -40,7 +40,8 @@ Other distributions now name their own builds. Amazon Corretto's changelogs, dat
 | Red Hat bulletin | 2026-11-18 13:53 UTC | RHSB-2026-018. Critical, CVSS 3.0 9.8. The bulletin text still says fixes are being expedited. [Red Hat][rh] |
 | Red Hat errata | 2026-11-18; time/TZ unknown | The CVE page marks the RHEL 8, 9, and 10 OpenJDK packages Fixed. [RHSA-2026:100563](https://access.redhat.com/errata/RHSA-2026:100563) |
 | Exploit-shaped requests | 2026-11-18 through 2026-11-19 | GreyNoise reports more than 150 requests from five addresses and no successful intrusion. Previdian reports nine attempts from six addresses and says that does not show a compromise. Cloudforce One reports one address sending ARTEX and a Java4Shell attempt. None of this is a KEV listing. [GreyNoise][grey] |
-| **Last updated** | **2026-11-20 (America/New_York)** | Red Hat's OpenJDK packages are out. The bulletin text has not caught up. |
+| Ubuntu and Debian packages | 2026-11-18 and 2026-11-20; time/TZ unknown | USN-9155-1 through USN-9158-1, and the CRaC notices USN-9178-1 through USN-9180-1. Debian DLA-4917-1, DSA-6639-1, and DSA-6640-1. Forky has none. |
+| **Last updated** | **2026-11-21 (America/New_York)** | Ubuntu, Debian, Amazon Linux, and AlmaLinux have packages. Forky, Rocky 9 and 10, and SUSE do not. |
 
 ## Detection
 
@@ -53,9 +54,16 @@ Other distributions now name their own builds. Amazon Corretto's changelogs, dat
 
 1. Install Oracle JDK **17.0.21.1, 21.0.13.1, 25.0.5.1, or 27.0.1.1**, or **8u513** for the Enterprise Performance Pack, and restart every process that loaded the old runtime. Rebuild a container image that bundles Java.
 2. For the other distributions, install the build that vendor names: Corretto **17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, or 27.0.1.1.4**; Microsoft **17.0.21.1, 21.0.13.1, or 25.0.5.1**; Temurin **17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, or 27.0.1.1+4**; Azul's November 17 Zulu build, or Prime **26.08.110.0** or **26.02.510.0**. On Red Hat Enterprise Linux, install the November 18 `java-17-openjdk`, `java-21-openjdk`, or `java-25-openjdk` erratum for the release you run. Do not treat the Oracle build number as another vendor's. A Red Hat build of Keycloak and a JBoss EAP image are still listed without a fixed package.
-3. Until that build is running, Calif says start the JVM with `-XX:-UseBASE64Intrinsics`, or with `-XX:UseAVX=2` on x86-64 only. OpenJDK on ARM does not recognize the second flag and fails to start. Oracle's advisory and the OpenJDK advisory do not mention either flag.
-4. CISA's temporary control is to restrict and validate Base64 at the application boundary and limit unauthenticated access. That is not the fix.
-5. The restart does not show whether a request already corrupted memory.
+3. Linux packages that name this CVE:
+   - **Ubuntu:** the package in USN-9155-1 through USN-9158-1 (November 18) for `openjdk-17`, `openjdk-21`, and `openjdk-25` on 22.04, 24.04, and 26.04 LTS. `openjdk-27` is fixed only on 26.10. The CRaC packages are USN-9178-1 through USN-9180-1 (November 20).
+   - **Debian:** `openjdk-17` **17.0.21.1+2-1~deb12u1** on bookworm (DLA-4917-1), `openjdk-21` **21.0.13.1+2-1~deb13u1** (DSA-6639-1) and `openjdk-25` **25.0.5.1+2-1~deb13u1** (DSA-6640-1) on trixie. Forky is still marked vulnerable.
+   - **Amazon Linux:** ALAS2-2026-4123 on Amazon Linux 2, and ALAS2023-2026-3478 through 3481 on Amazon Linux 2023, all dated November 17. Java 8 and 11 are not affected.
+   - **AlmaLinux:** ALSA-2026:100563 and ALSA-2026:100564 (November 19) for `java-17-openjdk` **17.0.21.1.2** on 8 and 9, and ALSA-2026:100568 for `java-21-openjdk` **21.0.13.1.2-1.2.el10.alma.1** on 10.
+   - **Rocky Linux:** RLSA-2026:100563 and RLSA-2026:100567 (November 19) cover Rocky Linux 8 only. Rocky 9 and 10 have no advisory.
+   - **SUSE:** the page last modified November 19 still says Java 17, 21, and 25 on SUSE Linux Enterprise Server 15 SP7 and 16.0 are In progress. Java 8 and 11 are not affected.
+4. Until that build is running, Calif says start the JVM with `-XX:-UseBASE64Intrinsics`, or with `-XX:UseAVX=2` on x86-64 only. OpenJDK on ARM does not recognize the second flag and fails to start. Oracle's advisory and the OpenJDK advisory do not mention either flag.
+5. CISA's temporary control is to restrict and validate Base64 at the application boundary and limit unauthenticated access. That is not the fix.
+6. The restart does not show whether a request already corrupted memory.
 
 ## Verification
 
@@ -78,7 +86,13 @@ The update does not show whether a request already ran code. A service Calif lis
 - [CISA alert][cisa] — November 17, 2026. Calls the flaw critical. Points at Oracle's advisory. Not a KEV listing.
 - [JDK 17.0.21.1 release notes](https://www.oracle.com/java/technologies/javase/17-0-21-1-relnotes.html) — release date November 17, 2026. Full version 17.0.21.1+4. Security baseline for the 17 family is that build. The 11 baseline listed there is 11.0.33.1+4 and the 8 baseline is 1.8.0_513-b04.
 - [Oracle Java downloads](https://www.oracle.com/java/technologies/downloads/) — read 2026-11-18. Lists 27.0.1.1, 25.0.5.1, 21.0.13.1, 17.0.21.1, and 8u513.
-- [CISA KEV JSON][kev] — catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z, checked 2026-11-19. CVE-2026-114938 is not listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-21. CVE-2026-114938 is not listed.
+- [Ubuntu CVE-2026-114938](https://ubuntu.com/security/CVE-2026-114938) — last updated 20 November 2026. Fixed on 22.04, 24.04, and 26.04 LTS for openjdk-17, 21, and 25. openjdk-27 is fixed only on 26.10.
+- [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-114938) — bookworm, trixie, and sid fixed. Forky still vulnerable: openjdk-21 21.0.13.0.3+1-1 and openjdk-25 25.0.5+8-1.
+- [SUSE CVE-2026-114938](https://www.suse.com/security/cve/CVE-2026-114938.html) — last modified 2026-11-19. SLES 15 SP7 and 16.0 Java 17, 21, and 25 are In progress.
+- [Amazon Linux](https://explore.alas.aws.amazon.com/CVE-2026-114938.html) — fixed 2026-11-17. ALAS2-2026-4123 and ALAS2023-2026-3478 through 3481.
+- [AlmaLinux ALSA-2026:100568](https://errata.almalinux.org/10/ALSA-2026-100568.html) — 2026-11-19. AlmaLinux 8 and 9 are ALSA-2026:100563 and ALSA-2026:100564.
+- [Rocky Linux RLSA-2026:100563](https://errata.rockylinux.org/api/v2/advisories/RLSA-2026:100563) — published 2026-11-19, Rocky Linux 8 only. No Rocky 9 or 10 advisory.
 - [Amazon Corretto 17 changelog][corretto] — 17.0.21.1.2, November 17, 2026. The CVE table includes CVE-2026-114938 at 8.1. The 21, 25, and 27 changelogs name 21.0.13.1.2, 25.0.5.1.2, and 27.0.1.1.4.
 - [Microsoft Build of OpenJDK, November 2026][ms] — November 18, 2026. 17.0.21.1, 21.0.13.1, and 25.0.5.1 contain the fix.
 - [Eclipse Temurin guidance][temurin] — 17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, and 27.0.1.1+4. Binaries publish as testing completes.

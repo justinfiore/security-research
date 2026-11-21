@@ -1,6 +1,6 @@
 # Linux kernel: November 2–3 High fixes
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-21 (America/New_York)
 
 [Main summary](../black-october-2026.md#linux-kernel-thirteen-high-fixes-from-november-2-and-3) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -49,7 +49,8 @@ The CNA's own scenario text says code execution is not established for these rec
 | Debian security kernels | 2026-11-13; DSA time not rechecked for each CVE | DSA-6628-1 fixes trixie `linux` at 6.12.117-1 and names CVE-2026-99270. The Debian tracker, read 2026-11-19, also marks bookworm security fixed for the local flaws that bookworm contains. |
 | Amazon Linux partial fixes | 2026-11-12; time unknown | ALAS2KERNEL-5.10-2026-139 and ALAS2023-2026-3448 name CVE-2026-99246 and CVE-2026-99236. CVE-2026-99270 is still pending on every Amazon Linux kernel listed. |
 | Ubuntu kernels | 2026-11-19; time/TZ unknown | USN-9165-1, USN-9166-1, USN-9167-1, and USN-9173-1. They do not list CVE-2026-99270. |
-| **Last updated** | **2026-11-20 (America/New_York)** | Ubuntu has packages for part of the set. CVE-2026-99270 is still open there. |
+| Oracle Linux UEK | 2026-11-12 and 2026-11-13; time/TZ unknown | ELSA-2026-500632 and ELSA-2026-500631 name CVE-2026-99270 only, and only for `kernel-uek`. |
+| **Last updated** | **2026-11-21 (America/New_York)** | Oracle Linux has a UEK package for CVE-2026-99270. The other twelve, and the RHEL-compatible kernel, still have none. |
 
 ## Detection
 
@@ -74,7 +75,8 @@ Install a distribution kernel that names the CVE and reboot into it. Installing 
 | Red Hat | CVE-2026-99270: RHEL 8, 9, and 10 `kernel` Affected, and RHEL 8 and 9 `kernel-rt` Affected. No `affected_release`. Red Hat scores it CVSS 3.1 5.9, availability only, and says the CNA's High/High/High impact is not what it has demonstrated. CVE-2026-99246: the same RHEL 8, 9, and 10 kernel rows are Affected, with no erratum. Red Hat scores that one 8.1 and says TIPC is not loaded by default. | No erratum yet. Do not load TIPC, and leave `tcp_migrate_req` at 0 unless you need it. Neither is a fix. |
 | SUSE | CVE-2026-99270: SLES 15 SP7 `kernel-default` Affected. SLES 16.1 `kernel-default` Affected. Real Time 15 SP7 `kernel-source-rt` Affected. SLES 12 SP5-LTSS and SLES 16.0 are Not affected. SUSE scores it 7.0, local, not the CNA's 8.1. | No released package found for the Affected products. |
 | Amazon Linux | CVE-2026-99270 is Pending Fix on Amazon Linux 2 core, the 5.4, 5.10, and 5.15 extras, and Amazon Linux 2023 `kernel`, `kernel6.12`, and `kernel6.18`. Amazon scores it 5.9. CVE-2026-99246 is fixed on the Amazon Linux 2 5.10 extra (ALAS2KERNEL-5.10-2026-139, 2026-11-12) and on Amazon Linux 2023 `kernel6.12` (ALAS2023-2026-3448, 2026-11-12). Amazon Linux 2 core is Not Affected for that one. CVE-2026-99236 has those same two fixed advisories, plus the Amazon Linux 2 5.15 extra (ALAS2KERNEL-5.15-2026-121, 2026-11-12). Amazon Linux 2023's default `kernel` is still Pending Fix for both. | Install the ALAS package only for the flavor it names, then reboot. A fixed `kernel6.12` does not fix the default 6.1 kernel. |
-| AlmaLinux, Rocky Linux, Oracle Linux | No erratum naming these thirteen CVEs was found. Do not assume a RHEL rebuild has a fix Red Hat has not published. | Unknown until the rebuild publishes it. |
+| Oracle Linux | CVE-2026-99270 only, and only the UEK kernel: ELSA-2026-500631 (2026-11-13) is `kernel-uek-5.15.0-326.224.5.1` on OL 8 and OL 9. ELSA-2026-500632 (2026-11-12) is `kernel-uek-6.12.0-208.112.5.2` on OL 9 and OL 10. Neither names the other twelve CVEs, and neither fixes the RHEL-compatible `kernel` package. | Install the UEK erratum only if you boot UEK, then reboot. |
+| AlmaLinux, Rocky Linux | No erratum naming these thirteen CVEs was found. Rocky's API, checked 2026-11-21, returned none for CVE-2026-99270. Do not assume a RHEL rebuild has a fix Red Hat has not published. | Unknown until the rebuild publishes it. |
 
 The CNA unaffected lines are the upstream floors, not a distribution package. A host on 5.10, 5.15, 6.1, or 6.6 has no upstream stable tag for CVE-2026-99270. Debian's bookworm fix for some of the other rows does not fill that gap.
 
@@ -97,4 +99,5 @@ No compromise indicators were published for these thirteen records. A kernel oop
 - [Red Hat CVE-2026-99270](https://access.redhat.com/security/cve/CVE-2026-99270) and [Red Hat CVE-2026-99246](https://access.redhat.com/security/cve/CVE-2026-99246). Package state from the Red Hat security-data API.
 - [SUSE CVE-2026-99270](https://www.suse.com/security/cve/CVE-2026-99270.html).
 - [Amazon Linux CVE-2026-99270](https://explore.alas.aws.amazon.com/CVE-2026-99270.html), [CVE-2026-99246](https://explore.alas.aws.amazon.com/CVE-2026-99246.html), and [CVE-2026-99236](https://explore.alas.aws.amazon.com/CVE-2026-99236.html).
+- [Oracle Linux CVE-2026-99270](https://linux.oracle.com/cve/CVE-2026-99270.html), [ELSA-2026-500631](https://linux.oracle.com/errata/ELSA-2026-500631.html), and [ELSA-2026-500632](https://linux.oracle.com/errata/ELSA-2026-500632.html). UEK only. The other twelve CVEs are not in these errata.
 - [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json), catalog 2026.11.18, checked 2026-11-19.

@@ -2,6 +2,13 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-21 03:10 EST (UTC−05:00) — Elecbrakes; OpenJDK; Linux kernel; N-able
+
+- **Elecbrakes:** On an [EB2 or VM1](black-october/details/elecbrakes.md#remediation), open the app and install the firmware. CISA rates CVE-2026-96805 and CVE-2026-125273 CVSS 3.1 9.6: a phone in Bluetooth range applies the trailer brakes, with no pairing. EB2 through 3.0.4.2.0 is fixed in 3.0.4.4.3. VM1 before 1.3.4.2.1 is fixed in 1.3.4.2.1. The update does not install itself. The ELBC2000 has no fix. None is in KEV.
+- **OpenJDK:** On Ubuntu, Debian, Amazon Linux, or AlmaLinux, install the [Java4Shell package](black-october/details/java4shell.md#remediation) and restart. Ubuntu is USN-9155-1 through USN-9158-1. Debian is DLA-4917-1, DSA-6639-1, and DSA-6640-1. Forky has none. Rocky Linux 9 and 10, and SUSE, have none. The Oracle floors are unchanged. It is not in KEV.
+- **Linux kernel:** On Oracle Linux, if you boot UEK, install [ELSA-2026-500631 or ELSA-2026-500632](black-october/details/linux-november-batch.md#remediation) and reboot. Those cover CVE-2026-99270 only. They do not fix the RHEL-compatible kernel, and they do not cover the other twelve. Red Hat, SUSE, Amazon Linux, AlmaLinux, and Rocky still have none for that CVE.
+- **N-able:** [Mail Assure and SpamExperts](black-october/details/nable-mail.md#timeline) are still offline. At 17:45 UTC on November 20 N-able said remediation has advanced and that the portal and API stay disabled until restoration begins. Mail is still filtered. There is still nothing to install.
+
 ## 2026-11-20 23:11 EST (UTC−05:00) — ASUS; Frappe; WordPress; Spring; MONAI Label; Confluence
 
 - **ASUS:** Install [Control Center Express v1.7.29](black-october/details/asus-control-center.md#remediation) or later, then update the agents from the console. ASUS rates CVE-2026-114202 CVSS 4.0 10.0: a hard-coded key forges an administrator token. Two more, 9.0 and 9.4, need a low-privileged account. The bulletin says anything before v1.7.29. None is in KEV.

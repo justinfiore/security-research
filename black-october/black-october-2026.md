@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 20, 2026**
+**As of November 21, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Elecbrakes: a phone in Bluetooth range applies the trailer brakes](#elecbrakes-a-phone-in-bluetooth-range-applies-the-trailer-brakes)
 - [ASUS Control Center Express: a forged token is the administrator](#asus-control-center-express-a-forged-token-is-the-administrator)
 - [Frappe Framework: a signed-in user sends mail as someone else](#frappe-framework-a-signed-in-user-sends-mail-as-someone-else)
 - [WordPress: User Registration Aide changes a password before login](#wordpress-user-registration-aide-changes-a-password-before-login)
@@ -298,10 +299,12 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** On an [Elecbrakes](#elecbrakes-a-phone-in-bluetooth-range-applies-the-trailer-brakes) EB2 or VM1, open the app and install the firmware. CISA rates [CVE-2026-96805](https://www.cve.org/CVERecord?id=CVE-2026-96805) and [CVE-2026-125273](https://www.cve.org/CVERecord?id=CVE-2026-125273) CVSS 3.1 9.6 Critical: a phone in Bluetooth range applies the trailer brakes, with no pairing. EB2 through 3.0.4.2.0 is fixed in **3.0.4.4.3**. VM1 before 1.3.4.2.1 is fixed in **1.3.4.2.1**. The update does not install itself. The ELBC2000 has no fix. None is in KEV.
 - **New this update:** Install [ASUS Control Center Express](#asus-control-center-express-a-forged-token-is-the-administrator) **v1.7.29 or later**, then update the agents from the console. ASUS rates [CVE-2026-114202](https://www.cve.org/CVERecord?id=CVE-2026-114202) CVSS 4.0 10.0 Critical: a hard-coded key lets a remote user forge an administrator token. Two more, 9.0 and 9.4, need a low-privileged account. The bulletin says anything before v1.7.29. The CVE records stop at v1.7.27. None is in KEV.
 - **New this update:** Upgrade [Frappe](#frappe-framework-a-signed-in-user-sends-mail-as-someone-else) to **15.127.1 or 16.60.1**. Frappe rates the mail flaw CVSS 3.1 8.5 High, and no CVE is assigned: a Website User sends mail as someone else and can attach files they should not read. Frappe says it has been exploited. There is no workaround. This is not Frappe Ghost.
 - **New this update:** Remove the [User Registration Aide](#wordpress-user-registration-aide-changes-a-password-before-login) plugin. WPScan published [CVE-2026-121385](https://www.cve.org/CVERecord?id=CVE-2026-121385) on November 20 with no score. CISA's enrichment scores it CVSS 3.1 9.8: through 1.5.3.8, anyone who knows a username and an email address sets that account's password. There is no fix. It is not in KEV.
 - **New this update:** Upgrade [Spring Security](#spring-an-expression-matcher-runs-code) to **7.1.3 or 7.0.9** and restart. Spring rates [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273) Critical: an application that binds external input to a `RequestMatcher` property runs that input as code. The advisory's vector is CVSS 3.1 9.8. The same day's batch has a second Critical, [CVE-2026-59367](https://www.cve.org/CVERecord?id=CVE-2026-59367), a test LDAP server that listens on every interface with a fixed password, fixed in Spring LDAP **4.1.3 or 4.0.7**. Ten more are High, including a Spring Data Elasticsearch query that evaluates its argument, fixed in **6.1.3 or 6.0.9**. Older lines are Enterprise Support only. None is in KEV.
+- **New this update:** On Ubuntu, Debian, Amazon Linux, or AlmaLinux, install the [Java4Shell](#openjdk-java4shell---a-base64-string-corrupts-memory) package and restart. Ubuntu is USN-9155-1 through USN-9158-1. Debian is DLA-4917-1, DSA-6639-1, and DSA-6640-1. Forky has none. Rocky Linux 9 and 10, and SUSE, have none. The Oracle floors are unchanged.
 - **New this update:** Do not expose [MONAI Label](#monai-label-an-upload-writes-any-file) **0.8.5 or earlier**. MITRE rates [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) CVSS 3.1 9.8 Critical: an upload writes any file the process can reach, and the record says it was exploited from September 2026. Authentication is off by default. The fix is merged and there is no release. It is not in KEV.
 - **New this update:** On an AMD [KVM host](#linux-kernel-a-nested-amd-guest-reads-the-host) with nested virtualization left on, install a kernel that contains commit `c7c288d178cb` and reboot. kernel.org rates [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312) CVSS 3.1 8.8 High: a guest that runs a virtual machine of its own can read and write host memory. Terra read about 127 GB on a DigitalOcean host. The upstream floors are **7.3.5**, **6.18.64**, and **6.12.118**. Debian and Ubuntu have no package. Red Hat rates it 5.6 and has none for RHEL 9 or 10. An Intel host is outside it. Until the reboot, set `kvm_amd`'s `nested` parameter to `0`. It is not in KEV.
 - **New this update:** On a [Moxa Ethernet switch](#moxa-ethernet-switches-one-shared-key-and-firmware-is-not-signed) in the series MPSA-268140 lists, regenerate the SSL certificate and the SSH key, and keep management off the internet. Moxa rates [CVE-2026-130493](https://www.cve.org/CVERecord?id=CVE-2026-130493) CVSS 4.0 7.7 High: every affected switch ships the same RSA-1024 key, and the firmware that holds it is public. [CVE-2026-130494](https://www.cve.org/CVERecord?id=CVE-2026-130494) is 8.6: an administrator can install firmware the switch does not check a signature on. There is no firmware fix. Neither is in KEV.
@@ -531,6 +534,29 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Elecbrakes: a phone in Bluetooth range applies the trailer brakes
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/elecbrakes.md):** [Detection](details/elecbrakes.md#detection) · [Remediation](details/elecbrakes.md#remediation) · [Verification](details/elecbrakes.md#verification) · [Timeline](details/elecbrakes.md#timeline)
+
+**CVEs:** [CVE-2026-96805](https://www.cve.org/CVERecord?id=CVE-2026-96805), [CVE-2026-125273](https://www.cve.org/CVERecord?id=CVE-2026-125273), [CVE-2026-124281](https://www.cve.org/CVERecord?id=CVE-2026-124281)
+
+**CISA rates [CVE-2026-96805](https://www.cve.org/CVERecord?id=CVE-2026-96805) and [CVE-2026-125273](https://www.cve.org/CVERecord?id=CVE-2026-125273) CVSS 3.1 9.6 Critical.** CISA ICS-CERT is the CNA. The vector for both is `CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:L/I:H/A:H`. CISA also scores both CVSS 4.0 8.5 High. A phone in Bluetooth range writes the brake-control characteristic with no pairing and no PIN, and a captured command can be replayed because commands have no sequence number. [CVE-2026-124281](https://www.cve.org/CVERecord?id=CVE-2026-124281) is CVSS 3.1 6.1 Medium: the firmware-update channel is not protected. [ICSA-26-323-02](https://www.cisa.gov/news-events/ics-advisories/icsa-26-323-02), released November 19, covers the **EB2 through 3.0.4.2.0**, the **VM1 before 1.3.4.2.1**, and **every ELBC2000**. The fixes are **EB2 3.0.4.4.3** and **VM1 1.3.4.2.1**, and the owner starts the update in the app. The ELBC2000, which is no longer sold, has no fix. Element Digital says the brakes release a few seconds after the attacker's connection drops, and that the firmware image is still unsigned. Elecbrakes told the researchers it knows of no reported damage or injury. CISA says no known public exploitation has been reported to it.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21) for any of the three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Reported to Elecbrakes | 2026-05-18; time/TZ unknown | Element Digital. |
+| Fixed firmware | 2026-07-06; time/TZ unknown | EB2 3.0.4.4.3 and VM1 1.3.4.2.1. The owner starts the update. |
+| **Public announcement** | **2026-11-19; time/TZ unknown** | ICSA-26-323-02. No fix for the ELBC2000. |
+| **Last updated** | **2026-11-21 03:10 EST (UTC−05:00)** | New item. Update the EB2 and VM1. |
+
+**Patch:** Open the Elecbrakes app and install **EB2 3.0.4.4.3 or later**, or **VM1 1.3.4.2.1 or later**. The update does not install itself. The ELBC2000 has no firmware. Until one exists, it answers brake commands from any device in Bluetooth range while it is powered. The update does not show whether a command was already sent.
+
+Sources: [ICSA-26-323-02](https://www.cisa.gov/news-events/ics-advisories/icsa-26-323-02), [detailed guide](details/elecbrakes.md).
 
 ---
 
@@ -1201,7 +1227,7 @@ Sources: [Oracle CSPU, November 2026](https://www.oracle.com/security-alerts/csp
 
 **CVEs:** No CVE is assigned.
 
-**No vendor or CNA has published a CVSS score.** N-able's status page, incident 202672, says someone had unauthorized access to one server in the Mail Assure and SpamExperts Hosted Cloud. N-able said that at 03:05 UTC on November 18, and said it did not then have evidence that customer data was compromised, including access to tenants' mailboxes. Mail still flows and is still filtered. The management portal, the API, quarantine, and logging are still offline: the latest update, 04:00:24 UTC on November 20, says they stay disabled while N-able hardens the service. N-able says this is unrelated to the [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) incident. It has not said how the server was reached.
+**No vendor or CNA has published a CVSS score.** N-able's status page, incident 202672, says someone had unauthorized access to one server in the Mail Assure and SpamExperts Hosted Cloud. N-able said that at 03:05 UTC on November 18, and said it did not then have evidence that customer data was compromised, including access to tenants' mailboxes. Mail still flows and is still filtered. The management portal, the API, quarantine, and logging are still offline. The latest update, 17:45:37 UTC on November 20, says remediation has advanced and that the portal and API stay disabled until restoration begins. N-able says this is unrelated to the [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) incident. It has not said how the server was reached.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
 
@@ -1209,7 +1235,8 @@ Sources: [Oracle CSPU, November 2026](https://www.oracle.com/security-alerts/csp
 |---|---|---|
 | Customers told of a disruption | 2026-11-16; time unknown | N-able's later update says it informed customers that day. |
 | **Security incident** | **2026-11-18 03:05:09 UTC** | Unauthorized access to one server. No evidence then of compromised customer data. |
-| **Last updated** | **2026-11-19 23:01 EST (UTC−05:00)** | New item. Read the partner email. The portal is still offline. |
+| Status | 2026-11-20 17:45:37 UTC | Preparing to restore the service. Portal and API stay disabled. |
+| **Last updated** | **2026-11-21 03:10 EST (UTC−05:00)** | Restoration has not started. There is still nothing to install. |
 
 **Patch:** There is no customer-side update. N-able says it mitigated the threat. Read the partner email, and contact N-able Technical Support if it did not arrive. Quarantined mail cannot be reviewed or released until the portal comes back. Mail arriving does not show that the portal is healthy.
 
@@ -1292,15 +1319,16 @@ Vulnerability Info Site: [calif.io](https://calif.io/java4shell/)
 
 **Oracle and the OpenJDK Vulnerability Group rate [CVE-2026-114938](https://www.cve.org/CVERecord?id=CVE-2026-114938) CVSS 3.1 8.1 High. Calif rates it CVSS 4.0 9.2 Critical. Red Hat rates it CVSS 3.0 9.8 Critical.** Oracle is the CNA. The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`. The flaw is in HotSpot's x86-64 Base64 decoder. Calif says a string of 64 `A` characters and one `=` writes past the output array, on OpenJDK **17.0.6 and newer** and only on a CPU with AVX-512 VBMI. ARM64 is not affected. Calif says that overwrite can leak heap memory and run code, and that it showed unauthenticated code execution in Keycloak, Jira, Confluence, Artifactory, Jenkins, and PingFederate. It is withholding those exploits. CISA's alert calls the flaw critical and says crafted Base64 could crash the JVM and allow unauthenticated remote code execution. The OpenJDK matrix marks 17, 21, 25, and 27. Oracle also lists the Java 8 Enterprise Performance Pack, **8u511b33-perf**, and GraalVM. Standard Java 8 and Java 11 are outside this CVE and inside the two 7.4 flaws. Oracle's download page lists **17.0.21.1, 21.0.13.1, 25.0.5.1, 27.0.1.1, and 8u513**. Corretto's fixed builds are **17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, and 27.0.1.1.4**. Microsoft's are **17.0.21.1, 21.0.13.1, and 25.0.5.1**. Temurin's are **17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, and 27.0.1.1+4**. Red Hat's November 18 errata cover `java-17-openjdk`, `java-21-openjdk`, and `java-25-openjdk` on the RHEL lines that ship them. Red Hat build of Keycloak and the JBoss EAP images are still listed without a package.
 
-**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). CISA published an alert on November 17 and did not add the CVE. GreyNoise, as of early November 19, reports more than 150 exploit-shaped requests from five addresses and no successful intrusion on its sensors. Previdian reports nine attempts from six addresses on November 18 and 19, and says that does not show a compromise. Cloudforce One reported one address sending a Java4Shell attempt, and did not say it succeeded. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21). CISA published an alert on November 17 and did not add the CVE. GreyNoise, as of early November 19, reports more than 150 exploit-shaped requests from five addresses and no successful intrusion on its sensors. Previdian reports nine attempts from six addresses on November 18 and 19, and says that does not show a compromise. Cloudforce One reported one address sending a Java4Shell attempt, and did not say it succeeded. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement and Oracle fix** | **2026-11-17; time unknown** | Oracle's November CSPU, Rev 1, and the OpenJDK advisory. The advisory's last update is 17:44 UTC. |
 | Red Hat errata | 2026-11-18; time/TZ unknown | The CVE page marks the RHEL OpenJDK packages Fixed. The bulletin text still says fixes are being expedited. |
-| **Last updated** | **2026-11-20 03:08 EST (UTC−05:00)** | Install the Red Hat OpenJDK erratum. |
+| Ubuntu and Debian packages | 2026-11-18 and 2026-11-20; time/TZ unknown | USN-9155-1 through USN-9158-1. Debian DLA-4917-1, DSA-6639-1, and DSA-6640-1. Forky has none. |
+| **Last updated** | **2026-11-21 03:10 EST (UTC−05:00)** | Ubuntu, Debian, Amazon Linux, and AlmaLinux have packages. Forky, Rocky 9 and 10, and SUSE do not. |
 
-**Patch:** Install **Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, or 27.0.1.1**, or **8u513** for the performance pack, and restart every process that loaded the old runtime. Rebuild an image that bundles Java. Corretto is **17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, or 27.0.1.1.4**. Microsoft is **17.0.21.1, 21.0.13.1, or 25.0.5.1**. Temurin is **17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, or 27.0.1.1+4**. On Red Hat Enterprise Linux, install the November 18 `java-17-openjdk`, `java-21-openjdk`, or `java-25-openjdk` erratum. Until the fixed build is running, Calif says start the JVM with `-XX:-UseBASE64Intrinsics`. `-XX:UseAVX=2` is x86-64 only and stops OpenJDK from starting on ARM. The restart does not show whether a request already ran code.
+**Patch:** Install **Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, or 27.0.1.1**, or **8u513** for the performance pack, and restart every process that loaded the old runtime. Rebuild an image that bundles Java. Corretto is **17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, or 27.0.1.1.4**. Microsoft is **17.0.21.1, 21.0.13.1, or 25.0.5.1**. Temurin is **17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, or 27.0.1.1+4**. On Red Hat Enterprise Linux, install the November 18 `java-17-openjdk`, `java-21-openjdk`, or `java-25-openjdk` erratum. Ubuntu has USN-9155-1 through USN-9158-1. Debian has DLA-4917-1, DSA-6639-1, and DSA-6640-1, and forky has none. Amazon Linux and AlmaLinux shipped on November 17 and 19. Rocky Linux 9 and 10, and SUSE, have none. Until the fixed build is running, Calif says start the JVM with `-XX:-UseBASE64Intrinsics`. `-XX:UseAVX=2` is x86-64 only and stops OpenJDK from starting on ARM. The restart does not show whether a request already ran code.
 
 Sources: [OpenJDK advisory](https://openjdk.org/groups/vulnerability/advisories/2026-11-17), [Oracle CSPU](https://www.oracle.com/security-alerts/cspunov2026.html), [Calif](https://calif.io/java4shell/), [CISA alert](https://www.cisa.gov/news-events/alerts/2026/11/17/critical-java-vulnerability-requires-immediate-patching), [detailed guide](details/java4shell.md).
 
@@ -1609,9 +1637,10 @@ Sources: [GHSA-45cp-v5ph-2jhm](https://github.com/requarks/wiki/security/advisor
 | **Public records** | **2026-11-02 16:06 UTC and 2026-11-03 11:18–12:32 UTC** | kernel.org CNA. Eleven records on November 2, three on November 3. |
 | Debian trixie | 2026-11-13; time/TZ unknown | `linux` 6.12.117-1, DSA-6628-1, names CVE-2026-99270. |
 | Ubuntu kernels | 2026-11-19; time/TZ unknown | USN-9165-1, USN-9166-1, USN-9167-1, and USN-9173-1. They do not list CVE-2026-99270. |
-| **Last updated** | **2026-11-20 03:08 EST (UTC−05:00)** | Ubuntu has packages for part of the set. CVE-2026-99270 is still open there. |
+| Oracle Linux UEK | 2026-11-12 and 2026-11-13; time/TZ unknown | ELSA-2026-500631 and ELSA-2026-500632 name CVE-2026-99270 only. |
+| **Last updated** | **2026-11-21 03:10 EST (UTC−05:00)** | Oracle Linux has a UEK package for CVE-2026-99270. The other twelve still have none. |
 
-**Patch:** Install a kernel that names the CVE you run and reboot. Debian trixie security is 6.12.117-1. Debian bookworm security is still vulnerable to CVE-2026-99270 and is fixed for the local flaws its 6.1 kernel contains. Ubuntu's November 19 kernels, including 22.04 `5.15.0-204.214` and 24.04 `6.8.0-151.151`, cover several of the thirteen and do not list CVE-2026-99270. Red Hat 8, 9, and 10 are Affected with no erratum. SLES 15 SP7 and 16.1 are Affected for CVE-2026-99270. Amazon Linux lists that CVE as Pending Fix on every flavor. See the [per-CVE table](details/linux-november-batch.md#what-each-flaw-needs).
+**Patch:** Install a kernel that names the CVE you run and reboot. Debian trixie security is 6.12.117-1. Debian bookworm security is still vulnerable to CVE-2026-99270 and is fixed for the local flaws its 6.1 kernel contains. Ubuntu's November 19 kernels, including 22.04 `5.15.0-204.214` and 24.04 `6.8.0-151.151`, cover several of the thirteen and do not list CVE-2026-99270. Red Hat 8, 9, and 10 are Affected with no erratum. SLES 15 SP7 and 16.1 are Affected for CVE-2026-99270. Amazon Linux lists that CVE as Pending Fix on every flavor. Oracle Linux has a UEK package for CVE-2026-99270 only: ELSA-2026-500631 and ELSA-2026-500632. That does not fix the RHEL-compatible kernel, and it does not cover the other twelve. AlmaLinux and Rocky have none. See the [per-CVE table](details/linux-november-batch.md#what-each-flaw-needs).
 
 Sources: [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270), [Debian DSA-6628-1](https://www.debian.org/security/dsa-6628-1), [detailed guide](details/linux-november-batch.md).
 
