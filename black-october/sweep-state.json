@@ -101,7 +101,7 @@
       "hold": "none"
     },
     "atlassian-dc.md": {
-      "last_checked": "2026-11-15T23:56:12Z",
+      "last_checked": "2026-11-21T00:01:58Z",
       "hold": "none"
     },
     "authmask.md": {
@@ -329,8 +329,8 @@
       "hold": "none"
     },
     "f5-bigip-nov18.md": {
-      "last_checked": "2026-11-19T23:56:08Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-21T00:01:58Z",
+      "hold": "none"
     },
     "fastify-http-proxy.md": {
       "last_checked": "2026-11-19T15:56:19Z",
@@ -417,8 +417,8 @@
       "hold": "none"
     },
     "grafana-mimir.md": {
-      "last_checked": "2026-11-19T23:56:08Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-21T00:01:58Z",
+      "hold": "none"
     },
     "gravity-forms.md": {
       "last_checked": "2026-11-19T15:56:19Z",
@@ -540,6 +540,10 @@
       "last_checked": "2026-11-20T15:56:01Z",
       "hold": "none"
     },
+    "linux-kvm-nested-init.md": {
+      "last_checked": "2026-11-21T00:01:58Z",
+      "hold": "awaiting-distros"
+    },
     "linux-noisytcp.md": {
       "last_checked": "2026-11-20T20:02:21Z",
       "hold": "awaiting-distros"
@@ -561,7 +565,7 @@
       "hold": "none"
     },
     "litellm-guardrail.md": {
-      "last_checked": "2026-11-19T23:56:08Z",
+      "last_checked": "2026-11-21T00:01:58Z",
       "hold": "none"
     },
     "litellm.md": {
@@ -785,7 +789,7 @@
       "hold": "awaiting-fix"
     },
     "redcap.md": {
-      "last_checked": "2026-11-19T23:56:08Z",
+      "last_checked": "2026-11-21T00:01:58Z",
       "hold": "none"
     },
     "ruby-httpx.md": {
@@ -889,7 +893,7 @@
       "hold": "awaiting-fix"
     },
     "synology-dsm.md": {
-      "last_checked": "2026-11-19T23:56:08Z",
+      "last_checked": "2026-11-21T00:01:58Z",
       "hold": "none"
     },
     "tabularis.md": {

@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-20 19:20 EST (UTC−05:00) — Linux KVM
+
+- **Linux kernel:** On an AMD [KVM host](black-october/details/linux-kvm-nested-init.md#remediation) with nested virtualization left on, install a kernel that contains commit `c7c288d178cb` and reboot. kernel.org rates CVE-2026-99312 CVSS 3.1 8.8: a guest that runs a virtual machine of its own can read and write host memory. Terra read about 127 GB on a DigitalOcean host. The upstream floors are 7.3.5, 6.18.64, and 6.12.118. Debian and Ubuntu have no package. Red Hat rates it 5.6 and has none for RHEL 9 or 10. An Intel host is outside it. Until the reboot, set `kvm_amd`'s `nested` parameter to `0`. It is not in KEV.
+
 ## 2026-11-20 15:10 EST (UTC−05:00) — Moxa; KEV; Synology; VMware Tools
 
 - **Moxa:** On an [Ethernet switch](black-october/details/moxa-switches.md#remediation) in the series MPSA-268140 lists, regenerate the SSL certificate and the SSH key, and keep management off the internet. Moxa rates CVE-2026-130493 CVSS 4.0 7.7: every affected switch ships the same RSA-1024 key, and the firmware that holds it is public. CVE-2026-130494 is 8.6 and needs an administrator: the switch does not check a signature on firmware. There is no firmware fix. Neither is in KEV.

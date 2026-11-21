@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Linux kernel: a nested AMD guest reads the host](#linux-kernel-a-nested-amd-guest-reads-the-host)
 - [Moxa Ethernet switches: one shared key, and firmware is not signed](#moxa-ethernet-switches-one-shared-key-and-firmware-is-not-signed)
 - [Apache Tomcat: a cluster node joins without being checked](#apache-tomcat-a-cluster-node-joins-without-being-checked)
 - [Cisco Expressway: a cluster cookie runs commands as root](#cisco-expressway-a-cluster-cookie-runs-commands-as-root)
@@ -292,6 +293,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** On an AMD [KVM host](#linux-kernel-a-nested-amd-guest-reads-the-host) with nested virtualization left on, install a kernel that contains commit `c7c288d178cb` and reboot. kernel.org rates [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312) CVSS 3.1 8.8 High: a guest that runs a virtual machine of its own can read and write host memory. Terra read about 127 GB on a DigitalOcean host. The upstream floors are **7.3.5**, **6.18.64**, and **6.12.118**. Debian and Ubuntu have no package. Red Hat rates it 5.6 and has none for RHEL 9 or 10. An Intel host is outside it. Until the reboot, set `kvm_amd`'s `nested` parameter to `0`. It is not in KEV.
 - **New this update:** On a [Moxa Ethernet switch](#moxa-ethernet-switches-one-shared-key-and-firmware-is-not-signed) in the series MPSA-268140 lists, regenerate the SSL certificate and the SSH key, and keep management off the internet. Moxa rates [CVE-2026-130493](https://www.cve.org/CVERecord?id=CVE-2026-130493) CVSS 4.0 7.7 High: every affected switch ships the same RSA-1024 key, and the firmware that holds it is public. [CVE-2026-130494](https://www.cve.org/CVERecord?id=CVE-2026-130494) is 8.6: an administrator can install firmware the switch does not check a signature on. There is no firmware fix. Neither is in KEV.
 - **New this update:** On a clustered [Apache Tomcat](#apache-tomcat-a-cluster-node-joins-without-being-checked) secured with TLS-PSK, switch the cluster channel to **TLS 1.2** and restart. Apache rates [CVE-2026-133325](https://www.cve.org/CVERecord?id=CVE-2026-133325) Critical: on TLS 1.3 the cluster does not check who the other node is, so a node with no credential can join. The affected builds are **11.0.28 to 11.0.29**, **10.1.62**, and **9.0.124**. The fixes, **11.0.30**, **10.1.63**, and **9.0.125**, are not released yet. A cluster that is not using TLS-PSK is outside the condition Apache names. It is not in KEV.
 - **New this update (CISA KEV):** Upgrade a clustered [Cisco Expressway](#cisco-expressway-a-cluster-cookie-runs-commands-as-root) to **X15.5.20 or later**. Cisco rates [CVE-2026-76466](https://www.cve.org/CVERecord?id=CVE-2026-76466) CVSS 3.1 9.8 Critical: the cluster database service accepts a persistent cookie and runs commands as root. CISA added it on November 20, due November 23, and requires forensic triage. X14 and earlier have to move to a fixed release. A device that is not in a cluster is outside the condition Cisco names. F6 says a company in Russia was attacked on X15.5.3 after a proof of concept was published. Cisco's October 21 advisory still says it knows of no malicious use. If the upgrade has to wait, block TCP 4371 and 4372 except from the cluster nodes you trust.
@@ -519,6 +521,27 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Linux kernel: a nested AMD guest reads the host
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/linux-kvm-nested-init.md):** [Detection](details/linux-kvm-nested-init.md#detection) · [Remediation](details/linux-kvm-nested-init.md#remediation) · [Verification](details/linux-kvm-nested-init.md#verification) · [Timeline](details/linux-kvm-nested-init.md#timeline)
+
+**CVEs:** [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312)
+
+**kernel.org rates [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312) CVSS 3.1 8.8 High.** kernel.org is the CNA. The vector is `CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H`. On an AMD host with KVM nested virtualization, a guest that runs a virtual machine of its own can leave the host holding a pointer to a page the kernel has freed. Terra Security read about 127 GB of a DigitalOcean host through that pointer, and wrote 32 bytes into a host kernel page on its own server. Intel hosts are outside it: the kernel record says INIT cannot be emulated while a nested guest is active on VMX. Ubuntu rates it CVSS 4.0 8.2 High. Red Hat's public page rates it CVSS 3.1 5.6 Moderate and describes a denial of service; its security-data feed describes a use-after-free with guest read and write, at a draft 7.8. SUSE rates it 5.5 moderate. The 8.8 is the CNA score.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20). Terra and DigitalOcean describe a researcher demonstration. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-18 08:42:06 UTC** | CVE record. The stable kernels 7.3.5, 6.18.64, and 6.12.118 shipped November 17. |
+| **Last updated** | **2026-11-20 19:20 EST (UTC−05:00)** | New item. Reboot the host, or turn nested virtualization off. |
+
+**Patch:** Reboot into a kernel that contains commit `c7c288d178cb`. Upstream, that is **7.3.5**, **6.18.64**, or **6.12.118**. Debian and Ubuntu have no package. Red Hat marks RHEL 9 and 10 affected and RHEL 7 and 8 not affected, with no erratum. SUSE marks SLES 15 SP7, 16.0, and 16.1 already fixed and names no package. Until the reboot, set the `nested` parameter of `kvm_amd` to `0`. A guest operating system cannot carry this fix. DigitalOcean says its own Droplet hosts are already live-patched.
+
+Sources: [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312), [Terra](https://www.terra.security/blog/kvm-guest-to-host-escape), [detailed guide](details/linux-kvm-nested-init.md).
 
 ---
 
