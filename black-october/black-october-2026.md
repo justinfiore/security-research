@@ -15,6 +15,11 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [ASUS Control Center Express: a forged token is the administrator](#asus-control-center-express-a-forged-token-is-the-administrator)
+- [Frappe Framework: a signed-in user sends mail as someone else](#frappe-framework-a-signed-in-user-sends-mail-as-someone-else)
+- [WordPress: User Registration Aide changes a password before login](#wordpress-user-registration-aide-changes-a-password-before-login)
+- [Spring: an expression matcher runs code](#spring-an-expression-matcher-runs-code)
+- [MONAI Label: an upload writes any file](#monai-label-an-upload-writes-any-file)
 - [Linux kernel: a nested AMD guest reads the host](#linux-kernel-a-nested-amd-guest-reads-the-host)
 - [Moxa Ethernet switches: one shared key, and firmware is not signed](#moxa-ethernet-switches-one-shared-key-and-firmware-is-not-signed)
 - [Apache Tomcat: a cluster node joins without being checked](#apache-tomcat-a-cluster-node-joins-without-being-checked)
@@ -293,6 +298,11 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Install [ASUS Control Center Express](#asus-control-center-express-a-forged-token-is-the-administrator) **v1.7.29 or later**, then update the agents from the console. ASUS rates [CVE-2026-114202](https://www.cve.org/CVERecord?id=CVE-2026-114202) CVSS 4.0 10.0 Critical: a hard-coded key lets a remote user forge an administrator token. Two more, 9.0 and 9.4, need a low-privileged account. The bulletin says anything before v1.7.29. The CVE records stop at v1.7.27. None is in KEV.
+- **New this update:** Upgrade [Frappe](#frappe-framework-a-signed-in-user-sends-mail-as-someone-else) to **15.127.1 or 16.60.1**. Frappe rates the mail flaw CVSS 3.1 8.5 High, and no CVE is assigned: a Website User sends mail as someone else and can attach files they should not read. Frappe says it has been exploited. There is no workaround. This is not Frappe Ghost.
+- **New this update:** Remove the [User Registration Aide](#wordpress-user-registration-aide-changes-a-password-before-login) plugin. WPScan published [CVE-2026-121385](https://www.cve.org/CVERecord?id=CVE-2026-121385) on November 20 with no score. CISA's enrichment scores it CVSS 3.1 9.8: through 1.5.3.8, anyone who knows a username and an email address sets that account's password. There is no fix. It is not in KEV.
+- **New this update:** Upgrade [Spring Security](#spring-an-expression-matcher-runs-code) to **7.1.3 or 7.0.9** and restart. Spring rates [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273) Critical: an application that binds external input to a `RequestMatcher` property runs that input as code. The advisory's vector is CVSS 3.1 9.8. The same day's batch has a second Critical, [CVE-2026-59367](https://www.cve.org/CVERecord?id=CVE-2026-59367), a test LDAP server that listens on every interface with a fixed password, fixed in Spring LDAP **4.1.3 or 4.0.7**. Ten more are High, including a Spring Data Elasticsearch query that evaluates its argument, fixed in **6.1.3 or 6.0.9**. Older lines are Enterprise Support only. None is in KEV.
+- **New this update:** Do not expose [MONAI Label](#monai-label-an-upload-writes-any-file) **0.8.5 or earlier**. MITRE rates [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) CVSS 3.1 9.8 Critical: an upload writes any file the process can reach, and the record says it was exploited from September 2026. Authentication is off by default. The fix is merged and there is no release. It is not in KEV.
 - **New this update:** On an AMD [KVM host](#linux-kernel-a-nested-amd-guest-reads-the-host) with nested virtualization left on, install a kernel that contains commit `c7c288d178cb` and reboot. kernel.org rates [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312) CVSS 3.1 8.8 High: a guest that runs a virtual machine of its own can read and write host memory. Terra read about 127 GB on a DigitalOcean host. The upstream floors are **7.3.5**, **6.18.64**, and **6.12.118**. Debian and Ubuntu have no package. Red Hat rates it 5.6 and has none for RHEL 9 or 10. An Intel host is outside it. Until the reboot, set `kvm_amd`'s `nested` parameter to `0`. It is not in KEV.
 - **New this update:** On a [Moxa Ethernet switch](#moxa-ethernet-switches-one-shared-key-and-firmware-is-not-signed) in the series MPSA-268140 lists, regenerate the SSL certificate and the SSH key, and keep management off the internet. Moxa rates [CVE-2026-130493](https://www.cve.org/CVERecord?id=CVE-2026-130493) CVSS 4.0 7.7 High: every affected switch ships the same RSA-1024 key, and the firmware that holds it is public. [CVE-2026-130494](https://www.cve.org/CVERecord?id=CVE-2026-130494) is 8.6: an administrator can install firmware the switch does not check a signature on. There is no firmware fix. Neither is in KEV.
 - **New this update:** On a clustered [Apache Tomcat](#apache-tomcat-a-cluster-node-joins-without-being-checked) secured with TLS-PSK, switch the cluster channel to **TLS 1.2** and restart. Apache rates [CVE-2026-133325](https://www.cve.org/CVERecord?id=CVE-2026-133325) Critical: on TLS 1.3 the cluster does not check who the other node is, so a node with no credential can join. The affected builds are **11.0.28 to 11.0.29**, **10.1.62**, and **9.0.124**. The fixes, **11.0.30**, **10.1.63**, and **9.0.125**, are not released yet. A cluster that is not using TLS-PSK is outside the condition Apache names. It is not in KEV.
@@ -521,6 +531,117 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## ASUS Control Center Express: a forged token is the administrator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/asus-control-center.md):** [Detection](details/asus-control-center.md#detection) · [Remediation](details/asus-control-center.md#remediation) · [Verification](details/asus-control-center.md#verification) · [Timeline](details/asus-control-center.md#timeline)
+
+**CVEs:** [CVE-2026-114202](https://www.cve.org/CVERecord?id=CVE-2026-114202), [CVE-2026-114204](https://www.cve.org/CVERecord?id=CVE-2026-114204), [CVE-2026-114205](https://www.cve.org/CVERecord?id=CVE-2026-114205)
+
+**ASUS rates [CVE-2026-114202](https://www.cve.org/CVERecord?id=CVE-2026-114202) CVSS 4.0 10.0 Critical.** ASUS is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`. Control Center Express, the console for a fleet of business PCs, ships a hard-coded key. A remote user with no login forges an authentication token and becomes an administrator of the console and of the clients it manages. [CVE-2026-114204](https://www.cve.org/CVERecord?id=CVE-2026-114204) is 9.0: a second key forges a session for an account that logged in recently, and it needs low privileges. [CVE-2026-114205](https://www.cve.org/CVERecord?id=CVE-2026-114205) is 9.4: a low-privileged user creates an administrator. The bulletin says versions **earlier than v1.7.29** are affected. The CVE records say **through v1.7.27** and do not mention v1.7.28. The fix is **v1.7.29 or later**, and the agents have to be updated from the console. ASUS does not report exploitation. This is not Control Center Datacenter or Enterprise.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20) for any of the three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-11-18 10:29:54 +0800** | ASUS bulletin. Fix v1.7.29. |
+| **Last updated** | **2026-11-20 23:11 EST (UTC−05:00)** | New item. Install v1.7.29 and update the agents. |
+
+**Patch:** Install **v1.7.29 or later**, then use **Select Function, then Client Agent Updater**, and confirm each agent. The console update alone leaves the agents behind. The update does not remove an administrator a forged token already created.
+
+Sources: [ASUS advisory](https://www.asus.com/security-advisory), [CVE-2026-114202](https://www.cve.org/CVERecord?id=CVE-2026-114202), [detailed guide](details/asus-control-center.md).
+
+---
+
+## Frappe Framework: a signed-in user sends mail as someone else
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/frappe-framework-mail.md):** [Detection](details/frappe-framework-mail.md#detection) · [Remediation](details/frappe-framework-mail.md#remediation) · [Verification](details/frappe-framework-mail.md#verification) · [Timeline](details/frappe-framework-mail.md#timeline)
+
+**CVEs:** No CVE is assigned. Frappe's advisory is [GHSA-vwqr-4mjv-ffrm](https://github.com/frappe/frappe/security/advisories/GHSA-vwqr-4mjv-ffrm).
+
+**Frappe rates it CVSS 3.1 8.5 High.** The vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:H/A:N`. A signed-in user, including a Website User, sends mail through the site's account, makes it look like another sender, and can attach files they should not read. Frappe says it has been exploited in the wild and names no sites. Affected builds are **before 15.127.1** and **16.0.0 through 16.60.0**. The fixes are **15.127.1** and **16.60.1**. There is no workaround. ERPNext sits on Frappe. This is not [Frappe Ghost](#frappe-ghost-a-guest-session-becomes-any-account).
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Frappe says the flaw has been exploited. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fixes** | **2026-11-19; time/TZ unknown** | GHSA-vwqr-4mjv-ffrm. |
+| **Last updated** | **2026-11-20 23:11 EST (UTC−05:00)** | New item. Upgrade Frappe. |
+
+**Patch:** Upgrade to **15.127.1 or 16.60.1** or later and restart. The upgrade does not show whether a message was already sent.
+
+Sources: [GHSA-vwqr-4mjv-ffrm](https://github.com/frappe/frappe/security/advisories/GHSA-vwqr-4mjv-ffrm), [detailed guide](details/frappe-framework-mail.md).
+
+---
+
+## WordPress: User Registration Aide changes a password before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-user-registration-aide.md):** [Detection](details/wordpress-user-registration-aide.md#detection) · [Remediation](details/wordpress-user-registration-aide.md#remediation) · [Verification](details/wordpress-user-registration-aide.md#verification) · [Timeline](details/wordpress-user-registration-aide.md#timeline)
+
+**CVEs:** [CVE-2026-121385](https://www.cve.org/CVERecord?id=CVE-2026-121385)
+
+**CISA's enrichment rates [CVE-2026-121385](https://www.cve.org/CVERecord?id=CVE-2026-121385) CVSS 3.1 9.8 Critical.** WPScan is the CNA and prints no score. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. NVD has not scored it. User Registration Aide through **1.5.3.8** changes a password without checking the current one or a reset token. Someone who is not logged in, and who knows a username and an email address, sets the password of any account, including an administrator. The record names no fixed version. Patchstack's page says there is no official patch.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-20; time/TZ unknown** | WPScan published the record. No fixed version. |
+| **Last updated** | **2026-11-20 23:11 EST (UTC−05:00)** | New item. Remove the plugin. |
+
+**Patch:** Deactivate the plugin and remove it. There is no version to update to. Then reset every account password, starting with administrators. Removing the plugin does not end a session that already exists.
+
+Sources: [CVE-2026-121385](https://www.cve.org/CVERecord?id=CVE-2026-121385), [Patchstack](https://patchstack.com/database/wordpress/plugin/user-registration-aide/vulnerability/wordpress-user-registration-aide-plugin-1-5-3-8-unauthenticated-account-takeover-vulnerability), [detailed guide](details/wordpress-user-registration-aide.md).
+
+---
+
+## Spring: an expression matcher runs code
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/spring-november.md):** [Detection](details/spring-november.md#detection) · [Remediation](details/spring-november.md#remediation) · [Verification](details/spring-november.md#verification) · [Timeline](details/spring-november.md#timeline)
+
+**CVEs:** [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273), [CVE-2026-59367](https://www.cve.org/CVERecord?id=CVE-2026-59367), [CVE-2026-123886](https://www.cve.org/CVERecord?id=CVE-2026-123886), [CVE-2026-59330](https://www.cve.org/CVERecord?id=CVE-2026-59330), [CVE-2026-59331](https://www.cve.org/CVERecord?id=CVE-2026-59331), [CVE-2026-59333](https://www.cve.org/CVERecord?id=CVE-2026-59333), [CVE-2026-59338](https://www.cve.org/CVERecord?id=CVE-2026-59338), [CVE-2026-59339](https://www.cve.org/CVERecord?id=CVE-2026-59339), [CVE-2026-59344](https://www.cve.org/CVERecord?id=CVE-2026-59344), [CVE-2026-59345](https://www.cve.org/CVERecord?id=CVE-2026-59345), [CVE-2026-59349](https://www.cve.org/CVERecord?id=CVE-2026-59349), [CVE-2026-59361](https://www.cve.org/CVERecord?id=CVE-2026-59361)
+
+**Spring rates [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273) Critical.** The advisory prints no number. The vector on the advisory's calculator link is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`, which is 9.8. `ELRequestMatcher` evaluates SpEL with full reflection, and Spring's data binding turns a string bound to a `RequestMatcher` property into that matcher. An application that binds external input there runs that input as code. Affected Spring Security is **7.1.0 through 7.1.2**, **7.0.0 through 7.0.8**, **6.5.0 through 6.5.12**, **6.4.0 through 6.4.19**, **5.8.0 through 5.8.28**, and **5.7.26 and earlier**. The open-source fixes are **7.1.3** and **7.0.9**. The older lines are Enterprise Support only.
+
+[CVE-2026-59367](https://www.cve.org/CVERecord?id=CVE-2026-59367) is the other Critical, in `spring-ldap-test`: `EmbeddedLdapServer` listens on every interface with a fixed administrative password. Spring's vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:L`, which is 9.4. It applies when a test starts that server on a reachable host. The open-source fixes are Spring LDAP **4.1.3** and **4.0.7**.
+
+Ten more from the same day are High. [CVE-2026-123886](https://www.cve.org/CVERecord?id=CVE-2026-123886) is 8.8: a string `@Query` in Spring Data Elasticsearch evaluates an argument as SpEL. The fixes are **6.1.3** and **6.0.9**. The rest are access checks and denial of service, in Spring Security, Spring AI, and Spring Web Services. Spring AI **2.0.3** is the open-source floor for the five AI flaws. Spring Web Services **5.0.4** is the floor for the unbounded message. Spring does not report exploitation of any of them.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20) for any CVE in this batch. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fixes** | **2026-11-19; time/TZ unknown** | Spring's advisory index. Open-source floors above. |
+| **Last updated** | **2026-11-20 23:11 EST (UTC−05:00)** | New item. Upgrade the jars you run. |
+
+**Patch:** Upgrade Spring Security to **7.1.3 or 7.0.9**, Spring LDAP to **4.1.3 or 4.0.7**, Spring Data Elasticsearch to **6.1.3 or 6.0.9**, Spring AI to **2.0.3**, and Spring Web Services to **5.0.4**, then restart. Lines older than those open-source floors are Enterprise Support only. An application that never binds input to a `RequestMatcher`, and a build that never starts `EmbeddedLdapServer`, is outside those two conditions. The upgrade does not show whether an expression already ran.
+
+Sources: [CVE-2026-59273](https://spring.io/security/cve-2026-59273), [Spring advisory index](https://spring.io/security), [detailed guide](details/spring-november.md).
+
+---
+
+## MONAI Label: an upload writes any file
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/monai-label.md):** [Detection](details/monai-label.md#detection) · [Remediation](details/monai-label.md#remediation) · [Verification](details/monai-label.md#verification) · [Timeline](details/monai-label.md#timeline)
+
+**CVEs:** [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968)
+
+**MITRE rates [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) CVSS 3.1 9.8 Critical.** MITRE is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The `image` parameter of `PUT /datastore/image` is used as a path, so an upload writes outside the datastore, through **0.8.5**. The record says this was exploited in the wild starting in September 2026. The project's advisory, published November 18, rates it Critical with no number, and says `PUT /datastore/label` has the same pattern. Authentication is off by default. With it on, the `ANNOTATOR` role is enough. The fix is pull request 1915, merged October 19. The advisory's patched-versions line is **None**. 0.8.5 is still the newest release.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20). The CVE record's exploitation statement is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix merged | 2026-10-19; time/TZ unknown | Commit `113527b` on `main`. No release. |
+| Project advisory | 2026-11-18; time/TZ unknown | GHSA-qc22-rmgc-vg94. Patched versions: None. |
+| **Public announcement** | **2026-11-20; time/TZ unknown** | MITRE published the CVE record. CVSS 3.1 9.8. |
+| **Last updated** | **2026-11-20 23:11 EST (UTC−05:00)** | New item. No release to install. |
+
+**Patch:** There is no release. Do not expose the server to a network you do not trust. Set `MONAI_LABEL_AUTH_ENABLE=True` and do not give `ANNOTATOR` to an account you do not trust. That is the project's workaround, not a fix. A deploy of commit `113527b` or later is the only build that contains the check. Taking the server off the network does not remove a file the process already wrote.
+
+Sources: [GHSA-qc22-rmgc-vg94](https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94), [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968), [detailed guide](details/monai-label.md).
 
 ---
 
@@ -1391,16 +1512,17 @@ Sources: [VU#604762](https://kb.cert.org/vuls/id/604762), [Deno advisory](https:
 
 **VulnCheck rates [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072) CVSS 4.0 8.8 High and CVSS 3.1 9.1 Critical.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H`. NVD has not scored it. Cloud Commander (`cloudcmd`) before **19.21.4** handles `PUT /rename` before authentication, so a request with no login moves any file the Node.js process can reach, including paths outside `--root`. The maintainer fixed it in v19.21.4 on October 25. The CVE record was published on November 16. This is not [CloudPaste](#cloudpaste-a-share-link-returns-the-webdav-password).
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Finder's report | 2026-10-23; time/TZ unknown | GitHub issue 486, against v19.21.2. |
 | Fix released | 2026-10-25 12:12:08 UTC | v19.21.4. |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | VulnCheck published the CVE record. |
-| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | New item. Fixed in 19.21.4. |
+| Socket report | 2026-11-19; time/TZ unknown | Issue 488. The stored password hash opens the terminal on 19.23.2. No CVE and no score. Commit `939d423` is not in a release. |
+| **Last updated** | **2026-11-20 23:11 EST (UTC−05:00)** | The socket fix is on master only. npm is still 19.23.2. |
 
-**Patch:** Upgrade `cloudcmd` to 19.21.4 or later and restart it. npm's latest on November 16 is 19.23.2. The upgrade does not put a moved file back.
+**Patch:** Upgrade `cloudcmd` to 19.21.4 or later and restart it. That closes this CVE. npm's latest on November 20 is 19.23.2, which does not contain commit `939d423`. Until a release does, change the password if the hash has been seen. The upgrade does not put a moved file back.
 
 Sources: [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072), [v19.21.4](https://github.com/coderaiser/cloudcmd/releases/tag/v19.21.4), [detailed guide](details/cloudcmd.md).
 
@@ -1412,15 +1534,15 @@ Sources: [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072), [v
 
 **CVEs:** [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071)
 
-**VulnCheck rates [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. NVD has not scored it. Go1 CMS (`go1cms`, a Frappe app) exposed `update_doc` to guests and saved with permissions ignored, so a request with no login rewrites any record, including a user. The fix is commit `ead8da3`, dated September 17, and GitHub lists no release. A checkout that does not contain it is still affected. This is not [Prime](#prime-anyone-can-register-an-administrator).
+**VulnCheck rates [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** VulnCheck is the CNA. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. NVD has not scored it. Go1 CMS (`go1cms`, a Frappe app) exposed `update_doc` to guests and saved with permissions ignored, so a request with no login rewrites any record, including a user. The fix is commit `ead8da3`, dated September 17, and GitHub lists no release. On November 20 the default branch `master` still did not contain it. The `version-3` tip does. A checkout that does not contain it is still affected. This is not [Prime](#prime-anyone-can-register-an-administrator).
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Fix committed | 2026-09-17 10:08:44 UTC | Commit `ead8da3`. No release. |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | VulnCheck published the CVE record. |
-| **Last updated** | **2026-11-16 19:10 EST (UTC−05:00)** | New item. The fix is a commit. |
+| **Last updated** | **2026-11-20 23:11 EST (UTC−05:00)** | `version-3` contains the fix. `master` still does not. There is no release. |
 
 **Patch:** Deploy a tree that contains `ead8da36a9452b961cc5361d6fd853ca68a58b08` and restart it. The deploy does not undo a record that was already changed.
 
@@ -1863,9 +1985,9 @@ Sources: [Patchstack](https://patchstack.com/database/wordpress/plugin/estatik/v
 
 **Atlassian rates [CVE-2026-90436](https://www.cve.org/CVERecord?id=CVE-2026-90436) CVSS 4.0 9.3 Critical.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. Confluence uses Apache Axis 1.x for its XML-RPC and SOAP APIs. A SOAP fault names a class, Axis loads it before checking that the class is one Axis uses, and Apache says that can run code. The endpoint has to be on. **Remote API (XML-RPC & SOAP)** has been off by default for new installations since Confluence 3.0, and Confluence 10 removed it. Atlassian says Confluence Data Center 1.x through 9.x is affected, and that **9.2.28** is the fix. Confluence Cloud is not affected.
 
-Apache, the CNA, rates the Axis flaw critical in text and publishes no number. Axis 1 is end of life, and Apache says it will not ship a fixed 1.x release. CISA's enrichment of the record scores it CVSS 3.1 9.8. NVD has not scored it. CISA's SSVC record from November 10 says exploitation is none. The same Axis flaw is the first step of the [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet) chain. This is not the [October Confluence file read](#atlassian-data-center-unauthenticated-web-root-file-read).
+Apache, the CNA, rates the Axis flaw critical in text and publishes no number. Axis 1 is end of life, and Apache says it will not ship a fixed 1.x release. CISA's enrichment of the record scores it CVSS 3.1 9.8. NVD has not scored it. CISA's SSVC record, updated November 19, says exploitation is active. The same Axis flaw is the first step of the [N-central](#n-central-critical-vulnerabilities-no-hotfix-yet) chain. This is not the [October Confluence file read](#atlassian-data-center-unauthenticated-web-root-file-read).
 
-**CISA KEV:** Listed — added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.18. Rapid7 says that on November 13 it detected exploitation against Confluence Data Center in a customer environment. Its November 17 update adds `trycloudflare.com`, a pinggy.net host, and `webhook.site` to the four addresses. CISA's SSVC record from November 10 says exploitation was none, and that record predates both. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.20. Rapid7 says that on November 13 it detected exploitation against Confluence Data Center in a customer environment. Its November 17 update adds `trycloudflare.com`, a pinggy.net host, and `webhook.site` to the four addresses. CISA's SSVC record, updated November 19, now says exploitation is active. The November 10 value was none. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1875,7 +1997,8 @@ Apache, the CNA, rates the Axis flaw critical in text and publishes no number. A
 | Rapid7 detection | 2026-11-13; time/TZ unknown | One customer environment. Published 2026-11-16. |
 | Rapid7 indicator update | 2026-11-17; time/TZ unknown | Adds three hosts to the four addresses. |
 | **CISA KEV** | **2026-11-18; time/TZ unknown** | Added. Federal due date 2026-11-21. Forensic triage required. |
-| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | CISA listed it. The fix is unchanged. |
+| CISA SSVC updated | 2026-11-19; time/TZ unknown | Exploitation changed from none to active. |
+| **Last updated** | **2026-11-20 23:11 EST (UTC−05:00)** | CISA's SSVC now says exploitation is active. The fix is unchanged. |
 
 **Patch:** Upgrade Confluence Data Center to **9.2.28 or later**, or to **10.0 or later**, and restart every node. Until then, clear **Remote API (XML-RPC & SOAP)** under Further Configuration and save. Atlassian says that takes effect without a restart, and that anything using XML-RPC or SOAP stops. Confluence Cloud needs nothing for this advisory. The upgrade does not remove an account or an add-on that was already created.
 

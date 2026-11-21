@@ -1,6 +1,6 @@
 # Confluence Data Center: a SOAP fault runs code
 
-**Last updated:** 2026-11-18 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main Confluence summary](../black-october-2026.md#confluence-data-center-a-soap-fault-runs-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,7 @@ Atlassian rates the same flaw **CVSS 4.0 9.3 Critical** for Confluence (`CVSS:4.
 
 This is not the [October file-read](atlassian-dc.md), CVE-2026-21589. The N-central chain that starts from the same Axis flaw is tracked with [N-central](n-central.md).
 
-**CISA KEV:** Listed — added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z. Rapid7 says that on November 13 its MDR service detected exploitation of this flaw against Confluence Data Center in a customer environment, from 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. Its November 17 update also names `*.trycloudflare.com`, `wpefh-192-238-253-176.free.pinggy.net`, and `webhook.site`. Rapid7 says not seeing those does not clear an environment. CISA's SSVC record, dated 2026-11-10, says exploitation is none, and that record predates both the detection and the listing. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z. Rapid7 says that on November 13 its MDR service detected exploitation of this flaw against Confluence Data Center in a customer environment, from 192.238.253.176, 5.133.47.243, 163.182.68.109, and 104.13.106.166. Its November 17 update also names `*.trycloudflare.com`, `wpefh-192-238-253-176.free.pinggy.net`, and `webhook.site`. Rapid7 says not seeing those does not clear an environment. CISA's SSVC record was updated on 2026-11-19 and now says exploitation is active. The November 10 value was none. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -28,7 +28,8 @@ This is not the [October file-read](atlassian-dc.md), CVE-2026-21589. The N-cent
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
 | Apache announcement | 2026-11-06 15:32 UTC | Robert Lazarski posted the notice to java-user. Severity: critical. Axis 1.x through 1.4. No fixed release. Credit: José Apari-Pantigozo, OKIOK. [Announce][announce] |
-| CVE record published | 2026-11-06 15:37:55 UTC | Apache CNA. Updated 2026-11-10 18:37:36 UTC, which is the CISA-ADP score and SSVC, not a new description. [CVE][cve] |
+| CVE record published | 2026-11-06 15:37:55 UTC | Apache CNA. Updated 2026-11-10 18:37:36 UTC, which is the CISA-ADP score and the first SSVC. [CVE][cve] |
+| CISA SSVC updated | 2026-11-19; time/TZ unknown | Exploitation changed from none to active. The score is unchanged. [CVE][cve] |
 | Atlassian advisory | 2026-11-09 22:00 PST (UTC−08:00) | Confluence Data Center only. Fixed version 9.2.28. Page last modified 2026-11-10. [Advisory][adv] |
 | Rapid7 detection | 2026-11-13; time/TZ unknown | Exploitation against Confluence Data Center in one customer environment. Published 2026-11-16. [Rapid7][r7] |
 | Rapid7 indicator update | 2026-11-17; time/TZ unknown | Adds `*.trycloudflare.com`, a pinggy.net host, and `webhook.site` to the four addresses. [Rapid7][r7] |
@@ -64,9 +65,9 @@ Atlassian publishes no indicator for this flaw and says to have the local securi
 
 - [Atlassian advisory][adv] — release date Tue, Nov 9 2026 22:00 PST. CVSS 4.0 9.3. Confluence Data Center 1.x through 9.x when the Remote API is on. Fixed in 9.2.28. Removed in 10.0. Cloud is not affected. Last modified Nov 10, 2026.
 - [Apache announcement][announce] — 2026-11-06 15:32 UTC. Critical, no number. Axis 1.x through 1.4, unsupported when assigned. No fixed release.
-- [CVE-2026-90436][cve] — Apache CNA, published 2026-11-06 15:37:55 UTC. CISA-ADP CVSS 3.1 9.8, added 2026-11-10. SSVC exploitation: none.
-- [Rapid7][r7] — published 2026-11-16. On November 13, Rapid7 MDR detected exploitation against Confluence Data Center in a customer environment. Four source addresses. Absence of those addresses does not clear an environment.
-- [CISA KEV JSON][kev] — catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z. CVE-2026-90436 added 2026-11-18, due 2026-11-21. Forensic triage Yes.
+- [CVE-2026-90436][cve] — Apache CNA, published 2026-11-06 15:37:55 UTC. CISA-ADP CVSS 3.1 9.8, added 2026-11-10. SSVC updated 2026-11-19: exploitation active. The November 10 value was none.
+- [Rapid7][r7] — published 2026-11-16, last updated 2026-11-19. On November 13, Rapid7 MDR detected exploitation against Confluence Data Center in a customer environment. Four source addresses. The November 19 update notes the KEV listing. Absence of those addresses does not clear an environment.
+- [CISA KEV JSON][kev] — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z. CVE-2026-90436 added 2026-11-18, due 2026-11-21. Forensic triage Yes.
 
 [r7]: https://www.rapid7.com/blog/post/etr-rapid7-detected-exploitation-of-cve-2026-90436-against-atlassian-confluence-data-center-n-able-n-central-also-exploited/
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

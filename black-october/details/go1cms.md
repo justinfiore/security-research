@@ -1,18 +1,18 @@
 # Go1 CMS: a guest request rewrites any record
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-20 (America/New_York)
 
 [Main Go1 CMS summary](../black-october-2026.md#go1-cms-a-guest-request-rewrites-any-record) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 Go1 CMS (`go1cms`, by TridotsTech) is a Frappe app. [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071) lets a request with no login change any document, including a User record. VulnCheck is the CNA and rates it **CVSS 4.0 9.3 Critical** and **CVSS 3.1 9.8 Critical**. The 4.0 vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. The 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. NVD has not scored it.
 
-The `update_doc` method was on the guest whitelist and saved with `ignore_permissions=True`. A caller supplies a doctype, a name, and fields, and the save writes them. The record covers the master branch through commit `7f68d05` and the version-3 branch before commit `ead8da36a9452b961cc5361d6fd853ca68a58b08`. That commit, dated 2026-09-17 10:08:44 UTC, drops the guest whitelist and saves with the record's own permissions. GitHub lists no release. A checkout that has not pulled that commit is still inside the range, whatever its branch name.
+The `update_doc` method was on the guest whitelist and saved with `ignore_permissions=True`. A caller supplies a doctype, a name, and fields, and the save writes them. The record covers the master branch through commit `7f68d05` and the version-3 branch before commit `ead8da36a9452b961cc5361d6fd853ca68a58b08`. That commit, dated 2026-09-17 10:08:44 UTC, drops the guest whitelist and saves with the record's own permissions. GitHub lists no release. On 2026-11-20 the default branch `master` was still `7f68d05` and did not contain the fix. The `version-3` tip `868e353`, committed 2026-11-18, does. A checkout that has not pulled the fix is still inside the range.
 
 The finder credited by VulnCheck is Behruz Chilmatov. The record names no exploitation.
 
 This is not [Prime](prime-cms.md) and not [CloudPaste](cloudpaste.md).
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -54,6 +54,6 @@ No source publishes an indicator or a confirmed compromise. A request that succe
 - [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071) — VulnCheck, published 2026-11-16. CVSS 4.0 9.3 and CVSS 3.1 9.8. Guest `update_doc` before commit `ead8da3`.
 - [VulnCheck advisory](https://www.vulncheck.com/advisories/tridotstech-go1cms-unauthenticated-arbitrary-document-modification-via-update-doc) — same facts, dated 2026-11-16.
 - [Commit ead8da3][fix] — 2026-09-17 10:08:44 UTC. Drops the guest whitelist and saves with the record's own permissions.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, released 2026-11-13T20:24:18.3008Z, read 2026-11-16. This CVE is not in it.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-20. This CVE is not in it.
 
 [fix]: https://github.com/TridotsTech/go1cms/commit/ead8da36a9452b961cc5361d6fd853ca68a58b08

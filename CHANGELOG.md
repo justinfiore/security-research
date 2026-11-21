@@ -2,6 +2,15 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-20 23:11 EST (UTC−05:00) — ASUS; Frappe; WordPress; Spring; MONAI Label; Confluence
+
+- **ASUS:** Install [Control Center Express v1.7.29](black-october/details/asus-control-center.md#remediation) or later, then update the agents from the console. ASUS rates CVE-2026-114202 CVSS 4.0 10.0: a hard-coded key forges an administrator token. Two more, 9.0 and 9.4, need a low-privileged account. The bulletin says anything before v1.7.29. None is in KEV.
+- **Frappe:** Upgrade to [15.127.1 or 16.60.1](black-october/details/frappe-framework-mail.md#remediation). Frappe rates the mail flaw CVSS 3.1 8.5, and no CVE is assigned. A Website User sends mail as someone else. Frappe says it has been exploited. There is no workaround. This is not Frappe Ghost.
+- **WordPress:** Remove [User Registration Aide](black-october/details/wordpress-user-registration-aide.md#remediation). Through 1.5.3.8, anyone who knows a username and an email address sets that password. WPScan published CVE-2026-121385 with no score. CISA's enrichment scores it 9.8. There is no fix. It is not in KEV.
+- **Spring:** Upgrade [Spring Security](black-october/details/spring-november.md#remediation) to 7.1.3 or 7.0.9 and restart. Spring rates CVE-2026-59273 Critical: an application that binds external input to a `RequestMatcher` property runs that input as code. The advisory's vector is CVSS 3.1 9.8. The same day fixes a test LDAP server that listens on every interface, in Spring LDAP 4.1.3 or 4.0.7, and a Spring Data Elasticsearch query that evaluates its argument, in 6.1.3 or 6.0.9. Older lines are Enterprise Support only. None is in KEV.
+- **MONAI Label:** Do not expose [0.8.5 or earlier](black-october/details/monai-label.md#remediation). MITRE rates CVE-2026-133968 CVSS 3.1 9.8: an upload writes any file the process can reach, and the record says it was exploited from September 2026. The fix is merged and there is no release. It is not in KEV.
+- **Confluence:** CISA's SSVC record for [CVE-2026-90436](black-october/details/confluence-axis.md#timeline), updated November 19, now says exploitation is active. The November 10 value was none. The fix is unchanged: 9.2.28 or later, or turn off Remote API. It has been in KEV since November 18, due November 21.
+
 ## 2026-11-20 19:20 EST (UTC−05:00) — Linux KVM
 
 - **Linux kernel:** On an AMD [KVM host](black-october/details/linux-kvm-nested-init.md#remediation) with nested virtualization left on, install a kernel that contains commit `c7c288d178cb` and reboot. kernel.org rates CVE-2026-99312 CVSS 3.1 8.8: a guest that runs a virtual machine of its own can read and write host memory. Terra read about 127 GB on a DigitalOcean host. The upstream floors are 7.3.5, 6.18.64, and 6.12.118. Debian and Ubuntu have no package. Red Hat rates it 5.6 and has none for RHEL 9 or 10. An Intel host is outside it. Until the reboot, set `kvm_amd`'s `nested` parameter to `0`. It is not in KEV.
