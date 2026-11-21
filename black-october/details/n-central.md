@@ -1,6 +1,6 @@
 # N-central: critical vulnerabilities, hotfix 2026.4.1.26
 
-**Last updated:** 2026-11-18 (America/New_York)
+**Last updated:** 2026-11-21 (America/New_York)
 
 [Back to N-central summary](../black-october-2026.md#n-central-critical-vulnerabilities-hotfix-20264126) · [Changelog](../../CHANGELOG.md)
 
@@ -70,6 +70,7 @@ The November 12 chain has no CVE of its own. The published proof of concept star
 | Exploitation reported | 2026-11-12 12:50 UTC | Huntback says a public mining pool listed 21 active `nc_` rigs, and that each address serves an N-central login page. 19 report build 2026.4.1.26. [Huntback][huntback] |
 | N-able finds indicators | 2026-11-13 03:50:42 UTC | Incident 202613. N-able says it identified indicators of compromise and is working with those customers. It names no count and no build. [Event 202613][event3] |
 | **HF3** | **2026-11-16; time/TZ unknown** | Build 2026.4.1.39. The notes say the Legacy API is permanently removed and that Agents and Probes must be upgraded. [HF3 notes][hf3] |
+| **HF4** | **2026-11-21 12:59; timezone not stated** | Build 2026.4.1.40. Remote control and the Intune integration are turned back on. The Java package is updated for CVE-2026-114938. N-able says a CMMC build is not ready. [HF4 notes][hf4] |
 | Seventeen more CVE records | 2026-11-17 11:44 to 11:48 UTC | N-able published CVE-2026-129271 through CVE-2026-129287. Three are CVSS 4.0 Critical: 9.3, 9.3, and 9.2. |
 | **CISA KEV** | **2026-11-18; time/TZ unknown** | CVE-2026-90436 added. Federal due date 2026-11-21. The seven and the seventeen are not listed. |
 | **Last updated** | **2026-11-18 (America/New_York)** | CISA listed the Axis flaw this chain starts from. The build is unchanged. |
@@ -87,10 +88,10 @@ The November 12 chain has no CVE of its own. The published proof of concept star
 
 ## Remediation
 
-1. **On premises, upgrade the server to 2026.4.1.39.** HF3's notes say it permanently removes the Legacy API, which is the condition incident 202609 named for the November 12 chain, and that it supersedes 2026.4.1.26. Keep the server offline until the upgrade has succeeded. The download named in the notes is [SD-000145](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LXVIA2/sd-000145). The HF2 downloads were [SD-000143](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LUHIA2/sd-000143) and, for a CMMC account, [SD-000144](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LVtIAM/sd-000144). The notes do not say whether SD-000145 covers a CMMC account.
-2. **Upgrade Agents before Probes, and both to 2026.4.1.39.** Hosted and on-premises customers both do this. Also move the Patch Management Engine to 2.14.4.5829 or later: [CVE-2026-129271](https://www.cve.org/CVERecord?id=CVE-2026-129271) names that component version, not the server build. HF3's notes say an Agent or Probe that is not upgraded can still be impersonated, and CVE-2026-129272 is that impersonation, scored 9.3. A Probe on the new build stops talking to an Agent or Patch Management Engine that is still older, and the offline patch cache stops with it. An older Probe keeps talking to a newer Agent, so the Agent can move first.
+1. **On premises, upgrade the server to 2026.4.1.40.** HF4's notes say it supersedes 2026.4.1.39, turns remote control and the Intune integration back on, and updates the Java package for CVE-2026-114938. HF3's removal of the Legacy API stays in place. The download is [SD-000146](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LZ7IAM/sd-000146). N-able says a CMMC build of HF4 is not ready, so a CMMC account stays on the earlier guidance.
+2. **Upgrade Agents before Probes, and both to 2026.4.1.40.** HF4 says a device that has not moved is the remaining exposure. Hosted and on-premises customers both do this. Also move the Patch Management Engine to 2.14.4.5829 or later: [CVE-2026-129271](https://www.cve.org/CVERecord?id=CVE-2026-129271) names that component version, not the server build. HF3's notes say an Agent or Probe that is not upgraded can still be impersonated, and CVE-2026-129272 is that impersonation, scored 9.3. A Probe on the new build stops talking to an Agent or Patch Management Engine that is still older, and the offline patch cache stops with it. An older Probe keeps talking to a newer Agent, so the Agent can move first.
 3. **Hosted servers are upgraded by N-able.** HF3's notes say an NCOD customer does not upgrade the server. Agents and Probes still have to move.
-4. **Two things stay off.** HF3's known issues say remote control other than Take Control is disabled, and the Intune integration is blocked. Do not turn the integration back on. N-able's blog the same day says data-leakage issues that need an already-privileged account are still open, and that the next release will bring remote control and the Intune integration back.
+4. **HF4 turns remote control and Intune back on.** That is the change HF3 had left blocked. N-able's November 16 blog still says data-leakage issues that need an already-privileged account are open; HF4's notes do not say those are fixed.
 5. **Take Control still works.** Built-in remote control does not. Plan around that.
 
 ## Verification
@@ -114,6 +115,7 @@ N-able's earlier updates said it had not seen an environment compromised. Incide
 - [N-able status, incident 202609][event2] — read 2026-11-12. Start 2026-11-12 00:00:00 MST, status Investigating. Claims of more flaws in on-premises 2026.4.1 HF2. N-able's initial review: the server issue needs Legacy API on and exposed to the internet. Hosted is not affected. No CVE and no newer build on that page.
 - [N-able status, incident 202613][event3] — reread 2026-11-13. Start 2026-11-12 16:00:00 UTC, status Identified. N-able turned the Intune integration off on hosted servers and, where it could, on on-premises servers. The 16:00 UTC update said no signs of compromise. The 03:50:42 UTC update on 2026-11-13 says N-able identified indicators of compromise and is working with those customers. No newer build.
 - [Release notes, HF2][notes] — posted November 10, 2026. Build 2026.4.1.26. The seven CVEs, the Agent and Probe order, the supported upgrade paths, and the disabled built-in remote control.
+- [Release notes, HF4][hf4] — posted November 21, 2026, 12:59. Build 2026.4.1.40. Supersedes HF3. Turns remote control and Intune back on. Updates Java for CVE-2026-114938. Says a CMMC build is not ready. Download [SD-000146](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LZ7IAM/sd-000146).
 - [Release notes, HF3][hf3] — posted November 16, 2026. Build 2026.4.1.39. Supersedes HF2. Permanently removes the Legacy API. Says Agents and Probes that are not upgraded can be impersonated. Lists CVE-2026-129271 through CVE-2026-129287. Remote control other than Take Control stays disabled, and the Intune integration stays blocked. Download [SD-000145](https://me.n-able.com/s/softwaredownloads/a9jVy0000000LXVIA2/sd-000145).
 - [CVE-2026-129272](https://www.cve.org/CVERecord?id=CVE-2026-129272), [CVE-2026-129280](https://www.cve.org/CVERecord?id=CVE-2026-129280), [CVE-2026-129286](https://www.cve.org/CVERecord?id=CVE-2026-129286), and CVE-2026-129271, CVE-2026-129273 through CVE-2026-129279, CVE-2026-129281 through CVE-2026-129285, and CVE-2026-129287 — N-able, published 2026-11-17 between 11:44 and 11:48 UTC. Scores in the summary above. Each record links an advisory on `me.n-able.com` that requires a login.
 - [Huntress, November 17](https://www.huntress.com/blog/n-able-disables-cloud-services-following-disclosure-of-able2shell-exploit-chains) — says public proof-of-concept code for all seventeen appeared the evening of November 16, and that Huntress has not observed exploitation of them in partner environments. The 9.3, 9.3, and 9.2 scores it repeats are N-able's.
@@ -133,5 +135,6 @@ N-able's earlier updates said it had not seen an environment compromised. Incide
 [status]: https://uptime.n-able.com/
 [notes]: https://status.n-able.com/2026/11/10/n-central-2026-4-hf2-release-notes/
 [hf3]: https://status.n-able.com/2026/11/16/n-central-2026-4-hf3-release-notes/
+[hf4]: https://status.n-able.com/2026/11/21/n-central-2026-4-hf4-release-notes/
 [bc]: https://www.bleepingcomputer.com/news/security/n-able-takes-cloud-platform-offline-after-30-plus-zero-days-published/
 [huntback]: https://huntback.io/blog/ncentral-4everable2shell-miners-on-live-servers

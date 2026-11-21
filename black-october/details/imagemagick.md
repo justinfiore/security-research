@@ -1,6 +1,6 @@
 # ImageMagick: stack buffer overflow when reading bzip2-compressed images
 
-**Last updated:** 2026-11-05 (America/New_York)
+**Last updated:** 2026-11-21 (America/New_York)
 
 [Main ImageMagick summary](../black-october-2026.md#imagemagick-stack-buffer-overflow-when-reading-bzip2-compressed-images) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -63,9 +63,10 @@ Checked 2026-10-26; recheck before relying on it.
 | Distribution | Status | Source |
 |---|---|---|
 | Debian | **Bookworm (Debian 12 LTS)** is fixed in `8:6.9.11.60+dfsg-1.6+deb12u15` ([DLA-4875-1][dla], October 31, 2026). **Trixie (Debian 13)** is fixed in `8:7.1.1.43+dfsg1-1+deb13u14` ([DSA-6611-1][dsa6611], November 4, 2026). **Forky and unstable (sid)** are fixed in `8:7.1.2.34+dfsg1-1` (tracker read 2026-11-02; unstable's first fix was `8:7.1.2.33+dfsg1-1`). | [Debian tracker][debian] |
-| Red Hat | Important; ImageMagick on **RHEL 6 and RHEL 7** listed as "Affected". No other RHEL products are listed in the CVE data. | [Red Hat][redhat] |
+| Red Hat | Important. **RHEL 7** ImageMagick is Affected, with no erratum. **RHEL 6** is Not affected. No other RHEL products are listed. | [Red Hat][redhat] |
 | Ubuntu | Priority **Medium**. Every listed release, including 26.10, 26.04 LTS, 24.04 LTS, and 22.04 LTS, is "Needs evaluation." No fixed package and no USN (page last updated 2026-10-28). | [Ubuntu][ubuntu] |
-| Others (Alpine, Fedora, SUSE, Homebrew, EPEL) | Not checked for this guide. | — |
+| SUSE Linux Enterprise 15 SP7 | Fixed in `ImageMagick-7.1.1.43-150700.3.101.1` ([SUSE-SU-2026:5357-1](https://www.suse.com/support/update/announcement/2026/suse-su-20265357-1/), 2026-11-18). The note names this CVE. | [SUSE](https://www.suse.com/support/update/announcement/2026/suse-su-20265357-1/) |
+| Others (Alpine, Fedora, Homebrew, EPEL) | Not checked for this guide. | — |
 
 ### Input reachability and signals
 

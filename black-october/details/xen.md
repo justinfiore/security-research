@@ -1,6 +1,6 @@
 # Xen: a guest can read and write other guests' memory
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-21 (America/New_York)
 
 [Main Xen summary](../black-october-2026.md#xen-a-guest-can-read-and-write-other-guests-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -66,6 +66,10 @@ rpm -q xen
 | Xen 4.6 through 4.16 | every release | no patch in the advisory; move to a supported release |
 | Xen 4.5 and earlier | not this flaw | no action for these two CVEs |
 | SUSE Linux Enterprise 15 SP7 | below 4.20.4_08-150700.3.52.1 | `xen` 4.20.4_08-150700.3.52.1 |
+| SUSE Linux Enterprise 15 SP6 LTSS | below 4.18.6_03-150600.3.56.1 | `xen` 4.18.6_03-150600.3.56.1 ([SUSE-SU-2026:5140-1](https://www.suse.com/support/update/announcement/2026/suse-su-20265140-1/), 2026-11-09) |
+| SUSE Linux Enterprise 15 SP5 LTSS | below 4.17.7_04-150500.3.85.1 | `xen` 4.17.7_04-150500.3.85.1 ([SUSE-SU-2026:5159-1](https://www.suse.com/support/update/announcement/2026/suse-su-20265159-1/), 2026-11-10) |
+| SUSE Linux Enterprise 15 SP4 LTSS | below 4.16.7_18-150400.4.98.1 | `xen` 4.16.7_18-150400.4.98.1 ([SUSE-SU-2026:5228-1](https://www.suse.com/support/update/announcement/2026/suse-su-20265228-1/), 2026-11-13) |
+| SUSE Linux Enterprise 12 SP5 LTSS | below 4.12.4_78-3.157.1 | `xen` 4.12.4_78-3.157.1 ([SUSE-SU-2026:5139-1](https://www.suse.com/support/update/announcement/2026/suse-su-20265139-1/), 2026-11-09). SUSE's page still marks non-LTSS 12 SP5, HPC 12 SP5, and SAP 12 SP5 Affected |
 | Debian 13 (trixie) | 4.20.3+127-gc42374a105-0+deb13u1 and earlier | 4.20.4+63-g7abfd2bce2-0+deb13u1 from trixie-security |
 | Debian 12 (bookworm) | 4.17.5+72-g01140da4e8-1 and earlier | 4.17.7+13-g2445b30a44-0+deb12u1 |
 | Debian forky | below 4.20.4+63-g7abfd2bce2-1 | 4.20.4+63-g7abfd2bce2-1, fixed; migrated to testing 2026-11-10 |
@@ -80,7 +84,7 @@ A version this table does not name is **unknown**, not safe. Ubuntu's "Needs eva
 ## Remediation
 
 1. Install the fixed build for the platform you run, then reboot the host. Rebooting a guest does not load a new hypervisor.
-   - **SUSE Linux Enterprise 15 SP7:** `zypper in -t patch SUSE-SLE-Module-Server-Applications-15-SP7-2026-5087`, then reboot. SUSE's note says to reboot after this update.
+   - **SUSE Linux Enterprise 15 SP7:** `zypper in -t patch SUSE-SLE-Module-Server-Applications-15-SP7-2026-5087`, then reboot. SUSE's note says to reboot after this update. The LTSS lines have their own packages: 15 SP6 `xen-4.18.6_03-150600.3.56.1`, 15 SP5 `xen-4.17.7_04-150500.3.85.1`, 15 SP4 `xen-4.16.7_18-150400.4.98.1`, and 12 SP5 LTSS `xen-4.12.4_78-3.157.1`. Non-LTSS 12 SP5 is still Affected.
    - **Debian 13:** install `xen` 4.20.4+63-g7abfd2bce2-0+deb13u1 or later from trixie-security and reboot.
    - **Debian 12:** install `xen` 4.17.7+13-g2445b30a44-0+deb12u1 or later and reboot. That package also fixes older Xen issues named in DLA-4881-1.
    - **Debian forky:** install `xen` 4.20.4+63-g7abfd2bce2-1 or later and reboot. That is the same version sid already had.

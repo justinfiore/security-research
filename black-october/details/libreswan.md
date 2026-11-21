@@ -1,6 +1,6 @@
 # Libreswan: an empty certificate crashes the VPN daemon
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-21 (America/New_York)
 
 [Main Libreswan summary](../black-october-2026.md#libreswan-an-empty-certificate-crashes-the-vpn-daemon) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -33,11 +33,11 @@ The CNA says **3.24 through 5.4.1** are affected and **5.4.2** is not. The advis
 
 ## Detection
 
-Run `ipsec --version`. A line that reports 3.24 through 5.4.1 is inside the advisory. 5.4.2 or later is the fix. A host that does not run Libreswan is outside this entry. A distribution package can carry the patch under an older number; the package changelog has to name CVE-2026-110339, and this run did not check distribution trackers.
+Run `ipsec --version`. A line that reports 3.24 through 5.4.1 is inside the advisory. 5.4.2 or later is the fix. A host that does not run Libreswan is outside this entry. Debian's tracker, read 2026-11-21, still lists bookworm `4.10-2+deb12u1`, trixie `5.2-2.2`, and sid `5.2-2.5` as vulnerable. Ubuntu's page, last updated 2026-11-18, says Needs evaluation on every listed release, including 26.10, 26.04, 24.04, and 22.04. A package that does not name this CVE is not the fix.
 
 ## Remediation
 
-1. Upgrade to **libreswan 5.4.2 or later** and restart `pluto`. The advisory says there is no workaround.
+1. Upgrade to **libreswan 5.4.2 or later** and restart `pluto`. The advisory says there is no workaround. Debian and Ubuntu have no fixed package yet, so a distribution install of 5.2 or 4.10 is still inside the flaw until the package changelog names CVE-2026-110339.
 2. If you cannot upgrade, apply the patch from the project's [patch directory](https://libreswan.org/security/CVE-2026-110339/) and restart. The patch file is dated 16-Nov-2026 18:06.
 
 ## Verification

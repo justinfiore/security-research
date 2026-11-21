@@ -1,6 +1,6 @@
 # AhsayCBS: authentication bypass and command injection chain
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-21 (America/New_York)
 
 [Main AhsayCBS summary](../black-october-2026.md#ahsaycbs-authentication-bypass-and-command-injection-chain-cve-2026-105133-and-cve-2026-105134) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -44,6 +44,7 @@ Attackers **chain the two flaws**. CVE-2026-105133 bypasses authentication throu
 | v10.3.6 released | 2026-11-02 (date only) | The release Ahsay had scheduled for the week after October 22. Its notes include "Ahsay Security Patchset for CVE-2026-105133 and CVE-2026-105134", disabling the JSP engine, disabling remote API access by default, and removing access tokens. Ahsay does not say this replaces 10.3.4.45 as the CVE boundary. [Ahsay v10.3.6][ahsay-1036] [v10.3.6 notes][rel1036] |
 | v10.3.6.1 released | 2026-11-03 (date only) | Ahsay says it "now supports: AhsayCBS security hardening updates" and "Enhance CBS authentication system to improve security." It does not name CVE-2026-105133 or CVE-2026-105134, and it does not say this replaces 10.3.4.45. [Ahsay v10.3.6.1][ahsay-10361] |
 | v10.3.6.14 released | 2026-11-13 (date only) | The notes list a security fix: "Redirector logged CBS password in the access log in readable form." Ahsay does not name CVE-2026-105133 or CVE-2026-105134, and does not say this replaces 10.3.4.45. [v10.3.6.14 notes][rel103614] |
+| **Client compromise advisory** | **2026-11-20 (date only)** | Ahsay confirms active attacks on unpatched servers. The attacker writes scripts into AhsayOBM Pre-Backup and Post-Backup commands, so a client that then runs a backup can run the downloaded batch file. AhsayACB has no such commands and is not affected. The rebuild builds Ahsay now names are v10.3.6.14 and v9.17. [Advisory][ahsay-obm] |
 
 ## Detection
 
@@ -92,7 +93,9 @@ Finding no indicators does not prove the server is clean. Huntress warns that at
 
 ## Compromise response
 
-Ahsay recommends a **full rebuild**: reinstall Windows or Linux, install AhsayCBS 9.15.0.0 or 10.3.4.0 and apply the 9.15.2.70 or 10.3.4.45 hotfix, then restore the server configuration from an **Auto Save version that predates the compromise**, at least one day before the earliest suspicious file or folder. Huntress likewise advises re-imaging from a trusted backup. [Ahsay status][ahsay-status] [Huntress][huntress]
+Ahsay recommends a **full rebuild**: reinstall Windows or Linux, install AhsayCBS 9.15.0.0 or 10.3.4.0 and apply the 9.15.2.70 or 10.3.4.45 hotfix, then restore the server configuration from an **Auto Save version that predates the compromise**, at least one day before the earliest suspicious file or folder. Huntress likewise advises re-imaging from a trusted backup. The November 20 advisory names the clean builds to deploy: **v10.3.6.14 or v9.17**. [Ahsay status][ahsay-status] [Huntress][huntress] [November 20][ahsay-obm]
+
+That advisory says the attacker injects scripts into AhsayOBM Pre-Backup and Post-Backup commands. A client that ran a backup after that can have executed the downloaded batch file, and other devices on the same network can be reached from there. Treat those machines as compromised: disconnect them and rebuild them, rather than cleaning them in place. AhsayACB does not support those commands and is outside this path. Look for unusual folders on drive roots, randomly named `.jsp` files under the webapps directory, unauthorized RPS receivers, and unauthorized Admin-type users.
 
 Before rebuilding, preserve disk and memory evidence, logs and the webshell files. Then go beyond the host:
 - Remove unauthorized replication receivers and admin accounts.
@@ -104,6 +107,7 @@ Before rebuilding, preserve disk and memory evidence, logs and the webshell file
 ## Sources
 
 - [Ahsay status update and IOCs][ahsay-status], [initial alert][ahsay-alert], [updated alert][ahsay-update], [partner message][ahsay-msg], [hardening hotfix][ahsay-harden], [v10.3.4 release notes][relnotes]: fix versions, dates, recovery guidance.
+- [November 20 advisory][ahsay-obm] — active attacks write scripts into AhsayOBM Pre-Backup and Post-Backup commands. Rebuild builds named: v10.3.6.14 and v9.17. AhsayACB is not affected.
 - VulDB CNA records for [CVE-2026-105133][cve133] and [CVE-2026-105134][cve134]: descriptions, CVSS, VulDB timeline.
 - NVD for [CVE-2026-105133][nvd133] and [CVE-2026-105134][nvd134]: displayed VulDB CVSS 4.0 6.9/10.0 (updated 2026-10-26 15:16 UTC); no NVD primary score. NVD's CVE-2026-105133 CPE match still ends at `versionEndExcluding 10.3.4`, which wrongly implies 10.3.4 is fixed; follow Ahsay's fixed builds instead.
 - [CISA KEV JSON feed][kev]: dates, forensic-triage flags.
@@ -125,5 +129,6 @@ Before rebuilding, preserve disk and memory evidence, logs and the webshell file
 [ahsay-10361]: https://www.ahsay.com/en/company/announcements/release-1036
 [rel1036]: https://www.ahsay.com/en/support/help-centre/release-notes/cbs/v10.3.6
 [rel103614]: https://www.ahsay.com/en/support/help-centre/release-notes/cbs/v10.3.6.14
+[ahsay-obm]: https://www.ahsay.com/en/company/announcements/security-advisory-ahsayobm-machines-compromised
 [huntress]: https://www.huntress.com/blog/ahsaycbs-flaws-exploit
 [sigma]: https://github.com/huntresslabs/threat-intel/tree/main/2026/2026-10/AhsayCBS_XMRig_Miner

@@ -2,6 +2,16 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-21 11:10 EST (UTC−05:00) — GPGME; Puppet; Ahsay; Brotli
+
+- **GPGME:** Update the shared library to [2.3.1](black-october/details/gpgme.md#remediation), or install Gpg4win 5.1.2, and restart what had it loaded. GnuPG calls CVE-2026-129975 a critical security bug. The record is still reserved, so there is no score. An OpenPGP key with a very long user ID frees memory twice, and GnuPG says that can take data out of the application. On Debian 13, install `gpgme1.0` 1.24.2-3+deb13u1. On Debian 12, install 1.18.0-3+deb12u1. Debian testing has no package. A program that links its own copy does not move with the system package. It is not in KEV.
+- **Puppet:** Move to the [November 20 builds](black-october/details/puppet.md#remediation): Puppet Enterprise 2023.8.14, 2025.12.2, or 2026.0.2, or Puppet Core 8.22.3 or 9.1.4, and restart Puppet Server. Perforce scores CVE-2026-118977 CVSS 4.0 7.3: a node can overwrite another node's trusted facts. The November 3 builds fix the two Critical flaws and leave this one. It is not in KEV.
+- **Ahsay:** Ahsay [confirmed](black-october/details/ahsaycbs.md#compromise-response) on November 20 that the attacks write scripts into AhsayOBM backup commands, so a client that then runs a backup can run the attacker's batch file. Rebuild a compromised server as v10.3.6.14 or v9.17, and rebuild the client rather than cleaning it. AhsayACB is not affected. The CVE floors are unchanged.
+- **Brotli:** [libjxl 0.13.0](black-october/details/brotli.md#remediation) bumps the bundled decoder to 1.2.1. An FFmpeg that still links 0.12.0 does not move. Upgrade DuckDB to 2.0.1. ClickHouse Cloud is patched, and a self-managed server needs 26.10.3.7, 26.9.27.3, 26.8.36.3, or 26.3.62.3.
+- **N-central:** Upgrade on premises to [2026.4.1.40](black-october/details/n-central.md#remediation), and move every Agent and Probe with it. HF4 turns remote control and the Intune integration back on, and it updates Java for CVE-2026-114938. N-able says a CMMC build is not ready. HF3's removal of the Legacy API stays.
+- **TeamCity:** Upgrade on premises to [2026.2.1 or 2026.1.5](black-october/details/teamcity.md#remediation). CVE-2026-133018 is CVSS 3.1 8.8: a callback in the Kotlin DSL sandbox runs code, and 2026.2.0 leaves it in place. The 2025.11 line has no build named for it.
+- **NGINX:** On Red Hat Enterprise Linux, the [module streams](black-october/details/nginx.md#distribution-packages) now have packages too. RHEL 8 `nginx:1.24` is RHSA-2026:100747. RHEL 9 `nginx:1.26` is RHSA-2026:100745. Rocky Linux 8 followed on November 21. Debian testing and SUSE still have none.
+
 ## 2026-11-21 07:10 EST (UTC−05:00) — Mitel MiCollab; pam-mysql; Elecbrakes
 
 - **Mitel:** Apply the [MiCollab patch in KB000129195](black-october/details/micollab.md#remediation), or upgrade past 10.3.0.18. Mitel rates CVE-2026-133323 CVSS 3.1 10.0: a conferencing request with no login runs commands. A second, 9.0, needs content staged first. Build 10.3.0.18 is still affected until the patch is on it. Until then, keep the conferencing component off the internet. None is in KEV.

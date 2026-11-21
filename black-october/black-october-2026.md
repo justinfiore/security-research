@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [GPGME: a long OpenPGP user ID frees memory twice](#gpgme-a-long-openpgp-user-id-frees-memory-twice)
 - [Mitel MiCollab: a conferencing request runs commands before login](#mitel-micollab-a-conferencing-request-runs-commands-before-login)
 - [Elecbrakes: a phone in Bluetooth range applies the trailer brakes](#elecbrakes-a-phone-in-bluetooth-range-applies-the-trailer-brakes)
 - [ASUS Control Center Express: a forged token is the administrator](#asus-control-center-express-a-forged-token-is-the-administrator)
@@ -300,6 +301,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [GPGME](#gpgme-a-long-openpgp-user-id-frees-memory-twice) to **2.3.1**, or install **Gpg4win 5.1.2** on Windows, and restart what had the library loaded. GnuPG calls [CVE-2026-129975](https://www.cve.org/CVERecord?id=CVE-2026-129975) a critical security bug, and the CVE record is still reserved, so there is no score. An OpenPGP key with a very long user ID frees memory twice. GnuPG says that can take data out of the application, and that remote code execution cannot be ruled out. Debian 13 is `gpgme1.0` **1.24.2-3+deb13u1** and Debian 12 is **1.18.0-3+deb12u1**. Debian testing has no package. A program that links its own copy does not move with the system package. It is not in KEV.
 - **New this update:** Apply the [MiCollab](#mitel-micollab-a-conferencing-request-runs-commands-before-login) patch in KB000129195, or upgrade past **10.3.0.18**. Mitel rates [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323) CVSS 3.1 10.0 Critical: a conferencing request with no login runs commands. A second, 9.0, needs content staged first. Build 10.3.0.18 is still affected until the patch is on it. Until then, keep the conferencing component off the internet. None is in KEV.
 - **New this update:** On an [Elecbrakes](#elecbrakes-a-phone-in-bluetooth-range-applies-the-trailer-brakes) EB2 or VM1, open the app and install the firmware. CISA rates [CVE-2026-96805](https://www.cve.org/CVERecord?id=CVE-2026-96805) and [CVE-2026-125273](https://www.cve.org/CVERecord?id=CVE-2026-125273) CVSS 3.1 9.6 Critical: a phone in Bluetooth range applies the trailer brakes, with no pairing. EB2 through 3.0.4.2.0 is fixed in **3.0.4.4.3**. VM1 before 1.3.4.2.1 is fixed in **1.3.4.2.1**. The update does not install itself. The ELBC2000 has no fix. None is in KEV.
 - **New this update:** Install [ASUS Control Center Express](#asus-control-center-express-a-forged-token-is-the-administrator) **v1.7.29 or later**, then update the agents from the console. ASUS rates [CVE-2026-114202](https://www.cve.org/CVERecord?id=CVE-2026-114202) CVSS 4.0 10.0 Critical: a hard-coded key lets a remote user forge an administrator token. Two more, 9.0 and 9.4, need a low-privileged account. The bulletin says anything before v1.7.29. The CVE records stop at v1.7.27. None is in KEV.
@@ -323,7 +325,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update (CISA KEV):** Update [vCenter](#vmware-vcenter-a-network-request-skips-login) to **9.1.1.0200, 9.0.2.0200, or 8.0 U3m**. Broadcom rates [CVE-2026-123890](https://www.cve.org/CVERecord?id=CVE-2026-123890) CVSS 3.1 9.8 Critical: a network request skips login and opens a session as `administrator@vsphere.local`. CISA added it on November 20, due November 23, and requires forensic triage. Google says ARMORY CASTLE used it in early September, before the patch. These builds are not a Quick Patch, and 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1. VMware Tools for Windows 11.x and 12.x are fixed in **12.5.5**, and 13.x in **13.1.5.0**. vCenter 7.0 has no public fix. ESX does not need an update. A vCenter that was unpatched in September should be checked for an SSO account you did not create.
 - **New this update:** Upgrade [PHP](#php-the-november-19-security-releases) to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** and restart every worker. PHP rates seven flaws CVSS 4.0 9.2 Critical. Two are fixed only on 8.5 and 8.6. The October 21 builds leave all seven in place. Depthfirst says one of them, the interrupted session write, is still present. PHP's advisory says the fix truncates the file first. None of the seven is in KEV. This is not PHP2Shell.
 - **New this update:** Upgrade [SmarterMail](#smartermail-an-application-password-is-guessable) to a current build. **9817** is the installer. The Zero Day Initiative rates [CVE-2026-126969](https://www.cve.org/CVERecord?id=CVE-2026-126969) CVSS 3.0 9.1 Critical: application passwords were guessable, with no login. Two more are 8.8 and need a login. ZDI says Build 9735, from August 27, is the fix. Do not stop there. Application passwords from before 9735 have to be reissued. None is in KEV.
-- **New this update:** Upgrade on-premises [TeamCity](#teamcity-a-signed-in-user-runs-code-on-the-server) to **2026.2**. 2026.1.4 and 2025.11.8 leave [CVE-2026-132892](https://www.cve.org/CVERecord?id=CVE-2026-132892) in place, which the CVE record rates 8.1. JetBrains' November 19 page adds [CVE-2026-132891](https://www.cve.org/CVERecord?id=CVE-2026-132891), which the CVE record rates 9.8: an external pull request runs code. 2026.1.3 and 2025.11.7 leave it in place. The Mercurial flaw from November 18 is unchanged. None is in KEV.
+- **New this update:** Upgrade on-premises [TeamCity](#teamcity-a-signed-in-user-runs-code-on-the-server) to **2026.2.1**, or to **2026.1.5** on the 2026.1 line. [CVE-2026-133018](https://www.cve.org/CVERecord?id=CVE-2026-133018) is CVSS 3.1 8.8: a callback in the Kotlin DSL sandbox runs code, and 2026.2.0 leaves it in place. 2025.11 has no build named for it. None is in KEV.
 - **New this update:** [Emacs](#emacs-a-project-file-runs-code-when-a-file-opens) 31.1 runs code from a project's `.dir-locals.el` when a matching file is opened. MITRE rates [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959) CVSS 3.1 7.8 High. Emacs 30.2 is not affected. The fix is marked for 31.2, and that release is not out. Until then, open an untrusted project with directory-local variables off. It is not in KEV.
 - **New this update:** Upgrade [Drupal](#drupal-core-field-ui-remote-code-execution) to **11.4.13, 11.3.22, or 10.6.22**. Drupal rates [SA-CORE-2026-017](https://www.drupal.org/sa-core-2026-017) Critical, 18/25: the installer can be used to reinstall the site and run code. The CVE record is still reserved and has no CVSS score. The October floors leave it in place. Until the upgrade, secure `install.php`. It is not in KEV.
 - **New this update:** On Ubuntu, install the [NGINX package in USN-9159-1](#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) and restart. Debian trixie is now 1.26.3-3+deb13u11 (DSA-6642-1) and bookworm is 1.22.1-9+deb12u11 (DLA-4918-1), both November 19. Forky still has no package. Red Hat shipped RHEL 10 and two RHEL 9 packages on November 20. The upstream floors, 1.30.7 and 1.31.9, are unchanged.
@@ -536,6 +538,29 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## GPGME: a long OpenPGP user ID frees memory twice
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/gpgme.md):** [Detection](details/gpgme.md#detection) · [Remediation](details/gpgme.md#remediation) · [Verification](details/gpgme.md#verification) · [Timeline](details/gpgme.md#timeline)
+
+**CVEs:** [CVE-2026-129975](https://www.cve.org/CVERecord?id=CVE-2026-129975)
+
+**GnuPG calls [CVE-2026-129975](https://www.cve.org/CVERecord?id=CVE-2026-129975) a critical security bug. The CVE record is still reserved, so no CNA has published a CVSS score.** Werner Koch announced GPGME 2.3.1 on 2026-11-20 at 19:01:51 CET. An OpenPGP key with a crafted, very long user ID triggers a double free in the status-line reader and the key-listing reader. GnuPG says that can exfiltrate data from an application, for example by sending signed data, and that remote code execution cannot be ruled out. Every GPGME before 2.3.0 is affected, whether it is a shared library, a Windows DLL, or linked into the program. 2.3.0 was never published. The advisory names Gpg4win, GnuPG Desktop, GnuPG VS-Desktop, most mail clients, many XMPP clients, Samba, and Flatpak. Johan Carlsson found it, and GitLab reported it on November 12. GnuPG does not report exploitation. Debian says the same flaw can disclose information, deny service, and potentially run code: trixie is fixed in `gpgme1.0` **1.24.2-3+deb13u1** (DSA-6646-1) and bookworm in **1.18.0-3+deb12u1** (DLA-4924-1). Forky **2.2.0-2** is still vulnerable. Sid is **2.3.1-1**.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Reported to GnuPG | 2026-11-12; time/TZ unknown | Johan Carlsson, through GitLab. |
+| **Public announcement** | **2026-11-20 19:01:51 CET (UTC+01:00)** | GPGME 2.3.1 and Gpg4win 5.1.2. The record is still reserved. |
+| Debian | 2026-11-20 | DSA-6646-1 at 21:36:59 UTC. DLA-4924-1 the same day. Forky has no package. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | New item. Update the library. A static copy does not move with it. |
+
+**Patch:** Update the shared library to **GPGME 2.3.1**, or install **Gpg4win 5.1.2**. On Debian 13 install `1.24.2-3+deb13u1`; on Debian 12 install `1.18.0-3+deb12u1`. Restart what had the library loaded. Rebuild a program that links GPGME statically. The legacy line is **1.24.4**, and GnuPG says that line may not get every later patch. Debian testing has no package. There is no configuration workaround. The update does not show whether an application already sent data it should not have.
+
+Sources: [GnuPG announcement](https://lists.gnupg.org/pipermail/gnupg-announce/2026q4/000517.html), [DSA-6646-1](https://www.debian.org/security/2026/dsa-6646), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-129975), [detailed guide](details/gpgme.md).
 
 ---
 
@@ -1016,9 +1041,9 @@ Sources: [ZDI-26-997](https://www.zerodayinitiative.com/advisories/ZDI-26-997), 
 |---|---|---|
 | **Public announcement** | **2026-11-18; time unknown** | Fixed before 2026.1.3 and 2025.11.7. |
 | Pull-request flaw | 2026-11-19; time/TZ unknown | CVE-2026-132891. Fixed in 2026.2, 2026.1.4, and 2025.11.8. |
-| **Last updated** | **2026-11-19 19:01 EST (UTC−05:00)** | The November 18 floors leave the pull-request flaw. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | 2026.2.0 leaves CVE-2026-133018. The floor is 2026.2.1 or 2026.1.5. |
 
-**Patch:** Upgrade on-premises TeamCity to **2026.2**, or to **2026.1.4** on the 2026.1 line, or to **2025.11.8** on the 2025.11 line. JetBrains' November 19 page adds [CVE-2026-132891](https://www.cve.org/CVERecord?id=CVE-2026-132891), which the CVE record rates 9.8: an external pull request runs code. 2026.1.3 and 2025.11.7 leave it in place. The upgrade does not show whether a build already ran code.
+**Patch:** Upgrade on-premises TeamCity to **2026.2.1**, or to **2026.1.5** on the 2026.1 line. [CVE-2026-133018](https://www.cve.org/CVERecord?id=CVE-2026-133018), published November 19, is CVSS 3.1 8.8: a callback in the Kotlin DSL sandbox runs code, and 2026.2.0 leaves it in place. 2025.11.8 fixes the pull-request flaw and leaves both later flaws, and no 2025.11 build is named for this one. The upgrade does not show whether a build already ran code.
 
 Sources: [CVE-2026-132234](https://www.cve.org/CVERecord?id=CVE-2026-132234), [JetBrains issues fixed](https://www.jetbrains.com/privacy-security/issues-fixed/), [detailed guide](details/teamcity.md).
 
@@ -1396,7 +1421,7 @@ Sources: [CVE-2026-84443](https://www.cve.org/CVERecord?id=CVE-2026-84443), [Lib
 |---|---|---|
 | Vendor notified | 2026-10-06; time/TZ unknown | The advisory writes 06-10-2026. |
 | **Public announcement** | **2026-11-16; time unknown** | Advisory and libreswan 5.4.2. The tarball is dated 17:39, timezone not stated. |
-| **Last updated** | **2026-11-17 08:20 EST (UTC−05:00)** | New item. Upgrade to 5.4.2. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | Debian and Ubuntu still have no package. |
 
 **Patch:** Upgrade to **libreswan 5.4.2 or later** and restart `pluto`. There is no workaround. A distribution build is fixed only when its changelog names CVE-2026-110339. The restart does not show whether the daemon was already being crashed.
 
@@ -2694,9 +2719,9 @@ On November 17 N-able published the seventeen records the notes listed, CVE-2026
 | **HF3** | **2026-11-16; time/TZ unknown** | Build 2026.4.1.39. Legacy API permanently removed. Agents and Probes must move too. |
 | Seventeen more CVE records | 2026-11-17 11:44 to 11:48 UTC | Three CVSS 4.0 Critical: 9.3, 9.3, and 9.2. |
 | **CISA KEV** | **2026-11-18; time/TZ unknown** | CVE-2026-90436 added. Federal due date 2026-11-21. The seven and the seventeen are not listed. |
-| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | CISA listed the Axis flaw this chain starts from. The build is unchanged. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | HF4 is 2026.4.1.40. Remote control and Intune are back on. |
 
-**Patch:** On premises, upgrade to **2026.4.1.39** and upgrade every Agent and Probe to that build, and the Patch Management Engine to 2.14.4.5829 or later. HF3 removes the Legacy API, so the setting the November 12 chain needed is gone. An Agent left on an older build can still be impersonated: that is CVE-2026-129272, scored 9.3. Upgrade Agents before Probes: a Probe on the new build stops talking to an older Agent. Leave the Intune integration off and expect built-in remote control to stay disabled. Take Control still works. Hosted servers are upgraded by N-able; their Agents and Probes are still the customer's. Treat a secret stored in an Automation Manager policy as disclosed, and do not trust Take Control audit records from before the upgrade. Check for `/tmp/.xvd/`, an `xvd.service` unit, and connections to `157.20.241.16`. The upgrade does not remove a miner or undo a script that already ran.
+**Patch:** On premises, upgrade to **2026.4.1.40** and upgrade every Agent and Probe to that build, and the Patch Management Engine to 2.14.4.5829 or later. HF4, posted November 21, turns remote control and the Intune integration back on and updates Java for CVE-2026-114938. HF3's removal of the Legacy API stays. N-able says a CMMC build of HF4 is not ready. An Agent left on an older build can still be impersonated: that is CVE-2026-129272, scored 9.3. Upgrade Agents before Probes. Hosted servers are upgraded by N-able; their Agents and Probes are still the customer's. The upgrade does not remove a miner or undo a script that already ran.
 
 Sources: [N-able status, incident 202584](https://uptime.n-able.com/event/202584), [release notes](https://status.n-able.com/2026/11/10/n-central-2026-4-hf2-release-notes/), [detailed guide](details/n-central.md).
 
@@ -3683,7 +3708,7 @@ Sources: [cisco-sa-cucs-rce-LzHSFRDQ](https://sec.cloudapps.cisco.com/security/c
 | Public announcement | 2026-11-03 12:00 UTC | XSA-523 version 2. |
 | SUSE, XCP-ng, Qubes, XenServer | 2026-11-03 | SUSE 15 SP7 `xen` 4.20.4_08-150700.3.52.1 at 13:45:04 UTC. XCP-ng 8.3 `xen-4.17.7-4.2.xcpng8.3`. Qubes 4.3 dom0 Xen 4.19.6-3. XenServer 8.4 and 9: updates pushed, no build number. |
 | Debian 12 | 2026-11-04 21:39:04 UTC | DLA-4881-1. `xen` 4.17.7+13-g2445b30a44-0+deb12u1. |
-| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | Qubes 4.3 current now has Xen 4.19.6-4. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | SUSE LTSS lines now have packages. Non-LTSS 12 SP5 does not. |
 
 **Patch:** Install the fixed build and reboot the host. A guest reboot does not load it. SUSE Linux Enterprise 15 SP7 is `xen` **4.20.4_08-150700.3.52.1**. Debian 13 is **4.20.4+63-g7abfd2bce2-0+deb13u1**. Debian 12 is **4.17.7+13-g2445b30a44-0+deb12u1**. Debian forky has no fixed package. XCP-ng 8.3 is **xen-4.17.7-4.2.xcpng8.3**. Qubes OS 4.3 is dom0 Xen **4.19.6-3**, then restart dom0. XenServer 8.4 and 9 take the channel update CTX697256 already pushed. Xen 4.17 and later from source take the advisory's patches on the stable-branch tip. Xen 4.6 through 4.16 have no patch. Ubuntu has not evaluated it.
 
@@ -3741,11 +3766,11 @@ Sources: [GHSA-g35w-6r6v-h4r7](https://github.com/airbytehq/airbyte/security/adv
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/puppet.md):** [Detection](details/puppet.md#detection) · [Remediation](details/puppet.md#remediation) · [Verification](details/puppet.md#verification) · [Timeline](details/puppet.md#timeline)
 
-**CVEs:** [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731), [CVE-2026-115732](https://www.cve.org/CVERecord?id=CVE-2026-115732)
+**CVEs:** [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731), [CVE-2026-115732](https://www.cve.org/CVERecord?id=CVE-2026-115732), [CVE-2026-118977](https://www.cve.org/CVERecord?id=CVE-2026-118977)
 
 **Perforce (CNA) rates CVE-2026-115731 CVSS 4.0 9.4 Critical and CVE-2026-115732 CVSS 4.0 9.0 Critical.** NVD has not scored either. The 9.4 flaw is in report processing: any client with a CA-signed agent certificate can run code on the Puppet Server as the service user. Where the CA autosigns without a strong check, an attacker can obtain that certificate without already having one. OpenVox published a report body that runs a shell command, and says code execution as `puppet` can read the CA signing key. The 9.0 flaw lets a certificate whose name extends or shortens an authorized hostname act as that host. On Puppet Enterprise that can reach certificate-authority administration.
 
-**CISA KEV:** Listed — [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731) added 2026-11-17, federal due date 2026-12-01. [CVE-2026-115732](https://www.cve.org/CVERecord?id=CVE-2026-115732) is not listed (catalog 2026.11.17). Perforce's November 3 notice said it was not aware of exploitation. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731) added 2026-11-17, federal due date 2026-12-01. [CVE-2026-115732](https://www.cve.org/CVERecord?id=CVE-2026-115732) and [CVE-2026-118977](https://www.cve.org/CVERecord?id=CVE-2026-118977) are not listed (catalog 2026.11.20, checked 2026-11-21). Perforce's November 3 notice said it was not aware of exploitation of the first two. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -3753,9 +3778,10 @@ Sources: [GHSA-g35w-6r6v-h4r7](https://github.com/airbytehq/airbyte/security/adv
 | OpenVox advisory | 2026-11-03; time/TZ unknown | Includes the report JSON. Server 8.18.0 / 9.2.0. |
 | Puppet Core 9.1.3 | 2026-11-06; time/TZ unknown | The notes say November 6, 2026, and name both CVEs. An earlier reading said last published 2026-10-30. |
 | **CISA KEV** | **2026-11-17; time/TZ unknown** | CVE-2026-115731 added. Federal due date 2026-12-01. CVE-2026-115732 is not listed. |
-| **Last updated** | **2026-11-17 15:10 EST (UTC−05:00)** | CISA listed CVE-2026-115731. The fixed builds are unchanged. |
+| **CVE-2026-118977** | **2026-11-20; time/TZ unknown** | Perforce, CVSS 4.0 7.3. The November 3 builds leave it in place. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | The floors moved to the November 20 builds. |
 
-**Patch:** Upgrade Puppet Enterprise to **2023.8.13, 2025.12.1, or 2026.0.1**, or Puppet Core to **8.22.2 or 9.1.3**, and restart Puppet Server. OpenVox Server is **8.18.0 or 9.2.0**, and OpenVox Agent is **8.32.0 or 9.3.0**. An agent-only upgrade does not fix the server. Until then, do not autosign certificate requests without a check you already trust. That does not protect a server that already trusts a certificate.
+**Patch:** Upgrade Puppet Enterprise to **2023.8.14, 2025.12.2, or 2026.0.2**, or Puppet Core to **8.22.3 or 9.1.4**, and restart Puppet Server. The November 3 builds, 2023.8.13, 2025.12.1, 2026.0.1, 8.22.2, and 9.1.3, fix the first two and leave CVE-2026-118977, which Perforce scores 7.3: a node can overwrite another node's trusted facts. OpenVox Server is **8.18.0 or 9.2.0**, and OpenVox Agent is **8.32.0 or 9.3.0**. An agent-only upgrade does not fix the server. Until then, do not autosign certificate requests without a check you already trust. That does not protect a server that already trusts a certificate.
 
 Sources: [CVE-2026-115731](https://www.cve.org/CVERecord?id=CVE-2026-115731), [CVE-2026-115732](https://www.cve.org/CVERecord?id=CVE-2026-115732), [OpenVox GHSA-ffr6-rwpm-p5wq](https://github.com/OpenVoxProject/openvox/security/advisories/GHSA-ffr6-rwpm-p5wq), [Puppet Core 9.1.3](https://help.puppet.com/core/current/Content/PuppetCore/PuppetReleaseNotes/release_notes_puppet_x-9-1-3.htm), [detailed guide](details/puppet.md).
 
@@ -5637,7 +5663,7 @@ Sources: [Oracle CPU October 2026](https://www.oracle.com/security-alerts/cpuoct
 | Debian 12 bookworm fix | 2026-10-31 23:24 +0100 | DLA-4875-1, `8:6.9.11.60+dfsg-1.6+deb12u15`. |
 | Debian forky and sid package | Tracker read 2026-11-02 | `8:7.1.2.34+dfsg1-1` is fixed. Ubuntu lists the CVE with no fixed package. |
 | Debian 13 trixie fix | 2026-11-04 21:44:32 UTC | DSA-6611-1. `8:7.1.1.43+dfsg1-1+deb13u14`, which includes CVE-2026-116149. |
-| **Last updated** | **2026-11-05 16:15 EST (UTC−05:00)** | Debian 13 now has a fixed package. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | SUSE 15 SP7 has a package. RHEL 6 is not affected. |
 
 ImageMagick transparently decompresses any input file that starts with the bzip2 signature `BZh` when built with the bzlib delegate. A crafted bzip2-compressed image overwrites stack memory during that decoding. Any service that runs ImageMagick on untrusted files is exposed: uploads, thumbnails, fetched images and document conversion, including through PHP Imagick, Python Wand, Ruby RMagick/MiniMagick and bundled copies such as Magick.NET.
 
@@ -6400,7 +6426,7 @@ Sources: [SA-CORE-2026-014](https://www.drupal.org/sa-core-2026-014), [SA-CONTRI
 | Debian DSA-6575-1 | 2026-10-21 15:28 UTC | trixie 1.26.3-3+deb13u10. |
 | Ubuntu USN-8955-1 | 2026-10-26; time/TZ unknown | Fixed nginx packages for 22.04, 24.04, 26.04 and 26.10. |
 | nginx 1.30.7 and 1.31.9 | 2026-11-18; time unknown | Ten flaws. Five are 8.1 and 9.2. The TLS 1.3 loop is 7.5 and 8.7. No distribution package yet. |
-| **Last updated** | **2026-11-18 19:40 EST (UTC−05:00)** | The same release fixes five more High or Critical flaws, not only the flow-control one. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | RHEL 8 nginx:1.24 and RHEL 9 nginx:1.26 now have packages. |
 
 Each flaw needs a specific configuration:
 
@@ -6494,7 +6520,7 @@ Sources: [curl advisory](https://curl.se/docs/CVE-2026-92392.html), [CVE record]
 | Red Hat fixed kernels | 2026-10-19 to 2026-10-24; time/TZ unknown | RHEL 10, 9, 7 ELS, then RHEL 8 (RHSA-2026:89083) on 2026-10-24. |
 | Red Hat real-time fixed kernels | 2026-10-22 to 2026-10-24; time/TZ unknown | RHEL 7 ELS, RHEL 9.2 SAP Solutions and RHEL 8 now have fixed `kernel-rt` builds; general RHEL 9 `kernel-rt` remains affected. |
 | AlmaLinux production kernels | 2026-10-23 17:16 UTC | Moved from testing to production. |
-| **Last updated** | **2026-10-31 00:45 EDT (UTC−04:00)** | Red Hat shipped RHEL 6 ELS and OpenShift 4.12–4.22 RHCOS fixes on 2026-10-27. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | Ubuntu 20.04 generic now matches USN-9170-1. |
 
 The flaw is in the host kernel's **IPv4 networking stack**, not in KVM. A guest sends crafted virtio-net checksum metadata, and the VMM writes it to a host TAP device. The host then corrupts an already-validated IPv4 header and reads beyond the packet data when it fragments the packet. Red Hat says local attackers can trigger it too.
 
@@ -6941,7 +6967,7 @@ Sources: [Atlassian advisory](https://confluence.atlassian.com/security/cve-2026
 | Later hardening builds | 2026-10-27; time/TZ unknown | v9.15.2.78 and v10.3.4.55. Ahsay does not say they replace the CVE fix. |
 | v10.3.6 released | 2026-11-02; time/TZ unknown | Includes a patchset for both CVEs, disables the JSP engine, and turns remote API access off by default. Not a new CVE boundary. |
 | v10.3.6.1 released | 2026-11-03; time/TZ unknown | Ahsay says it adds security hardening and an authentication-system change. It does not name the CVEs and does not change the fix floor. |
-| **Last updated** | **2026-11-05 16:15 EST (UTC−05:00)** | v10.3.6.1 is out. The CVE fix floor is still 10.3.4.45 / 9.15.2.70. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | Ahsay says the attacks reach AhsayOBM clients. |
 
 AhsayCBS is a backup server used mainly by MSPs. Attackers chain the two flaws: an authentication bypass in `checkSysPwd`, then OS command injection via `/rps/api/json/UpdateReceivers.do`. Together they give unauthenticated remote code execution (SYSTEM on the Windows hosts Huntress investigated).
 
@@ -7237,7 +7263,7 @@ Sources: [PHP advisories, including the October 23 update](https://www.php.net/a
 | ELLIO in-the-wild exploit attempt | 2026-10-26 15:08 UTC | Request built for official Node.js 24.22.0 x86-64; ELLIO found the attacker's chain non-working in its test. ELLIO also reproduced RCE on that x86-64 build. |
 | CISA KEV addition | 2026-10-27; time/TZ unknown | CISA added CVE-2026-111497 based on evidence of active exploitation; the federal civilian due date is 2026-11-10. |
 | PAN-OS Brotli hotfixes released | 2026-10-29; time/TZ unknown | Palo Alto removed the remaining ETAs for 11.2.4-h23, 12.1.4-h13 and 12.1.10-h3. |
-| **Last updated** | **2026-11-04 16:01 EST (UTC−05:00)** | ClickHouse package builds are on the package site. Arrow 26.0.1 is unchanged. |
+| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | libjxl 0.13.0 and DuckDB 2.0.1 are out. ClickHouse named the floors. |
 
 **HTTP2Shell, Node2Shell and Brotli2Shell are names for the same vulnerability, not separate CVEs.** The flaw resides in Google's native Brotli decoder and can affect any application embedding a vulnerable copy. Despite the names, it is **not specific to HTTP/2 or even HTTP**; exposure depends on decoding attacker-controlled Brotli data, including embedded file metadata and analytical buffers.
 
@@ -7954,6 +7980,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **GPGME before 2.3.1, or Gpg4win before 5.1.2** | Update the shared library to 2.3.1, or install Gpg4win 5.1.2, and restart what had it loaded. GnuPG calls CVE-2026-129975 critical: a long OpenPGP user ID frees memory twice. Debian 13 is `gpgme1.0` 1.24.2-3+deb13u1 and Debian 12 is 1.18.0-3+deb12u1. Debian testing has no package. Rebuild a program that links its own copy. [Guide](details/gpgme.md#remediation). |
 | **Mitel MiCollab 10.3.0.18 or earlier** | Apply the patch in KB000129195, or upgrade past 10.3.0.18. Mitel rates CVE-2026-133323 10.0: a conferencing request runs commands with no login. Build 10.3.0.18 still needs the patch. Until then, keep the conferencing component off the internet. [Guide](details/micollab.md#remediation). |
 | **WatchGuard Dimension 2.0 before 2.3.2** | Upgrade to 2.3.2 or later. WatchGuard rates CVE-2026-86130 9.3: the log collection service runs code with no login. This is not the AuthPoint gateway. [Guide](details/watchguard-dimension.md#remediation). |
 | **IBM Guardium Data Protection 12.2** | Install 12.2.4. IBM rates two flaws 9.8: a request with no login runs code, and another reads the database. There is no workaround. [Guide](details/ibm-guardium.md#remediation). |
@@ -8014,7 +8041,7 @@ flowchart TD
 | **Windows, especially a server running Exchange** | Install the November 10 cumulative update and reboot. Microsoft rates CVE-2026-116928 9.8: an email attachment runs code when Exchange indexes it, and the recipient never opens it. Windows Server 2022 is KB5131090, build 10.0.20348.5870. It is not in KEV. [Guide](details/windows-search.md#remediation). |
 | **iPhone, iPad, Mac, Apple Watch, or Apple Vision Pro** | Install the November 9 update and restart. CISA-ADP scores an iMessage group-join flaw 7.5 and a Bluetooth memory-corruption flaw 8.8. Apple publishes no score. iOS 18.7.12 fixes the Bluetooth flaw only. [Guide](details/apple-november.md#remediation). |
 | **SAP NetWeaver, Web Dispatcher, SAP Gateway, or BusinessObjects** | Apply the November 10 SAP Security Notes, starting with the four 10.0 notes on anything reachable from the internet. The notes need an SAP login and name the correction. Until then, restrict access to Gateway, Web Dispatcher, and ICM ports. Restart the component after a kernel update. [Guide](details/sap-november.md#remediation). |
-| **N-central, hosted or on premises** | Upgrade on premises to 2026.4.1.39, and upgrade every Agent, Probe, and the Patch Management Engine (2.14.4.5829 or later). N-able rates three of the seventeen November 17 flaws CVSS 4.0 Critical, including a 9.3 impersonation of an Agent that has not moved. HF3 removes the Legacy API. Leave the Intune integration off. Hosted servers are upgraded by N-able. [Guide](details/n-central.md#remediation). |
+| **N-central, hosted or on premises** | Upgrade on premises to 2026.4.1.40, and upgrade every Agent, Probe, and the Patch Management Engine (2.14.4.5829 or later). HF4 turns remote control and Intune back on. A CMMC build is not ready. HF3's removal of the Legacy API stays. Hosted servers are upgraded by N-able. [Guide](details/n-central.md#remediation). |
 | **Mail Assure or SpamExperts Hosted Cloud** | There is no customer-side update. N-able says someone reached one server in that cloud, disclosed at 03:05 UTC on November 18. Mail still flows. The portal, API, quarantine, and logs are still offline. Read the partner email. This is not the N-central incident. [Guide](details/nable-mail.md#remediation). |
 | **GPUStack below 2.3.1** | Upgrade the server and every worker to 2.3.1 or later and restart. 2.3.0 leaves a Critical flaw (repository Python running on the server) and a High proxy bypass. 2.2.0 fixes only the loopback administrator bypass, which CISA listed on November 9. 2.2.2 is the floor for the SAML callback and the cluster proxy, and it leaves a worker-management flaw. Until then, set `force_auth_localhost=true` and block `/auth/saml/callback`. The upgrade does not delete an administrator key already created. [Guide](details/gpustack.md#remediation). |
 | **FreeSWITCH before 1.11.3** | Upgrade to 1.11.3 or later and restart. CISA listed CVE-2026-116779 on November 9, due November 12. An inbound SIP MESSAGE can run an API command, and chat is on by default. Until then, set `enable-chat=false` on profiles that do not need it. Turning off the `system` API does not close the path. [Guide](details/freeswitch.md#remediation). |
@@ -8158,7 +8185,7 @@ flowchart TD
 | **Xen hosts (Xen 4.6 and later, including XCP-ng, XenServer, and Qubes OS)** | Install the fixed hypervisor and reboot the host. SUSE Linux Enterprise 15 SP7 is `xen` 4.20.4_08-150700.3.52.1. Debian 13 is 4.20.4+63-g7abfd2bce2-0+deb13u1. Debian 12 is 4.17.7+13-g2445b30a44-0+deb12u1. XCP-ng 8.3 is xen-4.17.7-4.2.xcpng8.3. Qubes OS 4.3 is dom0 Xen 4.19.6-3. Xen 4.6 through 4.16 have no patch. A guest reboot does not load the new hypervisor. [Guide](details/xen.md#remediation). |
 | **Rails 8.0 and 8.1** | Upgrade to 8.0.5.2 or 8.1.4.1 and restart. Rails 7 and older get no fix for the Active Storage file write. On `:mini_magick`, also install mini_magick 5.1 or later. If the Disk service was in use, rotate `secret_key_base`. [Guide](details/rails.md#remediation). |
 | **Self-managed Airbyte** | Upgrade to 2.2.0 or later (manifest-server 7.23.7) after a database backup. The migration cannot roll back. 1.x has no fix. Airbyte Cloud needs no action. [Guide](details/airbyte.md#remediation). |
-| **Puppet Enterprise, Puppet Core, and OpenVox** | Upgrade Puppet Enterprise to 2023.8.13, 2025.12.1, or 2026.0.1, or Puppet Core to 8.22.2 or 9.1.3, and restart Puppet Server. OpenVox Server is 8.18.0 or 9.2.0. An agent-only upgrade does not fix the server. Until then, do not autosign without a check you trust. [Guide](details/puppet.md#remediation). |
+| **Puppet Enterprise, Puppet Core, and OpenVox** | Upgrade Puppet Enterprise to 2023.8.14, 2025.12.2, or 2026.0.2, or Puppet Core to 8.22.3 or 9.1.4, and restart Puppet Server. The November 3 builds leave CVE-2026-118977, which Perforce scores 7.3. OpenVox Server is 8.18.0 or 9.2.0. An agent-only upgrade does not fix the server. Until then, do not autosign without a check you trust. [Guide](details/puppet.md#remediation). |
 | **Plex** | Media Server **1.43.3.10861 or later**; investigate previously exposed vulnerable servers. On Synology DSM 7.4 or 7.3 install package 1.43.5.11079-720011079 or above; on DSM 7.2.2 or 7.2.1 install 1.43.5.11079-700011079 or above. DSM itself is not the flaw. [Guide](details/plex2shell.md#remediation). |
 | **Nextcloud + built-in CODE** | `richdocumentscode` **26.4.303+**, or remove it. **Patch PHP separately.** |
 | **KSMBD / Broadcom Wi-Fi** | Obtain an exact vendor fix status; restrict or disable the affected service, or replace unsupported hardware. |
