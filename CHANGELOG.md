@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-21 15:10 EST (UTC−05:00) — Unstable Slope Management Program; Tegsoft
+
+- **Unstable Slope Management Program:** Confirm the instance is the one [fixed on or around October 19](black-october/details/usmp.md#remediation). CISA rates CVE-2026-129175 CVSS 3.1 9.8: a request with no login runs SQL and can take the database. Three more are High: a request deletes a user, a request creates a user, and a local password skips the Keycloak login. CISA names no build. Until the operator confirms the fix, keep it off the internet, then reset local passwords. None is in KEV.
+- **Tegsoft:** Upgrade Contact Center to [latest-202611161510 or later](black-october/details/tegsoft.md#remediation). TR-CERT rates CVE-2026-14914 CVSS 3.1 10.0: an upload plants a web shell, and the score says no login. A second flaw, 5.3, exposes system information and has the same floor. The upgrade does not remove a file already uploaded. Neither is in KEV.
+
 ## 2026-11-21 11:10 EST (UTC−05:00) — GPGME; Puppet; Ahsay; Brotli
 
 - **GPGME:** Update the shared library to [2.3.1](black-october/details/gpgme.md#remediation), or install Gpg4win 5.1.2, and restart what had it loaded. GnuPG calls CVE-2026-129975 a critical security bug. The record is still reserved, so there is no score. An OpenPGP key with a very long user ID frees memory twice, and GnuPG says that can take data out of the application. On Debian 13, install `gpgme1.0` 1.24.2-3+deb13u1. On Debian 12, install 1.18.0-3+deb12u1. Debian testing has no package. A program that links its own copy does not move with the system package. It is not in KEV.

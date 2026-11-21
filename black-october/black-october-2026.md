@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Unstable Slope Management Program: a request runs SQL before login](#unstable-slope-management-program-a-request-runs-sql-before-login)
+- [Tegsoft Contact Center: an upload plants a web shell](#tegsoft-contact-center-an-upload-plants-a-web-shell)
 - [GPGME: a long OpenPGP user ID frees memory twice](#gpgme-a-long-openpgp-user-id-frees-memory-twice)
 - [Mitel MiCollab: a conferencing request runs commands before login](#mitel-micollab-a-conferencing-request-runs-commands-before-login)
 - [Elecbrakes: a phone in Bluetooth range applies the trailer brakes](#elecbrakes-a-phone-in-bluetooth-range-applies-the-trailer-brakes)
@@ -301,6 +303,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Confirm the [Unstable Slope Management Program](#unstable-slope-management-program-a-request-runs-sql-before-login) instance is the one fixed on or around **October 19**. CISA rates [CVE-2026-129175](https://www.cve.org/CVERecord?id=CVE-2026-129175) CVSS 3.1 9.8 Critical: a request with no login runs SQL and can take the database. Three more are High: deleting a user, creating a user, and skipping the Keycloak login when you already have a local password. CISA names no build. Until the operator confirms the fix, keep it off the internet, then reset local passwords. None is in KEV.
+- **New this update:** Upgrade [Tegsoft Contact Center](#tegsoft-contact-center-an-upload-plants-a-web-shell) to **latest-202611161510 or later**. TR-CERT rates [CVE-2026-14914](https://www.cve.org/CVERecord?id=CVE-2026-14914) CVSS 3.1 10.0 Critical: an upload plants a web shell, and the score says no login. A second flaw, 5.3, exposes system information and has the same floor. The upgrade does not remove a file already uploaded. Neither is in KEV.
 - **New this update:** Update [GPGME](#gpgme-a-long-openpgp-user-id-frees-memory-twice) to **2.3.1**, or install **Gpg4win 5.1.2** on Windows, and restart what had the library loaded. GnuPG calls [CVE-2026-129975](https://www.cve.org/CVERecord?id=CVE-2026-129975) a critical security bug, and the CVE record is still reserved, so there is no score. An OpenPGP key with a very long user ID frees memory twice. GnuPG says that can take data out of the application, and that remote code execution cannot be ruled out. Debian 13 is `gpgme1.0` **1.24.2-3+deb13u1** and Debian 12 is **1.18.0-3+deb12u1**. Debian testing has no package. A program that links its own copy does not move with the system package. It is not in KEV.
 - **New this update:** Apply the [MiCollab](#mitel-micollab-a-conferencing-request-runs-commands-before-login) patch in KB000129195, or upgrade past **10.3.0.18**. Mitel rates [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323) CVSS 3.1 10.0 Critical: a conferencing request with no login runs commands. A second, 9.0, needs content staged first. Build 10.3.0.18 is still affected until the patch is on it. Until then, keep the conferencing component off the internet. None is in KEV.
 - **New this update:** On an [Elecbrakes](#elecbrakes-a-phone-in-bluetooth-range-applies-the-trailer-brakes) EB2 or VM1, open the app and install the firmware. CISA rates [CVE-2026-96805](https://www.cve.org/CVERecord?id=CVE-2026-96805) and [CVE-2026-125273](https://www.cve.org/CVERecord?id=CVE-2026-125273) CVSS 3.1 9.6 Critical: a phone in Bluetooth range applies the trailer brakes, with no pairing. EB2 through 3.0.4.2.0 is fixed in **3.0.4.4.3**. VM1 before 1.3.4.2.1 is fixed in **1.3.4.2.1**. The update does not install itself. The ELBC2000 has no fix. None is in KEV.
@@ -538,6 +542,50 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Unstable Slope Management Program: a request runs SQL before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/usmp.md):** [Detection](details/usmp.md#detection) · [Remediation](details/usmp.md#remediation) · [Verification](details/usmp.md#verification) · [Timeline](details/usmp.md#timeline)
+
+**CVEs:** [CVE-2026-129175](https://www.cve.org/CVERecord?id=CVE-2026-129175), [CVE-2026-129176](https://www.cve.org/CVERecord?id=CVE-2026-129176), [CVE-2026-129179](https://www.cve.org/CVERecord?id=CVE-2026-129179), [CVE-2026-129177](https://www.cve.org/CVERecord?id=CVE-2026-129177), [CVE-2026-129178](https://www.cve.org/CVERecord?id=CVE-2026-129178), [CVE-2026-129174](https://www.cve.org/CVERecord?id=CVE-2026-129174)
+
+**CISA rates [CVE-2026-129175](https://www.cve.org/CVERecord?id=CVE-2026-129175) CVSS 3.1 9.8 Critical.** CISA is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`, and the record also carries CVSS 4.0 9.3. A request with no login injects SQL into the Unstable Slope Management Program, the web application federal land managers use to inventory slopes, and CISA says that can give root access and complete control of the database. [CVE-2026-129176](https://www.cve.org/CVERecord?id=CVE-2026-129176) is 8.2: a POST with no cookie deletes a user. [CVE-2026-129179](https://www.cve.org/CVERecord?id=CVE-2026-129179) is 8.1: a local password opens a session without the Keycloak flow. [CVE-2026-129177](https://www.cve.org/CVERecord?id=CVE-2026-129177) is 7.5: a POST with no cookie creates a user. Two more are Medium: unsalted MD5 passwords at 6.5, and a user list returned with no login at 5.3. [VA-26-324-01](https://raw.githubusercontent.com/cisagov/CSAF/develop/csaf_files/IT/white/2026/va-26-324-01.json), released 2026-11-20T18:51:46Z, says all six were fixed on or around 2026-10-19 and names no build. CISA does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21) for any of the six. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix | 2026-10-19; time unknown | "Fixed on or around 2026-10-19." No build number. |
+| **Public announcement** | **2026-11-20 18:51 UTC** | VA-26-324-01. Six CVEs. |
+| **Last updated** | **2026-11-21 15:10 EST (UTC−05:00)** | New item. Confirm the October 19 fix is running. |
+
+**Patch:** There is no public package. Confirm the instance is the one fixed on or around October 19, and keep it off the internet until the operator confirms that. Then reset local passwords. The fix does not undo a row that was already changed.
+
+Sources: [VA-26-324-01](https://raw.githubusercontent.com/cisagov/CSAF/develop/csaf_files/IT/white/2026/va-26-324-01.json), [detailed guide](details/usmp.md).
+
+---
+
+## Tegsoft Contact Center: an upload plants a web shell
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/tegsoft.md):** [Detection](details/tegsoft.md#detection) · [Remediation](details/tegsoft.md#remediation) · [Verification](details/tegsoft.md#verification) · [Timeline](details/tegsoft.md#timeline)
+
+**CVEs:** [CVE-2026-14914](https://www.cve.org/CVERecord?id=CVE-2026-14914), [CVE-2026-14915](https://www.cve.org/CVERecord?id=CVE-2026-14915)
+
+**TR-CERT rates [CVE-2026-14914](https://www.cve.org/CVERecord?id=CVE-2026-14914) CVSS 3.1 10.0 Critical.** TR-CERT is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`. An unrestricted upload in Tegsoft Contact Center, call-center software from a company in Turkey, lets someone upload a web shell. The notice does not say whether the upload needs a login; the score says it does not. Everything before **latest-202611161510** is affected. [CVE-2026-14915](https://www.cve.org/CVERecord?id=CVE-2026-14915) is 5.3 Medium, an information disclosure on the same builds. [TR-26-1588](https://siberguvenlik.gov.tr/guvenlik-bildirimleri/detay/tr-26-1588), dated November 20, says to upgrade to that build or later and names no workaround. NVD has not scored either. TR-CERT does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21) for either. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix build | 2026-11-16, read from the version string | latest-202611161510. No release note names the date. |
+| **Public announcement** | **2026-11-20; time/TZ unknown** | TR-26-1588. Both CVEs. |
+| **Last updated** | **2026-11-21 15:10 EST (UTC−05:00)** | New item. Upgrade to latest-202611161510. |
+
+**Patch:** Upgrade to **latest-202611161510 or later**. That floor covers both CVEs. The upgrade does not remove a file the upload already wrote.
+
+Sources: [TR-26-1588](https://siberguvenlik.gov.tr/guvenlik-bildirimleri/detay/tr-26-1588), [detailed guide](details/tegsoft.md).
 
 ---
 
