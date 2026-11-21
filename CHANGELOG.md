@@ -2,6 +2,12 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-21 07:10 EST (UTC−05:00) — Mitel MiCollab; pam-mysql; Elecbrakes
+
+- **Mitel:** Apply the [MiCollab patch in KB000129195](black-october/details/micollab.md#remediation), or upgrade past 10.3.0.18. Mitel rates CVE-2026-133323 CVSS 3.1 10.0: a conferencing request with no login runs commands. A second, 9.0, needs content staged first. Build 10.3.0.18 is still affected until the patch is on it. Until then, keep the conferencing component off the internet. None is in KEV.
+- **pam-mysql:** Debian's tracker now agrees with [DLA-4919-1](black-october/details/pam-mysql.md#remediation). On Debian 12, install `pam-mysql` 0.8.2-2+deb12u1 from bookworm-security and restart `sshd`. The main bookworm repository is still 0.8.2-2. Testing, unstable, and Ubuntu still have no package.
+- **Elecbrakes:** The fix is unchanged. Elecbrakes told iTnews that [60 to 70 percent](black-october/details/elecbrakes.md#timeline) of controllers connecting each day are on the latest firmware, and that the ELBC still has no firmware. The risk is reduced while the owner is connected through the phone or the remote.
+
 ## 2026-11-21 03:10 EST (UTC−05:00) — Elecbrakes; OpenJDK; Linux kernel; N-able
 
 - **Elecbrakes:** On an [EB2 or VM1](black-october/details/elecbrakes.md#remediation), open the app and install the firmware. CISA rates CVE-2026-96805 and CVE-2026-125273 CVSS 3.1 9.6: a phone in Bluetooth range applies the trailer brakes, with no pairing. EB2 through 3.0.4.2.0 is fixed in 3.0.4.4.3. VM1 before 1.3.4.2.1 is fixed in 1.3.4.2.1. The update does not install itself. The ELBC2000 has no fix. None is in KEV.

@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Mitel MiCollab: a conferencing request runs commands before login](#mitel-micollab-a-conferencing-request-runs-commands-before-login)
 - [Elecbrakes: a phone in Bluetooth range applies the trailer brakes](#elecbrakes-a-phone-in-bluetooth-range-applies-the-trailer-brakes)
 - [ASUS Control Center Express: a forged token is the administrator](#asus-control-center-express-a-forged-token-is-the-administrator)
 - [Frappe Framework: a signed-in user sends mail as someone else](#frappe-framework-a-signed-in-user-sends-mail-as-someone-else)
@@ -299,6 +300,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Apply the [MiCollab](#mitel-micollab-a-conferencing-request-runs-commands-before-login) patch in KB000129195, or upgrade past **10.3.0.18**. Mitel rates [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323) CVSS 3.1 10.0 Critical: a conferencing request with no login runs commands. A second, 9.0, needs content staged first. Build 10.3.0.18 is still affected until the patch is on it. Until then, keep the conferencing component off the internet. None is in KEV.
 - **New this update:** On an [Elecbrakes](#elecbrakes-a-phone-in-bluetooth-range-applies-the-trailer-brakes) EB2 or VM1, open the app and install the firmware. CISA rates [CVE-2026-96805](https://www.cve.org/CVERecord?id=CVE-2026-96805) and [CVE-2026-125273](https://www.cve.org/CVERecord?id=CVE-2026-125273) CVSS 3.1 9.6 Critical: a phone in Bluetooth range applies the trailer brakes, with no pairing. EB2 through 3.0.4.2.0 is fixed in **3.0.4.4.3**. VM1 before 1.3.4.2.1 is fixed in **1.3.4.2.1**. The update does not install itself. The ELBC2000 has no fix. None is in KEV.
 - **New this update:** Install [ASUS Control Center Express](#asus-control-center-express-a-forged-token-is-the-administrator) **v1.7.29 or later**, then update the agents from the console. ASUS rates [CVE-2026-114202](https://www.cve.org/CVERecord?id=CVE-2026-114202) CVSS 4.0 10.0 Critical: a hard-coded key lets a remote user forge an administrator token. Two more, 9.0 and 9.4, need a low-privileged account. The bulletin says anything before v1.7.29. The CVE records stop at v1.7.27. None is in KEV.
 - **New this update:** Upgrade [Frappe](#frappe-framework-a-signed-in-user-sends-mail-as-someone-else) to **15.127.1 or 16.60.1**. Frappe rates the mail flaw CVSS 3.1 8.5 High, and no CVE is assigned: a Website User sends mail as someone else and can attach files they should not read. Frappe says it has been exploited. There is no workaround. This is not Frappe Ghost.
@@ -537,13 +539,35 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Mitel MiCollab: a conferencing request runs commands before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/micollab.md):** [Detection](details/micollab.md#detection) · [Remediation](details/micollab.md#remediation) · [Verification](details/micollab.md#verification) · [Timeline](details/micollab.md#timeline)
+
+**CVEs:** [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323), [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303), [CVE-2026-133311](https://www.cve.org/CVERecord?id=CVE-2026-133311), [CVE-2026-133275](https://www.cve.org/CVERecord?id=CVE-2026-133275), [CVE-2026-133324](https://www.cve.org/CVERecord?id=CVE-2026-133324)
+
+**Mitel rates [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323) CVSS 3.1 10.0 Critical.** Mitel published the score in [MISA-2026-0012](https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012); MITRE's record repeats it. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:H`. The Audio, Web, and Video Conferencing component does not sanitize a parameter. A request with no login runs commands in the context of the system. Mitel names integrity and availability, and the vector assigns no confidentiality impact. [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303) is 9.0: XML injection runs commands when malicious content is already staged. Three more, 5.9, 5.3, and 5.3, are an information leak, a file upload, and an authentication bypass, all with no login. Mitel says using them together can amplify the impact, and it does not describe a chain. Affected is **10.3 (10.3.0.18) and earlier**. A host already on 10.3.0.18 still needs the patch in KB000129195, which requires a Mitel login. Mitel and CERT Santé do not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21) for any of the five. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-16; time/TZ unknown** | MISA-2026-0012. Internal IDs only. |
+| CVE records | 2026-11-19; time/TZ unknown | MITRE. Scores match Mitel's table. |
+| **Last updated** | **2026-11-21 07:10 EST (UTC−05:00)** | New item. Apply the patch, or upgrade past 10.3.0.18. |
+
+**Patch:** Apply the patch in **KB000129195** on **10.3.0.18**, or upgrade to a later release that includes it. Until then, keep the conferencing component off the internet. The update does not show whether a command already ran.
+
+Sources: [MISA-2026-0012](https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012), [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323), [detailed guide](details/micollab.md).
+
+---
+
 ## Elecbrakes: a phone in Bluetooth range applies the trailer brakes
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/elecbrakes.md):** [Detection](details/elecbrakes.md#detection) · [Remediation](details/elecbrakes.md#remediation) · [Verification](details/elecbrakes.md#verification) · [Timeline](details/elecbrakes.md#timeline)
 
 **CVEs:** [CVE-2026-96805](https://www.cve.org/CVERecord?id=CVE-2026-96805), [CVE-2026-125273](https://www.cve.org/CVERecord?id=CVE-2026-125273), [CVE-2026-124281](https://www.cve.org/CVERecord?id=CVE-2026-124281)
 
-**CISA rates [CVE-2026-96805](https://www.cve.org/CVERecord?id=CVE-2026-96805) and [CVE-2026-125273](https://www.cve.org/CVERecord?id=CVE-2026-125273) CVSS 3.1 9.6 Critical.** CISA ICS-CERT is the CNA. The vector for both is `CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:L/I:H/A:H`. CISA also scores both CVSS 4.0 8.5 High. A phone in Bluetooth range writes the brake-control characteristic with no pairing and no PIN, and a captured command can be replayed because commands have no sequence number. [CVE-2026-124281](https://www.cve.org/CVERecord?id=CVE-2026-124281) is CVSS 3.1 6.1 Medium: the firmware-update channel is not protected. [ICSA-26-323-02](https://www.cisa.gov/news-events/ics-advisories/icsa-26-323-02), released November 19, covers the **EB2 through 3.0.4.2.0**, the **VM1 before 1.3.4.2.1**, and **every ELBC2000**. The fixes are **EB2 3.0.4.4.3** and **VM1 1.3.4.2.1**, and the owner starts the update in the app. The ELBC2000, which is no longer sold, has no fix. Element Digital says the brakes release a few seconds after the attacker's connection drops, and that the firmware image is still unsigned. Elecbrakes told the researchers it knows of no reported damage or injury. CISA says no known public exploitation has been reported to it.
+**CISA rates [CVE-2026-96805](https://www.cve.org/CVERecord?id=CVE-2026-96805) and [CVE-2026-125273](https://www.cve.org/CVERecord?id=CVE-2026-125273) CVSS 3.1 9.6 Critical.** CISA ICS-CERT is the CNA. The vector for both is `CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:L/I:H/A:H`. CISA also scores both CVSS 4.0 8.5 High. A phone in Bluetooth range writes the brake-control characteristic with no pairing and no PIN, and a captured command can be replayed because commands have no sequence number. [CVE-2026-124281](https://www.cve.org/CVERecord?id=CVE-2026-124281) is CVSS 3.1 6.1 Medium: the firmware-update channel is not protected. [ICSA-26-323-02](https://www.cisa.gov/news-events/ics-advisories/icsa-26-323-02), released November 19, covers the **EB2 through 3.0.4.2.0**, the **VM1 before 1.3.4.2.1**, and **every ELBC2000**. The fixes are **EB2 3.0.4.4.3** and **VM1 1.3.4.2.1**, and the owner starts the update in the app. The ELBC2000, which is no longer sold, has no fix. Element Digital says the brakes release a few seconds after the attacker's connection drops, and that the firmware image is still unsigned. On November 20 Elecbrakes told iTnews that 60 to 70 percent of controllers connecting each day are on the latest firmware, that it does not sign firmware, and that the ELBC gets a separate fix. Elecbrakes told the researchers it knows of no reported damage or injury. CISA says no known public exploitation has been reported to it.
 
 **CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21) for any of the three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -552,9 +576,10 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 | Reported to Elecbrakes | 2026-05-18; time/TZ unknown | Element Digital. |
 | Fixed firmware | 2026-07-06; time/TZ unknown | EB2 3.0.4.4.3 and VM1 1.3.4.2.1. The owner starts the update. |
 | **Public announcement** | **2026-11-19; time/TZ unknown** | ICSA-26-323-02. No fix for the ELBC2000. |
-| **Last updated** | **2026-11-21 03:10 EST (UTC−05:00)** | New item. Update the EB2 and VM1. |
+| Vendor figures | 2026-11-20 6:05PM; timezone not stated | 60 to 70 percent of connecting controllers are on the latest firmware. |
+| **Last updated** | **2026-11-21 07:10 EST (UTC−05:00)** | The vendor published adoption figures. The ELBC2000 still has no fix. |
 
-**Patch:** Open the Elecbrakes app and install **EB2 3.0.4.4.3 or later**, or **VM1 1.3.4.2.1 or later**. The update does not install itself. The ELBC2000 has no firmware. Until one exists, it answers brake commands from any device in Bluetooth range while it is powered. The update does not show whether a command was already sent.
+**Patch:** Open the Elecbrakes app and install **EB2 3.0.4.4.3 or later**, or **VM1 1.3.4.2.1 or later**. The update does not install itself. The ELBC2000 has no firmware. Elecbrakes says the risk is reduced while the owner is connected through the phone or the remote. Until a firmware exists, it answers brake commands from any device in Bluetooth range while it is powered and the owner is not connected. The update does not show whether a command was already sent.
 
 Sources: [ICSA-26-323-02](https://www.cisa.gov/news-events/ics-advisories/icsa-26-323-02), [detailed guide](details/elecbrakes.md).
 
@@ -901,7 +926,8 @@ Sources: [JTL note](https://www.jtl-software.com/de/security/sicherheitshinweis-
 | Debian trixie | 2026-11-19 20:18:29 UTC | DSA-6643-1, 0.8.2-2.1+deb13u1. |
 | Debian bookworm | 2026-11-19 22:25:05 UTC | DLA-4919-1, 0.8.2-2+deb12u1. |
 | Ubuntu CVE page | 2026-11-20; time/TZ unknown | Priority Medium. Needs evaluation. No package. |
-| **Last updated** | **2026-11-20 07:04 EST (UTC−05:00)** | Ubuntu published a page and no package. |
+| Debian tracker agrees | 2026-11-21; time/TZ unknown | bookworm is resolved. The fix is in bookworm-security, not the main repository. |
+| **Last updated** | **2026-11-21 07:10 EST (UTC−05:00)** | The tracker no longer disagrees with the bookworm advisory. |
 
 **Patch:** On Debian 13, install `pam-mysql` **0.8.2-2.1+deb13u1** or later. On Debian 12, install **0.8.2-2+deb12u1** or later. Restart `sshd` and any other service that loaded the module. Do not set `PermitEmptyPasswords yes`: it trades this bypass for OpenSSH's own empty-password path. Delete rows whose password is NULL, and on a 1.0 beta delete empty ones too. Ubuntu's page marks every release Needs evaluation and names no version. Fedora, Nix, Mageia, Rosa, and ALT ship a 1.0 beta with no fixed release. The package update does not end a session that already exists.
 
@@ -7928,6 +7954,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Mitel MiCollab 10.3.0.18 or earlier** | Apply the patch in KB000129195, or upgrade past 10.3.0.18. Mitel rates CVE-2026-133323 10.0: a conferencing request runs commands with no login. Build 10.3.0.18 still needs the patch. Until then, keep the conferencing component off the internet. [Guide](details/micollab.md#remediation). |
 | **WatchGuard Dimension 2.0 before 2.3.2** | Upgrade to 2.3.2 or later. WatchGuard rates CVE-2026-86130 9.3: the log collection service runs code with no login. This is not the AuthPoint gateway. [Guide](details/watchguard-dimension.md#remediation). |
 | **IBM Guardium Data Protection 12.2** | Install 12.2.4. IBM rates two flaws 9.8: a request with no login runs code, and another reads the database. There is no workaround. [Guide](details/ibm-guardium.md#remediation). |
 | **Splunk Enterprise below 10.6.1, 10.4.5, 10.2.9, 10.0.12, or 9.4.17; SOAR below 8.8.0; Enterprise Security below 8.7.0** | Upgrade to those builds. Splunk rates CVE-2026-76536 9.4: an empty clustering secret changes the configuration with no login. Until the upgrade, set a non-empty `pass4SymmKey`. [Guide](details/splunk-november.md#remediation). |

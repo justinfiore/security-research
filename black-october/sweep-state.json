@@ -308,6 +308,10 @@
       "last_checked": "2026-11-20T15:56:01Z",
       "hold": "awaiting-fix"
     },
+    "elecbrakes.md": {
+      "last_checked": "2026-11-21T11:56:23Z",
+      "hold": "awaiting-fix"
+    },
     "electrum.md": {
       "last_checked": "2026-11-20T15:56:01Z",
       "hold": "none"
@@ -717,7 +721,7 @@
       "hold": "none"
     },
     "pam-mysql.md": {
-      "last_checked": "2026-11-20T11:55:55Z",
+      "last_checked": "2026-11-21T11:56:23Z",
       "hold": "awaiting-distros"
     },
     "pan-os.md": {

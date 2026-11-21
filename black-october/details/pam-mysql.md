@@ -1,6 +1,6 @@
 # pam-mysql: a passwordless account accepts any password
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-21 (America/New_York)
 
 [Main pam-mysql summary](../black-october-2026.md#pam-mysql-a-passwordless-account-accepts-any-password) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -36,7 +36,8 @@ On 0.8.x the exploitable row is a nullable password column. On the 1.0 betas the
 | Debian trixie advisory | 2026-11-19 20:18:29 UTC | DSA-6643-1, `pam-mysql` 0.8.2-2.1+deb13u1. [DSA-6643-1][dsa] |
 | Debian bookworm advisory | 2026-11-19 22:25:05 UTC | DLA-4919-1, `pam-mysql` 0.8.2-2+deb12u1. [DLA-4919-1][dla] |
 | Ubuntu CVE page | 2026-11-20; time/TZ unknown | Priority Medium. Needs evaluation on every listed release. No package and no USN. [Ubuntu CVE][ubu] |
-| **Last updated** | **2026-11-20 (America/New_York)** | Ubuntu published a page and no package. The Debian packages are unchanged. |
+| Debian tracker agrees | 2026-11-21; time/TZ unknown | bookworm is resolved at 0.8.2-2+deb12u1, in bookworm-security. The main repository is still 0.8.2-2. |
+| **Last updated** | **2026-11-21 (America/New_York)** | The tracker no longer disagrees with the bookworm advisory. |
 
 ## Detection
 
@@ -51,7 +52,7 @@ rpm -q pam_mysql 2>/dev/null
 
 No package means this module is not how that host authenticates. A service that never names `pam_mysql.so` in `/etc/pam.d` or `/etc/pam.d` fragments is not using it, even when the package is present.
 
-2. Compare the installed version with the table below. A version string alone is not enough on Debian: the tracker and the advisory disagree about bookworm, and the advisory is the one that shipped the fix.
+2. Compare the installed version with the table below. On Debian 12 the fixed package is in bookworm-security, not in the main bookworm repository, so a host that does not use the security pocket still has 0.8.2-2.
 
 3. Find passwordless rows in the table the module reads. The column name is whatever `passwdcolumn` is set to; `password` is the usual one:
 
@@ -100,7 +101,7 @@ Expire sessions for any account that shows such a login, and set a real password
 - [oss-security, CVE-2026-124749][oss] — Andrey Vasilevsky, posted 2026-11-19. The defect, the 9.8 and 8.1 readings, the measured `sshd` results, the shipping fix, and the distribution survey.
 - [DSA-6643-1][dsa] — Salvatore Bonaccorso, 2026-11-19 20:18:29 UTC. Debian 13 trixie, `pam-mysql` 0.8.2-2.1+deb13u1.
 - [DLA-4919-1][dla] — Emilio Pozuelo Monfort, 2026-11-19 22:25:05 UTC. Debian 12 bookworm, `pam-mysql` 0.8.2-2+deb12u1.
-- [Debian security tracker][deb] — read 2026-11-20. trixie (security) fixed at 0.8.2-2.1+deb13u1. bookworm and bookworm (security) both listed vulnerable, including at 0.8.2-2+deb12u1. forky and sid vulnerable at 0.8.2-3. The bookworm row disagrees with DLA-4919-1.
+- [Debian security tracker][deb] — read 2026-11-21. trixie is resolved at 0.8.2-2.1+deb13u1 (trixie-security). bookworm is resolved at 0.8.2-2+deb12u1, and that package is in bookworm-security; the main bookworm repository is still 0.8.2-2. forky and sid are open at 0.8.2-3. The November 20 reading had bookworm marked vulnerable, which disagreed with DLA-4919-1.
 - [CVE-2026-124749](https://www.cve.org/CVERecord?id=CVE-2026-124749) — reserved. No description and no score.
 - [Ubuntu CVE-2026-124749][ubu] — published and updated 2026-11-20. Priority Medium. `pam-mysql` is Needs evaluation on 26.10, 26.04 LTS, 24.04 LTS, 22.04 LTS, 20.04 LTS, 18.04 LTS, and 16.04 LTS. No fixed version and no USN. The search page still returns no match.
 - [Red Hat CVE API](https://access.redhat.com/hydra/rest/securitydata/cve/CVE-2026-124749.json) — 404 on 2026-11-20. No published score.
