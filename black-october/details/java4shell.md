@@ -1,6 +1,6 @@
 # OpenJDK: Java4Shell - a Base64 string corrupts memory
 
-**Last updated:** 2026-11-21 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Main Java4Shell summary](../black-october-2026.md#openjdk-java4shell---a-base64-string-corrupts-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -60,7 +60,7 @@ Other distributions now name their own builds. Amazon Corretto's changelogs, dat
    - **Amazon Linux:** ALAS2-2026-4123 on Amazon Linux 2, and ALAS2023-2026-3478 through 3481 on Amazon Linux 2023, all dated November 17. Java 8 and 11 are not affected.
    - **AlmaLinux:** ALSA-2026:100563 and ALSA-2026:100564 (November 19) for `java-17-openjdk` **17.0.21.1.2** on 8 and 9, and ALSA-2026:100568 for `java-21-openjdk` **21.0.13.1.2-1.2.el10.alma.1** on 10.
    - **Rocky Linux:** RLSA-2026:100563 and RLSA-2026:100567 (November 19) cover Rocky Linux 8 only. Rocky 9 and 10 have no advisory.
-   - **SUSE:** the page last modified November 19 still says Java 17, 21, and 25 on SUSE Linux Enterprise Server 15 SP7 and 16.0 are In progress. Java 8 and 11 are not affected.
+   - **SUSE:** on SUSE Linux Enterprise Server 15 SP7, install `java-17-openjdk` **17.0.21.1-150400.3.79.1** (SUSE-SU-2026:5393-1), `java-21-openjdk` **21.0.13.1-150600.3.40.1** (SUSE-SU-2026:5394-1), and `java-25-openjdk` **25.0.5.1-150700.15.23.1** (SUSE-SU-2026:5385-1), all dated 2026-11-20. The page, last modified 2026-11-21, still marks SLES 16.0 Java 17, 21, and 25 In progress, and SLES 16.1 Java 17 Affected. Java 8 and 11 are not affected.
 4. Until that build is running, Calif says start the JVM with `-XX:-UseBASE64Intrinsics`, or with `-XX:UseAVX=2` on x86-64 only. OpenJDK on ARM does not recognize the second flag and fails to start. Oracle's advisory and the OpenJDK advisory do not mention either flag.
 5. CISA's temporary control is to restrict and validate Base64 at the application boundary and limit unauthenticated access. That is not the fix.
 6. The restart does not show whether a request already corrupted memory.
@@ -86,10 +86,10 @@ The update does not show whether a request already ran code. A service Calif lis
 - [CISA alert][cisa] — November 17, 2026. Calls the flaw critical. Points at Oracle's advisory. Not a KEV listing.
 - [JDK 17.0.21.1 release notes](https://www.oracle.com/java/technologies/javase/17-0-21-1-relnotes.html) — release date November 17, 2026. Full version 17.0.21.1+4. Security baseline for the 17 family is that build. The 11 baseline listed there is 11.0.33.1+4 and the 8 baseline is 1.8.0_513-b04.
 - [Oracle Java downloads](https://www.oracle.com/java/technologies/downloads/) — read 2026-11-18. Lists 27.0.1.1, 25.0.5.1, 21.0.13.1, 17.0.21.1, and 8u513.
-- [CISA KEV JSON][kev] — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-21. CVE-2026-114938 is not listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-22. CVE-2026-114938 is not listed.
 - [Ubuntu CVE-2026-114938](https://ubuntu.com/security/CVE-2026-114938) — last updated 20 November 2026. Fixed on 22.04, 24.04, and 26.04 LTS for openjdk-17, 21, and 25. openjdk-27 is fixed only on 26.10.
 - [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-114938) — bookworm, trixie, and sid fixed. Forky still vulnerable: openjdk-21 21.0.13.0.3+1-1 and openjdk-25 25.0.5+8-1.
-- [SUSE CVE-2026-114938](https://www.suse.com/security/cve/CVE-2026-114938.html) — last modified 2026-11-19. SLES 15 SP7 and 16.0 Java 17, 21, and 25 are In progress.
+- [SUSE CVE-2026-114938](https://www.suse.com/security/cve/CVE-2026-114938.html) — last modified 2026-11-21. SLES 15 SP7 Java 17, 21, and 25 are Released: SUSE-SU-2026:5393-1, 5394-1, and 5385-1, dated 2026-11-20. SLES 16.0 is still In progress. SLES 16.1 Java 17 is Affected.
 - [Amazon Linux](https://explore.alas.aws.amazon.com/CVE-2026-114938.html) — fixed 2026-11-17. ALAS2-2026-4123 and ALAS2023-2026-3478 through 3481.
 - [AlmaLinux ALSA-2026:100568](https://errata.almalinux.org/10/ALSA-2026-100568.html) — 2026-11-19. AlmaLinux 8 and 9 are ALSA-2026:100563 and ALSA-2026:100564.
 - [Rocky Linux RLSA-2026:100563](https://errata.rockylinux.org/api/v2/advisories/RLSA-2026:100563) — published 2026-11-19, Rocky Linux 8 only. No Rocky 9 or 10 advisory.
