@@ -1,6 +1,6 @@
 # Linux kernel: a nested AMD guest reads the host
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-21 (America/New_York)
 
 [Main KVM summary](../black-october-2026.md#linux-kernel-a-nested-amd-guest-reads-the-host) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -14,8 +14,8 @@ Scores disagree, and the disagreement is about impact, not about whether the cod
 |---|---|---|
 | kernel.org (CNA) | CVSS 3.1 8.8 High | High confidentiality, integrity, and availability, scope changed. |
 | Ubuntu | CVSS 4.0 8.2 High; priority High | Availability only, on the vulnerable system and a subsequent system. |
-| Red Hat | CVSS 3.1 5.6 Moderate, draft | Availability only. The page says a nested guest can leave the MMU inconsistent and cause a denial of service. Its security-data feed's draft score is 7.8 and its threat rating is Important; the public page is the one to cite. |
-| SUSE | CVSS 3.1 5.5, moderate | Availability only, scope unchanged. |
+| Red Hat | CVSS 3.1 7.8 Important, preliminary | High confidentiality, integrity, and availability, scope changed. The public page now describes the use-after-free with guest read and write of host memory. The security-data feed still marks the score a draft. |
+| SUSE | CVSS 3.1 7.8, important | High confidentiality, integrity, and availability, scope changed. The page's earlier 5.5 said availability only. |
 
 DigitalOcean, which reproduced the read on its own hosts, treated it as critical for that fleet. The 8.8 is the score this guide uses for admission. The lower scores are the vendors' own reading of how often the condition is met.
 
@@ -39,7 +39,7 @@ DigitalOcean, which reproduced the read on its own hosts, treated it as critical
 | Stable and longterm | 2026-11-17; time/TZ unknown | 7.3.5, 6.18.64, and 6.12.118. [Terra][terra] |
 | **Public announcement** | **2026-11-18 08:42:06 UTC** | CVE record published. Terra's write-up is the same day. [CVE][cve] |
 | DigitalOcean | 2026-11-19; time/TZ unknown | Says its Droplet fleet is live-patched. Customers of that fleet have nothing to install. [DigitalOcean][do] |
-| **Last updated** | **2026-11-20 (America/New_York)** | New item. Distributions have not all shipped a package. |
+| **Last updated** | **2026-11-21 (America/New_York)** | Oracle shipped UEK packages. SUSE reversed the lines it had called fixed. |
 
 ## Detection
 
@@ -57,7 +57,7 @@ Upstream fixed releases are **7.3.5**, **6.18.64**, and **6.12.118**. The record
 
 Reboot into a kernel that contains commit [`c7c288d178cb`](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c7c288d178cb). Drain guests first. Until that kernel is available, set the `nested` parameter of `kvm_amd` to `0` and reload the module, which means the guests have to stop. That turns nested virtualization off. Guests can no longer run their own virtual machines, including the kind a desktop hypervisor, an Android emulator, or a CI sandbox uses. Tell those tenants before changing it.
 
-| Distribution | Status, checked 2026-11-20 | Source |
+| Distribution | Status, checked 2026-11-21 | Source |
 |---|---|---|
 | Upstream | Fixed in 7.3.5, 6.18.64, 6.12.118, and 7.4-rc2. Also fixed before 5.16 and before 6.1 on those short branches. | [CVE record][cve] |
 | RHEL 10 | Affected. No erratum. | [Red Hat][rh] |
@@ -65,11 +65,12 @@ Reboot into a kernel that contains commit [`c7c288d178cb`](https://git.kernel.or
 | RHEL 8 | Not affected, including `kernel-rt`. | [Red Hat][rh] |
 | RHEL 7 | Not affected. | [Red Hat][rh] |
 | Ubuntu 22.04, 24.04, 26.04, 26.10 | Vulnerable. No package. 20.04's base kernel is Not affected; its HWE 5.15 kernel is Vulnerable. Priority High. | [Ubuntu][ubuntu] |
-| Debian bookworm, trixie | Vulnerable, including bookworm security 6.1.192-2 and trixie security 6.12.117-1. The unstable fix is 7.3.5-1, and forky and sid are still on 7.3.4-1. | [Debian][debian] |
-| SUSE | SLES 15 SP7, 16.0, and 16.1 are Already fixed. SLES 15 SP4, SP5, and SP6 LTSS are Affected. SLES 12 SP5 is Not affected. No advisory is cross-referenced, so no package version is named. | [SUSE][suse] |
-| Amazon Linux | Not in the public ALAS2 index on 2026-11-20. No package to name. | [ALAS][alas] |
+| Debian bookworm, trixie, forky | Vulnerable. Bookworm security is 6.1.192-2, trixie is 6.12.117-1, and forky is 7.3.4-1. Sid is fixed at 7.3.5-1. | [Debian][debian] |
+| SUSE | SLES 15 SP7, 16.0, and 16.1 are Affected. The page had called them Already fixed. SLES 15 SP4, SP5, and SP6 LTSS are Affected. SLES 12 SP5 is Not affected. No package version is named. Overall state Pending. | [SUSE][suse] |
+| Amazon Linux | Not in the public ALAS index on 2026-11-21. No package to name. | [ALAS][alas] |
+| Oracle Linux | UEK only. ELSA-2026-500643 (2026-11-19) is `kernel-uek-5.15.0-326.224.5.2.el8uek` and `kernel-uek-5.15.0-326.224.5.2.el9uek`. ELSA-2026-500644 (2026-11-19) is `kernel-uek-6.12.0-208.112.5.3.el9uek` and `kernel-uek-6.12.0-208.112.5.3.el10uek`. The RHEL-compatible kernel has no erratum. | [Oracle][oracle] |
 
-Red Hat's feed also lists OpenShift `ose-rhel-coreos-9` and the OpenShift 5 images as Affected, and `ose-rhel-coreos-8` as Not affected. AlmaLinux, Rocky Linux, and Oracle Linux follow the RHEL kernel they rebuild; none had a named erratum in the sources read for this run. A live-patch vendor is relevant only when it names this commit. DigitalOcean says it shipped its own live patch and that Droplet customers have nothing to install. That claim is about DigitalOcean's hosts, not about a kernel you run yourself.
+Red Hat's feed also lists OpenShift `ose-rhel-coreos-9` and the OpenShift 5 images as Affected, and `ose-rhel-coreos-8` as Not affected. AlmaLinux and Rocky Linux follow the RHEL kernel they rebuild, and neither had a named erratum in the sources read for this run. Oracle's UEK packages are in the table; its RHEL-compatible kernel is not among them. A live-patch vendor is relevant only when it names this commit. DigitalOcean says it shipped its own live patch and that Droplet customers have nothing to install. That claim is about DigitalOcean's hosts, not about a kernel you run yourself.
 
 ## Verification
 
@@ -86,10 +87,11 @@ Terra and DigitalOcean publish no indicator: no address, no file, and no log lin
 - [CVE-2026-99312][cve] — kernel.org, published 2026-11-18 08:42:06 UTC, updated 2026-11-19. CVSS 3.1 8.8. Nested SVM only. Unaffected from 6.12.118, 6.18.64, and 7.3.5.
 - [Terra write-up][terra] — Oren Yomtov, November 18, 2026. Read of about 127 GB on a DigitalOcean droplet. Write of 32 bytes on Terra's own server. Reported 2026-10-21. Introduced by the fix for CVE-2022-3344.
 - [DigitalOcean][do] — Tyler Healy, November 19, 2026. Confirms the read and the write. Fix tagged in v7.4-rc2 on November 9 and shipped in 7.3.5, 6.18.64, and 6.12.118 on November 17. Droplet fleet live-patched.
-- [Red Hat][rh] — CVSS 3.1 5.6 Moderate, draft. RHEL 9 and 10 affected, RHEL 7 and 8 not affected. No erratum. The security-data feed's draft base score is 7.8 and its statement describes a use-after-free with guest read and write of host memory; the public page describes denial of service.
+- [Red Hat][rh] — CVSS 3.1 7.8 Important, preliminary. The public page now describes the use-after-free with guest read and write of host memory. RHEL 9 and 10 affected, RHEL 7 and 8 not affected. No erratum. The security-data feed still marks the score a draft.
 - [Ubuntu][ubuntu] — priority High, CVSS 4.0 8.2, last updated November 20, 2026. No fixed package.
-- [Debian][debian] — bookworm, trixie, forky, and sid vulnerable. Unstable fixed version 7.3.5-1.
-- [SUSE][suse] — moderate, CVSS 3.1 5.5. SLES 15 SP7 and 16 already fixed, with no package version. Older LTSS lines affected. Page last modified November 18, 2026.
+- [Debian][debian] — bookworm, trixie, and forky vulnerable. Sid fixed at 7.3.5-1.
+- [SUSE][suse] — important, CVSS 3.1 7.8. SLES 15 SP7, 16.0, and 16.1 are Affected; the page had called them Already fixed. No package version. Page last modified November 21, 2026.
+- [Oracle][oracle] — ELSA-2026-500643 and ELSA-2026-500644, both 2026-11-19, cover the UEK kernels only. The RHEL-compatible kernel has no erratum.
 - [CISA KEV JSON][kev] — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-20. Not listed.
 
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-99312
@@ -99,5 +101,6 @@ Terra and DigitalOcean publish no indicator: no address, no file, and no log lin
 [ubuntu]: https://ubuntu.com/security/CVE-2026-99312
 [debian]: https://security-tracker.debian.org/tracker/CVE-2026-99312
 [suse]: https://www.suse.com/security/cve/CVE-2026-99312.html
+[oracle]: https://linux.oracle.com/cve/CVE-2026-99312.html
 [alas]: https://alas.aws.amazon.com/
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

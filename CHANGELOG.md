@@ -2,6 +2,13 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-21 19:10 EST (UTC−05:00) — GL.iNet; REDCap
+
+- **GL.iNet:** On a [router or KVM](black-october/details/glinet.md#detection), look for a process running `crond -i /tmp/.log`. GL.iNet says an unauthorized party used a vulnerability in its cloud service to install malware on a subset of devices, disclosed November 20. No CVE is assigned and no score is published. The cloud path is closed, and that does not remove malware already installed. If the process is there, factory reset the device, or on a KVM install the security beta now. Stable firmware is scheduled for November 22. On a KVM that matched, also check the computer connected to it.
+- **REDCap:** [Unit 42's October 7 note](black-october/details/redcap.md#compromise-response) says CVE-2026-90817 was used to deploy XMRig miners on public-facing servers, with at least four workers on one wallet. The upgrade to 16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard does not remove the miner, the crontab, or the SSH key. It has been in KEV since November 18, due November 21.
+- **F5:** [BIG-IP CNF](black-october/details/f5-bigip-nov18.md#detection) is now on the affected list for four of the six. F5's articles, updated November 19, name CNF 2.4.0–2.4.2, 2.3.0–2.3.4, and 2.2.0–2.2.5, fixed in 2.4.2-EHF1, 2.3.4-EHF1, and 2.2.5-EHF1. The CVE records for CVE-2026-116953 and CVE-2026-120292 still do not name CNF. The articles are the newer statement.
+- **Linux kernel:** On Oracle Linux, if you boot UEK, install [ELSA-2026-500643 or ELSA-2026-500644](black-october/details/linux-kvm-nested-init.md#remediation) and reboot. Those cover CVE-2026-99312 only, and they do not fix the RHEL-compatible kernel. SUSE's page now marks SLES 15 SP7, 16.0, and 16.1 Affected; it had called them fixed, and it still names no package. Red Hat's page now scores it 7.8 and describes the host-memory read and write. Debian and Ubuntu still have no package.
+
 ## 2026-11-21 15:10 EST (UTC−05:00) — Unstable Slope Management Program; Tegsoft
 
 - **Unstable Slope Management Program:** Confirm the instance is the one [fixed on or around October 19](black-october/details/usmp.md#remediation). CISA rates CVE-2026-129175 CVSS 3.1 9.8: a request with no login runs SQL and can take the database. Three more are High: a request deletes a user, a request creates a user, and a local password skips the Keycloak login. CISA names no build. Until the operator confirms the fix, keep it off the internet, then reset local passwords. None is in KEV.

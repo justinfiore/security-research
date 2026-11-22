@@ -24,7 +24,7 @@ This is not the September APM flaw, [CVE-2026-94127](https://www.cve.org/CVEReco
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
 | **Public announcement** | **2026-11-18 15:00 UTC** | K000164058 indexes 22 articles. CVE-2026-123637's record says `datePublic` 15:00 UTC. [F5][index] |
-| **Last updated** | **2026-11-18 (America/New_York)** | F5's CNA added BIG-IP Next CNF to three of the six. The K articles still say it is not vulnerable. |
+| **Last updated** | **2026-11-21 (America/New_York)** | F5's articles now list BIG-IP CNF as affected for three of the six. |
 
 ## Detection
 
@@ -33,10 +33,10 @@ The six are not one range. Read the version, then read the virtual server's iRul
 | CVE | The configuration that exposes it | Product |
 |---|---|---|
 | [CVE-2026-123637](https://www.cve.org/CVERecord?id=CVE-2026-123637) | APM provisioned, and a per-request policy with both the Client Information agent and Endpoint Security agents | BIG-IP APM |
-| [CVE-2026-116953](https://www.cve.org/CVERecord?id=CVE-2026-116953) | An iRule uses `GENERICMESSAGE::route` on client traffic | BIG-IP, all modules, and BIG-IP Next for Kubernetes |
+| [CVE-2026-116953](https://www.cve.org/CVERecord?id=CVE-2026-116953) | An iRule uses `GENERICMESSAGE::route` on client traffic | BIG-IP, all modules, BIG-IP CNF, and BIG-IP Next for Kubernetes |
 | [CVE-2026-120285](https://www.cve.org/CVERecord?id=CVE-2026-120285) | An HTTP profile and an iRule that uses `PSC::ip_address` | BIG-IP, all modules, BIG-IP CNF, BIG-IP Next CNF, and BIG-IP Next for Kubernetes |
-| [CVE-2026-120292](https://www.cve.org/CVERecord?id=CVE-2026-120292) | An HTTP profile and an iRule that uses `MR::message route` | BIG-IP, all modules, and BIG-IP Next for Kubernetes |
-| [CVE-2026-120722](https://www.cve.org/CVERecord?id=CVE-2026-120722) | An iRule uses `DNS::scrape` on client traffic | BIG-IP DNS, BIG-IP Next CNF, and BIG-IP Next for Kubernetes |
+| [CVE-2026-120292](https://www.cve.org/CVERecord?id=CVE-2026-120292) | An HTTP profile and an iRule that uses `MR::message route` | BIG-IP, all modules, BIG-IP CNF, and BIG-IP Next for Kubernetes |
+| [CVE-2026-120722](https://www.cve.org/CVERecord?id=CVE-2026-120722) | An iRule uses `DNS::scrape` on client traffic | BIG-IP DNS, BIG-IP CNF, BIG-IP Next CNF, and BIG-IP Next for Kubernetes |
 | [CVE-2026-121805](https://www.cve.org/CVERecord?id=CVE-2026-121805) | An iRule uses `PEM::subscriber` on client traffic | BIG-IP PEM, BIG-IP CNF, BIG-IP Next CNF, and BIG-IP Next for Kubernetes |
 
 F5's CVE record for CVE-2026-123637 names these affected floors, and says a version past the end of technical support was not evaluated:
@@ -49,7 +49,7 @@ F5's CVE record for CVE-2026-123637 names these affected floors, and says a vers
 
 The other five name their own hotfix builds in the article for that CVE. BIG-IP Next for Kubernetes is 2.4.0–2.4.2, 2.3.0–2.3.4, and 2.2.0–2.2.5, fixed in BNK-2.4.2-EHF1, BNK-2.3.4-EHF1, and BNK-2.2.5-EHF1 for CVE-2026-116953. A virtual server that does not use the command or the policy is outside that one flaw and can still be inside another.
 
-F5's CNA updated the records for CVE-2026-120285, CVE-2026-120722, and CVE-2026-121805 at 2026-11-18T22:56Z and added BIG-IP Next CNF, affected at 2.4.0, 2.3.0, and 2.2.0, and unaffected from the same three BNK engineering hotfixes. The K articles for those CVEs, read the same day, still say BIG-IP CNF is not vulnerable, and the index does not list Next CNF. Treat Next CNF as affected until F5 reconciles the two.
+F5's CNA updated the records for CVE-2026-120285, CVE-2026-120722, and CVE-2026-121805 at 2026-11-18T22:56Z and added BIG-IP Next CNF, affected at 2.4.0, 2.3.0, and 2.2.0, and unaffected from the same three BNK engineering hotfixes. The K articles for CVE-2026-116953, CVE-2026-120285, CVE-2026-120292, and CVE-2026-120722, updated November 19, now list BIG-IP CNF 2.4.0–2.4.2, 2.3.0–2.3.4, and 2.2.0–2.2.5 as affected, fixed in 2.4.2-EHF1, 2.3.4-EHF1, and 2.2.5-EHF1. The CVE records for CVE-2026-116953 and CVE-2026-120292 still do not name CNF, and the index, still dated November 18, does not list it either. The articles are the newer statement.
 
 ## Remediation
 

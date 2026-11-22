@@ -337,7 +337,7 @@
       "hold": "none"
     },
     "f5-bigip-nov18.md": {
-      "last_checked": "2026-11-21T00:01:58Z",
+      "last_checked": "2026-11-21T23:55:59Z",
       "hold": "none"
     },
     "fastify-http-proxy.md": {
@@ -433,7 +433,7 @@
       "hold": "none"
     },
     "grafana-mimir.md": {
-      "last_checked": "2026-11-21T00:01:58Z",
+      "last_checked": "2026-11-21T23:55:59Z",
       "hold": "none"
     },
     "gravity-forms.md": {
@@ -557,7 +557,7 @@
       "hold": "none"
     },
     "linux-kvm-nested-init.md": {
-      "last_checked": "2026-11-21T00:01:58Z",
+      "last_checked": "2026-11-21T23:55:59Z",
       "hold": "awaiting-distros"
     },
     "linux-noisytcp.md": {
@@ -581,7 +581,7 @@
       "hold": "none"
     },
     "litellm-guardrail.md": {
-      "last_checked": "2026-11-21T00:01:58Z",
+      "last_checked": "2026-11-21T23:55:59Z",
       "hold": "none"
     },
     "litellm.md": {
@@ -813,7 +813,7 @@
       "hold": "awaiting-fix"
     },
     "redcap.md": {
-      "last_checked": "2026-11-21T00:01:58Z",
+      "last_checked": "2026-11-21T23:55:59Z",
       "hold": "none"
     },
     "ruby-httpx.md": {
@@ -921,7 +921,7 @@
       "hold": "awaiting-fix"
     },
     "synology-dsm.md": {
-      "last_checked": "2026-11-21T00:01:58Z",
+      "last_checked": "2026-11-21T23:55:59Z",
       "hold": "none"
     },
     "tabularis.md": {
@@ -938,6 +938,10 @@
     },
     "teamviewer.md": {
       "last_checked": "2026-11-20T15:56:01Z",
+      "hold": "none"
+    },
+    "tegsoft.md": {
+      "last_checked": "2026-11-21T23:55:59Z",
       "hold": "none"
     },
     "telegram-clients.md": {
@@ -970,6 +974,10 @@
     },
     "unrealircd.md": {
       "last_checked": "2026-11-21T15:56:06Z",
+      "hold": "none"
+    },
+    "usmp.md": {
+      "last_checked": "2026-11-21T23:55:59Z",
       "hold": "none"
     },
     "vcenter.md": {
