@@ -2,6 +2,14 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-22 15:30 EST (UTC−05:00) — Entra Connect Health; OpenRouter; vCenter Tools; Qt packages
+
+- **Microsoft Entra Connect Health:** Read [Azure Service Health](black-october/details/entra-connect-health.md#remediation). Microsoft says a flaw in the Connect Health API, fixed on its servers on November 19, was used to read administrator and technical-contact email addresses and other tenant metadata. No CVE is assigned and there is nothing to install. If the notice names your tenant, warn those people about phishing and put phishing-resistant multifactor authentication on the privileged accounts.
+- **OpenRouter:** [Rotate a secret](black-october/details/openrouter.md#remediation) that was inside a prompt. OpenRouter said on November 22 that it removed three inference providers and took 125 endpoints off Zero Data Retention, after Dragos showed prompts were copied or kept. OpenRouter says its own systems were not breached. Together AI's stored samples are from June 24, July 4, July 8, and July 14. Phala's window for DeepSeek V4 Flash 0731 is October 21 through November 8 at 05:35 UTC. No CVE is assigned. Removing the endpoint does not expire the key.
+- **vCenter:** On Windows guests, update [VMware Tools](black-october/details/vcenter.md#remediation) to 13.1.5.0 on 13.x, and to 12.5.5 on 12.3.x, 12.4.x, and 12.5.x. VMSA-2026-0009.1's November 20 matrix names those versions. It does not name 11.x or 12.0 through 12.2. The FAQ still does, and it says it reflects the initial advisory. The vCenter floors are unchanged.
+- **Qt:** A distribution update still does not move [Qt](black-october/details/qt-qxml.md#remediation). Ubuntu, Debian, SUSE, and Red Hat now list CVE-2026-105925 and none has shipped a package. Ship Qt 6.8.10, 6.11.3, or 6.12.1 yourself. SUSE and Red Hat rescore it 5.5; the Qt Group's 8.2 stands.
+- **NoisyTCP:** On Debian sid, install [linux 7.3.5-1](black-october/details/linux-noisytcp.md#remediation) and reboot. forky stays 7.3.4-1. Ubuntu, Red Hat, SUSE, AlmaLinux, and Rocky Linux still have no package for CVE-2026-99288. It is not in KEV.
+
 ## 2026-11-22 12:10 EST (UTC−05:00) — SurrealDB; Idunno.AntiCsrf; Nexter Blocks Pro; distribution fixes
 
 - **SurrealDB:** Upgrade to [4.0.0 or later](black-october/details/surrealdb.md#remediation) and restart. VulnCheck rates CVE-2026-134292 CVSS 4.0 9.3 and CVSS 3.1 9.8: a JavaScript script calls a built-in function the user was denied. SurrealDB's own advisory rates the same issue High and names no CVE. 1.0.0 before 4.0.0 is affected. It is not in KEV. The upgrade does not show whether a script already called a function it was denied.

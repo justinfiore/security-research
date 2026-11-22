@@ -1,7 +1,7 @@
 {
   "items": {
     "3dexperience.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "awaiting-fix"
     },
     "7zip.md": {
@@ -125,7 +125,7 @@
       "hold": "none"
     },
     "batflat.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "awaiting-fix"
     },
     "bee-js.md": {
@@ -328,6 +328,10 @@
       "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
+    "entra-connect-health.md": {
+      "last_checked": "2026-11-22T19:55:59Z",
+      "hold": "none"
+    },
     "epics-base.md": {
       "last_checked": "2026-11-20T15:56:01Z",
       "hold": "none"
@@ -345,7 +349,7 @@
       "hold": "none"
     },
     "fastify-multipart.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "none"
     },
     "firefox.md": {
@@ -433,7 +437,7 @@
       "hold": "none"
     },
     "gpgme.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "none"
     },
     "gpustack.md": {
@@ -573,7 +577,7 @@
       "hold": "awaiting-distros"
     },
     "linux-noisytcp.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "awaiting-distros"
     },
     "linux-november-batch.md": {
@@ -637,7 +641,7 @@
       "hold": "none"
     },
     "moxa-switches.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "awaiting-fix"
     },
     "n-central.md": {
@@ -681,7 +685,7 @@
       "hold": "none"
     },
     "nodepress.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "awaiting-fix"
     },
     "northflank.md": {
@@ -701,7 +705,7 @@
       "hold": "awaiting-fix"
     },
     "octopus-deploy.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "none"
     },
     "oorexx.md": {
@@ -722,6 +726,10 @@
     },
     "openplc.md": {
       "last_checked": "2026-11-22T03:56:23Z",
+      "hold": "none"
+    },
+    "openrouter.md": {
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "none"
     },
     "openssh-musl.md": {
@@ -793,7 +801,7 @@
       "hold": "none"
     },
     "prime-cms.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "awaiting-fix"
     },
     "privilege-manager.md": {
@@ -813,7 +821,7 @@
       "hold": "awaiting-distros"
     },
     "qt-qxml.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "awaiting-distros"
     },
     "rails.md": {
@@ -841,7 +849,7 @@
       "hold": "none"
     },
     "ruby-httpx.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "none"
     },
     "ruby-november.md": {
@@ -945,7 +953,7 @@
       "hold": "none"
     },
     "synology-dsm-nov11.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "awaiting-fix"
     },
     "synology-dsm.md": {
@@ -977,7 +985,7 @@
       "hold": "awaiting-fix"
     },
     "tensei.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
+      "last_checked": "2026-11-22T19:55:59Z",
       "hold": "awaiting-fix"
     },
     "tum.md": {
@@ -1009,8 +1017,8 @@
       "hold": "none"
     },
     "vcenter.md": {
-      "last_checked": "2026-11-21T19:56:10Z",
-      "hold": "none"
+      "last_checked": "2026-11-22T19:55:59Z",
+      "hold": "awaiting-fix"
     },
     "veeam-backup.md": {
       "last_checked": "2026-11-20T15:56:01Z",

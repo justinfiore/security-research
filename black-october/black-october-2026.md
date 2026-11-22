@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Microsoft Entra Connect Health: a flaw exposed administrator email addresses](#microsoft-entra-connect-health-a-flaw-exposed-administrator-email-addresses)
+- [OpenRouter: inference providers kept prompts they said they would not](#openrouter-inference-providers-kept-prompts-they-said-they-would-not)
 - [SurrealDB: a script skips the function check](#surrealdb-a-script-skips-the-function-check)
 - [ASP.NET: Idunno.AntiCsrf runs code from a form field](#aspnet-idunnoanticsrf-runs-code-from-a-form-field)
 - [WordPress: Nexter Blocks Pro registers an administrator](#wordpress-nexter-blocks-pro-registers-an-administrator)
@@ -311,6 +313,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** If Azure Service Health sent an [Entra Connect Health](#microsoft-entra-connect-health-a-flaw-exposed-administrator-email-addresses) notice, warn the named administrators about phishing and put phishing-resistant multifactor authentication on those accounts. Microsoft says a flaw in the Connect Health API, found November 9 and fixed on Microsoft's servers on November 19, was used to read tenant metadata, including administrator and technical-contact email addresses. No CVE is assigned and no score is published. There is nothing to install. The notice is how Microsoft says it identified an affected tenant.
+- **New this update:** If a prompt sent through [OpenRouter](#openrouter-inference-providers-kept-prompts-they-said-they-would-not) contained a secret, rotate that secret. OpenRouter said on November 22 that it took three inference providers off the platform and removed 125 endpoints from Zero Data Retention, after Dragos showed prompts were copied or kept. OpenRouter says its own systems were not breached. No CVE is assigned. Together AI says stored samples from June 24, July 4, July 8, and July 14 were downloaded. Phala says DeepSeek V4 Flash 0731 requests it served from October 21 through November 8 at 05:35 UTC should be treated as exposed. Removing an endpoint does not expire a key that was inside a prompt.
 - **New this update:** Upgrade [SurrealDB](#surrealdb-a-script-skips-the-function-check) to **4.0.0 or later** and restart. VulnCheck rates [CVE-2026-134292](https://www.cve.org/CVERecord?id=CVE-2026-134292) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8: a JavaScript script calls a built-in function the user was denied. SurrealDB's own advisory rates the same issue High and names no CVE. 1.0.0 before 4.0.0 is affected. It is not in KEV.
 - **New this update:** Remove [Idunno.AntiCsrf](#aspnet-idunnoanticsrf-runs-code-from-a-form-field). Mandiant rates [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914) CVSS 4.0 9.3 Critical: a form field is deserialized before it is checked, and a request with no login runs code as the IIS worker. Every version through 0.9.1 Beta, the last release, is affected, and there is no patch. Mandiant says exploitation has been observed and names no indicator. It is not in KEV. Removing the module does not undo a request that already ran.
 - **New this update:** Update [Nexter Blocks Pro](#wordpress-nexter-blocks-pro-registers-an-administrator) to **5.0.11 or later**. Wordfence rates [CVE-2026-125294](https://www.cve.org/CVERecord?id=CVE-2026-125294) CVSS 3.1 9.8 Critical: a registration with no login creates an administrator, on a site that allows user registration and shows the Login | Register block. Every version through 5.0.10 is affected. The free plugin is not named. It is not in KEV. The update does not remove an administrator account that was already created.
@@ -342,7 +346,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Update [OpenPLC Runtime](#openplc-a-race-creates-an-administrator-before-login) to **4.3.0 or later**. CISA rates [CVE-2026-126088](https://www.cve.org/CVERecord?id=CVE-2026-126088) CVSS 4.0 9.2: two requests at once create administrator accounts, with no login. 4.2.4 and earlier are affected. It is not in KEV.
 - **New this update:** Upgrade [Eclipse Ditto](#eclipse-ditto-a-query-parameter-picks-the-user) to **3.8.15 or 3.9.9**. Eclipse rates [CVE-2026-120753](https://www.cve.org/CVERecord?id=CVE-2026-120753) CVSS 4.0 9.1: a query parameter picks the user, and the default chart lets a Bearer request through with no login. It is not in KEV.
 - **New this update:** Update [JTL-Shop](#jtl-shop-the-installer-still-runs-after-the-shop-is-installed) to **5.8.4, 5.7.6, 5.6.6, or 5.5.5**. JTL rates [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058) CVSS 4.0 9.2: the web installer still runs after the shop is installed. The note is November 12. The record is November 19. It is not in KEV.
-- **New this update (CISA KEV):** Update [vCenter](#vmware-vcenter-a-network-request-skips-login) to **9.1.1.0200, 9.0.2.0200, or 8.0 U3m**. Broadcom rates [CVE-2026-123890](https://www.cve.org/CVERecord?id=CVE-2026-123890) CVSS 3.1 9.8 Critical: a network request skips login and opens a session as `administrator@vsphere.local`. CISA added it on November 20, due November 23, and requires forensic triage. Google says ARMORY CASTLE used it in early September, before the patch. These builds are not a Quick Patch, and 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1. VMware Tools for Windows 11.x and 12.x are fixed in **12.5.5**, and 13.x in **13.1.5.0**. vCenter 7.0 has no public fix. ESX does not need an update. A vCenter that was unpatched in September should be checked for an SSO account you did not create.
+- **New this update (CISA KEV):** Update [vCenter](#vmware-vcenter-a-network-request-skips-login) to **9.1.1.0200, 9.0.2.0200, or 8.0 U3m**. Broadcom rates [CVE-2026-123890](https://www.cve.org/CVERecord?id=CVE-2026-123890) CVSS 3.1 9.8 Critical: a network request skips login and opens a session as `administrator@vsphere.local`. CISA added it on November 20, due November 23, and requires forensic triage. Google says ARMORY CASTLE used it in early September, before the patch. These builds are not a Quick Patch, and 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1. VMware Tools for Windows goes to **13.1.5.0** on 13.x and **12.5.5** on 12.3.x, 12.4.x, and 12.5.x. The November 20 matrix does not list 11.x. vCenter 7.0 has no public fix. ESX does not need an update. A vCenter that was unpatched in September should be checked for an SSO account you did not create.
 - **New this update:** Upgrade [PHP](#php-the-november-19-security-releases) to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** and restart every worker. PHP rates seven flaws CVSS 4.0 9.2 Critical. Two are fixed only on 8.5 and 8.6. The October 21 builds leave all seven in place. Depthfirst says one of them, the interrupted session write, is still present. PHP's advisory says the fix truncates the file first. None of the seven is in KEV. This is not PHP2Shell.
 - **New this update:** Upgrade [SmarterMail](#smartermail-an-application-password-is-guessable) to a current build. **9817** is the installer. The Zero Day Initiative rates [CVE-2026-126969](https://www.cve.org/CVERecord?id=CVE-2026-126969) CVSS 3.0 9.1 Critical: application passwords were guessable, with no login. Two more are 8.8 and need a login. ZDI says Build 9735, from August 27, is the fix. Do not stop there. Application passwords from before 9735 have to be reissued. None is in KEV.
 - **New this update:** Upgrade on-premises [TeamCity](#teamcity-a-signed-in-user-runs-code-on-the-server) to **2026.2.2**, or to **2026.1.6** on the 2026.1 line. [CVE-2026-133080](https://www.cve.org/CVERecord?id=CVE-2026-133080) is CVSS 3.1 8.8: Maven repository settings run code. [CVE-2026-133089](https://www.cve.org/CVERecord?id=CVE-2026-133089) is 8.1: the TFS helper process exposes a command server with no login. 2026.2.1 and 2026.1.5 leave both. 2025.11 has no build named for either. None is in KEV.
@@ -558,6 +562,53 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Microsoft Entra Connect Health: a flaw exposed administrator email addresses
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/entra-connect-health.md):** [Detection](details/entra-connect-health.md#detection) · [Remediation](details/entra-connect-health.md#remediation) · [Verification](details/entra-connect-health.md#verification) · [Timeline](details/entra-connect-health.md#timeline)
+
+**CVEs:** No CVE is assigned.
+
+**No vendor or CNA has published a CVSS score.** Microsoft has not published an MSRC advisory. BleepingComputer's November 21 report quotes Microsoft's Azure Service Health notice of November 20 and a Microsoft spokesperson. The notice says a flaw in the Entra Connect Health API, introduced on July 23 and found on November 9, was exploited. Microsoft deployed a server-side fix on November 19 and concluded that unauthorized read-only access to tenant-level metadata had occurred. It says it found no unauthorized configuration changes. The exposed information was administrator and technical-contact email addresses, tenant identifiers and directory-sync status, Connect Health onboarding status, and an expired certificate for an internal service Microsoft decommissioned in late 2024. Microsoft says passwords, hashes, tokens, valid keys, on-premises topology, and Azure subscription information were not exposed. It has not said who did it, how many tenants were affected, or when it began.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Flaw introduced | 2026-07-23; time unknown | Microsoft's notice, as reported by BleepingComputer. |
+| **Server-side fix** | **2026-11-19; time unknown** | Microsoft says this stops further exploitation. |
+| **Investigation concluded** | **2026-11-20; time unknown** | Notices sent through Azure Service Health. |
+| **Public report** | **2026-11-21 13:01 EST (UTC−05:00)** | BleepingComputer. The page prints 01:01 PM and no zone. |
+| **Last updated** | **2026-11-22 15:30 EST (UTC−05:00)** | New item. Nothing to install. |
+
+**Patch:** There is no customer-side update. Read Azure Service Health. If the notice is there, warn the named administrators about phishing that uses the tenant details, put phishing-resistant multifactor authentication on those accounts, and review their sign-in logs. The script at aka.ms/ConnectHealth/scripts shows the current metadata, not what was read. The fix does not show what was done with the addresses afterward.
+
+Sources: [BleepingComputer](https://www.bleepingcomputer.com/news/security/microsoft-entra-connect-health-flaw-exploited-to-steal-tenant-data/), [detailed guide](details/entra-connect-health.md).
+
+---
+
+## OpenRouter: inference providers kept prompts they said they would not
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/openrouter.md):** [Detection](details/openrouter.md#detection) · [Remediation](details/openrouter.md#remediation) · [Verification](details/openrouter.md#verification) · [Timeline](details/openrouter.md#timeline)
+
+**CVEs:** No CVE is assigned.
+
+**No vendor or CNA has published a CVSS score.** OpenRouter's announcement, dated November 22, says Dragos found inference providers whose data was compromised or whose data policies were not kept. OpenRouter took three providers off the platform, removed 125 endpoints from Zero Data Retention eligibility, and notified potentially affected customers. It says the testing did not show a breach of OpenRouter. Dragos, on November 19, says that from July through November it sent about two million prompts with unique credentials, that attackers copied requests at three hosting providers (the earliest in mid-July, and two of them included Zero Data Retention requests), and that it has not named those three. Together AI's November 21 notice is a stored-sample download: a credential for a private Hugging Face repository reached a public repository, and the party downloaded samples from MiniMax M3, GLM-5.2, and Kimi K2.6, primarily on June 24, July 4, July 8, and July 14. Phala's November 10 report says DeepSeek V4 Flash 0731 requests OpenRouter routed to Phala from October 21 at 00:00 UTC through November 8 at 05:35 UTC should be treated as exposed. Confirmed canary misuse there is October 21 and 22 only.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Dragos post** | **2026-11-19 08:00; timezone not stated on the page** | Three unnamed provider compromises. |
+| **Together notice** | **2026-11-21; time unknown** | Stored samples downloaded. |
+| **OpenRouter announcement** | **2026-11-22; time unknown** | Three providers off-boarded. 125 endpoints removed from Zero Data Retention. |
+| **Last updated** | **2026-11-22 15:30 EST (UTC−05:00)** | New item. Rotate a secret that was inside a prompt. |
+
+**Patch:** There is nothing to install. Rotate a secret that was inside a prompt in those windows. On Together AI, turn on Zero Data Retention for an account that sends sensitive prompts; Together says that is now the default for new accounts only. OpenRouter removing an endpoint does not expire a key that already left, and it has not published the list of 125.
+
+Sources: [OpenRouter](https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers), [Dragos](https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens), [Together AI](https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026), [detailed guide](details/openrouter.md).
 
 ---
 
@@ -1198,9 +1249,9 @@ Sources: [oss-security](https://www.openwall.com/lists/oss-security/2026/11/19/7
 | Exploitation | early September 2026; day and time unknown | ARMORY CASTLE, before the patch. |
 | **Public announcement and fixes** | **2026-11-19; CVE record 14:02:38 UTC** | VMSA-2026-0009. |
 | **CISA KEV** | **2026-11-20; catalog released 17:48:39 UTC** | CVE-2026-123890. Federal due date 2026-11-23. |
-| **Last updated** | **2026-11-20 15:10 EST (UTC−05:00)** | KEV listing. Tools 11.x and 12.x are fixed in 12.5.5. |
+| **Last updated** | **2026-11-22 15:30 EST (UTC−05:00)** | Tools follow the November 20 matrix: 13.x, and 12.3 through 12.5. Not 11.x. |
 
-**Patch:** Update vCenter to **9.1.1.0200, 9.0.2.0200, or 8.0 U3m**. Cloud Foundation 5.x goes to **5.2.5**. These updates are not eligible for vCenter Quick Patch. **8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1**; Broadcom says to wait for 9.1.2, or to move to 9.1.1 first and patch there. SDDC Manager is **9.1.1.0200, 9.0.2.0100, or 5.2.5**. VMware Tools for Windows goes to **13.1.5.0** on 13.x and **12.5.5** on 12.x and 11.x. vCenter 7.0 has no public fix. There is no workaround. ESX does not need an update for this advisory. A vCenter that was unpatched in September should be reviewed for an SSO account you did not create. The update does not remove one.
+**Patch:** Update vCenter to **9.1.1.0200, 9.0.2.0200, or 8.0 U3m**. Cloud Foundation 5.x goes to **5.2.5**. These updates are not eligible for vCenter Quick Patch. **8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1**; Broadcom says to wait for 9.1.2, or to move to 9.1.1 first and patch there. SDDC Manager is **9.1.1.0200, 9.0.2.0100, or 5.2.5**. VMware Tools for Windows goes to **13.1.5.0** on 13.x and **12.5.5** on 12.3.x, 12.4.x, and 12.5.x. The November 20 matrix does not list 11.x or 12.0 through 12.2. vCenter 7.0 has no public fix. There is no workaround. ESX does not need an update for this advisory. A vCenter that was unpatched in September should be reviewed for an SSO account you did not create. The update does not remove one.
 
 Sources: [VMSA-2026-0009](https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39495), [GTIG](https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere), [detailed guide](details/vcenter.md).
 
@@ -1969,9 +2020,10 @@ Sources: [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270), [Deb
 | Debian forky fixed; Ubuntu marks Vulnerable | Tracker and Ubuntu page read 2026-11-17 | Debian forky is 7.3.4-1 fixed, with sid. Ubuntu `linux` is Vulnerable on 16.04 through 26.10, with no package. On November 16 Ubuntu said Needs evaluation and forky was still vulnerable. |
 | Amazon Linux fixed | 2026-11-12 and 2026-11-17; time unknown | ALAS2-2026-4124 at 4.14.355-287.769. The 5.10 extra is `kernel-5.10.273-275.1133`, ALAS2KERNEL-5.10-2026-139, released November 12. |
 | Ubuntu page reread | 2026-11-19; time unknown | Still no package. The page now says last updated 19 November 2026. |
-| **Last updated** | **2026-11-19 15:01 EST (UTC−05:00)** | Amazon's 5.10 extra is fixed. Ubuntu, Red Hat, SUSE, Alma, and Rocky still have no package. |
+| Debian sid | Tracker read 2026-11-22 | sid is 7.3.5-1 fixed. forky stays 7.3.4-1. |
+| **Last updated** | **2026-11-22 15:30 EST (UTC−05:00)** | Debian sid moved to 7.3.5-1. Ubuntu, Red Hat, SUSE, Alma, and Rocky still have no package. |
 
-**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1), trixie at 6.12.117-1 (DSA-6628-1), and forky and sid at 7.3.4-1. Amazon Linux 2 is fixed at 4.14.355-287.769, and the 5.10 extra at `kernel-5.10.273-275.1133`. Amazon Linux 2023's `kernel6.18` is 6.18.62-127.179. Oracle Linux UEK is fixed on 7, 8, 9, and 10. Red Hat 8, 9, and 10 have no erratum. Ubuntu 16.04 through 26.10 is Vulnerable, with no package; the page was last updated 19 November 2026. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. Alma and Rocky have no production erratum. See the [distribution table](details/linux-noisytcp.md#detection).
+**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1), trixie at 6.12.117-1 (DSA-6628-1), forky at 7.3.4-1, and sid at 7.3.5-1. Amazon Linux 2 is fixed at 4.14.355-287.769, and the 5.10 extra at `kernel-5.10.273-275.1133`. Amazon Linux 2023's `kernel6.18` is 6.18.62-127.179. Oracle Linux UEK is fixed on 7, 8, 9, and 10. Red Hat 8, 9, and 10 have no erratum. Ubuntu 16.04 through 26.10 is Vulnerable, with no package; the page was last updated 20 November 2026. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. Alma and Rocky have no production erratum. See the [distribution table](details/linux-noisytcp.md#detection).
 
 Sources: [oss-security](https://www.openwall.com/lists/oss-security/2026/11/15/2), [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-99288), [detailed guide](details/linux-noisytcp.md).
 
@@ -2098,14 +2150,14 @@ Sources: [GHSA-gmhr-r4mc-w935](https://github.com/fastify/fastify-multipart/secu
 
 **The Qt Group rates [CVE-2026-105925](https://www.cve.org/CVERecord?id=CVE-2026-105925) CVSS 4.0 8.2 High.** The Qt Group is the CNA. The vector is `CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:N/VI:N/VA:H/SC:N/SI:N/SA:H/R:U/U:Green`. A document parsed with `QXmlSimpleReader::parse()` can allocate without a bound and exhaust memory, stopping the application and possibly the machine. The person at the computer has to get the application to parse the document. Affected: Qt **5.0.0 before 6.8.10**, **6.9.0 before 6.11.3**, and **6.12.0 before 6.12.1**. The fix is **6.8.10, 6.11.3, or 6.12.1** or later. Qt 5 has no release named; the mitigation is to parse only trusted documents. Two earlier advisories the same week, CVE-2026-97845 at 4.3 and CVE-2026-103645 at 1.1, are below this threshold and are fixed in the same 6.8.10 and 6.11.3 releases.
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-16; NVD published 08:16 UTC** | The Qt Group's advisory shows the date and no time. |
-| **Last updated** | **2026-11-16 12:10 EST (UTC−05:00)** | New item. Update Qt. |
+| **Last updated** | **2026-11-22 15:30 EST (UTC−05:00)** | Distributions list the CVE and still ship no package. |
 
-**Patch:** Update to Qt **6.8.10, 6.11.3, or 6.12.1** or later and ship that build. On Qt 5, stop parsing untrusted documents with `QXmlSimpleReader`. No distribution advisory was found on November 16.
+**Patch:** Update to Qt **6.8.10, 6.11.3, or 6.12.1** or later and ship that build. On Qt 5, stop parsing untrusted documents with `QXmlSimpleReader`. Ubuntu, Debian, SUSE, and Red Hat had not shipped a package as of November 22. SUSE and Red Hat rescore it CVSS 3.1 5.5; the Qt Group's 8.2 is the score above.
 
 Sources: [Qt advisory](https://www.qt.io/blog/security-advisory-cve-2026-105925), [CVE-2026-105925](https://www.cve.org/CVERecord?id=CVE-2026-105925), [detailed guide](details/qt-qxml.md).
 

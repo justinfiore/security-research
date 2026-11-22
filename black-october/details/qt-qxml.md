@@ -1,6 +1,6 @@
 # Qt: a document parsed by QXmlSimpleReader exhausts memory
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Main Qt summary](../black-october-2026.md#qt-a-document-parsed-by-qxmlsimplereader-exhausts-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -28,17 +28,18 @@ The Qt Group's blog published two related `QXmlSimpleReader` and codec advisorie
 | CVE-2026-97845 advisory | 2026-11-12; time/TZ unknown | Uncontrolled recursion in the same class. CVSS 4.0 4.3 Medium. [Qt][97845] |
 | CVE-2026-103645 advisory | 2026-11-13; time/TZ unknown | Integer overflow in `QTextCodec`. CVSS 4.0 1.1 Low. ICU builds only. [Qt][103645] |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | The Qt Group published the advisory and the CVE record. NVD's published time is 08:16 UTC. [Qt][adv] |
-| **Last updated** | **2026-11-16 (America/New_York)** | New item. Update Qt. |
+| Distribution trackers | 2026-11-22; time unknown | Ubuntu, Debian, SUSE, and Red Hat now list the CVE. None names a released package. [Ubuntu][ubuntu] |
+| **Last updated** | **2026-11-22 (America/New_York)** | The distributions have a tracker and still no package. |
 
 ## Detection
 
-Read the Qt version the application actually loads, not the one a package manager happens to list first. `qmake -query QT_VERSION` or the version resource of `Qt6Core` answers for a build that ships its own Qt. A distribution package needs the distribution's version mapping, which this entry does not have: no distribution advisory was found on November 16.
+Read the Qt version the application actually loads, not the one a package manager happens to list first. `qmake -query QT_VERSION` or the version resource of `Qt6Core` answers for a build that ships its own Qt. A distribution package is not a fix yet. Checked 2026-11-22: Ubuntu marks `qt6-5compat` and `qtbase-opensource-src` Needs evaluation; Debian marks both vulnerable, including unstable; SUSE marks every listed line Affected and the overall status Pending; Red Hat rates it Moderate, CVSS 3.1 5.5, and bug 2574015 was still NEW on 2026-11-17 with no erratum. SUSE and Red Hat rescore the same flaw 5.5. The Qt Group's 8.2 is the score this guide follows.
 
 An application that never calls `QXmlSimpleReader::parse()` does not reach the flaw. Confirm that before treating every Qt install as exposed.
 
 ## Remediation
 
-1. Update to **Qt 6.8.10, 6.11.3, or 6.12.1** or later, and ship that build. The advisory's patch archives are the alternative for a tree you compile yourself.
+1. Update to **Qt 6.8.10, 6.11.3, or 6.12.1** or later, and ship that build. The advisory's patch archives are the alternative for a tree you compile yourself. Ubuntu, Debian, SUSE, and Red Hat had not shipped a package as of 2026-11-22, so a distribution update does not move the library.
 2. On Qt 5, which has no release named here, stop parsing untrusted documents with `QXmlSimpleReader`.
 3. The update does not restart a process that already exhausted memory. Restart it.
 
@@ -56,8 +57,13 @@ The result is memory exhaustion, not code execution. No source reports exploitat
 - [CVE-2026-105925](https://www.cve.org/CVERecord?id=CVE-2026-105925) — Qt Group, published 2026-11-16. Same score. Affected 5.0.0 before 6.8.10, 6.9.0 before 6.11.3, 6.12.0 before 6.12.1.
 - [Qt advisory, CVE-2026-97845][97845] — published 2026-11-12. CVSS 4.0 4.3 Medium.
 - [Qt advisory, CVE-2026-103645][103645] — published 2026-11-13. CVSS 4.0 1.1 Low.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, released 2026-11-13T20:24:18.3008Z, read 2026-11-16. CVE-2026-105925 is not in it.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, read 2026-11-22. CVE-2026-105925 is not in it.
+- [Ubuntu CVE-2026-105925][ubuntu] — read 2026-11-22. Needs evaluation. No package.
+- [Debian security tracker](https://security-tracker.debian.org/tracker/CVE-2026-105925) — read 2026-11-22. Vulnerable in bookworm, trixie, forky, and sid.
+- [SUSE CVE-2026-105925](https://www.suse.com/security/cve/CVE-2026-105925.html) — read 2026-11-22. Pending. SUSE's score is CVSS 3.1 5.5.
+- [Red Hat CVE-2026-105925](https://access.redhat.com/security/cve/CVE-2026-105925) — read 2026-11-22. Moderate, CVSS 3.1 5.5. No erratum.
 
 [adv]: https://www.qt.io/blog/security-advisory-cve-2026-105925
+[ubuntu]: https://ubuntu.com/security/CVE-2026-105925
 [97845]: https://www.qt.io/blog/security-advisory-cve-2026-97845
 [103645]: https://www.qt.io/blog/security-advisory-cve-2026-103645

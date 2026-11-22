@@ -1,6 +1,6 @@
 # VMware vCenter: a network request skips login
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Main vCenter summary](../black-october-2026.md#vmware-vcenter-a-network-request-skips-login) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -14,7 +14,7 @@ The same advisory fixes four more flaws. Two are High and need a login on SDDC M
 | [CVE-2026-123891](https://www.cve.org/CVERecord?id=CVE-2026-123891) | Important, 8.1. `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N` | SQL injection. A logged-in user reads and writes the SDDC Manager database. | SDDC Manager 9.1.1.0200, 9.0.2.0100, 5.2.5. |
 | [CVE-2026-123892](https://www.cve.org/CVERecord?id=CVE-2026-123892) | Important, 7.2. `CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H` | Command injection. A logged-in user runs a command on the appliance. | the same three SDDC Manager builds. |
 | [CVE-2026-123893](https://www.cve.org/CVERecord?id=CVE-2026-123893) | Moderate, 6.7. `CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H` | A local administrator on SDDC Manager becomes root. | the same three SDDC Manager builds. |
-| [CVE-2026-123894](https://www.cve.org/CVERecord?id=CVE-2026-123894) | Moderate, 6.7. `CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H` | VMware Tools for Windows accepts a SAML token. The attacker already has a privileged process in a Windows guest that uses guest alias mapping. The escalation stays inside that guest. | Tools 13.1.5.0 for 13.x, and 12.5.5 for 12.x and 11.x. 12.4.10, inside 12.5.5, covers Windows 32-bit. |
+| [CVE-2026-123894](https://www.cve.org/CVERecord?id=CVE-2026-123894) | Moderate, 6.7. `CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H` | VMware Tools for Windows accepts a SAML token. The attacker already has a privileged process in a Windows guest that uses guest alias mapping. The escalation stays inside that guest. | Tools 13.1.5.0 for 13.x, and 12.5.5 for 12.3.x, 12.4.x, and 12.5.x. 12.4.10, inside 12.5.5, covers Windows 32-bit. The November 20 matrix does not list 11.x or 12.0 through 12.2. |
 
 GTIG describes CVE-2026-123890 as an unauthenticated Secure Remote Password session-key disclosure over DCE/RPC on TCP 2012. With the administrator session, the attacker can run commands and copy `data.mdb` through the `vmdird` interface `vmdirdbcp`. Broadcom's FAQ says this is not the July flaw, [CVE-2026-59309](https://www.cve.org/CVERecord?id=CVE-2026-59309), and that a system patched for that one still needs this update. Mandiant says BONESAW ran in early September against a vCenter that was already patched for the July flaw. None of the five is a guest-to-host escape. ESX does not need an update for this advisory.
 
@@ -38,8 +38,8 @@ GTIG describes CVE-2026-123890 as an unauthenticated Secure Remote Password sess
 | **Public announcement and fixes** | **2026-11-19; CVE records from 14:02:38 UTC** | VMSA-2026-0009, initial advisory. [VMSA][vmsa] |
 | GTIG write-up | 2026-11-19; time/TZ unknown | Names the actor, the session, and the tooling. [GTIG][gtig] |
 | **CISA KEV** | **2026-11-20; catalog released 17:48:39 UTC** | CVE-2026-123890 added. Federal due date 2026-11-23. The other four are not listed. [KEV][kev] |
-| VMSA update | 2026-11-20; time/TZ unknown | VMSA-2026-0009.1. Tools 11.x and 12.x are fixed in 12.5.5, and 13.x in 13.1.5.0. [VMSA][vmsa] |
-| **Last updated** | **2026-11-20 (America/New_York)** | KEV listing, and the Tools range now includes 11.x. |
+| VMSA update | 2026-11-20; time/TZ unknown | VMSA-2026-0009.1, "to clarify the impacted VMware Tools versions." The response matrix lists 13.x.x.x and 12.3.x, 12.4.x, 12.5.x. It does not list 11.x or 12.0 through 12.2. [VMSA][vmsa] |
+| **Last updated** | **2026-11-22 (America/New_York)** | The Tools range follows the November 20 matrix, not the FAQ. |
 
 ## Detection
 
@@ -47,7 +47,7 @@ Read the build from the appliance, not from a plan.
 
 - vCenter 9.1 below 9.1.1.0200, 9.0 below 9.0.2.0200, and 8.0 below 8.0 U3m are inside CVE-2026-123890. Cloud Foundation 5.x below 5.2.5 is inside it. vCenter 7.0 has no public build.
 - SDDC Manager 9.1 below 9.1.1.0200, 9.0 below 9.0.2.0100, and 5.x below 5.2.5 are inside the three SDDC Manager flaws. The 9.0 floor is 9.0.2.0100, one build behind the vCenter floor.
-- Windows guests with VMware Tools 13.x below 13.1.5.0, or 11.x or 12.x below 12.5.5, are inside CVE-2026-123894. The advisory says the attack needs guest alias mapping, and it lists no workaround, so update Tools either way. `VGAuthCLI.exe list`, run as an administrator in the guest, lists aliases. Turning guest operations off in vSphere does not close this flaw.
+- Windows guests with VMware Tools 13.x below 13.1.5.0, or 12.3.x, 12.4.x, or 12.5.x below 12.5.5, are inside CVE-2026-123894. The November 20 response matrix does not list 11.x or 12.0 through 12.2. The FAQ still says 11.x, 12.x, and 13.x, and its header says it reflects the initial advisory of November 19. The matrix is the newer statement. The advisory says the attack needs guest alias mapping, and it lists no workaround. `VGAuthCLI.exe list`, run as an administrator in the guest, lists aliases. Turning guest operations off in vSphere does not close this flaw.
 
 GTIG's reconnaissance hit TCP 443, 2012, 389, 5480, and 9080. Port 2012 is the Directory Service RPC. A scan of that port is a lead, and a closed port today does not show whether it was open in September.
 
@@ -67,7 +67,7 @@ On vCenter, Mandiant saw SSH enabled through a PUT to `/rest/appliance/access/ss
 2. These vCenter updates are **not eligible for vCenter Quick Patch**. Use the ordinary update, including the VAMI. vSphere 8 has to be on Update 3 before 8.0 U3m applies.
 3. **vCenter 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1.** Broadcom says to wait for 9.1.2, or to move vCenter to 9.1.1 first and apply the security update there. [KB 67077][kb670] is the back-in-time note.
 4. Update SDDC Manager to **9.1.1.0200**, **9.0.2.0100**, or **5.2.5**. That update does not stop virtual machines.
-5. Update VMware Tools for Windows to **13.1.5.0** on 13.x, and to **12.5.5** on 12.x and 11.x. VMSA-2026-0009.1, dated 2026-11-20, adds 11.x and the rest of 12.x to the range the earlier text limited to 12.3. 12.4.10, inside 12.5.5, covers Windows 32-bit.
+5. Update VMware Tools for Windows to **13.1.5.0** on 13.x, and to **12.5.5** on 12.3.x, 12.4.x, and 12.5.x. VMSA-2026-0009.1, dated 2026-11-20, lists those versions and does not list 11.x or 12.0 through 12.2. 12.4.10, inside 12.5.5, covers Windows 32-bit. A guest the matrix does not name is not cleared by that omission: the FAQ, which still names 11.x, says it reflects the initial advisory.
 6. ESX hosts do not need an update for this advisory. Updating vCenter does not update them, and they do not have to move first.
 7. There is no workaround. A firewall in front of TCP 2012, 443, and 5480 is not a substitute for the build.
 
@@ -75,7 +75,7 @@ On vCenter, Mandiant saw SSH enabled through a PUT to `/rest/appliance/access/ss
 
 - The vCenter build is 9.1.1.0200, 9.0.2.0200, or 8.0 U3m, and the appliance has been restarted onto it.
 - SDDC Manager, where you run it, is 9.1.1.0200, 9.0.2.0100, or 5.2.5.
-- Windows guests report Tools 13.1.5.0, or 12.5.5 on 12.x and 11.x.
+- Windows guests the matrix names report Tools 13.1.5.0, or 12.5.5 on 12.3.x, 12.4.x, and 12.5.x.
 - Do not send an SRP exchange to port 2012.
 
 ## Compromise response
