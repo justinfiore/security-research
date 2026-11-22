@@ -1,10 +1,10 @@
 # Swarm: bee-js 13.3.0 and Swarm Desktop 0.56.2 were malicious releases
 
-**Last updated:** 2026-11-09 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Back to Swarm summary](../black-october-2026.md#swarm-bee-js-1330-and-swarm-desktop-0562-were-malicious-releases) · [Changelog](../../CHANGELOG.md)
 
-**GitHub Advisory Database rates [GHSA-hh7j-5m3j-23pf](https://github.com/advisories/GHSA-hh7j-5m3j-23pf) Critical. There is no CVSS score and no CVE.** The advisory type is malware, and the severity field is `critical`. `@ethersphere/bee-js` 13.3.0 was on npm from 00:09:50 UTC to 01:24:58 UTC on 2026-11-09. Its `postinstall` script downloads and runs code. About half an hour later, the same release identity published Swarm Desktop 0.56.2, which runs the same loader each time the app starts. Both were built by the project's own automation. The maintainer's note says 0.56.2 was published with stolen CI credentials. **13.2.0 is the last clean bee-js release. Swarm Desktop 0.56.3 replaces 0.56.2 and is otherwise the 0.56.1 code.** Removing either release does not remove a backdoor already installed and does not protect a key already sent.
+**GitHub Advisory Database rates [GHSA-hh7j-5m3j-23pf](https://github.com/advisories/GHSA-hh7j-5m3j-23pf) Critical. There is no CVSS score and no CVE.** The advisory type is malware, and the severity field is `critical`. `@ethersphere/bee-js` 13.3.0 was on npm from 00:09:50 UTC to 01:24:58 UTC on 2026-11-09. Its `postinstall` script downloads and runs code. About half an hour later, the same release identity published Swarm Desktop 0.56.2, which runs the same loader each time the app starts. Both were built by the project's own automation. The maintainer's note says 0.56.2 was published with stolen CI credentials. **13.2.0 is the last clean bee-js release. Swarm Desktop 0.56.3 replaces 0.56.2 and is otherwise the 0.56.1 code.** 0.56.4, published 2026-11-17, only warns a user whose computer ran 0.56.2. It is not a new fix. Removing either release does not remove a backdoor already installed and does not protect a key already sent.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. The GitHub advisory is the listing that exists. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 

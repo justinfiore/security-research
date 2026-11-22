@@ -1,6 +1,6 @@
 # Ivanti Endpoint Manager: a SQL query runs code before login
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Main Ivanti summary](../black-october-2026.md#ivanti-endpoint-manager-a-sql-query-runs-code-before-login) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -63,7 +63,7 @@ Ivanti's record does not publish an indicator. If the Core was reachable from an
 ## Sources
 
 - [CVE-2026-121653][cve] — Ivanti CNA, published 2026-11-10 15:28:19 UTC. CVSS 3.1 9.8. Unaffected at 2024 SU8. Default status affected.
-- [Ivanti EPM advisory, November 2026][epm] — the advisory URL in the CVE record. A read on 2026-11-11 returned the hub shell and no article text.
+- [Ivanti EPM advisory, November 2026][epm] — read 2026-11-22. Affected is 2024 SU7 and prior, resolved in 2024 SU8. Ivanti says it is not aware of any customer being exploited. A read on 2026-11-11 returned the hub shell and no article text. NCSC-NL's advisory of 2026-11-13 says public proof-of-concept code exists for CVE-2026-121653.
 - [CVE-2026-121683][cve683] — Ivanti CNA, published 2026-11-10 15:33:51 UTC. CVSS 3.1 9.4. Description names version 5.0.8. The versions list says unaffected at 5.0.8.
 - [Ivanti CSA advisory][csa] — article 000110079, last modified 2026-11-10 15:17:40, timezone not stated. Only 5.0.8 is affected. Resolved in 5.0.8.1. 5.0.7 and earlier are not affected. The table labels the score CVSS 3.0. Not aware of exploitation.
 - [CISA KEV][kev] — catalog 2026.11.10, checked 2026-11-11. Neither CVE is listed.

@@ -1,6 +1,6 @@
 # TeamCity: a signed-in user runs code on the server
 
-**Last updated:** 2026-11-21 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 On November 19 JetBrains' fixed-issues page added a second set. [CVE-2026-132891](https://www.cve.org/CVERecord?id=CVE-2026-132891) is Critical: an external pull request runs code on the server. JetBrains marks it fixed in **2026.2, 2026.1.4, and 2025.11.8**. The November 18 floors, 2026.1.3 and 2025.11.7, leave it in place. The same page lists more than twenty further High flaws in those builds, including Mercurial repository contents, the Kotlin DSL sandbox, and an unauthenticated denial of service through the agent protocol. The CVE record rates CVE-2026-132891 CVSS 3.1 9.8. JetBrains' page says Critical and does not print a number.
 
@@ -45,13 +45,13 @@ The build is on the server's Administration page. A 2026.1 build before 2026.1.4
 
 ## Remediation
 
-1. Upgrade TeamCity On-Premises to **2026.2.1 or later**, or to **2026.1.5 or later** on the 2026.1 line. [CVE-2026-133018](https://www.cve.org/CVERecord?id=CVE-2026-133018), published 2026-11-19, is CVSS 3.1 8.8: a UI-patches callback in the Kotlin DSL sandbox runs code, on 2026.2 before 2026.2.1 and on every build before 2026.1.5. 2026.2.0 fixes [CVE-2026-132892](https://www.cve.org/CVERecord?id=CVE-2026-132892) and leaves this one. 2026.1.4 and 2025.11.8 fix the pull-request flaw, CVE-2026-132891, and leave both. The CVE record rates CVE-2026-132892 CVSS 3.1 8.1 and says it is resolved only in 2026.2. 2025.11 has no build named for CVE-2026-133018.
+1. Upgrade TeamCity On-Premises to **2026.2.2 or later**, or to **2026.1.6 or later** on the 2026.1 line. [CVE-2026-133080](https://www.cve.org/CVERecord?id=CVE-2026-133080), published 2026-11-19, is CVSS 3.1 8.8: Maven repository settings run code, on 2026.2 before 2026.2.2 and on every build before 2026.1.6. [CVE-2026-133089](https://www.cve.org/CVERecord?id=CVE-2026-133089) is CVSS 3.1 8.1: the TFS helper process exposes a command server with no login, on the same ranges. 2026.2.1 and 2026.1.5 leave both. JetBrains' bug-fix post says 2026.2.2 fixes 40 security problems and 2026.1.6 fixes 38. [CVE-2026-133018](https://www.cve.org/CVERecord?id=CVE-2026-133018), also published 2026-11-19, is CVSS 3.1 8.8: a UI-patches callback in the Kotlin DSL sandbox runs code, fixed earlier, in 2026.2.1 and 2026.1.5. 2026.2.0 fixes [CVE-2026-132892](https://www.cve.org/CVERecord?id=CVE-2026-132892) and leaves that one. 2026.1.4 and 2025.11.8 fix the pull-request flaw, CVE-2026-132891, and leave both. The CVE record rates CVE-2026-132892 CVSS 3.1 8.1 and says it is resolved only in 2026.2. 2025.11 has no build named for CVE-2026-133018, CVE-2026-133080, or CVE-2026-133089.
 2. TeamCity Cloud needs nothing from you.
 3. JetBrains publishes no workaround for this set.
 
 ## Verification
 
-- The Administration page shows 2026.2.1 or later, or 2026.1.5 or later. 2026.2.0 still contains CVE-2026-133018. 2025.11.8 still contains CVE-2026-132892, and no 2025.11 build is named for CVE-2026-133018.
+- The Administration page shows 2026.2.2 or later, or 2026.1.6 or later. 2026.2.1 and 2026.1.5 still contain CVE-2026-133080 and CVE-2026-133089. 2025.11.8 still contains CVE-2026-132892, and no 2025.11 build is named for CVE-2026-133018, CVE-2026-133080, or CVE-2026-133089.
 - A project still builds. Do not send a Mercurial root built to inject an argument.
 
 ## Compromise response

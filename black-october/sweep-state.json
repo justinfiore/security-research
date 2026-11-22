@@ -5,7 +5,7 @@
       "hold": "awaiting-fix"
     },
     "7zip.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "acf-extended.md": {
@@ -25,7 +25,7 @@
       "hold": "none"
     },
     "advanced-form-integration.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "agent-framework.md": {
@@ -33,15 +33,15 @@
       "hold": "none"
     },
     "ahsaycbs.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "none"
     },
     "airbyte.md": {
       "last_checked": "2026-11-21T15:56:06Z",
       "hold": "none"
     },
     "ao3.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "apache-camel-saxon.md": {
@@ -49,19 +49,19 @@
       "hold": "none"
     },
     "apache-http-server.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "awaiting-distros"
     },
     "apache-mina.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "apache-ofbiz.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "apache-roller.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "apache-shiro.md": {
@@ -73,7 +73,7 @@
       "hold": "none"
     },
     "apache-tomcat-cluster.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "apache-wicket.md": {
@@ -81,7 +81,7 @@
       "hold": "none"
     },
     "apple-november.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "aruba-aos.md": {
@@ -89,7 +89,7 @@
       "hold": "none"
     },
     "aspera-faspex.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "assent-apple.md": {
@@ -113,11 +113,11 @@
       "hold": "none"
     },
     "b3log-solo.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "babelfish.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "barracuda.md": {
@@ -129,7 +129,7 @@
       "hold": "awaiting-fix"
     },
     "bee-js.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "beta9.md": {
@@ -145,7 +145,7 @@
       "hold": "none"
     },
     "bolo.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "bookit.md": {
@@ -157,23 +157,23 @@
       "hold": "none"
     },
     "brotli.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "none"
     },
     "btcpay-server.md": {
       "last_checked": "2026-11-20T15:56:01Z",
       "hold": "none"
     },
     "cboard.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "chainalysis.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "checkmk.md": {
-      "last_checked": "2026-11-20T15:56:01Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "checkpoint-gaia.md": {
@@ -185,15 +185,15 @@
       "hold": "none"
     },
     "circutor-powerstudio.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "cisco-broadworks.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "cisco-expressway.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "cisco-sdwan-keydrift.md": {
@@ -217,7 +217,7 @@
       "hold": "none"
     },
     "cloudpaste.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "confluence-axis.md": {
@@ -229,7 +229,7 @@
       "hold": "none"
     },
     "cpguard.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "craft-cms.md": {
@@ -237,11 +237,11 @@
       "hold": "none"
     },
     "cryptopayment-gateway.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "curl.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "cursor-claude-code.md": {
@@ -253,15 +253,15 @@
       "hold": "awaiting-fix"
     },
     "danfoss-ak-sm800a.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "datalore.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "debian-apt.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "debugbear.md": {
@@ -289,7 +289,7 @@
       "hold": "none"
     },
     "drupal.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "eclipse-ditto.md": {
@@ -305,7 +305,7 @@
       "hold": "none"
     },
     "edk2-pxe.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "elecbrakes.md": {
@@ -321,11 +321,11 @@
       "hold": "none"
     },
     "emacs.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "emudhra.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "epics-base.md": {
@@ -333,7 +333,7 @@
       "hold": "none"
     },
     "estatik.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "f5-bigip-nov18.md": {
@@ -349,7 +349,7 @@
       "hold": "none"
     },
     "firefox.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "foglight.md": {
@@ -361,11 +361,11 @@
       "hold": "none"
     },
     "fortimail.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "fortinet-october.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "fortisandbox.md": {
@@ -385,7 +385,7 @@
       "hold": "none"
     },
     "freeswitch.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "ghostscript.md": {
@@ -393,11 +393,11 @@
       "hold": "awaiting-distros"
     },
     "git-recursive-clone.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "gitea-28-3.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "gitea.md": {
@@ -409,11 +409,11 @@
       "hold": "none"
     },
     "gitlab-ruby.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "give-peer-to-peer.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "glinet.md": {
@@ -425,7 +425,7 @@
       "hold": "none"
     },
     "goahead-tls.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "google-mcp-toolbox.md": {
@@ -449,11 +449,11 @@
       "hold": "none"
     },
     "header-accordions.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "hickory-dns.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "ibm-api-connect.md": {
@@ -464,24 +464,28 @@
       "last_checked": "2026-11-22T03:56:23Z",
       "hold": "none"
     },
+    "idunno-anticsrf.md": {
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "awaiting-fix"
+    },
     "imagemagick.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "imgproxy.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "incus.md": {
-      "last_checked": "2026-11-20T15:56:01Z",
-      "hold": "none"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "awaiting-distros"
     },
     "ivanti-connect-secure.md": {
       "last_checked": "2026-11-21T15:56:06Z",
       "hold": "none"
     },
     "ivanti-epm.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "java4shell.md": {
@@ -493,11 +497,11 @@
       "hold": "none"
     },
     "jetbrains-hub.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "jetbrains-ides.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "jtl-shop.md": {
@@ -517,11 +521,11 @@
       "hold": "none"
     },
     "keycloak.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "ksmbd.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "kubeflow-pipelines.md": {
@@ -529,7 +533,7 @@
       "hold": "none"
     },
     "kyverno.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "langflow-ibm.md": {
@@ -537,7 +541,7 @@
       "hold": "none"
     },
     "langflow.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "laravel.md": {
@@ -545,19 +549,19 @@
       "hold": "none"
     },
     "lenovo-xcc.md": {
-      "last_checked": "2026-11-20T15:56:01Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "libreoffice.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "libreswan.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "libslirp.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "linux-fragnesia.md": {
@@ -577,11 +581,11 @@
       "hold": "awaiting-distros"
     },
     "linux-tcp-options.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "linux-tcp-rcu.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "litellm-enterprise-file-read.md": {
@@ -597,7 +601,7 @@
       "hold": "none"
     },
     "lxd-mtls.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "macos-unicode-paths.md": {
@@ -613,7 +617,7 @@
       "hold": "none"
     },
     "micollab.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "mistral-vibe.md": {
@@ -621,7 +625,7 @@
       "hold": "none"
     },
     "mitsubishi-iconics-genesis.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "monai-label.md": {
@@ -629,7 +633,7 @@
       "hold": "none"
     },
     "mongodb.md": {
-      "last_checked": "2026-11-20T15:56:01Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "moxa-switches.md": {
@@ -637,8 +641,8 @@
       "hold": "awaiting-fix"
     },
     "n-central.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "none"
     },
     "n8n-credential-guard.md": {
       "last_checked": "2026-11-20T15:56:01Z",
@@ -660,12 +664,16 @@
       "last_checked": "2026-11-17T15:56:20Z",
       "hold": "none"
     },
+    "nexter-blocks.md": {
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "none"
+    },
     "nextjs.md": {
       "last_checked": "2026-11-21T15:56:06Z",
       "hold": "none"
     },
     "nginx.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "nodejs-november.md": {
@@ -677,7 +685,7 @@
       "hold": "awaiting-fix"
     },
     "northflank.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "nukeviet.md": {
@@ -697,15 +705,15 @@
       "hold": "none"
     },
     "oorexx.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "openam.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "openemr.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "opengear-console.md": {
@@ -717,15 +725,15 @@
       "hold": "none"
     },
     "openssh-musl.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "opnsense-acme-client.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "optimizely.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "oracle-cpu-october.md": {
@@ -733,8 +741,8 @@
       "hold": "none"
     },
     "oracle-cspu-november.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "none"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "awaiting-fix"
     },
     "ovhcloud-cli.md": {
       "last_checked": "2026-11-17T15:56:20Z",
@@ -753,15 +761,15 @@
       "hold": "none"
     },
     "penpot.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "php-november-19.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "awaiting-distros"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "none"
     },
     "php2shell.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "pillow.md": {
@@ -769,7 +777,7 @@
       "hold": "none"
     },
     "plex2shell.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "postgresql-november.md": {
@@ -797,11 +805,11 @@
       "hold": "none"
     },
     "puppet.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "pwnescape.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "qt-qxml.md": {
@@ -825,7 +833,7 @@
       "hold": "none"
     },
     "red-hat-quay.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "redcap.md": {
@@ -837,7 +845,7 @@
       "hold": "none"
     },
     "ruby-november.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "s2member.md": {
@@ -857,8 +865,8 @@
       "hold": "none"
     },
     "screenconnect-rmm.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "none"
     },
     "seppmail.md": {
       "last_checked": "2026-11-20T15:56:01Z",
@@ -873,8 +881,8 @@
       "hold": "none"
     },
     "siemens-iot2050.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "none"
     },
     "siemens-software-center.md": {
       "last_checked": "2026-11-17T15:56:20Z",
@@ -885,7 +893,7 @@
       "hold": "none"
     },
     "silverstripe.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "siteguard.md": {
@@ -893,23 +901,23 @@
       "hold": "none"
     },
     "skb-zerocopy-lpe.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "smartermail.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "sogo.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "sonicos.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "sonicwall-gms.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "sophos-utm.md": {
@@ -925,11 +933,15 @@
       "hold": "none"
     },
     "supermicro-bmc.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
+    "surrealdb.md": {
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "none"
+    },
     "symfony.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "synology-dsm-nov11.md": {
@@ -949,7 +961,7 @@
       "hold": "none"
     },
     "teamcity.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "teamviewer.md": {
@@ -961,19 +973,19 @@
       "hold": "none"
     },
     "telegram-clients.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "awaiting-distros"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "awaiting-fix"
     },
     "tensei.md": {
       "last_checked": "2026-11-21T19:56:10Z",
       "hold": "awaiting-fix"
     },
     "tum.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "typo3.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "ugcs.md": {
@@ -985,11 +997,11 @@
       "hold": "none"
     },
     "ultralytics-parse-model.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "unrealircd.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "usmp.md": {
@@ -1005,15 +1017,15 @@
       "hold": "none"
     },
     "velocloud.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "none"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "awaiting-fix"
     },
     "vertiv-avocent-acs.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "voapi.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "wasmtime.md": {
@@ -1045,7 +1057,7 @@
       "hold": "none"
     },
     "windows-shell.md": {
-      "last_checked": "2026-11-20T15:56:01Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "wing-ftp.md": {
@@ -1061,7 +1073,7 @@
       "hold": "none"
     },
     "wordpress-plugins-frontend-admin.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "wordpress-plugins-latepoint.md": {
@@ -1073,19 +1085,19 @@
       "hold": "none"
     },
     "wordpress-plugins-nov7.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "wordpress-plugins-nov8.md": {
-      "last_checked": "2026-11-19T15:56:19Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "wordpress-plugins-nov9.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "wordpress-plugins-nov9b.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "wordpress-upgrade-window.md": {
@@ -1097,7 +1109,7 @@
       "hold": "awaiting-fix"
     },
     "wpsplinter.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-fix"
     },
     "wso2-api-manager.md": {
@@ -1109,7 +1121,7 @@
       "hold": "none"
     },
     "xen.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "awaiting-distros"
     },
     "yootheme-pro.md": {
@@ -1121,7 +1133,7 @@
       "hold": "none"
     },
     "zenoh-pico.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
+      "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
     "zoom-workplace.md": {
@@ -1129,12 +1141,12 @@
       "hold": "none"
     },
     "zyxel-aps.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "none"
     },
     "zyxel-cpe-nov17.md": {
-      "last_checked": "2026-11-21T15:56:06Z",
-      "hold": "none"
+      "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "awaiting-fix"
     },
     "zyxel-gs1900.md": {
       "last_checked": "2026-11-21T15:56:06Z",

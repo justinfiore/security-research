@@ -1,6 +1,6 @@
 # Penpot: a logged-in user takes over any file, and an SVG export runs a command
 
-**Last updated:** 2026-11-08 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Main Penpot summary](../black-october-2026.md#penpot-a-logged-in-user-takes-over-any-file-and-an-svg-export-runs-a-command) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -17,7 +17,7 @@ Four more advisories in the same November 5 batch are High, and the GitHub pages
 
 **GitHub rates [GHSA-4f36-m4hj-cv86](https://github.com/penpot/penpot/security/advisories/GHSA-4f36-m4hj-cv86) Critical, 9.9,** published September 25, and the page names [CVE-2026-105691](https://www.cve.org/CVERecord?id=CVE-2026-105691). A logged-in user sets a text fill color to a shell substitution. Exporting that file as SVG runs the command in the exporter. The body says a public share link makes the same export reachable without a login. The header says affected below 2.17.1 and patched in 1.17.2. The body says affected through 2.17.1 and fixed in 2.17.2. 2.17.2 is the version that exists. 1.17.2 is not a current Penpot release.
 
-2.18.6 is the current release, tagged November 4, and it is the floor that covers the November advisories. 2.17.2 covers the exporter and not the November set.
+2.18.7, tagged 2026-11-09, is the current floor. It covers the November advisories and [GHSA-9wg6-cgj3-jccq](https://github.com/penpot/penpot/security/advisories/GHSA-9wg6-cgj3-jccq), published 2026-11-16, which Penpot rates Critical and assigns no CVE: a `.penpot` import writes a library relation the archive never contained, and a later export reads that other team's file. Affected is 2.4.0 through 2.18.6. 2.19.0 is also fixed. 2.17.2 covers the exporter and not this set.
 
 **CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). The file-takeover page says no CVE is known, so it cannot be listed. The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 

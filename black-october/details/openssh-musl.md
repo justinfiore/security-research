@@ -1,6 +1,6 @@
 # OpenSSH: password login on musl accepts any long password
 
-**Last updated:** 2026-11-17 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Back to OpenSSH summary](../black-october-2026.md#openssh-password-login-on-musl-accepts-any-long-password) · [Changelog](../../CHANGELOG.md)
 
@@ -44,7 +44,7 @@ All of the following have to be true. A host that fails any one of them is outsi
 3. **Some account has `*` in its password field.** On Alpine that includes `root` (shipped as `root:*` since about 3.16), a key-only user from `adduser` without a password or from `usermod -p '*'`, a directory user reached through musl-nscd, and the `alpine` user on official tiny-cloud images. `PermitRootLogin prohibit-password`, which is the default, keeps root itself out of a password login. An account locked with `!` (`user:!`) cannot log in with a password or a key, and is not the target.
 4. **Some other local account has a `$5$` or `$6$` password hash.** One such account is enough. A machine where no account has a `$`-style hash is not affected. The tiny-cloud images (qcow2, VHD, and AMI) from **3.18.11 through 3.24.3** ship the `alpine` user with `*` and passwordless `doas`. They are safe on first boot and become reachable as soon as any `$6$` hash exists, for example a console password or user-data `hashed_passwd`.
 
-The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems to check. A Buildroot or Yocto image that embeds OpenSSH without PAM is in the same condition; those projects had not published a fixed release when this was written.
+The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems to check. A Buildroot or Yocto image that embeds OpenSSH without PAM is in the same condition. Yocto merged the 10.6p2 upgrade on 2026-11-09, including scarthgap through 5.0.21. Buildroot 2026.08.2, tagged 2026-11-17, sets the OpenSSH minor to `p2`. An image built before those still needs a rebuild.
 
 ## Remediation
 

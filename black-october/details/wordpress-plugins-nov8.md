@@ -1,6 +1,6 @@
 # WordPress plugins: checkout role, password reset, and file deletion
 
-**Last updated:** 2026-11-08 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Main plugin summary](../black-october-2026.md#wordpress-plugins-checkout-role-password-reset-and-file-deletion) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,7 @@ Three plugins, three CVEs, each scored Critical by Wordfence. They are not one b
 
 **[CVE-2026-104014](https://www.cve.org/CVERecord?id=CVE-2026-104014): Wordfence rates Naimur Email OTP Verification for WooCommerce through 2.1.0 CVSS 3.1 9.8 Critical.** The same vector. The password-reset endpoint trusts a database row that says the email was verified. It does not check when, bind the row to a session, or require a reset token. Starting a reset and not finishing it leaves the row, and the cleanup cron has no handler, so the row stays. A logged-out caller who knows the email and reads the nonce the plugin prints on the account page for logged-out visitors sets a new password and receives a logged-in session cookie. Wordfence says that is a full site takeover if the account is an administrator. The record was published November 6 and updated November 7. The fix is **2.1.1**. The directory version on November 8 is **2.1.2**, updated 2026-11-02. That changelog does not name this CVE. 2.1.2 is later than 2.1.1.
 
-**[CVE-2026-122041](https://www.cve.org/CVERecord?id=CVE-2026-122041): Wordfence rates Checkout Field Editor for WooCommerce (Pro) through 3.8.0 CVSS 3.1 9.1 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H`. Confidentiality is None: the flaw deletes a file, it does not read one. `ajax_remove_uploaded()` is open to logged-out callers and checks only a nonce. The checkout page prints that nonce when a file-upload field is configured. A caller who has the nonce can delete any attachment by id. The record was published November 6 and updated November 7. The fix is **3.8.1**. This is a commercial plugin. The directory does not host it. Themehigh's product page is the vendor link Wordfence cites.
+**[CVE-2026-122041](https://www.cve.org/CVERecord?id=CVE-2026-122041): Wordfence rates Checkout Field Editor for WooCommerce (Pro) through 3.8.0 CVSS 3.1 9.1 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H`. Confidentiality is None: the flaw deletes a file, it does not read one. `ajax_remove_uploaded()` is open to logged-out callers and checks only a nonce. The checkout page prints that nonce when a file-upload field is configured. A caller who has the nonce can delete any attachment by id. The record was published November 6 and updated November 7. The fix is **3.8.1**. This is a commercial plugin. The directory does not host it. Themehigh's product page is the vendor link Wordfence cites. Themehigh's changelog, read 2026-11-22, lists **3.8.2**, dated 2026-11-17, with a separate security line: a client-controlled checkout fee could change the price and skip payment, with no login. That line names no CVE, and Wordfence has no record for it. 3.8.1's line is still the attachment-deletion fix. 3.8.2 is the current release, so the update path is 3.8.2 or later.
 
 **CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08) for any of the three. Wordfence does not report exploitation of these three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -52,7 +52,7 @@ A plugin that is installed and inactive can still load. Confirm each one. A site
 
 1. Update Registration Form for WooCommerce to **1.1.5 or later**. The directory copy on November 8 is 1.1.5.
 2. Update Naimur Email OTP Verification to **2.1.1 or later**. 2.1.2 is on the directory and is later than the fix.
-3. Update Checkout Field Editor for WooCommerce Pro to **3.8.1 or later**, from Themehigh. Until that build is installed, remove the file-upload field from checkout. That removes the printed nonce. It does not fix the handler, and a nonce already copied still works until it expires.
+3. Update Checkout Field Editor for WooCommerce Pro to **3.8.2 or later**, from Themehigh. 3.8.1 fixes the attachment deletion. 3.8.2, dated 2026-11-17, also fixes a checkout fee a client could set, which has no CVE. Until that build is installed, remove the file-upload field from checkout. That removes the printed nonce. It does not fix the handler, and a nonce already copied still works until it expires.
 4. The update does not restore a password already changed, an administrator account already created, or an attachment already deleted.
 
 ## Verification

@@ -1,6 +1,6 @@
 # Apple: an iMessage group accepts an outsider, and a nearby Bluetooth device corrupts memory
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Back to Apple summary](../black-october-2026.md#apple-an-imessage-group-accepts-an-outsider-and-a-nearby-bluetooth-device-corrupts-memory) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,7 @@ Apple released security updates on November 9. Two of the flaws in them have a H
 
 **CISA-ADP scores [CVE-2026-113970](https://www.cve.org/CVERecord?id=CVE-2026-113970) CVSS 3.1 8.8 High.** The vector is `CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Apple's description is a use after free in Bluetooth: an attacker in Bluetooth range may be able to corrupt process memory. The ADP record says Exploitation none, Automatable no, and Technical Impact total. Apple's record has no score.
 
-On November 12 Apple released HomeView Software Version 27.2. Its notes list the same two High flaws, CVE-2026-113961 and CVE-2026-113970, plus the seven lower-scored issues and the Brotli fix. A HomeView device is a separate product from the iPhone, iPad, Mac, Watch, and Vision Pro lines.
+On November 12 Apple released HomeView Software Version 27.2. Its notes list the same two High flaws, CVE-2026-113961 and CVE-2026-113970, plus the seven lower-scored issues and the Brotli fix. On November 18 Apple released HomeView **27.2.1**. Apple's releases page says that update has no published CVE entries. The CVE records still name 27.2, not 27.2.1. A HomeView device is a separate product from the iPhone, iPad, Mac, Watch, and Vision Pro lines.
 
 The same updates fix seven more issues. None of those reaches 7.0. [CVE-2026-113960](https://www.cve.org/CVERecord?id=CVE-2026-113960) lets someone newly added to a group read messages sent before they joined, and it has no score. [CVE-2026-113964](https://www.cve.org/CVERecord?id=CVE-2026-113964) and [CVE-2026-113965](https://www.cve.org/CVERecord?id=CVE-2026-113965) are 5.4: a device in Bluetooth range can pair without the user. [CVE-2026-113968](https://www.cve.org/CVERecord?id=CVE-2026-113968) is 5.4, an AirPlay pairing-code limit. [CVE-2026-113963](https://www.cve.org/CVERecord?id=CVE-2026-113963) is 5.5, an app reading sensitive data. [CVE-2026-113969](https://www.cve.org/CVERecord?id=CVE-2026-113969) has no score. iOS 27.2.1 also lists [CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497), the Brotli decoder flaw already tracked [separately](brotli.md).
 

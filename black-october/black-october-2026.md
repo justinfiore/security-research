@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [SurrealDB: a script skips the function check](#surrealdb-a-script-skips-the-function-check)
+- [ASP.NET: Idunno.AntiCsrf runs code from a form field](#aspnet-idunnoanticsrf-runs-code-from-a-form-field)
+- [WordPress: Nexter Blocks Pro registers an administrator](#wordpress-nexter-blocks-pro-registers-an-administrator)
 - [Ghostscript: Upload2Shell - a document runs commands](#ghostscript-upload2shell---a-document-runs-commands)
 - [Postgres Enterprise Manager: an agent reads the server, and a user becomes superuser](#postgres-enterprise-manager-an-agent-reads-the-server-and-a-user-becomes-superuser)
 - [NukeViet: a contact message runs script in the administrator's browser](#nukeviet-a-contact-message-runs-script-in-the-administrators-browser)
@@ -308,6 +311,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [SurrealDB](#surrealdb-a-script-skips-the-function-check) to **4.0.0 or later** and restart. VulnCheck rates [CVE-2026-134292](https://www.cve.org/CVERecord?id=CVE-2026-134292) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8: a JavaScript script calls a built-in function the user was denied. SurrealDB's own advisory rates the same issue High and names no CVE. 1.0.0 before 4.0.0 is affected. It is not in KEV.
+- **New this update:** Remove [Idunno.AntiCsrf](#aspnet-idunnoanticsrf-runs-code-from-a-form-field). Mandiant rates [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914) CVSS 4.0 9.3 Critical: a form field is deserialized before it is checked, and a request with no login runs code as the IIS worker. Every version through 0.9.1 Beta, the last release, is affected, and there is no patch. Mandiant says exploitation has been observed and names no indicator. It is not in KEV. Removing the module does not undo a request that already ran.
+- **New this update:** Update [Nexter Blocks Pro](#wordpress-nexter-blocks-pro-registers-an-administrator) to **5.0.11 or later**. Wordfence rates [CVE-2026-125294](https://www.cve.org/CVERecord?id=CVE-2026-125294) CVSS 3.1 9.8 Critical: a registration with no login creates an administrator, on a site that allows user registration and shows the Login | Register block. Every version through 5.0.10 is affected. The free plugin is not named. It is not in KEV. The update does not remove an administrator account that was already created.
 - **New this update:** Upgrade [Ghostscript](#ghostscript-upload2shell---a-document-runs-commands) to **10.08.0 or later**, and restart whatever renders files with it. VulnCheck rates [CVE-2026-125396](https://www.cve.org/CVERecord?id=CVE-2026-125396) CVSS 4.0 8.5 High: a document turns off Ghostscript's `-dSAFER` sandbox and runs commands as the renderer. pwn.ai showed that through a shared print queue, a Roundcube attachment, and a WordPress upload. Debian 13 is `ghostscript` **10.05.1~dfsg-1+deb13u3** and Debian 12 is **10.0.0~dfsg-11+deb12u9**. Ubuntu and SUSE have no package yet. It is not in KEV. WordPress 7.0.4 closes only WordPress's own upload path.
 - **New this update:** Upgrade [Postgres Enterprise Manager](#postgres-enterprise-manager-an-agent-reads-the-server-and-a-user-becomes-superuser) to **10.6.1 or later**. EnterpriseDB rates [CVE-2026-132658](https://www.cve.org/CVERecord?id=CVE-2026-132658), [CVE-2026-132659](https://www.cve.org/CVERecord?id=CVE-2026-132659), and [CVE-2026-132660](https://www.cve.org/CVERecord?id=CVE-2026-132660) CVSS 4.0 9.4 Critical. An agent certificate from one monitored host reads and writes files on the PEM server, and can schedule jobs on every other agent. A PEM user who can reach the backend database runs SQL as a superuser. PEM 9.x, including 9.8, gets no fix. None is in KEV. If a monitored host may have been compromised, reissue the PEM certificate authority after the upgrade.
 - **New this update:** Upgrade [NukeViet](#nukeviet-a-contact-message-runs-script-in-the-administrators-browser) to **4.6.01 or later**. GitHub rates [CVE-2026-94565](https://www.cve.org/CVERecord?id=CVE-2026-94565) CVSS 3.1 9.3 Critical: a contact message runs script in the administrator's browser. The 3.x line and 4.x before 4.6.01 are affected. It is not in KEV. The upgrade does not remove an administrator account that was already created.
@@ -339,10 +345,10 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update (CISA KEV):** Update [vCenter](#vmware-vcenter-a-network-request-skips-login) to **9.1.1.0200, 9.0.2.0200, or 8.0 U3m**. Broadcom rates [CVE-2026-123890](https://www.cve.org/CVERecord?id=CVE-2026-123890) CVSS 3.1 9.8 Critical: a network request skips login and opens a session as `administrator@vsphere.local`. CISA added it on November 20, due November 23, and requires forensic triage. Google says ARMORY CASTLE used it in early September, before the patch. These builds are not a Quick Patch, and 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1. VMware Tools for Windows 11.x and 12.x are fixed in **12.5.5**, and 13.x in **13.1.5.0**. vCenter 7.0 has no public fix. ESX does not need an update. A vCenter that was unpatched in September should be checked for an SSO account you did not create.
 - **New this update:** Upgrade [PHP](#php-the-november-19-security-releases) to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** and restart every worker. PHP rates seven flaws CVSS 4.0 9.2 Critical. Two are fixed only on 8.5 and 8.6. The October 21 builds leave all seven in place. Depthfirst says one of them, the interrupted session write, is still present. PHP's advisory says the fix truncates the file first. None of the seven is in KEV. This is not PHP2Shell.
 - **New this update:** Upgrade [SmarterMail](#smartermail-an-application-password-is-guessable) to a current build. **9817** is the installer. The Zero Day Initiative rates [CVE-2026-126969](https://www.cve.org/CVERecord?id=CVE-2026-126969) CVSS 3.0 9.1 Critical: application passwords were guessable, with no login. Two more are 8.8 and need a login. ZDI says Build 9735, from August 27, is the fix. Do not stop there. Application passwords from before 9735 have to be reissued. None is in KEV.
-- **New this update:** Upgrade on-premises [TeamCity](#teamcity-a-signed-in-user-runs-code-on-the-server) to **2026.2.1**, or to **2026.1.5** on the 2026.1 line. [CVE-2026-133018](https://www.cve.org/CVERecord?id=CVE-2026-133018) is CVSS 3.1 8.8: a callback in the Kotlin DSL sandbox runs code, and 2026.2.0 leaves it in place. 2025.11 has no build named for it. None is in KEV.
+- **New this update:** Upgrade on-premises [TeamCity](#teamcity-a-signed-in-user-runs-code-on-the-server) to **2026.2.2**, or to **2026.1.6** on the 2026.1 line. [CVE-2026-133080](https://www.cve.org/CVERecord?id=CVE-2026-133080) is CVSS 3.1 8.8: Maven repository settings run code. [CVE-2026-133089](https://www.cve.org/CVERecord?id=CVE-2026-133089) is 8.1: the TFS helper process exposes a command server with no login. 2026.2.1 and 2026.1.5 leave both. 2025.11 has no build named for either. None is in KEV.
 - **New this update:** [Emacs](#emacs-a-project-file-runs-code-when-a-file-opens) 31.1 runs code from a project's `.dir-locals.el` when a matching file is opened. MITRE rates [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959) CVSS 3.1 7.8 High. Emacs 30.2 is not affected. The fix is marked for 31.2, and that release is not out. Until then, open an untrusted project with directory-local variables off. It is not in KEV.
 - **New this update:** Upgrade [Drupal](#drupal-core-field-ui-remote-code-execution) to **11.4.13, 11.3.22, or 10.6.22**. Drupal rates [SA-CORE-2026-017](https://www.drupal.org/sa-core-2026-017) Critical, 18/25: the installer can be used to reinstall the site and run code. The CVE record is still reserved and has no CVSS score. The October floors leave it in place. Until the upgrade, secure `install.php`. It is not in KEV.
-- **New this update:** On Ubuntu, install the [NGINX package in USN-9159-1](#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) and restart. Debian trixie is now 1.26.3-3+deb13u11 (DSA-6642-1) and bookworm is 1.22.1-9+deb12u11 (DLA-4918-1), both November 19. Forky still has no package. Red Hat shipped RHEL 10 and two RHEL 9 packages on November 20. The upstream floors, 1.30.7 and 1.31.9, are unchanged.
+- **New this update:** On Ubuntu, install the [NGINX package in USN-9159-1](#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) and restart. Debian trixie is now 1.26.3-3+deb13u11 (DSA-6642-1) and bookworm is 1.22.1-9+deb12u11 (DLA-4918-1), both November 19. Forky is now `1.30.6-4`, and Rocky Linux 9 and 10 shipped on November 21. Red Hat shipped RHEL 10 and two RHEL 9 packages on November 20. SUSE still has none. The upstream floors, 1.30.7 and 1.31.9, are unchanged.
 - **New this update:** Upgrade [Ruby](#ruby-a-string-or-a-pattern-corrupts-memory) to **4.0.10, 3.4.13, or 3.3.14** and restart every process. Ruby's repository rates three of seven flaws Critical, and MITRE rates [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) CVSS 3.1 7.4 High. The six others have no CVE yet. Ruby knows of proofs of concept that run code. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. Ruby 3.2 and earlier get no fix. Self-managed GitLab's packages that include the fixed Ruby are **19.6.1, 19.5.8, and 19.4.10**. A self-compiled GitLab still has to be rebuilt on Ruby 3.3.14 or 3.4.13. None is in KEV.
 - **New this update:** Install the [F5 engineering hotfix](#f5-big-ip-six-flaws-crash-the-traffic-process) for the iRule or APM policy you run. F5 rates six flaws CVSS 3.1 9.8 and CVSS 4.0 9.3: a request with no login crashes the traffic process and may run code, on BIG-IP 21.1.0, 17.5.0–17.5.1, and 17.1.0–17.1.3 when that configuration is present. F5's November 19 articles add BIG-IP CNF 2.4.0–2.4.2, 2.3.0–2.3.4, and 2.2.0–2.2.5, fixed in 2.4.2-EHF1, 2.3.4-EHF1, and 2.2.5-EHF1. There is no workaround and no scheduled release. None is in KEV. This is not the September APM flaw.
 - **New this update (CISA KEV):** Upgrade [REDCap](#redcap-a-public-survey-runs-code) to **16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard** or later. Securifera rates [CVE-2026-90817](https://www.cve.org/CVERecord?id=CVE-2026-90817) CVSS 3.1 9.8 Critical: a request that knows one public survey hash reaches Data Import and runs code. CISA added it on November 18, due November 21, and requires forensic triage. Unit 42's October 7 note says the same flaw deployed XMRig miners on public-facing servers. The upgrade does not remove the miner, the crontab, or the SSH key. The record says 13.3.0 and higher, and its version list marks only 13.3.0 affected.
@@ -552,6 +558,72 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## SurrealDB: a script skips the function check
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/surrealdb.md):** [Detection](details/surrealdb.md#detection) · [Remediation](details/surrealdb.md#remediation) · [Verification](details/surrealdb.md#verification) · [Timeline](details/surrealdb.md#timeline)
+
+**CVEs:** [CVE-2026-134292](https://www.cve.org/CVERecord?id=CVE-2026-134292)
+
+**VulnCheck rates [CVE-2026-134292](https://www.cve.org/CVERecord?id=CVE-2026-134292) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** VulnCheck is the CNA. The CVSS 4.0 vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`, and the CVSS 3.1 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Both say no privileges are required. The description says the caller is authenticated and has been denied the function in SurrealQL. The embedded JavaScript bridge calls the function dispatchers directly, so the capability check never runs. GitHub's advisory, published 2026-11-03, rates the same issue High and names no CVE. The scores disagree, and both stay. Every version from **1.0.0 before 4.0.0** is affected. **4.0.0** is the fix. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| GitHub advisory | 2026-11-03; time/TZ unknown | Rated High. No CVE on that page. |
+| **Public announcement** | **2026-11-21 16:35:13 UTC** | VulnCheck published the record. CVSS 4.0 9.3 and CVSS 3.1 9.8. |
+| **Last updated** | **2026-11-22 12:10 EST (UTC−05:00)** | New item. Upgrade to 4.0.0. |
+
+**Patch:** Upgrade to **SurrealDB 4.0.0 or later** and restart. The upgrade does not show whether a script already called a function it was denied.
+
+Sources: [CVE-2026-134292](https://www.cve.org/CVERecord?id=CVE-2026-134292), [GHSA-5w6j-qm42-4rc2](https://github.com/surrealdb/surrealdb/security/advisories/GHSA-5w6j-qm42-4rc2), [detailed guide](details/surrealdb.md).
+
+---
+
+## ASP.NET: Idunno.AntiCsrf runs code from a form field
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/idunno-anticsrf.md):** [Detection](details/idunno-anticsrf.md#detection) · [Remediation](details/idunno-anticsrf.md#remediation) · [Verification](details/idunno-anticsrf.md#verification) · [Timeline](details/idunno-anticsrf.md#timeline)
+
+**CVEs:** [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914)
+
+**Mandiant rates [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914) CVSS 4.0 9.3 Critical.** Mandiant is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:A`. The abandoned `Idunno.AntiCsrf` module deserializes its CSRF form field with an unkeyed .NET `ObjectStateFormatter` before it compares the result with the cookie. A request with no login, and with any non-empty value in the CSRF cookie, runs code as the IIS worker process. Every version through **0.9.1 Beta**, the December 2008 release, is affected. There is no maintainer and no patch. Mandiant's advisory says exploitation has been observed and names no actor or indicator. NVD has not scored it.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). Mandiant's exploitation statement is separate from a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Last release | 2008-12; day unknown | `0.9.1 Beta`. CodePlex is retired. |
+| **Public announcement** | **2026-11-19 01:29:12 UTC** | Mandiant published the CVE record and MNDT-2026-0048. CVSS 4.0 9.3. |
+| **Last updated** | **2026-11-22 12:10 EST (UTC−05:00)** | New item. Remove the module. There is no patch. |
+
+**Patch:** There is no patch. Remove `Idunno.AntiCsrf` from `Web.config` and delete `Idunno.AntiCsrf.dll`, and replace it with a supported anti-forgery mechanism. Removing the module does not undo a request that already ran code. Where it was present, rotate the `<machineKey>` and the database credentials.
+
+Sources: [MNDT-2026-0048](https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0048.md), [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914), [detailed guide](details/idunno-anticsrf.md).
+
+---
+
+## WordPress: Nexter Blocks Pro registers an administrator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/nexter-blocks.md):** [Detection](details/nexter-blocks.md#detection) · [Remediation](details/nexter-blocks.md#remediation) · [Verification](details/nexter-blocks.md#verification) · [Timeline](details/nexter-blocks.md#timeline)
+
+**CVEs:** [CVE-2026-125294](https://www.cve.org/CVERecord?id=CVE-2026-125294)
+
+**Wordfence rates [CVE-2026-125294](https://www.cve.org/CVERecord?id=CVE-2026-125294) CVSS 3.1 9.8 Critical.** Wordfence is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The registration handler misses a user-meta key written with look-alike characters, and WordPress's default collation treats that key as `wp_capabilities`, so the new account is an administrator. The site has to allow user registration and show the Login | Register block. Every version of Nexter Blocks Pro through **5.0.10** is affected. **5.0.11**, dated 2026-11-16, is the fix. The free plugin is not named in the record. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| 5.0.11 | 2026-11-16; time/TZ unknown | The changelog calls it a security fix. |
+| **Public announcement** | **2026-11-20; time/TZ unknown** | Wordfence disclosed it. The record is 2026-11-21 18:31:29 UTC. |
+| **Last updated** | **2026-11-22 12:10 EST (UTC−05:00)** | New item. Update to 5.0.11. |
+
+**Patch:** Update Nexter Blocks Pro to **5.0.11 or later**. Until then, turn user registration off. The update does not remove an administrator account that was already created.
+
+Sources: [Wordfence](https://www.wordfence.com/threat-intel/vulnerabilities/id/8670d9ac-e2b0-4c19-a9d7-00be23a139c4?source=cve), [5.0.11](https://roadmap.nexterwp.com/en/changelogs/version-5-0-11), [detailed guide](details/nexter-blocks.md).
 
 ---
 
@@ -1192,9 +1264,9 @@ Sources: [ZDI-26-997](https://www.zerodayinitiative.com/advisories/ZDI-26-997), 
 |---|---|---|
 | **Public announcement** | **2026-11-18; time unknown** | Fixed before 2026.1.3 and 2025.11.7. |
 | Pull-request flaw | 2026-11-19; time/TZ unknown | CVE-2026-132891. Fixed in 2026.2, 2026.1.4, and 2025.11.8. |
-| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | 2026.2.0 leaves CVE-2026-133018. The floor is 2026.2.1 or 2026.1.5. |
+| **Last updated** | **2026-11-22 12:10 EST (UTC−05:00)** | 2026.2.1 and 2026.1.5 leave CVE-2026-133080 and CVE-2026-133089. The floor is 2026.2.2 or 2026.1.6. |
 
-**Patch:** Upgrade on-premises TeamCity to **2026.2.1**, or to **2026.1.5** on the 2026.1 line. [CVE-2026-133018](https://www.cve.org/CVERecord?id=CVE-2026-133018), published November 19, is CVSS 3.1 8.8: a callback in the Kotlin DSL sandbox runs code, and 2026.2.0 leaves it in place. 2025.11.8 fixes the pull-request flaw and leaves both later flaws, and no 2025.11 build is named for this one. The upgrade does not show whether a build already ran code.
+**Patch:** Upgrade on-premises TeamCity to **2026.2.2**, or to **2026.1.6** on the 2026.1 line. [CVE-2026-133080](https://www.cve.org/CVERecord?id=CVE-2026-133080), published November 19, is CVSS 3.1 8.8: Maven repository settings run code. [CVE-2026-133089](https://www.cve.org/CVERecord?id=CVE-2026-133089) is 8.1: the TFS helper exposes a command server with no login. 2026.2.1 and 2026.1.5 leave both. 2025.11.8 fixes the pull-request flaw and leaves the later flaws, and no 2025.11 build is named for these. The upgrade does not show whether a build already ran code.
 
 Sources: [CVE-2026-132234](https://www.cve.org/CVERecord?id=CVE-2026-132234), [JetBrains issues fixed](https://www.jetbrains.com/privacy-security/issues-fixed/), [detailed guide](details/teamcity.md).
 
@@ -3060,16 +3132,17 @@ Sources: [Patchstack](https://patchstack.com/database/wordpress/plugin/acf-front
 
 **CVEs:** [CVE-2026-110963](https://www.cve.org/CVERecord?id=CVE-2026-110963), [CVE-2026-109925](https://www.cve.org/CVERecord?id=CVE-2026-109925)
 
-**WPScan rates Userplace CVSS 3.1 9.8 Critical and Productive Commerce 8.6 High.** Both need no login. Userplace through 1.2.0 exposes the nonce on an AJAX action that does not check who is calling, so a logged-out visitor can create an administrator or write a site option. WPScan says there is no known fix, and the directory still ships 1.2.0, last updated five years ago, with 10+ active installs. Productive Commerce before 1.1.54 puts an unescaped parameter into SQL on the wishlist and compare handlers. Confidentiality is High and integrity is None, which is the 8.6. Patchstack scores the same flaw 9.3. The fix is **1.1.54**, released 2026-11-04, and its changelog says it addressed the SQL vulnerability. The public plugin page still displays 1.1.44; the directory API and the 1.1.54 zip both say 1.1.54. The CVE records are November 8 and do not print a score. This is not the [November 8 checkout set](#wordpress-plugins-checkout-role-password-reset-and-file-deletion), the [November 7 upload and role-deletion pair](#wordpress-plugins-unauthenticated-upload-and-role-deletion), the [four plugins from November 6](#wordpress-plugins-four-unauthenticated-critical-flaws), [LatePoint](#wordpress-plugins-latepoint-customer-account-takeover), or the [core upgrade-window flaw](#wordpress-unauthenticated-code-execution-during-a-core-upgrade).
+**WPScan rates Userplace CVSS 3.1 9.8 Critical and Productive Commerce 8.6 High.** Both need no login. Userplace through 1.2.0 exposes the nonce on an AJAX action that does not check who is calling, so a logged-out visitor can create an administrator or write a site option. WPScan says there is no known fix. The directory page, read 2026-11-22, is closed as of 2026-10-23 and is not available for download, and the version line is still 1.2.0. Closing the page does not update a site that already has it. Productive Commerce before 1.1.54 puts an unescaped parameter into SQL on the wishlist and compare handlers. Confidentiality is High and integrity is None, which is the 8.6. Patchstack scores the same flaw 9.3. The fix is **1.1.54**, released 2026-11-04. The directory now reports **1.1.55**, whose changelog does not name this flaw. The CVE records are November 8 and do not print a score. This is not the [November 8 checkout set](#wordpress-plugins-checkout-role-password-reset-and-file-deletion), the [November 7 upload and role-deletion pair](#wordpress-plugins-unauthenticated-upload-and-role-deletion), the [four plugins from November 6](#wordpress-plugins-four-unauthenticated-critical-flaws), [LatePoint](#wordpress-plugins-latepoint-customer-account-takeover), or the [core upgrade-window flaw](#wordpress-unauthenticated-code-execution-during-a-core-upgrade).
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-09). WPScan does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). WPScan does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| Productive Commerce 1.1.54 | 2026-11-04 16:12 GMT | The changelog names the SQL fix. The public page still displays 1.1.44. |
+| Productive Commerce 1.1.54 | 2026-11-04 16:12 GMT | The changelog names the SQL fix. The directory now reports 1.1.55. |
+| Directory reread | 2026-11-22; time/TZ unknown | Userplace's page is closed as of 2026-10-23. Productive Commerce is 1.1.55. |
 | WPScan pages | 2026-11-06; time/TZ unknown | Both publicly published. Last updated November 7. |
 | **Public announcement** | **2026-11-08 06:17 UTC** | WPScan published both CVE records. Neither prints a score. |
-| **Last updated** | **2026-11-08 23:06 EST (UTC−05:00)** | New item. Remove Userplace. Update Productive Commerce. |
+| **Last updated** | **2026-11-22 12:10 EST (UTC−05:00)** | Userplace's directory page is closed. Productive Commerce is 1.1.55. |
 
 **Patch:** Remove Userplace. There is no fixed version. Update Productive Commerce to **1.1.54 or later**. Removing Userplace does not delete an administrator account already created.
 

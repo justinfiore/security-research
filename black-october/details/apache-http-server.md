@@ -1,6 +1,6 @@
 # Apache HTTP Server: an HTTP/2 request can run code
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Main Apache HTTP Server summary](../black-october-2026.md#apache-http-server-an-http2-request-can-run-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -99,7 +99,7 @@ Red Hat's [RHSA-2026:100550](https://access.redhat.com/errata/RHSA-2026:100550),
 ## Remediation
 
 1. Upgrade the Apache HTTP Server project's own build to **2.4.71 or later**, or install the `mod_http2` package in the table for the Red Hat release you run. Restart `httpd` or `apache2`. A running process keeps the module it loaded.
-2. On Debian bookworm, install `apache2` **2.4.71-1~deb12u1** or later. On Debian trixie, install **2.4.71-1~deb13u1** or later from the security pocket. On Debian sid and forky, install **2.4.71-1** or later. On Ubuntu, install the `apache2` build in the table. On Amazon Linux, install `httpd` **2.4.71-1.amzn2.0.1** or **2.4.71-1.amzn2023.0.1**. On SLES 15 SP7, install `apache2` **2.4.71-150700.4.30.1** or later (SUSE-SU-2026:5231-1, 2026-11-13). SLES 16.0, SLES 16.1, and the 15 SP4 through SP6 and 12 SP5 LTSS lines are also Released. openSUSE Leap 16.0 and 16.1 are not: until a package ships there, take HTTP/2 off.
+2. On Debian bookworm, install `apache2` **2.4.71-1~deb12u1** or later. On Debian trixie, install **2.4.71-1~deb13u1** or later from the security pocket. On Debian sid and forky, install **2.4.71-1** or later. On Ubuntu, install the `apache2` build in the table. On Amazon Linux, install `httpd` **2.4.71-1.amzn2.0.1** or **2.4.71-1.amzn2023.0.1**. On SLES 15 SP7, install `apache2` **2.4.71-150700.4.30.1** or later (SUSE-SU-2026:5231-1, 2026-11-13). SLES 16.0, SLES 16.1, and the 15 SP4 through SP6 and 12 SP5 LTSS lines are also Released. openSUSE Leap 16.0 and 16.1 now have `apache2` 2.4.71 (openSUSE-SU-2026:22352-1, 2026-11-13). SUSE's CVE page, last modified 2026-11-19, still labels both Affected while listing those packages. Take HTTP/2 off only where the installed package is older than 2.4.71.
 3. Until the package is in, remove `h2` and `h2c` from every `Protocols` line and leave `http/1.1`. Wiz describes that step. Apache's advisory names no workaround. Turning HTTP/2 off is not a substitute for the upgrade, and it does not fix CVE-2026-106023, which is in `mod_md` and does not need HTTP/2.
 4. A server built from the archived GitHub `mod_h2` has no release after 2.0.42. Rebuild it from the 2.4.71 tree, or turn HTTP/2 off.
 5. Red Hat Enterprise Linux 8 and earlier do not contain this code. Do not treat a scanner finding there as this flaw without checking the package.
