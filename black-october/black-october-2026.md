@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Postgres Enterprise Manager: an agent reads the server, and a user becomes superuser](#postgres-enterprise-manager-an-agent-reads-the-server-and-a-user-becomes-superuser)
+- [NukeViet: a contact message runs script in the administrator's browser](#nukeviet-a-contact-message-runs-script-in-the-administrators-browser)
+- [WordPress: Restrictions for BuddyPress runs code before login](#wordpress-restrictions-for-buddypress-runs-code-before-login)
 - [Unstable Slope Management Program: a request runs SQL before login](#unstable-slope-management-program-a-request-runs-sql-before-login)
 - [Tegsoft Contact Center: an upload plants a web shell](#tegsoft-contact-center-an-upload-plants-a-web-shell)
 - [GPGME: a long OpenPGP user ID frees memory twice](#gpgme-a-long-openpgp-user-id-frees-memory-twice)
@@ -304,6 +307,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [Postgres Enterprise Manager](#postgres-enterprise-manager-an-agent-reads-the-server-and-a-user-becomes-superuser) to **10.6.1 or later**. EnterpriseDB rates [CVE-2026-132658](https://www.cve.org/CVERecord?id=CVE-2026-132658), [CVE-2026-132659](https://www.cve.org/CVERecord?id=CVE-2026-132659), and [CVE-2026-132660](https://www.cve.org/CVERecord?id=CVE-2026-132660) CVSS 4.0 9.4 Critical. An agent certificate from one monitored host reads and writes files on the PEM server, and can schedule jobs on every other agent. A PEM user who can reach the backend database runs SQL as a superuser. PEM 9.x, including 9.8, gets no fix. None is in KEV. If a monitored host may have been compromised, reissue the PEM certificate authority after the upgrade.
+- **New this update:** Upgrade [NukeViet](#nukeviet-a-contact-message-runs-script-in-the-administrators-browser) to **4.6.01 or later**. GitHub rates [CVE-2026-94565](https://www.cve.org/CVERecord?id=CVE-2026-94565) CVSS 3.1 9.3 Critical: a contact message runs script in the administrator's browser. The 3.x line and 4.x before 4.6.01 are affected. It is not in KEV. The upgrade does not remove an administrator account that was already created.
+- **New this update:** Update [Restrictions for BuddyPress](#wordpress-restrictions-for-buddypress-runs-code-before-login) to **1.5.5 or later**. Wordfence rates [CVE-2026-120539](https://www.cve.org/CVERecord?id=CVE-2026-120539) CVSS 3.1 9.8 Critical: a request with no login runs code, on a site that also runs BuddyPress and Paid Memberships Pro. The CVE record is still reserved. It is not in KEV.
 - **New this update:** On a [GL.iNet](#glinet-the-cloud-service-installed-malware-on-routers-and-kvms) router or KVM, look for a process running `crond -i /tmp/.log`. GL.iNet says an unauthorized party used a vulnerability in its cloud service to install malware on a subset of devices, disclosed November 20. No CVE is assigned and no score is published. The cloud path is closed, and that does not remove malware already installed. If the process is there, factory reset the device or, on a KVM, install the security beta now. Stable firmware is scheduled for November 22.
 - **New this update:** Confirm the [Unstable Slope Management Program](#unstable-slope-management-program-a-request-runs-sql-before-login) instance is the one fixed on or around **October 19**. CISA rates [CVE-2026-129175](https://www.cve.org/CVERecord?id=CVE-2026-129175) CVSS 3.1 9.8 Critical: a request with no login runs SQL and can take the database. Three more are High: deleting a user, creating a user, and skipping the Keycloak login when you already have a local password. CISA names no build. Until the operator confirms the fix, keep it off the internet, then reset local passwords. None is in KEV.
 - **New this update:** Upgrade [Tegsoft Contact Center](#tegsoft-contact-center-an-upload-plants-a-web-shell) to **latest-202611161510 or later**. TR-CERT rates [CVE-2026-14914](https://www.cve.org/CVERecord?id=CVE-2026-14914) CVSS 3.1 10.0 Critical: an upload plants a web shell, and the score says no login. A second flaw, 5.3, exposes system information and has the same floor. The upgrade does not remove a file already uploaded. Neither is in KEV.
@@ -544,6 +550,72 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Postgres Enterprise Manager: an agent reads the server, and a user becomes superuser
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/pem.md):** [Detection](details/pem.md#detection) · [Remediation](details/pem.md#remediation) · [Verification](details/pem.md#verification) · [Timeline](details/pem.md#timeline)
+
+**CVEs:** [CVE-2026-132658](https://www.cve.org/CVERecord?id=CVE-2026-132658), [CVE-2026-132659](https://www.cve.org/CVERecord?id=CVE-2026-132659), [CVE-2026-132660](https://www.cve.org/CVERecord?id=CVE-2026-132660)
+
+**EnterpriseDB rates all three CVSS 4.0 9.4 Critical.** EnterpriseDB is the CNA, and each CVE record repeats the score. [CVE-2026-132658](https://www.cve.org/CVERecord?id=CVE-2026-132658) and [CVE-2026-132659](https://www.cve.org/CVERecord?id=CVE-2026-132659) use `CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`. [CVE-2026-132660](https://www.cve.org/CVERecord?id=CVE-2026-132660) uses `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`. The `pem_agent` role can read and write files on the PEM server as the `postgres` operating system user, including the certificate authority key. The job policies let one agent schedule jobs for every other agent, including shell steps. The `SECURITY DEFINER` functions let any PEM user who can connect to the backend database run SQL as a superuser. kta1kri reported all three. EDB does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22) for any of the three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-19; time/TZ unknown** | EDB published the three advisories. |
+| CVE records | 2026-11-20; time/TZ unknown | EnterpriseDB is the CNA. |
+| **Last updated** | **2026-11-22 00:05 EST (UTC−05:00)** | New item. Upgrade to 10.6.1. PEM 9.x gets no fix. |
+
+**Patch:** Upgrade to **PEM 10.6.1 or later**. PEM 9.8 is end of life, and the rest of PEM 9.x gets no fix either. The file flaw starts at 10.5.0. The job flaw starts at 7.3.0. The search-path flaw starts at 7.6.0. If a monitored host may have been compromised, reissue the PEM certificate authority and every agent certificate after the upgrade. The upgrade does not undo a statement that already ran.
+
+Sources: [CVE-2026-132658](https://www.enterprisedb.com/docs/security/advisories/cve2026132658/), [CVE-2026-132659](https://www.enterprisedb.com/docs/security/advisories/cve2026132659/), [CVE-2026-132660](https://www.enterprisedb.com/docs/security/advisories/cve2026132660/), [detailed guide](details/pem.md).
+
+---
+
+## NukeViet: a contact message runs script in the administrator's browser
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/nukeviet.md):** [Detection](details/nukeviet.md#detection) · [Remediation](details/nukeviet.md#remediation) · [Verification](details/nukeviet.md#verification) · [Timeline](details/nukeviet.md#timeline)
+
+**CVEs:** [CVE-2026-94565](https://www.cve.org/CVERecord?id=CVE-2026-94565)
+
+**GitHub rates [CVE-2026-94565](https://www.cve.org/CVERecord?id=CVE-2026-94565) CVSS 3.1 9.3 Critical.** GitHub is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:N`. The filter splits attributes on a space, and a browser also splits them on `/`, so a contact message that starts an event handler with `/` is stored and runs when an administrator opens it. The panel sends no Content Security Policy. The advisory says that can persist a super-administrator account. The record says **3.0.0 before 4.6.01**. A visitor needs no account. The advisory does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| GitHub advisory | 2026-08-30; time/TZ unknown | GHSA-662q-v5rm-78gm. Fixed in 4.6.01. |
+| **Public announcement** | **2026-11-20; time/TZ unknown** | GitHub published the CVE record. |
+| **Last updated** | **2026-11-22 00:05 EST (UTC−05:00)** | New item. Upgrade to 4.6.01. |
+
+**Patch:** Upgrade to **NukeViet 4.6.01 or later**. The 3.x line has to move to that release. The upgrade does not remove an administrator account that was already created.
+
+Sources: [GHSA-662q-v5rm-78gm](https://github.com/nukeviet/nukeviet/security/advisories/GHSA-662q-v5rm-78gm), [CVE-2026-94565](https://www.cve.org/CVERecord?id=CVE-2026-94565), [detailed guide](details/nukeviet.md).
+
+---
+
+## WordPress: Restrictions for BuddyPress runs code before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-bp-restrict.md):** [Detection](details/wordpress-bp-restrict.md#detection) · [Remediation](details/wordpress-bp-restrict.md#remediation) · [Verification](details/wordpress-bp-restrict.md#verification) · [Timeline](details/wordpress-bp-restrict.md#timeline)
+
+**CVEs:** [CVE-2026-120539](https://www.cve.org/CVERecord?id=CVE-2026-120539)
+
+**Wordfence rates [CVE-2026-120539](https://www.cve.org/CVERecord?id=CVE-2026-120539) CVSS 3.1 9.8 Critical.** The CVE.org record is still reserved, so the score is Wordfence's, not a published CNA record. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The plugin puts the request URI into a PHP expression and evaluates it, and a request with no login runs code. The site also has to be running BuddyPress and Paid Memberships Pro. The affected conditions are on by default. Every version through **1.5.4** is affected. **1.5.5**, tagged 2026-11-12, is the fix. Wordfence does not describe an incident.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| 1.5.5 tagged | 2026-11-12 09:48:02 UTC | Seventh Queen calls it a security fix. |
+| **Public announcement** | **2026-11-20; time/TZ unknown** | Wordfence published the page. The record is still reserved. |
+| **Last updated** | **2026-11-22 00:05 EST (UTC−05:00)** | New item. Update to 1.5.5. |
+
+**Patch:** Update the plugin to **1.5.5 or later**, or deactivate it. The update does not show whether a request already ran code.
+
+Sources: [Wordfence](https://www.wordfence.com/threat-intel/vulnerabilities/wordpress-plugins/bp-restrict/restrictions-for-buddypress-154-unauthenticated-remote-code-execution-via-request-uri-string-interpolation-in-eval), [1.5.5](https://github.com/seventhqueen/buddypress-restrict/releases/tag/1.5.5), [detailed guide](details/wordpress-bp-restrict.md).
 
 ---
 
@@ -1673,10 +1745,11 @@ Sources: [VU#604762](https://kb.cert.org/vuls/id/604762), [Deno advisory](https:
 | Finder's report | 2026-10-23; time/TZ unknown | GitHub issue 486, against v19.21.2. |
 | Fix released | 2026-10-25 12:12:08 UTC | v19.21.4. |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | VulnCheck published the CVE record. |
-| Socket report | 2026-11-19; time/TZ unknown | Issue 488. The stored password hash opens the terminal on 19.23.2. No CVE and no score. Commit `939d423` is not in a release. |
-| **Last updated** | **2026-11-20 23:11 EST (UTC−05:00)** | The socket fix is on master only. npm is still 19.23.2. |
+| Socket report | 2026-11-19; time/TZ unknown | Issue 488. The stored password hash opens the terminal on 19.23.2. No CVE and no score. |
+| Socket fix released | 2026-11-21 15:43:29 UTC | v19.24.0 contains commit `939d423`. |
+| **Last updated** | **2026-11-22 00:05 EST (UTC−05:00)** | The socket fix is in 19.24.0. |
 
-**Patch:** Upgrade `cloudcmd` to 19.21.4 or later and restart it. That closes this CVE. npm's latest on November 20 is 19.23.2, which does not contain commit `939d423`. Until a release does, change the password if the hash has been seen. The upgrade does not put a moved file back.
+**Patch:** Upgrade `cloudcmd` to **19.24.0 or later** and restart it. 19.21.4 closes this CVE. 19.24.0 also closes the socket check from issue 488, which 19.23.2 leaves open. Change the password if the hash has been seen. The upgrade does not put a moved file back.
 
 Sources: [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072), [v19.21.4](https://github.com/coderaiser/cloudcmd/releases/tag/v19.21.4), [detailed guide](details/cloudcmd.md).
 

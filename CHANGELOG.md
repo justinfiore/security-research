@@ -2,6 +2,13 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-22 00:05 EST (UTC−05:00) — Postgres Enterprise Manager; NukeViet; WordPress
+
+- **Postgres Enterprise Manager:** Upgrade to [10.6.1 or later](black-october/details/pem.md#remediation). EnterpriseDB rates CVE-2026-132658, CVE-2026-132659, and CVE-2026-132660 CVSS 4.0 9.4. An agent certificate from one monitored host reads and writes files on the PEM server, and can schedule jobs on every other agent. A PEM user who can reach the backend database runs SQL as a superuser. PEM 9.x, including 9.8, gets no fix. None is in KEV. If a monitored host may have been compromised, reissue the PEM certificate authority after the upgrade.
+- **NukeViet:** Upgrade to [4.6.01 or later](black-october/details/nukeviet.md#remediation). GitHub rates CVE-2026-94565 CVSS 3.1 9.3: a contact message runs script in the administrator's browser. The 3.x line and 4.x before 4.6.01 are affected. It is not in KEV. The upgrade does not remove an administrator account that was already created.
+- **WordPress:** Update [Restrictions for BuddyPress](black-october/details/wordpress-bp-restrict.md#remediation) to 1.5.5 or later. Wordfence rates CVE-2026-120539 CVSS 3.1 9.8: a request with no login runs code, on a site that also runs BuddyPress and Paid Memberships Pro. The CVE record is still reserved. It is not in KEV.
+- **Cloud Commander:** Upgrade to [19.24.0 or later](black-october/details/cloudcmd.md#remediation) and restart it. 19.21.4 already closes CVE-2026-130072. 19.24.0, published November 21, is the first release that also checks the socket password instead of accepting the stored hash. 19.23.2 leaves that open. Change the password if the hash has been seen.
+
 ## 2026-11-21 19:10 EST (UTC−05:00) — GL.iNet; REDCap
 
 - **GL.iNet:** On a [router or KVM](black-october/details/glinet.md#detection), look for a process running `crond -i /tmp/.log`. GL.iNet says an unauthorized party used a vulnerability in its cloud service to install malware on a subset of devices, disclosed November 20. No CVE is assigned and no score is published. The cloud path is closed, and that does not remove malware already installed. If the process is there, factory reset the device, or on a KVM install the security beta now. Stable firmware is scheduled for November 22. On a KVM that matched, also check the computer connected to it.
