@@ -2,6 +2,18 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-23 11:30 EST (UTC−05:00) — sigstore-js; Mail Assure; Drupal; GitLab; kernel packages
+
+- **Node.js:** Upgrade [`@sigstore/oci`](black-october/details/sigstore-oci.md#remediation) to 0.8.0 or later. The maintainers rate GHSA-9mj6-f434-pgcg CVSS 3.1 7.5: a trusted token service that redirects sends the registry password to the other host. VulnCheck's CVE-2026-134816 scores the same issue 8.2 and 5.9. Anything before 0.8.0 is affected, and only identity-token credentials take this path. The advisory page still says it is not patched. It is not in KEV.
+- **N-able:** [Mail Assure](black-october/details/nable-mail.md#remediation) now has a CVE. N-able rates CVE-2026-134624 CVSS 4.0 9.3: an API user points the LDAP connection check at any internal host. Builds before 20261121.1943 are affected. N-able says Hosted Cloud is already patched and has found no exploitation beyond the one server from November 18. It does not say the flaw was the way in. Reconnect integrations, because the API tokens were revoked. A Local Cloud server has to be on that build. It is not in KEV.
+- **Drupal:** [SA-CORE-2026-017](black-october/details/drupal.md#remediation) is now Highly critical, 20/25. Drupal says the installer flaw was exploited on live sites as early as 19:00 UTC on November 19. The floors are unchanged: 11.4.13, 11.3.22, and 10.6.22. Until then, secure `install.php`. The upgrade does not undo a reinstall that already happened.
+- **GitLab:** Upgrade self-managed GitLab to [19.6.1, 19.5.8, or 19.4.10](black-october/details/gitlab-ruby.md#remediation). The November 20 release updates the bundled Ruby for CVE-2026-132825. The Ruby team rates it Critical and MITRE rates it 7.4. The November 16 builds do not contain it, and no 19.3 build is named. A self-compiled install rebuilds Ruby at 3.3.14 or 3.4.13. GitLab.com and Dedicated are already patched.
+- **Linux kernel:** On Amazon Linux and on Oracle Linux UEK, install the [package that names CVE-2026-99284](black-october/details/skb-zerocopy-lpe.md#remediation) and reboot. Ubuntu 24.04 `linux-fips` for the TCP options flaw is now `6.8.0-151.151+fips1`. Other flavors of both flaws are still open. Neither is in KEV.
+- **ImageMagick:** On Amazon Linux 2023, install `ImageMagick` [6.9.13.60-1.amzn2023](black-october/details/imagemagick.md#remediation) and restart whatever loaded the old library. ALAS2023-2026-3490, November 19, names CVE-2026-116149. Red Hat and Ubuntu still have no package.
+- **Red Hat Quay:** The mirror registry for OpenShift is [v2.0.13](black-october/details/red-hat-quay.md#remediation) (RHSA-2026:100818, November 20) for both Critical flaws. Quay 5 still has no package. The Quay 3 floors are unchanged.
+- **curl:** On SUSE Linux Enterprise Server 15 SP6 LTSS, install `curl` [8.22.0-150600.4.58.1](black-october/details/curl.md#remediation) (SUSE-SU-2026:5069-1) and restart what loaded it. openSUSE Leap 16.0 and 16.1 still have no package.
+- **Brotli:** Install the [November 12 Windows update](black-october/details/brotli.md#remediation) and reboot. Windows 11 26H2 is KB5132061 and Windows Server 2025 is KB5131080. Microsoft's score stays 8.1 and it still says the flaw is not exploited. The library floors are unchanged.
+
 ## 2026-11-23 07:01 EST (UTC−05:00) — OTRS; Weblate; simple-git; binary-parser; WordPress
 
 - **OTRS:** Upgrade to [2026.8.2 or later](black-october/details/otrs.md#remediation). OTRS rates CVE-2026-93584 CVSS 3.1 8.6 and CVSS 4.0 8.7: a survey request with no login reads ticket data. 2024.3.1, the 2025 line, and 2026 before 2026.8.2 are affected. The advisory does not mention Community Edition. It is not in KEV.

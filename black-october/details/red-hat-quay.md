@@ -1,6 +1,6 @@
 # Red Hat Quay: an anonymous token installs a signing key
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-23 (America/New_York)
 
 [Back to Red Hat Quay summary](../black-october-2026.md#red-hat-quay-an-anonymous-token-installs-a-signing-key) · [Changelog](../../CHANGELOG.md)
 
@@ -38,7 +38,7 @@ Dave O'Connor of Red Hat found both. Red Hat's pages do not report exploitation.
 
 ## Remediation
 
-1. Upgrade to the fixed build for the line you run: **3.9.28, 3.10.28, 3.12.24, 3.14.10, 3.15.9, 3.16.7, 3.17.7, or 3.18.3**. The CVE-2026-123710 record now names those same ceilings, updated 2026-11-13. Quay 5 remains affected with no released package.
+1. Upgrade to the fixed build for the line you run: **3.9.28, 3.10.28, 3.12.24, 3.14.10, 3.15.9, 3.16.7, 3.17.7, or 3.18.3**. The CVE-2026-123710 record now names those same ceilings, updated 2026-11-13. Quay 5 remains affected with no released package. The mirror registry is a separate product: [RHSA-2026:100818](https://access.redhat.com/errata/RHSA-2026:100818), issued 2026-11-20, is mirror registry for Red Hat OpenShift **v2.0.13** and lists both CVEs. That erratum does not fix Quay 5.
 2. Restrict `/keys` at the proxy or load balancer so only trusted internal components can reach it. Red Hat gives that step for CVE-2026-123710 and names no other workaround. Turning off anonymous access does not close it: [solution 7149923](https://access.redhat.com/solutions/7149923), added to the CVE record on November 12, says anonymous access is on by default and that any valid Quay account can still install a key. The rest of that solution is behind a subscription.
 3. Review audit logs for `service_key_rotate` and `service_key_delete` events with a null expiration, and remove a key you do not recognize. Red Hat says deleting a rogue key is not durable until a fixed build is deployed, because the request can install a new one.
 4. For CVE-2026-110697, Red Hat says there is no complete workaround. Restricting who can create a namespace that contains an underscore, and rotating robot tokens for a namespace that collides with one, reduces exposure and does not fix it.

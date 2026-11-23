@@ -1,6 +1,6 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-23 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skbzerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -151,6 +151,9 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | RHEL 10.0 | `kernel-6.12.0-55.117.1.el10_0` and `kernel-rt-6.12.0-55.117.1.el10_0` | [RHSA-2026:94508][rhsa100], issued 2026-11-03, for 10.0 Extended Update Support. Names ZDI-CAN-33367 with an empty CVE field, and CVE-2026-98432. This is not the 10.2 kernel. | [RHSA-2026:94508][rhsa100] |
 | Oracle Linux 8 | `kernel-4.18.0-553.182.1.el8_10` | [ELSA-2026-93414][elsa8], 2026-11-02. The 4.18.0-553.181.1 changelog line is the marker copy; the same build fixes CVE-2026-98432. | [ELSA-2026-93414][elsa8] |
 | Oracle Linux 10 | `kernel-6.12.0-211.72.1.el10_2` | [ELSA-2026-93413][elsa10] (2026-11-02). The changelog has `net: skbuff: propagate shared-frag marker in skb_zerocopy()` at 6.12.0-211.71.1 and does not name ZDI-CAN-33367. | [ELSA-2026-93413][elsa10] |
+| Oracle Linux UEK | `kernel-uek-5.4.17-2136.361.4.4` (OL7, OL8), `kernel-uek-5.15.0-326.224.5.2` (OL8, OL9), `kernel-uek-6.12.0-208.112.5.3` (OL9, OL10) | ELSA-2026-500637, ELSA-2026-500643, and ELSA-2026-500644, all 2026-11-19. Each changelog names `skb_zerocopy()` and CVE-2026-99284. These are the UEK kernels, not the RHEL-compatible rows above. | [ELSA-2026-500644](https://linux.oracle.com/errata/ELSA-2026-500644.html) |
+| Amazon Linux 2 | `kernel-4.14.355-287.768.amzn2`, plus the extras `kernel-5.4.302-229.516.amzn2`, `kernel-5.10.272-274.1151.amzn2`, and `kernel-5.15.223-159.273.amzn2` | ALAS2-2026-4082, ALAS2KERNEL-5.4-2026-136, ALAS2KERNEL-5.10-2026-138, and ALAS2KERNEL-5.15-2026-122. Released 2026-11-09; the CVE was added to the notes on 2026-11-18. Install the package that matches the booted kernel. | [ALAS2-2026-4082](https://alas.aws.amazon.com/ALAS2-2026-4082.html) |
+| Amazon Linux 2023 | `kernel-6.1.190-237.431.amzn2023`, `kernel6.12-6.12.114-139.210.amzn2023`, `kernel6.18-6.18.56-126.188.amzn2023` | ALAS2023-2026-3389, ALAS2023-2026-3402, and ALAS2023-2026-3390. Released 2026-11-09; the CVE was added on 2026-11-18. | [ALAS2023-2026-3389](https://alas.aws.amazon.com/ALAS2023/ALAS2023-2026-3389.html) |
 | RHEL 9.2 real-time | `kernel-rt-5.14.0-284.202.1.rt14.487.el9_2` | [RHSA-2026:94558][rhsa92rt], issued 2026-11-03, for 9.2 Update Services for SAP Solutions and Extended Life Cycle. Names ZDI-CAN-33367 with an empty CVE field. Not general RHEL 9 `kernel-rt`. | [RHSA-2026:94558][rhsa92rt] |
 | Debian 13 (trixie) | `linux` 6.12.116-1 (fixed from 6.12.115-1) | trixie security, accepted 2026-11-08. | [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99284) |
 | Debian 12 (bookworm), default kernel | `linux` 6.1.192-2, still vulnerable | The default bookworm kernel is not fixed. | [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99284) |

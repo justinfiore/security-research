@@ -1,6 +1,6 @@
 # HTTP2Shell / Node2Shell: detection and remediation
 
-**Last updated:** 2026-11-21 (America/New_York)
+**Last updated:** 2026-11-23 (America/New_York)
 
 [Main Brotli summary and patch matrix](../black-october-2026.md#2-http2shell--node2shell-a-cross-stack-brotli-decoder-vulnerability) · [Changelog](../../CHANGELOG.md)
 
@@ -43,6 +43,7 @@
 | PHP extension fix | 2026-10-24 23:49:20 UTC: [php-ext-brotli 0.21.1](https://github.com/kjdev/php-ext-brotli/releases/tag/0.21.1) bundles 1.2.1 |
 | PHP Windows package rebuilds | 2026-10-23, time/TZ unknown: the [PHP project](https://www.php.net/archive/2026.php) released Windows packages **8.2.35-1 / 8.3.36-1 / 8.4.27-1 / 8.5.12-1** with Brotli 1.2.1. The `-1` suffix identifies the rebuilt package; the PHP source/runtime version is unchanged. |
 | .NET advisory publication | 2026-10-25 19:06:12 UTC: [Microsoft advisory](https://github.com/dotnet/announcements/issues/494) published, identifying fixed runtimes 8.0.33 / 9.0.22 / 10.0.14 and preview 11.0.0-rc.3.26522.148. This is the advisory issue's creation time, not the first availability of every artifact; supersedes earlier reports that no fixed .NET release was established |
+| Windows OS builds | 2026-11-12; time/TZ unknown | MSRC revision 7.0 of the same CVE adds fixed Windows builds, including Windows 11 26H2 **KB5132061** (10.0.26300.9974) and Windows Server 2025 **KB5131080** (10.0.26100.33822). Score stays 8.1 and exploited stays No. [MSRC][msrcbrotli] |
 | Arrow upstream report | 2026-10-23 23:40:01 UTC: [issue #55166](https://github.com/apache/arrow/issues/55166) reports bundled Brotli 1.0.9 and file-processing exposure; this is a public issue timestamp, not JFrog's private discovery date |
 | libjxl source fix | 2026-10-24 17:09:23 UTC: [PR #5062](https://github.com/libjxl/libjxl/pull/5062) merged a Brotli 1.2.1 dependency bump. A source merge is not an FFmpeg or libjxl binary release |
 | ClickHouse source fix | 2026-10-25 11:58:00 UTC: [PR #127419](https://github.com/ClickHouse/ClickHouse/pull/127419) merged the Brotli 1.2.1 bump. Its current version information names 26.11.1.749-master and backports 26.10.3.6 / 26.9.26.18 / 26.8.35.17 / 26.3.61.13; these are not evidence of published release artifacts |

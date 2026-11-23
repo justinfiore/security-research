@@ -1,6 +1,6 @@
 # curl and libcurl: use-after-free when a server resets an upload
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-23 (America/New_York)
 
 [Main curl summary](../black-october-2026.md#curl-and-libcurl-use-after-free-when-a-server-resets-an-upload) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -113,7 +113,7 @@ The proven exploit needs very precise conditions, so finding nothing proves noth
    | RHEL 6, 7, 8, 9 | Not affected. Red Hat says those builds predate the flawed code |
    | Amazon Linux 2023 | Fixed, `libcurl-8.21.0-5.amzn2023.0.3` ([ALAS2023-2026-3267](https://alas.aws.amazon.com/AL2023/ALAS2023-2026-3267.html)) |
    | Amazon Linux 2 | Not affected |
-   | SUSE | Some products are fixed, including SLES 15 SP7 and Tumbleweed. SLES 15 SP6 and openSUSE Leap 16.0 and 16.1 are still affected, and SUSE's overall state is Pending |
+   | SUSE | SLES 15 SP7, Tumbleweed, and now SLES 15 SP6 LTSS are fixed. SLES 15 SP6 is `curl` **8.22.0-150600.4.58.1** ([SUSE-SU-2026:5069-1](https://www.suse.com/support/update/announcement/2026/suse-su-20265069-1), 2026-11-03). openSUSE Leap 16.0 and 16.1 are still affected, and SUSE's overall state is Pending |
 
    Support customers of commercial rock-solid curl can use 8.20.2, 8.16.2 or 8.14.3. [curl advisory][adv] [Rock-solid curl][rs]
 2. **Rebuild** everything that bundles or statically links libcurl: container images, wheels, Rust and Go-cgo binaries, and vendor software (ask the vendor). Restart long-running processes so they load the patched shared library.
