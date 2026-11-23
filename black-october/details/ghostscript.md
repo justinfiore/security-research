@@ -1,6 +1,6 @@
 # Ghostscript: Upload2Shell - a document runs commands
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-23 (America/New_York)
 
 [Main Ghostscript summary](../black-october-2026.md#ghostscript-upload2shell---a-document-runs-commands) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -57,7 +57,8 @@ Read the Ghostscript the renderer actually loads, not a `gs` binary that happens
 - Upstream before **10.08.0** is inside the range the record names.
 - Debian 13 (trixie) is fixed at `ghostscript` **10.05.1~dfsg-1+deb13u3**. Debian 12 (bookworm) is fixed at **10.0.0~dfsg-11+deb12u9** from bookworm-security. The main bookworm repository is still 10.0.0~dfsg-11+deb12u8, which the tracker marks vulnerable. Forky and sid are fixed at 10.08.0~dfsg-2.
 - Ubuntu's page, last updated 2026-11-18, marks `ghostscript` **Needs evaluation** on 26.10, 26.04 LTS, 24.04 LTS, 22.04 LTS, and the Pro releases. It names no package. Do not treat an older USN as this fix: USN-8949-1, dated 2026-10-21, does not list CVE-2026-125396.
-- SUSE's page, last modified 2026-11-10, rates it important and marks SLES 15 SP7 In progress and SLES 16.0 and 16.1 Affected. It names no released announcement.
+- SUSE's page, last modified 2026-11-13, rates it important and marks SLES 15 SP7, 16.0, and 16.1 In progress, and openSUSE Leap 16.0 and 16.1 Affected. It lists `ghostscript` 9.52-150000.222.1 for SLES 15 SP7 under packages in QA, which is not a released package, and it names no security announcement. The only released line on that page is openSUSE Tumbleweed `ghostscript` 10.08.0-5.1.
+- AlmaLinux's post of 2026-11-22 puts patched builds in the testing repository only, not production: AlmaLinux 8 `ghostscript` 9.27-20.el8_10.alma.1, 9 `ghostscript` 9.54.0-19.el9_8.3.alma.1, and 10 `ghostscript` 10.02.1-16.el10_2.3.alma.1. AlmaLinux says it knows of no fixed package for RHEL 8, 9, or 10. A testing build is not the fix to install.
 
 A process that embeds its own Ghostscript, or shells out to a copy outside the system package, does not move when the package does. ImageMagick's `delegates.xml` and PHP Imagick are two ways a file named `.jpg` or `.png` still reaches `gs`. Finding the library does not show that any caller is exposed, and not finding a caller does not show the library is unused.
 
@@ -87,7 +88,8 @@ pwn.ai does not report exploitation outside its own tests. The upgrade does not 
 - [Debian tracker][deb] — read 2026-11-22. trixie fixed at 10.05.1~dfsg-1+deb13u3 (DSA-6516-1). bookworm-security fixed at 10.0.0~dfsg-11+deb12u9 (DLA-4914-1). forky and sid fixed at 10.08.0~dfsg-2.
 - [DSA-6516-1][dsa] — Salvatore Bonaccorso, 2026-09-25 21:17:14 UTC. The advisory text names CVE-2026-39919. The tracker is what credits the package for CVE-2026-125396.
 - [Ubuntu CVE-2026-125396](https://ubuntu.com/security/CVE-2026-125396) — published 2026-11-10, last updated 2026-11-18. Priority Medium. Every listed release is Needs evaluation.
-- [SUSE CVE-2026-125396](https://www.suse.com/security/cve/CVE-2026-125396.html) — last modified 2026-11-10. Important. SLES 15 SP7 In progress. SLES 16.0 and 16.1 Affected. No announcement.
+- [SUSE CVE-2026-125396](https://www.suse.com/security/cve/CVE-2026-125396.html) — last modified 2026-11-13. Important. SLES 15 SP7, 16.0, and 16.1 In progress. `ghostscript` 9.52-150000.222.1 is listed in QA for SLES 15 SP7, not released. No announcement.
+- [AlmaLinux, 2026-11-22](https://almalinux.org/blog/2026-11-22-upload2shell-cve-2026-125396/) — testing builds only: 9.27-20.el8_10.alma.1, 9.54.0-19.el9_8.3.alma.1, and 10.02.1-16.el10_2.3.alma.1. No released RHEL package known to AlmaLinux.
 - [WordPress CVE-2026-65640][wp] — the separate Core fix, 7.0.4 on 2026-08-12.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-22. Not listed.
 

@@ -15,6 +15,11 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [OTRS: a survey link reads the database](#otrs-a-survey-link-reads-the-database)
+- [Weblate: a lookalike email resets the password](#weblate-a-lookalike-email-resets-the-password)
+- [Node.js: simple-git runs a command from an argument](#nodejs-simple-git-runs-a-command-from-an-argument)
+- [Node.js: binary-parser runs code from a parser option](#nodejs-binary-parser-runs-code-from-a-parser-option)
+- [WordPress: Simple Shopping Cart and APCu Manager run code from a field](#wordpress-simple-shopping-cart-and-apcu-manager-run-code-from-a-field)
 - [Rackspace Spot: leaked credentials read Kubernetes secrets](#rackspace-spot-leaked-credentials-read-kubernetes-secrets)
 - [Cleverbridge: payment card data was copied](#cleverbridge-payment-card-data-was-copied)
 - [Microsoft Entra Connect Health: a flaw exposed administrator email addresses](#microsoft-entra-connect-health-a-flaw-exposed-administrator-email-addresses)
@@ -315,6 +320,11 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [OTRS](#otrs-a-survey-link-reads-the-database) to **2026.8.2 or later**. OTRS rates [CVE-2026-93584](https://www.cve.org/CVERecord?id=CVE-2026-93584) CVSS 3.1 8.6 High and CVSS 4.0 8.7: a survey request with no login reads ticket data. 2024.3.1, the 2025 line, and 2026 before 2026.8.2 are affected. The advisory does not mention Community Edition. It is not in KEV.
+- **New this update:** Upgrade [Weblate](#weblate-a-lookalike-email-resets-the-password) to **2026.11.1 or later**. Weblate rates [GHSA-6hph-c9x9-4mcv](https://github.com/WeblateOrg/weblate/security/advisories/GHSA-6hph-c9x9-4mcv) CVSS 3.1 9.1 Critical: a lookalike email address receives the password-reset link. VulnCheck's [CVE-2026-134838](https://www.cve.org/CVERecord?id=CVE-2026-134838) scores the same issue CVSS 4.0 9.1 and CVSS 3.1 7.4. Anything before 2026.11 is affected. 2026.11.1 lists the leftover lookalike identities. An existing second factor blocks the reset Weblate showed. It is not in KEV.
+- **New this update:** Upgrade [simple-git](#nodejs-simple-git-runs-a-command-from-an-argument) to **4.1.0 or later** and turn on `strict` or `unsafe.recommended`. VulnCheck rates [CVE-2026-134815](https://www.cve.org/CVERecord?id=CVE-2026-134815) CVSS 4.0 9.2 Critical: an argument to `listRemote()` or `raw()` runs a command. The maintainer publishes no score. `@simple-git/argv-parser` before 3.0.0 is affected too. The check is off unless one of those options is on. It is not in KEV.
+- **New this update:** Upgrade [binary-parser](#nodejs-binary-parser-runs-code-from-a-parser-option) to **2.3.1 or later**. The maintainer rates [GHSA-xmxc-6c22-m377](https://github.com/keichi/binary-parser/security/advisories/GHSA-xmxc-6c22-m377) CVSS 3.1 8.1 High, and VulnCheck's [CVE-2026-134814](https://www.cve.org/CVERecord?id=CVE-2026-134814) scores it CVSS 4.0 9.2 Critical: a parser definition loaded from outside runs JavaScript. Every version through 2.3.0 is affected. Parsing untrusted bytes with the application's own definition is not this flaw. It is not in KEV.
+- **New this update:** Update [Simple Shopping Cart](#wordpress-simple-shopping-cart-and-apcu-manager-run-code-from-a-field) to **5.3.4 or later** and [APCu Manager](#wordpress-simple-shopping-cart-and-apcu-manager-run-code-from-a-field) to **4.7.0 or later**. Patchstack rates [CVE-2026-131782](https://www.cve.org/CVERecord?id=CVE-2026-131782) and [CVE-2026-131754](https://www.cve.org/CVERecord?id=CVE-2026-131754) CVSS 3.1 9.8 Critical: each deserializes a request with no login. Simple Shopping Cart through 5.3.3 and APCu Manager through 4.6.1 are affected. Neither record names the field. Neither is in KEV.
 - **New this update:** If Rackspace notified a [Spot](#rackspace-spot-leaked-credentials-read-kubernetes-secrets) account, reissue the API tokens, replace refresh tokens in automation, download fresh Kubernetes configuration files, and rotate every credential that was in a Secret. Rackspace's notice, reported November 21, says leaked credentials were used on November 17, about 00:20 to 22:00 UTC, to create pods, read Secrets, and list nodes and volumes in some customer organizations. No CVE is assigned and no score is published. Rackspace says it revoked the tokens and removed the pods. That does not expire a key that was already read.
 - **New this update:** If a [Cleverbridge](#cleverbridge-payment-card-data-was-copied) notice names a card, tell the issuer and check that card's statements. Cleverbridge says it found unauthorized activity on November 4 and that a third party copied payment card data stored on the platform. Notices began November 20. No CVE is assigned and no score is published. One notice quoted by BleepingComputer lists the card number, the expiry date, and the security code, and says the name and billing details were not copied. Cleverbridge's own page does not name the fields. There is nothing to install.
 - **New this update:** On Google Cloud, apply [GCP-2026-090](details/php-november-19.md#remediation) and do not wait for the managed image. For [phpAfterShell](#php-the-november-19-security-releases), set `session.upload_progress.enabled = 0` on App Engine, Cloud Run, and Cloud Run functions. A container you build can move to PHP 8.2.36, 8.3.37, 8.4.28, or 8.5.13 now. PHP 8.1 and 7.2 get no patch. Google says the managed images are not published yet.
@@ -323,10 +333,9 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade [SurrealDB](#surrealdb-a-script-skips-the-function-check) to **4.0.0 or later** and restart. VulnCheck rates [CVE-2026-134292](https://www.cve.org/CVERecord?id=CVE-2026-134292) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8: a JavaScript script calls a built-in function the user was denied. SurrealDB's own advisory rates the same issue High and names no CVE. 1.0.0 before 4.0.0 is affected. It is not in KEV.
 - **New this update:** Remove [Idunno.AntiCsrf](#aspnet-idunnoanticsrf-runs-code-from-a-form-field). Mandiant rates [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914) CVSS 4.0 9.3 Critical: a form field is deserialized before it is checked, and a request with no login runs code as the IIS worker. Every version through 0.9.1 Beta, the last release, is affected, and there is no patch. Mandiant says exploitation has been observed and names no indicator. It is not in KEV. Removing the module does not undo a request that already ran.
 - **New this update:** Update [Nexter Blocks Pro](#wordpress-nexter-blocks-pro-registers-an-administrator) to **5.0.11 or later**. Wordfence rates [CVE-2026-125294](https://www.cve.org/CVERecord?id=CVE-2026-125294) CVSS 3.1 9.8 Critical: a registration with no login creates an administrator, on a site that allows user registration and shows the Login | Register block. Every version through 5.0.10 is affected. The free plugin is not named. It is not in KEV. The update does not remove an administrator account that was already created.
-- **New this update:** Upgrade [Ghostscript](#ghostscript-upload2shell---a-document-runs-commands) to **10.08.0 or later**, and restart whatever renders files with it. VulnCheck rates [CVE-2026-125396](https://www.cve.org/CVERecord?id=CVE-2026-125396) CVSS 4.0 8.5 High: a document turns off Ghostscript's `-dSAFER` sandbox and runs commands as the renderer. pwn.ai showed that through a shared print queue, a Roundcube attachment, and a WordPress upload. Debian 13 is `ghostscript` **10.05.1~dfsg-1+deb13u3** and Debian 12 is **10.0.0~dfsg-11+deb12u9**. Ubuntu and SUSE have no package yet. It is not in KEV. WordPress 7.0.4 closes only WordPress's own upload path.
+- **New this update:** Upgrade [Ghostscript](#ghostscript-upload2shell---a-document-runs-commands) to **10.08.0 or later**, and restart whatever renders files with it. VulnCheck rates [CVE-2026-125396](https://www.cve.org/CVERecord?id=CVE-2026-125396) CVSS 4.0 8.5 High: a document turns off Ghostscript's `-dSAFER` sandbox and runs commands as the renderer. pwn.ai showed that through a shared print queue, a Roundcube attachment, and a WordPress upload. Debian 13 is `ghostscript` **10.05.1~dfsg-1+deb13u3** and Debian 12 is **10.0.0~dfsg-11+deb12u9**. Ubuntu has no package. SUSE lists one for SLES 15 SP7 in QA only, and AlmaLinux's builds are in testing. It is not in KEV. WordPress 7.0.4 closes only WordPress's own upload path.
 - **New this update:** Upgrade [Postgres Enterprise Manager](#postgres-enterprise-manager-an-agent-reads-the-server-and-a-user-becomes-superuser) to **10.6.1 or later**. EnterpriseDB rates [CVE-2026-132658](https://www.cve.org/CVERecord?id=CVE-2026-132658), [CVE-2026-132659](https://www.cve.org/CVERecord?id=CVE-2026-132659), and [CVE-2026-132660](https://www.cve.org/CVERecord?id=CVE-2026-132660) CVSS 4.0 9.4 Critical. An agent certificate from one monitored host reads and writes files on the PEM server, and can schedule jobs on every other agent. A PEM user who can reach the backend database runs SQL as a superuser. PEM 9.x, including 9.8, gets no fix. None is in KEV. If a monitored host may have been compromised, reissue the PEM certificate authority after the upgrade.
 - **New this update:** Upgrade [NukeViet](#nukeviet-a-contact-message-runs-script-in-the-administrators-browser) to **4.6.01 or later**. GitHub rates [CVE-2026-94565](https://www.cve.org/CVERecord?id=CVE-2026-94565) CVSS 3.1 9.3 Critical: a contact message runs script in the administrator's browser. The 3.x line and 4.x before 4.6.01 are affected. It is not in KEV. The upgrade does not remove an administrator account that was already created.
-- **New this update:** Update [Restrictions for BuddyPress](#wordpress-restrictions-for-buddypress-runs-code-before-login) to **1.5.5 or later**. Wordfence rates [CVE-2026-120539](https://www.cve.org/CVERecord?id=CVE-2026-120539) CVSS 3.1 9.8 Critical: a request with no login runs code, on a site that also runs BuddyPress and Paid Memberships Pro. The CVE record is still reserved. It is not in KEV.
 - **New this update:** On a [GL.iNet](#glinet-the-cloud-service-installed-malware-on-routers-and-kvms) router or KVM, install the stable build whose release note names the cloud-management flaw, and look for a process running `crond -i /tmp/.log` first. GL-MT6000 and GL-MT3000 are **4.11.1**. GL-BE9300 and GL-BE3600 are **4.10.2**. Five more router models are **4.8.4**, and GL-X2000 and GL-MT2500 are **4.7.14**. The seven named KVM models are **1.10.3**, except RMQ1 at **1.8.7**. A model with no such note, including GL-B3000, has no build to install. The update does not replace the process check.
 - **New this update:** Confirm the [Unstable Slope Management Program](#unstable-slope-management-program-a-request-runs-sql-before-login) instance is the one fixed on or around **October 19**. CISA rates [CVE-2026-129175](https://www.cve.org/CVERecord?id=CVE-2026-129175) CVSS 3.1 9.8 Critical: a request with no login runs SQL and can take the database. Three more are High: deleting a user, creating a user, and skipping the Keycloak login when you already have a local password. CISA names no build. Until the operator confirms the fix, keep it off the internet, then reset local passwords. None is in KEV.
 - **New this update:** Upgrade [Tegsoft Contact Center](#tegsoft-contact-center-an-upload-plants-a-web-shell) to **latest-202611161510 or later**. TR-CERT rates [CVE-2026-14914](https://www.cve.org/CVERecord?id=CVE-2026-14914) CVSS 3.1 10.0 Critical: an upload plants a web shell, and the score says no login. A second flaw, 5.3, exposes system information and has the same floor. The upgrade does not remove a file already uploaded. Neither is in KEV.
@@ -570,6 +579,115 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## OTRS: a survey link reads the database
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/otrs.md):** [Detection](details/otrs.md#detection) · [Remediation](details/otrs.md#remediation) · [Verification](details/otrs.md#verification) · [Timeline](details/otrs.md#timeline)
+
+**CVEs:** [CVE-2026-93584](https://www.cve.org/CVERecord?id=CVE-2026-93584)
+
+**OTRS rates [CVE-2026-93584](https://www.cve.org/CVERecord?id=CVE-2026-93584) CVSS 3.1 8.6 High and CVSS 4.0 8.7 High.** EasyVista-OTRS is the CNA. The CVE record carries only the CVSS 3.1 score. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N`. The advisory's CVSS 4.0 vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N/AU:Y/R:A/RE:M/U:Red`. The Survey endpoint copies the survey key into an SQL statement. A request with no login reads ticket data the database account can see. The external frontend has to be reachable. **2024.3.1**, the **2025.x** line, and **2026.x before 2026.8.2** are affected. **2026.8.2** is the fix. The advisory does not mention ((OTRS)) Community Edition. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-23; time/TZ unknown** | OSA-2026-19. CVSS 3.1 8.6 and CVSS 4.0 8.7. Fixed in 2026.8.2. |
+| **Last updated** | **2026-11-23 07:01 EST (UTC−05:00)** | New item. Upgrade to 2026.8.2. |
+
+**Patch:** Upgrade to **OTRS 2026.8.2 or later**. Until then, keep the external frontend off untrusted networks. The upgrade does not show whether a survey request already read ticket data.
+
+Sources: [OSA-2026-19](https://otrs.com/release-notes/otrs-security-advisory-2026-19/), [CVE-2026-93584](https://www.cve.org/CVERecord?id=CVE-2026-93584), [detailed guide](details/otrs.md).
+
+---
+
+## Weblate: a lookalike email resets the password
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/weblate.md):** [Detection](details/weblate.md#detection) · [Remediation](details/weblate.md#remediation) · [Verification](details/weblate.md#verification) · [Timeline](details/weblate.md#timeline)
+
+**CVEs:** [CVE-2026-134838](https://www.cve.org/CVERecord?id=CVE-2026-134838)
+
+**Weblate rates [GHSA-6hph-c9x9-4mcv](https://github.com/WeblateOrg/weblate/security/advisories/GHSA-6hph-c9x9-4mcv) CVSS 3.1 9.1 Critical.** The vector on that page is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N`, and the page names no CVE. VulnCheck's [CVE-2026-134838](https://www.cve.org/CVERecord?id=CVE-2026-134838) scores the same issue **CVSS 4.0 9.1 Critical** and **CVSS 3.1 7.4 High**. The two CVSS 3.1 scores disagree, and both stay. Password reset treats a Unicode lookalike email as the account's address and sends the link to the address that was typed. The attacker sets a new password. Weblate says the same matching also affects identity and invitation association, and that an existing second factor stops the reset it demonstrated. Anything **before 2026.11** is affected. **2026.11**, released 2026-11-02, is the fix. **2026.11.1**, released 2026-11-05, lists leftover lookalike identities. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| 2026.11 | 2026-11-02 18:55:03 UTC | The release notes list the fix. |
+| 2026.11.1 | 2026-11-05 08:40:14 UTC | Adds the lookalike-identity check. |
+| **Public announcement** | **2026-11-13; time/TZ unknown** | GHSA-6hph-c9x9-4mcv. CVSS 3.1 9.1. The CVE record is 2026-11-22. |
+| **Last updated** | **2026-11-23 07:01 EST (UTC−05:00)** | New item. Upgrade to 2026.11.1. |
+
+**Patch:** Upgrade to **Weblate 2026.11.1 or later**. Then remove lookalike identities the upgrade check lists, and reset those passwords. Requiring a second factor limits the reset chain. It does not replace the upgrade.
+
+Sources: [GHSA-6hph-c9x9-4mcv](https://github.com/WeblateOrg/weblate/security/advisories/GHSA-6hph-c9x9-4mcv), [CVE-2026-134838](https://www.cve.org/CVERecord?id=CVE-2026-134838), [detailed guide](details/weblate.md).
+
+---
+
+## Node.js: simple-git runs a command from an argument
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/simple-git.md):** [Detection](details/simple-git.md#detection) · [Remediation](details/simple-git.md#remediation) · [Verification](details/simple-git.md#verification) · [Timeline](details/simple-git.md#timeline)
+
+**CVEs:** [CVE-2026-134815](https://www.cve.org/CVERecord?id=CVE-2026-134815)
+
+**VulnCheck rates [CVE-2026-134815](https://www.cve.org/CVERecord?id=CVE-2026-134815) CVSS 4.0 9.2 Critical and CVSS 3.1 8.1 High.** VulnCheck is the CNA. The CVSS 4.0 vector is `CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. The maintainer's release notes name the same commit and publish no score. `allowUnsafePack` blocked `--exec` only on `git push`. The same option names the remote program for `ls-remote`, `archive`, `fetch-pack`, and `send-pack`. An application that passes outside arguments to `listRemote()` or `raw()` runs that program. `simple-git` **before 4.1.0** and `@simple-git/argv-parser` **before 3.0.0** are affected. **4.1.0**, released 2026-11-16, is the fix, and the new check is enforced only when `unsafe.recommended` or `strict` is on. Both default off. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| 4.1.0 | 2026-11-16 18:23:38 UTC | Blocks `--exec` beyond `push` and `rebase`. |
+| **Public announcement** | **2026-11-22; time/TZ unknown** | VulnCheck published the record. CVSS 4.0 9.2 and CVSS 3.1 8.1. |
+| **Last updated** | **2026-11-23 07:01 EST (UTC−05:00)** | New item. Upgrade to 4.1.0 and turn the check on. |
+
+**Patch:** Upgrade `simple-git` to **4.1.0 or later** and set `strict: true` or `unsafe.recommended: true`. Without one of those, the release notes say the check is not enforced. The upgrade does not show whether a command already ran.
+
+Sources: [CVE-2026-134815](https://www.cve.org/CVERecord?id=CVE-2026-134815), [simple-git 4.1.0](https://github.com/steveukx/git-js/releases/tag/simple-git%404.1.0), [detailed guide](details/simple-git.md).
+
+---
+
+## Node.js: binary-parser runs code from a parser option
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/binary-parser.md):** [Detection](details/binary-parser.md#detection) · [Remediation](details/binary-parser.md#remediation) · [Verification](details/binary-parser.md#verification) · [Timeline](details/binary-parser.md#timeline)
+
+**CVEs:** [CVE-2026-134814](https://www.cve.org/CVERecord?id=CVE-2026-134814)
+
+**The maintainer rates [GHSA-xmxc-6c22-m377](https://github.com/keichi/binary-parser/security/advisories/GHSA-xmxc-6c22-m377) CVSS 3.1 8.1 High.** The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`, and the page names no CVE. VulnCheck's [CVE-2026-134814](https://www.cve.org/CVERecord?id=CVE-2026-134814) scores the same issue **CVSS 4.0 9.2 Critical** and **CVSS 3.1 8.1 High**. The High and the Critical disagree, and both stay. String options other than the field name are copied into the generated parser. A parser definition loaded from outside, such as JSON, runs JavaScript in the Node.js process when it is compiled. The maintainer says untrusted bytes parsed with the application's own definition are not this flaw. Every version **through 2.3.0** is affected. **2.3.1** is the fix. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-11; time/TZ unknown** | GHSA-xmxc-6c22-m377. CVSS 3.1 8.1. The CVE record is 2026-11-22. |
+| **Last updated** | **2026-11-23 07:01 EST (UTC−05:00)** | New item. Upgrade to 2.3.1. |
+
+**Patch:** Upgrade `binary-parser` to **2.3.1 or later**. A `length` written as an expression such as `len - 1` has to become a function. The upgrade does not show whether a parser definition already ran code.
+
+Sources: [GHSA-xmxc-6c22-m377](https://github.com/keichi/binary-parser/security/advisories/GHSA-xmxc-6c22-m377), [CVE-2026-134814](https://www.cve.org/CVERecord?id=CVE-2026-134814), [detailed guide](details/binary-parser.md).
+
+---
+
+## WordPress: Simple Shopping Cart and APCu Manager run code from a field
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-nov23.md):** [Detection](details/wordpress-nov23.md#detection) · [Remediation](details/wordpress-nov23.md#remediation) · [Verification](details/wordpress-nov23.md#verification) · [Timeline](details/wordpress-nov23.md#timeline)
+
+**CVEs:** [CVE-2026-131782](https://www.cve.org/CVERecord?id=CVE-2026-131782), [CVE-2026-131754](https://www.cve.org/CVERecord?id=CVE-2026-131754)
+
+**Patchstack rates both CVSS 3.1 9.8 Critical.** Patchstack is the CNA. The vector on both is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. [CVE-2026-131782](https://www.cve.org/CVERecord?id=CVE-2026-131782) is Simple Shopping Cart, slug `wordpress-simple-paypal-shopping-cart`: a PHP object injection with no login, every version **through 5.3.3**, fixed in **5.3.4**. [CVE-2026-131754](https://www.cve.org/CVERecord?id=CVE-2026-131754) is APCu Manager, slug `apcu-manager`: the same class of flaw, every version **through 4.6.1**, fixed in **4.7.0**. Neither record names the field or a condition beyond the version. The plugins are unrelated. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-23) for either CVE. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Patchstack pages | 2026-11-20; time/TZ unknown | Both pages are dated November 20. |
+| **Public announcement** | **2026-11-22; time/TZ unknown** | Patchstack published both records. Each is CVSS 3.1 9.8. |
+| **Last updated** | **2026-11-23 07:01 EST (UTC−05:00)** | New item. Update both plugins. |
+
+**Patch:** Update Simple Shopping Cart to **5.3.4 or later** and APCu Manager to **4.7.0 or later**. Neither update shows whether a request already ran code.
+
+Sources: [Simple Shopping Cart](https://patchstack.com/database/wordpress/plugin/wordpress-simple-paypal-shopping-cart/vulnerability/wordpress-simple-shopping-cart-plugin-5-3-3-php-object-injection-vulnerability?_s_id=cve), [APCu Manager](https://patchstack.com/database/wordpress/plugin/apcu-manager/vulnerability/wordpress-apcu-manager-plugin-4-6-1-php-object-injection-vulnerability?_s_id=cve), [detailed guide](details/wordpress-nov23.md).
+
+---
+
 ## Rackspace Spot: leaked credentials read Kubernetes secrets
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/rackspace-spot.md):** [Detection](details/rackspace-spot.md#detection) · [Remediation](details/rackspace-spot.md#remediation) · [Verification](details/rackspace-spot.md#verification) · [Timeline](details/rackspace-spot.md#timeline)
@@ -746,9 +864,9 @@ Vulnerability Info Site: [pwn.ai](https://pwn.ai/upload2shell)
 | Debian 13 | 2026-09-25 21:17:14 UTC | DSA-6516-1. The tracker marks 10.05.1~dfsg-1+deb13u3 fixed. |
 | **Public announcement** | **2026-11-09; time/TZ unknown** | VulnCheck published the CVE. CVSS 4.0 8.5. |
 | Public write-up | 2026-11-17; time/TZ unknown | pwn.ai. The case studies are not published. |
-| **Last updated** | **2026-11-22 07:10 EST (UTC−05:00)** | New item. Debian is fixed. Ubuntu is not. |
+| **Last updated** | **2026-11-23 07:01 EST (UTC−05:00)** | SUSE has a package in QA only. AlmaLinux's builds are in testing. |
 
-**Patch:** Upgrade to **Ghostscript 10.08.0 or later** and restart the workers that render files. On Debian 13, install `ghostscript` **10.05.1~dfsg-1+deb13u3**. On Debian 12, install **10.0.0~dfsg-11+deb12u9** from bookworm-security. Ubuntu's page, updated November 18, marks every release Needs evaluation and names no package. SUSE marks SLES 15 SP7 In progress and 16.0 and 16.1 Affected. Update WordPress to **7.0.4 or later** as well: that closes one upload path and leaves the library in place.
+**Patch:** Upgrade to **Ghostscript 10.08.0 or later** and restart the workers that render files. On Debian 13, install `ghostscript` **10.05.1~dfsg-1+deb13u3**. On Debian 12, install **10.0.0~dfsg-11+deb12u9** from bookworm-security. Ubuntu's page, updated November 18, marks every release Needs evaluation and names no package. SUSE marks SLES 15 SP7, 16.0, and 16.1 In progress and lists `ghostscript` 9.52-150000.222.1 for 15 SP7 in QA only, not released. AlmaLinux's November 22 builds are in testing, not production. Update WordPress to **7.0.4 or later** as well: that closes one upload path and leaves the library in place.
 
 Sources: [CVE-2026-125396](https://www.cve.org/CVERecord?id=CVE-2026-125396), [pwn.ai](https://pwn.ai/upload2shell), [detailed guide](details/ghostscript.md).
 
@@ -804,15 +922,15 @@ Sources: [GHSA-662q-v5rm-78gm](https://github.com/nukeviet/nukeviet/security/adv
 
 **CVEs:** [CVE-2026-120539](https://www.cve.org/CVERecord?id=CVE-2026-120539)
 
-**Wordfence rates [CVE-2026-120539](https://www.cve.org/CVERecord?id=CVE-2026-120539) CVSS 3.1 9.8 Critical.** The CVE.org record is still reserved, so the score is Wordfence's, not a published CNA record. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The plugin puts the request URI into a PHP expression and evaluates it, and a request with no login runs code. The site also has to be running BuddyPress and Paid Memberships Pro. The affected conditions are on by default. Every version through **1.5.4** is affected. **1.5.5**, tagged 2026-11-12, is the fix. Wordfence does not describe an incident.
+**Wordfence rates [CVE-2026-120539](https://www.cve.org/CVERecord?id=CVE-2026-120539) CVSS 3.1 9.8 Critical.** Wordfence published the record on 2026-11-21, and it carries the same score. The CVE.org HTML page still rendered it reserved on 2026-11-23; the JSON record is published. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The plugin puts the request URI into a PHP expression and evaluates it, and a request with no login runs code. The site also has to be running BuddyPress and Paid Memberships Pro. The affected conditions are on by default. Every version through **1.5.4** is affected. **1.5.5**, tagged 2026-11-12, is the fix. Wordfence does not describe an incident.
 
 **CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | 1.5.5 tagged | 2026-11-12 09:48:02 UTC | Seventh Queen calls it a security fix. |
-| **Public announcement** | **2026-11-20; time/TZ unknown** | Wordfence published the page. The record is still reserved. |
-| **Last updated** | **2026-11-22 00:05 EST (UTC−05:00)** | New item. Update to 1.5.5. |
+| **Public announcement** | **2026-11-20; time/TZ unknown** | Wordfence published the page. The record was published 2026-11-21 05:35:04 UTC. |
+| **Last updated** | **2026-11-23 07:01 EST (UTC−05:00)** | The CVE record is published. |
 
 **Patch:** Update the plugin to **1.5.5 or later**, or deactivate it. The update does not show whether a request already ran code.
 
@@ -1898,7 +2016,7 @@ Sources: [CVE-2026-91115](https://www.cve.org/CVERecord?id=CVE-2026-91115), [Sil
 
 **CVEs:** [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443), [CVE-2026-116440](https://www.cve.org/CVERecord?id=CVE-2026-116440), [CVE-2026-116448](https://www.cve.org/CVERecord?id=CVE-2026-116448), [CVE-2026-116449](https://www.cve.org/CVERecord?id=CVE-2026-116449), [CVE-2026-116439](https://www.cve.org/CVERecord?id=CVE-2026-116439), [CVE-2026-116446](https://www.cve.org/CVERecord?id=CVE-2026-116446), [CVE-2026-116441](https://www.cve.org/CVERecord?id=CVE-2026-116441). [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) lists the rest, and the detailed guide names the ones Dell rates 8.8 or higher. Revision 4.0, dated November 19, removes CVE-2026-67271.
 
-**Dell rates [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) Critical, and seven of its flaws CVSS 3.1 9.8.** Dell is the CNA. [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443) is a stack-based buffer overflow in the NAS TFTP service: Dell says an unauthenticated remote attacker can cause a denial of service or potential code execution. [CVE-2026-116448](https://www.cve.org/CVERecord?id=CVE-2026-116448) and [CVE-2026-116449](https://www.cve.org/CVERecord?id=CVE-2026-116449) are command injection that needs internal network access and runs commands as root. [CVE-2026-116439](https://www.cve.org/CVERecord?id=CVE-2026-116439) reads, modifies, or deletes files. The rest of the 9.8 rows are buffer overflows and path traversal in the same file-services layer. [CVE-2026-116441](https://www.cve.org/CVERecord?id=CVE-2026-116441) is 9.6 and needs a peer on the storage-processor interconnect. PowerStoreT OS **5.1.x before 5.1.0.0-2798105** is affected, and that build is the fix for the 5.1 line. Revision 2.0, dated November 17, adds **4.3.1.3-2800620** for a subset of the 4.3 LTS flaws. That build does not include CVE-2026-116443. Dell's CNA published the 9.8 records on November 18. On November 19 it published [CVE-2026-111509](https://www.cve.org/CVERecord?id=CVE-2026-111509) at 9.1, a weak random-number generator on NAS SSH and SFTP, and [CVE-2026-111506](https://www.cve.org/CVERecord?id=CVE-2026-111506) at 8.8. The 5.1 build covers both. The 4.3 build covers the 8.8 and not the 9.1. The build numbers are unchanged.
+**Dell rates [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) Critical, and seven of its flaws CVSS 3.1 9.8.** Dell is the CNA. [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443) is a stack-based buffer overflow in the NAS TFTP service: Dell says an unauthenticated remote attacker can cause a denial of service or potential code execution. [CVE-2026-116448](https://www.cve.org/CVERecord?id=CVE-2026-116448) and [CVE-2026-116449](https://www.cve.org/CVERecord?id=CVE-2026-116449) are command injection that needs internal network access and runs commands as root. [CVE-2026-116439](https://www.cve.org/CVERecord?id=CVE-2026-116439) reads, modifies, or deletes files. Dell published that record on 2026-11-19 at 12:53:30 UTC, and it names the 5.1 floor only, not the 4.3 build. [CVE-2026-116440](https://www.cve.org/CVERecord?id=CVE-2026-116440), published the same day at 12:46:05 UTC, names both floors. The rest of the 9.8 rows are buffer overflows and path traversal in the same file-services layer. [CVE-2026-116441](https://www.cve.org/CVERecord?id=CVE-2026-116441) is 9.6 and needs a peer on the storage-processor interconnect. PowerStoreT OS **5.1.x before 5.1.0.0-2798105** is affected, and that build is the fix for the 5.1 line. Revision 2.0, dated November 17, adds **4.3.1.3-2800620** for a subset of the 4.3 LTS flaws. That build does not include CVE-2026-116443 or CVE-2026-116439. Dell's CNA published the first 9.8 records on November 18. On November 19 it published [CVE-2026-111509](https://www.cve.org/CVERecord?id=CVE-2026-111509) at 9.1, a weak random-number generator on NAS SSH and SFTP, and [CVE-2026-111506](https://www.cve.org/CVERecord?id=CVE-2026-111506) at 8.8. The 5.1 build covers both. The 4.3 build covers the 8.8 and not the 9.1. The build numbers are unchanged.
 
 **CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any CVE in the advisory. Dell does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -1906,7 +2024,8 @@ Sources: [CVE-2026-91115](https://www.cve.org/CVERecord?id=CVE-2026-91115), [Sil
 |---|---|---|
 | **Public announcement** | **2026-10-30; time/TZ unknown** | DSA-2026-479 revision 1.0. Dell's article says last modified 30 Oct 2026. |
 | Advisory revision 4.0 | 2026-11-19; time/TZ unknown | Removes CVE-2026-67271. The builds are unchanged. |
-| **Last updated** | **2026-11-20 03:08 EST (UTC−05:00)** | The 9.8 table no longer lists CVE-2026-67271. |
+| CVE-2026-116440 and CVE-2026-116439 published | 2026-11-19 12:46:05 UTC and 12:53:30 UTC | Both 9.8. CVE-2026-116439 names the 5.1 floor only. |
+| **Last updated** | **2026-11-23 07:01 EST (UTC−05:00)** | Those two records are published. |
 
 **Patch:** On 5.1, upgrade PowerStoreT OS to **5.1.0.0-2798105 or later**. On 4.3 LTS, install **4.3.1.3-2800620 or later** and wait for the later patches Dell says are still to come. Until then, keep TFTP, NFS, and the management interface off untrusted networks. The upgrade does not show whether a request already ran code.
 
@@ -8340,6 +8459,11 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **OTRS 2024.3.1, any 2025 release, or 2026 before 2026.8.2** | Upgrade to 2026.8.2 or later. OTRS rates CVE-2026-93584 8.6: a survey request with no login reads ticket data. The advisory does not mention Community Edition. [Guide](details/otrs.md#remediation). |
+| **Weblate before 2026.11** | Upgrade to 2026.11.1 or later. Weblate rates GHSA-6hph-c9x9-4mcv 9.1: a lookalike email receives the password-reset link. 2026.11.1 lists the leftover identities. [Guide](details/weblate.md#remediation). |
+| **Node.js `simple-git` before 4.1.0** | Upgrade to 4.1.0 or later and set `strict: true` or `unsafe.recommended: true`. VulnCheck rates CVE-2026-134815 9.2: an argument runs a command. The check is off unless one of those options is on. [Guide](details/simple-git.md#remediation). |
+| **Node.js `binary-parser` 2.3.0 or earlier** | Upgrade to 2.3.1 or later. The maintainer rates GHSA-xmxc-6c22-m377 8.1, and VulnCheck scores CVE-2026-134814 9.2: a parser definition from outside runs JavaScript. [Guide](details/binary-parser.md#remediation). |
+| **WordPress Simple Shopping Cart through 5.3.3, or APCu Manager through 4.6.1** | Update Simple Shopping Cart to 5.3.4 or later and APCu Manager to 4.7.0 or later. Patchstack rates CVE-2026-131782 and CVE-2026-131754 9.8: each deserializes a request with no login. [Guide](details/wordpress-nov23.md#remediation). |
 | **GPGME before 2.3.1, or Gpg4win before 5.1.2** | Update the shared library to 2.3.1, or install Gpg4win 5.1.2, and restart what had it loaded. GnuPG calls CVE-2026-129975 critical: a long OpenPGP user ID frees memory twice. Debian 13 is `gpgme1.0` 1.24.2-3+deb13u1 and Debian 12 is 1.18.0-3+deb12u1. Debian testing has no package. Rebuild a program that links its own copy. [Guide](details/gpgme.md#remediation). |
 | **Mitel MiCollab 10.3.0.18 or earlier** | Apply the patch in KB000129195, or upgrade past 10.3.0.18. Mitel rates CVE-2026-133323 10.0: a conferencing request runs commands with no login. Build 10.3.0.18 still needs the patch. Until then, keep the conferencing component off the internet. [Guide](details/micollab.md#remediation). |
 | **WatchGuard Dimension 2.0 before 2.3.2** | Upgrade to 2.3.2 or later. WatchGuard rates CVE-2026-86130 9.3: the log collection service runs code with no login. This is not the AuthPoint gateway. [Guide](details/watchguard-dimension.md#remediation). |

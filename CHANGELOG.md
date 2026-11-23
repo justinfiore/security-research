@@ -2,6 +2,17 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-23 07:01 EST (UTC−05:00) — OTRS; Weblate; simple-git; binary-parser; WordPress
+
+- **OTRS:** Upgrade to [2026.8.2 or later](black-october/details/otrs.md#remediation). OTRS rates CVE-2026-93584 CVSS 3.1 8.6 and CVSS 4.0 8.7: a survey request with no login reads ticket data. 2024.3.1, the 2025 line, and 2026 before 2026.8.2 are affected. The advisory does not mention Community Edition. It is not in KEV.
+- **Weblate:** Upgrade to [2026.11.1 or later](black-october/details/weblate.md#remediation). Weblate rates GHSA-6hph-c9x9-4mcv CVSS 3.1 9.1: a lookalike email receives the password-reset link. VulnCheck's CVE-2026-134838 scores the same issue 9.1 and 7.4. Anything before 2026.11 is affected. 2026.11.1 lists the leftover identities. It is not in KEV.
+- **Node.js:** Upgrade [simple-git](black-october/details/simple-git.md#remediation) to 4.1.0 or later and turn on `strict` or `unsafe.recommended`. VulnCheck rates CVE-2026-134815 CVSS 4.0 9.2: an argument to `listRemote()` or `raw()` runs a command. The check is off unless one of those options is on. It is not in KEV.
+- **Node.js:** Upgrade [binary-parser](black-october/details/binary-parser.md#remediation) to 2.3.1 or later. The maintainer rates GHSA-xmxc-6c22-m377 CVSS 3.1 8.1, and VulnCheck's CVE-2026-134814 scores it 9.2: a parser definition loaded from outside runs JavaScript. Every version through 2.3.0 is affected. It is not in KEV.
+- **WordPress:** Update [Simple Shopping Cart](black-october/details/wordpress-nov23.md#remediation) to 5.3.4 or later and APCu Manager to 4.7.0 or later. Patchstack rates CVE-2026-131782 and CVE-2026-131754 CVSS 3.1 9.8: each deserializes a request with no login. Neither is in KEV.
+- **WordPress:** [Restrictions for BuddyPress](black-october/details/wordpress-bp-restrict.md#timeline) has a published record. Wordfence published CVE-2026-120539 on November 21 at 05:35 UTC, CVSS 3.1 9.8. The fix is still 1.5.5. The CVE.org page still rendered the record reserved on November 23; the JSON record is the published one.
+- **Dell PowerStore:** [CVE-2026-116440 and CVE-2026-116439](black-october/details/dell-powerstore.md#timeline) are published, both CVSS 3.1 9.8. CVE-2026-116439, the path traversal, names only the 5.1 floor, so 4.3.1.3-2800620 does not cover it. The builds are unchanged.
+- **Ghostscript:** [SUSE and AlmaLinux](black-october/details/ghostscript.md#detection) still have no released package. SUSE lists `ghostscript` 9.52-150000.222.1 for SLES 15 SP7 in QA, and AlmaLinux's November 22 builds are in the testing repository only. Debian's packages are unchanged.
+
 ## 2026-11-23 03:01 EST (UTC−05:00) — PAN-OS NGINX hotfixes
 
 - **PAN-OS and Panorama:** If the HTTP/2 option is on, install the [hotfix for the branch](black-october/details/nginx.md#pan-os-and-panorama). Palo Alto rates CVE-2026-123633 and CVE-2026-123007 Critical, CVSS-B 4.0 9.2. 12.2 is 12.2.4-h3. 12.1 is 12.1.10-h6, or 12.1.7-h15 once that build is out. 11.2 is 11.2.16-h3, or 11.2.13-h6 or 11.2.10-h19 once those are out. Palo Alto still marks the last three ETA November 23. 12.1.4 and earlier, and 11.2.7 and earlier, need no action. Until the hotfix, turn HTTP/2 off. Palo Alto knows of no malicious exploitation. The upstream NGINX floors are unchanged.
