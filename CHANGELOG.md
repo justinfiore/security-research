@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-22 23:06 EST (UTC−05:00) — GL.iNet stable firmware
+
+- **GL.iNet:** Install the [stable build](black-october/details/glinet.md#remediation) whose release note names the November 20 cloud-management flaw, and look for `crond -i /tmp/.log` first. GL-MT6000 and GL-MT3000 are 4.11.1. GL-BE9300 and GL-BE3600 are 4.10.2. Five more router models are 4.8.4, and GL-X2000 and GL-MT2500 are 4.7.14. The seven named KVM models are 1.10.3, except RMQ1 at 1.8.7. A model whose newest stable release predates November 22, including GL-B3000, has no such note and no build to install. GL.iNet has not said the update removes an infection by itself. No CVE is assigned.
+
 ## 2026-11-22 19:56 EST (UTC−05:00) — Rackspace Spot; Cleverbridge; Google Cloud PHP
 
 - **Rackspace Spot:** If Rackspace notified the account, [reissue the API tokens](black-october/details/rackspace-spot.md#remediation), replace refresh tokens in automation, download fresh Kubernetes configuration files, and rotate every credential that was in a Secret. Rackspace's notice, reported November 21, says leaked credentials were used on November 17, about 00:20 to 22:00 UTC, to create pods and read Secrets in some customer organizations. No CVE is assigned. Revoking a token does not expire a key that was already read.
