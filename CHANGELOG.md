@@ -2,6 +2,13 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-22 19:56 EST (UTC−05:00) — Rackspace Spot; Cleverbridge; Google Cloud PHP
+
+- **Rackspace Spot:** If Rackspace notified the account, [reissue the API tokens](black-october/details/rackspace-spot.md#remediation), replace refresh tokens in automation, download fresh Kubernetes configuration files, and rotate every credential that was in a Secret. Rackspace's notice, reported November 21, says leaked credentials were used on November 17, about 00:20 to 22:00 UTC, to create pods and read Secrets in some customer organizations. No CVE is assigned. Revoking a token does not expire a key that was already read.
+- **Cleverbridge:** If a notice names a card, [tell the issuer](black-october/details/cleverbridge.md#remediation) and check that card's statements. Cleverbridge says unauthorized activity on November 4 led to payment card data being copied, and notices began November 20. No CVE is assigned. One quoted notice lists the card number, the expiry, and the security code, and says the name and billing details were not copied. Cleverbridge's own page does not name the fields. There is nothing to install.
+- **PHP on Google Cloud:** Set [`session.upload_progress.enabled = 0`](black-october/details/php-november-19.md#remediation) now on App Engine, Cloud Run, and Cloud Run functions. Bulletin GCP-2026-090, November 20, says the managed images for CVE-2026-126714 are not published yet. A container you build can move to PHP 8.2.36, 8.3.37, 8.4.28, or 8.5.13 today. PHP 8.1 and 7.2 get no patch. The setting is the mitigation, not the fix.
+- **KVM:** On Debian 13, install [`linux-image` 6.12.118-1](black-october/details/linux-kvm-nested-init.md#remediation) from trixie-security and reboot. DSA-6652-1 carries CVE-2026-99312. Bookworm and forky still have no package. Ubuntu, Red Hat, and SUSE still have none. It is not in KEV. The reboot is the fix.
+
 ## 2026-11-22 15:30 EST (UTC−05:00) — Entra Connect Health; OpenRouter; vCenter Tools; Qt packages
 
 - **Microsoft Entra Connect Health:** Read [Azure Service Health](black-october/details/entra-connect-health.md#remediation). Microsoft says a flaw in the Connect Health API, fixed on its servers on November 19, was used to read administrator and technical-contact email addresses and other tenant metadata. No CVE is assigned and there is nothing to install. If the notice names your tenant, warn those people about phishing and put phishing-resistant multifactor authentication on the privileged accounts.

@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 22, 2026**
+**As of November 23, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Rackspace Spot: leaked credentials read Kubernetes secrets](#rackspace-spot-leaked-credentials-read-kubernetes-secrets)
+- [Cleverbridge: payment card data was copied](#cleverbridge-payment-card-data-was-copied)
 - [Microsoft Entra Connect Health: a flaw exposed administrator email addresses](#microsoft-entra-connect-health-a-flaw-exposed-administrator-email-addresses)
 - [OpenRouter: inference providers kept prompts they said they would not](#openrouter-inference-providers-kept-prompts-they-said-they-would-not)
 - [SurrealDB: a script skips the function check](#surrealdb-a-script-skips-the-function-check)
@@ -313,6 +315,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** If Rackspace notified a [Spot](#rackspace-spot-leaked-credentials-read-kubernetes-secrets) account, reissue the API tokens, replace refresh tokens in automation, download fresh Kubernetes configuration files, and rotate every credential that was in a Secret. Rackspace's notice, reported November 21, says leaked credentials were used on November 17, about 00:20 to 22:00 UTC, to create pods, read Secrets, and list nodes and volumes in some customer organizations. No CVE is assigned and no score is published. Rackspace says it revoked the tokens and removed the pods. That does not expire a key that was already read.
+- **New this update:** If a [Cleverbridge](#cleverbridge-payment-card-data-was-copied) notice names a card, tell the issuer and check that card's statements. Cleverbridge says it found unauthorized activity on November 4 and that a third party copied payment card data stored on the platform. Notices began November 20. No CVE is assigned and no score is published. One notice quoted by BleepingComputer lists the card number, the expiry date, and the security code, and says the name and billing details were not copied. Cleverbridge's own page does not name the fields. There is nothing to install.
+- **New this update:** On Google Cloud, apply [GCP-2026-090](details/php-november-19.md#remediation) and do not wait for the managed image. For [phpAfterShell](#php-the-november-19-security-releases), set `session.upload_progress.enabled = 0` on App Engine, Cloud Run, and Cloud Run functions. A container you build can move to PHP 8.2.36, 8.3.37, 8.4.28, or 8.5.13 now. PHP 8.1 and 7.2 get no patch. Google says the managed images are not published yet.
 - **New this update:** If Azure Service Health sent an [Entra Connect Health](#microsoft-entra-connect-health-a-flaw-exposed-administrator-email-addresses) notice, warn the named administrators about phishing and put phishing-resistant multifactor authentication on those accounts. Microsoft says a flaw in the Connect Health API, found November 9 and fixed on Microsoft's servers on November 19, was used to read tenant metadata, including administrator and technical-contact email addresses. No CVE is assigned and no score is published. There is nothing to install. The notice is how Microsoft says it identified an affected tenant.
 - **New this update:** If a prompt sent through [OpenRouter](#openrouter-inference-providers-kept-prompts-they-said-they-would-not) contained a secret, rotate that secret. OpenRouter said on November 22 that it took three inference providers off the platform and removed 125 endpoints from Zero Data Retention, after Dragos showed prompts were copied or kept. OpenRouter says its own systems were not breached. No CVE is assigned. Together AI says stored samples from June 24, July 4, July 8, and July 14 were downloaded. Phala says DeepSeek V4 Flash 0731 requests it served from October 21 through November 8 at 05:35 UTC should be treated as exposed. Removing an endpoint does not expire a key that was inside a prompt.
 - **New this update:** Upgrade [SurrealDB](#surrealdb-a-script-skips-the-function-check) to **4.0.0 or later** and restart. VulnCheck rates [CVE-2026-134292](https://www.cve.org/CVERecord?id=CVE-2026-134292) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8: a JavaScript script calls a built-in function the user was denied. SurrealDB's own advisory rates the same issue High and names no CVE. 1.0.0 before 4.0.0 is affected. It is not in KEV.
@@ -334,7 +339,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade [Spring Security](#spring-an-expression-matcher-runs-code) to **7.1.3 or 7.0.9** and restart. Spring rates [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273) Critical: an application that binds external input to a `RequestMatcher` property runs that input as code. The advisory's vector is CVSS 3.1 9.8. The same day's batch has a second Critical, [CVE-2026-59367](https://www.cve.org/CVERecord?id=CVE-2026-59367), a test LDAP server that listens on every interface with a fixed password, fixed in Spring LDAP **4.1.3 or 4.0.7**. Ten more are High, including a Spring Data Elasticsearch query that evaluates its argument, fixed in **6.1.3 or 6.0.9**. Older lines are Enterprise Support only. None is in KEV.
 - **New this update:** On SUSE Linux Enterprise Server 15 SP7, install the [Java4Shell](#openjdk-java4shell---a-base64-string-corrupts-memory) packages and restart: `java-17-openjdk` **17.0.21.1-150400.3.79.1**, `java-21-openjdk` **21.0.13.1-150600.3.40.1**, and `java-25-openjdk` **25.0.5.1-150700.15.23.1** (SUSE-SU-2026:5393-1, 5394-1, and 5385-1, November 20). SLES 16.0 is still In progress and SLES 16.1 has none. Debian forky, and Rocky Linux 9 and 10, still have none.
 - **New this update:** Upgrade [MONAI Label](#monai-label-an-upload-writes-any-file) to **0.8.6 or later** and restart. MITRE rates [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) CVSS 3.1 9.8 Critical: an upload writes any file the process can reach, and the record says it was exploited from September 2026. 0.8.6, published November 22, is the first release with the fix. It also fixes a second path traversal, in session upload, that has no CVE. The advisory still says there is no patched version. It is not in KEV.
-- **New this update:** On an AMD [KVM host](#linux-kernel-a-nested-amd-guest-reads-the-host) with nested virtualization left on, install a kernel that contains commit `c7c288d178cb` and reboot. kernel.org rates [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312) CVSS 3.1 8.8 High: a guest that runs a virtual machine of its own can read and write host memory. Terra read about 127 GB on a DigitalOcean host. The upstream floors are **7.3.5**, **6.18.64**, and **6.12.118**. Debian sid is fixed; bookworm, trixie, forky, and Ubuntu have no package. Red Hat now rates it 7.8 and has none for RHEL 9 or 10. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected. Oracle's UEK packages are ELSA-2026-500643 and ELSA-2026-500644. An Intel host is outside it. Until the reboot, set `kvm_amd`'s `nested` parameter to `0`. It is not in KEV.
+- **New this update:** On an AMD [KVM host](#linux-kernel-a-nested-amd-guest-reads-the-host) with nested virtualization left on, install a kernel that contains commit `c7c288d178cb` and reboot. kernel.org rates [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312) CVSS 3.1 8.8 High: a guest that runs a virtual machine of its own can read and write host memory. Terra read about 127 GB on a DigitalOcean host. The upstream floors are **7.3.5**, **6.18.64**, and **6.12.118**. Debian sid is fixed, and Debian trixie security is now **6.12.118-1**. Bookworm, forky, and Ubuntu have no package. Red Hat now rates it 7.8 and has none for RHEL 9 or 10. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected. Oracle's UEK packages are ELSA-2026-500643 and ELSA-2026-500644. An Intel host is outside it. Until the reboot, set `kvm_amd`'s `nested` parameter to `0`. It is not in KEV.
 - **New this update:** On a [Moxa Ethernet switch](#moxa-ethernet-switches-one-shared-key-and-firmware-is-not-signed) in the series MPSA-268140 lists, regenerate the SSL certificate and the SSH key, and keep management off the internet. Moxa rates [CVE-2026-130493](https://www.cve.org/CVERecord?id=CVE-2026-130493) CVSS 4.0 7.7 High: every affected switch ships the same RSA-1024 key, and the firmware that holds it is public. [CVE-2026-130494](https://www.cve.org/CVERecord?id=CVE-2026-130494) is 8.6: an administrator can install firmware the switch does not check a signature on. There is no firmware fix. Neither is in KEV.
 - **New this update:** On a clustered [Apache Tomcat](#apache-tomcat-a-cluster-node-joins-without-being-checked) secured with TLS-PSK, switch the cluster channel to **TLS 1.2** and restart. Apache rates [CVE-2026-133325](https://www.cve.org/CVERecord?id=CVE-2026-133325) Critical: on TLS 1.3 the cluster does not check who the other node is, so a node with no credential can join. The affected builds are **11.0.28 to 11.0.29**, **10.1.62**, and **9.0.124**. The fixes, **11.0.30**, **10.1.63**, and **9.0.125**, are not released yet. A cluster that is not using TLS-PSK is outside the condition Apache names. It is not in KEV.
 - **New this update (CISA KEV):** Upgrade a clustered [Cisco Expressway](#cisco-expressway-a-cluster-cookie-runs-commands-as-root) to **X15.5.20 or later**. Cisco rates [CVE-2026-76466](https://www.cve.org/CVERecord?id=CVE-2026-76466) CVSS 3.1 9.8 Critical: the cluster database service accepts a persistent cookie and runs commands as root. CISA added it on November 20, due November 23, and requires forensic triage. X14 and earlier have to move to a fixed release. A device that is not in a cluster is outside the condition Cisco names. F6 says a company in Russia was attacked on X15.5.3 after a proof of concept was published. Cisco's October 21 advisory still says it knows of no malicious use. If the upgrade has to wait, block TCP 4371 and 4372 except from the cluster nodes you trust.
@@ -562,6 +567,51 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Rackspace Spot: leaked credentials read Kubernetes secrets
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/rackspace-spot.md):** [Detection](details/rackspace-spot.md#detection) · [Remediation](details/rackspace-spot.md#remediation) · [Verification](details/rackspace-spot.md#verification) · [Timeline](details/rackspace-spot.md#timeline)
+
+**CVEs:** No CVE is assigned.
+
+**No vendor or CNA has published a CVSS score.** BleepingComputer's November 21 report quotes a notice Rackspace sent to affected customers. The notice says an unauthorized party used leaked credentials to access parts of Rackspace Spot on November 17, 2026, between about 00:20 and 22:00 UTC, and could act as a legitimate user in some customer organizations. In those organizations the party could create pods, read Kubernetes Secrets, and list nodes and volumes, including any Spot API token or refresh token the user held. Rackspace says it revoked the affected tokens and sessions, removed the unauthorized pods, and rotated its own keys. It has not said how many customers were affected or whether data was stolen. This guide did not read Rackspace's notice; the claims are what BleepingComputer attributes to it.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Access window | 2026-11-17, about 00:20–22:00 UTC | Leaked credentials. Quoted from the customer notice. |
+| **Public report** | **2026-11-21 17:59; timezone not stated on the page** | BleepingComputer. The page prints 05:59 PM and no zone. Service restored the same day, time unknown. |
+| **Last updated** | **2026-11-22 19:56 EST (UTC−05:00)** | New item. Reissue tokens and rotate secrets. |
+
+**Patch:** There is nothing to install. If Rackspace notified the account, reissue the Spot API tokens, replace refresh tokens used in automation, download fresh Kubernetes configuration files, and rotate every credential that was in a Secret. The indicators in the notice are 23.224.79.106, the range 23.224.0.0/15, and pod and object prefixes `i1`, `glm-`, and `probe`. Revoking a token does not expire a key that was already read.
+
+Sources: [BleepingComputer](https://www.bleepingcomputer.com/news/security/rackspace-spot-breach-let-hackers-access-customer-kubernetes-secrets/), [detailed guide](details/rackspace-spot.md).
+
+---
+
+## Cleverbridge: payment card data was copied
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cleverbridge.md):** [Detection](details/cleverbridge.md#detection) · [Remediation](details/cleverbridge.md#remediation) · [Verification](details/cleverbridge.md#verification) · [Timeline](details/cleverbridge.md#timeline)
+
+**CVEs:** No CVE is assigned.
+
+**No vendor or CNA has published a CVSS score.** Cleverbridge's incident page says that on November 4, 2026 it detected unauthorized activity, took affected systems offline, and brought them back the same day. The investigation then found that a third party copied payment card data stored on the platform. Notices began on November 20. The page does not name the card fields. BleepingComputer's November 22 report quotes one notice: the card number, the expiry date, and the card security code were copied, and the name, contact, and billing details were not. This guide did not see that notice, and Cleverbridge has not said whether every notice lists the same fields.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Detection | 2026-11-04; time unknown | Systems offline and back the same day. Card data copied. |
+| **Notices** | **2026-11-20; time unknown** | Affected individuals, where Cleverbridge judged it appropriate. |
+| **Public report** | **2026-11-22 10:43; timezone not stated on the page** | BleepingComputer. The page prints 10:43 AM and no zone. |
+| **Last updated** | **2026-11-22 19:56 EST (UTC−05:00)** | New item. Tell the card issuer. |
+
+**Patch:** There is nothing to install. If a notice names a card, tell the issuer and check that card's statements. The issuer may replace the card. Cleverbridge says it will not ask for a card number, a password, or a security code by email, phone, or text. It has not said how many cards were copied.
+
+Sources: [Cleverbridge](https://grow.cleverbridge.com/incident-update), [BleepingComputer](https://www.bleepingcomputer.com/news/security/cleverbridge-warns-hackers-stole-credit-card-numbers-cvvs-in-data-breach), [detailed guide](details/cleverbridge.md).
 
 ---
 
@@ -1008,9 +1058,9 @@ Sources: [GHSA-qc22-rmgc-vg94](https://github.com/Project-MONAI/MONAILabel/secur
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-18 08:42:06 UTC** | CVE record. The stable kernels 7.3.5, 6.18.64, and 6.12.118 shipped November 17. |
-| **Last updated** | **2026-11-21 19:10 EST (UTC−05:00)** | Oracle shipped UEK packages. SUSE reversed the lines it had called fixed. |
+| **Last updated** | **2026-11-22 19:56 EST (UTC−05:00)** | Debian trixie security is now 6.12.118-1. |
 
-**Patch:** Reboot into a kernel that contains commit `c7c288d178cb`. Upstream, that is **7.3.5**, **6.18.64**, or **6.12.118**. Debian sid is fixed at 7.3.5-1; bookworm, trixie, and forky have no package, and Ubuntu has none. Red Hat marks RHEL 9 and 10 affected and RHEL 7 and 8 not affected, with no erratum. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected and names no package. On Oracle Linux, the UEK packages are ELSA-2026-500643 and ELSA-2026-500644; the RHEL-compatible kernel has none. Until the reboot, set the `nested` parameter of `kvm_amd` to `0`. A guest operating system cannot carry this fix. DigitalOcean says its own Droplet hosts are already live-patched.
+**Patch:** Reboot into a kernel that contains commit `c7c288d178cb`. Upstream, that is **7.3.5**, **6.18.64**, or **6.12.118**. Debian sid is fixed at 7.3.5-1, and Debian trixie security is now **6.12.118-1** (DSA-6652-1). Bookworm and forky have no package, and Ubuntu has none. Red Hat marks RHEL 9 and 10 affected and RHEL 7 and 8 not affected, with no erratum. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected and names no package. On Oracle Linux, the UEK packages are ELSA-2026-500643 and ELSA-2026-500644; the RHEL-compatible kernel has none. Until the reboot, set the `nested` parameter of `kvm_amd` to `0`. A guest operating system cannot carry this fix. DigitalOcean says its own Droplet hosts are already live-patched.
 
 Sources: [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312), [Terra](https://www.terra.security/blog/kvm-guest-to-host-escape), [detailed guide](details/linux-kvm-nested-init.md).
 
@@ -1265,15 +1315,16 @@ Sources: [VMSA-2026-0009](https://support.broadcom.com/web/ecx/support-content-n
 
 **PHP's GitHub advisories rate the seven CVSS 4.0 9.2 Critical.** Six use `CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. [CVE-2026-126714](https://www.cve.org/CVERecord?id=CVE-2026-126714) and [CVE-2026-129289](https://www.cve.org/CVERecord?id=CVE-2026-129289) are the same with attack complexity Low. The builds are **8.6.0, 8.5.13, 8.4.28, 8.3.37, and 8.2.36**, released November 19. Two of the seven, the backtrace flaws, are fixed only in 8.5.13 and 8.6.0. One, the interrupted session shutdown, starts at 8.3. Depthfirst says the session-file fix does not close CVE-2026-126714 and that the current trees are still vulnerable. PHP's advisory says the fix truncates the file before the write and names those builds. This is not [PHP2Shell](#php-php2shell---unauthenticated-execution-below-your-application). The October 21 builds leave all of these in place.
 
-**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any of the ten. The two October CVEs stay listed under PHP2Shell. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22) for any of the ten. The two October CVEs stay listed under PHP2Shell. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Advance notice | 2026-11-18; time/TZ unknown | Scheduled for November 19, 14:00 to 14:30 UTC. Highest severity Critical. |
 | **Public announcement and fixes** | **2026-11-19; advisories from 14:05:55 UTC** | The five builds. |
-| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | New item. Upgrade PHP and restart. |
+| Google Cloud bulletin | 2026-11-20; time unknown | GCP-2026-090. Managed images not published yet. |
+| **Last updated** | **2026-11-22 19:56 EST (UTC−05:00)** | Google Cloud customers set the upload-progress switch now. |
 
-**Patch:** Upgrade to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** and restart every worker. PHP 8.1 and earlier get no build. Keep `session.upload_progress.enabled=0` where you do not need it. PHP says that removes one input and is not the fix. The upgrade does not show whether a request already ran code.
+**Patch:** Upgrade to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** and restart every worker. PHP 8.1 and earlier get no build. Keep `session.upload_progress.enabled=0` where you do not need it. PHP says that removes one input and is not the fix. On Google Cloud, [GCP-2026-090](https://docs.cloud.google.com/support/bulletins#gcp-2026-090) says the managed images for App Engine, Cloud Run, and Cloud Run functions are not published yet: set `session.upload_progress.enabled = 0` now, and a container you build can move to the patched PHP today. The upgrade does not show whether a request already ran code.
 
 Sources: [PHP changelog](https://www.php.net/ChangeLog-8.php), [GHSA-fm2m-fjf5-v3cp](https://github.com/php/php-src/security/advisories/GHSA-fm2m-fjf5-v3cp), [detailed guide](details/php-november-19.md).
 

@@ -1,6 +1,6 @@
 # PHP: the November 19 security releases
 
-**Last updated:** 2026-11-19 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Main PHP November 19 summary](../black-october-2026.md#php-the-november-19-security-releases) · [PHP2Shell](php2shell.md) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -23,7 +23,7 @@ The same builds fix more flaws the advisories rate Medium, including [CVE-2026-1
 
 Depthfirst's write-up, published 2026-11-19, says the November 19 builds are still vulnerable to CVE-2026-126714, including `master`. PHP's advisory for that CVE, published the same day, says the opposite: the fix truncates the session file before the write, and the patched versions are the five builds above. Use the vendor's patched versions. The two pages disagree, and this guide does not treat the researcher's range as the fixed range.
 
-**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19) for any CVE in this table. [CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619) stay listed under [PHP2Shell](php2shell.md). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22) for any CVE in this table. [CVE-2026-109618](https://www.cve.org/CVERecord?id=CVE-2026-109618) and [CVE-2026-109619](https://www.cve.org/CVERecord?id=CVE-2026-109619) stay listed under [PHP2Shell](php2shell.md). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -41,6 +41,8 @@ Depthfirst's write-up, published 2026-11-19, says the November 19 builds are sti
 | Advance notice | 2026-11-18; time/TZ unknown | PHP scheduled the release for 2026-11-19, 14:00 to 14:30 UTC, and said the highest severity is Critical. [Archive][archive] |
 | **Public announcement and fixes** | **2026-11-19; the advisories are timestamped from 14:05:55 UTC** | 8.6.0, 8.5.13, 8.4.28, 8.3.37, and 8.2.36. [Changelog][changelog] |
 | Depthfirst write-up | 2026-11-19; time/TZ unknown | Says the session-file fix does not close CVE-2026-126714. PHP's advisory says it does. [depthfirst][depth] |
+| **Google Cloud bulletin** | **2026-11-20; time unknown** | GCP-2026-090. Managed PHP images for App Engine, Cloud Run, and Cloud Run functions are not published yet. [GCP-2026-090][gcp] |
+| **Last updated** | **2026-11-22 (America/New_York)** | Google Cloud customers set `session.upload_progress.enabled = 0` now. |
 
 ## Detection
 
@@ -58,6 +60,12 @@ The conditions differ:
 1. Upgrade to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** on the branch you run, and restart every worker. PHP 8.1 and earlier are end of life and get no build.
 2. Keep `session.upload_progress.enabled=0` where the feature is not needed. PHP's advisory for CVE-2026-126714 says that removes one input path and is not the fix.
 3. The October 21 builds leave every row in the table in place.
+4. On Google Cloud, bulletin [GCP-2026-090][gcp], published 2026-11-20, says the managed PHP images are not published yet. It names App Engine Standard (second-generation PHP 7.2 through 8.5), App Engine Flexible, Cloud Run, and Cloud Run functions. Until the image arrives:
+   - Set `session.upload_progress.enabled = 0` where the application does not track upload progress. Google says this mitigates the primary path for CVE-2026-126714 in particular. It also says to move `session.save_handler` off `files` where that is feasible.
+   - A container you build, on Cloud Run or an App Engine flexible custom runtime, can move to PHP 8.2.36, 8.3.37, 8.4.28, or 8.5.13 now and does not have to wait.
+   - App Engine standard on PHP 8.2 through 8.5, and Cloud Run services and functions with automatic base image updates, receive the patched runtime once Google publishes it. Apply the setting above until then.
+   - App Engine flexible on the managed runtime, Cloud Run jobs and worker pools, Cloud Functions (1st gen), and a deployment pinned to a patch string have to be rebuilt after Google publishes the image.
+   - PHP 7.2 through 8.1 get no patch. Move to 8.2 or later, or apply the settings above. Google says no upstream patch will be released for 8.1 or earlier.
 
 ## Verification
 
@@ -75,7 +83,10 @@ PHP does not report exploitation of this release. A worker that exited while wri
 - [GHSA-fm2m-fjf5-v3cp](https://github.com/php/php-src/security/advisories/GHSA-fm2m-fjf5-v3cp) — CVE-2026-126714, Critical, CVSS 4.0 9.2. "The fix truncates the session file to zero before writing the replacement data."
 - [GHSA-qc49-hpvq-g2w6](https://github.com/php/php-src/security/advisories/GHSA-qc49-hpvq-g2w6), [GHSA-2fjv-p558-g82m](https://github.com/php/php-src/security/advisories/GHSA-2fjv-p558-g82m), [GHSA-8mjj-2r7p-4hg2](https://github.com/php/php-src/security/advisories/GHSA-8mjj-2r7p-4hg2), [GHSA-g3vh-838c-65v7](https://github.com/php/php-src/security/advisories/GHSA-g3vh-838c-65v7), [GHSA-gr4f-wgx5-jpfv](https://github.com/php/php-src/security/advisories/GHSA-gr4f-wgx5-jpfv), [GHSA-jm4m-qfqx-967m](https://github.com/php/php-src/security/advisories/GHSA-jm4m-qfqx-967m), [GHSA-f6gg-rchx-xw8j](https://github.com/php/php-src/security/advisories/GHSA-f6gg-rchx-xw8j), [GHSA-mmf9-xm3v-hg2x](https://github.com/php/php-src/security/advisories/GHSA-mmf9-xm3v-hg2x) — the other six Critical and three High advisories, published 2026-11-19.
 - [depthfirst, phpAfterShell][depth] — published 2026-11-19. Says the current 8.2 through 8.6 trees, including the November 19 ordering, are still vulnerable.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.18, checked 2026-11-19. None of these CVEs is listed.
+- [Google Cloud, GCP-2026-090][gcp] — published 2026-11-20. Managed images for App Engine, Cloud Run, and Cloud Run functions are not published yet. Names `session.upload_progress.enabled = 0` as the immediate mitigation for CVE-2026-126714.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, checked 2026-11-22. None of these CVEs is listed.
+
+[gcp]: https://docs.cloud.google.com/support/bulletins#gcp-2026-090
 
 [archive]: https://www.php.net/archive/2026.php#2026-11-18-1
 [changelog]: https://www.php.net/ChangeLog-8.php

@@ -1,6 +1,6 @@
 # Linux kernel: a nested AMD guest reads the host
 
-**Last updated:** 2026-11-21 (America/New_York)
+**Last updated:** 2026-11-22 (America/New_York)
 
 [Main KVM summary](../black-october-2026.md#linux-kernel-a-nested-amd-guest-reads-the-host) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -39,7 +39,7 @@ DigitalOcean, which reproduced the read on its own hosts, treated it as critical
 | Stable and longterm | 2026-11-17; time/TZ unknown | 7.3.5, 6.18.64, and 6.12.118. [Terra][terra] |
 | **Public announcement** | **2026-11-18 08:42:06 UTC** | CVE record published. Terra's write-up is the same day. [CVE][cve] |
 | DigitalOcean | 2026-11-19; time/TZ unknown | Says its Droplet fleet is live-patched. Customers of that fleet have nothing to install. [DigitalOcean][do] |
-| **Last updated** | **2026-11-21 (America/New_York)** | Oracle shipped UEK packages. SUSE reversed the lines it had called fixed. |
+| **Last updated** | **2026-11-22 (America/New_York)** | Debian trixie security is now 6.12.118-1. |
 
 ## Detection
 
@@ -65,7 +65,7 @@ Reboot into a kernel that contains commit [`c7c288d178cb`](https://git.kernel.or
 | RHEL 8 | Not affected, including `kernel-rt`. | [Red Hat][rh] |
 | RHEL 7 | Not affected. | [Red Hat][rh] |
 | Ubuntu 22.04, 24.04, 26.04, 26.10 | Vulnerable. No package. 20.04's base kernel is Not affected; its HWE 5.15 kernel is Vulnerable. Priority High. | [Ubuntu][ubuntu] |
-| Debian bookworm, trixie, forky | Vulnerable. Bookworm security is 6.1.192-2, trixie is 6.12.117-1, and forky is 7.3.4-1. Sid is fixed at 7.3.5-1. | [Debian][debian] |
+| Debian bookworm, trixie, forky | Trixie security is fixed at 6.12.118-1 (DSA-6652-1). Bookworm and bookworm security are still vulnerable, at 6.1.176-1 and 6.1.192-2. Forky is still 7.3.4-1. Sid is fixed at 7.3.5-1. | [Debian][debian] |
 | SUSE | SLES 15 SP7, 16.0, and 16.1 are Affected. The page had called them Already fixed. SLES 15 SP4, SP5, and SP6 LTSS are Affected. SLES 12 SP5 is Not affected. No package version is named. Overall state Pending. | [SUSE][suse] |
 | Amazon Linux | Not in the public ALAS index on 2026-11-21. No package to name. | [ALAS][alas] |
 | Oracle Linux | UEK only. ELSA-2026-500643 (2026-11-19) is `kernel-uek-5.15.0-326.224.5.2.el8uek` and `kernel-uek-5.15.0-326.224.5.2.el9uek`. ELSA-2026-500644 (2026-11-19) is `kernel-uek-6.12.0-208.112.5.3.el9uek` and `kernel-uek-6.12.0-208.112.5.3.el10uek`. The RHEL-compatible kernel has no erratum. | [Oracle][oracle] |
