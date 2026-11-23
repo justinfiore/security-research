@@ -15,6 +15,10 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [WordPress: six WP connect plugins shipped a backdoor](#wordpress-six-wp-connect-plugins-shipped-a-backdoor)
+- [Routinator: an rsync server can crash the validator](#routinator-an-rsync-server-can-crash-the-validator)
+- [ZoneAlarm: a local user becomes SYSTEM](#zonealarm-a-local-user-becomes-system)
+- [Apache Solr: a health check does more than a health check](#apache-solr-a-health-check-does-more-than-a-health-check)
 - [OTRS: a survey link reads the database](#otrs-a-survey-link-reads-the-database)
 - [Weblate: a lookalike email resets the password](#weblate-a-lookalike-email-resets-the-password)
 - [Node.js: sigstore-js sends the registry password to another host](#nodejs-sigstore-js-sends-the-registry-password-to-another-host)
@@ -321,6 +325,10 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** If a [WP connect](#wordpress-six-wp-connect-plugins-shipped-a-backdoor) plugin is one of six named versions, remove it and look for `includes/airwp-online.php`. Wordfence rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical: the file runs PHP from `tascredit-pay.com` on every request, with no login. WordPress.org stopped the releases before sites were offered them, and there is no patch. The CVE record is still reserved. It is not in KEV. Removing the plugin does not remove a file already written under `uploads`.
+- **New this update:** Upgrade [Routinator](#routinator-an-rsync-server-can-crash-the-validator) to **0.16.2 or later** and restart it. NLnet Labs rates [CVE-2026-119068](https://www.cve.org/CVERecord?id=CVE-2026-119068) CVSS 3.1 7.5 High: an rsync server that sends diagnostic output with no line break makes the validator run out of memory. The same release fixes [CVE-2026-119069](https://www.cve.org/CVERecord?id=CVE-2026-119069), which NLnet Labs scores 5.3. The records name only 0.16.2 as unaffected. Neither is in KEV.
+- **New this update:** Update the [ZoneAlarm](#zonealarm-a-local-user-becomes-system) client for Windows to **4.4.217.20710 or later**. Check Point rates [CVE-2026-132856](https://www.cve.org/CVERecord?id=CVE-2026-132856) CVSS 3.1 7.8 High: a local user runs code as SYSTEM. Anything lower is affected. A remote request is not this flaw. It is not in KEV.
+- **New this update:** Upgrade [Apache Solr](#apache-solr-a-health-check-does-more-than-a-health-check) to **9.11.0 or 10.1.0 or later** and restart it. Apache rates [CVE-2026-86312](https://www.cve.org/CVERecord?id=CVE-2026-86312) CVSS 3.1 8.8 High: a request to `/admin/ping` can do more than a health check. 9.0.0 before 9.11.0 and 10.0.0 before 10.1.0 are affected, and the sample security configuration leaves that endpoint with no login. Both fixes shipped in October, before the advisory. It is not in KEV.
 - **New this update:** Upgrade [OTRS](#otrs-a-survey-link-reads-the-database) to **2026.8.2 or later**. OTRS rates [CVE-2026-93584](https://www.cve.org/CVERecord?id=CVE-2026-93584) CVSS 3.1 8.6 High and CVSS 4.0 8.7: a survey request with no login reads ticket data. 2024.3.1, the 2025 line, and 2026 before 2026.8.2 are affected. The advisory does not mention Community Edition. It is not in KEV.
 - **New this update:** Upgrade [Weblate](#weblate-a-lookalike-email-resets-the-password) to **2026.11.1 or later**. Weblate rates [GHSA-6hph-c9x9-4mcv](https://github.com/WeblateOrg/weblate/security/advisories/GHSA-6hph-c9x9-4mcv) CVSS 3.1 9.1 Critical: a lookalike email address receives the password-reset link. VulnCheck's [CVE-2026-134838](https://www.cve.org/CVERecord?id=CVE-2026-134838) scores the same issue CVSS 4.0 9.1 and CVSS 3.1 7.4. Anything before 2026.11 is affected. 2026.11.1 lists the leftover lookalike identities. An existing second factor blocks the reset Weblate showed. It is not in KEV.
 - **New this update:** Upgrade [`@sigstore/oci`](#nodejs-sigstore-js-sends-the-registry-password-to-another-host) to **0.8.0 or later**. The maintainers rate [GHSA-9mj6-f434-pgcg](https://github.com/sigstore/sigstore-js/security/advisories/GHSA-9mj6-f434-pgcg) CVSS 3.1 7.5 High: a trusted token service that answers with a cross-origin redirect receives the registry password. VulnCheck's [CVE-2026-134816](https://www.cve.org/CVERecord?id=CVE-2026-134816) scores the same issue CVSS 4.0 8.2 and CVSS 3.1 5.9. Anything before 0.8.0 is affected, and only identity-token credentials take this path. The advisory page still says it is not patched; the 0.8.0 release is the newer statement. It is not in KEV.
@@ -331,7 +339,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** If a [Cleverbridge](#cleverbridge-payment-card-data-was-copied) notice names a card, tell the issuer and check that card's statements. Cleverbridge says it found unauthorized activity on November 4 and that a third party copied payment card data stored on the platform. Notices began November 20. No CVE is assigned and no score is published. One notice quoted by BleepingComputer lists the card number, the expiry date, and the security code, and says the name and billing details were not copied. Cleverbridge's own page does not name the fields. There is nothing to install.
 - **New this update:** On Google Cloud, apply [GCP-2026-090](details/php-november-19.md#remediation) and do not wait for the managed image. For [phpAfterShell](#php-the-november-19-security-releases), set `session.upload_progress.enabled = 0` on App Engine, Cloud Run, and Cloud Run functions. A container you build can move to PHP 8.2.36, 8.3.37, 8.4.28, or 8.5.13 now. PHP 8.1 and 7.2 get no patch. Google says the managed images are not published yet.
 - **New this update:** If Azure Service Health sent an [Entra Connect Health](#microsoft-entra-connect-health-a-flaw-exposed-administrator-email-addresses) notice, warn the named administrators about phishing and put phishing-resistant multifactor authentication on those accounts. Microsoft says a flaw in the Connect Health API, found November 9 and fixed on Microsoft's servers on November 19, was used to read tenant metadata, including administrator and technical-contact email addresses. No CVE is assigned and no score is published. There is nothing to install. The notice is how Microsoft says it identified an affected tenant.
-- **New this update:** If a prompt sent through [OpenRouter](#openrouter-inference-providers-kept-prompts-they-said-they-would-not) contained a secret, rotate that secret. OpenRouter said on November 22 that it took three inference providers off the platform and removed 125 endpoints from Zero Data Retention, after Dragos showed prompts were copied or kept. OpenRouter says its own systems were not breached. No CVE is assigned. Together AI says stored samples from June 24, July 4, July 8, and July 14 were downloaded. Phala says DeepSeek V4 Flash 0731 requests it served from October 21 through November 8 at 05:35 UTC should be treated as exposed. Removing an endpoint does not expire a key that was inside a prompt.
+- **New this update:** If a prompt sent through [OpenRouter](#openrouter-inference-providers-kept-prompts-they-said-they-would-not) or Atlas Cloud contained a secret, rotate that secret. OpenRouter said on November 22 that it took three inference providers off the platform and removed 125 endpoints from Zero Data Retention. Atlas Cloud's November 22 notice says prompts to MiniMax M3 and M2.7 sent through Atlas Cloud in the third quarter and early fourth quarter of 2026 had links opened by a third party, and to treat a secret sent to MiniMax M3, M2.7, or M3.1 Flash as exposed. OpenRouter's own page still lists three provider notices. No CVE is assigned. Removing an endpoint does not expire a key that was inside a prompt.
 - **New this update:** Upgrade [SurrealDB](#surrealdb-a-script-skips-the-function-check) to **4.0.0 or later** and restart. VulnCheck rates [CVE-2026-134292](https://www.cve.org/CVERecord?id=CVE-2026-134292) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8: a JavaScript script calls a built-in function the user was denied. SurrealDB's own advisory rates the same issue High and names no CVE. 1.0.0 before 4.0.0 is affected. It is not in KEV.
 - **New this update:** Remove [Idunno.AntiCsrf](#aspnet-idunnoanticsrf-runs-code-from-a-form-field). Mandiant rates [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914) CVSS 4.0 9.3 Critical: a form field is deserialized before it is checked, and a request with no login runs code as the IIS worker. Every version through 0.9.1 Beta, the last release, is affected, and there is no patch. Mandiant says exploitation has been observed and names no indicator. It is not in KEV. Removing the module does not undo a request that already ran.
 - **New this update:** Update [Nexter Blocks Pro](#wordpress-nexter-blocks-pro-registers-an-administrator) to **5.0.11 or later**. Wordfence rates [CVE-2026-125294](https://www.cve.org/CVERecord?id=CVE-2026-125294) CVSS 3.1 9.8 Critical: a registration with no login creates an administrator, on a site that allows user registration and shows the Login | Register block. Every version through 5.0.10 is affected. The free plugin is not named. It is not in KEV. The update does not remove an administrator account that was already created.
@@ -390,7 +398,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Deploy [Frappe Ghost](#frappe-ghost-a-guest-session-becomes-any-account) commit `641db34` or later and restart it. This is the Frappe app by muneeb141, not the Ghost publishing platform. VulnCheck rates [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070) CVSS 4.0 9.3 Critical: a guest session sets `bypass_otp` and receives tokens for any account. The commit is from October 20 and there is no release. It is not in KEV. Revoke tokens you cannot account for.
 - **New this update:** Upgrade [Wiki.js](#wikijs-a-user-manager-takes-the-administrator-account) to **2.5.315 or later** and restart it. GitHub rates [CVE-2026-120698](https://www.cve.org/CVERecord?id=CVE-2026-120698) CVSS 3.1 8.8 High: an account with `manage:users` sets the administrator password and turns off its second factor. [CVE-2026-120697](https://www.cve.org/CVERecord?id=CVE-2026-120697) is 8.7: a page stores script that runs when someone opens it. The release is from September 21. Neither is in KEV. Reset the administrator password.
 - **New this update:** Install a kernel that names the [November 2–3 High fixes](#linux-kernel-thirteen-high-fixes-from-november-2-and-3) you actually run, and reboot. kernel.org scores thirteen flaws CVSS 3.1 High. [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270) and [CVE-2026-99246](https://www.cve.org/CVERecord?id=CVE-2026-99246) are 8.1 and need TCP migration or TIPC. The other eleven are local. Debian trixie 6.12.117-1 covers the set it ships. Ubuntu's November 19 kernels cover several of the thirteen and still have no package for CVE-2026-99270. Red Hat and Amazon Linux have none for that one either. None is in KEV. This is not NoisyTCP.
-- **New this update:** Install a kernel that names [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288) and reboot. Red Hat rates it CVSS 3.1 7.5 High: one TCP connection can panic the host, with no login. kernel.org publishes no score. The upstream floors are 6.12.117, 6.18.63, and 7.3.4. Debian bookworm, trixie, forky, and sid have a fixed package, as do Amazon Linux 2 and Amazon Linux 2023 `kernel6.18`. Red Hat 8, 9, and 10, and Ubuntu, still do not. It is not in KEV. The reboot is the fix; installing the package is not.
+- **New this update:** On Red Hat Enterprise Linux and AlmaLinux, install the [NoisyTCP](#linux-kernel-noisytcp---a-tcp-packet-crashes-the-host) kernel and reboot. RHEL 10 is `kernel-6.12.0-264.19.1.el10_3` (RHSA-2026:102168), RHEL 9 is `kernel-5.14.0-741.26.1.el9_9` (RHSA-2026:102167), and RHEL 8 is `kernel-4.18.0-553.189.1.el8_10` (RHSA-2026:102218), all November 23. AlmaLinux shipped the same builds. RHEL 9 `kernel-rt` is still Affected. Ubuntu, SUSE, and Rocky Linux still have no package. It is not in KEV. The reboot is the fix.
 - **New this update:** Install the [3DEXPERIENCE](#3dexperience-the-station-launcher-runs-a-command) fix from Dassault support article QA00000522688. Dassault rates [CVE-2026-93664](https://www.cve.org/CVERecord?id=CVE-2026-93664) CVSS 3.1 10.0 Critical: the Station Launcher deserializes untrusted data and can run code with no login. [CVE-2026-77033](https://www.cve.org/CVERecord?id=CVE-2026-77033) and [CVE-2026-19732](https://www.cve.org/CVERecord?id=CVE-2026-19732) are 9.9 and need a login. R2023x through R2026x are affected, and no public page names the fixed level. None is in KEV.
 - **New this update:** Take a public [NodePress](#nodepress-the-default-password-and-the-default-signing-key-are-administrator) through 8.5.1 offline. VulnCheck rates [CVE-2026-129955](https://www.cve.org/CVERecord?id=CVE-2026-129955) and [CVE-2026-129952](https://www.cve.org/CVERecord?id=CVE-2026-129952) CVSS 3.1 9.8 Critical: with the environment unset, the administrator password is `root` and the JWT signing key is `nodepress-secret`. No fixed release exists. Neither is in KEV. Set both secrets, which signs out forged tokens and does not undo a change already made.
 - **New this update:** Take a public [Prime](#prime-anyone-can-register-an-administrator) offline. VulnCheck rates [CVE-2026-129941](https://www.cve.org/CVERecord?id=CVE-2026-129941) CVSS 3.1 9.8 Critical: a request with no login to `createUser` registers an administrator, through `@primecms/core` 0.4.0-beta.0. The latest npm publish is 0.3.4-beta.3, from 2020. No fixed release exists. It is not in KEV. Taking it offline does not remove an account already created.
@@ -579,6 +587,95 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## WordPress: six WP connect plugins shipped a backdoor
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-wp-connect.md):** [Detection](details/wordpress-wp-connect.md#detection) · [Remediation](details/wordpress-wp-connect.md#remediation) · [Verification](details/wordpress-wp-connect.md#verification) · [Timeline](details/wordpress-wp-connect.md#timeline)
+
+**CVEs:** [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) (reserved)
+
+**Wordfence rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The CVE.org page still rendered the record reserved on 2026-11-23, so there is no CNA score. On 2026-11-22, over about two hours, new releases of six plugins from developer WP connect were committed to WordPress.org from the developer's own account. Each adds `includes/airwp-online.php`. The file runs on every request, including one with no login, sends the site address and the system user to `tascredit-pay.com` with certificate checks off, and runs the PHP that server returns. It can also run a shell command, dump password hashes, and write a PHP file under `uploads`. The versions are Air WP Sync **2.9.1 through 2.9.4**, WP Sync for Notion **1.7.4**, Add-on Brevo for Gravity Forms **2.6.3**, Add-On for Contact Form 7 to Airtable **2.5.4**, Add-On for Contact Form 7 to Notion **1.6.4**, and Orders Sync to Airtable for WooCommerce **1.0.2**. WordPress.org stopped the releases before sites were offered them, and closed all six plugins the same evening. There is no patch. The developer reports the account was compromised, and Wordfence says further details are pending.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). The record is reserved. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Releases committed | 2026-11-22, about 16:30–17:40 America/New_York | Six plugins. Wordfence gives the window, not a clock time. |
+| Releases stopped | 2026-11-22; time/TZ unknown | Protect The Shire held them. The plugins were closed the same evening. |
+| **Public announcement** | **2026-11-23; time/TZ unknown** | Wordfence. CVSS 3.1 9.8. The CVE record is reserved. |
+| **Last updated** | **2026-11-23 15:56 EST (UTC−05:00)** | New item. Remove a listed version. |
+
+**Patch:** No patch. If a listed version is installed, remove the plugin and look for `includes/airwp-online.php`, an `airwp_` option, and a PHP file under `wp-content/uploads/` that you did not put there. Removing the plugin does not remove a file or a cron hook the backdoor already wrote. A site that never installed a listed version needs no change.
+
+Sources: [Wordfence](https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/), [Wordfence Intelligence](https://www.wordfence.com/threat-intel/vulnerabilities/id/2bda1d59-0524-40ee-9427-2d31470780f9), [detailed guide](details/wordpress-wp-connect.md).
+
+---
+
+## Routinator: an rsync server can crash the validator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/routinator.md):** [Detection](details/routinator.md#detection) · [Remediation](details/routinator.md#remediation) · [Verification](details/routinator.md#verification) · [Timeline](details/routinator.md#timeline)
+
+**CVEs:** [CVE-2026-119068](https://www.cve.org/CVERecord?id=CVE-2026-119068), [CVE-2026-119069](https://www.cve.org/CVERecord?id=CVE-2026-119069)
+
+**NLnet Labs rates [CVE-2026-119068](https://www.cve.org/CVERecord?id=CVE-2026-119068) CVSS 3.1 7.5 High.** The vector is `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:L`. An rsync server sends diagnostic output that Routinator reads line by line. Output with no line break makes Routinator run out of memory and crash. The score marks confidentiality and integrity High, and the record does not say what is read or changed. [CVE-2026-119069](https://www.cve.org/CVERecord?id=CVE-2026-119069) is **Medium, CVSS 3.1 5.3**: when a publication point is rejected partway through, Routinator keeps the data it already processed instead of dropping it. The same release fixes both. The records mark only **0.16.2** unaffected and do not name the first affected version. **0.16.2**, published 2026-11-23, is the fix. The vendor text files the records link returned HTTP 404 on 2026-11-23. The release notes name both CVEs. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23) for CVE-2026-119068 or CVE-2026-119069. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-23 12:43:45 UTC** | Routinator 0.16.2. NLnet Labs CVSS 3.1 7.5 and 5.3. |
+| **Last updated** | **2026-11-23 15:56 EST (UTC−05:00)** | New item. Upgrade to 0.16.2. |
+
+**Patch:** Upgrade Routinator to **0.16.2 or later** and restart it. The upgrade does not show whether a publication point already left data behind.
+
+Sources: [Routinator 0.16.2](https://github.com/NLnetLabs/routinator/releases/tag/v0.16.2), [CVE-2026-119068](https://www.cve.org/CVERecord?id=CVE-2026-119068), [CVE-2026-119069](https://www.cve.org/CVERecord?id=CVE-2026-119069), [detailed guide](details/routinator.md).
+
+---
+
+## ZoneAlarm: a local user becomes SYSTEM
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/zonealarm.md):** [Detection](details/zonealarm.md#detection) · [Remediation](details/zonealarm.md#remediation) · [Verification](details/zonealarm.md#verification) · [Timeline](details/zonealarm.md#timeline)
+
+**CVEs:** [CVE-2026-132856](https://www.cve.org/CVERecord?id=CVE-2026-132856)
+
+**Check Point rates [CVE-2026-132856](https://www.cve.org/CVERecord?id=CVE-2026-132856) CVSS 3.1 7.8 High.** The vector is `CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`. A person who can already run code on the computer as a local user can run code as SYSTEM. Check Point says the quarantine restore function does not check directory junctions, and the internal service does not check the signatures of programs that connect to it. A remote request is not this flaw. **ZoneAlarm before 4.4.217.20710** is affected. **4.4.217.20710** is the fix. The support article was created 2026-11-22 and last modified 2026-11-23. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Article created | 2026-11-22; time/TZ unknown | sk1000415. |
+| **Public announcement** | **2026-11-23; time/TZ unknown** | CVE record. CVSS 3.1 7.8. |
+| **Last updated** | **2026-11-23 15:56 EST (UTC−05:00)** | New item. Update to 4.4.217.20710. |
+
+**Patch:** Update the ZoneAlarm client for Windows to **4.4.217.20710 or later**. The update does not show whether a local user already ran code as SYSTEM.
+
+Sources: [sk1000415](https://support.checkpoint.com/results/sk/sk1000415), [CVE-2026-132856](https://www.cve.org/CVERecord?id=CVE-2026-132856), [detailed guide](details/zonealarm.md).
+
+---
+
+## Apache Solr: a health check does more than a health check
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-solr.md):** [Detection](details/apache-solr.md#detection) · [Remediation](details/apache-solr.md#remediation) · [Verification](details/apache-solr.md#verification) · [Timeline](details/apache-solr.md#timeline)
+
+**CVEs:** [CVE-2026-86312](https://www.cve.org/CVERecord?id=CVE-2026-86312)
+
+**Apache rates [CVE-2026-86312](https://www.cve.org/CVERecord?id=CVE-2026-86312) CVSS 3.1 8.8 High.** The vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`. A request to `/admin/ping` can do more than a health check. Where rule-based authorization is on and the caller has only the `health` permission, the request can do something that permission should not allow. The sample `security.json` that `bin/solr` installs leaves that permission with no login. **9.0.0 before 9.11.0** and **10.0.0 before 10.1.0** are affected. **9.11.0**, announced 2026-10-04, and **10.1.0**, announced 2026-10-27, are the fixes. Both shipped before the advisory, which is 2026-11-22. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Solr 9.11.0 | 2026-10-04; time/TZ unknown | Announced. The advisory is later. |
+| Solr 10.1.0 | 2026-10-27; time/TZ unknown | Announced. |
+| **Public announcement** | **2026-11-22 23:22 UTC** | Apache announce list. CVSS 3.1 8.8. |
+| **Last updated** | **2026-11-23 15:56 EST (UTC−05:00)** | New item. Upgrade to 9.11.0 or 10.1.0. |
+
+**Patch:** Upgrade the 9.x line to **9.11.0 or later**, or the 10.x line to **10.1.0 or later**, and restart Solr. Until then, require a trusted role for `/admin/ping`. That is the workaround, not the fix. The upgrade does not show whether a ping request already did more than a health check.
+
+Sources: [Apache announcement](https://lists.apache.org/thread/23vlsohrl7vcckysqp9d094yplt4pjcv), [CVE-2026-86312](https://www.cve.org/CVERecord?id=CVE-2026-86312), [detailed guide](details/apache-solr.md).
 
 ---
 
@@ -789,7 +886,7 @@ Sources: [BleepingComputer](https://www.bleepingcomputer.com/news/security/micro
 
 **CVEs:** No CVE is assigned.
 
-**No vendor or CNA has published a CVSS score.** OpenRouter's announcement, dated November 22, says Dragos found inference providers whose data was compromised or whose data policies were not kept. OpenRouter took three providers off the platform, removed 125 endpoints from Zero Data Retention eligibility, and notified potentially affected customers. It says the testing did not show a breach of OpenRouter. Dragos, on November 19, says that from July through November it sent about two million prompts with unique credentials, that attackers copied requests at three hosting providers (the earliest in mid-July, and two of them included Zero Data Retention requests), and that it has not named those three. Together AI's November 21 notice is a stored-sample download: a credential for a private Hugging Face repository reached a public repository, and the party downloaded samples from MiniMax M3, GLM-5.2, and Kimi K2.6, primarily on June 24, July 4, July 8, and July 14. Phala's November 10 report says DeepSeek V4 Flash 0731 requests OpenRouter routed to Phala from October 21 at 00:00 UTC through November 8 at 05:35 UTC should be treated as exposed. Confirmed canary misuse there is October 21 and 22 only.
+**No vendor or CNA has published a CVSS score.** OpenRouter's announcement, dated November 22, says Dragos found inference providers whose data was compromised or whose data policies were not kept. OpenRouter took three providers off the platform, removed 125 endpoints from Zero Data Retention eligibility, and notified potentially affected customers. It says the testing did not show a breach of OpenRouter. Dragos, on November 19, says that from July through November it sent about two million prompts with unique credentials, that attackers copied requests at three hosting providers (the earliest in mid-July, and two of them included Zero Data Retention requests), and that it has not named those three. Together AI's November 21 notice is a stored-sample download: a credential for a private Hugging Face repository reached a public repository, and the party downloaded samples from MiniMax M3, GLM-5.2, and Kimi K2.6, primarily on June 24, July 4, July 8, and July 14. Phala's November 10 report says DeepSeek V4 Flash 0731 requests OpenRouter routed to Phala from October 21 at 00:00 UTC through November 8 at 05:35 UTC should be treated as exposed. Confirmed canary misuse there is October 21 and 22 only. Atlas Cloud's November 22 notice is separate from the three OpenRouter links: a third party opened links from prompts sent to MiniMax's official API, including MiniMax M3 and M2.7 prompts sent through Atlas Cloud in the third quarter and early fourth quarter of 2026. Atlas Cloud says to treat a secret sent to MiniMax M3, M2.7, or M3.1 Flash as exposed, and that it took its own models off OpenRouter. OpenRouter's page, read November 23, still lists three notices.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
 
@@ -798,11 +895,12 @@ Sources: [BleepingComputer](https://www.bleepingcomputer.com/news/security/micro
 | **Dragos post** | **2026-11-19 08:00; timezone not stated on the page** | Three unnamed provider compromises. |
 | **Together notice** | **2026-11-21; time unknown** | Stored samples downloaded. |
 | **OpenRouter announcement** | **2026-11-22; time unknown** | Three providers off-boarded. 125 endpoints removed from Zero Data Retention. |
-| **Last updated** | **2026-11-22 15:30 EST (UTC−05:00)** | New item. Rotate a secret that was inside a prompt. |
+| **Atlas Cloud notice** | **2026-11-22; time unknown** | MiniMax M3, M2.7, and M3.1 Flash. Atlas Cloud took its own models off OpenRouter. |
+| **Last updated** | **2026-11-23 15:56 EST (UTC−05:00)** | Atlas Cloud's notice added. |
 
 **Patch:** There is nothing to install. Rotate a secret that was inside a prompt in those windows. On Together AI, turn on Zero Data Retention for an account that sends sensitive prompts; Together says that is now the default for new accounts only. OpenRouter removing an endpoint does not expire a key that already left, and it has not published the list of 125.
 
-Sources: [OpenRouter](https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers), [Dragos](https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens), [Together AI](https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026), [detailed guide](details/openrouter.md).
+Sources: [OpenRouter](https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers), [Dragos](https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens), [Atlas Cloud](https://www.atlascloud.ai/blog/ai-updates/security-and-privacy-commitment), [detailed guide](details/openrouter.md).
 
 ---
 
@@ -2219,9 +2317,10 @@ Sources: [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270), [Deb
 | Amazon Linux fixed | 2026-11-12 and 2026-11-17; time unknown | ALAS2-2026-4124 at 4.14.355-287.769. The 5.10 extra is `kernel-5.10.273-275.1133`, ALAS2KERNEL-5.10-2026-139, released November 12. |
 | Ubuntu page reread | 2026-11-19; time unknown | Still no package. The page now says last updated 19 November 2026. |
 | Debian sid | Tracker read 2026-11-22 | sid is 7.3.5-1 fixed. forky stays 7.3.4-1. |
-| **Last updated** | **2026-11-22 15:30 EST (UTC−05:00)** | Debian sid moved to 7.3.5-1. Ubuntu, Red Hat, SUSE, Alma, and Rocky still have no package. |
+| Red Hat and AlmaLinux | 2026-11-23; time/TZ unknown | RHSA-2026:102168, 102167, 102218, and 102219. AlmaLinux published the same four. |
+| **Last updated** | **2026-11-23 15:56 EST (UTC−05:00)** | Red Hat and AlmaLinux shipped packages. RHEL 9 kernel-rt, Ubuntu, SUSE, and Rocky still have none. |
 
-**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1), trixie at 6.12.117-1 (DSA-6628-1), forky at 7.3.4-1, and sid at 7.3.5-1. Amazon Linux 2 is fixed at 4.14.355-287.769, and the 5.10 extra at `kernel-5.10.273-275.1133`. Amazon Linux 2023's `kernel6.18` is 6.18.62-127.179. Oracle Linux UEK is fixed on 7, 8, 9, and 10. Red Hat 8, 9, and 10 have no erratum. Ubuntu 16.04 through 26.10 is Vulnerable, with no package; the page was last updated 20 November 2026. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. Alma and Rocky have no production erratum. See the [distribution table](details/linux-noisytcp.md#detection).
+**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Red Hat Enterprise Linux 10 is `kernel-6.12.0-264.19.1.el10_3` (RHSA-2026:102168, November 23), RHEL 9 is `kernel-5.14.0-741.26.1.el9_9` (RHSA-2026:102167), and RHEL 8 is `kernel-4.18.0-553.189.1.el8_10` (RHSA-2026:102218). AlmaLinux shipped the same four advisories the same day. RHEL 9 `kernel-rt` is still Affected. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1), trixie at 6.12.117-1 (DSA-6628-1), forky at 7.3.4-1, and sid at 7.3.5-1. Amazon Linux 2 is fixed at 4.14.355-287.769, and the 5.10 extra at `kernel-5.10.273-275.1133`. Amazon Linux 2023's `kernel6.18` is 6.18.62-127.179. Oracle Linux UEK is fixed on 7, 8, 9, and 10. Ubuntu 16.04 through 26.10 is still Vulnerable, with no package; the page was last updated 23 November 2026. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. Rocky Linux has no production package. See the [distribution table](details/linux-noisytcp.md#detection).
 
 Sources: [oss-security](https://www.openwall.com/lists/oss-security/2026/11/15/2), [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-99288), [detailed guide](details/linux-noisytcp.md).
 
@@ -8489,6 +8588,10 @@ flowchart TD
 |---|---|
 | **OTRS 2024.3.1, any 2025 release, or 2026 before 2026.8.2** | Upgrade to 2026.8.2 or later. OTRS rates CVE-2026-93584 8.6: a survey request with no login reads ticket data. The advisory does not mention Community Edition. [Guide](details/otrs.md#remediation). |
 | **Weblate before 2026.11** | Upgrade to 2026.11.1 or later. Weblate rates GHSA-6hph-c9x9-4mcv 9.1: a lookalike email receives the password-reset link. 2026.11.1 lists the leftover identities. [Guide](details/weblate.md#remediation). |
+| **WordPress with a WP connect plugin at a backdoored version** | Remove it. The versions are Air WP Sync 2.9.1–2.9.4, WP Sync for Notion 1.7.4, Add-on Brevo for Gravity Forms 2.6.3, Add-On for Contact Form 7 to Airtable 2.5.4, Add-On for Contact Form 7 to Notion 1.6.4, and Orders Sync to Airtable for WooCommerce 1.0.2. Look for `includes/airwp-online.php`. There is no patch. Removing the plugin does not remove a file under `uploads`. [Guide](details/wordpress-wp-connect.md#remediation). |
+| **Routinator before 0.16.2** | Upgrade to 0.16.2 or later and restart. NLnet Labs rates CVE-2026-119068 7.5: an rsync server can make the validator run out of memory. The same release fixes CVE-2026-119069, scored 5.3. [Guide](details/routinator.md#remediation). |
+| **ZoneAlarm for Windows before 4.4.217.20710** | Update to 4.4.217.20710 or later. Check Point rates CVE-2026-132856 7.8: a local user runs code as SYSTEM. [Guide](details/zonealarm.md#remediation). |
+| **Apache Solr 9.0.0 before 9.11.0, or 10.0.0 before 10.1.0** | Upgrade to 9.11.0 or 10.1.0 or later and restart. Apache rates CVE-2026-86312 8.8: `/admin/ping` can do more than a health check when only the health permission can reach it. Until then, require a trusted role for that path. [Guide](details/apache-solr.md#remediation). |
 | **Node.js `@sigstore/oci` before 0.8.0** | Upgrade to 0.8.0 or later. The maintainers rate GHSA-9mj6-f434-pgcg 7.5: a redirecting token service receives the registry password. Only identity-token credentials take this path. [Guide](details/sigstore-oci.md#remediation). |
 | **Node.js `simple-git` before 4.1.0** | Upgrade to 4.1.0 or later and set `strict: true` or `unsafe.recommended: true`. VulnCheck rates CVE-2026-134815 9.2: an argument runs a command. The check is off unless one of those options is on. [Guide](details/simple-git.md#remediation). |
 | **Node.js `binary-parser` 2.3.0 or earlier** | Upgrade to 2.3.1 or later. The maintainer rates GHSA-xmxc-6c22-m377 8.1, and VulnCheck scores CVE-2026-134814 9.2: a parser definition from outside runs JavaScript. [Guide](details/binary-parser.md#remediation). |
@@ -8522,7 +8625,7 @@ flowchart TD
 | **CloudPaste through 1.9.1** | Keep `/api/proxy/link` off the public internet and rotate the WebDAV password. VulnCheck rates CVE-2026-129494 8.7: a share slug returns the WebDAV username and password. v1.9.1 is the newest release and is affected. [Guide](details/cloudpaste.md#remediation). |
 | **Bolo (bolo-solo) through 2.6.4** | Do not rely on an article password. VulnCheck rates CVE-2026-129493 8.7: the article list returns it in plaintext. v2.6.4 is the newest release and is affected. Change every article password. [Guide](details/bolo.md#remediation). |
 | **WordPress with Give Peer-to-Peer through 2.9.5** | Update `give-peer-to-peer` to 2.9.7 or later. Wordfence rates CVE-2026-82568 and CVE-2026-82663 7.5: a request with no login reads the database through 2.9.3 and changes a team through 2.9.5. The vendor changelog says 2.9.4 fixed both; Wordfence says 2.9.6 fixes the second. [Guide](details/give-peer-to-peer.md#remediation). |
-| **Linux kernel from 4.4, TCP listeners** | Install the kernel that names CVE-2026-99288 and reboot. Red Hat rates it 7.5: one TCP connection can panic the host. Upstream floors are 6.12.117, 6.18.63, and 7.3.4. Red Hat 8, 9, and 10, Ubuntu, and Debian have no fixed package yet. This is not the TCP options flaw and not FragNesia. [Guide](details/linux-noisytcp.md#remediation). |
+| **Linux kernel from 4.4, TCP listeners** | Install the kernel that names CVE-2026-99288 and reboot. Red Hat rates it 7.5: one TCP connection can panic the host. On RHEL and AlmaLinux the November 23 kernels are in. RHEL 9 `kernel-rt`, Ubuntu, SUSE, and Rocky Linux still have no package. [Guide](details/linux-noisytcp.md#remediation). |
 | **3DEXPERIENCE R2023x through R2026x** | Install the Station Launcher fix from Dassault support article QA00000522688. Dassault rates CVE-2026-93664 10.0, unauthenticated, and two command-injection flaws 9.9. No public page names the fixed level. [Guide](details/3dexperience.md#remediation). |
 | **NodePress through 8.5.1** | No fixed release. Take it offline. VulnCheck rates two flaws 9.8: the administrator password defaults to `root`, and JWTs fall back to `nodepress-secret`. Set both secrets. [Guide](details/nodepress.md#remediation). |
 | **Prime (`@primecms/core`) through 0.4.0-beta.0** | No fixed release. Take it offline. VulnCheck rates CVE-2026-129941 9.8: `createUser` registers an administrator with no login. [Guide](details/prime-cms.md#remediation). |

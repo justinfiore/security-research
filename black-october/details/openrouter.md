@@ -1,6 +1,6 @@
 # OpenRouter: inference providers kept prompts they said they would not
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-23 (America/New_York)
 
 [Main summary](../black-october-2026.md#openrouter-inference-providers-kept-prompts-they-said-they-would-not) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -17,6 +17,8 @@ Together AI's notice, published November 21, 2026, is a different path from the 
 Phala's preliminary report, published November 10, 2026, says requests to its deployment of DeepSeek V4 Flash 0731 that OpenRouter routed between October 21, 2026 at 00:00 UTC and November 8, 2026 at 05:35 UTC should be treated as exposed. Phala says canary misuse was confirmed only for requests sent on October 21 and 22, and that it keeps the wider window because the canaries sampled requests rather than seeing every one. It says the attacker chained a legacy internet-facing service with management interfaces that trusted loopback and did not authenticate the caller, created unauthorized confidential virtual machines, and took an inference VM that was serving production traffic without full hardening. Phala says it contained the incident on November 8 at 05:35 UTC and has contacted the one tenant whose virtual-machine credentials were misused.
 
 Novita's notice is a post on X. This guide did not read that post, so it does not repeat a claim about what Novita says happened.
+
+Atlas Cloud's notice, posted November 22, 2026, is not one of the three OpenRouter links. Atlas Cloud says Dragos's testing showed a third party opened links from prompts sent to MiniMax's official API, including MiniMax M3 and M2.7 prompts sent through Atlas Cloud in the third quarter and early fourth quarter of 2026. It says the access happened after the request reached MiniMax, not on Atlas Cloud, and that Atlas Cloud did not store those prompts. It stopped sending requests to MiniMax's official API and says to treat any secret sent to MiniMax M3, M2.7, or M3.1 Flash as exposed. It also says it took every Atlas Cloud model off OpenRouter itself, and that this was its decision, not OpenRouter's. OpenRouter's page, read November 23, still lists three notices and still says three providers were off-boarded.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -39,15 +41,17 @@ Novita's notice is a post on X. This guide did not read that post, so it does no
 | **Dragos post** | **2026-11-19 08:00; timezone not stated on the page** | Three provider compromises, reseller logging, and retention failures. Providers not named. |
 | **Together notice** | **2026-11-21; time unknown** | Page says Published 11/21/2026. Credential in a public repository; stored samples downloaded. |
 | **OpenRouter announcement** | **2026-11-22; time unknown** | Three providers off-boarded. 125 endpoints removed from Zero Data Retention. [OpenRouter][or] |
-| **Last updated** | **2026-11-22 (America/New_York)** | New item. Rotate secrets that were inside a prompt. |
+| **Atlas Cloud notice** | **2026-11-22; time unknown** | MiniMax M3, M2.7, and M3.1 Flash prompts in Q3 and early Q4. Atlas Cloud took its own models off OpenRouter. [Atlas Cloud][atlas] |
+| **Last updated** | **2026-11-23 (America/New_York)** | Atlas Cloud's notice added. |
 
 ## Detection
 
 1. Read the notice OpenRouter sent the account, if one arrived. OpenRouter says it notified potentially affected customers and does not publish the list.
 2. For a Together AI account, the requests at risk are the ones Together names: MiniMax M3, GLM-5.2, and Kimi K2.6, primarily on the four dates above. Together says it will contact customers directly and has not published a per-customer list.
 3. For a request OpenRouter routed to Phala's DeepSeek V4 Flash 0731 inside the window above, treat the prompt as exposed. Phala says the gateway is notifying those users.
-4. A prompt that contained an API key, a token, or a password is the one to rotate. A prompt that did not is still exposed text, and rotating an unrelated key does not address it.
-5. Dragos names two user agents, `artex-agent` and `artex-judge-r121`, from the actor who used stolen keys against Dragos's own canary accounts. Those are indicators for the canary accounts, not proof of what happened to a customer key.
+4. For a request sent through Atlas Cloud to MiniMax M3, M2.7, or M3.1 Flash in the third quarter or early fourth quarter of 2026, treat a secret in that prompt as exposed. Atlas Cloud says it emailed the accounts that used those models.
+5. A prompt that contained an API key, a token, or a password is the one to rotate. A prompt that did not is still exposed text, and rotating an unrelated key does not address it.
+6. Dragos names two user agents, `artex-agent` and `artex-judge-r121`, from the actor who used stolen keys against Dragos's own canary accounts. Those are indicators for the canary accounts, not proof of what happened to a customer key.
 
 ## Remediation
 
@@ -70,14 +74,16 @@ A secret that was inside a copied prompt should be treated as exposed from the d
 
 ## Sources
 
-- [OpenRouter, Data Processing Incidents on Inference Providers][or] — dated 2026-11-22. Three providers off-boarded, 125 endpoints removed from Zero Data Retention, customers notified. Says OpenRouter itself was not breached. Links Novita, Phala, and Together, and says not every affected provider has posted.
+- [OpenRouter, Data Processing Incidents on Inference Providers][or] — dated 2026-11-22, read again 2026-11-23. Three providers off-boarded, 125 endpoints removed from Zero Data Retention, customers notified. Says OpenRouter itself was not breached. Still links Novita, Phala, and Together, and says not every affected provider has posted.
+- [Atlas Cloud, November 22, 2026][atlas] — MiniMax's official API. Prompts to MiniMax M3 and M2.7 through Atlas Cloud in Q3 and early Q4 2026. Treat secrets sent to M3, M2.7, or M3.1 Flash as exposed. Atlas Cloud took its own models off OpenRouter.
 - [Dragos, HD Moore, November 19, 2026][dragos] — about two million canary prompts, July through November. Three unnamed provider compromises, reseller logging, and retention failures, including Zero Data Retention requests. Names the ARTEX user agents.
 - [Together AI security event][together] — published 2026-11-21. Stored samples for MiniMax M3, GLM-5.2, and Kimi K2.6 downloaded after a credential reached a public repository. Five tested credentials were Dragos canaries.
 - [Phala preliminary incident report][phala] — published 2026-11-10. DeepSeek V4 Flash 0731 exposure window 2026-10-21 00:00 UTC through 2026-11-08 05:35 UTC. Contained 2026-11-08 05:35 UTC.
-- [CISA KEV JSON][kev] — catalog 2026.11.20, checked 2026-11-22. No CVE to match.
+- [CISA KEV JSON][kev] — catalog 2026.11.23, checked 2026-11-23. No CVE to match.
 
 [or]: https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers
 [dragos]: https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens
 [together]: https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026
 [phala]: https://phala.com/posts/phala-november-preliminary-incident-report
+[atlas]: https://www.atlascloud.ai/blog/ai-updates/security-and-privacy-commitment
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
