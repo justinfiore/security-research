@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-23 03:01 EST (UTC−05:00) — PAN-OS NGINX hotfixes
+
+- **PAN-OS and Panorama:** If the HTTP/2 option is on, install the [hotfix for the branch](black-october/details/nginx.md#pan-os-and-panorama). Palo Alto rates CVE-2026-123633 and CVE-2026-123007 Critical, CVSS-B 4.0 9.2. 12.2 is 12.2.4-h3. 12.1 is 12.1.10-h6, or 12.1.7-h15 once that build is out. 11.2 is 11.2.16-h3, or 11.2.13-h6 or 11.2.10-h19 once those are out. Palo Alto still marks the last three ETA November 23. 12.1.4 and earlier, and 11.2.7 and earlier, need no action. Until the hotfix, turn HTTP/2 off. Palo Alto knows of no malicious exploitation. The upstream NGINX floors are unchanged.
+
 ## 2026-11-22 23:06 EST (UTC−05:00) — GL.iNet stable firmware
 
 - **GL.iNet:** Install the [stable build](black-october/details/glinet.md#remediation) whose release note names the November 20 cloud-management flaw, and look for `crond -i /tmp/.log` first. GL-MT6000 and GL-MT3000 are 4.11.1. GL-BE9300 and GL-BE3600 are 4.10.2. Five more router models are 4.8.4, and GL-X2000 and GL-MT2500 are 4.7.14. The seven named KVM models are 1.10.3, except RMQ1 at 1.8.7. A model whose newest stable release predates November 22, including GL-B3000, has no such note and no build to install. GL.iNet has not said the update removes an infection by itself. No CVE is assigned.

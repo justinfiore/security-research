@@ -1,6 +1,6 @@
 # NGINX: configuration-dependent memory corruption and TLS session forgery
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-23 (America/New_York)
 
 [Main NGINX summary](../black-october-2026.md#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -15,7 +15,7 @@
 | [CVE-2026-113425](https://www.cve.org/CVERecord?id=CVE-2026-113425) | major | 3.1 8.1 / 4.0 9.2 | Configured as a mail proxy. A crafted mail session is a use after free. | 0.5.33–1.31.8 |
 | [CVE-2026-118899](https://www.cve.org/CVERecord?id=CVE-2026-118899) | major | 3.1 7.5 / 4.0 8.7 | `listen … ssl` with TLS 1.3. A crafted connection loops the worker while it reads the request body. Denial of service only. | 1.13.0–1.31.8 |
 
-The 8.1 vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`. F5 says code execution on the five memory flaws needs ASLR off or bypassed. Xint says it leaked addresses and ran commands, and it is withholding a Linux SCTP chain it used to reach root from a container. That kernel flaw has no CVE and no public fix, so it is not tracked here. NGINX Plus is **37.3.0.1 and 37.0.8.1** for five of the six. CVE-2026-123633 is fixed one build earlier, in **37.2.0.1 and 37.0.7.1**. R34 through R36 have no fix. F5 names no mitigation for the HTTP/2, HTTP/3, or TLS 1.3 flaws. For the mail proxy, restrict the listener to trusted networks. Four more flaws in the same release are below 7.0, including a stream client-certificate bypass, [CVE-2026-120967](https://www.cve.org/CVERecord?id=CVE-2026-120967), which F5 rates 4.8 and 6.3. Debian trixie and bookworm now have packages: DSA-6642-1 and DLA-4918-1, both November 19. Forky `1.30.6-4` is fixed. Ubuntu's November 19 notice, USN-9159-1, names fixed packages. Red Hat shipped RHEL 10 and two RHEL 9 packages on November 20. [K000163926](https://my.f5.com/manage/s/article/K000163926)
+The 8.1 vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`. F5 says code execution on the five memory flaws needs ASLR off or bypassed. Xint says it leaked addresses and ran commands, and it is withholding a Linux SCTP chain it used to reach root from a container. That kernel flaw has no CVE and no public fix, so it is not tracked here. NGINX Plus is **37.3.0.1 and 37.0.8.1** for five of the six. CVE-2026-123633 is fixed one build earlier, in **37.2.0.1 and 37.0.7.1**. R34 through R36 have no fix. F5 names no mitigation for the HTTP/2, HTTP/3, or TLS 1.3 flaws. For the mail proxy, restrict the listener to trusted networks. Four more flaws in the same release are below 7.0, including a stream client-certificate bypass, [CVE-2026-120967](https://www.cve.org/CVERecord?id=CVE-2026-120967), which F5 rates 4.8 and 6.3. Debian trixie and bookworm now have packages: DSA-6642-1 and DLA-4918-1, both November 19. Forky `1.30.6-4` is fixed. Ubuntu's November 19 notice, USN-9159-1, names fixed packages. Red Hat shipped RHEL 10 and two RHEL 9 packages on November 20. Palo Alto Networks rates the same two HTTP/2 flaws Critical, CVSS-B 4.0 9.2, on PAN-OS and Panorama when the HTTP/2 option is on. [K000163926](https://my.f5.com/manage/s/article/K000163926) [PAN-OS advisory](https://security.paloaltonetworks.com/CVE-2026-123633)
 
 **1.30.6 and 1.31.7, released 2026-10-14, fix four earlier flaws.** For the three memory-corruption bugs, F5 gives CVSS 4.0 9.2 and CVSS 3.1 8.1. For the session forgery, F5 gives CVSS 4.0 8.3 and CVSS 3.1 6.5. nginx.org rates all four medium. Each of those four needs a specific configuration. 1.30.6 and 1.31.7 do not fix CVE-2026-123007. [nginx.org advisories][ngx-adv]
 
@@ -41,6 +41,7 @@ The same release also fixed [CVE-2026-95101](https://www.cve.org/CVERecord?id=CV
   - [Logs](#logs)
 - [Remediation](#remediation)
   - [F5 products that embed NGINX](#f5-products-that-embed-nginx)
+  - [PAN-OS and Panorama](#pan-os-and-panorama)
   - [Distribution packages](#distribution-packages)
   - [Temporary mitigations](#temporary-mitigations)
 - [Verification](#verification)
@@ -62,7 +63,8 @@ The same release also fixed [CVE-2026-95101](https://www.cve.org/CVERecord?id=CV
 | K000162607 (CVE-2026-93479) updated | 2026-10-23 | Credits expanded; the CVE record was updated 21:51 UTC. [K000162607][k93479] |
 | nginx 1.30.7 and 1.31.9; F5 out-of-band notice | 2026-11-18; time/TZ unknown | Ten flaws. F5 rates five CVSS 3.1 8.1 and 4.0 9.2, and the TLS 1.3 loop 7.5 and 8.7. [K000164058][k-index] [nginx.org advisories][ngx-adv] |
 | CISA KEV | Not listed | Catalog 2026.11.18 checked on 2026-11-18. [KEV][kev] |
-| Exploitation evidence | Proof of concept, no in-the-wild report | Rapid7 published a proof of concept for CVE-2026-123007. Xint and Wiz describe code execution in a lab. Neither reports use in the wild. |
+| Exploitation evidence | Proof of concept, no in-the-wild report | Rapid7 published a proof of concept for CVE-2026-123007. Xint and Wiz describe code execution in a lab. Neither reports use in the wild. Palo Alto Networks says it knows of no malicious exploitation of the PAN-OS impact. |
+| PAN-OS portfolio status | 2026-11-20; time/TZ unknown | Palo Alto's timeline says Initial Publication. The page says Published 2026-11-21 and Updated 2026-11-20. PAN-OS and Panorama are affected only with the HTTP/2 option on. [PAN-OS advisory][pan-nginx] |
 
 **Range discrepancies:** nginx.org lists CVE-2026-97205 as 0.8.11–1.31.6. F5's CVE record and K article list only branches still under technical support (1.30.0–1.30.5 and 1.31.0–1.31.6), because "End of Technical Support" versions are not evaluated. For CVE-2026-15176, F5's K article marks 0.1.29–0.9.9 as vulnerable with no fix. **Treat all older builds as vulnerable.**
 
@@ -82,6 +84,7 @@ ps -eo pid,args | grep '[n]ginx: master'   # which binary and config are actuall
 - **Distribution packages** use backports, so the upstream version number alone does **not** tell you whether a package is vulnerable. Check your distribution's tracker (see [Distribution packages](#distribution-packages)).
 - **NGINX Plus:** run `nginx -v`. For the November 18 set, 37.x before **37.3.0.1 and 37.0.8.1** is vulnerable, and R34 through R36 have no fix. CVE-2026-123633 is fixed in 37.2.0.1 and 37.0.7.1. [K000163926][k123007]
 - Do not forget NGINX inside containers, Kubernetes ingress and gateway controllers, appliances, and F5 products (see the table under [Remediation](#f5-products-that-embed-nginx)). The community **ingress-nginx** project is not covered by F5's advisories, and its status was not established in this review.
+- **PAN-OS and Panorama:** Palo Alto says only devices with the HTTP/2 option enabled are affected, on PAN-OS 12.2 before 12.2.4-h3, 12.1.5 and later before 12.1.7-h15 or 12.1.10-h6, and 11.2.8 and later before 11.2.10-h19, 11.2.13-h6, or 11.2.16-h3. 12.1.2 through 12.1.4 and 11.2.0 through 11.2.7 need no action. PAN-OS 11.1 and 10.2 are not in the advisory, and Palo Alto says an on-premise product it does not list was reviewed and is unaffected. Check the option with `request http http2 show` on PAN-OS 11.2.8 or later. [PAN-OS advisory][pan-nginx]
 
 ### Configuration check with nginx -T (read-only)
 
@@ -135,6 +138,25 @@ This table is a summary of F5's K articles. Ranges vary by CVE, so check each ar
 
 Sources: [K000162416][k15176], [K000162607][k93479], [K000162608][k97205], [K000162606][k97629].
 
+### PAN-OS and Panorama
+
+Palo Alto Networks' [portfolio advisory][pan-nginx], initially published 2026-11-20, rates CVE-2026-123633 and CVE-2026-123007 **Critical, CVSS-B 4.0 9.2**, urgency Moderate. The vector is `CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/AU:Y/R:U/V:C/RE:M/U:Amber`. Exposure requires the **HTTP/2 option** on PAN-OS or Panorama. A device with HTTP/2 off is not affected. Panorama is affected on virtual appliances and on M-Series. Palo Alto says it is not aware of malicious exploitation, and that it is fixing its SaaS products itself.
+
+An upgrade to one of these builds is the fix. Confirm the three builds still marked ETA are downloadable before you schedule them. Until then, the already released build on the same branch is the one to install, or disable HTTP/2.
+
+| Running release | Install | Status on the advisory |
+|---|---|---|
+| 12.2.0 through 12.2.4-h2 | **12.2.4-h3** or later | Listed as unaffected at 12.2.4-h3 |
+| 12.1.8 through 12.1.10-h5 | **12.1.10-h6** or later | Listed as unaffected at 12.1.10-h6 |
+| 12.1.5 through 12.1.7-h14 | **12.1.7-h15**, or **12.1.10-h6** or later | 12.1.7-h15 is ETA 11/23 |
+| 12.1.2 through 12.1.4, any hotfix | No action | Not affected |
+| 11.2.15 through 11.2.16-h2 | **11.2.16-h3** or later | Listed as unaffected at 11.2.16-h3 |
+| 11.2.11 through 11.2.13-h5 | **11.2.13-h6**, or **11.2.16-h3** or later | 11.2.13-h6 is ETA 11/23 |
+| 11.2.8 through 11.2.10-h18 | **11.2.10-h19**, or **11.2.16-h3** or later | 11.2.10-h19 is ETA 11/23 |
+| 11.2.0 through 11.2.7, any hotfix | No action | Not affected |
+
+Disabling HTTP/2 is the workaround, and it is not a substitute for the hotfix once that build is out. On PAN-OS 11.2.8 or later the commands are `request http http2 show`, `request http http2 enable`, and `request http http2 disable`. Enabling HTTP/2 turns HTTP/1.1 off, with no fallback. These commands were not run on a device for this review. [PAN-OS HTTP/2 documentation](https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-networking-admin/manage-http-2-network-support)
+
 ### Distribution packages
 
 - **Debian:** [DSA-6642-1](https://www.debian.org/security/2026/dsa-6642) (2026-11-19 14:40:29 +0000) fixes trixie in **1.26.3-3+deb13u11**, including CVE-2026-123007 and CVE-2026-123633. [DLA-4918-1](https://www.debian.org/lts/security/2026/dla-4918) (2026-11-19) fixes bookworm in **1.22.1-9+deb12u11** for the same two. Forky and sid are both **1.30.6-4**, marked fixed, with the upstream 1.30.7 fixes backported. The per-CVE tracker page was stale on 2026-11-19 and still showed the older builds. [Debian tracker][deb]
@@ -179,6 +201,7 @@ The November 18 configuration mitigations do not replace the upgrade:
 
 - [nginx.org security advisories][ngx-adv], [nginx.org news][ngx-news], [CHANGES for 1.30.x][changes]: nginx.org severities, ranges, credits and release dates.
 - F5, November 18: [K000164058][k-index], [K000163926][k123007] (CVE-2026-123007), [K000163928][k123633] (CVE-2026-123633), [K000163925][k123634] (CVE-2026-123634), [K000163927][k121810] (CVE-2026-121810), [K000163931][k113425] (CVE-2026-113425), [K000163930][k118899] (CVE-2026-118899).
+- [Palo Alto Networks CVE-2026-123633][pan-nginx] — PAN-OS and Panorama versions, the HTTP/2 condition, and the hotfix ETAs.
 - F5, October 14: [K000162416][k15176] (CVE-2026-15176), [K000162607][k93479] (CVE-2026-93479), [K000162608][k97205] (CVE-2026-97205), [K000162606][k97629] (CVE-2026-97629).
 - CVE records: [CVE-2026-15176][cve-15176], [CVE-2026-93479][cve-93479], [CVE-2026-97205][cve-97205], [CVE-2026-97629][cve-97629], [CVE-2026-95101][cve-95101]. [NVD CVE-2026-15176][nvd-15176].
 - [Debian DSA-6575-1][dsa], [Debian security tracker][deb], [Ubuntu CVE-2026-93479][ubuntu].
@@ -211,3 +234,4 @@ The November 18 configuration mitigations do not replace the upgrade:
 [usn]: https://ubuntu.com/security/notices/USN-8955-1
 [usn2]: https://ubuntu.com/security/notices/USN-8955-2
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+[pan-nginx]: https://security.paloaltonetworks.com/CVE-2026-123633
