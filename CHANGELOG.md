@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-24 03:05 EST (UTC−05:00) — Cisco Expressway; ScreenConnect
+
+- **Cisco Expressway:** Cisco revised [cisco-sa-vcs-static-cred-hr7EWZ8t](black-october/details/cisco-expressway.md#timeline) to version 1.1 on November 23 at 15:51 GMT. It now says CVE-2026-76466 was added to CISA's KEV catalog, and that Cisco has no direct evidence of active exploitation. The fix is unchanged: a clustered Expressway moves to X15.5.20 or later. F6's report of an attack on X15.5.3 stands. X14 and earlier still have to move to a fixed release.
+- **ScreenConnect:** Update every technician's [host client to 26.6.5 or later](black-october/details/screenconnect-rmm.md#remediation). Huntress says CVE-2026-84869, the September client flaw, was used on November 12: a guest made one MSP technician's client run a file, and it counted 688,000 attempts against 42 servers through November 16. Updating the server does not update that client. Until then, remove the TransferFiles permission. The RMM+ extension flaw is a different CVE and still has no fixed build. Disable it on premises.
+
 ## 2026-11-23 23:30 EST (UTC−05:00) — Rclone; Wing FTP; GL.iNet
 
 - **Rclone:** If [rclone](black-october/details/rclone.md#remediation) runs `serve sftp --auth-proxy`, upgrade to 1.76.0 or later and restart it. VulnCheck rates CVE-2026-134352 CVSS 4.0 9.2: a public key sent as a password, from the same client IP, gets that user's files. rclone rates the same issue CVSS 3.1 8.1. The changelog puts the fix in 1.76.0, released November 6. The GitHub advisory's affected range includes 1.76.0. An rclone that does not serve SFTP with an auth proxy needs no change. It is not in KEV. The upgrade does not show whether a public key was already sent as a password.

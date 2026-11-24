@@ -1,6 +1,6 @@
 # Cisco Expressway: a cluster cookie runs commands as root
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main Expressway summary](../black-october-2026.md#cisco-expressway-a-cluster-cookie-runs-commands-as-root) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@ Cisco Expressway is the gateway that lets remote users reach an organization's v
 
 Cisco rates [CVE-2026-76466](https://www.cve.org/CVERecord?id=CVE-2026-76466) **Critical, CVSS 3.1 9.8**. Cisco is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The database service uses persistent cookies, and when clustering has **TLS Verify Mode** set to **Enabled** the device does not check the client certificate. Someone who has the cookies can connect to that service and run commands as root. Cisco says there is no workaround. The fix is **X15.5.20**. X14 and earlier have to move to a fixed release.
 
-Cisco's advisory is still version 1.0, dated October 21, and still says the PSIRT is not aware of any public announcement or malicious use. That sentence is now behind the reports. A proof of concept is public. F6 says it investigated an attack on a company in Russia: two internet-facing Expressway **X15.5.3** devices were taken, and one of them was used to reach two more nodes of the same cluster on the internal network. After root, the attackers wrote Python scripts to scan the network, look for SMB shares, talk to SQL Server and WinRM, and search GitLab repositories. F6 says the scripts were edited during the attack and that the comments look like an AI assistant wrote them. F6 does not name the company or a threat actor. SecurityWeek's November 19 account of the same report says Cisco had not revised the advisory.
+Cisco revised the advisory to version 1.1 on 2026-11-23 at 15:51 GMT. The exploitation section now says the vulnerability was added to CISA's KEV catalog in November 2026, and the revision note says Cisco does not have direct evidence of active exploitation. The fixed releases did not change. A proof of concept is public. F6 says it investigated an attack on a company in Russia: two internet-facing Expressway **X15.5.3** devices were taken, and one of them was used to reach two more nodes of the same cluster on the internal network. After root, the attackers wrote Python scripts to scan the network, look for SMB shares, talk to SQL Server and WinRM, and search GitLab repositories. F6 says the scripts were edited during the attack and that the comments look like an AI assistant wrote them. F6 does not name the company or a threat actor. SecurityWeek's November 19 account of the same report was written before Cisco revised the advisory.
 
 **CISA KEV:** Listed — [CVE-2026-76466](https://www.cve.org/CVERecord?id=CVE-2026-76466) was added 2026-11-20, federal due date 2026-11-23. CISA requires mitigations per the vendor and forensic triage under BOD 26-04. Ransomware use is Unknown. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -29,7 +29,8 @@ Cisco's advisory is still version 1.0, dated October 21, and still says the PSIR
 | F6 investigation published | 2026-11-18; time/TZ unknown | F6 says this is the first exploitation it has seen. Two X15.5.3 devices, then two internal cluster nodes. [F6][f6] |
 | SecurityWeek account | 2026-11-19 08:12 ET | Says the advisory still denies public announcements and malicious use, and that a proof of concept is on GitHub. [SecurityWeek][sw] |
 | **CISA KEV** | **2026-11-20; catalog released 17:48:39 UTC** | Added. Federal due date 2026-11-23. [KEV][kev] |
-| **Last updated** | **2026-11-20 (America/New_York)** | KEV listing. The fix stays X15.5.20. |
+| Cisco revises the advisory | 2026-11-23 15:51 GMT | Version 1.1. Cisco notes the KEV listing and says it has no direct evidence of active exploitation. The fix stays X15.5.20. [Cisco][cisco] |
+| **Last updated** | **2026-11-24 (America/New_York)** | Cisco's own advisory now names the KEV listing. The fix stays X15.5.20. |
 
 ## Detection
 
@@ -71,17 +72,17 @@ Those three belong to that investigation. A device that never logged them can st
 
 ## Compromise response
 
-Cisco's advisory still says the PSIRT knows of no malicious use. F6's report says otherwise for one organization. Treat a clustered Expressway that was on X15.5.3 or earlier, and reachable, as a host that may have run commands as root.
+Cisco's revised advisory says it does not have direct evidence of active exploitation. F6's report says otherwise for one organization. Treat a clustered Expressway that was on X15.5.3 or earlier, and reachable, as a host that may have run commands as root.
 
 Start with `erlang.log` and the `nodeup,'wombat@127.0.0.1'` line, then look for Python files under `/mnt/harddisk` matching the path F6 published. Those scripts, in the attack F6 investigated, scanned the network, opened SMB shares, talked to SQL Server and WinRM, and searched GitLab. A credential those scripts could read should be rotated. The upgrade does not do that, and it does not end a session that was already opened inside the network.
 
 ## Sources
 
-- [cisco-sa-vcs-static-cred-hr7EWZ8t][cisco] — Cisco PSIRT, version 1.0, first published 2026-10-21 16:00 GMT. Critical, CVSS 3.1 9.8. Clustered Expressway-C and Expressway-E. Fixed in X15.5.20. X14 and earlier migrate. No workaround. The exploitation section still says no public announcement and no malicious use known to Cisco. Reported by Stefan Aleksic of Jane Street.
+- [cisco-sa-vcs-static-cred-hr7EWZ8t][cisco] — Cisco PSIRT, version 1.1, last updated 2026-11-23 15:51 GMT. First published 2026-10-21 16:00 GMT. Critical, CVSS 3.1 9.8. Clustered Expressway-C and Expressway-E. Fixed in X15.5.20. X14 and earlier migrate. No workaround. The revision says the vulnerability was added to CISA KEV and that Cisco does not have direct evidence of active exploitation. Reported by Stefan Aleksic of Jane Street. Read 2026-11-24.
 - [F6 press release][f6] — dated 2026-11-18. Says a company in Russia was attacked on X15.5.3 shortly after a public proof of concept, that two internet-facing devices led to two internal cluster nodes, and that Python scripts were prepared for lateral movement. Names the Erlang log line, two IP addresses, and a path pattern.
 - [SecurityWeek][sw] — Eduard Kovacs, 2026-11-19 08:12 ET. Reports the same F6 investigation and says Cisco's advisory had not been revised. Links a public proof of concept.
 - [CVE-2026-76466](https://www.cve.org/CVERecord?id=CVE-2026-76466) — Cisco, published 2026-10-21. CVSS 3.1 9.8.
-- [CISA KEV JSON][kev] — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z. CVE-2026-76466 was added 2026-11-20, due 2026-11-23.
+- [CISA KEV JSON][kev] — catalog 2026.11.23, released 2026-11-23T19:43:55.7979Z, checked 2026-11-24. CVE-2026-76466 was added 2026-11-20, due 2026-11-23. Ransomware use is Unknown. Forensic triage is required.
 
 [cisco]: https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-vcs-static-cred-hr7EWZ8t
 [f6]: https://www.f6.ru/media-center/press-releases/cisco-cve-2026-76466/
