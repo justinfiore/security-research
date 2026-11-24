@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Microsoft Azure API Management: stored secrets were read](#microsoft-azure-api-management-stored-secrets-were-read)
+- [Apache Allura: a ticket runs script in the browser](#apache-allura-a-ticket-runs-script-in-the-browser)
+- [WHMCS: the shopping cart reads the database](#whmcs-the-shopping-cart-reads-the-database)
 - [Rclone: a public key logs in as a password](#rclone-a-public-key-logs-in-as-a-password)
 - [Cribl Stream: a collector response runs code](#cribl-stream-a-collector-response-runs-code)
 - [EV Reach: a low-privileged user runs commands as SYSTEM](#ev-reach-a-low-privileged-user-runs-commands-as-system)
@@ -331,6 +334,10 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** If you run [Azure API Management](#microsoft-azure-api-management-stored-secrets-were-read) on a Classic Developer, Basic, Standard, or Premium tier, replace every secret it stored, at the system that issued it. Microsoft says a flaw let an unauthorized party read named values, identity-provider and OpenID Connect client secrets, subscription keys, and direct-management tokens before it closed the path on November 19. No CVE is assigned and no score is published. The fix does not revoke a credential already read. Consumption and v2 tiers are not affected. Norway's NSM says an unknown actor targeted those secrets, and names Equinor and Skagerak Energi.
+- **New this update:** Upgrade [Apache Allura](#apache-allura-a-ticket-runs-script-in-the-browser) to **1.23.0 or later**. Apache rates [CVE-2026-135660](https://www.cve.org/CVERecord?id=CVE-2026-135660) critical and publishes no numeric score: a ticket runs script in the browser. Allura before 1.23.0 is affected, and the release note says through 1.22.1. It is not in KEV.
+- **New this update:** Update self-hosted [WHMCS](#whmcs-the-shopping-cart-reads-the-database) to **9.1.2, 9.0.10, or 8.13.8**, then delete every email campaign and empty the template cache. HackerOne rates [CVE-2026-82981](https://www.cve.org/CVERecord?id=CVE-2026-82981) CVSS 4.0 8.7 High: the shopping cart reads client data and administrator password hashes with no login. [CVE-2026-93700](https://www.cve.org/CVERecord?id=CVE-2026-93700) is CVSS 3.1 9.0 Critical: a logged-in client reads configuration files and runs code, and the update alone does not close it. 8.0 through 8.12 has no backport. None is in KEV.
+- **New this update:** Update [Chrome](#google-chrome-critical-browser-security-fixes) to **158.0.8127.88 or later** and relaunch. Windows and Mac are 158.0.8127.88/.89 and Linux is 158.0.8127.88. Google rates [CVE-2026-134401](https://www.cve.org/CVERecord?id=CVE-2026-134401) Critical: a crafted page runs code outside the sandbox. The November 17 builds, 158.0.8127.36/.37, do not contain it. Google publishes no numeric score. It is not in KEV.
 - **New this update:** If [rclone](#rclone-a-public-key-logs-in-as-a-password) runs `serve sftp --auth-proxy`, upgrade to **1.76.0 or later** and restart it. VulnCheck rates [CVE-2026-134352](https://www.cve.org/CVERecord?id=CVE-2026-134352) CVSS 4.0 9.2 Critical: a public key sent as a password, from the same client IP, gets that user's files. rclone rates the same issue CVSS 3.1 8.1. The changelog puts the fix in 1.76.0. The GitHub advisory's affected range includes 1.76.0. An rclone that does not serve SFTP with an auth proxy is outside it. It is not in KEV.
 - **New this update:** Upgrade [Wing FTP Server](#wing-ftp-server-administrator-path-traversal-to-code-execution) to **8.2.8 or later**. VulnCheck published [CVE-2026-135171](https://www.cve.org/CVERecord?id=CVE-2026-135171) on November 23, CVSS 4.0 9.2: an administrator session identifier can be guessed, and a request with no login replays the session. [CVE-2026-135170](https://www.cve.org/CVERecord?id=CVE-2026-135170) is 7.7 and injects Lua through an LDAP login name. Both say before 8.2.8, which shipped November 19. 8.2.6 leaves both. Neither is in KEV.
 - **New this update:** If a [WP connect](#wordpress-six-wp-connect-plugins-shipped-a-backdoor) plugin is one of six named versions, remove it and look for `includes/airwp-online.php`. Wordfence rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical: the file runs PHP from `tascredit-pay.com` on every request, with no login. WordPress.org stopped the releases before sites were offered them, and there is no patch. The CVE record is still reserved. It is not in KEV. Removing the plugin does not remove a file already written under `uploads`.
@@ -595,6 +602,78 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Microsoft Azure API Management: stored secrets were read
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/azure-api-management.md):** [Detection](details/azure-api-management.md#detection) · [Remediation](details/azure-api-management.md#remediation) · [Verification](details/azure-api-management.md#verification) · [Timeline](details/azure-api-management.md#timeline)
+
+**CVEs:** No CVE is assigned. Do not use [CVE-2026-35425](https://www.cve.org/CVERecord?id=CVE-2026-35425) for this incident. That is a different API Management flaw, from July 2026.
+
+**No vendor or CNA has published a CVSS score.** Microsoft told customers, in Azure Service Health advisory **MZK9-GH0**, that it found a flaw in Azure API Management on November 18 and closed the access path on November 19. The advisory is not published as a public MSRC page. The Register describes it as critical, which is a description of the notice and not a score. An unauthorized party could read secrets stored in a **Classic Developer, Basic, Standard, or Premium** instance that was not configured to Microsoft's recommended practices. Microsoft lists secrets in named values, client secrets for identity providers and OpenID Connect providers, subscription keys, and tokens for the direct management API. The Classic **Consumption** tier and every **v2** tier are not affected. Microsoft says the fix is deployed to hosted instances, rotated Microsoft-controlled keys, and does not revoke a customer credential that was read before November 19.
+
+Norway's National Security Authority says an unknown actor actively targeted access tokens, secrets, and named values, that Norway's energy sector found it first, and that Equinor and Skagerak Energi are among the affected organizations. Equinor disclosed an attack on November 17 and later said it found no data theft. That statement is about Equinor.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Equinor discloses an attack | 2026-11-17; time unknown | A day before Microsoft says it identified the flaw. |
+| Microsoft identifies the flaw | 2026-11-18; time unknown | Service Health advisory MZK9-GH0. Not a public MSRC advisory. |
+| **Access path closed** | **2026-11-19; time unknown** | Microsoft says customer credentials already read stay valid. |
+| NSM advisory | 2026-11-20; time unknown | Updated 2026-11-23. Runtime floors: 31936 on 0.52.x, 31938 on 0.53.x. |
+| **Public report** | **2026-11-23 14:42 EST (UTC−05:00)** | BleepingComputer quotes the advisory. The page prints 02:42 PM and no zone. |
+| **Last updated** | **2026-11-24 07:30 EST (UTC−05:00)** | New item. Rotate the credentials at their issuer. |
+
+**Patch:** Nothing to install. On every Classic Developer, Basic, Standard, and Premium instance, confirm the gateway runtime and then replace every stored credential at the system that issued it. NSM's check is `https://<gateway>/internal-status-0123456789abcdef`: 0.52.x is patched at **31936** or higher, and 0.53.x at **31938** or higher. A version like `0.53.4608.0` is v2 or Consumption and is not in scope. Replacing the value inside API Management does not revoke the old one. Set **Enable Management REST API** to **No** unless you still call the direct management API. The rotation does not show whether a secret was already used.
+
+Sources: [NSM](https://nsm.no/aktuelt/nsm-deler-tiltak-mot-sarbarhet-i-azure-api-management), [BleepingComputer](https://www.bleepingcomputer.com/news/security/microsoft-azure-flaw-exploited-to-steal-customers-api-credentials/), [Microsoft rotation guide](https://techcommunity.microsoft.com/blog/integrationsonazureblog/rotating-credentials-in-azure-api-management/4575478), [detailed guide](details/azure-api-management.md).
+
+---
+
+## Apache Allura: a ticket runs script in the browser
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/apache-allura.md):** [Detection](details/apache-allura.md#detection) · [Remediation](details/apache-allura.md#remediation) · [Verification](details/apache-allura.md#verification) · [Timeline](details/apache-allura.md#timeline)
+
+**CVEs:** [CVE-2026-135660](https://www.cve.org/CVERecord?id=CVE-2026-135660)
+
+**The Apache Allura project rates [CVE-2026-135660](https://www.cve.org/CVERecord?id=CVE-2026-135660) critical and publishes no numeric score.** The CVE record, published 2026-11-24, says the same. Script in a ticket runs in the browser of whoever opens it. **Allura before 1.23.0** is affected. The 1.23.0 release note says the flaw affects Allura **through 1.22.1** and that 1.23.0, released November 23, is the fix. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **1.23.0 released** | **2026-11-23; time/TZ unknown** | The release note prints the date and no time. |
+| Advisory to the users list | 2026-11-23 22:54 UTC | Severity critical. Affected: before 1.23.0. |
+| CVE published | 2026-11-24 11:31:09 UTC | No numeric score. |
+| **Last updated** | **2026-11-24 07:30 EST (UTC−05:00)** | New item. Upgrade to 1.23.0. |
+
+**Patch:** Upgrade to **Allura 1.23.0 or later**. Stop the Allura services first, and upgrade to the prior release before this one. The upgrade does not show whether a ticket already ran script.
+
+Sources: [Allura 1.23.0](https://allura.apache.org/posts/2026-allura-1.23.0.html), [users list](https://lists.apache.org/thread/4v50l6k8blgox9w56b9vs11cso7odwh6), [CVE-2026-135660](https://www.cve.org/CVERecord?id=CVE-2026-135660), [detailed guide](details/apache-allura.md).
+
+---
+
+## WHMCS: the shopping cart reads the database
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/whmcs.md):** [Detection](details/whmcs.md#detection) · [Remediation](details/whmcs.md#remediation) · [Verification](details/whmcs.md#verification) · [Timeline](details/whmcs.md#timeline)
+
+**CVEs:** [CVE-2026-82981](https://www.cve.org/CVERecord?id=CVE-2026-82981), [CVE-2026-93700](https://www.cve.org/CVERecord?id=CVE-2026-93700), [CVE-2026-82979](https://www.cve.org/CVERecord?id=CVE-2026-82979)
+
+**HackerOne rates [CVE-2026-82981](https://www.cve.org/CVERecord?id=CVE-2026-82981) CVSS 4.0 8.7 High.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N`. The shopping cart returns client personal and support information, and administrator account records with password hashes, to a request with no login. WHMCS 9.1.x before **9.1.2** and 9.0.x before **9.0.10** are affected. **[CVE-2026-93700](https://www.cve.org/CVERecord?id=CVE-2026-93700) is CVSS 3.1 9.0 Critical**, `CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:H`. A logged-in client uses email campaigns to read configuration files, including database credentials, and to run code. The record requires user interaction and does not say whose. 8.0.0 through 8.13.7, 9.0.0 through 9.0.9, and 9.1.0 through 9.1.1 are affected, and 8.0 through 8.12 has no backport. **[CVE-2026-82979](https://www.cve.org/CVERecord?id=CVE-2026-82979) is CVSS 4.0 7.1 High.** A client with the View & Manage Contacts permission reads other clients' data and the same administrator records. 8.13.x before **8.13.8** is affected too. WHMCS does not report attacks. The three fixes are 9.1.2, 9.0.10, and 8.13.8.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-24) for any of the three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-23; time/TZ unknown** | Three WHMCS advisories. Each page says Nov 23, 2026, and prints no time. |
+| CVE records | 2026-11-23 21:37:09 UTC | CVE-2026-82979 and CVE-2026-93700. CVE-2026-82981 the same day. |
+| **Last updated** | **2026-11-24 07:30 EST (UTC−05:00)** | New item. Update, then delete the campaigns. |
+
+**Patch:** Update self-hosted WHMCS to **9.1.2, 9.0.10, or 8.13.8** on the line you run. Then delete every email campaign under **Utilities > Email Campaigns**, and empty the template cache under **Utilities > System > System Cleanup**. The update alone does not close CVE-2026-93700. It also does not show whether a hash or a database password was already read.
+
+Sources: [CVE-2026-82981 advisory](https://help.whmcs.com/m/125386/l/2151347-cve-2026-82981-whmcs-security-update-2026-11-23), [CVE-2026-93700 advisory](https://help.whmcs.com/m/125386/l/2151351-cve-2026-93700-whmcs-security-update-2026-11-23), [CVE-2026-82981](https://www.cve.org/CVERecord?id=CVE-2026-82981), [detailed guide](details/whmcs.md).
 
 ---
 
@@ -1126,9 +1205,9 @@ Vulnerability Info Site: [pwn.ai](https://pwn.ai/upload2shell)
 | Debian 13 | 2026-09-25 21:17:14 UTC | DSA-6516-1. The tracker marks 10.05.1~dfsg-1+deb13u3 fixed. |
 | **Public announcement** | **2026-11-09; time/TZ unknown** | VulnCheck published the CVE. CVSS 4.0 8.5. |
 | Public write-up | 2026-11-17; time/TZ unknown | pwn.ai. The case studies are not published. |
-| **Last updated** | **2026-11-23 07:01 EST (UTC−05:00)** | SUSE has a package in QA only. AlmaLinux's builds are in testing. |
+| **Last updated** | **2026-11-24 07:30 EST (UTC−05:00)** | AlmaLinux's builds are in production. Amazon Linux 2027 Preview has a package. |
 
-**Patch:** Upgrade to **Ghostscript 10.08.0 or later** and restart the workers that render files. On Debian 13, install `ghostscript` **10.05.1~dfsg-1+deb13u3**. On Debian 12, install **10.0.0~dfsg-11+deb12u9** from bookworm-security. Ubuntu's page, updated November 18, marks every release Needs evaluation and names no package. SUSE marks SLES 15 SP7, 16.0, and 16.1 In progress and lists `ghostscript` 9.52-150000.222.1 for 15 SP7 in QA only, not released. AlmaLinux's November 22 builds are in testing, not production. Update WordPress to **7.0.4 or later** as well: that closes one upload path and leaves the library in place.
+**Patch:** Upgrade to **Ghostscript 10.08.0 or later** and restart the workers that render files. On Debian 13, install `ghostscript` **10.05.1~dfsg-1+deb13u3**. On Debian 12, install **10.0.0~dfsg-11+deb12u9** from bookworm-security. On AlmaLinux, install **9.27-20.el8_10.alma.1**, **9.54.0-19.el9_8.3.alma.1**, or **10.02.1-16.el10_2.3.alma.1**. On Amazon Linux 2027 Preview, install **10.08.0-1.amzn2027.0.2**. Ubuntu's page, updated November 18, marks every release Needs evaluation and names no package. SUSE marks SLES 15 SP7, 16.0, and 16.1 In progress and lists `ghostscript` 9.52-150000.222.1 for 15 SP7 in QA only, not released. AlmaLinux still knows of no RHEL package, and Amazon Linux 2 and 2023 are Pending Fix. Update WordPress to **7.0.4 or later** as well: that closes one upload path and leaves the library in place.
 
 Sources: [CVE-2026-125396](https://www.cve.org/CVERecord?id=CVE-2026-125396), [pwn.ai](https://pwn.ai/upload2shell), [detailed guide](details/ghostscript.md).
 
@@ -1305,9 +1384,9 @@ Sources: [MISA-2026-0012](https://www.mitel.com/support/security-advisories/mite
 | Fixed firmware | 2026-07-06; time/TZ unknown | EB2 3.0.4.4.3 and VM1 1.3.4.2.1. The owner starts the update. |
 | **Public announcement** | **2026-11-19; time/TZ unknown** | ICSA-26-323-02. No fix for the ELBC2000. |
 | Vendor figures | 2026-11-20 6:05PM; timezone not stated | 60 to 70 percent of connecting controllers are on the latest firmware. |
-| **Last updated** | **2026-11-21 07:10 EST (UTC−05:00)** | The vendor published adoption figures. The ELBC2000 still has no fix. |
+| **Last updated** | **2026-11-24 07:30 EST (UTC−05:00)** | The firmware breaks a V2 remote. The ELBC2000 still has no fix. |
 
-**Patch:** Open the Elecbrakes app and install **EB2 3.0.4.4.3 or later**, or **VM1 1.3.4.2.1 or later**. The update does not install itself. The ELBC2000 has no firmware. Elecbrakes says the risk is reduced while the owner is connected through the phone or the remote. Until a firmware exists, it answers brake commands from any device in Bluetooth range while it is powered and the owner is not connected. The update does not show whether a command was already sent.
+**Patch:** Open the Elecbrakes app and install **EB2 3.0.4.4.3 or later**, or **VM1 1.3.4.2.1 or later**. The update does not install itself. Elecbrakes' November 23 advisory says a V2 remote stops working after the install: register for a free V3 remote, and call support before updating if you are travelling and the remote is what you use. The ELBC2000 has no firmware. Stay connected through the phone or the remote while it is in use. Until a firmware exists, it answers brake commands from any device in Bluetooth range while it is powered and the owner is not connected. The update does not show whether a command was already sent.
 
 Sources: [ICSA-26-323-02](https://www.cisa.gov/news-events/ics-advisories/icsa-26-323-02), [detailed guide](details/elecbrakes.md).
 
@@ -1382,7 +1461,7 @@ Sources: [CVE-2026-121385](https://www.cve.org/CVERecord?id=CVE-2026-121385), [P
 
 **CVEs:** [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273), [CVE-2026-59367](https://www.cve.org/CVERecord?id=CVE-2026-59367), [CVE-2026-123886](https://www.cve.org/CVERecord?id=CVE-2026-123886), [CVE-2026-59330](https://www.cve.org/CVERecord?id=CVE-2026-59330), [CVE-2026-59331](https://www.cve.org/CVERecord?id=CVE-2026-59331), [CVE-2026-59333](https://www.cve.org/CVERecord?id=CVE-2026-59333), [CVE-2026-59338](https://www.cve.org/CVERecord?id=CVE-2026-59338), [CVE-2026-59339](https://www.cve.org/CVERecord?id=CVE-2026-59339), [CVE-2026-59344](https://www.cve.org/CVERecord?id=CVE-2026-59344), [CVE-2026-59345](https://www.cve.org/CVERecord?id=CVE-2026-59345), [CVE-2026-59349](https://www.cve.org/CVERecord?id=CVE-2026-59349), [CVE-2026-59361](https://www.cve.org/CVERecord?id=CVE-2026-59361)
 
-**Spring rates [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273) Critical.** The advisory prints no number. The vector on the advisory's calculator link is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`, which is 9.8. `ELRequestMatcher` evaluates SpEL with full reflection, and Spring's data binding turns a string bound to a `RequestMatcher` property into that matcher. An application that binds external input there runs that input as code. Affected Spring Security is **7.1.0 through 7.1.2**, **7.0.0 through 7.0.8**, **6.5.0 through 6.5.12**, **6.4.0 through 6.4.19**, **5.8.0 through 5.8.28**, and **5.7.26 and earlier**. The open-source fixes are **7.1.3** and **7.0.9**. The older lines are Enterprise Support only.
+**Spring now rates [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273) Medium.** On 2026-11-23 the advisory's history says the score and the description were updated. The page prints Medium, and the calculator vector is `CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:H/I:H/A:H`, which is 6.0. The November 19 vector was `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`, which is 9.8, and the page then printed Critical and no number. `ELRequestMatcher` evaluates SpEL with full reflection, and Spring's data binding turns a string bound to a `RequestMatcher` property into that matcher. An application that binds untrusted input there runs that input as code, if the application invokes the matcher. Affected Spring Security is **7.1.0 through 7.1.2**, **7.0.0 through 7.0.8**, **6.5.0 through 6.5.12**, **6.4.0 through 6.4.19**, **5.8.0 through 5.8.28**, and **5.7.26 and earlier**. The open-source fixes are **7.1.3** and **7.0.9**, unchanged. The older lines are Enterprise Support only.
 
 [CVE-2026-59367](https://www.cve.org/CVERecord?id=CVE-2026-59367) is the other Critical, in `spring-ldap-test`: `EmbeddedLdapServer` listens on every interface with a fixed administrative password. Spring's vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:L`, which is 9.4. It applies when a test starts that server on a reachable host. The open-source fixes are Spring LDAP **4.1.3** and **4.0.7**.
 
@@ -1393,7 +1472,8 @@ Ten more from the same day are High. [CVE-2026-123886](https://www.cve.org/CVERe
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement and fixes** | **2026-11-19; time/TZ unknown** | Spring's advisory index. Open-source floors above. |
-| **Last updated** | **2026-11-20 23:11 EST (UTC−05:00)** | New item. Upgrade the jars you run. |
+| **Rescored** | **2026-11-23; time/TZ unknown** | CVE-2026-59273 is now Medium, CVSS 3.1 6.0. The floors did not change. |
+| **Last updated** | **2026-11-24 07:30 EST (UTC−05:00)** | The matcher flaw is no longer Critical. The LDAP flaw still is. |
 
 **Patch:** Upgrade Spring Security to **7.1.3 or 7.0.9**, Spring LDAP to **4.1.3 or 4.0.7**, Spring Data Elasticsearch to **6.1.3 or 6.0.9**, Spring AI to **2.0.3**, and Spring Web Services to **5.0.4**, then restart. Lines older than those open-source floors are Enterprise Support only. An application that never binds input to a `RequestMatcher`, and a build that never starts `EmbeddedLdapServer`, is outside those two conditions. The upgrade does not show whether an expression already ran.
 
@@ -5980,9 +6060,9 @@ Sources: [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-46300), [Ubuntu 
 
 **CVEs:** [CVE-2026-118306](https://www.cve.org/CVERecord?id=CVE-2026-118306), [CVE-2026-118331](https://www.cve.org/CVERecord?id=CVE-2026-118331), [CVE-2026-118344](https://www.cve.org/CVERecord?id=CVE-2026-118344), [CVE-2026-118348](https://www.cve.org/CVERecord?id=CVE-2026-118348), [CVE-2026-76024](https://www.cve.org/CVERecord?id=CVE-2026-76024), [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350)
 
-**Google rates five Chrome 156 flaws Critical, seven more in Chrome 157, and six more in Chrome 158.** The October 27 release fixed four in FileSystem, FileAPI, Layout and Skia. The October 29 release adds [CVE-2026-76024](https://www.cve.org/CVERecord?id=CVE-2026-76024), memory corruption in MediaStream. On 2026-11-03 Google promoted Chrome 157, with 213 security fixes. The seven new Critical fixes are [CVE-2026-121156](https://www.cve.org/CVERecord?id=CVE-2026-121156), [CVE-2026-121229](https://www.cve.org/CVERecord?id=CVE-2026-121229), [CVE-2026-121246](https://www.cve.org/CVERecord?id=CVE-2026-121246), [CVE-2026-121035](https://www.cve.org/CVERecord?id=CVE-2026-121035), [CVE-2026-121247](https://www.cve.org/CVERecord?id=CVE-2026-121247), [CVE-2026-121203](https://www.cve.org/CVERecord?id=CVE-2026-121203), and [CVE-2026-121126](https://www.cve.org/CVERecord?id=CVE-2026-121126). On 2026-11-09 Google updated Stable to 157.0.8103.50/.51 and rates [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) High, a use after free in XML. Google says an exploit for it exists in the wild. On 2026-11-11 Google updated Stable to 157.0.8103.78/.79, with five more Critical fixes, and does not report exploitation of those. On 2026-11-17 Google promoted Chrome 158, with 204 security fixes. The six new Critical fixes are [CVE-2026-130963](https://www.cve.org/CVERecord?id=CVE-2026-130963), [CVE-2026-131031](https://www.cve.org/CVERecord?id=CVE-2026-131031), [CVE-2026-131060](https://www.cve.org/CVERecord?id=CVE-2026-131060), [CVE-2026-131008](https://www.cve.org/CVERecord?id=CVE-2026-131008), [CVE-2026-131054](https://www.cve.org/CVERecord?id=CVE-2026-131054), and [CVE-2026-130975](https://www.cve.org/CVERecord?id=CVE-2026-130975). The post does not report exploitation of those. Google publishes no numeric score. The CVE-2026-76024 record has no CNA numeric score. CISA's enrichment scores it CVSS 3.1 6.5 Medium, which is not Google's rating.
+**Google rates five Chrome 156 flaws Critical, seven more in Chrome 157, six more in Chrome 158, and [CVE-2026-134401](https://www.cve.org/CVERecord?id=CVE-2026-134401) Critical.** The November 23 update takes Windows and Mac to **158.0.8127.88/.89** and Linux to **158.0.8127.88**. The post lists one fix: improper input validation in Variations, and the CVE record says a crafted page runs code outside the sandbox, before 158.0.8127.88. Google publishes no numeric score. The post does not say an exploit exists. The November 17 builds do not contain it. Extended Stable the same day is **156.0.8078.114**, and that post says the one fix is CVE-2026-134401. The October 27 release fixed four in FileSystem, FileAPI, Layout and Skia. The October 29 release adds [CVE-2026-76024](https://www.cve.org/CVERecord?id=CVE-2026-76024), memory corruption in MediaStream. On 2026-11-03 Google promoted Chrome 157, with 213 security fixes. The seven new Critical fixes are [CVE-2026-121156](https://www.cve.org/CVERecord?id=CVE-2026-121156), [CVE-2026-121229](https://www.cve.org/CVERecord?id=CVE-2026-121229), [CVE-2026-121246](https://www.cve.org/CVERecord?id=CVE-2026-121246), [CVE-2026-121035](https://www.cve.org/CVERecord?id=CVE-2026-121035), [CVE-2026-121247](https://www.cve.org/CVERecord?id=CVE-2026-121247), [CVE-2026-121203](https://www.cve.org/CVERecord?id=CVE-2026-121203), and [CVE-2026-121126](https://www.cve.org/CVERecord?id=CVE-2026-121126). On 2026-11-09 Google updated Stable to 157.0.8103.50/.51 and rates [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) High, a use after free in XML. Google says an exploit for it exists in the wild. On 2026-11-11 Google updated Stable to 157.0.8103.78/.79, with five more Critical fixes, and does not report exploitation of those. On 2026-11-17 Google promoted Chrome 158, with 204 security fixes. The six new Critical fixes are [CVE-2026-130963](https://www.cve.org/CVERecord?id=CVE-2026-130963), [CVE-2026-131031](https://www.cve.org/CVERecord?id=CVE-2026-131031), [CVE-2026-131060](https://www.cve.org/CVERecord?id=CVE-2026-131060), [CVE-2026-131008](https://www.cve.org/CVERecord?id=CVE-2026-131008), [CVE-2026-131054](https://www.cve.org/CVERecord?id=CVE-2026-131054), and [CVE-2026-130975](https://www.cve.org/CVERecord?id=CVE-2026-130975). The post does not report exploitation of those. Google publishes no numeric score. The CVE-2026-76024 record has no CNA numeric score. CISA's enrichment scores it CVSS 3.1 6.5 Medium, which is not Google's rating.
 
-**CISA KEV:** Listed — [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) added 2026-11-10, federal due date 2026-11-24. Ransomware use Unknown. The Chrome 156 CVEs, the seven Chrome 157 Critical CVEs from November 3, and the six Chrome 158 Critical CVEs are not listed (catalog 2026.11.18, checked 2026-11-18). CISA-ADP scores CVE-2026-125350 8.8, which is not Google's rating. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — [CVE-2026-125350](https://www.cve.org/CVERecord?id=CVE-2026-125350) added 2026-11-10, federal due date 2026-11-24. Ransomware use Unknown. The Chrome 156 CVEs, the seven Chrome 157 Critical CVEs from November 3, the six Chrome 158 Critical CVEs, and CVE-2026-134401 are not listed (catalog 2026.11.23, checked 2026-11-24). CISA-ADP scores CVE-2026-125350 8.8, which is not Google's rating. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -5996,9 +6076,10 @@ Sources: [CVE record](https://www.cve.org/CVERecord?id=CVE-2026-46300), [Ubuntu 
 | **ChromeOS Stable** | **2026-11-18 21:16 PST (UTC−08:00)** | OS 16868.24.0, browser 158.0.8127.65. Twelve Critical browser fixes. CVE-2026-130963 is not in the list. |
 | Extended Stable update | 2026-11-09; time/TZ unknown | 156.0.8078.96 for Windows and Mac, including CVE-2026-125350. |
 | **CISA KEV** | **2026-11-10; time/TZ unknown** | CVE-2026-125350 added. Federal due date 2026-11-24. |
-| **Last updated** | **2026-11-19 03:01 EST (UTC−05:00)** | ChromeOS browser 158.0.8127.65. Desktop builds unchanged. |
+| **Stable update** | **2026-11-23; time/TZ unknown** | 158.0.8127.88/.89 for Windows and Mac and 158.0.8127.88 for Linux. One fix, Critical CVE-2026-134401. Extended Stable 156.0.8078.114. |
+| **Last updated** | **2026-11-24 07:30 EST (UTC−05:00)** | The November 17 builds do not contain CVE-2026-134401. |
 
-**Patch:** Update Windows/macOS Chrome to **158.0.8127.36/.37 or later** and Linux Chrome to **158.0.8127.36 or later**, then relaunch. On Android, update to **158.0.8127.42 or later**. On ChromeOS, update to OS **16868.24.0**, browser **158.0.8127.65**. That post does not list CVE-2026-130963. On Extended Stable, update Windows and Mac to **156.0.8078.108/.109 or later**. That channel does not list the six Chrome 158 Critical CVEs. A Chrome 157 build, including 157.0.8103.78/.79, does not include the November 17 fixes. The November 9 builds, 157.0.8103.50/.51 and 156.0.8078.96, do not include the November 11 fixes. The November 3 builds, 157.0.8103.38/.39, do not include CVE-2026-125350. Google says the update rolls out over the coming days and weeks. Use the supported update channel; the major version alone does not prove the security update is installed. The update does not show whether a page already used an exploit.
+**Patch:** Update Windows/macOS Chrome to **158.0.8127.88/.89 or later** and Linux Chrome to **158.0.8127.88 or later**, then relaunch. On Android, update to **158.0.8127.42 or later**. On ChromeOS, update to OS **16868.24.0**, browser **158.0.8127.65**. That post does not list CVE-2026-130963 or CVE-2026-134401. On Extended Stable, update Windows and Mac to **156.0.8078.114 or later**. The November 17 builds, 158.0.8127.36/.37 and 156.0.8078.108/.109, do not contain CVE-2026-134401. A Chrome 157 build, including 157.0.8103.78/.79, does not include the November 17 fixes. The November 9 builds, 157.0.8103.50/.51 and 156.0.8078.96, do not include the November 11 fixes. The November 3 builds, 157.0.8103.38/.39, do not include CVE-2026-125350. Google says the update rolls out over the coming days and weeks. Use the supported update channel; the major version alone does not prove the security update is installed. The update does not show whether a page already used an exploit.
 
 Sources: [October 27 stable release](https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_0562499947.html), [October 29 stable release](https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_02107719452.html), [November 3 stable release](https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop.html), [November 9 stable release](https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_018223192.html), [November 17 stable release](https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_01699533288.html), [November 17 Extended Stable](https://chromereleases.googleblog.com/2026/11/extended-stable-update-for-desktop_01061812727.html), [CVE-2026-76024](https://www.cve.org/CVERecord?id=CVE-2026-76024), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 

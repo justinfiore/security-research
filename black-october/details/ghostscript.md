@@ -1,6 +1,6 @@
 # Ghostscript: Upload2Shell - a document runs commands
 
-**Last updated:** 2026-11-23 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main Ghostscript summary](../black-october-2026.md#ghostscript-upload2shell---a-document-runs-commands) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -58,7 +58,8 @@ Read the Ghostscript the renderer actually loads, not a `gs` binary that happens
 - Debian 13 (trixie) is fixed at `ghostscript` **10.05.1~dfsg-1+deb13u3**. Debian 12 (bookworm) is fixed at **10.0.0~dfsg-11+deb12u9** from bookworm-security. The main bookworm repository is still 10.0.0~dfsg-11+deb12u8, which the tracker marks vulnerable. Forky and sid are fixed at 10.08.0~dfsg-2.
 - Ubuntu's page, last updated 2026-11-18, marks `ghostscript` **Needs evaluation** on 26.10, 26.04 LTS, 24.04 LTS, 22.04 LTS, and the Pro releases. It names no package. Do not treat an older USN as this fix: USN-8949-1, dated 2026-10-21, does not list CVE-2026-125396.
 - SUSE's page, last modified 2026-11-13, rates it important and marks SLES 15 SP7, 16.0, and 16.1 In progress, and openSUSE Leap 16.0 and 16.1 Affected. It lists `ghostscript` 9.52-150000.222.1 for SLES 15 SP7 under packages in QA, which is not a released package, and it names no security announcement. The only released line on that page is openSUSE Tumbleweed `ghostscript` 10.08.0-5.1.
-- AlmaLinux's post of 2026-11-22 puts patched builds in the testing repository only, not production: AlmaLinux 8 `ghostscript` 9.27-20.el8_10.alma.1, 9 `ghostscript` 9.54.0-19.el9_8.3.alma.1, and 10 `ghostscript` 10.02.1-16.el10_2.3.alma.1. AlmaLinux says it knows of no fixed package for RHEL 8, 9, or 10. A testing build is not the fix to install.
+- AlmaLinux's post, updated 2026-11-23, says the same builds are now in the production repositories: AlmaLinux 8 `ghostscript` **9.27-20.el8_10.alma.1**, 9 `ghostscript` **9.54.0-19.el9_8.3.alma.1**, and 10 `ghostscript` **10.02.1-16.el10_2.3.alma.1**. AlmaLinux says it still knows of no fixed package for RHEL 8, 9, or 10.
+- Amazon Linux 2027 Preview is fixed at `ghostscript` **10.08.0-1.amzn2027.0.2** ([ALAS2027-2026-379](https://alas.aws.amazon.com/AL2027/ALAS2027-2026-379.html), updated 2026-11-23). Amazon Linux 2 and Amazon Linux 2023 are still Pending Fix.
 
 A process that embeds its own Ghostscript, or shells out to a copy outside the system package, does not move when the package does. ImageMagick's `delegates.xml` and PHP Imagick are two ways a file named `.jpg` or `.png` still reaches `gs`. Finding the library does not show that any caller is exposed, and not finding a caller does not show the library is unused.
 
@@ -67,7 +68,8 @@ A process that embeds its own Ghostscript, or shells out to a copy outside the s
 1. Upgrade Ghostscript to **10.08.0 or later**, or install the distribution package the tracker marks fixed, and restart every process that had the library loaded. On Debian 13, install `ghostscript` **10.05.1~dfsg-1+deb13u3**. On Debian 12, install **10.0.0~dfsg-11+deb12u9** from bookworm-security.
 2. Update WordPress to **7.0.4 or later** on the 7.0 line, or the backport on your branch through 4.7. That closes the Author upload path WordPress describes. It leaves every other caller of Ghostscript in place, including a plugin form that does not require an account.
 3. A shared CUPS queue that accepts a print job with no login is one of the paths pwn.ai demonstrated. Requiring authentication on that queue blocks the unauthenticated submission. It does not fix Ghostscript.
-4. Ubuntu and SUSE have no package for this CVE yet. Do not wait on them for a Debian host, and do not assume a Debian package version is what Ubuntu shipped.
+4. On AlmaLinux 8, 9, or 10, install the production build named above and restart the workers. On Amazon Linux 2027 Preview, install `ghostscript` **10.08.0-1.amzn2027.0.2**. Amazon Linux 2 and 2023 have no package yet.
+5. Ubuntu, SUSE, and RHEL have no package for this CVE yet. Do not wait on them for a host that already has one, and do not assume a Debian package version is what Ubuntu shipped.
 
 ## Verification
 
@@ -89,7 +91,8 @@ pwn.ai does not report exploitation outside its own tests. The upgrade does not 
 - [DSA-6516-1][dsa] — Salvatore Bonaccorso, 2026-09-25 21:17:14 UTC. The advisory text names CVE-2026-39919. The tracker is what credits the package for CVE-2026-125396.
 - [Ubuntu CVE-2026-125396](https://ubuntu.com/security/CVE-2026-125396) — published 2026-11-10, last updated 2026-11-18. Priority Medium. Every listed release is Needs evaluation.
 - [SUSE CVE-2026-125396](https://www.suse.com/security/cve/CVE-2026-125396.html) — last modified 2026-11-13. Important. SLES 15 SP7, 16.0, and 16.1 In progress. `ghostscript` 9.52-150000.222.1 is listed in QA for SLES 15 SP7, not released. No announcement.
-- [AlmaLinux, 2026-11-22](https://almalinux.org/blog/2026-11-22-upload2shell-cve-2026-125396/) — testing builds only: 9.27-20.el8_10.alma.1, 9.54.0-19.el9_8.3.alma.1, and 10.02.1-16.el10_2.3.alma.1. No released RHEL package known to AlmaLinux.
+- [AlmaLinux, updated 2026-11-23](https://almalinux.org/blog/2026-11-22-upload2shell-cve-2026-125396/) — the same builds are now in production: 9.27-20.el8_10.alma.1, 9.54.0-19.el9_8.3.alma.1, and 10.02.1-16.el10_2.3.alma.1. No released RHEL package known to AlmaLinux.
+- [ALAS2027-2026-379](https://alas.aws.amazon.com/AL2027/ALAS2027-2026-379.html) — Amazon Linux 2027 Preview, `ghostscript` 10.08.0-1.amzn2027.0.2, updated 2026-11-23. Amazon Linux 2 and 2023 remain Pending Fix.
 - [WordPress CVE-2026-65640][wp] — the separate Core fix, 7.0.4 on 2026-08-12.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-22. Not listed.
 

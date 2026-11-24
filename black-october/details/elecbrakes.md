@@ -1,6 +1,6 @@
 # Elecbrakes: a phone in Bluetooth range applies the trailer brakes
 
-**Last updated:** 2026-11-21 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main Elecbrakes summary](../black-october-2026.md#elecbrakes-a-phone-in-bluetooth-range-applies-the-trailer-brakes) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -49,8 +49,9 @@ A controller that is none of those three models is outside this advisory. Elemen
 ## Remediation
 
 1. On an EB2, open the Elecbrakes app and install firmware **3.0.4.4.3 or later**. On a VM1, install **1.3.4.2.1 or later**. The update does not install itself.
-2. The ELBC2000 has no firmware. CISA says the vendor is still determining how to address it. On November 20 Elecbrakes told iTnews it is working on a separate path, and that the risk is reduced while the owner is connected through the smartphone or the Elecbrakes remote, which is what the product instructions already say. Until a firmware exists, the controller answers brake commands from any device in Bluetooth range while it is powered and the owner is not connected.
-3. CISA's general advice is to keep control devices off the internet. These flaws are Bluetooth, so unplugging a network cable does not close them.
+2. The ELBC2000 has no firmware. CISA says the vendor is still determining how to address it. Elecbrakes' customer advisory of November 23 says the same thing the product instructions already say: stay connected to the smartphone or the remote while the controller is in use. Until a firmware exists, the controller answers brake commands from any device in Bluetooth range while it is powered and the owner is not connected.
+3. A V2 remote stops working with an EB2 or VM1 after the firmware install. Elecbrakes' November 23 advisory says to register for a free V3 remote, and to call support before updating if you are travelling and the remote is what you use. The app still operates the controller while the replacement is in transit. The exchange is not the security fix.
+4. CISA's general advice is to keep control devices off the internet. These flaws are Bluetooth, so unplugging a network cable does not close them.
 
 ## Verification
 
@@ -67,6 +68,7 @@ CISA and Elecbrakes publish no indicator. Element Digital says a brake applicati
 - [ICSA-26-323-02][icsa] — CISA, initial release November 19, 2026. CVE-2026-96805 and CVE-2026-125273 are CVSS 3.1 9.6 Critical and CVSS 4.0 8.5 High. CVE-2026-124281 is CVSS 3.1 6.1 Medium. EB2 through 3.0.4.2.0, VM1 before 1.3.4.2.1, and every ELBC2000. Fixes are EB2 3.0.4.4.3 and VM1 1.3.4.2.1. No fix for the ELBC2000. No known exploitation reported to CISA.
 - [Element Digital, Brake Check][element] — published November 19, 2026. Reports the May 18 disclosure, the July 6 firmware, the October 30 ELBC2000 confirmation, a 2 to 5 second release after disconnect, and that the firmware image is still unsigned.
 - [iTnews][itnews] — November 20, 2026, 6:05PM, timezone not stated. Quotes Elecbrakes co-founder Craig de Leon: 60 to 70 percent of controllers connecting each day are on the latest firmware; 39,843 users were notified and 23,775 prompts delivered; the company does not sign firmware; the ELBC gets a separate remediation.
+- [Elecbrakes customer advisory](https://www.elecbrakes.com/news-and-articles/security-update-for-elecbrakes-brake-controllers) — published November 23, 2026, no time. The same firmware floors. A V2 remote is not compatible after the update; register for a free V3. The ELBC cannot take the firmware. Elecbrakes says it knows of no exploitation.
 - [CVE-2026-96805](https://www.cve.org/CVERecord?id=CVE-2026-96805), [CVE-2026-125273](https://www.cve.org/CVERecord?id=CVE-2026-125273), and [CVE-2026-124281](https://www.cve.org/CVERecord?id=CVE-2026-124281) — CISA ICS-CERT CNA.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-21. None of the three is listed.
 

@@ -1,16 +1,16 @@
 # Spring: an expression matcher runs code
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main Spring summary](../black-october-2026.md#spring-an-expression-matcher-runs-code) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-On 2026-11-19 Spring published a batch of advisories. Two are Critical. [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273) is in Spring Security: `ELRequestMatcher` evaluates a SpEL expression with full reflection, and Spring's data binding turns a string bound to a `RequestMatcher` property into that matcher. An application that binds external input to such a property runs that input as code. Spring's calculator vector for it is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`, which is 9.8. The advisory itself prints Critical and does not print the number.
+On 2026-11-19 Spring published a batch of advisories. One is still Critical. [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273) is in Spring Security: `ELRequestMatcher` evaluates a SpEL expression with full reflection, and Spring's data binding turns a string bound to a `RequestMatcher` property into that matcher. An application that binds untrusted input to such a property runs that input as code, if the application invokes the matcher. On 2026-11-23 Spring rescored it. The advisory now prints **Medium**, and the calculator vector is `CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:H/I:H/A:H`, which is 6.0. The November 19 vector was `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`, which is 9.8, and the page then printed Critical and no number. The affected ranges and the fixes did not change.
 
 [CVE-2026-59367](https://www.cve.org/CVERecord?id=CVE-2026-59367) is in the `spring-ldap-test` artifact. `EmbeddedLdapServer` listens on every interface and accepts a fixed administrative password. Spring's vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:L`, which is 9.4. It matters when a test or a shared CI agent starts that server on a reachable host. A production application that never starts it is outside the condition Spring names.
 
 Ten more in the same batch are High. The one that runs code is [CVE-2026-123886](https://www.cve.org/CVERecord?id=CVE-2026-123886) in Spring Data Elasticsearch: an argument to a string `@Query` is substituted before SpEL runs, so untrusted input is evaluated. Spring's vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`, which is 8.8. The fixes are **6.1.3** and **6.0.9**. The other nine are access-control and denial-of-service flaws; their floors are in the remediation table. Spring does not report exploitation of any of them.
 
-The open-source floors for the Critical pair are Spring Security **7.1.3** and **7.0.9**, and Spring LDAP **4.1.3** and **4.0.7**. Lines 6.5, 6.4, 5.8, 5.7, and the older LDAP lines are fixed only in Enterprise Support builds.
+The open-source floors are Spring Security **7.1.3** and **7.0.9** for CVE-2026-59273, and Spring LDAP **4.1.3** and **4.0.7** for the remaining Critical flaw. Lines 6.5, 6.4, 5.8, 5.7, and the older LDAP lines are fixed only in Enterprise Support builds.
 
 **CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20) for any CVE in this batch. Spring does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -71,7 +71,7 @@ Spring does not report exploitation. An application that bound external input to
 
 ## Sources
 
-- [CVE-2026-59273](https://spring.io/security/cve-2026-59273) — Spring, published 2026-11-19. Critical. Spring Security `ELRequestMatcher`. Open-source fixes 7.1.3 and 7.0.9.
+- [CVE-2026-59273](https://spring.io/security/cve-2026-59273) — Spring, published 2026-11-19, rescored 2026-11-23. The page now prints Medium. The calculator vector is `CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:H/I:H/A:H`, which is 6.0. Open-source fixes 7.1.3 and 7.0.9, unchanged.
 - [CVE-2026-59367](https://spring.io/security/cve-2026-59367) — Spring, published 2026-11-19. Critical. `spring-ldap-test` embedded server. Open-source fixes 4.1.3 and 4.0.7.
 - [CVE-2026-123886](https://spring.io/security/cve-2026-123886) — Spring, published 2026-11-19. High. Spring Data Elasticsearch. Fixes 6.1.3 and 6.0.9.
 - [CVE-2026-59330](https://spring.io/security/cve-2026-59330), [CVE-2026-59331](https://spring.io/security/cve-2026-59331), [CVE-2026-59333](https://spring.io/security/cve-2026-59333) — Spring Security, High, same date.
