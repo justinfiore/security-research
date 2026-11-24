@@ -1,6 +1,6 @@
 # OpenRouter: inference providers kept prompts they said they would not
 
-**Last updated:** 2026-11-23 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main summary](../black-october-2026.md#openrouter-inference-providers-kept-prompts-they-said-they-would-not) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -14,11 +14,13 @@ OpenRouter's announcement, dated November 22, 2026, says the testing did not sho
 
 Together AI's notice, published November 21, 2026, is a different path from the front-door copying. Together says an AI coding agent committed a credential for a private Hugging Face repository into its public `xorl` repository, and an unauthorized party downloaded stored prompt samples from that repository. The samples were from requests to MiniMax M3, GLM-5.2, and Kimi K2.6, primarily on June 24, July 4, July 8, and July 14, 2026. Together says five of the credentials the party tested were Dragos canaries, that it has not identified further prompt leakage, and that its review of whether the samples held personal information is still going. It now makes Zero Data Retention the default for new accounts.
 
-Phala's preliminary report, published November 10, 2026, says requests to its deployment of DeepSeek V4 Flash 0731 that OpenRouter routed between October 21, 2026 at 00:00 UTC and November 8, 2026 at 05:35 UTC should be treated as exposed. Phala says canary misuse was confirmed only for requests sent on October 21 and 22, and that it keeps the wider window because the canaries sampled requests rather than seeing every one. It says the attacker chained a legacy internet-facing service with management interfaces that trusted loopback and did not authenticate the caller, created unauthorized confidential virtual machines, and took an inference VM that was serving production traffic without full hardening. Phala says it contained the incident on November 8 at 05:35 UTC and has contacted the one tenant whose virtual-machine credentials were misused.
+Phala's detailed report, published November 23, 2026, supersedes its November 10 preliminary report. It shortens the exposure window for DeepSeek V4 Flash 0731 requests OpenRouter routed to Phala: **2026-10-21 02:25 UTC through 2026-11-01 02:03 UTC**, and it counts 152,092 requests in that window. The last recorded canary misuse is **2026-11-07 01:05:17 UTC**, not November 9. It also says the attacker obtained the legacy KMS root key on November 5, and that an application deployed before 2026-11-06 05:02 UTC that derives keys with `getKey()` must move anything those keys protect.
 
-Novita's notice is a post on X. This guide did not read that post, so it does not repeat a claim about what Novita says happened.
+Novita's blog, dated November 22, 2026, says requests to MiniMax models through Novita between **2026-05-28 and 2026-11-11** may have been accessed or retained by a third party, whether the request came directly or through OpenRouter. Novita says it observed no use of the AWS test-key markers.
 
-Atlas Cloud's notice, posted November 22, 2026, is not one of the three OpenRouter links. Atlas Cloud says Dragos's testing showed a third party opened links from prompts sent to MiniMax's official API, including MiniMax M3 and M2.7 prompts sent through Atlas Cloud in the third quarter and early fourth quarter of 2026. It says the access happened after the request reached MiniMax, not on Atlas Cloud, and that Atlas Cloud did not store those prompts. It stopped sending requests to MiniMax's official API and says to treat any secret sent to MiniMax M3, M2.7, or M3.1 Flash as exposed. It also says it took every Atlas Cloud model off OpenRouter itself, and that this was its decision, not OpenRouter's. OpenRouter's page, read November 23, still lists three notices and still says three providers were off-boarded.
+MiniMax's notice, dated November 24, 2026, says requests reached its API directly from OpenRouter or through Novita, Streamlake, and Atlas Cloud. MiniMax says it has found no evidence that prompt content or model responses were disclosed, that it does not retain the full content of requests or responses, and that it deleted the URLs recorded from the affected requests. It says the activity included requests OpenRouter had marked Zero Data Retention.
+
+Atlas Cloud's notice is now dated November 23, 2026. The actions are unchanged: MiniMax M3, M2.7, and M3.1 Flash prompts in the third quarter and early fourth quarter, and Atlas Cloud took its own models off OpenRouter. OpenRouter's page, read November 24, now lists five notices: the earlier three plus Atlas Cloud and MiniMax. It still says three providers were off-boarded and still does not name them.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -37,18 +39,21 @@ Atlas Cloud's notice, posted November 22, 2026, is not one of the three OpenRout
 |---|---|---|
 | Together sample window | 2026-06-24, 2026-07-04, 2026-07-08, 2026-07-14; times unknown | Stored prompt samples for three models. Together does not date the download. [Together][together] |
 | Dragos seeding | 2026-07 through 2026-11; days not all stated | About two million canary prompts. Earliest provider compromise in mid-July. [Dragos][dragos] |
-| Phala exposure window | 2026-10-21 00:00 UTC through 2026-11-08 05:35 UTC | DeepSeek V4 Flash 0731 requests routed to Phala. Confirmed canary misuse on October 21 and 22 only. [Phala][phala] |
+| Phala exposure window | 2026-10-21 02:25 UTC through 2026-11-01 02:03 UTC | Phala's November 23 report shortens the preliminary window and counts 152,092 requests. Last canary misuse 2026-11-07 01:05:17 UTC. [Phala][phala] |
 | **Dragos post** | **2026-11-19 08:00; timezone not stated on the page** | Three provider compromises, reseller logging, and retention failures. Providers not named. |
 | **Together notice** | **2026-11-21; time unknown** | Page says Published 11/21/2026. Credential in a public repository; stored samples downloaded. |
 | **OpenRouter announcement** | **2026-11-22; time unknown** | Three providers off-boarded. 125 endpoints removed from Zero Data Retention. [OpenRouter][or] |
 | **Atlas Cloud notice** | **2026-11-22; time unknown** | MiniMax M3, M2.7, and M3.1 Flash prompts in Q3 and early Q4. Atlas Cloud took its own models off OpenRouter. [Atlas Cloud][atlas] |
-| **Last updated** | **2026-11-23 (America/New_York)** | Atlas Cloud's notice added. |
+| Novita blog | 2026-11-22; time unknown | MiniMax requests through Novita, 2026-05-28 through 2026-11-11. [Novita][novita] |
+| Phala detailed report | 2026-11-23; time unknown | Supersedes the November 10 report. Shortens the window and adds the KMS key. |
+| MiniMax notice | 2026-11-24; time unknown | No evidence of prompt disclosure. URLs deleted from security logs. [MiniMax][minimax] |
+| **Last updated** | **2026-11-24 (America/New_York)** | Phala's window changed, and Novita and MiniMax posted. |
 
 ## Detection
 
 1. Read the notice OpenRouter sent the account, if one arrived. OpenRouter says it notified potentially affected customers and does not publish the list.
 2. For a Together AI account, the requests at risk are the ones Together names: MiniMax M3, GLM-5.2, and Kimi K2.6, primarily on the four dates above. Together says it will contact customers directly and has not published a per-customer list.
-3. For a request OpenRouter routed to Phala's DeepSeek V4 Flash 0731 inside the window above, treat the prompt as exposed. Phala says the gateway is notifying those users.
+3. For a request OpenRouter routed to Phala's DeepSeek V4 Flash 0731 inside the shortened window above, treat the prompt as exposed. An application deployed on Phala before 2026-11-06 05:02 UTC that derives keys with `getKey()` should move what those keys protect.
 4. For a request sent through Atlas Cloud to MiniMax M3, M2.7, or M3.1 Flash in the third quarter or early fourth quarter of 2026, treat a secret in that prompt as exposed. Atlas Cloud says it emailed the accounts that used those models.
 5. A prompt that contained an API key, a token, or a password is the one to rotate. A prompt that did not is still exposed text, and rotating an unrelated key does not address it.
 6. Dragos names two user agents, `artex-agent` and `artex-judge-r121`, from the actor who used stolen keys against Dragos's own canary accounts. Those are indicators for the canary accounts, not proof of what happened to a customer key.
@@ -60,7 +65,7 @@ There is no customer-side patch.
 1. If a prompt in the windows above contained a secret, rotate that secret at the service that issued it. OpenRouter removing an endpoint does not expire it.
 2. On Together AI, turn on Zero Data Retention for an account that sends sensitive prompts. Together says that is now the default for new accounts, not for existing ones.
 3. On OpenRouter, check the account privacy setting if the account was relying on Zero Data Retention. OpenRouter says an endpoint removed from that list is not eligible again until the provider is revalidated, and it has not published the 125 endpoints.
-4. Do not send a new secret through a provider whose notice you have not read. Novita's statement is on X and is not reproduced here.
+4. For a MiniMax request sent through Novita between 2026-05-28 and 2026-11-11, treat the prompt as exposed. Novita says that covers requests routed through OpenRouter.
 
 ## Verification
 
@@ -74,16 +79,20 @@ A secret that was inside a copied prompt should be treated as exposed from the d
 
 ## Sources
 
-- [OpenRouter, Data Processing Incidents on Inference Providers][or] — dated 2026-11-22, read again 2026-11-23. Three providers off-boarded, 125 endpoints removed from Zero Data Retention, customers notified. Says OpenRouter itself was not breached. Still links Novita, Phala, and Together, and says not every affected provider has posted.
+- [OpenRouter, Data Processing Incidents on Inference Providers][or] — dated 2026-11-22, read again 2026-11-24. Three providers off-boarded, 125 endpoints removed from Zero Data Retention. The page now lists five notices: Novita, Phala, Together, Atlas Cloud, and MiniMax. It still does not name the three.
 - [Atlas Cloud, November 22, 2026][atlas] — MiniMax's official API. Prompts to MiniMax M3 and M2.7 through Atlas Cloud in Q3 and early Q4 2026. Treat secrets sent to M3, M2.7, or M3.1 Flash as exposed. Atlas Cloud took its own models off OpenRouter.
 - [Dragos, HD Moore, November 19, 2026][dragos] — about two million canary prompts, July through November. Three unnamed provider compromises, reseller logging, and retention failures, including Zero Data Retention requests. Names the ARTEX user agents.
 - [Together AI security event][together] — published 2026-11-21. Stored samples for MiniMax M3, GLM-5.2, and Kimi K2.6 downloaded after a credential reached a public repository. Five tested credentials were Dragos canaries.
-- [Phala preliminary incident report][phala] — published 2026-11-10. DeepSeek V4 Flash 0731 exposure window 2026-10-21 00:00 UTC through 2026-11-08 05:35 UTC. Contained 2026-11-08 05:35 UTC.
-- [CISA KEV JSON][kev] — catalog 2026.11.23, checked 2026-11-23. No CVE to match.
+- [Phala detailed incident report][phala] — published 2026-11-23. Supersedes the November 10 report. Window 2026-10-21 02:25 UTC through 2026-11-01 02:03 UTC. 152,092 requests. Legacy KMS root key taken November 5.
+- [Novita, November 22, 2026][novita] — MiniMax requests through Novita, 2026-05-28 through 2026-11-11, including requests routed by OpenRouter.
+- [MiniMax, November 24, 2026][minimax] — requests arrived from OpenRouter, Novita, Streamlake, and Atlas Cloud. Says no prompt content was disclosed, and that the recorded URLs were deleted.
+- [CISA KEV JSON][kev] — catalog 2026.11.24, checked 2026-11-24. No CVE to match.
 
 [or]: https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers
 [dragos]: https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens
 [together]: https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026
-[phala]: https://phala.com/posts/phala-november-preliminary-incident-report
+[phala]: https://phala.com/posts/phala-november-detailed-incident-report
+[novita]: https://novita.ai/blog/minimax-requests-privacy-notice/
+[minimax]: https://www.minimax.io/blog/update-on-url-access-in-forwarded-api-requests-20261124
 [atlas]: https://www.atlascloud.ai/blog/ai-updates/security-and-privacy-commitment
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

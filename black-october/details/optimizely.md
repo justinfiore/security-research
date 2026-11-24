@@ -1,14 +1,14 @@
 # Optimizely: a flaw in Experimentation served malware to customer sites
 
-**Last updated:** 2026-11-18 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main Optimizely summary](../black-october-2026.md#optimizely-a-flaw-in-experimentation-served-malware-to-customer-sites) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 Optimizely Web Experimentation is a script that customer sites load from Optimizely's CDN. On November 16 an attacker used a flaw in that product to add JavaScript to some customer projects, and the sites then served it to visitors.
 
-**No CVE is assigned, and no vendor or CNA has published a CVSS score.** Optimizely's status page says an unauthorized party exploited a vulnerability in Experimentation, that Optimizely has fixed it, and that it removed the injected code. Scott Helme of Report URI counted 188 infected scripts across 178 organizations, including Zoom, the BBC, CNN, Salesforce, and GitLab. The script replaced cryptocurrency wallet addresses, captured card numbers, and on iPhones and iPads loaded the Coruna and DarkSword exploit kits. Helme says one of the 188 scripts was still malicious at 21:52 UTC on November 16, and that the earliest hijacked script he found was that morning. The Hacker News says Smartsheet's snippet was reinfected after the cleanup, so removing the code once did not keep the attacker out.
+**MITRE rates [CVE-2026-132224](https://www.cve.org/CVERecord?id=CVE-2026-132224) CVSS 4.0 7.1 High.** The vector is `CVSS:4.0/AV:N/AC:H/AT:N/PR:L/UI:N/VC:N/VI:H/VA:N/SC:H/SI:H/SA:N`. The record, published 2026-11-18, says Web Experimentation before 2026-11-17 mishandles the account signup flow, and that attacker-controlled code ends up in the Project JavaScript of some `cdn.optimizely.com` assets. Optimizely's status page says an unauthorized party exploited a vulnerability in Experimentation, that Optimizely has fixed it, and that it removed the injected code. Scott Helme of Report URI counted 188 infected scripts across 178 organizations, including Zoom, the BBC, CNN, Salesforce, and GitLab. The script replaced cryptocurrency wallet addresses, captured card numbers, and on iPhones and iPads loaded the Coruna and DarkSword exploit kits. Helme says one of the 188 scripts was still malicious at 21:52 UTC on November 16, and that the earliest hijacked script he found was that morning. The Hacker News says Smartsheet's snippet was reinfected after the cleanup, so removing the code once did not keep the attacker out.
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-132224](https://www.cve.org/CVERecord?id=CVE-2026-132224) added 2026-11-24, federal due date 2026-11-27. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.24, released 2026-11-24T17:47:46.199Z. CISA's required action is the vendor's mitigation for a cloud service, or to stop using the product if that mitigation is not available. The listing date is not when the scripts were served. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -27,7 +27,9 @@ Optimizely Web Experimentation is a script that customer sites load from Optimiz
 | One script still malicious | 2026-11-16 21:52 UTC | Helme, of 188 scripts. |
 | **Optimizely statement** | **2026-11-17 01:02 UTC** | Status page: vulnerability fixed, code removed, accounts secured. [Status][status] |
 | Optimizely update | 2026-11-18 14:49 UTC | The flaw was in the Web Experimentation account signup flow. Optimizely says it was detected and closed within three hours, that fewer than 5% of customers were affected, and that it contacted every Web Experimentation customer. [Status][status] |
-| **Last updated** | **2026-11-18 (America/New_York)** | New item. Check what the site served on November 16. |
+| CVE record | 2026-11-18 | MITRE published CVE-2026-132224. CVSS 4.0 7.1 High. Affected before 2026-11-17. [CVE](https://www.cve.org/CVERecord?id=CVE-2026-132224) |
+| **CISA KEV** | **2026-11-24; catalog released 17:47:46 UTC** | Added. Federal due date 2026-11-27. Ransomware use Unknown. Forensic triage required. [KEV][kev] |
+| **Last updated** | **2026-11-24 (America/New_York)** | The CVE and the KEV listing. The customer action is unchanged. |
 
 ## Detection
 
@@ -58,7 +60,8 @@ A site that served the script should treat card data entered that day as exposed
 - [Report URI, Scott Helme][helme] — November 16. 188 scripts, 178 organizations. Payload behavior and the wallet addresses.
 - [BleepingComputer][bc] — Lawrence Abrams, November 16, 09:12 PM. Confirms the script on Zoom, CNN, BBC, Salesforce, GitLab, and others, and lists the wallet totals.
 - [The Hacker News](https://thehackernews.com/2026/11/hijacked-optimizely-scripts-served-card.html) — November 17. Smartsheet's snippet reinfected after cleanup.
-- [CISA KEV JSON][kev] — catalog 2026.11.17, checked 2026-11-18. No CVE to match.
+- [CVE-2026-132224](https://www.cve.org/CVERecord?id=CVE-2026-132224) — MITRE, published 2026-11-18. CVSS 4.0 7.1 High. Web Experimentation before 2026-11-17. The record links Optimizely's incident report and the status page.
+- [CISA KEV JSON][kev] — catalog 2026.11.24, released 2026-11-24T17:47:46.199Z, checked 2026-11-24. CVE-2026-132224 added 2026-11-24, due 2026-11-27. Ransomware use Unknown. Forensic triage Yes.
 
 [status]: https://status.optimizely.com/incidents/ftw0fh9wx43z
 [helme]: https://blog.report-uri.com/worlds-largest-brands-infected-with-malware-via-optimizely/

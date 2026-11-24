@@ -1,6 +1,6 @@
 # Qt: a document parsed by QXmlSimpleReader exhausts memory
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main Qt summary](../black-october-2026.md#qt-a-document-parsed-by-qxmlsimplereader-exhausts-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -29,17 +29,18 @@ The Qt Group's blog published two related `QXmlSimpleReader` and codec advisorie
 | CVE-2026-103645 advisory | 2026-11-13; time/TZ unknown | Integer overflow in `QTextCodec`. CVSS 4.0 1.1 Low. ICU builds only. [Qt][103645] |
 | **Public announcement** | **2026-11-16; time/TZ unknown** | The Qt Group published the advisory and the CVE record. NVD's published time is 08:16 UTC. [Qt][adv] |
 | Distribution trackers | 2026-11-22; time unknown | Ubuntu, Debian, SUSE, and Red Hat now list the CVE. None names a released package. [Ubuntu][ubuntu] |
-| **Last updated** | **2026-11-22 (America/New_York)** | The distributions have a tracker and still no package. |
+| Debian unstable | 2026-11-21 02:32:57 UTC | `qt6-5compat` 6.11.2-5 entered sid. The changelog, dated 2026-11-20, names CVE-2026-105925. |
+| **Last updated** | **2026-11-24 (America/New_York)** | Debian sid has the Qt 6 package. Every other tracked line still does not. |
 
 ## Detection
 
-Read the Qt version the application actually loads, not the one a package manager happens to list first. `qmake -query QT_VERSION` or the version resource of `Qt6Core` answers for a build that ships its own Qt. A distribution package is not a fix yet. Checked 2026-11-22: Ubuntu marks `qt6-5compat` and `qtbase-opensource-src` Needs evaluation; Debian marks both vulnerable, including unstable; SUSE marks every listed line Affected and the overall status Pending; Red Hat rates it Moderate, CVSS 3.1 5.5, and bug 2574015 was still NEW on 2026-11-17 with no erratum. SUSE and Red Hat rescore the same flaw 5.5. The Qt Group's 8.2 is the score this guide follows.
+Read the Qt version the application actually loads, not the one a package manager happens to list first. `qmake -query QT_VERSION` or the version resource of `Qt6Core` answers for a build that ships its own Qt. A distribution package is a fix only on the line that shipped one. Checked 2026-11-24: Debian sid `qt6-5compat` is **6.11.2-5**, which names CVE-2026-105925. Debian bookworm, trixie, and forky are still vulnerable, and Debian's Qt 5 package is open on every line. Ubuntu marks `qt6-5compat` and `qtbase-opensource-src` Needs evaluation. SUSE marks every listed line Affected and the overall status Pending. Red Hat rates it Moderate, CVSS 3.1 5.5, and bug 2574015 was still NEW on 2026-11-17 with no erratum. SUSE and Red Hat rescore the same flaw 5.5. The Qt Group's 8.2 is the score this guide follows.
 
 An application that never calls `QXmlSimpleReader::parse()` does not reach the flaw. Confirm that before treating every Qt install as exposed.
 
 ## Remediation
 
-1. Update to **Qt 6.8.10, 6.11.3, or 6.12.1** or later, and ship that build. The advisory's patch archives are the alternative for a tree you compile yourself. Ubuntu, Debian, SUSE, and Red Hat had not shipped a package as of 2026-11-22, so a distribution update does not move the library.
+1. Update to **Qt 6.8.10, 6.11.3, or 6.12.1** or later, and ship that build. The advisory's patch archives are the alternative for a tree you compile yourself. On Debian sid, `qt6-5compat` **6.11.2-5** carries the fix. Debian bookworm, trixie, and forky, and Ubuntu, SUSE, and Red Hat, still have no package, so a distribution update on those lines does not move the library. Qt 5 has no package anywhere checked.
 2. On Qt 5, which has no release named here, stop parsing untrusted documents with `QXmlSimpleReader`.
 3. The update does not restart a process that already exhausted memory. Restart it.
 

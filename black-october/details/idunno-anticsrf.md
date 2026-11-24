@@ -1,6 +1,6 @@
 # ASP.NET: Idunno.AntiCsrf runs code from a form field
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main plugin summary](../black-october-2026.md#aspnet-idunnoanticsrf-runs-code-from-a-form-field) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -12,7 +12,7 @@ Every version through **0.9.1 Beta** (file version `0.9.1.0`) is affected. That 
 
 This is not [.NET Framework](dotnet-framework.md).
 
-**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). Mandiant says exploitation has been observed, and that statement is separate from a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914) added 2026-11-24, federal due date 2026-11-27. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.24, released 2026-11-24T17:47:46.199Z. CISA says the product could be end of life and tells users to discontinue it. Mandiant's statement that exploitation has been observed is the researcher report, not the KEV date. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -30,6 +30,7 @@ This is not [.NET Framework](dotnet-framework.md).
 | Last release | 2008-12; day unknown | `0.9.1 Beta`. CodePlex is retired. [MNDT-2026-0048][mndt] |
 | Root-cause analysis | 2026-11-04; time/TZ unknown | FLARE, during incident response. [MNDT-2026-0048][mndt] |
 | **Public announcement** | **2026-11-19 01:29:12 UTC** | Mandiant published the CVE record and the advisory. CVSS 4.0 9.3. [CVE](https://www.cve.org/CVERecord?id=CVE-2026-131914) |
+| **CISA KEV** | **2026-11-24; catalog released 17:47:46 UTC** | Added. Federal due date 2026-11-27. Ransomware use Unknown. Forensic triage required. [KEV](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) |
 
 ## Detection
 
@@ -65,6 +66,6 @@ Mandiant says exploitation has been observed and gives no indicator. Where the m
 - [MNDT-2026-0048][mndt] — Mandiant, published 2026-11-18 per its timeline. CVSS 4.0 9.3 Critical. Affected through 0.9.1 Beta. No patch. Says active exploitation has been observed, with no actor or indicator. Hashes for three builds.
 - [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914) — Mandiant, published 2026-11-19T01:29:12.970Z. The record repeats the score and the affected range.
 - [CodePlex archive](https://codeplexarchive.org/project/AntiCSRF) — the retired project page.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-22. Not listed.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.24, released 2026-11-24T17:47:46.199Z, checked 2026-11-24. CVE-2026-131914 added 2026-11-24, due 2026-11-27. Ransomware use Unknown. Forensic triage Yes. CISA says the product could be end of life.
 
 [mndt]: https://github.com/mandiant/Vulnerability-Disclosures/blob/master/2026/MNDT-2026-0048.md

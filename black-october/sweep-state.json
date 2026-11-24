@@ -1,7 +1,7 @@
 {
   "items": {
     "3dexperience.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-fix"
     },
     "7zip.md": {
@@ -137,7 +137,7 @@
       "hold": "none"
     },
     "batflat.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-fix"
     },
     "bee-js.md": {
@@ -284,6 +284,10 @@
       "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
+    "ddi-central.md": {
+      "last_checked": "2026-11-24T19:56:23Z",
+      "hold": "none"
+    },
     "debian-apt.md": {
       "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
@@ -353,7 +357,7 @@
       "hold": "awaiting-fix"
     },
     "entra-connect-health.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "none"
     },
     "epics-base.md": {
@@ -377,7 +381,7 @@
       "hold": "none"
     },
     "fastify-multipart.md": {
-      "last_checked": "2026-11-22T19:55:59Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "none"
     },
     "firefox.md": {
@@ -465,7 +469,7 @@
       "hold": "none"
     },
     "gpgme.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-distros"
     },
     "gpustack.md": {
@@ -609,7 +613,7 @@
       "hold": "awaiting-distros"
     },
     "linux-noisytcp.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-distros"
     },
     "linux-november-batch.md": {
@@ -638,6 +642,10 @@
     },
     "lxd-mtls.md": {
       "last_checked": "2026-11-22T15:56:16Z",
+      "hold": "none"
+    },
+    "m365-copilot.md": {
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "none"
     },
     "macos-unicode-paths.md": {
@@ -673,7 +681,7 @@
       "hold": "none"
     },
     "moxa-switches.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-fix"
     },
     "n-central.md": {
@@ -717,7 +725,7 @@
       "hold": "none"
     },
     "nodepress.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-fix"
     },
     "northflank.md": {
@@ -737,7 +745,7 @@
       "hold": "awaiting-fix"
     },
     "octopus-deploy.md": {
-      "last_checked": "2026-11-22T19:55:59Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "none"
     },
     "oorexx.md": {
@@ -761,7 +769,7 @@
       "hold": "none"
     },
     "openrouter.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "none"
     },
     "openssh-musl.md": {
@@ -837,7 +845,7 @@
       "hold": "none"
     },
     "prime-cms.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-fix"
     },
     "privilege-manager.md": {
@@ -857,7 +865,7 @@
       "hold": "awaiting-distros"
     },
     "qt-qxml.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-distros"
     },
     "rackspace-spot.md": {
@@ -897,7 +905,7 @@
       "hold": "none"
     },
     "ruby-httpx.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "none"
     },
     "ruby-november.md": {
@@ -949,7 +957,7 @@
       "hold": "none"
     },
     "sigstore-oci.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "none"
     },
     "silverstripe.md": {
@@ -1013,7 +1021,7 @@
       "hold": "awaiting-fix"
     },
     "synology-dsm-nov11.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-fix"
     },
     "synology-dsm.md": {
@@ -1045,7 +1053,7 @@
       "hold": "awaiting-fix"
     },
     "tensei.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-fix"
     },
     "tum.md": {
@@ -1077,8 +1085,8 @@
       "hold": "none"
     },
     "vcenter.md": {
-      "last_checked": "2026-11-23T19:56:05Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-24T19:56:23Z",
+      "hold": "none"
     },
     "veeam-backup.md": {
       "last_checked": "2026-11-20T15:56:01Z",
@@ -1090,6 +1098,10 @@
     },
     "vertiv-avocent-acs.md": {
       "last_checked": "2026-11-24T15:56:15Z",
+      "hold": "awaiting-fix"
+    },
+    "vmware-esx.md": {
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "awaiting-fix"
     },
     "voapi.md": {
@@ -1205,7 +1217,7 @@
       "hold": "none"
     },
     "xen-orchestra.md": {
-      "last_checked": "2026-11-23T15:56:15Z",
+      "last_checked": "2026-11-24T19:56:23Z",
       "hold": "none"
     },
     "xen.md": {

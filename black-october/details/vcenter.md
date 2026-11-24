@@ -1,6 +1,6 @@
 # VMware vCenter: a network request skips login
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main vCenter summary](../black-october-2026.md#vmware-vcenter-a-network-request-skips-login) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -65,7 +65,7 @@ On vCenter, Mandiant saw SSH enabled through a PUT to `/rest/appliance/access/ss
 
 1. Update vCenter to **9.1.1.0200**, **9.0.2.0200**, or **8.0 U3m**. Cloud Foundation 5.x goes to **5.2.5** by the async path in [KB 88287][kb882]. Telco Cloud Platform and Telco Cloud Infrastructure follow [KB463116][kb463]. vCenter 7.0 has no public fix; an extended-support contract is the path Broadcom names, and Broadcom says to move to Cloud Foundation 9.1.
 2. These vCenter updates are **not eligible for vCenter Quick Patch**. Use the ordinary update, including the VAMI. vSphere 8 has to be on Update 3 before 8.0 U3m applies.
-3. **vCenter 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1.** Broadcom says to wait for 9.1.2, or to move vCenter to 9.1.1 first and apply the security update there. [KB 67077][kb670] is the back-in-time note.
+3. **Cloud Foundation 9.1.2 lifts the upgrade block.** VMSA-2026-0009's FAQ still says vCenter 8.0 U3m and 9.0.2.0200 cannot move to Cloud Foundation 9.1.1. The VMSA-2026-0011 FAQ, updated November 24, says Cloud Foundation 9.1.2 resolves that restriction, and that systems on those two builds can upgrade to 9.1.2. [KB 67077][kb670] is the back-in-time note.
 4. Update SDDC Manager to **9.1.1.0200**, **9.0.2.0100**, or **5.2.5**. That update does not stop virtual machines.
 5. Update VMware Tools for Windows to **13.1.5.0** on 13.x, and to **12.5.5** on 12.3.x, 12.4.x, and 12.5.x. VMSA-2026-0009.1, dated 2026-11-20, lists those versions and does not list 11.x or 12.0 through 12.2. 12.4.10, inside 12.5.5, covers Windows 32-bit. A guest the matrix does not name is not cleared by that omission: the FAQ, which still names 11.x, says it reflects the initial advisory.
 6. ESX hosts do not need an update for this advisory. Updating vCenter does not update them, and they do not have to move first.
@@ -87,7 +87,8 @@ Look for an SSO account you did not create, SSH enabled through the VAMI, a copy
 ## Sources
 
 - [VMSA-2026-0009][vmsa] — initial advisory, issue date 2026-11-19. Critical, CVSS 3.1 range 6.7–9.8. No workaround.
-- [VMSA-2026-0009 questions and answers][faq] — ESX is not affected. The vCenter updates are not eligible for Quick Patch. 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1. CVE-2026-123890 is distinct from CVE-2026-59309.
+- [VMSA-2026-0009 questions and answers][faq] — ESX is not affected. The vCenter updates are not eligible for Quick Patch. 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1. CVE-2026-123890 is distinct from CVE-2026-59309. That FAQ was last changed November 19 and still says to wait for 9.1.2.
+- [VMSA-2026-0011 questions and answers](https://brcm.tech/vmsa-2026-0011-qna) — question 44, commit dated 2026-11-24. Cloud Foundation 9.1.2 resolves the restriction, and systems on 8.0 U3m or 9.0.2.0200 can upgrade to 9.1.2.
 - [CVE-2026-123890](https://www.cve.org/CVERecord?id=CVE-2026-123890) — Broadcom, published 2026-11-19 14:02:38 UTC. CVSS 3.1 9.8.
 - [CVE-2026-123891](https://www.cve.org/CVERecord?id=CVE-2026-123891), [CVE-2026-123892](https://www.cve.org/CVERecord?id=CVE-2026-123892), [CVE-2026-123893](https://www.cve.org/CVERecord?id=CVE-2026-123893), [CVE-2026-123894](https://www.cve.org/CVERecord?id=CVE-2026-123894) — the four others, published the same minute.
 - [GTIG and Mandiant, ARMORY CASTLE][gtig] — published 2026-11-19. Exploitation in early September, the session name, TCP 2012, and the tool names.

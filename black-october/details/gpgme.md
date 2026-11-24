@@ -1,6 +1,6 @@
 # GPGME: a long OpenPGP user ID frees memory twice
 
-**Last updated:** 2026-11-21 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main GPGME summary](../black-october-2026.md#gpgme-a-long-openpgp-user-id-frees-memory-twice) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -31,6 +31,7 @@ Affected is every GPGME before 2.3.0, as a shared library, a Windows DLL, or lin
 | GPGME 2.3.1 tagged | 2026-11-19; time/TZ unknown | The changelog date. Not the public announcement. [Advisory][adv] |
 | **Public announcement** | **2026-11-20 19:01:51 CET (UTC+01:00)** | Werner Koch, gnupg-announce. Gpg4win 5.1.2 the same day. [Advisory][adv] |
 | Debian | 2026-11-20 | DSA-6646-1 at 21:36:59 UTC fixes trixie. DLA-4924-1 fixes bookworm. Forky has no package. [Tracker][tracker] |
+| Red Hat, Ubuntu, SUSE, Amazon | 2026-11-20 through 2026-11-23 | Each lists the CVE. None has shipped a package. Red Hat, SUSE, and Amazon score it CVSS 3.1 8.1. |
 
 ## Detection
 
@@ -44,7 +45,7 @@ A program that links GPGME statically, or ships its own copy, does not move when
 2. Rebuild anything linked against GPGME statically, against 2.3.1.
 3. The legacy line is **1.24.4**. GnuPG says it cannot guarantee that line will see every later security patch.
 4. If the library cannot be updated, the announcement carries a patch GnuPG says likely applies to old versions. There is no configuration workaround.
-5. Debian testing (forky) has no fixed package. The tracker still lists 2.2.0-2 as vulnerable.
+5. Debian testing (forky) has no fixed package. The tracker still lists 2.2.0-2 as vulnerable. Red Hat marks `gpgme` Affected on RHEL 10, 9, 8, and 7, with no erratum, and scores it CVSS 3.1 8.1. Ubuntu marks `gpgme1.0` Needs evaluation on 26.10, 26.04, 24.04, 22.04, and 20.04, priority Medium, page updated 23 November 2026. SUSE's overall state is Pending, and SLES 15 SP7, 16.0, 16.1, and 12 SP5 are Affected. Amazon Linux 2 and 2023 are Pending Fix. AlmaLinux, Rocky, and Oracle have no public erratum; Oracle's CVE page returns 404.
 
 ## Verification
 
@@ -62,7 +63,11 @@ GnuPG does not report exploitation. An application that imported or listed keys 
 - [CVE-2026-129975](https://www.cve.org/CVERecord?id=CVE-2026-129975) — reserved. No CNA description and no score, checked 2026-11-21.
 - [DSA-6646-1](https://www.debian.org/security/2026/dsa-6646) — 2026-11-20 21:36:59 UTC. Trixie `1.24.2-3+deb13u1`. Debian says information disclosure, denial of service, and potentially arbitrary code.
 - [Debian security tracker][tracker] — checked 2026-11-21. Bookworm security `1.18.0-3+deb12u1` (DLA-4924-1) fixed. Trixie security fixed. Forky `2.2.0-2` vulnerable. Sid `2.3.1-1` fixed.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-21. Not listed.
+- [Red Hat CVE-2026-129975](https://access.redhat.com/security/cve/CVE-2026-129975) — public 2026-11-20. Important, CVSS 3.1 8.1. RHEL 10, 9, 8, and 7 Affected. No erratum.
+- [Ubuntu CVE-2026-129975](https://ubuntu.com/security/CVE-2026-129975) — updated 23 November 2026. Needs evaluation on 20.04 through 26.10. No package.
+- [SUSE CVE-2026-129975](https://www.suse.com/security/cve/CVE-2026-129975.html) — page modified 2026-11-22. Pending. SLES 15 SP7, 16.0, 16.1, and 12 SP5 Affected.
+- [Amazon Linux CVE-2026-129975](https://explore.alas.aws.amazon.com/CVE-2026-129975.html) — public 2026-11-23. Amazon Linux 2 and 2023 Pending Fix.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.24, released 2026-11-24T17:47:46.199Z, checked 2026-11-24. Not listed.
 
 [adv]: https://lists.gnupg.org/pipermail/gnupg-announce/2026q4/000517.html
 [tracker]: https://security-tracker.debian.org/tracker/CVE-2026-129975

@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Microsoft 365 Copilot: a signed-in user could raise their own privileges](#microsoft-365-copilot-a-signed-in-user-could-raise-their-own-privileges)
 - [VMware ESX: a network request runs code on the host](#vmware-esx-a-network-request-runs-code-on-the-host)
 - [ManageEngine DDI Central: a DHCP option runs a command](#manageengine-ddi-central-a-dhcp-option-runs-a-command)
 - [Microsoft Azure API Management: stored secrets were read](#microsoft-azure-api-management-stored-secrets-were-read)
@@ -336,6 +337,10 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Nothing to install for [Microsoft 365 Copilot](#microsoft-365-copilot-a-signed-in-user-could-raise-their-own-privileges). Microsoft rates [CVE-2026-50691](https://www.cve.org/CVERecord?id=CVE-2026-50691) CVSS 3.1 9.9 Critical: a signed-in user raises their privileges over the network. Microsoft says it mitigated the service on November 19 and that no customer action resolves it. It is not in KEV. The advisory names no feature and no indicator.
+- **New this update (CISA KEV):** CISA added three flaws on November 24, each due November 27, each requiring forensic triage. [Optimizely](#optimizely-a-flaw-in-experimentation-served-malware-to-customer-sites) is [CVE-2026-132224](https://www.cve.org/CVERecord?id=CVE-2026-132224), which MITRE rates CVSS 4.0 7.1, and there is still nothing to install. [Idunno.AntiCsrf](#aspnet-idunnoanticsrf-runs-code-from-a-form-field) is [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914): remove the module. [Drupal](#drupal-core-field-ui-remote-code-execution) is [CVE-2026-132165](https://www.cve.org/CVERecord?id=CVE-2026-132165): the floors stay 11.4.13, 11.3.22, and 10.6.22. The October Drupal CVEs are not listed.
+- **New this update:** [Xen Orchestra](#xen-orchestra-an-empty-login-cookie-is-an-administrator) now has a CVE. GitHub rates [CVE-2026-133469](https://www.cve.org/CVERecord?id=CVE-2026-133469) CVSS 3.1 9.8 Critical. Vates's advisory still has no score. The builds are unchanged: 6.10.1 or 6.9.2. It is not in KEV.
+- **New this update:** [Cloud Foundation 9.1.2](#vmware-vcenter-a-network-request-skips-login) lifts the block that kept vCenter 8.0 U3m and 9.0.2.0200 from moving to 9.1.1. The vCenter builds for CVE-2026-123890 are unchanged.
 - **New this update:** Update [VMware ESX](#vmware-esx-a-network-request-runs-code-on-the-host) and restart each host. Broadcom rates [CVE-2026-123910](https://www.cve.org/CVERecord?id=CVE-2026-123910) and [CVE-2026-123911](https://www.cve.org/CVERecord?id=CVE-2026-123911) CVSS 3.1 9.8 Critical: a request that can reach the host runs code on it. ESX 9.1 is **ESXi-9.1.2.0-25946735**, ESX 9.0 is **ESXi-9.0.2.0200-25953133**, and ESX 8.0 is **ESXi80U3m-25926933**. The updates are not eligible for ESX Live Patch. vCenter 9.1 moves to **9.1.2** and vCenter 9.0 to **9.0.2.0300** for a second Directory Service bypass, [CVE-2026-123903](https://www.cve.org/CVERecord?id=CVE-2026-123903), also 9.8. A vCenter already on 8.0 U3m does not move again. ESX 7.0 has no public build. None of the 23 is in KEV.
 - **New this update:** Update [ManageEngine DDI Central](#manageengine-ddi-central-a-dhcp-option-runs-a-command) to **build 6501 or later**. ManageEngine rates [CVE-2026-131964](https://www.cve.org/CVERecord?id=CVE-2026-131964) Critical and publishes no numeric score: a low-privileged operator changes a shared DHCP option, and that option can run a command on a managed ISC DHCP server. Build 6500 is the affected build. [CVE-2026-130508](https://www.cve.org/CVERecord?id=CVE-2026-130508) is High, in the same build, and runs a Cisco IOS command. Both CVE records are still reserved. Neither is in KEV.
 - **New this update:** If you run [Azure API Management](#microsoft-azure-api-management-stored-secrets-were-read) on a Classic Developer, Basic, Standard, or Premium tier, replace every secret it stored, at the system that issued it. Microsoft says a flaw let an unauthorized party read named values, identity-provider and OpenID Connect client secrets, subscription keys, and direct-management tokens before it closed the path on November 19. No CVE is assigned and no score is published. The fix does not revoke a credential already read. Consumption and v2 tiers are not affected. Norway's NSM says an unknown actor targeted those secrets, and names Equinor and Skagerak Energi.
@@ -608,6 +613,26 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
 
 ---
+
+## Microsoft 365 Copilot: a signed-in user could raise their own privileges
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/m365-copilot.md):** [Detection](details/m365-copilot.md#detection) · [Remediation](details/m365-copilot.md#remediation) · [Verification](details/m365-copilot.md#verification) · [Timeline](details/m365-copilot.md#timeline)
+
+**CVEs:** [CVE-2026-50691](https://www.cve.org/CVERecord?id=CVE-2026-50691)
+
+**Microsoft rates [CVE-2026-50691](https://www.cve.org/CVERecord?id=CVE-2026-50691) Critical, CVSS 3.1 base 9.9.** Microsoft is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H/E:U/RL:O/RC:C`. The temporal score is 8.6. Improper authorization in Microsoft 365 Copilot lets an attacker who already has some access raise their privileges over the network. The advisory names no feature, no request, and no version. NVD has not scored it. Microsoft's exploitability table says it is not publicly disclosed and not exploited.
+
+**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **MSRC advisory published** | **2026-11-19 08:00 UTC** | Critical. CVSS 3.1 base 9.9. Microsoft says the service is already mitigated. |
+| NVD published the record | 2026-11-23 | Awaiting enrichment. No NVD score. |
+| **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | New item. Nothing to install. |
+
+**Patch:** There is nothing to install. Microsoft says it has fully mitigated the service and that no customer action resolves the vulnerability. Restricting who can use Copilot is not the fix. This is not the Entra Connect Health exposure, which has no CVE, and not the September Copilot records.
+
+Sources: [MSRC CVE-2026-50691](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-50691), [detailed guide](details/m365-copilot.md).
 
 ## VMware ESX: a network request runs code on the host
 
@@ -1150,7 +1175,7 @@ Sources: [BleepingComputer](https://www.bleepingcomputer.com/news/security/micro
 
 **CVEs:** No CVE is assigned.
 
-**No vendor or CNA has published a CVSS score.** OpenRouter's announcement, dated November 22, says Dragos found inference providers whose data was compromised or whose data policies were not kept. OpenRouter took three providers off the platform, removed 125 endpoints from Zero Data Retention eligibility, and notified potentially affected customers. It says the testing did not show a breach of OpenRouter. Dragos, on November 19, says that from July through November it sent about two million prompts with unique credentials, that attackers copied requests at three hosting providers (the earliest in mid-July, and two of them included Zero Data Retention requests), and that it has not named those three. Together AI's November 21 notice is a stored-sample download: a credential for a private Hugging Face repository reached a public repository, and the party downloaded samples from MiniMax M3, GLM-5.2, and Kimi K2.6, primarily on June 24, July 4, July 8, and July 14. Phala's November 10 report says DeepSeek V4 Flash 0731 requests OpenRouter routed to Phala from October 21 at 00:00 UTC through November 8 at 05:35 UTC should be treated as exposed. Confirmed canary misuse there is October 21 and 22 only. Atlas Cloud's November 22 notice is separate from the three OpenRouter links: a third party opened links from prompts sent to MiniMax's official API, including MiniMax M3 and M2.7 prompts sent through Atlas Cloud in the third quarter and early fourth quarter of 2026. Atlas Cloud says to treat a secret sent to MiniMax M3, M2.7, or M3.1 Flash as exposed, and that it took its own models off OpenRouter. OpenRouter's page, read November 23, still lists three notices.
+**No vendor or CNA has published a CVSS score.** OpenRouter's announcement, dated November 22, says Dragos found inference providers whose data was compromised or whose data policies were not kept. OpenRouter took three providers off the platform, removed 125 endpoints from Zero Data Retention eligibility, and notified potentially affected customers. It says the testing did not show a breach of OpenRouter. Dragos, on November 19, says that from July through November it sent about two million prompts with unique credentials, that attackers copied requests at three hosting providers (the earliest in mid-July, and two of them included Zero Data Retention requests), and that it has not named those three. Together AI's November 21 notice is a stored-sample download: a credential for a private Hugging Face repository reached a public repository, and the party downloaded samples from MiniMax M3, GLM-5.2, and Kimi K2.6, primarily on June 24, July 4, July 8, and July 14. Phala's November 23 report supersedes its November 10 report and shortens the window: DeepSeek V4 Flash 0731 requests OpenRouter routed to Phala from October 21 at 02:25 UTC through November 1 at 02:03 UTC, 152,092 requests. The last recorded canary misuse is November 7. Phala also says the legacy KMS root key was taken on November 5. Novita's November 22 blog says MiniMax requests through Novita from May 28 through November 11 may have been retained, including requests OpenRouter routed there. MiniMax's November 24 notice says it found no disclosure of prompt content and deleted the recorded URLs. Atlas Cloud's notice is now dated November 23, and the action is unchanged. OpenRouter's page, read November 24, lists five notices and still says three providers were off-boarded.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
 
@@ -1159,10 +1184,12 @@ Sources: [BleepingComputer](https://www.bleepingcomputer.com/news/security/micro
 | **Dragos post** | **2026-11-19 08:00; timezone not stated on the page** | Three unnamed provider compromises. |
 | **Together notice** | **2026-11-21; time unknown** | Stored samples downloaded. |
 | **OpenRouter announcement** | **2026-11-22; time unknown** | Three providers off-boarded. 125 endpoints removed from Zero Data Retention. |
-| **Atlas Cloud notice** | **2026-11-22; time unknown** | MiniMax M3, M2.7, and M3.1 Flash. Atlas Cloud took its own models off OpenRouter. |
-| **Last updated** | **2026-11-23 15:56 EST (UTC−05:00)** | Atlas Cloud's notice added. |
+| **Atlas Cloud notice** | **2026-11-23; time unknown** | The page date moved from November 22. The models are unchanged. |
+| Phala detailed report | 2026-11-23; time unknown | The window is now October 21 02:25 UTC through November 1 02:03 UTC. |
+| MiniMax notice | 2026-11-24; time unknown | No evidence of prompt disclosure. |
+| **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | Phala's window changed. Novita and MiniMax posted. |
 
-**Patch:** There is nothing to install. Rotate a secret that was inside a prompt in those windows. On Together AI, turn on Zero Data Retention for an account that sends sensitive prompts; Together says that is now the default for new accounts only. OpenRouter removing an endpoint does not expire a key that already left, and it has not published the list of 125.
+**Patch:** There is nothing to install. Rotate a secret that was inside a prompt in those windows, including a MiniMax prompt sent through Novita from May 28 through November 11. On Phala, move anything protected by a key an application derived with `getKey()` before November 6 at 05:02 UTC. On Together AI, turn on Zero Data Retention for an account that sends sensitive prompts; Together says that is now the default for new accounts only. OpenRouter removing an endpoint does not expire a key that already left, and it has not published the list of 125.
 
 Sources: [OpenRouter](https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers), [Dragos](https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens), [Atlas Cloud](https://www.atlascloud.ai/blog/ai-updates/security-and-privacy-commitment), [detailed guide](details/openrouter.md).
 
@@ -1198,13 +1225,14 @@ Sources: [CVE-2026-134292](https://www.cve.org/CVERecord?id=CVE-2026-134292), [G
 
 **Mandiant rates [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914) CVSS 4.0 9.3 Critical.** Mandiant is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:A`. The abandoned `Idunno.AntiCsrf` module deserializes its CSRF form field with an unkeyed .NET `ObjectStateFormatter` before it compares the result with the cookie. A request with no login, and with any non-empty value in the CSRF cookie, runs code as the IIS worker process. Every version through **0.9.1 Beta**, the December 2008 release, is affected. There is no maintainer and no patch. Mandiant's advisory says exploitation has been observed and names no actor or indicator. NVD has not scored it.
 
-**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). Mandiant's exploitation statement is separate from a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914) added 2026-11-24, federal due date 2026-11-27. Ransomware use Unknown. Forensic triage is required. CISA says the product could be end of life and tells users to discontinue it. Mandiant's exploitation statement is the researcher report, not the KEV date. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Last release | 2008-12; day unknown | `0.9.1 Beta`. CodePlex is retired. |
 | **Public announcement** | **2026-11-19 01:29:12 UTC** | Mandiant published the CVE record and MNDT-2026-0048. CVSS 4.0 9.3. |
-| **Last updated** | **2026-11-22 12:10 EST (UTC−05:00)** | New item. Remove the module. There is no patch. |
+| **CISA KEV** | **2026-11-24; catalog released 17:47:46 UTC** | Added. Federal due date 2026-11-27. Forensic triage required. |
+| **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | CISA listed it. The fix is still to remove the module. |
 
 **Patch:** There is no patch. Remove `Idunno.AntiCsrf` from `Web.config` and delete `Idunno.AntiCsrf.dll`, and replace it with a supported anti-forgery mechanism. Removing the module does not undo a request that already ran code. Where it was present, rotate the `<machineKey>` and the database credentials.
 
@@ -1387,7 +1415,7 @@ Sources: [TR-26-1588](https://siberguvenlik.gov.tr/guvenlik-bildirimleri/detay/t
 | Debian | 2026-11-20 | DSA-6646-1 at 21:36:59 UTC. DLA-4924-1 the same day. Forky has no package. |
 | **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | New item. Update the library. A static copy does not move with it. |
 
-**Patch:** Update the shared library to **GPGME 2.3.1**, or install **Gpg4win 5.1.2**. On Debian 13 install `1.24.2-3+deb13u1`; on Debian 12 install `1.18.0-3+deb12u1`. Restart what had the library loaded. Rebuild a program that links GPGME statically. The legacy line is **1.24.4**, and GnuPG says that line may not get every later patch. Debian testing has no package. There is no configuration workaround. The update does not show whether an application already sent data it should not have.
+**Patch:** Update the shared library to **GPGME 2.3.1**, or install **Gpg4win 5.1.2**. On Debian 13 install `1.24.2-3+deb13u1`; on Debian 12 install `1.18.0-3+deb12u1`. Restart what had the library loaded. Rebuild a program that links GPGME statically. The legacy line is **1.24.4**, and GnuPG says that line may not get every later patch. Debian testing has no package. Red Hat, Ubuntu, SUSE, and Amazon Linux list the CVE and have shipped no package; Red Hat, SUSE, and Amazon score it CVSS 3.1 8.1, which is not GnuPG's word. There is no configuration workaround. The update does not show whether an application already sent data it should not have.
 
 Sources: [GnuPG announcement](https://lists.gnupg.org/pipermail/gnupg-announce/2026q4/000517.html), [DSA-6646-1](https://www.debian.org/security/2026/dsa-6646), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-129975), [detailed guide](details/gpgme.md).
 
@@ -1808,9 +1836,10 @@ Sources: [oss-security](https://www.openwall.com/lists/oss-security/2026/11/19/7
 | Exploitation | early September 2026; day and time unknown | ARMORY CASTLE, before the patch. |
 | **Public announcement and fixes** | **2026-11-19; CVE record 14:02:38 UTC** | VMSA-2026-0009. |
 | **CISA KEV** | **2026-11-20; catalog released 17:48:39 UTC** | CVE-2026-123890. Federal due date 2026-11-23. |
-| **Last updated** | **2026-11-22 15:30 EST (UTC−05:00)** | Tools follow the November 20 matrix: 13.x, and 12.3 through 12.5. Not 11.x. |
+| Cloud Foundation 9.1.2 | 2026-11-24; time/TZ unknown | The VMSA-2026-0011 FAQ says 9.1.2 lifts the block that kept 8.0 U3m and 9.0.2.0200 from moving to 9.1.1. |
+| **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | The upgrade block is lifted. The vCenter builds are unchanged. |
 
-**Patch:** Update vCenter to **9.1.1.0200, 9.0.2.0200, or 8.0 U3m**. Cloud Foundation 5.x goes to **5.2.5**. These updates are not eligible for vCenter Quick Patch. **8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1**; Broadcom says to wait for 9.1.2, or to move to 9.1.1 first and patch there. SDDC Manager is **9.1.1.0200, 9.0.2.0100, or 5.2.5**. VMware Tools for Windows goes to **13.1.5.0** on 13.x and **12.5.5** on 12.3.x, 12.4.x, and 12.5.x. The November 20 matrix does not list 11.x or 12.0 through 12.2. vCenter 7.0 has no public fix. There is no workaround. ESX does not need an update for this advisory. A vCenter that was unpatched in September should be reviewed for an SSO account you did not create. The update does not remove one.
+**Patch:** Update vCenter to **9.1.1.0200, 9.0.2.0200, or 8.0 U3m**. Cloud Foundation 5.x goes to **5.2.5**. These updates are not eligible for vCenter Quick Patch. VMSA-2026-0009's FAQ still says 8.0 U3m and 9.0.2.0200 cannot move to Cloud Foundation 9.1.1. The VMSA-2026-0011 FAQ, updated November 24, says **Cloud Foundation 9.1.2** resolves that restriction, and that systems on those two builds can upgrade to 9.1.2. SDDC Manager is **9.1.1.0200, 9.0.2.0100, or 5.2.5**. VMware Tools for Windows goes to **13.1.5.0** on 13.x and **12.5.5** on 12.3.x, 12.4.x, and 12.5.x. The November 20 matrix does not list 11.x or 12.0 through 12.2. vCenter 7.0 has no public fix. There is no workaround. ESX does not need an update for this advisory. A vCenter that was unpatched in September should be reviewed for an SSO account you did not create. The update does not remove one.
 
 Sources: [VMSA-2026-0009](https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39495), [GTIG](https://cloud.google.com/blog/topics/threat-intelligence/armory-castle-exploits-vsphere), [detailed guide](details/vcenter.md).
 
@@ -2163,17 +2192,19 @@ Sources: [N-able status, incident 202672](https://uptime.n-able.com/event/202672
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/optimizely.md):** [Detection](details/optimizely.md#detection) · [Remediation](details/optimizely.md#remediation) · [Verification](details/optimizely.md#verification) · [Timeline](details/optimizely.md#timeline)
 
-**CVEs:** No CVE is assigned.
+**CVEs:** [CVE-2026-132224](https://www.cve.org/CVERecord?id=CVE-2026-132224)
 
-**No vendor or CNA has published a CVSS score.** Optimizely's status page, posted November 17 at 01:02 UTC, says an unauthorized party exploited a vulnerability in Experimentation and used it to add malicious JavaScript to some customer projects. Optimizely says it has fixed the vulnerability, removed the code, and secured the affected accounts. An update at 14:49 UTC on November 18 says the flaw was in the account signup flow, that it was closed within three hours, and that fewer than 5% of customers were affected. Scott Helme of Report URI counted **188 infected scripts across 178 organizations**, including Zoom, the BBC, CNN, Salesforce, and GitLab. The script loaded `1688360[.]cc`, replaced cryptocurrency wallet addresses, captured card numbers, and on iPhones and iPads loaded the Coruna and DarkSword exploit kits. He says one script was still malicious at 21:52 UTC on November 16. The Hacker News says Smartsheet's snippet was reinfected after the cleanup.
+**MITRE rates [CVE-2026-132224](https://www.cve.org/CVERecord?id=CVE-2026-132224) CVSS 4.0 7.1 High.** The vector is `CVSS:4.0/AV:N/AC:H/AT:N/PR:L/UI:N/VC:N/VI:H/VA:N/SC:H/SI:H/SA:N`. The record, published November 18, says Web Experimentation before 2026-11-17 mishandles the account signup flow, so attacker-controlled code ends up in the Project JavaScript of some `cdn.optimizely.com` assets. Optimizely's status page, posted November 17 at 01:02 UTC, says an unauthorized party exploited a vulnerability in Experimentation and used it to add malicious JavaScript to some customer projects. Optimizely says it has fixed the vulnerability, removed the code, and secured the affected accounts. An update at 14:49 UTC on November 18 says the flaw was in the account signup flow, that it was closed within three hours, and that fewer than 5% of customers were affected. Scott Helme of Report URI counted **188 infected scripts across 178 organizations**, including Zoom, the BBC, CNN, Salesforce, and GitLab. The script loaded `1688360[.]cc`, replaced cryptocurrency wallet addresses, captured card numbers, and on iPhones and iPads loaded the Coruna and DarkSword exploit kits. He says one script was still malicious at 21:52 UTC on November 16. The Hacker News says Smartsheet's snippet was reinfected after the cleanup.
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — [CVE-2026-132224](https://www.cve.org/CVERecord?id=CVE-2026-132224) added 2026-11-24, federal due date 2026-11-27. Ransomware use Unknown. Forensic triage is required. The customer action is still Optimizely's: there is nothing to install. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Malicious scripts served | 2026-11-16, from early morning; time/TZ unknown | Helme's earliest hijacked script. |
 | **Optimizely statement** | **2026-11-17 01:02 UTC** | Vulnerability fixed, code removed. |
-| **Last updated** | **2026-11-18 03:30 EST (UTC−05:00)** | New item. Check what the site served on November 16. |
+| CVE record | 2026-11-18 | MITRE. CVSS 4.0 7.1 High. Affected before 2026-11-17. |
+| **CISA KEV** | **2026-11-24; catalog released 17:47:46 UTC** | Added. Federal due date 2026-11-27. Forensic triage required. |
+| **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | The CVE and the KEV listing. Nothing new to install. |
 
 **Patch:** There is no customer-side update. Optimizely says the fix is deployed. If Optimizely contacted you, follow that notice. A visitor who entered a card number or copied a wallet address on an affected site on November 16 should check the statement and the transaction. Removing the script does not undo either.
 
@@ -2571,15 +2602,15 @@ Sources: [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270), [Deb
 
 **CVEs:** [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288)
 
-**Red Hat rates [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288) CVSS 3.1 7.5 High.** kernel.org, the CNA, publishes no score, and NVD has not scored it. The vector Red Hat publishes is `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H`, and Red Hat calls the impact Important. A race in the lockless lookup of established TCP sockets lets a stale lookup take a socket that was freed and reused. In the path the finder demonstrated, that socket has no listener, and the receive path panics the kernel. The crash takes down the host, including containers that share its kernel. The finder, Hyunwoo Kim, describes a second nested race that produces a use-after-free and says that path is generally hard to trigger. He does not claim code execution, and Red Hat says the flaw allows neither data alteration nor code execution. It was introduced in 2015 and is present from Linux 4.4. The upstream fix, commit `4e2b3ef19e0e`, is in **6.12.117, 6.18.63, and 7.3.4**. kernel.org lists no fixed release for 5.10, 5.15, 6.1, or 6.6. Triggering it needs more than one receive context. This is not the [IPv4 TCP options use-after-free](#linux-kernel-ipv4-tcp-options-use-after-free) or [FragNesia](#linux-kernel-ipv6-fragment-reassembly-flaw-fragnesia---remote-memory-corruption-and-data-leak).
+**kernel.org, the CNA, rates [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288) CVSS 3.1 7.5**, vector `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H`, in the record updated 2026-11-23. NVD has not scored it. Red Hat rates it 7.5 High as well, with a different vector, `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H`, and calls the impact Important. A race in the lockless lookup of established TCP sockets lets a stale lookup take a socket that was freed and reused. In the path the finder demonstrated, that socket has no listener, and the receive path panics the kernel. The crash takes down the host, including containers that share its kernel. The finder, Hyunwoo Kim, describes a second nested race that produces a use-after-free and says that path is generally hard to trigger. He does not claim code execution, and Red Hat says the flaw allows neither data alteration nor code execution. It was introduced in 2015 and is present from Linux 4.4. The upstream fix, commit `4e2b3ef19e0e`, is in **5.10.275, 5.15.226, 6.1.193, 6.6.163, 6.12.117, 6.18.63, and 7.3.4**. kernel.org dated the four long-term releases 2026-11-23. Triggering it needs more than one receive context. This is not the [IPv4 TCP options use-after-free](#linux-kernel-ipv4-tcp-options-use-after-free) or [FragNesia](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite).
 
-**CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-16). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Introduced | 2015-10-03; time/TZ unknown | Commit `079096f103fa`. Present from Linux 4.4. |
 | Upstream fix merged | 2026-11-03; time/TZ unknown | Commit `4e2b3ef19e0e`. |
-| CVE record | 2026-11-10 18:19:08 UTC | kernel.org. No score. Fixed stable floors 6.12.117, 6.18.63, 7.3.4. |
+| CVE record | 2026-11-10 18:19:08 UTC | kernel.org. Updated 2026-11-23: CVSS 3.1 7.5, and 5.10.275, 5.15.226, 6.1.193, 6.6.163 added. |
 | **Public technical disclosure** | **2026-11-15 16:00:04 UTC** | oss-security, after the linux-distros embargo. The message is dated 2026-11-16 01:00:04 +0900. |
 | Debian and Oracle UEK fixed | 2026-11-12 through 2026-11-15; time/TZ unknown | Debian trixie 6.12.117-1 (DSA-6628-1) and bookworm 6.1.192-1 (DLA-4906-1). Oracle Linux UEK on 7, 8, 9, and 10 (ELSA-2026-500630, ELSA-2026-500631, ELSA-2026-500632). |
 | Debian forky fixed; Ubuntu marks Vulnerable | Tracker and Ubuntu page read 2026-11-17 | Debian forky is 7.3.4-1 fixed, with sid. Ubuntu `linux` is Vulnerable on 16.04 through 26.10, with no package. On November 16 Ubuntu said Needs evaluation and forky was still vulnerable. |
@@ -2587,9 +2618,10 @@ Sources: [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270), [Deb
 | Ubuntu page reread | 2026-11-19; time unknown | Still no package. The page now says last updated 19 November 2026. |
 | Debian sid | Tracker read 2026-11-22 | sid is 7.3.5-1 fixed. forky stays 7.3.4-1. |
 | Red Hat and AlmaLinux | 2026-11-23; time/TZ unknown | RHSA-2026:102168, 102167, 102218, and 102219. AlmaLinux published the same four. |
-| **Last updated** | **2026-11-23 15:56 EST (UTC−05:00)** | Red Hat and AlmaLinux shipped packages. RHEL 9 kernel-rt, Ubuntu, SUSE, and Rocky still have none. |
+| Rocky 10 and RHEL 9 kernel-rt | 2026-11-23 and 2026-11-24 | Rocky 10 `kernel-6.12.0-264.20.1.el10_3`. RHSA-2026:102167 ships the realtime kernel. |
+| **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | Long-term stables, Rocky 10, and RHEL 9 kernel-rt. Ubuntu, SUSE, Rocky 8, and Rocky 9 still have none. |
 
-**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Red Hat Enterprise Linux 10 is `kernel-6.12.0-264.19.1.el10_3` (RHSA-2026:102168, November 23), RHEL 9 is `kernel-5.14.0-741.26.1.el9_9` (RHSA-2026:102167), and RHEL 8 is `kernel-4.18.0-553.189.1.el8_10` (RHSA-2026:102218). AlmaLinux shipped the same four advisories the same day. RHEL 9 `kernel-rt` is still Affected. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1), trixie at 6.12.117-1 (DSA-6628-1), forky at 7.3.4-1, and sid at 7.3.5-1. Amazon Linux 2 is fixed at 4.14.355-287.769, and the 5.10 extra at `kernel-5.10.273-275.1133`. Amazon Linux 2023's `kernel6.18` is 6.18.62-127.179. Oracle Linux UEK is fixed on 7, 8, 9, and 10. Ubuntu 16.04 through 26.10 is still Vulnerable, with no package; the page was last updated 23 November 2026. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. Rocky Linux has no production package. See the [distribution table](details/linux-noisytcp.md#detection).
+**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Red Hat Enterprise Linux 10 is `kernel-6.12.0-264.19.1.el10_3` (RHSA-2026:102168, November 23), RHEL 9 is `kernel-5.14.0-741.26.1.el9_9` and `kernel-rt-5.14.0-741.26.1.el9_9` (RHSA-2026:102167), and RHEL 8 is `kernel-4.18.0-553.189.1.el8_10` (RHSA-2026:102218). AlmaLinux shipped the same advisories. Rocky Linux 10 is `kernel-6.12.0-264.20.1.el10_3`, and there is no RLSA. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1), trixie at 6.12.117-1 (DSA-6628-1), forky at 7.3.4-1, and sid at 7.3.5-1. Amazon Linux 2 is fixed at 4.14.355-287.769, and the 5.10 extra at `kernel-5.10.273-275.1133`. Amazon Linux 2023's `kernel6.18` is 6.18.62-127.179. Oracle Linux UEK is fixed on 7, 8, 9, and 10. Ubuntu 16.04 through 26.10 is still Vulnerable, with no package. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. Rocky Linux 8 and 9 have no package. See the [distribution table](details/linux-noisytcp.md#detection).
 
 Sources: [oss-security](https://www.openwall.com/lists/oss-security/2026/11/15/2), [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-99288), [detailed guide](details/linux-noisytcp.md).
 
@@ -2723,7 +2755,7 @@ Sources: [GHSA-gmhr-r4mc-w935](https://github.com/fastify/fastify-multipart/secu
 | **Public announcement** | **2026-11-16; NVD published 08:16 UTC** | The Qt Group's advisory shows the date and no time. |
 | **Last updated** | **2026-11-22 15:30 EST (UTC−05:00)** | Distributions list the CVE and still ship no package. |
 
-**Patch:** Update to Qt **6.8.10, 6.11.3, or 6.12.1** or later and ship that build. On Qt 5, stop parsing untrusted documents with `QXmlSimpleReader`. Ubuntu, Debian, SUSE, and Red Hat had not shipped a package as of November 22. SUSE and Red Hat rescore it CVSS 3.1 5.5; the Qt Group's 8.2 is the score above.
+**Patch:** Update to Qt **6.8.10, 6.11.3, or 6.12.1** or later and ship that build. On Qt 5, stop parsing untrusted documents with `QXmlSimpleReader`. Debian sid `qt6-5compat` **6.11.2-5**, published November 21, carries the fix. Debian bookworm, trixie, and forky, and Ubuntu, SUSE, and Red Hat, still have no package. SUSE and Red Hat rescore it CVSS 3.1 5.5; the Qt Group's 8.2 is the score above.
 
 Sources: [Qt advisory](https://www.qt.io/blog/security-advisory-cve-2026-105925), [CVE-2026-105925](https://www.cve.org/CVERecord?id=CVE-2026-105925), [detailed guide](details/qt-qxml.md).
 
@@ -3440,16 +3472,17 @@ Sources: [MSRC CVE-2026-116928](https://msrc.microsoft.com/update-guide/vulnerab
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/xen-orchestra.md):** [Detection](details/xen-orchestra.md#detection) · [Remediation](details/xen-orchestra.md#remediation) · [Verification](details/xen-orchestra.md#verification) · [Timeline](details/xen-orchestra.md#timeline)
 
-**CVEs:** No CVE is assigned. Vates tracks this as VSA-2026-062.
+**CVEs:** [CVE-2026-133469](https://www.cve.org/CVERecord?id=CVE-2026-133469). Vates tracks this as VSA-2026-062.
 
-**Vates classifies VSA-2026-062 as Critical. No CVSS score is assigned.** A REST cookie of `authenticationToken=j:{}` is parsed into an empty object. The token store treats that object as a lookup with no filter and returns its first token, and the caller is logged in as that token's owner. The authenticated route then returns login token IDs that can be reused. Vates says a compromised console can run code on the pools it manages and take an XCP-ng node as root. Vates says the vulnerability is actively exploited, first from `91.211.251.112` and a Tor service. Xen Orchestra before **6.9.2** (stable) and **6.10.1** (latest) is affected, and so is the appliance. The fixing packages are `xo-server` **5.211.2** (stable) and **5.213.1** (latest).
+**GitHub rates [CVE-2026-133469](https://www.cve.org/CVERecord?id=CVE-2026-133469) CVSS 3.1 9.8 Critical.** GitHub is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Vates classifies VSA-2026-062 as Critical and its own advisory, last updated November 10, still has no score. A REST cookie of `authenticationToken=j:{}` is parsed into an empty object. The token store treats that object as a lookup with no filter and returns its first token, and the caller is logged in as that token's owner. The authenticated route then returns login token IDs that can be reused. Vates says a compromised console can run code on the pools it manages and take an XCP-ng node as root. Vates says the vulnerability is actively exploited, first from `91.211.251.112` and a Tor service. Xen Orchestra before **6.9.2** (stable) and **6.10.1** (latest) is affected, and so is the appliance. The fixing packages are `xo-server` **5.211.2** (stable) and **5.213.1** (latest).
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Vates says this vulnerability is actively exploited. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Vates and the CVE record both say this vulnerability is actively exploited, and that statement is separate from a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| **Public announcement and fix** | **2026-11-10; time/TZ unknown** | VSA-2026-062. Critical. CVSS not assigned. Actively exploited. |
-| **Last updated** | **2026-11-10 19:04 EST (UTC−05:00)** | New item. Update Xen Orchestra. |
+| **Public announcement and fix** | **2026-11-10; time/TZ unknown** | VSA-2026-062. Critical. Vates assigns no CVSS score. Actively exploited. |
+| **CVE record** | **2026-11-23 17:07:16 UTC** | GitHub CNA. CVSS 3.1 9.8. The fixed builds are unchanged. |
+| **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | The CVE and the score. The builds to install are unchanged. |
 
 **Patch:** Update to **6.10.1** (latest) or **6.9.2** (stable) and restart `xo-server`. A source install takes the latest `master`, which includes pull request 10748. If the console was reachable from the internet, revoke every session and API token and rotate the secrets the stack uses. Vates says a reinstall is the recommendation when a compromise is confirmed. Blocking the addresses Vates names stops the campaign it has seen and does not close the check.
 
@@ -7256,7 +7289,7 @@ Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/adviso
 
 **SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): Drupal Security Team Critical 19/25. The CNA record has no CVSS score, and NVD has not scored it. CISA-ADP scored it CVSS 3.1 8.1 High on 2026-11-06, with Exploitation none. That score is not Drupal's. A related advisory, SA-CONTRIB-2026-218 for Entity List ([CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099)), is also Critical 19/25 from Drupal and also has no CNA score. CISA-ADP scored that one 8.1 the same day.**
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-09) for either CVE. CISA-ADP's Exploitation field is none. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Listed — [CVE-2026-132165](https://www.cve.org/CVERecord?id=CVE-2026-132165), the November 18 installer flaw, added 2026-11-24, federal due date 2026-11-27. Ransomware use Unknown. Forensic triage is required. CVE-2026-108097 and CVE-2026-108099, the October Field UI flaws, are not listed. CISA-ADP's Exploitation field is none on those two. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -7268,7 +7301,8 @@ Sources: [GHSA-673q-mjm6-r5xr](https://github.com/vercel/next.js/security/adviso
 | CVE records published | 2026-10-30 03:09 UTC | Drupal CNA. No CVSS score in either record. Affected bounds match the advisories. |
 | CISA-ADP score | 2026-11-06 | CVSS 3.1 8.1 High on both records. Exploitation none. Drupal's 19/25 is unchanged. |
 | Installer flaw | 2026-11-18; time/TZ unknown | SA-CORE-2026-017. Drupal rates it Critical, 18/25. Fixed in 11.4.13, 11.3.22, and 10.6.22. |
-| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | The installer flaw is a second upgrade. The October floors do not include it. |
+| **CISA KEV** | **2026-11-24; catalog released 17:47:46 UTC** | CVE-2026-132165. Federal due date 2026-11-27. Forensic triage required. The October CVEs are not listed. |
+| **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | CISA listed the installer flaw. The floors are unchanged. |
 
 The flaw is in core's Field UI module. Drupal says core alone cannot be exploited, but "multiple serious exploit paths exist with contributed modules", and at least one of them needs no login. Custom code may also expose it. The contributed modules are not named. Entity List has its own separate RCE with the same pattern.
 
@@ -8859,6 +8893,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Microsoft 365 Copilot** | Nothing to install. Microsoft rates CVE-2026-50691 9.9: a signed-in user raises their privileges. Microsoft says the service is already mitigated. [Guide](details/m365-copilot.md#remediation). |
 | **rclone `serve sftp --auth-proxy` before 1.76.0** | Upgrade to 1.76.0 or later and restart. VulnCheck rates CVE-2026-134352 9.2: a public key sent as a password gets that user's files. The GitHub advisory's range includes 1.76.0; the changelog puts the fix in that release. [Guide](details/rclone.md#remediation). |
 | **Wing FTP Server before 8.2.8** | Upgrade to 8.2.8 or later. VulnCheck rates CVE-2026-135171 9.2: an administrator session can be replayed with no login. 8.2.6 fixes only the path traversal. [Guide](details/wing-ftp.md#remediation). |
 | **Self-hosted Cribl Stream or Cribl Edge 4.20.4 or earlier** | Upgrade to 4.21 or later. Upgrade a self-hosted Leader before its Edge nodes. Cribl rates CVE-2026-115899 9.3: pagination data a REST Collector reads can run code as the Worker. CVE-2026-115873 is 9.9 on CVSS 3.1 and 8.7 on CVSS 4.0. Cribl manages a Cloud Leader. [Guide](details/cribl-stream.md#remediation). |
@@ -8905,7 +8940,7 @@ flowchart TD
 | **CloudPaste through 1.9.1** | Keep `/api/proxy/link` off the public internet and rotate the WebDAV password. VulnCheck rates CVE-2026-129494 8.7: a share slug returns the WebDAV username and password. v1.9.1 is the newest release and is affected. [Guide](details/cloudpaste.md#remediation). |
 | **Bolo (bolo-solo) through 2.6.4** | Do not rely on an article password. VulnCheck rates CVE-2026-129493 8.7: the article list returns it in plaintext. v2.6.4 is the newest release and is affected. Change every article password. [Guide](details/bolo.md#remediation). |
 | **WordPress with Give Peer-to-Peer through 2.9.5** | Update `give-peer-to-peer` to 2.9.7 or later. Wordfence rates CVE-2026-82568 and CVE-2026-82663 7.5: a request with no login reads the database through 2.9.3 and changes a team through 2.9.5. The vendor changelog says 2.9.4 fixed both; Wordfence says 2.9.6 fixes the second. [Guide](details/give-peer-to-peer.md#remediation). |
-| **Linux kernel from 4.4, TCP listeners** | Install the kernel that names CVE-2026-99288 and reboot. Red Hat rates it 7.5: one TCP connection can panic the host. On RHEL and AlmaLinux the November 23 kernels are in. RHEL 9 `kernel-rt`, Ubuntu, SUSE, and Rocky Linux still have no package. [Guide](details/linux-noisytcp.md#remediation). |
+| **Linux kernel from 4.4, TCP listeners** | Install the kernel that names CVE-2026-99288 and reboot. kernel.org rates it 7.5: one TCP connection can panic the host. RHEL 9 `kernel-rt` and Rocky Linux 10 now have a package. Ubuntu, SUSE, and Rocky Linux 8 and 9 still do not. [Guide](details/linux-noisytcp.md#remediation). |
 | **3DEXPERIENCE R2023x through R2026x** | Install the Station Launcher fix from Dassault support article QA00000522688. Dassault rates CVE-2026-93664 10.0, unauthenticated, and two command-injection flaws 9.9. No public page names the fixed level. [Guide](details/3dexperience.md#remediation). |
 | **NodePress through 8.5.1** | No fixed release. Take it offline. VulnCheck rates two flaws 9.8: the administrator password defaults to `root`, and JWTs fall back to `nodepress-secret`. Set both secrets. [Guide](details/nodepress.md#remediation). |
 | **Prime (`@primecms/core`) through 0.4.0-beta.0** | No fixed release. Take it offline. VulnCheck rates CVE-2026-129941 9.8: `createUser` registers an administrator with no login. [Guide](details/prime-cms.md#remediation). |

@@ -1,14 +1,14 @@
 # Xen Orchestra: an empty login cookie is an administrator
 
-**Last updated:** 2026-11-10 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main Xen Orchestra summary](../black-october-2026.md#xen-orchestra-an-empty-login-cookie-is-an-administrator) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-Xen Orchestra is the web console for XCP-ng and Xen. Vates says a REST cookie of `authenticationToken=j:{}` is parsed into an empty object, the token store treats that object as a lookup with no filter, and the first unexpired token's owner is logged in. The authenticated route `/rest/v0/users/me/authentication_tokens` then returns login token IDs that can be reused. Vates rates the impact Critical and says a compromised console can run code on the pools it manages and take an XCP-ng node as root. There is no CVE and no CVSS score.
+Xen Orchestra is the web console for XCP-ng and Xen. Vates says a REST cookie of `authenticationToken=j:{}` is parsed into an empty object, the token store treats that object as a lookup with no filter, and the first unexpired token's owner is logged in. The authenticated route `/rest/v0/users/me/authentication_tokens` then returns login token IDs that can be reused. Vates rates the impact Critical and says a compromised console can run code on the pools it manages and take an XCP-ng node as root. GitHub, the CNA, published [CVE-2026-133469](https://www.cve.org/CVERecord?id=CVE-2026-133469) on 2026-11-23 and rates it **CVSS 3.1 9.8 Critical**. Vates's own advisory still has no score.
 
-**Vates classifies [VSA-2026-062](https://docs.vates.tech/security-advisories/advisories/2026/vates-sa-2026-062/) as Critical.** The advisory's CVSS 4.0 cell says "Not available yet." Vates says the vulnerability is actively exploited by a threat actor that first operated from `91.211.251.112:8001` and the Tor service `ustar3rqxgnskzgnwkgpofgtvxevm6cx3lxdbwt4mndtveqyaohid.onion:3333`. The affected line is Xen Orchestra before **6.9.2** on the stable channel and before **6.10.1** on the latest channel, and the Xen Orchestra Appliance. The packages that fix it are `xo-server` **5.211.2** on stable and **5.213.1** on latest. A source install takes the latest `master`, which includes [pull request 10748](https://github.com/vatesfr/xen-orchestra/pull/10748).
+**Vates classifies [VSA-2026-062](https://docs.vates.tech/security-advisories/advisories/2026/vates-sa-2026-062/) as Critical.** The advisory's CVSS 4.0 cell still says "Not available yet," and the page was last updated November 10. **GitHub rates the same flaw [CVE-2026-133469](https://www.cve.org/CVERecord?id=CVE-2026-133469), CVSS 3.1 9.8 Critical**, vector `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The record, published 2026-11-23T17:07:16Z, says it is actively exploited and that the fix is 6.9.2 and 6.10.1. Its ranges are Xen Orchestra before 6.9.2 and 6.10.0 before 6.10.1, and `xo-server` before 5.211.2 and 5.213.0 before 5.213.1. Vates says the vulnerability is actively exploited by a threat actor that first operated from `91.211.251.112:8001` and the Tor service `ustar3rqxgnskzgnwkgpofgtvxevm6cx3lxdbwt4mndtveqyaohid.onion:3333`. The affected line is Xen Orchestra before **6.9.2** on the stable channel and before **6.10.1** on the latest channel, and the Xen Orchestra Appliance. The packages that fix it are `xo-server` **5.211.2** on stable and **5.213.1** on latest. A source install takes the latest `master`, which includes [pull request 10748](https://github.com/vatesfr/xen-orchestra/pull/10748).
 
-**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. Vates says this vulnerability is actively exploited. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Vates and the CVE record both say this vulnerability is actively exploited, and that statement is separate from a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -25,6 +25,9 @@ Xen Orchestra is the web console for XCP-ng and Xen. Vates says a REST cookie of
 |---|---|---|
 | **Public announcement and fix** | **2026-11-10; time/TZ unknown** | Vates published VSA-2026-062 and the fixed builds the same day. Severity Critical. CVSS not assigned. Actively exploited. [Advisory][vsa] |
 | Forum notice | 2026-11-10; time/TZ unknown | Vates says the flaw was under embargo and the embargo has been lifted. An appliance should move to 6.10.1 (latest) or 6.9.2 (stable). [Forum][forum] |
+| GitHub advisory | 2026-11-20 | [GHSA-2r3w-c2vx-fv5g](https://github.com/vatesfr/xen-orchestra/security/advisories/GHSA-2r3w-c2vx-fv5g). CVSS 3.1 9.8. Patched in `xo-server` 5.213.1 and 5.211.2. |
+| **CVE record** | **2026-11-23 17:07:16 UTC** | GitHub CNA published CVE-2026-133469. CVSS 3.1 9.8. Says actively exploited. The fixed builds are unchanged. [CVE](https://www.cve.org/CVERecord?id=CVE-2026-133469) |
+| **Last updated** | **2026-11-24 (America/New_York)** | The CVE and the score. The builds to install are unchanged. |
 
 ## Detection
 
@@ -60,7 +63,9 @@ If any detection check matches, or the console was on the internet while it was 
 - [VSA-2026-062][vsa] — published and updated 2026-11-10. Severity Critical. CVSS 4.0 not available. Affected before 6.9.2 (stable) and 6.10.1 (latest), and the appliance. Fixed in `xo-server` 5.211.2 and 5.213.1. Actively exploited. The detection list and the address list are in this advisory.
 - [XCP-ng forum notice][forum] — the flaw was under embargo. Appliance targets are 6.10.1 (latest) and 6.9.2 (stable). Revoke sessions and rotate secrets if the console was exposed.
 - [Pull request 10748](https://github.com/vatesfr/xen-orchestra/pull/10748) — the fix for a source install.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.10. No CVE is assigned, so there is no listing.
+- [GHSA-2r3w-c2vx-fv5g](https://github.com/vatesfr/xen-orchestra/security/advisories/GHSA-2r3w-c2vx-fv5g) — published 2026-11-20. CVSS 3.1 9.8 Critical. Affected `xo-server` 5.213.0, patched in 5.213.1 and 5.211.2.
+- [CVE-2026-133469](https://www.cve.org/CVERecord?id=CVE-2026-133469) — GitHub CNA, published 2026-11-23T17:07:16.240Z. CVSS 3.1 9.8. Xen Orchestra before 6.9.2 and 6.10.0 before 6.10.1. Says actively exploited.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.24, released 2026-11-24T17:47:46.199Z, checked 2026-11-24. CVE-2026-133469 is not listed.
 
 [vsa]: https://docs.vates.tech/security-advisories/advisories/2026/vates-sa-2026-062/
 [forum]: https://xcp-ng.org/forum/topic/12571/security-vsa-2026-062-critical-xen-orchestra-vulnerability-fixed-please-update

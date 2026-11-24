@@ -1,10 +1,10 @@
 # Drupal core: Field UI remote code execution
 
-**Last updated:** 2026-11-23 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main Drupal summary](../black-october-2026.md#drupal-core-field-ui-remote-code-execution) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-**SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): the Drupal Security Team (the vendor and CNA) rates it Critical, 19/25 (`AC:Basic/A:None/CI:All/II:All/E:Theoretical/TD:Default`).** The CNA record still has no CVSS score, and NVD has not scored it. CISA-ADP scored it CVSS 3.1 8.1 High on 2026-11-06, vector `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`, with Exploitation none. That is lower than Drupal's Critical, and the ADP score is not Drupal's. **Not listed in CISA KEV (catalog 2026.11.06, checked 2026-11-09).** A related contributed-module advisory, **SA-CONTRIB-2026-218 (Entity List, [CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099))**, is also rated Critical 19/25 by Drupal, was published the same day, and likewise has no CNA CVSS score. CISA-ADP scored that one 8.1 High on the same day. [SA-CORE-2026-014][sa-core] [SA-CONTRIB-2026-218][sa-el] [CVE-2026-108097][cve] [KEV][kev]
+**SA-CORE-2026-014 / [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097): the Drupal Security Team (the vendor and CNA) rates it Critical, 19/25 (`AC:Basic/A:None/CI:All/II:All/E:Theoretical/TD:Default`).** The CNA record still has no CVSS score, and NVD has not scored it. CISA-ADP scored it CVSS 3.1 8.1 High on 2026-11-06, vector `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H`, with Exploitation none. That is lower than Drupal's Critical, and the ADP score is not Drupal's. **CVE-2026-108097 is not in CISA KEV.** A related contributed-module advisory, **SA-CONTRIB-2026-218 (Entity List, [CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099))**, is also rated Critical 19/25 by Drupal, was published the same day, and likewise has no CNA CVSS score. CISA-ADP scored that one 8.1 High on the same day. [SA-CORE-2026-014][sa-core] [SA-CONTRIB-2026-218][sa-el] [CVE-2026-108097][cve] [KEV][kev]
 
 **What it is:** A remote code execution flaw in the core **Field UI** module (`field_ui`). Drupal says:
 
@@ -25,12 +25,12 @@ The advisory does not name the contributed modules. [SA-CORE-2026-014][sa-core]
 | Drupal core 10.6.x | 8.9.0 up to but not including 10.6.19 | **10.6.19** | 10.5.x and older, Drupal 8 and Drupal 9 are end-of-life: **no fix** |
 | Drupal core 12 pre-release | 12.0.0-alpha1 up to but not including 12.0.0-beta2 | **12.0.0-beta2** | Pre-release |
 
-**A second flaw shipped on November 18 and is not this one.** [SA-CORE-2026-017](https://www.drupal.org/sa-core-2026-017) / [CVE-2026-132165](https://www.cve.org/CVERecord?id=CVE-2026-132165): Drupal now rates it **Highly critical, 20/25** (`AC:Complex/A:None/CI:All/II:All/E:Exploit/TD:Uncommon`). The advisory's update says the Security Team received a report that it was exploited on live sites as early as **2026-11-19 19:00 UTC**. The earlier text was Critical, 18/25, with `E:Proof`. The CVE record is still reserved, so there is no CNA CVSS score. Under specific conditions the installer can be used to reinstall Drupal, and Drupal says that can take over the site or run code. A web server that cannot write `settings.php` blocks some of the paths and not all of them. Affected is before **10.6.22**, 11.0.0 before **11.3.22**, and 11.4.0 before **11.4.13**. The October Field UI floors do not include this fix. Until the upgrade, [secure the installer](https://www.drupal.org/docs/administering-a-drupal-site/security-in-drupal/securing-the-installer-installphp). Drupal Steward covers some known paths and not all of them. The upgrade does not undo a reinstall that already happened.
+**A second flaw shipped on November 18 and is not this one.** [SA-CORE-2026-017](https://www.drupal.org/sa-core-2026-017) / [CVE-2026-132165](https://www.cve.org/CVERecord?id=CVE-2026-132165): Drupal now rates it **Highly critical, 20/25** (`AC:Complex/A:None/CI:All/II:All/E:Exploit/TD:Uncommon`). The advisory's update says the Security Team received a report that it was exploited on live sites as early as **2026-11-19 19:00 UTC**. The earlier text was Critical, 18/25, with `E:Proof`. The CVE record is still reserved, so there is no CNA CVSS score. Under specific conditions the installer can be used to reinstall Drupal, and Drupal says that can take over the site or run code. **CISA added CVE-2026-132165 on 2026-11-24, federal due date 2026-11-27.** Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.24, released 2026-11-24T17:47:46.199Z. The listing is not a new fix: the floors are still 11.4.13, 11.3.22, and 10.6.22. A web server that cannot write `settings.php` blocks some of the paths and not all of them. Affected is before **10.6.22**, 11.0.0 before **11.3.22**, and 11.4.0 before **11.4.13**. The October Field UI floors do not include this fix. Until the upgrade, [secure the installer](https://www.drupal.org/docs/administering-a-drupal-site/security-in-drupal/securing-the-installer-installphp). Drupal Steward covers some known paths and not all of them. The upgrade does not undo a reinstall that already happened.
 | Entity List (`entity_list`) | below 3.0.10 | **3.0.10** | SA-CONTRIB-2026-218 |
 
 The affected range is the advisory's: `>= 8.9.0 < 10.6.19 || >= 11.0.0 < 11.3.19 || >= 11.4.0 < 11.4.10 || >= 12.0.0-alpha1 < 12.0.0-beta2`. [SA-CORE-2026-014][sa-core]
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-09) for CVE-2026-108097 or CVE-2026-108099. CISA-ADP's Exploitation field is none on both. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-132165](https://www.cve.org/CVERecord?id=CVE-2026-132165) added 2026-11-24, federal due date 2026-11-27. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.24, released 2026-11-24T17:47:46.199Z. [CVE-2026-108097](https://www.cve.org/CVERecord?id=CVE-2026-108097) and [CVE-2026-108099](https://www.cve.org/CVERecord?id=CVE-2026-108099), the October Field UI flaws, are not listed. CISA-ADP's Exploitation field is none on both of those. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -58,7 +58,8 @@ The affected range is the advisory's: `>= 8.9.0 < 10.6.19 || >= 11.0.0 < 11.3.19
 | Follow-up bug-fix releases 11.4.11, 11.3.20 and 10.6.20 | 2026-10-21 | Not security releases. Being on these versions also includes the fix. [Release history][rh-core] |
 | CVE records published | 2026-10-30 03:09:50 UTC (CVE-2026-108099) and 03:09:55 UTC (CVE-2026-108097) | Drupal CNA. Neither record includes a CVSS score. Affected bounds match the advisories. [CVE-2026-108097][cve] [CVE-2026-108099][cve099] |
 | CISA-ADP score | 2026-11-06 | CVSS 3.1 8.1 High on both records. Exploitation none. Drupal's 19/25 Critical is unchanged. |
-| CISA KEV | Not listed | Catalog 2026.11.06 checked on 2026-11-09. [KEV][kev] |
+| CISA KEV, October flaws | Not listed | Catalog 2026.11.24 checked on 2026-11-24. CVE-2026-108097 and CVE-2026-108099 are not listed. [KEV][kev] |
+| **CISA KEV, installer flaw** | **2026-11-24; catalog released 17:47:46 UTC** | CVE-2026-132165 added. Federal due date 2026-11-27. Ransomware use Unknown. Forensic triage required. |
 | **Last updated** | **2026-11-09 (America/New_York)** | The ADP score is recorded. The versions to install are unchanged. |
 | Exploitation evidence | Lab reconstruction published 2026-10-18; no in-the-wild exploitation reported | Fortbridge rebuilt the chain on 11.4.9 with a synthetic writer module and says it fails on 11.4.10. Drupal's E field remains "Theoretical". [Fortbridge][fortbridge] |
 
@@ -125,7 +126,7 @@ vendor/bin/drush sql:query "SELECT name, created, access FROM users_field_data O
 - [PSA-2026-10-12][psa]: release window and pre-announcement rating.
 - Drupal release-history feeds for [core][rh-core] and [Entity List][rh-el], and Drupal.org RSS for [core][core-rss], [contrib][contrib-rss] and [PSA][psa-rss] advisories: release and publication timestamps.
 - [CVE-2026-108097][cve] and [CVE-2026-108099][cve099]: Drupal CNA records, published 2026-10-30, no CNA CVSS score. CISA-ADP scored both CVSS 3.1 8.1 High on 2026-11-06, Exploitation none. NVD has not added its own score.
-- [CISA KEV feed][kev] (no entry).
+- [CISA KEV feed][kev] — catalog 2026.11.24, released 2026-11-24T17:47:46.199Z, checked 2026-11-24. CVE-2026-132165 added 2026-11-24, due 2026-11-27. CVE-2026-108097 and CVE-2026-108099 are not listed.
 - Secondary: [BleepingComputer][bc].
 
 [sa-core]: https://www.drupal.org/sa-core-2026-014
