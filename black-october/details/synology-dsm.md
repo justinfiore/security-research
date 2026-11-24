@@ -1,6 +1,6 @@
 # Synology DSM: unauthenticated file read and write
 
-**Last updated:** 2026-11-18 (America/New_York)
+**Last updated:** 2026-11-23 (America/New_York)
 
 [Main summary](../black-october-2026.md#synology-dsm-unauthenticated-file-read-and-write) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@
 
 CVE-2026-13639 is insufficient entropy in DSM login logic. CVE-2026-13684 is improper output encoding in DSM's SCGI component. Synology says either one lets a remote unauthenticated attacker read or write arbitrary files and cause a denial of service. Versions of DSM before 7.2.1 are marked unknown in the CNA records, not confirmed unaffected. Synology lists no workaround.
 
-**CISA KEV:** Listed — [CVE-2024-10441](https://www.cve.org/CVERecord?id=CVE-2024-10441) added 2026-11-18, federal due date 2026-11-21. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z. [CVE-2026-13639](https://www.cve.org/CVERecord?id=CVE-2026-13639), [CVE-2026-13684](https://www.cve.org/CVERecord?id=CVE-2026-13684), and the other SA-26:13 CVEs are not listed. CISA's ADP assessment of 2026-09-18 records Exploitation "none" for both of those. 360 later reported ransomware cases that it attributes to them. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2024-10441](https://www.cve.org/CVERecord?id=CVE-2024-10441) added 2026-11-18, federal due date 2026-11-21. Ransomware use Known (catalog 2026.11.23, released 2026-11-23T19:43:55.7979Z; the November 18 catalog said Unknown). Forensic triage is required. [CVE-2026-13639](https://www.cve.org/CVERecord?id=CVE-2026-13639), [CVE-2026-13684](https://www.cve.org/CVERecord?id=CVE-2026-13684), and the other SA-26:13 CVEs are not listed. CISA's ADP assessment of 2026-09-18 records Exploitation "none" for both of those. 360 later reported ransomware cases that it attributes to them. The feed does not say which ransomware, and it does not move that report onto CVE-2024-10441. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -28,6 +28,7 @@ CVE-2026-13639 is insufficient entropy in DSM login logic. CVE-2026-13684 is imp
 | 360 ransomware warning | 2026-10-29; time/TZ unknown | 360 says C3RB3R, which it calls a Cerber variant, encrypted Synology NAS devices through CVE-2026-13639 and CVE-2026-13684, and that the cases began in October 2026. [360][q360] |
 | Synology press statement | 2026-10-29; time/TZ unknown | Synology says attackers are exploiting a vulnerability patched in December 2024 (it points to [Synology-SA-24:20][sa2420], whose Critical issue is CVE-2024-10441) against outdated DSM. It does not name CVE-2026-13639 or CVE-2026-13684. [Press release][press] |
 | **CISA KEV** | **2026-11-18; time/TZ unknown** | CVE-2024-10441 added. Federal due date 2026-11-21. Forensic triage required. The September CVEs are not listed. [KEV][kev] |
+| Ransomware use Known | 2026-11-23; time/TZ unknown | Catalog 2026.11.23, released 2026-11-23T19:43:55.7979Z. The November 18 entry said Unknown. The feed names no ransomware family. |
 
 ## Detection
 
@@ -67,7 +68,7 @@ If files are encrypted, or if a device below either fixed floor was reachable fr
 - [CVE-2026-13639][cve13639] and [CVE-2026-13684][cve13684] — Synology CNA records and CISA ADP exploitation status.
 - [360 warning (2026-10-29)][q360] — C3RB3R cases attributed to the two September CVEs.
 - [Synology press release (2026-10-29)][press] and [Synology-SA-24:20][sa2420] — Synology's attribution to the December 2024 vulnerability and its fixed builds.
-- [CISA KEV JSON feed][kev] — catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z. CVE-2024-10441 added 2026-11-18, due 2026-11-21. Ransomware use Unknown. Forensic triage Yes. CVE-2026-13639 and CVE-2026-13684 are not listed.
+- [CISA KEV JSON feed][kev] — catalog 2026.11.23, released 2026-11-23T19:43:55.7979Z, checked 2026-11-23. CVE-2024-10441 added 2026-11-18, due 2026-11-21. Ransomware use Known. The November 18 catalog said Unknown. Forensic triage Yes. CVE-2026-13639 and CVE-2026-13684 are not listed.
 
 [sa2613]: https://www.synology.com/en-global/security/advisory/Synology_SA_26_13
 [sa2420]: https://www.synology.com/en-global/security/advisory/Synology_SA_24_20

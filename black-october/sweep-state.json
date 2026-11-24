@@ -45,7 +45,7 @@
       "hold": "none"
     },
     "apache-camel-saxon.md": {
-      "last_checked": "2026-11-16T23:55:58Z",
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "none"
     },
     "apache-http-server.md": {
@@ -66,6 +66,10 @@
     },
     "apache-shiro.md": {
       "last_checked": "2026-11-23T19:56:05Z",
+      "hold": "none"
+    },
+    "apache-solr.md": {
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "none"
     },
     "apache-thrift.md": {
@@ -244,6 +248,10 @@
       "last_checked": "2026-11-23T15:56:15Z",
       "hold": "none"
     },
+    "cribl-stream.md": {
+      "last_checked": "2026-11-23T23:55:59Z",
+      "hold": "none"
+    },
     "cryptopayment-gateway.md": {
       "last_checked": "2026-11-23T15:56:15Z",
       "hold": "awaiting-fix"
@@ -348,8 +356,12 @@
       "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
+    "ev-reach.md": {
+      "last_checked": "2026-11-23T23:55:59Z",
+      "hold": "none"
+    },
     "f5-bigip-nov18.md": {
-      "last_checked": "2026-11-22T23:56:36Z",
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "none"
     },
     "fastify-http-proxy.md": {
@@ -453,8 +465,8 @@
       "hold": "none"
     },
     "grafana-mimir.md": {
-      "last_checked": "2026-11-22T23:56:36Z",
-      "hold": "none"
+      "last_checked": "2026-11-23T23:55:59Z",
+      "hold": "awaiting-fix"
     },
     "gravity-forms.md": {
       "last_checked": "2026-11-19T15:56:19Z",
@@ -478,6 +490,10 @@
     },
     "idunno-anticsrf.md": {
       "last_checked": "2026-11-23T15:56:15Z",
+      "hold": "awaiting-fix"
+    },
+    "ifm-cameras.md": {
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "awaiting-fix"
     },
     "imagemagick.md": {
@@ -581,7 +597,7 @@
       "hold": "none"
     },
     "linux-kvm-nested-init.md": {
-      "last_checked": "2026-11-22T23:56:36Z",
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "awaiting-distros"
     },
     "linux-noisytcp.md": {
@@ -605,7 +621,7 @@
       "hold": "none"
     },
     "litellm-guardrail.md": {
-      "last_checked": "2026-11-22T23:56:36Z",
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "none"
     },
     "litellm.md": {
@@ -861,7 +877,11 @@
       "hold": "awaiting-fix"
     },
     "redcap.md": {
-      "last_checked": "2026-11-22T23:56:36Z",
+      "last_checked": "2026-11-23T23:55:59Z",
+      "hold": "none"
+    },
+    "routinator.md": {
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "none"
     },
     "ruby-httpx.md": {
@@ -976,12 +996,16 @@
       "last_checked": "2026-11-22T15:56:16Z",
       "hold": "none"
     },
+    "synchronet.md": {
+      "last_checked": "2026-11-23T23:55:59Z",
+      "hold": "awaiting-fix"
+    },
     "synology-dsm-nov11.md": {
       "last_checked": "2026-11-23T19:56:05Z",
       "hold": "awaiting-fix"
     },
     "synology-dsm.md": {
-      "last_checked": "2026-11-22T23:56:36Z",
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "none"
     },
     "tabularis.md": {
@@ -1001,7 +1025,7 @@
       "hold": "none"
     },
     "tegsoft.md": {
-      "last_checked": "2026-11-22T23:56:36Z",
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "none"
     },
     "telegram-clients.md": {
@@ -1037,7 +1061,7 @@
       "hold": "none"
     },
     "usmp.md": {
-      "last_checked": "2026-11-22T23:56:36Z",
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "none"
     },
     "vcenter.md": {
@@ -1059,6 +1083,10 @@
     "voapi.md": {
       "last_checked": "2026-11-23T15:56:15Z",
       "hold": "awaiting-fix"
+    },
+    "wago-wbm.md": {
+      "last_checked": "2026-11-23T23:55:59Z",
+      "hold": "none"
     },
     "wasmtime.md": {
       "last_checked": "2026-11-23T15:56:15Z",
@@ -1148,6 +1176,10 @@
       "last_checked": "2026-11-23T11:56:15Z",
       "hold": "awaiting-fix"
     },
+    "wordpress-wp-connect.md": {
+      "last_checked": "2026-11-23T23:55:59Z",
+      "hold": "awaiting-fix"
+    },
     "wpsplinter.md": {
       "last_checked": "2026-11-23T15:56:15Z",
       "hold": "awaiting-fix"
@@ -1174,6 +1206,10 @@
     },
     "zenoh-pico.md": {
       "last_checked": "2026-11-23T15:56:15Z",
+      "hold": "none"
+    },
+    "zonealarm.md": {
+      "last_checked": "2026-11-23T23:55:59Z",
       "hold": "none"
     },
     "zoom-workplace.md": {

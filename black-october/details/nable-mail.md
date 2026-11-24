@@ -8,7 +8,7 @@ Mail Assure and SpamExperts Hosted Cloud filter email for N-able's customers. On
 
 **N-able rates [CVE-2026-134624](https://www.cve.org/CVERecord?id=CVE-2026-134624) CVSS 4.0 9.3 Critical.** N-able is the CNA. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:N/SC:H/SI:H/SA:N`. MailAssure (SpamExperts) before **20261121.1943** does not restrict where the LDAP synchronisation connection check connects when a relay is configured. An API user with high privileges can point the server at any internal host and port, see which answer, and send data to them. The record does not say this runs code. N-able's November 22 update says it remediated the vulnerability, restored the dashboard and API as of November 21 at 23:45 UTC, and has found no exploitation beyond the one hosted server from the original investigation. It does not say the flaw was how that server was reached. A root-cause analysis is due within two weeks of that update. The status page, incident 202672, still says that at 03:05 UTC on November 18 it did not have evidence that customer data was compromised, including tenants' mailboxes, and that this is unrelated to the [N-central](../black-october-2026.md#n-central-critical-vulnerabilities-hotfix-20264126) incident. The incident statements describe Hosted Cloud. SpamExperts Local Cloud runs on the customer's hardware, and those operators should confirm the server is on **20261121.1943**.
 
-**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-134624](https://www.cve.org/CVERecord?id=CVE-2026-134624) added 2026-11-23, federal due date 2026-11-26. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.23, released 2026-11-23T19:43:55.7979Z. CISA's listing is the known-exploitation evidence. N-able still says it has found no exploitation beyond the one hosted server, and it does not say the flaw was how that server was reached. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -32,6 +32,7 @@ Mail Assure and SpamExperts Hosted Cloud filter email for N-able's customers. On
 | Status | 2026-11-21 17:15:45 UTC | Restoration work continuing. Portal and API still disabled. |
 | **Dashboard restored** | **2026-11-21 23:44:43 UTC** | N-able says the dashboard and API are back, in phases, under monitoring. The page header still says they are offline. [Status][status] |
 | **CVE published** | **2026-11-22; time/TZ unknown** | CVE-2026-134624, CVSS 4.0 9.3. Fixed before 20261121.1943. N-able does not say it was the way in. [CVE](https://www.cve.org/CVERecord?id=CVE-2026-134624) |
+| **CISA KEV** | **2026-11-23; time/TZ unknown** | Added. Federal due date 2026-11-26. Ransomware use Unknown. Forensic triage required. [KEV][kev] |
 
 ## Detection
 
@@ -60,7 +61,7 @@ N-able's statement from 03:05 UTC on November 18 is that it had no evidence then
 - [N-able status, incident 202672][status] — read 2026-11-22. Unauthorized access to one server, disclosed 2026-11-18 03:05:09 UTC. At 2026-11-21 23:44:43 UTC N-able said the dashboard and API are restored and under monitoring. The page header still says they are offline.
 - [CVE-2026-134624](https://www.cve.org/CVERecord?id=CVE-2026-134624) — N-able, published 2026-11-22. CVSS 4.0 9.3. MailAssure before 20261121.1943. An authenticated API user points the LDAP connection check at any internal host.
 - [Mail Assure incident update](https://www.n-able.com/blog/mail-assure-incident-update) — November 22, 2026, 2:30 pm EST. Vulnerability remediated. No exploitation found beyond the one hosted server. Root-cause analysis due within two weeks. N-able does not say the flaw was the way in.
-- [CISA KEV JSON][kev] — catalog 2026.11.23, checked 2026-11-23. CVE-2026-134624 is not listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.23, released 2026-11-23T19:43:55.7979Z, checked 2026-11-23. CVE-2026-134624 added 2026-11-23, due 2026-11-26. Ransomware use Unknown. Forensic triage Yes.
 
 [status]: https://uptime.n-able.com/event/202672
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

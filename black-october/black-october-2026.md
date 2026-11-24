@@ -15,6 +15,11 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Cribl Stream: a collector response runs code](#cribl-stream-a-collector-response-runs-code)
+- [EV Reach: a low-privileged user runs commands as SYSTEM](#ev-reach-a-low-privileged-user-runs-commands-as-system)
+- [ifm cameras: a request with no login installs firmware](#ifm-cameras-a-request-with-no-login-installs-firmware)
+- [WAGO: a low-privileged login runs commands as root](#wago-a-low-privileged-login-runs-commands-as-root)
+- [Synchronet: a long terminal name blocks the board](#synchronet-a-long-terminal-name-blocks-the-board)
 - [WordPress: six WP connect plugins shipped a backdoor](#wordpress-six-wp-connect-plugins-shipped-a-backdoor)
 - [Routinator: an rsync server can crash the validator](#routinator-an-rsync-server-can-crash-the-validator)
 - [ZoneAlarm: a local user becomes SYSTEM](#zonealarm-a-local-user-becomes-system)
@@ -357,13 +362,13 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Remove the [User Registration Aide](#wordpress-user-registration-aide-changes-a-password-before-login) plugin. WPScan published [CVE-2026-121385](https://www.cve.org/CVERecord?id=CVE-2026-121385) on November 20 with no score. CISA's enrichment scores it CVSS 3.1 9.8: through 1.5.3.8, anyone who knows a username and an email address sets that account's password. There is no fix. It is not in KEV.
 - **New this update:** Upgrade [Spring Security](#spring-an-expression-matcher-runs-code) to **7.1.3 or 7.0.9** and restart. Spring rates [CVE-2026-59273](https://www.cve.org/CVERecord?id=CVE-2026-59273) Critical: an application that binds external input to a `RequestMatcher` property runs that input as code. The advisory's vector is CVSS 3.1 9.8. The same day's batch has a second Critical, [CVE-2026-59367](https://www.cve.org/CVERecord?id=CVE-2026-59367), a test LDAP server that listens on every interface with a fixed password, fixed in Spring LDAP **4.1.3 or 4.0.7**. Ten more are High, including a Spring Data Elasticsearch query that evaluates its argument, fixed in **6.1.3 or 6.0.9**. Older lines are Enterprise Support only. None is in KEV.
 - **New this update:** On SUSE Linux Enterprise Server 15 SP7, install the [Java4Shell](#openjdk-java4shell---a-base64-string-corrupts-memory) packages and restart: `java-17-openjdk` **17.0.21.1-150400.3.79.1**, `java-21-openjdk` **21.0.13.1-150600.3.40.1**, and `java-25-openjdk` **25.0.5.1-150700.15.23.1** (SUSE-SU-2026:5393-1, 5394-1, and 5385-1, November 20). SLES 16.0 is still In progress and SLES 16.1 has none. Debian forky, and Rocky Linux 9 and 10, still have none.
-- **New this update:** Upgrade [MONAI Label](#monai-label-an-upload-writes-any-file) to **0.8.6 or later** and restart. MITRE rates [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) CVSS 3.1 9.8 Critical: an upload writes any file the process can reach, and the record says it was exploited from September 2026. 0.8.6, published November 22, is the first release with the fix. It also fixes a second path traversal, in session upload, that has no CVE. The advisory still says there is no patched version. It is not in KEV.
-- **New this update:** On an AMD [KVM host](#linux-kernel-a-nested-amd-guest-reads-the-host) with nested virtualization left on, install a kernel that contains commit `c7c288d178cb` and reboot. kernel.org rates [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312) CVSS 3.1 8.8 High: a guest that runs a virtual machine of its own can read and write host memory. Terra read about 127 GB on a DigitalOcean host. The upstream floors are **7.3.5**, **6.18.64**, and **6.12.118**. Debian sid is fixed, and Debian trixie security is now **6.12.118-1**. Bookworm, forky, and Ubuntu have no package. Red Hat now rates it 7.8 and has none for RHEL 9 or 10. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected. Oracle's UEK packages are ELSA-2026-500643 and ELSA-2026-500644. An Intel host is outside it. Until the reboot, set `kvm_amd`'s `nested` parameter to `0`. It is not in KEV.
+- **New this update:** Upgrade [MONAI Label](#monai-label-an-upload-writes-any-file) to **0.8.6 or later** and restart. MITRE rates [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) CVSS 3.1 9.8 Critical: an upload writes any file the process can reach, and the record says it was exploited from September 2026. 0.8.6, published November 22, is the first release with the fix. It also fixes a second path traversal, in session upload, that has no CVE. The advisory still says there is no patched version. CISA added it on November 23, due November 26.
+- **New this update:** On an AMD [KVM host](#linux-kernel-a-nested-amd-guest-reads-the-host) with nested virtualization left on, install a kernel that contains commit `c7c288d178cb` and reboot. kernel.org rates [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312) CVSS 3.1 8.8 High: a guest that runs a virtual machine of its own can read and write host memory. Terra read about 127 GB on a DigitalOcean host. The upstream floors are **7.3.5**, **6.18.64**, and **6.12.118**. Debian sid and forky are fixed at **7.3.5-1**, and Debian trixie security is **6.12.118-1**. Bookworm and Ubuntu have no package. Upstream added **5.15.226**, **6.1.193**, and **6.6.163** on November 23. Red Hat now rates it 7.8 and has none for RHEL 9 or 10. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected. Oracle's UEK packages are ELSA-2026-500643 and ELSA-2026-500644. An Intel host is outside it. Until the reboot, set `kvm_amd`'s `nested` parameter to `0`. It is not in KEV.
 - **New this update:** On a [Moxa Ethernet switch](#moxa-ethernet-switches-one-shared-key-and-firmware-is-not-signed) in the series MPSA-268140 lists, regenerate the SSL certificate and the SSH key, and keep management off the internet. Moxa rates [CVE-2026-130493](https://www.cve.org/CVERecord?id=CVE-2026-130493) CVSS 4.0 7.7 High: every affected switch ships the same RSA-1024 key, and the firmware that holds it is public. [CVE-2026-130494](https://www.cve.org/CVERecord?id=CVE-2026-130494) is 8.6: an administrator can install firmware the switch does not check a signature on. There is no firmware fix. Neither is in KEV.
 - **New this update:** On a clustered [Apache Tomcat](#apache-tomcat-a-cluster-node-joins-without-being-checked) secured with TLS-PSK, switch the cluster channel to **TLS 1.2** and restart. Apache rates [CVE-2026-133325](https://www.cve.org/CVERecord?id=CVE-2026-133325) Critical: on TLS 1.3 the cluster does not check who the other node is, so a node with no credential can join. The affected builds are **11.0.28 to 11.0.29**, **10.1.62**, and **9.0.124**. The fixes, **11.0.30**, **10.1.63**, and **9.0.125**, are not released yet. A cluster that is not using TLS-PSK is outside the condition Apache names. It is not in KEV.
 - **New this update (CISA KEV):** Upgrade a clustered [Cisco Expressway](#cisco-expressway-a-cluster-cookie-runs-commands-as-root) to **X15.5.20 or later**. Cisco rates [CVE-2026-76466](https://www.cve.org/CVERecord?id=CVE-2026-76466) CVSS 3.1 9.8 Critical: the cluster database service accepts a persistent cookie and runs commands as root. CISA added it on November 20, due November 23, and requires forensic triage. X14 and earlier have to move to a fixed release. A device that is not in a cluster is outside the condition Cisco names. F6 says a company in Russia was attacked on X15.5.3 after a proof of concept was published. Cisco's October 21 advisory still says it knows of no malicious use. If the upgrade has to wait, block TCP 4371 and 4372 except from the cluster nodes you trust.
 - **New this update:** On Debian, install [pam-mysql](#pam-mysql-a-passwordless-account-accepts-any-password) **0.8.2-2.1+deb13u1** (trixie) or **0.8.2-2+deb12u1** (bookworm) and restart `sshd`. The researcher rates [CVE-2026-124749](https://www.cve.org/CVERecord?id=CVE-2026-124749) CVSS 3.1 9.8: a stock SSH server lets anyone in as an account whose stored password is SQL NULL. The CVE record is still reserved. Do not set `PermitEmptyPasswords yes`. Ubuntu's page, dated November 20, marks every release Needs evaluation and names no package. The 1.0 betas have none either. It is not in KEV.
-- **New this update:** [Mail Assure and SpamExperts](#n-able-someone-reached-a-server-behind-mail-assure-and-spamexperts) now have a CVE. N-able rates [CVE-2026-134624](https://www.cve.org/CVERecord?id=CVE-2026-134624) CVSS 4.0 9.3: an API user points the LDAP connection check at any internal host. Builds before 20261121.1943 are affected. N-able says Hosted Cloud is remediated and that it has not found exploitation beyond the one server reached on November 18. It does not say the flaw was the way in. Reconnect integrations, because the API tokens were revoked. A Local Cloud server has to be on 20261121.1943. It is not in KEV.
+- **New this update:** [Mail Assure and SpamExperts](#n-able-someone-reached-a-server-behind-mail-assure-and-spamexperts) now have a CVE. N-able rates [CVE-2026-134624](https://www.cve.org/CVERecord?id=CVE-2026-134624) CVSS 4.0 9.3: an API user points the LDAP connection check at any internal host. Builds before 20261121.1943 are affected. N-able says Hosted Cloud is remediated and that it has not found exploitation beyond the one server reached on November 18. It does not say the flaw was the way in. Reconnect integrations, because the API tokens were revoked. A Local Cloud server has to be on 20261121.1943. CISA added it on November 23, due November 26.
 - **New this update:** Upgrade [WatchGuard Dimension](#watchguard-dimension-a-log-request-runs-code-before-login) to **2.3.2 or later**. WatchGuard rates [CVE-2026-86130](https://www.cve.org/CVERecord?id=CVE-2026-86130) CVSS 4.0 9.3 Critical: the log collection service runs code with no login. Two more, both 9.3, need an administrator login and expose a Super Administrator session. Dimension 2.0 before 2.3.2 is affected. This is not the AuthPoint gateway. None is in KEV.
 - **New this update:** Install [IBM Guardium Data Protection 12.2.4](#ibm-guardium-a-request-runs-code-before-login). IBM rates [CVE-2026-84236](https://www.cve.org/CVERecord?id=CVE-2026-84236) and [CVE-2026-87977](https://www.cve.org/CVERecord?id=CVE-2026-87977) CVSS 3.1 9.8: a request with no login runs code in the SharePoint Tap, and another reads the database. 12.2 is the line. There is no workaround. None is in KEV.
 - **New this update:** Upgrade [Splunk Enterprise](#splunk-an-empty-secret-runs-a-search-before-login) to **10.6.1, 10.4.5, 10.2.9, 10.0.12, or 9.4.17**. Splunk rates [CVE-2026-76536](https://www.cve.org/CVERecord?id=CVE-2026-76536) CVSS 3.1 9.4: an empty clustering secret lets a request with no login change the configuration. A second, 9.1, runs searches. SOAR goes to **8.8.0** and Enterprise Security to **8.7.0**. None is in KEV.
@@ -587,6 +592,113 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Cribl Stream: a collector response runs code
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/cribl-stream.md):** [Detection](details/cribl-stream.md#detection) · [Remediation](details/cribl-stream.md#remediation) · [Verification](details/cribl-stream.md#verification) · [Timeline](details/cribl-stream.md#timeline)
+
+**CVEs:** [CVE-2026-115899](https://www.cve.org/CVERecord?id=CVE-2026-115899), [CVE-2026-115873](https://www.cve.org/CVERecord?id=CVE-2026-115873), [CVE-2026-115900](https://www.cve.org/CVERecord?id=CVE-2026-115900), [CVE-2026-115901](https://www.cve.org/CVERecord?id=CVE-2026-115901), [CVE-2026-115903](https://www.cve.org/CVERecord?id=CVE-2026-115903)
+
+**Cribl rates [CVE-2026-115899](https://www.cve.org/CVERecord?id=CVE-2026-115899) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8 Critical.** The vectors are `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N` and `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Someone who controls the pagination data an existing REST Collector reads can run code as the Worker service account. The Collector has to use response-based pagination and process that data during a job. **[CVE-2026-115873](https://www.cve.org/CVERecord?id=CVE-2026-115873) is CVSS 3.1 9.9 Critical and CVSS 4.0 8.7 High.** The vectors are `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H` and `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. A user with Read Only access to one Worker Group who can reach the Leader API runs code as the Leader service account. Both scores stay. Three more are High on CVSS 4.0: 8.7 for a Worker heartbeat that bypasses Leader login, 8.5 for a sign-in link that takes an existing session, and 7.1 for Cribl Edge file search. **Self-hosted Stream and Edge 4.20.4 and earlier** are affected. Cribl says 4.20.4 was Cloud-only and matches 4.20.3 on premises. **4.21**, released 2026-11-18, is the fix. The CVE records were published 2026-11-23. Cribl manages a Cloud Leader. A managed Edge node still has to move to 4.21, and upgrading only the Leader does not fix it. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23) for any of the five. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Cribl 4.21 | 2026-11-18; time/TZ unknown | The release that contains the fixes. |
+| **Public announcement** | **2026-11-23 08:25:07 UTC** | CSAF for all five. CVSS 4.0 9.3 and CVSS 3.1 9.8 on the collector flaw. |
+| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | New item. Upgrade to 4.21. |
+
+**Patch:** Upgrade self-hosted Cribl Stream and Cribl Edge to **4.21 or later**. Upgrade a self-hosted Leader before its Edge nodes. The upgrade does not show whether a job already ran code.
+
+Sources: [Cribl Trust Center](https://trust.cribl.io/notifications), [cribl-2026-0007](https://csaf.cribl.io/2026/cribl-2026-0007.json), [detailed guide](details/cribl-stream.md).
+
+---
+
+## EV Reach: a low-privileged user runs commands as SYSTEM
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ev-reach.md):** [Detection](details/ev-reach.md#detection) · [Remediation](details/ev-reach.md#remediation) · [Verification](details/ev-reach.md#verification) · [Timeline](details/ev-reach.md#timeline)
+
+**CVEs:** [CVE-2026-93585](https://www.cve.org/CVERecord?id=CVE-2026-93585)
+
+**EasyVista rates [CVE-2026-93585](https://www.cve.org/CVERecord?id=CVE-2026-93585) CVSS 3.1 8.8 High and CVSS 4.0 8.7 High.** EasyVista-OTRS is the CNA. The CVE record carries only the CVSS 3.1 score. The vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`. The advisory's CVSS 4.0 vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/RE:M/U:Red`. A user who is already logged in, and who is not an administrator, runs a command on a remote Windows endpoint as `NT AUTHORITY\SYSTEM`. The agent is supposed to run it as that user. EasyVista says that, under specific conditions, it runs as the agent service instead. **Console before 11.0.14.1127**, **Agent before 11.0.16**, and **Server before 11.0.14.1274** are affected. Those builds are the fixes. Until then, EasyVista says to limit TCP port 22000 to management systems you trust. That is the workaround, not the fix. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-23; time/TZ unknown** | EVA-2026-01. CVSS 3.1 8.8 and CVSS 4.0 8.7. |
+| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | New item. Update Console, Agent, and Server. |
+
+**Patch:** Update the Console to **11.0.14.1127 or later**, the Agent to **11.0.16 or later**, and the Server to **11.0.14.1274 or later**. The update does not show whether a command already ran as `SYSTEM`.
+
+Sources: [EVA-2026-01](https://otrs.com/release-notes/easyvista-advisory-2026-01/), [CVE-2026-93585](https://www.cve.org/CVERecord?id=CVE-2026-93585), [detailed guide](details/ev-reach.md).
+
+---
+
+## ifm cameras: a request with no login installs firmware
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ifm-cameras.md):** [Detection](details/ifm-cameras.md#detection) · [Remediation](details/ifm-cameras.md#remediation) · [Verification](details/ifm-cameras.md#verification) · [Timeline](details/ifm-cameras.md#timeline)
+
+**CVEs:** [CVE-2026-121613](https://www.cve.org/CVERecord?id=CVE-2026-121613)
+
+**CERT@VDE rates [CVE-2026-121613](https://www.cve.org/CVERecord?id=CVE-2026-121613) CVSS 3.1 9.8 Critical** in VDE-2026-148. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. An exposed interface on ifm 3D cameras does not check who is calling. A remote attacker who is not logged in can reboot the camera or upload firmware. The advisory lists the firmware per model: **1.90.119** and **1.71.10735** on several O3D models, **1.90.107** on others, **1.20.6381** on O3D361, **2.10.16** on the O3DP models, and **2.0.10412** on O3X120 and O3X130. **The advisory says no remediation is available.** There is no firmware to install. Keeping the management interface off an untrusted network limits who can reach it and does not close the missing check. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-23 10:00; timezone not stated** | VDE-2026-148. CVSS 3.1 9.8. No firmware fix. |
+| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | New item. No firmware to install. |
+
+**Patch:** No patch. Keep the camera's management interface off networks you do not trust. Restricting the network does not restore firmware that was already replaced.
+
+Sources: [VDE-2026-148](https://certvde.com/en/advisories/VDE-2026-148), [CVE-2026-121613](https://www.cve.org/CVERecord?id=CVE-2026-121613), [detailed guide](details/ifm-cameras.md).
+
+---
+
+## WAGO: a low-privileged login runs commands as root
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wago-wbm.md):** [Detection](details/wago-wbm.md#detection) · [Remediation](details/wago-wbm.md#remediation) · [Verification](details/wago-wbm.md#verification) · [Timeline](details/wago-wbm.md#timeline)
+
+**CVEs:** [CVE-2026-80466](https://www.cve.org/CVERecord?id=CVE-2026-80466), [CVE-2026-88850](https://www.cve.org/CVERecord?id=CVE-2026-88850)
+
+**CERT@VDE rates [CVE-2026-80466](https://www.cve.org/CVERecord?id=CVE-2026-80466) CVSS 3.1 8.8 High** in VDE-2026-096. The vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`. A user who can log in to the web management interface, and who is not an administrator, puts a shell command in a routing parameter. A root helper script runs it. **[CVE-2026-88850](https://www.cve.org/CVERecord?id=CVE-2026-88850) is CVSS 3.1 8.1 High.** The same login changes PROFIBUS settings, including the device address. The products are CC100, PFC100 G2, PFC200 G2, Touch Panel 600, Edge Controller, and WP400. **Firmware below 4.10.0 (FW32)** is affected, and custom firmware below **4.10.0 (70)** is affected. **4.10.0 (FW32) or later** is the fix. A custom build comes from WAGO support. The update restarts the controller. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23) for either CVE. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-23 11:00; timezone not stated** | VDE-2026-096. CVSS 3.1 8.8 and 8.1. Fixed in 4.10.0 (FW32). |
+| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | New item. Update to 4.10.0. |
+
+**Patch:** Update to firmware **4.10.0 (FW32) or later**. Until then, allow the web management interface only from the engineering stations that configure the controller. The update does not undo a command that already ran as root.
+
+Sources: [VDE-2026-096](https://certvde.com/en/advisories/VDE-2026-096), [CVE-2026-80466](https://www.cve.org/CVERecord?id=CVE-2026-80466), [detailed guide](details/wago-wbm.md).
+
+---
+
+## Synchronet: a long terminal name blocks the board
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/synchronet.md):** [Detection](details/synchronet.md#detection) · [Remediation](details/synchronet.md#remediation) · [Verification](details/synchronet.md#verification) · [Timeline](details/synchronet.md#timeline)
+
+**CVEs:** [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646)
+
+**INCIBE rates [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646) CVSS 4.0 8.7 High.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N`. There is no CVSS 3 score. The SSH service copies the terminal name into a 41-byte field and does not stop at 41 bytes. A client that is not logged in sends up to 64. INCIBE says the overflow blocks connection threads, and filling the sockets stops new connections until Synchronet is restarted. The record describes a denial of service. It does not say the overflow runs code. **3.20b through 3.21e** is affected, when SSH is on. 3.21e, released 2026-03-17, is the current release, and the record names no fixed version. INCIBE's notice page rejected this run's fetch. Turning SSH off is the workaround, not a fix. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Synchronet 3.21e | 2026-03-17; time/TZ unknown | Current release. Still inside the range. |
+| **Public announcement** | **2026-11-23; time/TZ unknown** | INCIBE. CVSS 4.0 8.7. No fixed version. |
+| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | New item. No fixed release. |
+
+**Patch:** No patch. Turn the SSH service off if the board does not need it, and restart Synchronet to clear a thread that is already stuck. A build above 3.21e that names this flaw was not published on 2026-11-23.
+
+Sources: [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646), [Synchronet news](https://www.synchro.net/), [detailed guide](details/synchronet.md).
 
 ---
 
@@ -1271,7 +1383,7 @@ Sources: [CVE-2026-59273](https://spring.io/security/cve-2026-59273), [Spring ad
 
 **MITRE rates [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) CVSS 3.1 9.8 Critical.** MITRE is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The `image` parameter of `PUT /datastore/image` is used as a path, so an upload writes outside the datastore, through **0.8.5**. The record says this was exploited in the wild starting in September 2026. The project's advisory, published November 18, rates it Critical with no number, and says `PUT /datastore/label` has the same pattern. Authentication is off by default. With it on, the `ANNOTATOR` role is enough. **0.8.6**, published 01:29 UTC on November 22, fixes both. The same notes disclose a second path traversal, in `PUT /session/?uncompress=true`, through 0.8.5 and fixed in the same release. It has no CVE. The advisory's patched-versions line still says **None**. The release is newer.
 
-**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). The CVE record's exploitation statement is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — added 2026-11-23, federal due date 2026-11-26. Ransomware use Unknown. Forensic triage is required. The CVE record's statement that exploitation started in September 2026 is not the KEV date. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1279,7 +1391,8 @@ Sources: [CVE-2026-59273](https://spring.io/security/cve-2026-59273), [Spring ad
 | Project advisory | 2026-11-18; time/TZ unknown | GHSA-qc22-rmgc-vg94. Patched versions: None. |
 | **Public announcement** | **2026-11-20; time/TZ unknown** | MITRE published the CVE record. CVSS 3.1 9.8. |
 | **Release 0.8.6** | **2026-11-22 01:29:24 UTC** | Both path traversals. The session one has no CVE. |
-| **Last updated** | **2026-11-22 07:10 EST (UTC−05:00)** | Upgrade to 0.8.6. |
+| **CISA KEV** | **2026-11-23; time/TZ unknown** | Added. Federal due date 2026-11-26. Forensic triage required. |
+| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | CISA listed it. The fix is still 0.8.6. |
 
 **Patch:** Upgrade to **0.8.6 or later** and restart. The release notes say every deployment should upgrade. The advisory's line that there is no patched version is older than the release. The upgrade does not remove a file the process already wrote.
 
@@ -1300,9 +1413,9 @@ Sources: [GHSA-qc22-rmgc-vg94](https://github.com/Project-MONAI/MONAILabel/secur
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-18 08:42:06 UTC** | CVE record. The stable kernels 7.3.5, 6.18.64, and 6.12.118 shipped November 17. |
-| **Last updated** | **2026-11-22 19:56 EST (UTC−05:00)** | Debian trixie security is now 6.12.118-1. |
+| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | Debian forky is now 7.3.5-1. Upstream added 5.15.226, 6.1.193, and 6.6.163. |
 
-**Patch:** Reboot into a kernel that contains commit `c7c288d178cb`. Upstream, that is **7.3.5**, **6.18.64**, or **6.12.118**. Debian sid is fixed at 7.3.5-1, and Debian trixie security is now **6.12.118-1** (DSA-6652-1). Bookworm and forky have no package, and Ubuntu has none. Red Hat marks RHEL 9 and 10 affected and RHEL 7 and 8 not affected, with no erratum. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected and names no package. On Oracle Linux, the UEK packages are ELSA-2026-500643 and ELSA-2026-500644; the RHEL-compatible kernel has none. Until the reboot, set the `nested` parameter of `kvm_amd` to `0`. A guest operating system cannot carry this fix. DigitalOcean says its own Droplet hosts are already live-patched.
+**Patch:** Reboot into a kernel that contains commit `c7c288d178cb`. Upstream, that is **7.3.5**, **6.18.64**, or **6.12.118**. Debian sid and forky are fixed at **7.3.5-1**, and Debian trixie security is **6.12.118-1** (DSA-6652-1). Bookworm has no package, and Ubuntu has none. Upstream added **5.15.226**, **6.1.193**, and **6.6.163** on November 23. Red Hat marks RHEL 9 and 10 affected and RHEL 7 and 8 not affected, with no erratum. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected and names no package. On Oracle Linux, the UEK packages are ELSA-2026-500643 and ELSA-2026-500644; the RHEL-compatible kernel has none. Until the reboot, set the `nested` parameter of `kvm_amd` to `0`. A guest operating system cannot carry this fix. DigitalOcean says its own Droplet hosts are already live-patched.
 
 Sources: [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312), [Terra](https://www.terra.security/blog/kvm-guest-to-host-escape), [detailed guide](details/linux-kvm-nested-init.md).
 
@@ -1873,7 +1986,7 @@ Sources: [GL.iNet security notice](https://www.gl-inet.com/en-us/blogs/blog/glin
 
 **N-able rates [CVE-2026-134624](https://www.cve.org/CVERecord?id=CVE-2026-134624) CVSS 4.0 9.3 Critical.** N-able is the CNA. MailAssure (SpamExperts) before **20261121.1943** lets an API user with high privileges point the LDAP connection check at any internal host and port. The record does not say this runs code. N-able's status page, incident 202672, says someone had unauthorized access to one server in the Hosted Cloud. N-able said that at 03:05 UTC on November 18, and said it did not then have evidence that customer data was compromised, including access to tenants' mailboxes. N-able's November 22 update says the flaw is remediated and that it has found no exploitation beyond that one server. It does not say the flaw was how the server was reached. Mail still flows and is still filtered. At 23:44:43 UTC on November 21 N-able said the dashboard and the API had been restored, in phases. The page header still says the dashboard, API, and quarantine remain offline. The incident is still Active. N-able says this is unrelated to the [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) incident.
 
-**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — added 2026-11-23, federal due date 2026-11-26. Ransomware use Unknown. Forensic triage is required. N-able still says it has found no exploitation beyond the one hosted server, and it does not say the flaw was how that server was reached. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -1882,7 +1995,8 @@ Sources: [GL.iNet security notice](https://www.gl-inet.com/en-us/blogs/blog/glin
 | Status | 2026-11-20 17:45:37 UTC | Preparing to restore the service. Portal and API stay disabled. |
 | **Dashboard restored** | **2026-11-21 23:44:43 UTC** | N-able says the dashboard and API are back, under monitoring. The page header still says offline. |
 | **CVE published** | **2026-11-22; time/TZ unknown** | CVE-2026-134624, CVSS 4.0 9.3. Fixed in 20261121.1943. N-able does not say it was the way in. |
-| **Last updated** | **2026-11-23 11:30 EST (UTC−05:00)** | The CVE is assigned. Hosted Cloud is patched. Local Cloud has to confirm the build. |
+| **CISA KEV** | **2026-11-23; time/TZ unknown** | Added. Federal due date 2026-11-26. Forensic triage required. |
+| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | CISA listed it. The build is unchanged. |
 
 **Patch:** Hosted Cloud is already on the fixed build, N-able says, so there is nothing for a hosted customer to install. Reconnect integrations: the API tokens were revoked. SpamExperts Local Cloud runs on customer hardware, and that server has to be **20261121.1943 or later**. Read the customer communication, and contact N-able Technical Support if the partner email did not arrive. Quarantine is not named in the restoration update, so do not assume a release works until it does. The fix does not show what the one reached server did.
 
@@ -5440,7 +5554,7 @@ Sources: [Wordfence](https://www.wordfence.com/threat-intel/vulnerabilities/id/e
 
 **Synology (CNA) rates CVE-2026-13639 and CVE-2026-13684 CVSS 3.1 9.8 Critical each.** NVD has no score of its own. Either flaw lets a remote unauthenticated attacker read or write arbitrary files and cause a denial of service. Synology lists no workaround. The High CVEs in the same advisory require an authenticated user.
 
-**CISA KEV:** Listed — [CVE-2024-10441](https://www.cve.org/CVERecord?id=CVE-2024-10441) added 2026-11-18, federal due date 2026-11-21. Forensic triage is required. [CVE-2026-13639](https://www.cve.org/CVERecord?id=CVE-2026-13639) and [CVE-2026-13684](https://www.cve.org/CVERecord?id=CVE-2026-13684) are not listed (catalog 2026.11.18). CISA's September 18 ADP assessment records Exploitation "none" for both of those. 360 later reported ransomware it attributes to them. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — [CVE-2024-10441](https://www.cve.org/CVERecord?id=CVE-2024-10441) added 2026-11-18, federal due date 2026-11-21. Ransomware use Known (catalog 2026.11.23; the November 18 catalog said Unknown). Forensic triage is required. [CVE-2026-13639](https://www.cve.org/CVERecord?id=CVE-2026-13639) and [CVE-2026-13684](https://www.cve.org/CVERecord?id=CVE-2026-13684) are not listed. CISA's September 18 ADP assessment records Exploitation "none" for both of those. 360 later reported ransomware it attributes to them. The feed does not name the ransomware, and it does not move that report onto this CVE. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -5448,7 +5562,8 @@ Sources: [Wordfence](https://www.wordfence.com/threat-intel/vulnerabilities/id/e
 | 360 ransomware report | 2026-10-29; time/TZ unknown | Attributes C3RB3R encryption to the two September CVEs. |
 | Synology statement | 2026-10-29; time/TZ unknown | Attributes attacks on outdated DSM to a vulnerability patched in December 2024 ([SA-24:20](https://www.synology.com/en-global/security/advisory/Synology_SA_24_20), CVE-2024-10441). |
 | **CISA KEV** | **2026-11-18; time/TZ unknown** | CVE-2024-10441 added. Federal due date 2026-11-21. The September CVEs are not listed. |
-| **Last updated** | **2026-11-18 16:10 EST (UTC−05:00)** | CISA listed the 2024 flaw. The September flaws are still not listed. |
+| Ransomware use Known | 2026-11-23; time/TZ unknown | Catalog 2026.11.23. The November 18 entry said Unknown. The feed names no ransomware family. |
+| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | The KEV entry now says ransomware use is Known. The floors are unchanged. |
 
 **Exploitation:** 360 says that since early October 2026 it has handled Synology NAS cases encrypted by C3RB3R, which it calls a Cerber variant, and that the entry was CVE-2026-13639 and CVE-2026-13684. Synology's same-day statement instead says attackers are using a vulnerability patched in December 2024. The two accounts do not name the same CVE. Updating to a current DSM build is the action both support.
 
@@ -8586,6 +8701,11 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Self-hosted Cribl Stream or Cribl Edge 4.20.4 or earlier** | Upgrade to 4.21 or later. Upgrade a self-hosted Leader before its Edge nodes. Cribl rates CVE-2026-115899 9.3: pagination data a REST Collector reads can run code as the Worker. CVE-2026-115873 is 9.9 on CVSS 3.1 and 8.7 on CVSS 4.0. Cribl manages a Cloud Leader. [Guide](details/cribl-stream.md#remediation). |
+| **EV Reach Console, Agent, or Server below the November 23 floors** | Update the Console to 11.0.14.1127, the Agent to 11.0.16, and the Server to 11.0.14.1274. EasyVista rates CVE-2026-93585 8.8: a low-privileged user runs a command as SYSTEM. Until then, limit TCP 22000 to management systems you trust. [Guide](details/ev-reach.md#remediation). |
+| **ifm O3D, O3DP, or O3X camera on a listed firmware** | No firmware fix. Keep the management interface off networks you do not trust. CERT@VDE rates CVE-2026-121613 9.8: a request with no login uploads firmware. [Guide](details/ifm-cameras.md#remediation). |
+| **WAGO CC100, PFC, Touch Panel 600, Edge Controller, or WP400 below 4.10.0** | Update to firmware 4.10.0 (FW32) or later. The update restarts the controller. CERT@VDE rates CVE-2026-80466 8.8: a low-privileged login runs a command as root. A custom firmware comes from WAGO support. [Guide](details/wago-wbm.md#remediation). |
+| **Synchronet BBS 3.20b through 3.21e with SSH on** | No fixed release. Turn SSH off if the board does not need it. INCIBE rates CVE-2026-133646 8.7: a long terminal name blocks new connections until a restart. [Guide](details/synchronet.md#remediation). |
 | **OTRS 2024.3.1, any 2025 release, or 2026 before 2026.8.2** | Upgrade to 2026.8.2 or later. OTRS rates CVE-2026-93584 8.6: a survey request with no login reads ticket data. The advisory does not mention Community Edition. [Guide](details/otrs.md#remediation). |
 | **Weblate before 2026.11** | Upgrade to 2026.11.1 or later. Weblate rates GHSA-6hph-c9x9-4mcv 9.1: a lookalike email receives the password-reset link. 2026.11.1 lists the leftover identities. [Guide](details/weblate.md#remediation). |
 | **WordPress with a WP connect plugin at a backdoored version** | Remove it. The versions are Air WP Sync 2.9.1–2.9.4, WP Sync for Notion 1.7.4, Add-on Brevo for Gravity Forms 2.6.3, Add-On for Contact Form 7 to Airtable 2.5.4, Add-On for Contact Form 7 to Notion 1.6.4, and Orders Sync to Airtable for WooCommerce 1.0.2. Look for `includes/airwp-online.php`. There is no patch. Removing the plugin does not remove a file under `uploads`. [Guide](details/wordpress-wp-connect.md#remediation). |

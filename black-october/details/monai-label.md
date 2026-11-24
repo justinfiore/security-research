@@ -1,6 +1,6 @@
 # MONAI Label: an upload writes any file
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-23 (America/New_York)
 
 [Main MONAI Label summary](../black-october-2026.md#monai-label-an-upload-writes-any-file) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,7 @@ The project's own advisory is narrower and more specific. `LocalDatastore.add_im
 
 **0.8.6**, published 2026-11-22 01:29:24 UTC, is the security release. Its notes say every MONAI Label server should upgrade, name CVE-2026-133968 and GHSA-qc22-rmgc-vg94, and say both upload endpoints are fixed in pull request 1915. The same notes disclose a second path traversal the advisory does not: `PUT /session/?uncompress=true` extracts a tar archive without checking member names, and session IDs are used as paths. It affects every version through 0.8.5, it is fixed in pull request 1942, and the notes assign it no CVE. Authentication off means both were reachable by any client that can connect.
 
-**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-22). The CVE record says exploitation started in September 2026. That is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) added 2026-11-23, federal due date 2026-11-26. Ransomware use Unknown. Forensic triage is required. Catalog 2026.11.23, released 2026-11-23T19:43:55.7979Z. The CVE record's statement that exploitation started in September 2026 is the vendor record, not the KEV date. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -29,6 +29,7 @@ The project's own advisory is narrower and more specific. `LocalDatastore.add_im
 | Project advisory | 2026-11-18; time/TZ unknown | GHSA-qc22-rmgc-vg94. Patched versions: None. [Advisory][ghsa] |
 | **CVE record** | **2026-11-20; time/TZ unknown** | MITRE. CVSS 3.1 9.8. Says exploited from September 2026. [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) |
 | **Release 0.8.6** | **2026-11-22 01:29:24 UTC** | Security release. Names the CVE and a second path traversal, in session upload, with no CVE. [0.8.6][rel] |
+| **CISA KEV** | **2026-11-23; time/TZ unknown** | Added. Federal due date 2026-11-26. Ransomware use Unknown. Forensic triage required. [KEV](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) |
 
 ## Detection
 
@@ -59,7 +60,7 @@ The CVE record says the flaw was exploited in the wild from September 2026. A se
 - [Pull request 1915][pr] — merged to `main` on 2026-10-19 as commit `113527b`.
 - [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) — MITRE, published 2026-11-20. CVSS 3.1 9.8. Says exploited from September 2026.
 - [MONAI Label 0.8.6][rel] — published 2026-11-22 01:29:24 UTC. Fixes the datastore upload in pull request 1915 and the session upload in pull request 1942. The session issue has no CVE.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-22. Not listed.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.23, released 2026-11-23T19:43:55.7979Z, checked 2026-11-23. CVE-2026-133968 added 2026-11-23, due 2026-11-26. Ransomware use Unknown. Forensic triage Yes.
 
 [ghsa]: https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94
 [pr]: https://github.com/Project-MONAI/MONAILabel/pull/1915
