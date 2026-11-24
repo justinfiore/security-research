@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [VMware ESX: a network request runs code on the host](#vmware-esx-a-network-request-runs-code-on-the-host)
+- [ManageEngine DDI Central: a DHCP option runs a command](#manageengine-ddi-central-a-dhcp-option-runs-a-command)
 - [Microsoft Azure API Management: stored secrets were read](#microsoft-azure-api-management-stored-secrets-were-read)
 - [Apache Allura: a ticket runs script in the browser](#apache-allura-a-ticket-runs-script-in-the-browser)
 - [WHMCS: the shopping cart reads the database](#whmcs-the-shopping-cart-reads-the-database)
@@ -334,6 +336,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [VMware ESX](#vmware-esx-a-network-request-runs-code-on-the-host) and restart each host. Broadcom rates [CVE-2026-123910](https://www.cve.org/CVERecord?id=CVE-2026-123910) and [CVE-2026-123911](https://www.cve.org/CVERecord?id=CVE-2026-123911) CVSS 3.1 9.8 Critical: a request that can reach the host runs code on it. ESX 9.1 is **ESXi-9.1.2.0-25946735**, ESX 9.0 is **ESXi-9.0.2.0200-25953133**, and ESX 8.0 is **ESXi80U3m-25926933**. The updates are not eligible for ESX Live Patch. vCenter 9.1 moves to **9.1.2** and vCenter 9.0 to **9.0.2.0300** for a second Directory Service bypass, [CVE-2026-123903](https://www.cve.org/CVERecord?id=CVE-2026-123903), also 9.8. A vCenter already on 8.0 U3m does not move again. ESX 7.0 has no public build. None of the 23 is in KEV.
+- **New this update:** Update [ManageEngine DDI Central](#manageengine-ddi-central-a-dhcp-option-runs-a-command) to **build 6501 or later**. ManageEngine rates [CVE-2026-131964](https://www.cve.org/CVERecord?id=CVE-2026-131964) Critical and publishes no numeric score: a low-privileged operator changes a shared DHCP option, and that option can run a command on a managed ISC DHCP server. Build 6500 is the affected build. [CVE-2026-130508](https://www.cve.org/CVERecord?id=CVE-2026-130508) is High, in the same build, and runs a Cisco IOS command. Both CVE records are still reserved. Neither is in KEV.
 - **New this update:** If you run [Azure API Management](#microsoft-azure-api-management-stored-secrets-were-read) on a Classic Developer, Basic, Standard, or Premium tier, replace every secret it stored, at the system that issued it. Microsoft says a flaw let an unauthorized party read named values, identity-provider and OpenID Connect client secrets, subscription keys, and direct-management tokens before it closed the path on November 19. No CVE is assigned and no score is published. The fix does not revoke a credential already read. Consumption and v2 tiers are not affected. Norway's NSM says an unknown actor targeted those secrets, and names Equinor and Skagerak Energi.
 - **New this update:** Upgrade [Apache Allura](#apache-allura-a-ticket-runs-script-in-the-browser) to **1.23.0 or later**. Apache rates [CVE-2026-135660](https://www.cve.org/CVERecord?id=CVE-2026-135660) critical and publishes no numeric score: a ticket runs script in the browser. Allura before 1.23.0 is affected, and the release note says through 1.22.1. It is not in KEV.
 - **New this update:** Update self-hosted [WHMCS](#whmcs-the-shopping-cart-reads-the-database) to **9.1.2, 9.0.10, or 8.13.8**, then delete every email campaign and empty the template cache. HackerOne rates [CVE-2026-82981](https://www.cve.org/CVERecord?id=CVE-2026-82981) CVSS 4.0 8.7 High: the shopping cart reads client data and administrator password hashes with no login. [CVE-2026-93700](https://www.cve.org/CVERecord?id=CVE-2026-93700) is CVSS 3.1 9.0 Critical: a logged-in client reads configuration files and runs code, and the update alone does not close it. 8.0 through 8.12 has no backport. None is in KEV.
@@ -602,6 +606,49 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## VMware ESX: a network request runs code on the host
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/vmware-esx.md):** [Detection](details/vmware-esx.md#detection) · [Remediation](details/vmware-esx.md#remediation) · [Verification](details/vmware-esx.md#verification) · [Timeline](details/vmware-esx.md#timeline)
+
+**CVEs:** [CVE-2026-123910](https://www.cve.org/CVERecord?id=CVE-2026-123910), [CVE-2026-123911](https://www.cve.org/CVERecord?id=CVE-2026-123911), [CVE-2026-123903](https://www.cve.org/CVERecord?id=CVE-2026-123903), [CVE-2026-123912](https://www.cve.org/CVERecord?id=CVE-2026-123912)
+
+**Broadcom rates [CVE-2026-123910](https://www.cve.org/CVERecord?id=CVE-2026-123910) and [CVE-2026-123911](https://www.cve.org/CVERecord?id=CVE-2026-123911) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Both are in the ESX I/O filter service. A request with network access to the host runs code on it, and neither flaw needs a virtual machine. On ESXi 8.x the service listens on TCP 9080. **[CVE-2026-123903](https://www.cve.org/CVERecord?id=CVE-2026-123903) is the same 9.8**, a second authentication bypass in the VMware Directory Service. It is not [CVE-2026-123890](https://www.cve.org/CVERecord?id=CVE-2026-123890). **[CVE-2026-123912](https://www.cve.org/CVERecord?id=CVE-2026-123912) is 9.3 on Workstation and Fusion and 8.4 on ESX.** A local administrator in a virtual machine runs code as the VMX process. On ESX that stays inside the sandbox. VMSA-2026-0011, issued 2026-11-24, lists 23 flaws. Broadcom reports no exploitation. The CVE.org records were still reserved when checked the same day.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-24) for any of the 23. CVE-2026-123890 is a different flaw and is listed under the November 19 guide. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fixes** | **2026-11-24; time/TZ unknown** | VMSA-2026-0011, initial advisory. |
+| **Last updated** | **2026-11-24 11:04 EST (UTC−05:00)** | New item. Patch ESX, and vCenter 9. |
+
+**Patch:** Update ESX 9.1 to **ESXi-9.1.2.0-25946735**, ESX 9.0 to **ESXi-9.0.2.0200-25953133**, and ESX 8.0 to **ESXi80U3m-25926933**, and restart each host. The updates are not eligible for ESX Live Patch. Update vCenter 9.1 to **9.1.2** and vCenter 9.0 to **9.0.2.0300**. A vCenter already on 8.0 U3m is current for the new vCenter flaws. ESX 9.0 stays inside two Moderate flaws after 9.0.2.0200; Broadcom marks those Patch Pending. ESX 7.0 and vCenter 7.0 have no public build. On ESXi 8.x, until the restart, restrict TCP 9080 to the vCenter address. That is not the fix.
+
+Sources: [VMSA-2026-0011](https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39626), [questions and answers](https://brcm.tech/vmsa-2026-0011-qna), [detailed guide](details/vmware-esx.md).
+
+---
+
+## ManageEngine DDI Central: a DHCP option runs a command
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ddi-central.md):** [Detection](details/ddi-central.md#detection) · [Remediation](details/ddi-central.md#remediation) · [Verification](details/ddi-central.md#verification) · [Timeline](details/ddi-central.md#timeline)
+
+**CVEs:** [CVE-2026-131964](https://www.cve.org/CVERecord?id=CVE-2026-131964), [CVE-2026-130508](https://www.cve.org/CVERecord?id=CVE-2026-130508)
+
+**ManageEngine rates [CVE-2026-131964](https://www.cve.org/CVERecord?id=CVE-2026-131964) Critical and publishes no numeric score.** DDI Central 6.5.0, build 6500, lets a low-privileged operator change a DHCP option definition that every ISC DHCP cluster shares. ManageEngine says a crafted change can run a command on a managed ISC DHCP server. **[CVE-2026-130508](https://www.cve.org/CVERecord?id=CVE-2026-130508) is High, also with no numeric score.** The same build lets an operator who can configure DHCP on one cluster run a Cisco IOS command on a device in that cluster. Build **6501**, fixed on November 19, 2026, is the fix for both. Both CVE.org records were still reserved when checked on November 24. ManageEngine does not report attacks. A console below build 6500 is also inside the September flaws, which are a different set.
+
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-24) for either. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Fix** | **2026-11-19; time/TZ unknown** | Both pages say fixed on November 19, 2026. Build 6501. |
+| **Public pages** | **2026-11-24; time/TZ unknown** | The security-updates index listed both. It prints no publication time. |
+| **Last updated** | **2026-11-24 11:04 EST (UTC−05:00)** | New item. Move the console to 6501. |
+
+**Patch:** Update the DDI Central console to **build 6501 or later**. Build 6500 is the affected build, not the fix. The update does not show whether an option definition was changed or a Cisco IOS command already ran.
+
+Sources: [CVE-2026-131964](https://www.manageengine.com/dns-dhcp-ipam/security-updates/cve-2026-131964.html), [CVE-2026-130508](https://www.manageengine.com/dns-dhcp-ipam/security-updates/cve-2026-130508.html), [detailed guide](details/ddi-central.md).
 
 ---
 
@@ -5140,7 +5187,7 @@ Sources: [Fleet advisory](https://github.com/rancher/fleet/security/advisories/G
 
 **Am I impacted?** Any WordPress site with BookIt **2.6.0.6 or earlier**, including older 2.x copies. WordPress.org lists 4,000+ active installations. On a trusted host, from the WordPress root, run `wp plugin list --name=bookit --fields=name,status,version --skip-plugins --skip-themes`, or read the `Version:` header in `wp-content/plugins/bookit/bookit.php`.
 
-**Patch:** Update to **2.6.0.7 or later**. Until then, deactivate the plugin or take the booking form offline. Updating does not undo database rows an injected query already changed.
+**Patch:** Update to **2.6.0.9 or later**. 2.6.0.7 closes CVE-2026-62048. Patchstack then published CVE-2026-125828, CVSS 3.1 7.1, fixed in 2.6.0.8, and CVE-2026-131720, CVSS 3.1 7.5, fixed in 2.6.0.9. Until then, deactivate the plugin or take the booking form offline. Updating does not undo database rows an injected query already changed.
 
 Sources: [Patchstack](https://patchstack.com/database/wordpress/plugin/bookit/vulnerability/wordpress-bookit-plugin-2-6-0-6-sql-injection-vulnerability?_s_id=cve), [CVE-2026-62048](https://www.cve.org/CVERecord?id=CVE-2026-62048), [WordPress.org plugin changelog](https://wordpress.org/plugins/bookit/), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -6800,7 +6847,8 @@ Sources: [Progress bulletin](https://community.progress.com/s/article/Marklogic-
 | CVE IDs reserved | 2026-08-25 and 2026-09-22 (UTC) | Not disclosure. CVE-2026-79845 was reserved and published by VulDB for an unrelated product. |
 | HPE bulletin HPESBNW05162 rev.1 and fixed releases | 2026-10-22 16:00:00 UTC (CSAF release time) | Fixes 10.8.1.2, 10.7.2.7, 10.4.1.14, 8.13.3.1 and 8.10.0.24 announced as released. |
 | CVE records published | 2026-10-22 19:04:44–19:07:12 UTC | 71 HPE records; none for CVE-2026-79845. |
-| **Last updated** | **2026-10-26 11:30 EDT (UTC−04:00)** | Added from discovery review and primary sources. |
+| **Bulletin revision 2** | **2026-11-17; time/TZ unknown** | Replaces CVE-2026-79845 with CVE-2026-95787. AP-5xx FIPS moves to 8.13.3.2. |
+| **Last updated** | **2026-11-24 11:04 EST (UTC−05:00)** | The FIPS floor and the corrected CVE ID. |
 
 HPE's bulletin fixes 72 flaws in the AOS-8 and AOS-10 wireless operating systems that run Mobility Conductors, Mobility Controllers, Central-managed Mobility Gateways, AOS-10 APs and AOS-8 Instant APs, including virtual controllers. Nineteen Critical flaws are reachable over the network without authentication, through the web-based management interface, the CLI and SSH daemon (**[CVE-2026-79855](https://www.cve.org/CVERecord?id=CVE-2026-79855)**, AOS-8 SSH authentication bypass, 9.8), and **PAPI**, Aruba's access point management protocol on **UDP 8211**. Another 14 Critical flaws (9.6 and 9.3) need only adjacent-network access, one of them through AOS-10 Wi-Fi frame processing. The rest are High-rated denial-of-service, higher-complexity and authenticated flaws, plus eight Medium/Low issues fixed in the same releases. HPE says four of the flaws need "certain preconditions outside of the attacker's control".
 
@@ -6812,7 +6860,7 @@ HPE's bulletin fixes 72 flaws in the AOS-8 and AOS-10 wireless operating systems
 
 **Am I impacted?** Check the running version of every conductor, controller, gateway and AP (`show version` on AOS-8 controllers, read-only; Central's firmware view for AOS-10). Affected: **AOS-10.8 ≤ 10.8.1.1, 10.7 ≤ 10.7.2.6, 10.4 ≤ 10.4.1.13, AOS-8.13 ≤ 8.13.3.0, AOS-8.10 ≤ 8.10.0.23**. HPE presumes branches past End of Maintenance are affected and does not cover them. Devices are most at risk when SSH, WebUI/API or UDP 8211 is reachable from user, guest or external networks, but the adjacent-network flaws mean a firewall alone does not clear a device.
 
-**Patch:** Upgrade to **AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, AOS-8.13.3.1+ or 8.10.0.24+**, or move unsupported branches to a fixed supported branch. Expect reboots. Until upgraded, apply HPE's workaround: restrict the CLI and web management interfaces to a dedicated management VLAN or firewall policy and enable accounting. Also limit UDP 8211 to your own APs and controllers. Neither measure covers adjacent or Wi-Fi attackers.
+**Patch:** Upgrade to **AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, AOS-8.13.3.1+ or 8.10.0.24+**, or move unsupported branches to a fixed supported branch. An AP-5xx running AOS-8.13 in a FIPS environment goes to **8.13.3.2 FIPS or later**. Revision 2, dated November 17, says 8.13.3.1 is not enough there, and it replaces CVE-2026-79845 with CVE-2026-95787 for the AOS-10 PAPI bypass. Expect reboots. Until upgraded, apply HPE's workaround: restrict the CLI and web management interfaces to a dedicated management VLAN or firewall policy and enable accounting. Also limit UDP 8211 to your own APs and controllers. Neither measure covers adjacent or Wi-Fi attackers.
 
 Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05162en_us&docLocale=en_US), [HPE CSAF](https://csaf.arubanetworking.hpe.com/2026/hpe_networking_-_hpesbnw05162.json), [HPE CNA record (CVE-2026-79844)](https://cveawg.mitre.org/api/cve/CVE-2026-79844), [CVE-2026-79845 record](https://cveawg.mitre.org/api/cve/CVE-2026-79845), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-79844), [BleepingComputer](https://www.bleepingcomputer.com/news/security/hpe-patches-eight-max-severity-rce-and-auth-bypass-aos-flaws), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 

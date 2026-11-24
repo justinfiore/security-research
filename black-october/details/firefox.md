@@ -1,6 +1,6 @@
 # Firefox: a layout bug can run code from a web page
 
-**Last updated:** 2026-11-18 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Back to Firefox summary](../black-october-2026.md#firefox-a-layout-bug-can-run-code-from-a-web-page) · [Changelog](../../CHANGELOG.md)
 
@@ -38,7 +38,7 @@ On 2026-11-10 Mozilla published [MFSA 2026-125][mfsa160], impact high, fixed in 
 
 ## Remediation
 
-1. Update Firefox to **160.0.1 or later** on the Release channel, then relaunch. 160 fixes the November 10 set and leaves the two November 17 flaws. 159.0.1 fixes only CVE-2026-120572. Update ESR to **153.7 or later**, or **115.45 or later** on the 115 line. 115.45 does not list CVE-2026-124917. Update Thunderbird to **160 or later**.
+1. Update Firefox to **161 or later** on the Release channel, then relaunch. [MFSA 2026-131](https://www.mozilla.org/en-US/security/advisories/mfsa2026-131/), announced 2026-11-24, rates the advisory high and fixes it in Firefox 161. It includes [CVE-2026-135500](https://www.cve.org/CVERecord?id=CVE-2026-135500), a privilege escalation from an integer overflow in WebGPU, and many more issues Mozilla rates high, including sandbox escapes. Mozilla publishes no numeric score. [MFSA 2026-132](https://www.mozilla.org/en-US/security/advisories/mfsa2026-132/) fixes Firefox ESR **115.46**, and [MFSA 2026-133](https://www.mozilla.org/en-US/security/advisories/mfsa2026-133/) fixes Firefox ESR **153.8**. 160.0.1 does not contain this set. 160 fixes the November 10 set and leaves the two November 17 flaws. 159.0.1 fixes only CVE-2026-120572. Update Thunderbird to **160 or later** for the November 10 set. No Thunderbird advisory was published with the November 24 set.
 2. Mozilla publishes no workaround. Not opening untrusted pages is not a control the advisory states.
 3. The update does not show whether a page already ran code.
 

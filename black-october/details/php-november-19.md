@@ -1,6 +1,6 @@
 # PHP: the November 19 security releases
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main PHP November 19 summary](../black-october-2026.md#php-the-november-19-security-releases) · [PHP2Shell](php2shell.md) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -41,7 +41,8 @@ Depthfirst's write-up, published 2026-11-19, says the November 19 builds are sti
 | Advance notice | 2026-11-18; time/TZ unknown | PHP scheduled the release for 2026-11-19, 14:00 to 14:30 UTC, and said the highest severity is Critical. [Archive][archive] |
 | **Public announcement and fixes** | **2026-11-19; the advisories are timestamped from 14:05:55 UTC** | 8.6.0, 8.5.13, 8.4.28, 8.3.37, and 8.2.36. [Changelog][changelog] |
 | Depthfirst write-up | 2026-11-19; time/TZ unknown | Says the session-file fix does not close CVE-2026-126714. PHP's advisory says it does. [depthfirst][depth] |
-| **Google Cloud bulletin** | **2026-11-20; time unknown** | GCP-2026-090. Managed PHP images for App Engine, Cloud Run, and Cloud Run functions are not published yet. [GCP-2026-090][gcp] |
+| **Google Cloud bulletin** | **2026-11-20; time unknown** | GCP-2026-090. Managed PHP images were not published yet. [GCP-2026-090][gcp] |
+| **Managed images published** | **2026-11-23; time unknown** | GCP-2026-090's update says the patched runtimes are available: 8.2.36, 8.3.37, 8.4.28, and 8.5.13. |
 | **Last updated** | **2026-11-22 (America/New_York)** | Google Cloud customers set `session.upload_progress.enabled = 0` now. |
 
 ## Detection
@@ -60,7 +61,7 @@ The conditions differ:
 1. Upgrade to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** on the branch you run, and restart every worker. PHP 8.1 and earlier are end of life and get no build.
 2. Keep `session.upload_progress.enabled=0` where the feature is not needed. PHP's advisory for CVE-2026-126714 says that removes one input path and is not the fix.
 3. The October 21 builds leave every row in the table in place.
-4. On Google Cloud, bulletin [GCP-2026-090][gcp], published 2026-11-20, says the managed PHP images are not published yet. It names App Engine Standard (second-generation PHP 7.2 through 8.5), App Engine Flexible, Cloud Run, and Cloud Run functions. Until the image arrives:
+4. On Google Cloud, bulletin [GCP-2026-090][gcp] was updated 2026-11-23 and now says the patched PHP runtimes are available on App Engine, Cloud Run, and Cloud Run functions: **8.2.36, 8.3.37, 8.4.28, and 8.5.13**. Redeploy onto that runtime. PHP 8.1 and 7.2 still have no patch. Until a service is on the new image:
    - Set `session.upload_progress.enabled = 0` where the application does not track upload progress. Google says this mitigates the primary path for CVE-2026-126714 in particular. It also says to move `session.save_handler` off `files` where that is feasible.
    - A container you build, on Cloud Run or an App Engine flexible custom runtime, can move to PHP 8.2.36, 8.3.37, 8.4.28, or 8.5.13 now and does not have to wait.
    - App Engine standard on PHP 8.2 through 8.5, and Cloud Run services and functions with automatic base image updates, receive the patched runtime once Google publishes it. Apply the setting above until then.

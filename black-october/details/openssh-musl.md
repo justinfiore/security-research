@@ -1,6 +1,6 @@
 # OpenSSH: password login on musl accepts any long password
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Back to OpenSSH summary](../black-october-2026.md#openssh-password-login-on-musl-accepts-any-long-password) · [Changelog](../../CHANGELOG.md)
 
@@ -32,7 +32,7 @@ OpenSSH calls the workaround in 10.6p2 a **critical** security fix. **MITRE rate
 | CISA ADP | 2026-11-06 04:56:35 UTC | SSVC Exploitation `poc`. That is a proof-of-concept label, not a report of attacks and not a KEV listing. The description, the score, and the range are unchanged. |
 | Honeypot logins | 2026-11-06; clock time not on the page | Previdian. First attempt less than nine hours after the CVE record. [Help Net Security][hns] [Previdian][prev] |
 | **CISA KEV** | **2026-11-09** | Catalog 2026.11.09, released 16:16:16 UTC. Due 2026-11-12. Ransomware use Unknown. [KEV feed][kev] |
-| GreyNoise reports follow-on activity | 2026-11-07 00:46:51 UTC onward | First successful exploitation GreyNoise observed, on its own sensor. Page rebuilt 2026-11-17. [GreyNoise][gn] |
+| GreyNoise reports follow-on activity | 2026-11-07 00:46:51 UTC onward | First successful exploitation GreyNoise observed, on its own sensor. Page last updated 2026-11-24 15:41 UTC: 10 attacker IPs and 53 events, through 2026-11-23 13:58 UTC. [GreyNoise][gn] |
 | **Last updated** | **2026-11-17 (America/New_York)** | GreyNoise reports commands run after a login. The package to install is unchanged. |
 
 ## Detection
@@ -95,7 +95,7 @@ The researcher names Alpine, OpenWrt, Buildroot, and Yocto as the musl systems t
 - [The Hacker News][thn] — 2026-11-05. Reports that no attacks using the flaw have been reported, and that no CVE had been assigned that day. MITRE published the CVE later the same day.
 - [Help Net Security][hns] — 2026-11-06. Ryan Dewhurst of Previdian: the first attempt arrived less than nine hours after the CVE record, and a honeypot running Alpine and OpenSSH accepted a login as root. Eight attempts, all from `89.116.89.18`. The commands were `id`, `uname`, and `hostname`.
 - [The Hacker News, exploitation][thn2] — 2026-11-06. The same Dewhurst statement. CISA listed the CVE on 2026-11-09.
-- [GreyNoise SSHole activity][gn] — rebuilt 2026-11-17 02:41 UTC. Says it confirmed post-exploitation from 10 attacker IPs, 45 events, with the first successful exploitation of a GreyNoise sensor at 2026-11-07 00:46:51 UTC. One cluster drops a Python agent it calls TAC; another, from 140.245.33.114 on 2026-11-12, writes `/usr/libexec/tiny-cloud/sync.py` (sha256 `02341e1e5917ccb2ea42686560554140f35f30af50f86162ad5d88649314228c`) and a chisel binary at `/usr/libexec/tiny-cloud/cloud-agent` that talks to `91.149.254.143:853`. These are GreyNoise's sensors, not a count of customer systems. Not seeing these files does not clear a host.
+- [GreyNoise SSHole activity][gn] — last updated 2026-11-24 15:41 UTC. Says it confirmed post-exploitation from 10 attacker IPs, 53 events, with the first successful exploitation of a GreyNoise sensor at 2026-11-07 00:46:51 UTC and activity through 2026-11-23 13:58 UTC. One cluster drops a Python agent it calls TAC; another, from 140.245.33.114 on 2026-11-12, writes `/usr/libexec/tiny-cloud/sync.py` (sha256 `02341e1e5917ccb2ea42686560554140f35f30af50f86162ad5d88649314228c`) and a chisel binary at `/usr/libexec/tiny-cloud/cloud-agent` that talks to `91.149.254.143:853`. These are GreyNoise's sensors, not a count of customer systems. Not seeing these files does not clear a host.
 - [Previdian CVE-2026-123158][prev] — reread 2026-11-07. The public page says 19 attempts, 12 addresses, 8 countries, and 4 sensors. The chart says updated 2026-11-07, with 14 events on November 6 and 5 on November 7. It still says an attempt is not a successful login, and it still does not print the source address. That count disagrees with the interview's eight attempts from one address. CISA listed the CVE on 2026-11-09.
 - [CVE-2026-123158][cve] — MITRE, published 2026-11-05 15:46:26 UTC. CVSS 3.1 8.1 High. Affected from 0 before 10.6p2 on Linux. The description says 256 to 1024 characters; OpenSSH and Alpine say 257 to 1024 bytes.
 - [CISA KEV JSON feed][kev] — added 2026-11-09, due 2026-11-12 (catalog 2026.11.09, released 16:16:16 UTC). Ransomware use Unknown.

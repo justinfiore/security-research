@@ -1,6 +1,6 @@
 # HPE Aruba Networking AOS: unauthenticated RCE and authentication bypass in wireless infrastructure
 
-**Last updated:** 2026-10-26 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main HPE Aruba Networking AOS summary](../black-october-2026.md#hpe-aruba-networking-aos-unauthenticated-rce-and-authentication-bypass-in-wireless-infrastructure) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,9 +8,9 @@
 
 **HPE security bulletin HPESBNW05162 rev.1 — HPE CVSS 3.1: eight CVEs at 10.0 Critical (CVE-2026-79844 through CVE-2026-79851); 33 of the 72 CVEs are Critical (9.0 or higher), 31 High, 7 Medium and 1 Low; HPE bulletin severity: Critical. NVD lists HPE's scores as secondary and has not published its own (status "Awaiting Analysis" on 2026-10-26). Not in CISA KEV.** The bulletin covers the HPE Networking (formerly Aruba) wireless operating systems **AOS-8** and **AOS-10** on Mobility Conductors, Mobility Controllers, Mobility Gateways managed by HPE Networking Central, AOS-10 access points (AOS-AP) and AOS-8 Instant access points (AOS-IAP), including virtual appliances. HPE says any hardware or VM compatible with an affected version is vulnerable, and that its model list is illustrative only. The worst issues let an **unauthenticated network attacker** run commands as a privileged user on the device through the web-based management interface, the CLI/SSH daemon, or **PAPI** (Aruba's access point management protocol, UDP 8211). A second large group needs only **adjacent-network** (same layer-2 segment or radio) access. Worst case: full takeover of the controller, gateway or AP, which carries client traffic and holds network and authentication configuration. Some flaws are qualified by HPE: CVE-2026-79844, CVE-2026-79846, CVE-2026-79891 and CVE-2026-95711 need "certain preconditions outside of the attacker's control", which HPE does not describe.
 
-**CVE ID conflict:** HPE's bulletin, CSAF file and BleepingComputer's coverage list **CVE-2026-79845** as an AOS-10 PAPI authentication bypass (HPE CVSS 10.0). On 2026-10-26 the CVE.org record and NVD entry for that ID belong to a **different, unrelated** VulDB-assigned issue (an SQL injection in code-projects Simple Inventory System, published 2026-08-25). HPE published CVE records for the other 71 IDs only. The CVE.org link above is generated as required and is **not** evidence of an HPE record. Track the AOS-10 PAPI flaw by HPE's bulletin, not by that CVE record, until HPE or CVE.org corrects it.
+**CVE ID corrected in revision 2.** Revision 1 of the bulletin, and this guide through 2026-10-26, listed **CVE-2026-79845** as the AOS-10 PAPI authentication bypass (HPE CVSS 10.0). The CVE.org record for that ID belongs to an unrelated VulDB issue. Revision 2, dated 2026-11-17, replaces that ID with **[CVE-2026-95787](https://www.cve.org/CVERecord?id=CVE-2026-95787)** and adds [CVE-2026-95788](https://www.cve.org/CVERecord?id=CVE-2026-95788), [CVE-2026-95789](https://www.cve.org/CVERecord?id=CVE-2026-95789), [CVE-2026-95790](https://www.cve.org/CVERecord?id=CVE-2026-95790), and [CVE-2026-95791](https://www.cve.org/CVERecord?id=CVE-2026-95791), which HPE says were left out of revision 1. CVE-2026-95787 is the same PAPI bypass, still CVSS 3.1 10.0, and the fixed builds are unchanged. The four added scores are 7.1, 7.2, 6.5, and 4.9, and they use the same October 22 builds. HPE still says it knows of no public exploit code as of the advisory release date.
 
-**CISA KEV:** Not listed (catalog 2026.10.23, checked 2026-10-26). HPE says it is not aware of public discussion or exploit code as of 2026-10-22, CISA's ADP SSVC entries record "Exploitation: none", and no exploitation reports were found through 2026-10-26. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-24). HPE's revision 2, dated 2026-11-17, says it is not aware of public exploit code as of the advisory release date. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -38,6 +38,8 @@
 | CISA ADP SSVC assessments | 2026-10-22 and 2026-10-23 | Every SSVC entry on the HPE records reads "Exploitation: none"; "Automatable" and "Technical impact" vary by CVE (CVE-2026-79844 and CVE-2026-79855: automatable yes, technical impact total). Some records had no ADP entry on 2026-10-26. [CVE-2026-79855 JSON][cve79855] |
 | BleepingComputer coverage | 2026-10-23; publisher shows 08:48 AM, TZ not stated | Reports the eight 10.0 flaws and repeats HPE's statement that no public PoC or exploitation was known. [BleepingComputer][bc] |
 | CISA KEV status check | 2026-10-26 (catalog 2026.10.23, released 2026-10-23 19:30:18 UTC) | None of the 72 IDs is listed. [KEV JSON][kev] |
+| **Bulletin revision 2** | **2026-11-17; time/TZ unknown** | Replaces CVE-2026-79845 with CVE-2026-95787 and adds CVE-2026-95788 through CVE-2026-95791. AOS-8.13 FIPS on AP-5xx moves to 8.13.3.2 FIPS. The other floors are unchanged. [Signed text][hpetxt] |
+| **Last updated** | **2026-11-24 (America/New_York)** | The PAPI flaw's CVE ID and the FIPS floor. |
 
 ## Detection
 
@@ -52,6 +54,7 @@
    | AOS-10.7 | 10.7.2.6 and below | 10.7.2.7 or later |
    | AOS-10.4 | 10.4.1.13 and below | 10.4.1.14 or later |
    | AOS-8.13 | 8.13.3.0 and below | 8.13.3.1 or later |
+   | AOS-8.13 FIPS, AP-5xx | revision 2 | 8.13.3.2 FIPS or later |
    | AOS-8.10 | 8.10.0.23 and below | 8.10.0.24 or later |
 
    The HPE CNA records encode the same ranges starting at x.y.0.0 (for example 8.13.0.0 through 8.13.3.0). **Other branches are not cleared:** HPE says versions past End of Maintenance are presumed affected and not covered, and that it has not assessed versions past End of Support. Treat any other AOS-8 or AOS-10 branch as **affected with no fix in that branch**.
@@ -66,7 +69,7 @@ All scores are HPE CVSS 3.1 base scores from the bulletin. "Both" means AOS-8 an
 | CVSS | CVE | Family | Flaw |
 |---|---|---|---|
 | 10.0 | CVE-2026-79844 | AOS-10 | Authentication bypass to command execution (preconditions apply) |
-| 10.0 | CVE-2026-79845 | AOS-10 | PAPI authentication bypass to admin access (ID conflict, see above) |
+| 10.0 | CVE-2026-95787 | AOS-10 | PAPI authentication bypass to admin access. Revision 1 called this CVE-2026-79845. |
 | 10.0 | CVE-2026-79846 | AOS-8 | Command injection (preconditions apply) |
 | 10.0 | CVE-2026-79847, CVE-2026-79851 | AOS-10 | Buffer overflows to privileged code execution |
 | 10.0 | CVE-2026-79848, CVE-2026-79849 | AOS-8 | SQL injection to command execution |
@@ -115,7 +118,7 @@ These checks are weak. AOS devices give limited visibility into the underlying O
 
 ## Remediation
 
-1. **Upgrade** every device to **AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, AOS-8.13.3.1+ or 8.10.0.24+**, downloading firmware only from the [HPE Networking Support Portal](https://networkingsupport.hpe.com). For Central-managed AOS-10 gateways and APs, schedule the upgrade through Central. Devices on other branches must move to a supported fixed branch; HPE does not cover them.
+1. **Upgrade** every device to **AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, AOS-8.13.3.1+ or 8.10.0.24+**, downloading firmware only from the [HPE Networking Support Portal](https://networkingsupport.hpe.com). An AP-5xx running AOS-8.13 in a FIPS environment goes to **8.13.3.2 FIPS or later**. Revision 2, dated 2026-11-17, adds that floor and says 8.13.3.1 is not enough for those access points. For Central-managed AOS-10 gateways and APs, schedule the upgrade through Central. Devices on other branches must move to a supported fixed branch; HPE does not cover them.
 2. Plan for reboots and coverage loss. Upgrade conductors, controllers or gateways and their APs in the order HPE's release notes and upgrade guides require, keep cluster and AP firmware compatible, and back up configurations first. Read the release notes for each target version before upgrading; this guide did not review them.
 3. **Until upgraded**, apply HPE's workaround: restrict the CLI and web-based management interfaces to a dedicated layer-2 segment/VLAN and/or firewall policy at layer 3 and above, with accounting enabled to track user activity. This changes device or firewall configuration, so test it so you do not lock yourself out.
 4. Additional containment (not from HPE): permit UDP 8211 only between your own APs, controllers and gateways, and keep user, guest and IoT segments out of the layer-2 domains of device management interfaces. Neither step addresses the Wi-Fi frame-processing flaw or adjacent attackers who are already inside an allowed segment; only the upgrade does.
@@ -137,7 +140,7 @@ These checks are weak. AOS devices give limited visibility into the underlying O
 
 ## Sources
 
-- [HPE security bulletin HPESBNW05162 rev.1][hpe] — affected products and versions, fixed versions, workaround, per-CVE descriptions and HPE CVSS scores, exploitation statement, EoM/EoS note.
+- [HPE security bulletin HPESBNW05162 rev.2][hpe] — affected products and versions, fixed versions, workaround, per-CVE descriptions and HPE CVSS scores, exploitation statement, EoM/EoS note. Revision 2, 2026-11-17, replaces CVE-2026-79845 with CVE-2026-95787 and raises the AP-5xx FIPS floor to 8.13.3.2.
 - [HPE signed text copy][hpetxt] and [CSAF file][csaf] — same content; CSAF release time and per-CVE AOS-8/AOS-10 applicability.
 - [HPE CNA record (example: CVE-2026-79844)][cve79844] and [CVE-2026-79855][cve79855] — publication metadata, version ranges, CISA ADP SSVC.
 - [CVE-2026-79845 record][cve79845] — shows the ID belongs to an unrelated VulDB issue.

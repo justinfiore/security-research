@@ -1,6 +1,6 @@
 # BookIt: unauthenticated SQL injection on the public booking endpoint
 
-**Last updated:** 2026-11-02 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main BookIt summary](../black-october-2026.md#bookit-unauthenticated-sql-injection-on-the-public-booking-endpoint) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -53,7 +53,7 @@ The vendor changelog places the fix on the public booking endpoint. A site that 
 
 ## Remediation
 
-1. **Update BookIt to 2.6.0.7 or later** from WordPress.org or the site's normal update screen. WordPress.org lists 2.6.0.7 as the current release. [changelog][wp] [Patchstack][ps]
+1. **Update BookIt to 2.6.0.9 or later** from WordPress.org or the site's normal update screen. 2.6.0.7 is the first version the CVE-2026-62048 record calls unaffected. WordPress.org now lists **2.6.0.9**, dated 2026-11-17. Patchstack published two more after that: [CVE-2026-125828](https://www.cve.org/CVERecord?id=CVE-2026-125828), stored XSS, CVSS 3.1 7.1, fixed in 2.6.0.8, and [CVE-2026-131720](https://www.cve.org/CVERecord?id=CVE-2026-131720), CVSS 3.1 7.5, fixed in 2.6.0.9. [changelog][wp] [Patchstack][ps]
 2. **If you cannot update now,** deactivate the plugin or take the booking form offline. That is a mitigation, not a fix. Patchstack says it has a mitigation rule for its own customers; that rule is not a substitute for 2.6.0.7.
 3. Updating stops the query the vendor hardened. It does not undo rows an attacker already changed, and it does not remove an administrator account an injected query created.
 
