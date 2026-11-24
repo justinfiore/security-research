@@ -2,6 +2,12 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-23 23:30 EST (UTC−05:00) — Rclone; Wing FTP; GL.iNet
+
+- **Rclone:** If [rclone](black-october/details/rclone.md#remediation) runs `serve sftp --auth-proxy`, upgrade to 1.76.0 or later and restart it. VulnCheck rates CVE-2026-134352 CVSS 4.0 9.2: a public key sent as a password, from the same client IP, gets that user's files. rclone rates the same issue CVSS 3.1 8.1. The changelog puts the fix in 1.76.0, released November 6. The GitHub advisory's affected range includes 1.76.0. An rclone that does not serve SFTP with an auth proxy needs no change. It is not in KEV. The upgrade does not show whether a public key was already sent as a password.
+- **GL.iNet:** Install the [security firmware](black-october/details/glinet.md#remediation) for the exact model. The November 23 notice says the firmware disables the known malware and removes the related files, and that a factory reset alone does not install the fixes. Six more router models now have a floor, including GL-MG1300 at 4.11.1 and GL-E5800 at 4.10.3. If access is known or suspected, install it without keeping settings. A device that connected to GoodCloud should have passwords and keys stored on it replaced. No CVE is assigned. An update cannot revoke a key already copied.
+- **Wing FTP:** Upgrade [Wing FTP Server](black-october/details/wing-ftp.md#remediation) to 8.2.8 or later. VulnCheck published CVE-2026-135171 on November 23, CVSS 4.0 9.2: an administrator session identifier can be guessed, and a request with no login replays the session. CVE-2026-135170 is 7.7 and injects Lua through an LDAP login name. Both say before 8.2.8, which shipped November 19. 8.2.6 leaves both. Neither is in KEV. Until the upgrade, turn upload links off and end administrator web sessions.
+
 ## 2026-11-23 19:00 EST (UTC−05:00) — Cribl; EV Reach; ifm; WAGO; Synchronet; KEV
 
 - **Cribl:** Upgrade self-hosted [Cribl Stream and Cribl Edge](black-october/details/cribl-stream.md#remediation) to 4.21 or later. Upgrade a self-hosted Leader before its Edge nodes. Cribl rates CVE-2026-115899 CVSS 4.0 9.3 and CVSS 3.1 9.8: pagination data a REST Collector reads can run code as the Worker. CVE-2026-115873 is 9.9 on CVSS 3.1 and 8.7 on CVSS 4.0, and needs a Read Only user who can reach the Leader API. 4.20.4 and earlier are affected. Cribl manages a Cloud Leader. The Edge nodes on that deployment still need 4.21. None is in KEV.
