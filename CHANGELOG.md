@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-25 03:01 EST (UTC−05:00) — Check Point SmartConsole; Kerberos Agent
+
+- **Check Point SmartConsole:** Install the [July Jumbo](black-october/details/checkpoint-smartconsole.md#remediation) on Security Management and Multi-Domain Security Management, and reboot. Check Point rates CVE-2026-16232 CVSS 4.0 9.3: a request with no login obtains an application token and logs in as an administrator. The floors are R82.10 Take 36, R82 Take 118, and R81.20 Take 158. R81.10, R81, and older releases through R77.30 have no named take. CISA listed it on July 22, due July 25. GreyNoise says a script for this flaw ran management tasks on 24 servers between October 20 and October 26, and that its visibility ended November 2. This is not the November Gaia socket flaw. The Jumbo does not undo a policy change.
+- **Kerberos Agent:** 3.14.7 is the [current release](black-october/details/kerberos-agent.md#remediation). The floor stays 3.14.4. The new release accepts ActiveMQ failover URIs and does not change the JWT fix.
+
 ## 2026-11-25 02:02 EST (UTC−05:00) — Linux kernel
 
 - **Linux kernel:** Install a kernel that names the [November 20 High fixes](black-october/details/linux-november-20.md#remediation) you can reach, and reboot. kernel.org scores eight flaws CVSS 3.1 High. [CVE-2026-99794](https://www.cve.org/CVERecord?id=CVE-2026-99794) is 8.3 and [CVE-2026-99793](https://www.cve.org/CVERecord?id=CVE-2026-99793) is 8.1: a nearby Bluetooth peer can move an L2CAP channel forward before the host accepts it. Debian trixie security is `linux` 6.12.118-1. bookworm security is still vulnerable. Ubuntu and Red Hat have no package. Red Hat scores three of the eight Moderate and has deferred them. None is in KEV. This is not the November 2–3 set.

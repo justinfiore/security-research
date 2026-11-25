@@ -560,6 +560,10 @@
       "last_checked": "2026-11-24T15:56:15Z",
       "hold": "none"
     },
+    "kerberos-agent.md": {
+      "last_checked": "2026-11-25T07:56:11Z",
+      "hold": "none"
+    },
     "keycloak.md": {
       "last_checked": "2026-11-24T15:56:15Z",
       "hold": "awaiting-fix"
@@ -893,7 +897,7 @@
       "hold": "none"
     },
     "rclone.md": {
-      "last_checked": "2026-11-24T07:56:30Z",
+      "last_checked": "2026-11-25T07:56:11Z",
       "hold": "none"
     },
     "red-hat-quay.md": {
@@ -1174,6 +1178,10 @@
     },
     "wordpress-bp-restrict.md": {
       "last_checked": "2026-11-24T11:56:11Z",
+      "hold": "none"
+    },
+    "wordpress-nov18.md": {
+      "last_checked": "2026-11-25T07:56:11Z",
       "hold": "none"
     },
     "wordpress-nov23.md": {

@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Check Point SmartConsole: a login token is an administrator](#check-point-smartconsole-a-login-token-is-an-administrator)
 - [Kerberos Agent: a default key forges an administrator token](#kerberos-agent-a-default-key-forges-an-administrator-token)
 - [WordPress: an editor link creates an administrator](#wordpress-an-editor-link-creates-an-administrator)
 - [vSRM: a request runs SQL before login](#vsrm-a-request-runs-sql-before-login)
@@ -342,6 +343,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Install the [July Jumbo](#check-point-smartconsole-a-login-token-is-an-administrator) on Check Point Security Management and Multi-Domain Security Management, and reboot. Check Point rates [CVE-2026-16232](https://www.cve.org/CVERecord?id=CVE-2026-16232) CVSS 4.0 9.3 Critical: a request with no login obtains an application token and logs in as an administrator. The floors are R82.10 Take 36, R82 Take 118, and R81.20 Take 158. R81.10, R81, and older releases through R77.30 have no named take. CISA listed it on July 22, due July 25. GreyNoise says a script for this flaw ran management tasks on 24 servers between October 20 and October 26. This is not the November Gaia socket flaw. The Jumbo does not undo a policy change.
 - **New this update:** Upgrade [Kerberos Agent](#kerberos-agent-a-default-key-forges-an-administrator-token) to **3.14.4 or later** and set `AGENT_JWT_SECRET`. The maintainers rate [GHSA-3c52-7fc8-c39j](https://github.com/kerberos-io/agent/security/advisories/GHSA-3c52-7fc8-c39j) CVSS 3.1 9.8 Critical: when the secret is unset, the agent signs tokens with `TOBECHANGED`, and a request with no login forges an administrator token. VulnCheck's [CVE-2026-135208](https://www.cve.org/CVERecord?id=CVE-2026-135208) scores the same issue 9.8 and CVSS 4.0 9.3. Every release through 3.14.3 is affected. 3.14.4 shipped November 21. Changing the login password does not replace the key. It is not in KEV. Rotate camera and Hub credentials the agent stored.
 - **New this update:** Update [WordPress](#wordpress-an-editor-link-creates-an-administrator) to **7.1.5**, or to the fixed release for the installed branch. The project rates five issues in the November 18 release High and publishes no numeric score. [GHSA-pmp8-6cv8-q323](https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-pmp8-6cv8-q323): an Administrator who opens a crafted editor link can create an Administrator account, and that account can upload a plugin. It affects 5.9 through 7.1.4. [GHSA-mwj7-xhp9-7773](https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-mwj7-xhp9-7773): on multisite, a site Administrator takes over a Super Admin account. Wordfence scores that one CVSS 3.1 9.1. The project does not. None of the 19 advisories has a CVE. 4.6 and earlier get no fix. This is not the upgrade-window flaw fixed in 7.1.4.
 - **New this update:** Upgrade [vSRM](#vsrm-a-request-runs-sql-before-login) to **v14.08.5 or later**, then reset local passwords. TR-CERT rates [CVE-2026-119582](https://www.cve.org/CVERecord?id=CVE-2026-119582) CVSS 3.1 9.8 Critical: a request with no login runs SQL. [CVE-2026-117593](https://www.cve.org/CVERecord?id=CVE-2026-117593) is 9.1: the password-recovery path sets a password. [CVE-2026-119543](https://www.cve.org/CVERecord?id=CVE-2026-119543) is 8.8. All three affect v14.08.3 before v14.08.5. Four more, all below High, are fixed in the same release. None is in KEV. The upgrade does not undo a password that was already reset.
@@ -623,13 +625,36 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Check Point SmartConsole: a login token is an administrator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/checkpoint-smartconsole.md):** [Detection](details/checkpoint-smartconsole.md#detection) · [Remediation](details/checkpoint-smartconsole.md#remediation) · [Verification](details/checkpoint-smartconsole.md#verification) · [Timeline](details/checkpoint-smartconsole.md#timeline)
+
+**CVEs:** [CVE-2026-16232](https://www.cve.org/CVERecord?id=CVE-2026-16232)
+
+**Check Point rates [CVE-2026-16232](https://www.cve.org/CVERecord?id=CVE-2026-16232) CVSS 4.0 9.3 Critical.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. Check Point publishes no CVSS 3.1 score. A request with no login obtains an application token and uses it to log in to SmartConsole as an administrator, then changes the security policy. Remote exploitation needs the Management Server reachable from the internet and Trusted Clients left unrestricted. Check Point said in July that a handful of customers in that configuration were exploited, and that Smart-1 Cloud was already protected. **R82.10 Take 36 and below, R82 Take 118 and below, and R81.20 Take 158 and below** are affected, and so are **R81.10, R81, and the older releases through R77.30**, which have no named take. The fix shipped 2026-07-22 in the Jumbo Hotfix Accumulator. [GreyNoise's November 23 report](https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign) says a script for this flaw launched management tasks, including copying the firewall database and unloading policies, on 24 servers between October 20 and October 26, and that it could not tell when those servers were first reached. This is not the [November Gaia socket flaw](#check-point-gaia-a-local-socket-runs-a-command-as-root).
+
+**CISA KEV:** Listed — added 2026-07-22, federal due date 2026-07-25. Ransomware use is Unknown and forensic triage is required. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement and fix** | **2026-07-22 13:53:09 UTC** | CVE record published. The advisory is the same day and names no time. |
+| KEV | 2026-07-22; time/TZ unknown | Added, due 2026-07-25. |
+| **Later exploitation reported** | **2026-11-23; time/TZ unknown** | GreyNoise. Activity through November 2. The post prints no time. |
+| **Last updated** | **2026-11-25 03:01 EST (UTC−05:00)** | New item. Install the July Jumbo. |
+
+**Patch:** Install the Jumbo Hotfix Accumulator at **R82.10 Take 36, R82 Take 118, or R81.20 Take 158** or later, and reboot. R81.10 and older have no named take. Until then, limit Trusted Clients to addresses you trust. The Jumbo does not undo a policy change or a copied database.
+
+Sources: [sk185169](https://support.checkpoint.com/results/sk/sk185169), [July advisory](https://blog.checkpoint.com/security/security-advisory-action-required-active-exploitation-of-check-point-smartconsole-authentication-bypass-cve-2026-16232), [GreyNoise](https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign), [detailed guide](details/checkpoint-smartconsole.md).
+
+---
+
 ## Kerberos Agent: a default key forges an administrator token
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/kerberos-agent.md):** [Detection](details/kerberos-agent.md#detection) · [Remediation](details/kerberos-agent.md#remediation) · [Verification](details/kerberos-agent.md#verification) · [Timeline](details/kerberos-agent.md#timeline)
 
 **CVEs:** [CVE-2026-135208](https://www.cve.org/CVERecord?id=CVE-2026-135208)
 
-**The maintainers rate [GHSA-3c52-7fc8-c39j](https://github.com/kerberos-io/agent/security/advisories/GHSA-3c52-7fc8-c39j) Critical, CVSS 3.1 9.8.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Kerberos Agent, the camera component of Kerberos.io, signs its API tokens with `TOBECHANGED` when `AGENT_JWT_SECRET` is unset. The project's own deployment manifests leave it unset. A request with no login forges an administrator token and reads the agent configuration, including stored RTSP, ONVIF, Hub, and recording keys, and can rewrite the configuration or stop the camera. Changing the login password and leaving the signing key at its default does not close it. VulnCheck's [CVE-2026-135208](https://www.cve.org/CVERecord?id=CVE-2026-135208) scores the same issue CVSS 3.1 9.8 and CVSS 4.0 9.3. The GitHub advisory still says no CVE is known. **Every release through 3.14.3** is affected. **3.14.4**, released 2026-11-21, drops the default key. 3.14.6 is current. No source read for this entry reports exploitation.
+**The maintainers rate [GHSA-3c52-7fc8-c39j](https://github.com/kerberos-io/agent/security/advisories/GHSA-3c52-7fc8-c39j) Critical, CVSS 3.1 9.8.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Kerberos Agent, the camera component of Kerberos.io, signs its API tokens with `TOBECHANGED` when `AGENT_JWT_SECRET` is unset. The project's own deployment manifests leave it unset. A request with no login forges an administrator token and reads the agent configuration, including stored RTSP, ONVIF, Hub, and recording keys, and can rewrite the configuration or stop the camera. Changing the login password and leaving the signing key at its default does not close it. VulnCheck's [CVE-2026-135208](https://www.cve.org/CVERecord?id=CVE-2026-135208) scores the same issue CVSS 3.1 9.8 and CVSS 4.0 9.3. The GitHub advisory still says no CVE is known. **Every release through 3.14.3** is affected. **3.14.4**, released 2026-11-21, drops the default key. 3.14.7 is current. No source read for this entry reports exploitation.
 
 **CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -637,9 +662,9 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 |---|---|---|
 | Advisory and fix | 2026-11-21 22:31:39 UTC | v3.14.4 drops the default key. The advisory page prints no time. |
 | **Public CVE** | **2026-11-23; time/TZ unknown** | CVE-2026-135208. VulnCheck. |
-| **Last updated** | **2026-11-24 23:30 EST (UTC−05:00)** | New item. Upgrade, and set a secret. |
+| **Last updated** | **2026-11-25 03:01 EST (UTC−05:00)** | 3.14.7 is current. The JWT floor is unchanged. |
 
-**Patch:** Upgrade to **3.14.4 or later** and set `AGENT_JWT_SECRET`. 3.14.6 includes the token fix. The upgrade does not show whether a forged token already read the camera credentials. Rotate the credentials the agent stored.
+**Patch:** Upgrade to **3.14.4 or later** and set `AGENT_JWT_SECRET`. 3.14.7 includes the token fix. The upgrade does not show whether a forged token already read the camera credentials. Rotate the credentials the agent stored.
 
 Sources: [GHSA-3c52-7fc8-c39j](https://github.com/kerberos-io/agent/security/advisories/GHSA-3c52-7fc8-c39j), [CVE-2026-135208](https://www.cve.org/CVERecord?id=CVE-2026-135208), [detailed guide](details/kerberos-agent.md).
 
@@ -9014,6 +9039,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Check Point Security Management or Multi-Domain Management at R82.10 Take 36 or below, R82 Take 118 or below, R81.20 Take 158 or below, or on R81.10 or older** | Install the Jumbo at R82.10 Take 36, R82 Take 118, or R81.20 Take 158 or later, and reboot. Check Point rates CVE-2026-16232 9.3: a request with no login logs in as an administrator. R81.10 and older have no named take. CISA listed it on July 22. [Guide](details/checkpoint-smartconsole.md#remediation). |
 | **vSRM before v14.08.5** | Upgrade to v14.08.5 or later, then reset local passwords. TR-CERT rates CVE-2026-119582 9.8: a request with no login runs SQL. CVE-2026-117593 is 9.1 and sets a password through the recovery path. [Guide](details/vsrm.md#remediation). |
 | **Windows instance launched from an AWS AMI released before 2026-09-09** | Replace it with one launched from an AMI released on or after that date. Amazon rates CVE-2026-134069 7.3: SSM Agent shares one registration key, and a local user might obtain the instance role. Upgrading the agent leaves the key. Do not delete the Vault. [Guide](details/ssm-agent.md#remediation). |
 | **Microsoft 365 Copilot** | Nothing to install. Microsoft rates CVE-2026-50691 9.9: a signed-in user raises their privileges. Microsoft says the service is already mitigated. [Guide](details/m365-copilot.md#remediation). |
