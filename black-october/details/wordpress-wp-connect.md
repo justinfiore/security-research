@@ -1,10 +1,10 @@
 # WordPress: six WP connect plugins shipped a backdoor
 
-**Last updated:** 2026-11-23 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main plugin summary](../black-october-2026.md#wordpress-six-wp-connect-plugins-shipped-a-backdoor) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-On 2026-11-23 Wordfence published a supply-chain report for six WordPress plugins from the developer WP connect. Wordfence rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) **Critical, CVSS 3.1 9.8**. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The CVE.org page still rendered the record reserved on 2026-11-23, so there is no CNA score yet. Wordfence's score is the one this entry uses.
+On 2026-11-23 Wordfence published a supply-chain report for six WordPress plugins from the developer WP connect. Wordfence is the CNA for [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) and rates it **Critical, CVSS 3.1 9.8**. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The record, published 2026-11-24, says the same. It was still reserved on 2026-11-23.
 
 On the afternoon of 2026-11-22, new releases were committed to the WordPress.org repositories of all six plugins from the developer's own account, over about two hours. Each release adds `includes/airwp-online.php` and loads it from the plugin's main file. The file runs on every request, including a page view with no login, and on a half-hourly cron event. It sends the site URL, the PHP, WordPress, and operating system versions, and the system user to `tascredit-pay.com`, with TLS certificate verification turned off, and runs the PHP that server returns. It can also run a shell command, read and write files, dump the users table including password hashes, write a PHP file into the uploads directory, and register an hourly cron hook.
 
@@ -21,7 +21,7 @@ Wordfence lists these versions:
 
 The release immediately before each of those does not contain the file. WordPress.org's Protect The Shire release delay, and its automated reviewer, stopped the versions before they were offered to sites. All six plugins were closed on WordPress.org the same evening. Wordfence says most sites should not have a backdoored copy, and that there is no patch. The WordPress.org Plugins Team says the developer reports the account was compromised. Further details are still pending. Wordfence says it is still writing malware signatures.
 
-**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). The record is reserved, and KEV lists published CVEs. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -39,6 +39,7 @@ The release immediately before each of those does not contain the file. WordPres
 | Backdoored releases committed | 2026-11-22, about 16:30–17:40 America/New_York | Six plugins, from the developer's WordPress.org account. Wordfence gives the window, not a clock time. [Report][wf] |
 | Releases stopped | 2026-11-22; time/TZ unknown | Protect The Shire held them, and the plugins were closed the same evening. [Report][wf] |
 | **Public announcement** | **2026-11-23; time/TZ unknown** | Wordfence. CVSS 3.1 9.8. [Report][wf] |
+| **CVE record published** | **2026-11-24; time/TZ unknown** | Wordfence is the CNA. CVSS 3.1 9.8. No patched version. [CVE](https://www.cve.org/CVERecord?id=CVE-2026-135202) |
 
 ## Detection
 
@@ -72,7 +73,7 @@ If a listed version ran, treat the site as compromised. Wordfence's own indicato
 
 - [Wordfence, 2026-11-23][wf] — Chloe Chamberland. CVSS 3.1 9.8. Six plugins, the versions in the table, the file `includes/airwp-online.php`, and the host `tascredit-pay.com`. Says the versions were never released and that there is no patch.
 - [Wordfence Intelligence record](https://www.wordfence.com/threat-intel/vulnerabilities/id/2bda1d59-0524-40ee-9427-2d31470780f9) — published 2026-11-23. CVSS 3.1 9.8. Names CVE-2026-135202. No patched version.
-- [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) — rendered reserved on 2026-11-23. No CNA description and no score.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.23, released 2026-11-23T12:54:37.9646Z, checked 2026-11-23. Not listed.
+- [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) — Wordfence, published 2026-11-24. CVSS 3.1 9.8. CWE-506. The same six versions. Says the plugins are closed and no patched version is available. It rendered reserved on 2026-11-23.
+- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.24, released 2026-11-24T17:47:46.199Z, checked 2026-11-24. Not listed.
 
 [wf]: https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/

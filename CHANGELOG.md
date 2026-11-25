@@ -2,6 +2,13 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-24 19:01 EST (UTC−05:00) — vSRM; SSM Agent; Synchronet; WP connect
+
+- **vSRM:** Upgrade to [v14.08.5 or later](black-october/details/vsrm.md#remediation), then reset local passwords. TR-CERT rates CVE-2026-119582 CVSS 3.1 9.8: a request with no login runs SQL. CVE-2026-117593 is 9.1 and sets a password through the recovery path. CVE-2026-119543 is 8.8. All three affect v14.08.3 before v14.08.5. Four more, all below High, are fixed in the same release. None is in KEV. The upgrade does not undo a password that was already reset.
+- **Amazon SSM Agent:** Replace a Windows instance launched from an [AWS AMI released before September 9, 2026](black-october/details/ssm-agent.md#remediation). Amazon rates CVE-2026-134069 CVSS 3.1 7.3 and CVSS 4.0 8.2: those AMIs share one registration key, and a local user who is not an administrator might obtain the instance's Default Host Management Configuration role. The fixed agent is 3.3.5226.0. An in-place upgrade leaves the key. Do not delete the agent's Vault. It is not in KEV.
+- **Synchronet:** Still [no released build](black-october/details/synchronet.md#remediation). INCIBE now says the fix for CVE-2026-133646 is v3.22 build B, scheduled for late 2026, or a v3.22a build released after November 19. The news page lists neither. Turn SSH off if the board does not need it. It is not in KEV.
+- **WordPress:** The [WP connect](black-october/details/wordpress-wp-connect.md#remediation) record is published. Wordfence, the CNA, rates CVE-2026-135202 CVSS 3.1 9.8, the same score as its report. There is still no patch. Remove a listed version. It is not in KEV.
+
 ## 2026-11-24 15:01 EST (UTC−05:00) — Copilot; KEV; Xen Orchestra; Cloud Foundation
 
 - **Microsoft 365 Copilot:** Nothing to install. Microsoft rates [CVE-2026-50691](black-october/details/m365-copilot.md#remediation) CVSS 3.1 9.9: a signed-in user raises their privileges over the network. Microsoft says it mitigated the service on November 19 and that no customer action resolves it. The advisory names no feature and no indicator. It is not in KEV.

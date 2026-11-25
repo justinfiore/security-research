@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [vSRM: a request runs SQL before login](#vsrm-a-request-runs-sql-before-login)
+- [Amazon SSM Agent: Windows instances share one registration key](#amazon-ssm-agent-windows-instances-share-one-registration-key)
 - [Microsoft 365 Copilot: a signed-in user could raise their own privileges](#microsoft-365-copilot-a-signed-in-user-could-raise-their-own-privileges)
 - [VMware ESX: a network request runs code on the host](#vmware-esx-a-network-request-runs-code-on-the-host)
 - [ManageEngine DDI Central: a DHCP option runs a command](#manageengine-ddi-central-a-dhcp-option-runs-a-command)
@@ -337,6 +339,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [vSRM](#vsrm-a-request-runs-sql-before-login) to **v14.08.5 or later**, then reset local passwords. TR-CERT rates [CVE-2026-119582](https://www.cve.org/CVERecord?id=CVE-2026-119582) CVSS 3.1 9.8 Critical: a request with no login runs SQL. [CVE-2026-117593](https://www.cve.org/CVERecord?id=CVE-2026-117593) is 9.1: the password-recovery path sets a password. [CVE-2026-119543](https://www.cve.org/CVERecord?id=CVE-2026-119543) is 8.8. All three affect v14.08.3 before v14.08.5. Four more, all below High, are fixed in the same release. None is in KEV. The upgrade does not undo a password that was already reset.
+- **New this update:** Replace a Windows instance launched from an AWS AMI released before September 9, 2026. Amazon rates [CVE-2026-134069](https://www.cve.org/CVERecord?id=CVE-2026-134069) CVSS 3.1 7.3 High and CVSS 4.0 8.2: [SSM Agent](#amazon-ssm-agent-windows-instances-share-one-registration-key) on those AMIs shares one registration key, and a local user who is not an administrator might obtain the instance's Default Host Management Configuration role. The fixed agent is 3.3.5226.0, and an in-place upgrade leaves the key. Do not delete the agent's Vault. It is not in KEV.
 - **New this update:** Nothing to install for [Microsoft 365 Copilot](#microsoft-365-copilot-a-signed-in-user-could-raise-their-own-privileges). Microsoft rates [CVE-2026-50691](https://www.cve.org/CVERecord?id=CVE-2026-50691) CVSS 3.1 9.9 Critical: a signed-in user raises their privileges over the network. Microsoft says it mitigated the service on November 19 and that no customer action resolves it. It is not in KEV. The advisory names no feature and no indicator.
 - **New this update (CISA KEV):** CISA added three flaws on November 24, each due November 27, each requiring forensic triage. [Optimizely](#optimizely-a-flaw-in-experimentation-served-malware-to-customer-sites) is [CVE-2026-132224](https://www.cve.org/CVERecord?id=CVE-2026-132224), which MITRE rates CVSS 4.0 7.1, and there is still nothing to install. [Idunno.AntiCsrf](#aspnet-idunnoanticsrf-runs-code-from-a-form-field) is [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914): remove the module. [Drupal](#drupal-core-field-ui-remote-code-execution) is [CVE-2026-132165](https://www.cve.org/CVERecord?id=CVE-2026-132165): the floors stay 11.4.13, 11.3.22, and 10.6.22. The October Drupal CVEs are not listed.
 - **New this update:** [Xen Orchestra](#xen-orchestra-an-empty-login-cookie-is-an-administrator) now has a CVE. GitHub rates [CVE-2026-133469](https://www.cve.org/CVERecord?id=CVE-2026-133469) CVSS 3.1 9.8 Critical. Vates's advisory still has no score. The builds are unchanged: 6.10.1 or 6.9.2. It is not in KEV.
@@ -349,7 +353,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Update [Chrome](#google-chrome-critical-browser-security-fixes) to **158.0.8127.88 or later** and relaunch. Windows and Mac are 158.0.8127.88/.89 and Linux is 158.0.8127.88. Google rates [CVE-2026-134401](https://www.cve.org/CVERecord?id=CVE-2026-134401) Critical: a crafted page runs code outside the sandbox. The November 17 builds, 158.0.8127.36/.37, do not contain it. Google publishes no numeric score. It is not in KEV.
 - **New this update:** If [rclone](#rclone-a-public-key-logs-in-as-a-password) runs `serve sftp --auth-proxy`, upgrade to **1.76.0 or later** and restart it. VulnCheck rates [CVE-2026-134352](https://www.cve.org/CVERecord?id=CVE-2026-134352) CVSS 4.0 9.2 Critical: a public key sent as a password, from the same client IP, gets that user's files. rclone rates the same issue CVSS 3.1 8.1. The changelog puts the fix in 1.76.0. The GitHub advisory's affected range includes 1.76.0. An rclone that does not serve SFTP with an auth proxy is outside it. It is not in KEV.
 - **New this update:** Upgrade [Wing FTP Server](#wing-ftp-server-administrator-path-traversal-to-code-execution) to **8.2.8 or later**. VulnCheck published [CVE-2026-135171](https://www.cve.org/CVERecord?id=CVE-2026-135171) on November 23, CVSS 4.0 9.2: an administrator session identifier can be guessed, and a request with no login replays the session. [CVE-2026-135170](https://www.cve.org/CVERecord?id=CVE-2026-135170) is 7.7 and injects Lua through an LDAP login name. Both say before 8.2.8, which shipped November 19. 8.2.6 leaves both. Neither is in KEV.
-- **New this update:** If a [WP connect](#wordpress-six-wp-connect-plugins-shipped-a-backdoor) plugin is one of six named versions, remove it and look for `includes/airwp-online.php`. Wordfence rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical: the file runs PHP from `tascredit-pay.com` on every request, with no login. WordPress.org stopped the releases before sites were offered them, and there is no patch. The CVE record is still reserved. It is not in KEV. Removing the plugin does not remove a file already written under `uploads`.
+- **New this update:** If a [WP connect](#wordpress-six-wp-connect-plugins-shipped-a-backdoor) plugin is one of six named versions, remove it and look for `includes/airwp-online.php`. Wordfence, now the CNA, rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical: the file runs PHP from `tascredit-pay.com` on every request, with no login. The record was published November 24. WordPress.org stopped the releases before sites were offered them, and there is no patch. It is not in KEV. Removing the plugin does not remove a file already written under `uploads`.
 - **New this update:** Upgrade [Routinator](#routinator-an-rsync-server-can-crash-the-validator) to **0.16.2 or later** and restart it. NLnet Labs rates [CVE-2026-119068](https://www.cve.org/CVERecord?id=CVE-2026-119068) CVSS 3.1 7.5 High: an rsync server that sends diagnostic output with no line break makes the validator run out of memory. The same release fixes [CVE-2026-119069](https://www.cve.org/CVERecord?id=CVE-2026-119069), which NLnet Labs scores 5.3. The records name only 0.16.2 as unaffected. Neither is in KEV.
 - **New this update:** Update the [ZoneAlarm](#zonealarm-a-local-user-becomes-system) client for Windows to **4.4.217.20710 or later**. Check Point rates [CVE-2026-132856](https://www.cve.org/CVERecord?id=CVE-2026-132856) CVSS 3.1 7.8 High: a local user runs code as SYSTEM. Anything lower is affected. A remote request is not this flaw. It is not in KEV.
 - **New this update:** Upgrade [Apache Solr](#apache-solr-a-health-check-does-more-than-a-health-check) to **9.11.0 or 10.1.0 or later** and restart it. Apache rates [CVE-2026-86312](https://www.cve.org/CVERecord?id=CVE-2026-86312) CVSS 3.1 8.8 High: a request to `/admin/ping` can do more than a health check. 9.0.0 before 9.11.0 and 10.0.0 before 10.1.0 are affected, and the sample security configuration leaves that endpoint with no login. Both fixes shipped in October, before the advisory. It is not in KEV.
@@ -614,6 +618,49 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## vSRM: a request runs SQL before login
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/vsrm.md):** [Detection](details/vsrm.md#detection) · [Remediation](details/vsrm.md#remediation) · [Verification](details/vsrm.md#verification) · [Timeline](details/vsrm.md#timeline)
+
+**CVEs:** [CVE-2026-119582](https://www.cve.org/CVERecord?id=CVE-2026-119582), [CVE-2026-117593](https://www.cve.org/CVERecord?id=CVE-2026-117593), [CVE-2026-119543](https://www.cve.org/CVERecord?id=CVE-2026-119543), [CVE-2026-96438](https://www.cve.org/CVERecord?id=CVE-2026-96438), [CVE-2026-97198](https://www.cve.org/CVERecord?id=CVE-2026-97198), [CVE-2026-94365](https://www.cve.org/CVERecord?id=CVE-2026-94365), [CVE-2026-103756](https://www.cve.org/CVERecord?id=CVE-2026-103756)
+
+**TR-CERT rates [CVE-2026-119582](https://www.cve.org/CVERecord?id=CVE-2026-119582) CVSS 3.1 9.8 Critical and [CVE-2026-117593](https://www.cve.org/CVERecord?id=CVE-2026-117593) CVSS 3.1 9.1 Critical.** The 9.8 vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. A request with no login runs SQL against vSRM, the supplier-relationship product from ITG Bilgisayar. The 9.1 lets the password-recovery path set a password. [CVE-2026-119543](https://www.cve.org/CVERecord?id=CVE-2026-119543) is 8.8: an identifier in the request reaches a function the caller should not. All three affect **v14.08.3 before v14.08.5**. Four more, 6.5, 6.5, 5.4, and 5.4, are fixed in the same release; two of them start at v14.08.1. Turkey's notice TR-26-1600, dated 2026-11-24, says to upgrade to **v14.08.5 or later**. The records do not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24) for any of the seven. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-24; time/TZ unknown** | TR-26-1600. The notice prints the date and no time. |
+| **Last updated** | **2026-11-24 19:01 EST (UTC−05:00)** | New item. Upgrade, then reset passwords. |
+
+**Patch:** Upgrade to **v14.08.5 or later**. The notice names no other fix. The upgrade does not reset a password the recovery flaw already changed. Reset local passwords after it.
+
+Sources: [TR-26-1600](https://siberguvenlik.gov.tr/guvenlik-bildirimleri/detay/tr-26-1600), [CVE-2026-119582](https://www.cve.org/CVERecord?id=CVE-2026-119582), [detailed guide](details/vsrm.md).
+
+---
+
+## Amazon SSM Agent: Windows instances share one registration key
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/ssm-agent.md):** [Detection](details/ssm-agent.md#detection) · [Remediation](details/ssm-agent.md#remediation) · [Verification](details/ssm-agent.md#verification) · [Timeline](details/ssm-agent.md#timeline)
+
+**CVEs:** [CVE-2026-134069](https://www.cve.org/CVERecord?id=CVE-2026-134069)
+
+**Amazon rates [CVE-2026-134069](https://www.cve.org/CVERecord?id=CVE-2026-134069) High, CVSS 3.1 7.3 and CVSS 4.0 8.2.** The CVSS 3.1 vector is `CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:L/A:N`. AWS-provided Windows Server AMIs released before 2026-09-09 shipped Amazon SSM Agent with one registration key, and every instance launched from the same AMI kept it. On an instance managed through Default Host Management Configuration, a local user who is not an administrator might obtain that instance's role credentials. AWS says those credentials allow limited Systems Manager actions by default. A person needs a local login. **Agent versions before 3.3.5226.0** on those AMIs are affected. The fix is in **3.3.5226.0**, in AMIs released on or after 2026-09-09. An in-place upgrade leaves the shared key, so the running version does not show that the instance is fixed. AWS says to replace the instance, and says deleting the agent's Vault breaks Default Host Management Configuration. AWS does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fixed AMIs | 2026-09-09; time/TZ unknown | AWS says AMIs released on or after this date include 3.3.5226.0. |
+| **Public announcement** | **2026-11-23 13:30 PST (UTC−08:00)** | Bulletin 2026-197-AWS. |
+| **Last updated** | **2026-11-24 19:01 EST (UTC−05:00)** | New item. Replace the instance. |
+
+**Patch:** Replace an instance launched from an affected AMI with one launched from an AWS Windows Server AMI released on or after 2026-09-09. Upgrading the agent does not replace the key. Do not delete the agent's Vault. Until then, limit local access by users who are not administrators. A Linux instance, and an AMI you built yourself, are outside the condition AWS names.
+
+Sources: [AWS bulletin 2026-197-AWS](https://aws.amazon.com/security/security-bulletins/2026-197-aws/), [GHSA-rfpp-9v45-jjv4](https://github.com/aws/amazon-ssm-agent/security/advisories/GHSA-rfpp-9v45-jjv4), [detailed guide](details/ssm-agent.md).
+
+---
+
 ## Microsoft 365 Copilot: a signed-in user could raise their own privileges
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/m365-copilot.md):** [Detection](details/m365-copilot.md#detection) · [Remediation](details/m365-copilot.md#remediation) · [Verification](details/m365-copilot.md#verification) · [Timeline](details/m365-copilot.md#timeline)
@@ -863,17 +910,18 @@ Sources: [VDE-2026-096](https://certvde.com/en/advisories/VDE-2026-096), [CVE-20
 
 **CVEs:** [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646)
 
-**INCIBE rates [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646) CVSS 4.0 8.7 High.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N`. There is no CVSS 3 score. The SSH service copies the terminal name into a 41-byte field and does not stop at 41 bytes. A client that is not logged in sends up to 64. INCIBE says the overflow blocks connection threads, and filling the sockets stops new connections until Synchronet is restarted. The record describes a denial of service. It does not say the overflow runs code. **3.20b through 3.21e** is affected, when SSH is on. 3.21e, released 2026-03-17, is the current release, and the record names no fixed version. INCIBE's notice page rejected this run's fetch. Turning SSH off is the workaround, not a fix. No source read for this entry reports exploitation.
+**INCIBE rates [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646) CVSS 4.0 8.7 High.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N`. There is no CVSS 3 score. The SSH service copies the terminal name into a 41-byte field and does not stop at 41 bytes. A client that is not logged in sends up to 64. INCIBE says the overflow blocks connection threads, and filling the sockets stops new connections until Synchronet is restarted. The record describes a denial of service. It does not say the overflow runs code. **3.20b through 3.21e** is affected, when SSH is on. 3.21e, released 2026-03-17, is the current release. The record now says commit `cb6d77dbca` fixes it, in **v3.22 build B or later**, which it says is scheduled for late 2026, or a **v3.22a build released after 2026-11-19**. The news page lists neither. Turning SSH off is the workaround, not a fix. No source read for this entry reports exploitation.
 
-**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Synchronet 3.21e | 2026-03-17; time/TZ unknown | Current release. Still inside the range. |
-| **Public announcement** | **2026-11-23; time/TZ unknown** | INCIBE. CVSS 4.0 8.7. No fixed version. |
-| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | New item. No fixed release. |
+| **Public announcement** | **2026-11-23; time/TZ unknown** | INCIBE. CVSS 4.0 8.7. |
+| **Fix named, not released** | **2026-11-24; time/TZ unknown** | v3.22 build B, scheduled for late 2026, or a v3.22a build released after 2026-11-19. Neither is listed. |
+| **Last updated** | **2026-11-24 19:01 EST (UTC−05:00)** | The record names a build. It is not released. |
 
-**Patch:** No patch. Turn the SSH service off if the board does not need it, and restart Synchronet to clear a thread that is already stuck. A build above 3.21e that names this flaw was not published on 2026-11-23.
+**Patch:** No released build. Turn the SSH service off if the board does not need it, and restart Synchronet to clear a thread that is already stuck. Install v3.22 build B or later, or a v3.22a build released after 2026-11-19, when one exists. The news page still ends at 3.21e.
 
 Sources: [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646), [Synchronet news](https://www.synchro.net/), [detailed guide](details/synchronet.md).
 
@@ -883,18 +931,19 @@ Sources: [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646), [S
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-wp-connect.md):** [Detection](details/wordpress-wp-connect.md#detection) · [Remediation](details/wordpress-wp-connect.md#remediation) · [Verification](details/wordpress-wp-connect.md#verification) · [Timeline](details/wordpress-wp-connect.md#timeline)
 
-**CVEs:** [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) (reserved)
+**CVEs:** [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202)
 
-**Wordfence rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The CVE.org page still rendered the record reserved on 2026-11-23, so there is no CNA score. On 2026-11-22, over about two hours, new releases of six plugins from developer WP connect were committed to WordPress.org from the developer's own account. Each adds `includes/airwp-online.php`. The file runs on every request, including one with no login, sends the site address and the system user to `tascredit-pay.com` with certificate checks off, and runs the PHP that server returns. It can also run a shell command, dump password hashes, and write a PHP file under `uploads`. The versions are Air WP Sync **2.9.1 through 2.9.4**, WP Sync for Notion **1.7.4**, Add-on Brevo for Gravity Forms **2.6.3**, Add-On for Contact Form 7 to Airtable **2.5.4**, Add-On for Contact Form 7 to Notion **1.6.4**, and Orders Sync to Airtable for WooCommerce **1.0.2**. WordPress.org stopped the releases before sites were offered them, and closed all six plugins the same evening. There is no patch. The developer reports the account was compromised, and Wordfence says further details are pending.
+**Wordfence, the CNA, rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The record was published 2026-11-24. It rendered reserved on 2026-11-23. On 2026-11-22, over about two hours, new releases of six plugins from developer WP connect were committed to WordPress.org from the developer's own account. Each adds `includes/airwp-online.php`. The file runs on every request, including one with no login, sends the site address and the system user to `tascredit-pay.com` with certificate checks off, and runs the PHP that server returns. It can also run a shell command, dump password hashes, and write a PHP file under `uploads`. The versions are Air WP Sync **2.9.1 through 2.9.4**, WP Sync for Notion **1.7.4**, Add-on Brevo for Gravity Forms **2.6.3**, Add-On for Contact Form 7 to Airtable **2.5.4**, Add-On for Contact Form 7 to Notion **1.6.4**, and Orders Sync to Airtable for WooCommerce **1.0.2**. WordPress.org stopped the releases before sites were offered them, and closed all six plugins the same evening. There is no patch. The developer reports the account was compromised, and Wordfence says further details are pending.
 
-**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-23). The record is reserved. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Releases committed | 2026-11-22, about 16:30–17:40 America/New_York | Six plugins. Wordfence gives the window, not a clock time. |
 | Releases stopped | 2026-11-22; time/TZ unknown | Protect The Shire held them. The plugins were closed the same evening. |
-| **Public announcement** | **2026-11-23; time/TZ unknown** | Wordfence. CVSS 3.1 9.8. The CVE record is reserved. |
-| **Last updated** | **2026-11-23 15:56 EST (UTC−05:00)** | New item. Remove a listed version. |
+| **Public announcement** | **2026-11-23; time/TZ unknown** | Wordfence. CVSS 3.1 9.8. |
+| **CVE record published** | **2026-11-24; time/TZ unknown** | Wordfence is the CNA. No patched version. |
+| **Last updated** | **2026-11-24 19:01 EST (UTC−05:00)** | The CVE record is published. Still no patch. |
 
 **Patch:** No patch. If a listed version is installed, remove the plugin and look for `includes/airwp-online.php`, an `airwp_` option, and a PHP file under `wp-content/uploads/` that you did not put there. Removing the plugin does not remove a file or a cron hook the backdoor already wrote. A site that never installed a listed version needs no change.
 
@@ -8893,6 +8942,8 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **vSRM before v14.08.5** | Upgrade to v14.08.5 or later, then reset local passwords. TR-CERT rates CVE-2026-119582 9.8: a request with no login runs SQL. CVE-2026-117593 is 9.1 and sets a password through the recovery path. [Guide](details/vsrm.md#remediation). |
+| **Windows instance launched from an AWS AMI released before 2026-09-09** | Replace it with one launched from an AMI released on or after that date. Amazon rates CVE-2026-134069 7.3: SSM Agent shares one registration key, and a local user might obtain the instance role. Upgrading the agent leaves the key. Do not delete the Vault. [Guide](details/ssm-agent.md#remediation). |
 | **Microsoft 365 Copilot** | Nothing to install. Microsoft rates CVE-2026-50691 9.9: a signed-in user raises their privileges. Microsoft says the service is already mitigated. [Guide](details/m365-copilot.md#remediation). |
 | **rclone `serve sftp --auth-proxy` before 1.76.0** | Upgrade to 1.76.0 or later and restart. VulnCheck rates CVE-2026-134352 9.2: a public key sent as a password gets that user's files. The GitHub advisory's range includes 1.76.0; the changelog puts the fix in that release. [Guide](details/rclone.md#remediation). |
 | **Wing FTP Server before 8.2.8** | Upgrade to 8.2.8 or later. VulnCheck rates CVE-2026-135171 9.2: an administrator session can be replayed with no login. 8.2.6 fixes only the path traversal. [Guide](details/wing-ftp.md#remediation). |
@@ -8900,7 +8951,7 @@ flowchart TD
 | **EV Reach Console, Agent, or Server below the November 23 floors** | Update the Console to 11.0.14.1127, the Agent to 11.0.16, and the Server to 11.0.14.1274. EasyVista rates CVE-2026-93585 8.8: a low-privileged user runs a command as SYSTEM. Until then, limit TCP 22000 to management systems you trust. [Guide](details/ev-reach.md#remediation). |
 | **ifm O3D, O3DP, or O3X camera on a listed firmware** | No firmware fix. Keep the management interface off networks you do not trust. CERT@VDE rates CVE-2026-121613 9.8: a request with no login uploads firmware. [Guide](details/ifm-cameras.md#remediation). |
 | **WAGO CC100, PFC, Touch Panel 600, Edge Controller, or WP400 below 4.10.0** | Update to firmware 4.10.0 (FW32) or later. The update restarts the controller. CERT@VDE rates CVE-2026-80466 8.8: a low-privileged login runs a command as root. A custom firmware comes from WAGO support. [Guide](details/wago-wbm.md#remediation). |
-| **Synchronet BBS 3.20b through 3.21e with SSH on** | No fixed release. Turn SSH off if the board does not need it. INCIBE rates CVE-2026-133646 8.7: a long terminal name blocks new connections until a restart. [Guide](details/synchronet.md#remediation). |
+| **Synchronet BBS 3.20b through 3.21e with SSH on** | No released build. Turn SSH off if the board does not need it. INCIBE says the fix is v3.22 build B, scheduled for late 2026, or a v3.22a build released after 2026-11-19. Neither is listed. [Guide](details/synchronet.md#remediation). |
 | **OTRS 2024.3.1, any 2025 release, or 2026 before 2026.8.2** | Upgrade to 2026.8.2 or later. OTRS rates CVE-2026-93584 8.6: a survey request with no login reads ticket data. The advisory does not mention Community Edition. [Guide](details/otrs.md#remediation). |
 | **Weblate before 2026.11** | Upgrade to 2026.11.1 or later. Weblate rates GHSA-6hph-c9x9-4mcv 9.1: a lookalike email receives the password-reset link. 2026.11.1 lists the leftover identities. [Guide](details/weblate.md#remediation). |
 | **WordPress with a WP connect plugin at a backdoored version** | Remove it. The versions are Air WP Sync 2.9.1–2.9.4, WP Sync for Notion 1.7.4, Add-on Brevo for Gravity Forms 2.6.3, Add-On for Contact Form 7 to Airtable 2.5.4, Add-On for Contact Form 7 to Notion 1.6.4, and Orders Sync to Airtable for WooCommerce 1.0.2. Look for `includes/airwp-online.php`. There is no patch. Removing the plugin does not remove a file under `uploads`. [Guide](details/wordpress-wp-connect.md#remediation). |
