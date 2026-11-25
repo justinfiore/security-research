@@ -2,6 +2,15 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-24 23:30 EST (UTC−05:00) — Kerberos Agent; WordPress; Rackspace Spot; GL.iNet; Wiki.js
+
+- **Kerberos Agent:** Upgrade to [3.14.4 or later](black-october/details/kerberos-agent.md#remediation) and set `AGENT_JWT_SECRET`. The maintainers rate GHSA-3c52-7fc8-c39j CVSS 3.1 9.8: when the secret is unset, the agent signs tokens with `TOBECHANGED`, and a request with no login forges an administrator token. VulnCheck's CVE-2026-135208 scores the same issue 9.8 and CVSS 4.0 9.3. Every release through 3.14.3 is affected. 3.14.4 shipped November 21. Changing the login password does not replace the key. It is not in KEV. Rotate camera and Hub credentials the agent stored.
+- **WordPress:** Update to [7.1.5](black-october/details/wordpress-nov18.md#remediation), or to the fixed release for the installed branch. The project rates five issues in the November 18 release High and publishes no numeric score. One lets an Administrator who opens a crafted editor link create an Administrator account. On multisite, a site Administrator can take over a Super Admin account. Wordfence scores that one CVSS 3.1 9.1. The project does not. None of the 19 advisories has a CVE. 4.6 and earlier get no fix. 7.1.4 leaves this release's fixes out. This is not the upgrade-window flaw.
+- **Rackspace Spot:** Every customer [reissues tokens and rotates Secrets](black-october/details/rackspace-spot.md#remediation), whether or not an earlier notice arrived, and moves workloads off Spot before Tuesday, December 8, 2026, at 5pm CT. The status page says data is not accessible after that. A November 24 notice says the party may have read cluster Secrets and files on storage volumes. Log review starts November 16. No CVE is assigned.
+- **Cleverbridge:** The [incident page](black-october/details/cleverbridge.md) now says that in a minority of cases the copied card information included CVV data. A notice still lists the fields for that person. There is nothing to install.
+- **GL.iNet:** The [November 24 staff notice](black-october/details/glinet.md#remediation) adds security firmware for fourteen more routers: 4.5.24 for GL-A1300 and GL-X300B, and 4.3.31 for twelve older models. A factory reset still does not install the fixes.
+- **Wiki.js 3:** Upgrade to [3.6.1 or later](black-october/details/wiki-js.md#remediation). GitHub rates GHSA-fcq7-f2fm-cm85 CVSS 3.1 8.7: an editor's MathJax formula runs script when an administrator clicks it. 3.6.0 and earlier are affected. No CVE is assigned. A 2.x site stays on 2.5.315 or later.
+
 ## 2026-11-24 19:01 EST (UTC−05:00) — vSRM; SSM Agent; Synchronet; WP connect
 
 - **vSRM:** Upgrade to [v14.08.5 or later](black-october/details/vsrm.md#remediation), then reset local passwords. TR-CERT rates CVE-2026-119582 CVSS 3.1 9.8: a request with no login runs SQL. CVE-2026-117593 is 9.1 and sets a password through the recovery path. CVE-2026-119543 is 8.8. All three affect v14.08.3 before v14.08.5. Four more, all below High, are fixed in the same release. None is in KEV. The upgrade does not undo a password that was already reset.

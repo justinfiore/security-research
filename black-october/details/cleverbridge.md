@@ -1,6 +1,6 @@
 # Cleverbridge: payment card data was copied
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main summary](../black-october-2026.md#cleverbridge-payment-card-data-was-copied) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@ Cleverbridge sells and bills software for other companies. Its incident page say
 
 **No CVE is assigned, and no vendor or CNA has published a CVSS score.** This is an incident at the checkout platform, not a flaw in an application you patch.
 
-The incident page does not say which card fields were copied. It says affected people should read the notice sent to them. BleepingComputer's November 22 report quotes one such notice: the copied data includes the card number, the expiry date, and the card security code (CVV/CVC), and "no other personal data (for example your name, contact or billing details) were copied." The notice names the last digits of the affected card. This guide did not see that notice. A separate report, which this guide also did not verify against a notice, says a different notice lists contact details and says the security code was not copied. Cleverbridge has not said publicly why the notices would differ, so this guide does not pick one list of fields as the only one.
+The incident page now says that in a minority of cases the copied card information included CVV data, and that affected people should read the notice sent to them for the fields in their case. BleepingComputer's November 22 report quotes one such notice: the copied data includes the card number, the expiry date, and the card security code (CVV/CVC), and "no other personal data (for example your name, contact or billing details) were copied." The notice names the last digits of the affected card. This guide did not see that notice. A separate report, which this guide also did not verify against a notice, says a different notice lists contact details and says the security code was not copied. Cleverbridge has not said publicly why the notices would differ, so this guide does not pick one list of fields as the only one.
 
 Cleverbridge says the incident was not ransomware and that no system was encrypted. It has not said how the party got in, how long the access lasted, how many people are affected, or which of its clients' customers were notified. It says it notified data protection authorities, law enforcement, the card networks, and its payment partners, and that TransUnion's Cyberscout sends the notices and offers credit or identity monitoring where that is available. It says it will never ask for a card number, a password, or a security code by email, phone, or text.
 
@@ -30,7 +30,8 @@ Cleverbridge says the incident was not ransomware and that no system was encrypt
 | Detection and containment | 2026-11-04; time unknown | Unauthorized activity. Systems taken offline and brought back the same day. [Cleverbridge][cb] |
 | **Notices begin** | **2026-11-20; time unknown** | Affected individuals, where Cleverbridge judged it appropriate. |
 | **Public report** | **2026-11-22 10:43; timezone not stated on the page** | BleepingComputer. The page prints 10:43 AM and no zone. Quotes a notice that names the card number, expiry, and security code. [BleepingComputer][bc] |
-| **Last updated** | **2026-11-22 (America/New_York)** | New item. Check the card and tell the issuer. |
+| Incident page names CVV | 2026-11-24; time unknown | "In a minority of cases, this information included CVV data." [Page][cb] |
+| **Last updated** | **2026-11-24 (America/New_York)** | The vendor page now says CVV data was copied in a minority of cases. |
 
 ## Detection
 

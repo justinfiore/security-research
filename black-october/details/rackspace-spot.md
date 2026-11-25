@@ -1,6 +1,6 @@
 # Rackspace Spot: leaked credentials read Kubernetes secrets
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main summary](../black-october-2026.md#rackspace-spot-leaked-credentials-read-kubernetes-secrets) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -33,26 +33,28 @@ The administration console was down while Rackspace took the platform offline. S
 | Rackspace notified | 2026-11-18; time unknown | A customer report. The recipient was confirmed the same day. |
 | **Public report** | **2026-11-21 17:59; timezone not stated on the page** | BleepingComputer. The page prints 05:59 PM and no zone. |
 | Service restored | 2026-11-21; time unknown | Rackspace's Reddit announcement, as reported. |
-| **Last updated** | **2026-11-22 (America/New_York)** | New item. Reissue tokens and rotate secrets. |
+| Wind-down notice | 2026-11-24 09:30:48; timezone not stated on the page | Spot status page. Workloads terminate 2026-12-08 at 5pm CT. [Status][status] |
+| BleepingComputer shutdown report | 2026-11-24 04:37 PM; timezone not stated on the page | Quotes a notice telling every Spot customer to treat tokens and Secrets as exposed. [Shutdown][shut] |
+| **Last updated** | **2026-11-24 (America/New_York)** | Every Spot customer rotates credentials. The service ends December 8. |
 
 ## Detection
 
 1. Read the notice Rackspace sent the account, if one arrived. The public report does not list the affected organizations.
 2. In an affected cluster, look for pods and objects whose names start with `i1`, `glm-`, or `probe`. Rackspace says it removed the unauthorized pods; a name that is still there is a lead, and a name that is gone is not proof nothing was read.
-3. Review audit logs from November 17 for calls from 23.224.79.106 and from 23.224.0.0/15. A log that does not show those addresses does not show that a secret was not read.
-4. Review the downstream logs Rackspace names, from November 17: databases, container registries, Git repositories, cloud storage, and third-party services whose credentials were in a Secret.
+3. Review audit logs from November 16 for calls from 23.224.79.106 and from 23.224.0.0/15. A log that does not show those addresses does not show that a secret was not read.
+4. Review the downstream logs Rackspace names, from November 16: databases, container registries, Git repositories, cloud storage, and third-party services whose credentials were in a Secret.
 
 ## Remediation
 
 There is no customer-side patch.
 
-1. If Rackspace notified the account, reissue the Spot API tokens, replace refresh tokens used in automation, and download fresh Kubernetes configuration files. Rackspace says it revoked the old ones.
-2. Rotate every credential that was stored in a Secret in an affected cluster. Treat a secret that was readable as exposed from November 17, not from the date of the notice.
-3. A cluster that was not notified has no action from this report. Absence of a notice is what Rackspace says it sent, and this guide cannot confirm delivery.
+1. Every Spot customer reissues Spot API tokens, replaces refresh tokens used in automation, and downloads fresh Kubernetes configuration files. Rackspace's November 24 notice, quoted by BleepingComputer, says to do this whether or not an earlier notice arrived. Rackspace says it revoked the old tokens.
+2. Rotate every credential that was stored in a Secret. The same notice says the party may have read cluster Secrets and files on storage volumes. Treat those as exposed from November 16, the date the notice now says to start log review.
+3. Move workloads off Spot before Tuesday, December 8, 2026, at 5pm CT. The status page says workloads still running then are terminated, and data is not accessible after that date. Rotating a credential does not keep the data.
 
 ## Verification
 
-- Tokens and configuration files for a notified account have been reissued, and credentials that were in those clusters' Secrets have been rotated.
+- Tokens and configuration files have been reissued, credentials that were in Secrets have been rotated, and workloads have a home that is not Spot before December 8, 2026, 5pm CT.
 - Automation that held a refresh token has the replacement, not the revoked one.
 - Do not probe the addresses above. They are indicators, not a check you run against the platform.
 
@@ -67,3 +69,8 @@ A secret that was readable on November 17 should be treated as exposed even if t
 
 [bc]: https://www.bleepingcomputer.com/news/security/rackspace-spot-breach-let-hackers-access-customer-kubernetes-secrets/
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+- [Rackspace Spot status][status] — created 2026-11-24 09:30:48. Wind-down date Tuesday, December 8, 2026 at 5pm CT. Workloads terminate and data is inaccessible after that.
+- [BleepingComputer, November 24][shut] — Lawrence Abrams, 04:37 PM, timezone not stated. Quotes a notice telling every Spot customer to treat API tokens, refresh tokens, kubeconfigs, and Kubernetes Secrets as potentially compromised, and to review logs from November 16. The party "may have read cluster Secrets and files on storage volumes."
+
+[status]: https://status.spot.rackspace.com/status/uptime
+[shut]: https://www.bleepingcomputer.com/news/security/rackspace-shuts-down-spot-cloud-platform-after-security-breach/

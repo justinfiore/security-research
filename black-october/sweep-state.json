@@ -229,11 +229,11 @@
       "hold": "none"
     },
     "cleverbridge.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "cloudcmd.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "cloudpaste.md": {
@@ -241,7 +241,7 @@
       "hold": "awaiting-fix"
     },
     "confluence-axis.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "control-web-panel.md": {
@@ -321,7 +321,7 @@
       "hold": "none"
     },
     "eclipse-ditto.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "edge-pwn2own.md": {
@@ -405,11 +405,11 @@
       "hold": "awaiting-fix"
     },
     "fortisandbox.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "awaiting-fix"
     },
     "fortisiem.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "awaiting-fix"
     },
     "frappe-framework-mail.md": {
@@ -417,8 +417,8 @@
       "hold": "none"
     },
     "frappe-ghost.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
-      "hold": "none"
+      "last_checked": "2026-11-25T03:56:13Z",
+      "hold": "awaiting-fix"
     },
     "freeswitch.md": {
       "last_checked": "2026-11-22T15:56:16Z",
@@ -453,12 +453,12 @@
       "hold": "none"
     },
     "glinet.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "go1cms.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
-      "hold": "none"
+      "last_checked": "2026-11-25T03:56:13Z",
+      "hold": "awaiting-fix"
     },
     "goahead-tls.md": {
       "last_checked": "2026-11-24T15:56:15Z",
@@ -497,7 +497,7 @@
       "hold": "none"
     },
     "ibm-guardium.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "idunno-anticsrf.md": {
@@ -545,7 +545,7 @@
       "hold": "none"
     },
     "jtl-shop.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "jumis.md": {
@@ -765,7 +765,7 @@
       "hold": "none"
     },
     "openplc.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "openrouter.md": {
@@ -869,7 +869,7 @@
       "hold": "awaiting-distros"
     },
     "rackspace-spot.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "rails.md": {
@@ -997,12 +997,16 @@
       "hold": "none"
     },
     "splunk-november.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "spring-november.md": {
       "last_checked": "2026-11-24T11:56:11Z",
       "hold": "awaiting-fix"
+    },
+    "ssm-agent.md": {
+      "last_checked": "2026-11-25T03:56:13Z",
+      "hold": "none"
     },
     "supermicro-bmc.md": {
       "last_checked": "2026-11-24T15:56:15Z",
@@ -1108,6 +1112,10 @@
       "last_checked": "2026-11-24T15:56:15Z",
       "hold": "awaiting-fix"
     },
+    "vsrm.md": {
+      "last_checked": "2026-11-25T03:56:13Z",
+      "hold": "none"
+    },
     "wago-wbm.md": {
       "last_checked": "2026-11-24T23:56:16Z",
       "hold": "none"
@@ -1121,7 +1129,7 @@
       "hold": "none"
     },
     "watchguard-dimension.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "weblate.md": {
@@ -1133,7 +1141,7 @@
       "hold": "none"
     },
     "wiki-js.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "windchill.md": {
@@ -1153,11 +1161,11 @@
       "hold": "none"
     },
     "wing-ftp.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "none"
     },
     "wolfvision-cynap.md": {
-      "last_checked": "2026-11-24T03:56:26Z",
+      "last_checked": "2026-11-25T03:56:13Z",
       "hold": "awaiting-fix"
     },
     "wordpress-bp-restrict.md": {

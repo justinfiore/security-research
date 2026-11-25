@@ -1,6 +1,6 @@
 # GL.iNet: the cloud service installed malware on routers and KVMs
 
-**Last updated:** 2026-11-23 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main summary](../black-october-2026.md#glinet-the-cloud-service-installed-malware-on-routers-and-kvms) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -29,6 +29,7 @@ A second report, linked from the same notice, says an AstroWarp/SD-WAN field run
 | Notice updated | 2026-11-21 04:25 UTC | Earlier update. Cloud path closed. Firmware still being prepared. |
 | Notice updated | 2026-11-22 (UTC); time unknown | Community security check added. |
 | **Notice updated** | **2026-11-23 (UTC); time unknown** | Pending CVE reports, the EMQX authorization error, and the recovery change: the firmware removes the known malware, and a factory reset alone does not install the fixes. |
+| Forum notice adds models | 2026-11-24 04:04 UTC | The staff post's download table adds fourteen router models: GL-A1300 and GL-X300B at 4.5.24, and twelve models at 4.3.31. [Forum][forum] |
 
 ## Detection
 
@@ -52,6 +53,8 @@ The November 23 notice says updating is the primary action, and that a check is 
    | GL-BE10000 | 4.8.7 |
    | GL-AX1800, GL-AXT1800, GL-SFT1200, GL-X3000, GL-XE3000 | 4.8.4 |
    | GL-MT2500 / GL-MT2500A, GL-X2000 | 4.7.14 |
+   | GL-A1300, GL-X300B | 4.5.24 |
+   | GL-AP1300, GL-AR300M (NAND), GL-AR300M16, GL-AR750, GL-AR750S-EXT, GL-B1300, GL-E750 / GL-E750V2, GL-MT1300, GL-MT300N-V2, GL-X750, GL-XE300 | 4.3.31 |
    | RM1, RM1V2, RM10, RM10RC, RM1PE, RM4PE | 1.10.3 |
    | RMQ1 | 1.8.7 |
 

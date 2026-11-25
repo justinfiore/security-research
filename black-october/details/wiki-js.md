@@ -1,6 +1,6 @@
 # Wiki.js: a user manager takes the administrator account
 
-**Last updated:** 2026-11-18 (America/New_York)
+**Last updated:** 2026-11-24 (America/New_York)
 
 [Main Wiki.js summary](../black-october-2026.md#wikijs-a-user-manager-takes-the-administrator-account) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -13,6 +13,8 @@ Wiki.js (requarks) is a Node.js wiki. Two flaws fixed in **2.5.315** are rated H
 [v2.5.315](https://github.com/requarks/wiki/releases/tag/v2.5.315) was published 2026-09-21 06:18:18 UTC. The release note says 2.x releases have moved to the `wiki-v2` repository and that this is the last 2.x release posted in `requarks/wiki`. The CVE records were published 2026-11-16. CISA's enrichment of the CVE-2026-120698 record, timestamped 2026-11-16 21:28 UTC, marks exploitation `poc`. The same mark was added to CVE-2026-120697 on 2026-11-18 17:59 UTC, citing the GitHub advisory. Both are a public proof of concept, not a report of use in the wild. Neither record describes an incident. `requarks/wiki-v2` has later builds, v2.5.316 (2026-10-02) and v2.5.317 (2026-10-23). Both contain the fix commits, and neither release note names these CVEs.
 
 **CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-18). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
+**Wiki.js 3 is a separate line.** [GHSA-fcq7-f2fm-cm85](https://github.com/requarks/wiki/security/advisories/GHSA-fcq7-f2fm-cm85), published 2026-11-23, is High, CVSS 3.1 8.7 (`CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:N`). An editor stores a MathJax formula whose link runs script when an administrator clicks it, and the reporter's lab used that click to add the editor to the Administrators group. **3.6.0 and earlier** are affected. **3.6.1** is the fix. No CVE is assigned. The advisory says earlier 3.x releases that ship the block were not checked, and it does not report exploitation. A 2.x site is outside this flaw.
 
 ## Table of contents
 
@@ -31,7 +33,8 @@ Wiki.js (requarks) is a Node.js wiki. Two flaws fixed in **2.5.315** are rated H
 | **Public announcement** | **2026-11-16; time/TZ unknown** | GitHub published both CVE records. |
 | Proof of concept marked | 2026-11-16 21:28 UTC | CISA's enrichment of CVE-2026-120698 says `poc`. Not a report of use in the wild. |
 | **Proof of concept marked** | **2026-11-18 17:59 UTC** | CISA's enrichment of CVE-2026-120697 now says `poc`, citing the GitHub advisory. Not a report of use in the wild. |
-| **Last updated** | **2026-11-18 (America/New_York)** | Both CVEs now have a public proof of concept. The fix is unchanged. |
+| Wiki.js 3 advisory | 2026-11-23; time/TZ unknown | [GHSA-fcq7-f2fm-cm85][g3]. High, 8.7. Fixed in 3.6.1. No CVE. |
+| **Last updated** | **2026-11-24 (America/New_York)** | Wiki.js 3.6.1 closes a High formula flaw. The 2.x floor is unchanged. |
 
 ## Detection
 
@@ -39,7 +42,8 @@ Read the Wiki.js version the running process reports, or the image tag. Anything
 
 ## Remediation
 
-1. Upgrade to **2.5.315 or later** and restart. 2.5.315 is the last 2.x release in `requarks/wiki`; later 2.x builds are in `requarks/wiki-v2`.
+1. On 2.x, upgrade to **2.5.315 or later** and restart. 2.5.315 is the last 2.x release in `requarks/wiki`; later 2.x builds are in `requarks/wiki-v2`.
+2. On 3.x, upgrade to **3.6.1 or later** and restart. 3.6.0 leaves the MathJax formula flaw in place. The 2.x upgrade does not move a 3.x site.
 2. The upgrade does not put a password, a second factor, or a group membership back. Reset the root administrator password, turn its second factor back on, and check that an administrator group still has a member.
 3. The upgrade does not remove a page that already contains the slot attribute. Review pages edited by accounts that should not run script.
 
@@ -62,3 +66,4 @@ CISA's enrichment marks a proof of concept for the takeover and names no inciden
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.18, released 2026-11-18T19:17:41.0354Z, read 2026-11-18. Neither CVE is in it.
 
 [rel]: https://github.com/requarks/wiki/releases/tag/v2.5.315
+[g3]: https://github.com/requarks/wiki/security/advisories/GHSA-fcq7-f2fm-cm85
