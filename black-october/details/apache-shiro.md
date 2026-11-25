@@ -1,6 +1,6 @@
 # Apache Shiro: a cached LDAP login accepts any password
 
-**Last updated:** 2026-11-15 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main Shiro summary](../black-october-2026.md#apache-shiro-a-cached-ldap-login-accepts-any-password) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -28,7 +28,8 @@ The same November 13–14 [announcement][oss349] covers seven more flaws. Apache
 | Shiro 3.0.1 | date not published by the project | Stops installing `AllowAllCredentialsMatcher` by default and fixes the RememberMe session fixation. The advisory names the version and not the release time. [oss-security][oss349] |
 | Shiro 3.0.2 published | 2026-11-08 06:26:50 UTC | Fixes the remaining six. The notes describe the behavior changes and do not name the CVE identifiers. [3.0.2][rel302] |
 | **Public announcement** | **2026-11-13 23:28:57 UTC through 2026-11-14 05:37:47 UTC** | Lenny Primak posted the eight advisories to oss-security, ending with CVE-2026-129349. [oss-security][oss349] |
-| **Last updated** | **2026-11-15 (America/New_York)** | New item. Upgrade Shiro. |
+| **Project page lists the CVEs** | **2026-11-25; time/TZ unknown** | The security-reports index now names CVE-2026-129349, CVE-2026-129348, CVE-2026-129347, and CVE-2026-129320. The fix versions are unchanged. |
+| **Last updated** | **2026-11-25 (America/New_York)** | The project page caught up. The upgrade is still 3.0.2. |
 
 ## The other seven
 
@@ -76,7 +77,7 @@ Apache publishes no indicator that a login already happened with the wrong passw
 - [oss-security, CVE-2026-129348][oss348] — 2026-11-14 05:24:39 UTC. CVSS 4.0 2.3. Fixed in 3.0.2.
 - [oss-security, CVE-2026-114737][oss737] — 2026-11-13 23:28:57 UTC. CVSS 4.0 2.3. Version 3.0.1 only, fixed in 3.0.2.
 - [Shiro 3.0.2 release][rel302] — published 2026-11-08 06:26:50 UTC. Describes the behavior changes and does not name the CVE identifiers.
-- [Shiro security reports][reports] — the project page. It says only the current line receives all fixes, and that 2.x ended on 2026-06-29. Read 2026-11-15, it did not yet list these eight.
+- [Shiro security reports][reports] — the project page. It says only the current line receives all fixes, and that 2.x ended on 2026-06-29. Read 2026-11-25, the index lists CVE-2026-129349, CVE-2026-129348, CVE-2026-129347, and CVE-2026-129320. The scores and the fix versions are unchanged.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, checked 2026-11-15. None of the eight is listed.
 
 [oss349]: https://seclists.org/oss-sec/2026/q4/705

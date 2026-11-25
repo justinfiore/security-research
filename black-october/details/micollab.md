@@ -18,7 +18,7 @@ Three more are Medium, all unauthenticated, all through 10.3 (10.3.0.18):
 
 Affected is **MiCollab 10.3 (10.3.0.18) and earlier**, supported versions only. A host already on 10.3.0.18 is still affected until the patch in [KB000129195](https://mitel.service-now.com/mitel?id=kb_article&sys_id=3e441c0d97285b10cd1b3a871153afc5) is applied, or the host is upgraded to a later release that includes the update. That knowledge-base article needs a Mitel login. Mitel's advisory and CERT Santé, on 2026-11-20, report no exploitation and no public proof of concept. Accenture APEX Labs, in a November 2026 report, says otherwise: one victim had web-shell activity before 23:00 UTC on November 15, the day before the advisory. The first command ran 12 minutes after the first request, root followed within 30 minutes, and the LDAP connector account reached a domain controller within 32 minutes. A second MiCollab server has held an HTTPS channel to the same address, 204.76.203.204, since November 9. Accenture has not shown which flaw that second server used. The shell path it names is `/pictures/*/shell.asp`. Local MiCollab logs were edited, so a clean log is not a clean server.
 
-**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25) for any of the five. Accenture's report is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — all five added 2026-11-25. [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323), [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303), [CVE-2026-133275](https://www.cve.org/CVERecord?id=CVE-2026-133275), and [CVE-2026-133324](https://www.cve.org/CVERecord?id=CVE-2026-133324) are due 2026-11-28. [CVE-2026-133311](https://www.cve.org/CVERecord?id=CVE-2026-133311) is due 2026-12-09. The required action includes the vendor's mitigations and CISA's forensic triage. Ransomware use is Unknown for all five. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -37,6 +37,7 @@ Affected is **MiCollab 10.3 (10.3.0.18) and earlier**, supported versions only. 
 | CVE records | 2026-11-19; time/TZ unknown | MITRE. Scores match Mitel's table. |
 | CERT Santé notice | 2026-11-20; time/TZ unknown | No exploitation and no public proof of concept. [CERT Santé][sante] |
 | **Accenture report** | **2026-11; day not stated on the page** | Web shell before 23:00 UTC on 2026-11-15 at one victim. A second server called 204.76.203.204 from 2026-11-09. [Accenture][apex] |
+| **CISA KEV** | **2026-11-25; time/TZ unknown** | All five added. Four are due 2026-11-28. CVE-2026-133311 is due 2026-12-09. Forensic triage is required. [KEV][kev] |
 
 ## Detection
 
@@ -64,8 +65,9 @@ Mitel and CERT Santé do not report exploitation. Accenture does, for one victim
 - [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323), [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303), [CVE-2026-133311](https://www.cve.org/CVERecord?id=CVE-2026-133311), [CVE-2026-133275](https://www.cve.org/CVERecord?id=CVE-2026-133275), [CVE-2026-133324](https://www.cve.org/CVERecord?id=CVE-2026-133324) — MITRE, published 2026-11-19. The scores match Mitel's table.
 - [CERT Santé][sante] — 2026-11-20. No known exploitation and no public proof of concept.
 - [Accenture APEX Labs][apex] — published November 2026, day not stated. Web shell before 23:00 UTC on 2026-11-15. Indicators 204.76.203.204 and 204.76.203.216, and `/pictures/*/shell.asp`.
-- [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-21. None of the five is listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.25, released 2026-11-25T19:48:12.4344Z, checked 2026-11-25. All five were added 2026-11-25. CVE-2026-133323, CVE-2026-133303, CVE-2026-133275, and CVE-2026-133324 are due 2026-11-28. CVE-2026-133311 is due 2026-12-09. Ransomware use Unknown.
 
 [adv]: https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012
 [sante]: https://cyberveille.esante.gouv.fr/alertes/mitel-cve-2026-133323-2026-11-20
 [apex]: https://accenture.github.io/cyber-intelligence/micollab-exploitation/
+[kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

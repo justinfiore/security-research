@@ -1,6 +1,6 @@
 # ManageEngine DDI Central: a DHCP option runs a command
 
-**Last updated:** 2026-11-24 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main summary](../black-october-2026.md#manageengine-ddi-central-a-dhcp-option-runs-a-command) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -30,7 +30,8 @@ Build 6500 fixed four earlier flaws, including [CVE-2026-95651](https://www.cve.
 | Build 6500 | 2026-09-17; time/TZ unknown | Fixes the four 6500 CVEs. This build is the affected version for the two below. [Release notes][readme] |
 | **Fix** | **2026-11-19; time/TZ unknown** | Both pages say fixed on November 19, 2026. Build 6501. [131964][a964] [130508][a508] |
 | **Public pages** | **2026-11-24; time/TZ unknown** | Both advisories were on the security-updates index when read on this date. The index prints no publication time. The CVE.org records were still reserved. |
-| **Last updated** | **2026-11-24 (America/New_York)** | New item. Move the console to 6501. |
+| **Release notes name 6501** | **2026-11-25; time/TZ unknown** | The page's newest section is 6501, dated November 19, and its Security Fixes name both CVEs. |
+| **Last updated** | **2026-11-25 (America/New_York)** | The release notes caught up. The build is still 6501. |
 
 ## Detection
 
@@ -55,7 +56,7 @@ ManageEngine does not report attacks and publishes no indicator. The update does
 - [ManageEngine, CVE-2026-131964][a964] — Critical. Build 6500 only. Fixed in build 6501 on November 19, 2026. No numeric score.
 - [ManageEngine, CVE-2026-130508][a508] — High. The same build and the same fix date. Cisco IOS DHCPv6 pool updates.
 - [DDI Central security updates][index] — the index that lists both above the September build 6500 rows.
-- [DDI Central release notes][readme] — build 6500 is dated September 17, 2026. The page's newest section is still 6500 and does not mention 6501.
+- [DDI Central release notes][readme] — build 6501 is dated November 19, 2026. Its Security Fixes section names both CVEs and credits Tuan Anh 91. Build 6500 is dated September 17, 2026.
 - [CVE-2026-131964](https://www.cve.org/CVERecord?id=CVE-2026-131964) and [CVE-2026-130508](https://www.cve.org/CVERecord?id=CVE-2026-130508) — both reserved when checked on 2026-11-24. A generated CVE.org link is not a published record.
 - [CISA KEV JSON][kev] — catalog 2026.11.23, checked 2026-11-24. Neither is listed.
 

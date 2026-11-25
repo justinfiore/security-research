@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Jenkins: a sandboxed Pipeline runs code on the controller](#jenkins-a-sandboxed-pipeline-runs-code-on-the-controller)
 - [GeoServer: a stored query reads a file, then a default key is the administrator](#geoserver-a-stored-query-reads-a-file-then-a-default-key-is-the-administrator)
 - [FinCEN: unauthorized access to a limited set of systems](#fincen-unauthorized-access-to-a-limited-set-of-systems)
 - [Hex.pm: an Erlang request body ran commands on the registry](#hexpm-an-erlang-request-body-ran-commands-on-the-registry)
@@ -639,6 +640,27 @@ The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited V
 
 ---
 
+## Jenkins: a sandboxed Pipeline runs code on the controller
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/jenkins-november.md):** [Detection](details/jenkins-november.md#detection) · [Remediation](details/jenkins-november.md#remediation) · [Verification](details/jenkins-november.md#verification) · [Timeline](details/jenkins-november.md#timeline)
+
+**CVEs:** [CVE-2026-136834](https://www.cve.org/CVERecord?id=CVE-2026-136834), [CVE-2026-136835](https://www.cve.org/CVERecord?id=CVE-2026-136835), [CVE-2026-136836](https://www.cve.org/CVERecord?id=CVE-2026-136836), [CVE-2026-136837](https://www.cve.org/CVERecord?id=CVE-2026-136837), [CVE-2026-136840](https://www.cve.org/CVERecord?id=CVE-2026-136840), [CVE-2026-136842](https://www.cve.org/CVERecord?id=CVE-2026-136842), [CVE-2026-136854](https://www.cve.org/CVERecord?id=CVE-2026-136854)
+
+**Jenkins rates seven issues in its [November 25 advisory](https://www.jenkins.io/security/advisory/2026-11-25/) High and publishes no numeric score.** [CVE-2026-136834](https://www.cve.org/CVERecord?id=CVE-2026-136834) is in Pipeline: Groovy through 4403.v471713a_cea_19: someone who can define and run a sandboxed Pipeline runs code in the controller JVM. [CVE-2026-136837](https://www.cve.org/CVERecord?id=CVE-2026-136837) is in Warnings 13.10251.va_452d3553728 through 13.10365.v85cd7a_c8110b_: an inline Groovy parser is compiled on the controller with no sandbox. [CVE-2026-136840](https://www.cve.org/CVERecord?id=CVE-2026-136840) is in Configuration as Code: someone with Overall/SystemRead reads a file on the controller, and Jenkins says that read can lead to code execution. It applies only where that permission is granted, and one build in the range, 2140.2142.v3836c98f1b_30, is not affected. [CVE-2026-136836](https://www.cve.org/CVERecord?id=CVE-2026-136836) reads `.mvn/extensions.xml` from a workspace and applies only where Develocity Maven auto-injection is on. The other three are a second sandbox bypass in Script Security, a stored script from a Performance report, and a stored script from a job name in Rich Text Publisher. The same advisory has four Medium issues. This is not the October core advisory.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25) for any of the 21. Jenkins reports no exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Advisory and fixes** | **2026-11-25; time/TZ unknown** | Eleven plugins. [Advisory](https://www.jenkins.io/security/advisory/2026-11-25/) |
+| **Last updated** | **2026-11-25 15:15 EST (UTC−05:00)** | New item. Update the plugins. |
+
+**Patch:** Update Pipeline: Groovy to **4403.4405.va_b_cdb_b_d0b_89f**, Script Security to **1436.1438.v3dc5ef7d16f2**, Gradle to **2.22.1283.v53b_41fe4cb_d9**, Warnings to **13.10365.10367.v2db_e2de17661**, Configuration as Code to **2148.v9d0c041b_a_13c**, Performance to **1025.ve64297f8ccb_c**, and Rich Text Publisher to **1.6**. The Medium fixes are in the [guide](details/jenkins-november.md#remediation). The update does not undo a job or a credential that was already changed.
+
+Sources: [Jenkins advisory, November 25](https://www.jenkins.io/security/advisory/2026-11-25/), [detailed guide](details/jenkins-november.md).
+
+---
+
 ## GeoServer: a stored query reads a file, then a default key is the administrator
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/geoserver.md):** [Detection](details/geoserver.md#detection) · [Remediation](details/geoserver.md#remediation) · [Verification](details/geoserver.md#verification) · [Timeline](details/geoserver.md#timeline)
@@ -669,13 +691,13 @@ Sources: [GeoServer, November 23](https://geoserver.org/vulnerability/2026/11/23
 
 **CVEs:** No CVE is assigned.
 
-**No vendor or CNA has published a CVSS score.** The Bank Secrecy Act E-Filing site says FinCEN is investigating a cybersecurity incident that resulted in unauthorized access to a limited subset of its systems, and that some systems were taken offline as a precaution. The site stays up. Some services on it may not. A filing the outage blocked uses the deadline relief in FinCEN's November 24 order. A suspicious-activity report that cannot wait goes to the Financial Institutions Hotline, 1-866-556-3974. The banner does not say what was read or when the access started. A Reuters report quotes a FinCEN official saying there is no evidence the Bank Secrecy Act or beneficial-ownership databases were breached, and that the review with the FBI and CISA is not finished. This guide did not see that sentence on a FinCEN page.
+**No vendor or CNA has published a CVSS score.** The Bank Secrecy Act E-Filing site says FinCEN is investigating a cybersecurity incident that resulted in unauthorized access to a limited subset of its systems, and that some systems were taken offline as a precaution. The site stays up. Some services on it may not. A filing the outage blocked uses the deadline relief in FinCEN's November 24 order: a submission otherwise due November 18 through December 29, 2026 is due no later than December 30, 2026. A suspicious-activity report that cannot wait goes to the Financial Institutions Hotline, 1-866-556-3974. The banner does not say what was read or when the access started. A Reuters report quotes a FinCEN official saying there is no evidence the Bank Secrecy Act or beneficial-ownership databases were breached, and that the review with the FBI and CISA is not finished. This guide did not see that sentence on a FinCEN page.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| **Exceptive relief** | **2026-11-24; time unknown** | FinCEN's news page dates the order November 24. |
+| **Exceptive relief** | **2026-11-24; time unknown** | Order FIN-2026-R002. Filings otherwise due November 18 through December 29 are due December 30. |
 | **Banner** | **2026-11-25; time unknown** | Unauthorized access. Some systems offline. [E-Filing](https://bsaefiling.fincen.gov/) |
 | **Last updated** | **2026-11-25 11:30 EST (UTC−05:00)** | New item. Nothing to install. |
 
@@ -1407,7 +1429,7 @@ Sources: [BleepingComputer](https://www.bleepingcomputer.com/news/security/micro
 
 **CVEs:** No CVE is assigned.
 
-**No vendor or CNA has published a CVSS score.** OpenRouter's announcement, dated November 22, says Dragos found inference providers whose data was compromised or whose data policies were not kept. OpenRouter took three providers off the platform, removed 125 endpoints from Zero Data Retention eligibility, and notified potentially affected customers. It says the testing did not show a breach of OpenRouter. Dragos, on November 19, says that from July through November it sent about two million prompts with unique credentials, that attackers copied requests at three hosting providers (the earliest in mid-July, and two of them included Zero Data Retention requests), and that it has not named those three. Together AI's November 21 notice is a stored-sample download: a credential for a private Hugging Face repository reached a public repository, and the party downloaded samples from MiniMax M3, GLM-5.2, and Kimi K2.6, primarily on June 24, July 4, July 8, and July 14. Phala's November 23 report supersedes its November 10 report and shortens the window: DeepSeek V4 Flash 0731 requests OpenRouter routed to Phala from October 21 at 02:25 UTC through November 1 at 02:03 UTC, 152,092 requests. The last recorded canary misuse is November 7. Phala also says the legacy KMS root key was taken on November 5. Novita's November 22 blog says MiniMax requests through Novita from May 28 through November 11 may have been retained, including requests OpenRouter routed there. MiniMax's November 24 notice says it found no disclosure of prompt content and deleted the recorded URLs. Atlas Cloud's notice is now dated November 23, and the action is unchanged. OpenRouter's page, read November 24, lists five notices and still says three providers were off-boarded.
+**No vendor or CNA has published a CVSS score.** OpenRouter's announcement, dated November 22, says Dragos found inference providers whose data was compromised or whose data policies were not kept. OpenRouter took three providers off the platform, removed 125 endpoints from Zero Data Retention eligibility, and notified potentially affected customers. It says the testing did not show a breach of OpenRouter. Dragos, on November 19, says that from July through November it sent about two million prompts with unique credentials, that attackers copied requests at three hosting providers (the earliest in mid-July, and two of them included Zero Data Retention requests), and that it has not named those three. Together AI's November 21 notice is a stored-sample download: a credential for a private Hugging Face repository reached a public repository, and the party downloaded samples from MiniMax M3, GLM-5.2, and Kimi K2.6, primarily on June 24, July 4, July 8, and July 14. Phala's November 23 report supersedes its November 10 report and shortens the window: DeepSeek V4 Flash 0731 requests OpenRouter routed to Phala from October 21 at 02:25 UTC through November 1 at 02:03 UTC, 152,092 requests. The last recorded canary misuse is November 7. Phala also says the legacy KMS root key was taken on November 5. Novita's November 22 blog says MiniMax requests through Novita from May 28 through November 11 may have been retained, including requests OpenRouter routed there. MiniMax's November 24 notice says it found no disclosure of prompt content and deleted the recorded URLs. Atlas Cloud's notice is now dated November 23, and the action is unchanged. GMI Cloud's November 24 notice adds a sixth: a logging system that kept prompts and responses was reached on October 21 and 22 and from October 27, and requests from October 18 through November 18 may be included. OpenRouter's page, read November 25, lists six notices and still says three providers were off-boarded.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
 
@@ -1419,9 +1441,10 @@ Sources: [BleepingComputer](https://www.bleepingcomputer.com/news/security/micro
 | **Atlas Cloud notice** | **2026-11-23; time unknown** | The page date moved from November 22. The models are unchanged. |
 | Phala detailed report | 2026-11-23; time unknown | The window is now October 21 02:25 UTC through November 1 02:03 UTC. |
 | MiniMax notice | 2026-11-24; time unknown | No evidence of prompt disclosure. |
-| **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | Phala's window changed. Novita and MiniMax posted. |
+| **GMI Cloud notice** | **2026-11-24 16:00 UTC** | Prompts and responses from October 18 through November 18 may have been retained. |
+| **Last updated** | **2026-11-25 15:15 EST (UTC−05:00)** | GMI Cloud is the sixth notice. |
 
-**Patch:** There is nothing to install. Rotate a secret that was inside a prompt in those windows, including a MiniMax prompt sent through Novita from May 28 through November 11. On Phala, move anything protected by a key an application derived with `getKey()` before November 6 at 05:02 UTC. On Together AI, turn on Zero Data Retention for an account that sends sensitive prompts; Together says that is now the default for new accounts only. OpenRouter removing an endpoint does not expire a key that already left, and it has not published the list of 125.
+**Patch:** There is nothing to install. Rotate a secret that was inside a prompt in those windows, including a MiniMax prompt sent through Novita from May 28 through November 11, and a prompt sent to a GMI Cloud endpoint from October 18 through November 18. On Phala, move anything protected by a key an application derived with `getKey()` before November 6 at 05:02 UTC. On Together AI, turn on Zero Data Retention for an account that sends sensitive prompts; Together says that is now the default for new accounts only. OpenRouter removing an endpoint does not expire a key that already left, and it has not published the list of 125.
 
 Sources: [OpenRouter](https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers), [Dragos](https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens), [Atlas Cloud](https://www.atlascloud.ai/blog/ai-updates/security-and-privacy-commitment), [detailed guide](details/openrouter.md).
 
@@ -1636,7 +1659,7 @@ Sources: [TR-26-1588](https://siberguvenlik.gov.tr/guvenlik-bildirimleri/detay/t
 
 **CVEs:** [CVE-2026-129975](https://www.cve.org/CVERecord?id=CVE-2026-129975)
 
-**GnuPG calls [CVE-2026-129975](https://www.cve.org/CVERecord?id=CVE-2026-129975) a critical security bug. The CVE record is still reserved, so no CNA has published a CVSS score.** Werner Koch announced GPGME 2.3.1 on 2026-11-20 at 19:01:51 CET. An OpenPGP key with a crafted, very long user ID triggers a double free in the status-line reader and the key-listing reader. GnuPG says that can exfiltrate data from an application, for example by sending signed data, and that remote code execution cannot be ruled out. Every GPGME before 2.3.0 is affected, whether it is a shared library, a Windows DLL, or linked into the program. 2.3.0 was never published. The advisory names Gpg4win, GnuPG Desktop, GnuPG VS-Desktop, most mail clients, many XMPP clients, Samba, and Flatpak. Johan Carlsson found it, and GitLab reported it on November 12. GnuPG does not report exploitation. Debian says the same flaw can disclose information, deny service, and potentially run code: trixie is fixed in `gpgme1.0` **1.24.2-3+deb13u1** (DSA-6646-1) and bookworm in **1.18.0-3+deb12u1** (DLA-4924-1). Forky **2.2.0-2** is still vulnerable. Sid is **2.3.1-1**.
+**GnuPG calls [CVE-2026-129975](https://www.cve.org/CVERecord?id=CVE-2026-129975) a critical security bug. The CVE record is still reserved, so no CNA has published a CVSS score.** Werner Koch announced GPGME 2.3.1 on 2026-11-20 at 19:01:51 CET. An OpenPGP key with a crafted, very long user ID triggers a double free in the status-line reader and the key-listing reader. GnuPG says that can exfiltrate data from an application, for example by sending signed data, and that remote code execution cannot be ruled out. Every GPGME before 2.3.0 is affected, whether it is a shared library, a Windows DLL, or linked into the program. 2.3.0 was never published. The advisory names Gpg4win, GnuPG Desktop, GnuPG VS-Desktop, most mail clients, many XMPP clients, Samba, and Flatpak. Johan Carlsson found it, and GitLab reported it on November 12. GnuPG does not report exploitation. Debian says the same flaw can disclose information, deny service, and potentially run code: trixie is fixed in `gpgme1.0` **1.24.2-3+deb13u1** (DSA-6646-1) and bookworm in **1.18.0-3+deb12u1** (DLA-4924-1). Forky and sid are both fixed at **2.3.1-1**. The tracker, read 2026-11-25, no longer lists forky as vulnerable.
 
 **CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -1644,10 +1667,11 @@ Sources: [TR-26-1588](https://siberguvenlik.gov.tr/guvenlik-bildirimleri/detay/t
 |---|---|---|
 | Reported to GnuPG | 2026-11-12; time/TZ unknown | Johan Carlsson, through GitLab. |
 | **Public announcement** | **2026-11-20 19:01:51 CET (UTC+01:00)** | GPGME 2.3.1 and Gpg4win 5.1.2. The record is still reserved. |
-| Debian | 2026-11-20 | DSA-6646-1 at 21:36:59 UTC. DLA-4924-1 the same day. Forky has no package. |
-| **Last updated** | **2026-11-21 11:10 EST (UTC−05:00)** | New item. Update the library. A static copy does not move with it. |
+| Debian | 2026-11-20 | DSA-6646-1 at 21:36:59 UTC. DLA-4924-1 the same day. |
+| Debian testing fixed | 2026-11-25; time/TZ unknown | The tracker lists forky at `2.3.1-1`, fixed, with sid. |
+| **Last updated** | **2026-11-25 15:15 EST (UTC−05:00)** | Debian testing is fixed. Red Hat, Ubuntu, SUSE, and Amazon still have no package. |
 
-**Patch:** Update the shared library to **GPGME 2.3.1**, or install **Gpg4win 5.1.2**. On Debian 13 install `1.24.2-3+deb13u1`; on Debian 12 install `1.18.0-3+deb12u1`. Restart what had the library loaded. Rebuild a program that links GPGME statically. The legacy line is **1.24.4**, and GnuPG says that line may not get every later patch. Debian testing has no package. Red Hat, Ubuntu, SUSE, and Amazon Linux list the CVE and have shipped no package; Red Hat, SUSE, and Amazon score it CVSS 3.1 8.1, which is not GnuPG's word. There is no configuration workaround. The update does not show whether an application already sent data it should not have.
+**Patch:** Update the shared library to **GPGME 2.3.1**, or install **Gpg4win 5.1.2**. On Debian 13 install `1.24.2-3+deb13u1`; on Debian 12 install `1.18.0-3+deb12u1`. Restart what had the library loaded. Rebuild a program that links GPGME statically. The legacy line is **1.24.4**, and GnuPG says that line may not get every later patch. Debian testing is fixed at `2.3.1-1`. Red Hat, Ubuntu, SUSE, and Amazon Linux list the CVE and have shipped no package; Red Hat, SUSE, and Amazon score it CVSS 3.1 8.1, which is not GnuPG's word. There is no configuration workaround. The update does not show whether an application already sent data it should not have.
 
 Sources: [GnuPG announcement](https://lists.gnupg.org/pipermail/gnupg-announce/2026q4/000517.html), [DSA-6646-1](https://www.debian.org/security/2026/dsa-6646), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-129975), [detailed guide](details/gpgme.md).
 
@@ -1661,14 +1685,15 @@ Sources: [GnuPG announcement](https://lists.gnupg.org/pipermail/gnupg-announce/2
 
 **Mitel rates [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323) CVSS 3.1 10.0 Critical.** Mitel published the score in [MISA-2026-0012](https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012); MITRE's record repeats it. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:H`. The Audio, Web, and Video Conferencing component does not sanitize a parameter. A request with no login runs commands in the context of the system. Mitel names integrity and availability, and the vector assigns no confidentiality impact. [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303) is 9.0: XML injection runs commands when malicious content is already staged. Three more, 5.9, 5.3, and 5.3, are an information leak, a file upload, and an authentication bypass, all with no login. Mitel says using them together can amplify the impact, and it does not describe a chain. Affected is **10.3 (10.3.0.18) and earlier**. A host already on 10.3.0.18 still needs the patch in KB000129195, which requires a Mitel login. Mitel and CERT Santé do not report exploitation. Accenture APEX Labs does: one victim had a web shell before 23:00 UTC on November 15, and the LDAP connector account reached a domain controller 32 minutes later. A second server has called 204.76.203.204 since November 9. Accenture has not shown which flaw that second server used. The shell path it names is under `pictures`.
 
-**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25) for any of the five. Accenture's report is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — all five added 2026-11-25. [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323), [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303), [CVE-2026-133275](https://www.cve.org/CVERecord?id=CVE-2026-133275), and [CVE-2026-133324](https://www.cve.org/CVERecord?id=CVE-2026-133324) are due 2026-11-28. [CVE-2026-133311](https://www.cve.org/CVERecord?id=CVE-2026-133311) is due 2026-12-09. Forensic triage is required. Ransomware use is Unknown. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-16; time/TZ unknown** | MISA-2026-0012. Internal IDs only. |
 | Web shell, per Accenture | before 2026-11-15 23:00 UTC | One victim. The advisory is the next day. |
 | CVE records | 2026-11-19; time/TZ unknown | MITRE. Scores match Mitel's table. |
-| **Last updated** | **2026-11-25 12:00 EST (UTC−05:00)** | Accenture reports exploitation before the advisory. |
+| **CISA KEV** | **2026-11-25; time/TZ unknown** | All five added. Four are due 2026-11-28. CVE-2026-133311 is due 2026-12-09. |
+| **Last updated** | **2026-11-25 15:15 EST (UTC−05:00)** | All five are in KEV. The patch is unchanged. |
 
 **Patch:** Apply the patch in **KB000129195** on **10.3.0.18**, or upgrade to a later release that includes it. Until then, keep the conferencing component off the internet. Look for `shell.asp` under `pictures` in the proxy log, not only the MiCollab log. The update does not remove a shell or a directory password that was already taken.
 
@@ -2879,7 +2904,7 @@ Sources: [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270), [Deb
 | Rocky 10 and RHEL 9 kernel-rt | 2026-11-23 and 2026-11-24 | Rocky 10 `kernel-6.12.0-264.20.1.el10_3`. RHSA-2026:102167 ships the realtime kernel. |
 | **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | Long-term stables, Rocky 10, and RHEL 9 kernel-rt. Ubuntu, SUSE, Rocky 8, and Rocky 9 still have none. |
 
-**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Red Hat Enterprise Linux 10 is `kernel-6.12.0-264.19.1.el10_3` (RHSA-2026:102168, November 23), RHEL 9 is `kernel-5.14.0-741.26.1.el9_9` and `kernel-rt-5.14.0-741.26.1.el9_9` (RHSA-2026:102167), and RHEL 8 is `kernel-4.18.0-553.189.1.el8_10` (RHSA-2026:102218). AlmaLinux shipped the same advisories. Rocky Linux 10 is `kernel-6.12.0-264.20.1.el10_3`, and there is no RLSA. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1), trixie at 6.12.117-1 (DSA-6628-1), forky at 7.3.4-1, and sid at 7.3.5-1. Amazon Linux 2 is fixed at 4.14.355-287.769, and the 5.10 extra at `kernel-5.10.273-275.1133`. Amazon Linux 2023's `kernel6.18` is 6.18.62-127.179. Oracle Linux UEK is fixed on 7, 8, 9, and 10. Ubuntu 16.04 through 26.10 is still Vulnerable, with no package. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. Rocky Linux 8 and 9 have no package. See the [distribution table](details/linux-noisytcp.md#detection).
+**Patch:** Install the distribution kernel that names CVE-2026-99288 and reboot into it. Red Hat Enterprise Linux 10 is `kernel-6.12.0-264.19.1.el10_3` (RHSA-2026:102168, November 23), RHEL 9 is `kernel-5.14.0-741.26.1.el9_9` and `kernel-rt-5.14.0-741.26.1.el9_9` (RHSA-2026:102167), and RHEL 8 is `kernel-4.18.0-553.189.1.el8_10` (RHSA-2026:102218). AlmaLinux shipped the same advisories. Rocky Linux 10 is `kernel-6.12.0-264.20.1.el10_3`, and there is no RLSA. Debian bookworm is fixed at 6.1.192-1 (DLA-4906-1), trixie at 6.12.117-1 (DSA-6628-1), forky at 7.3.4-1, and sid at 7.3.5-1. Amazon Linux 2 is fixed at 4.14.355-287.769, and the 5.10 extra at `kernel-5.10.273-275.1133`. Amazon Linux 2023's `kernel6.18` is 6.18.62-127.179. Oracle Linux UEK is fixed on 7, 8, 9, and 10, and Oracle Linux 8's Red Hat-compatible kernel is `kernel-4.18.0-553.189.1.el8_10` (ELSA-2026-102218, November 23). Oracle Linux 9 and 10 have no RHCK erratum. Ubuntu 16.04 through 26.10 is still Vulnerable, with no package. SUSE lists SLES 15 SP7, 16.0, and 16.1 as affected, with no announcement. Rocky Linux 8 and 9 have no package. See the [distribution table](details/linux-noisytcp.md#detection).
 
 Sources: [oss-security](https://www.openwall.com/lists/oss-security/2026/11/15/2), [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288), [Red Hat](https://access.redhat.com/security/cve/CVE-2026-99288), [detailed guide](details/linux-noisytcp.md).
 
@@ -3666,7 +3691,7 @@ Sources: [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653), [E
 
 **CVEs:** [CVE-2026-120382](https://www.cve.org/CVERecord?id=CVE-2026-120382), [CVE-2026-76954](https://www.cve.org/CVERecord?id=CVE-2026-76954), [CVE-2026-85101](https://www.cve.org/CVERecord?id=CVE-2026-85101)
 
-**Synology rates [CVE-2026-120382](https://www.cve.org/CVERecord?id=CVE-2026-120382) and CVE-2026-76954 CVSS 3.1 9.8 Critical, and CVE-2026-85101 CVSS 3.1 8.6 Important.** The new 9.8 flaw is in the OAuth API: a remote attacker who is not logged in reads or writes arbitrary files. Synology-SA-26:21 revision 2, dated November 20, says to upgrade DSM 7.4 to **7.4.1-90080-2** and DSM 7.3 to **7.3.2-86009-6**. DSM 7.2, 7.1, and BeeStation OS 1.5 stay Ongoing, and Synology recommends moving 7.2 to 7.3.2-86009-6. Deactivate the OAuth Service package until that build is installed. The November 10 floors, 7.4.1-90080-1 and 7.3.2-86009-5, leave it in place. The other 9.8 flaw is SQL injection in the Auth API, and the 8.6 flaw is an authentication bypass in rsync. This is not the September pair, CVE-2026-13639 and CVE-2026-13684.
+**Synology rates [CVE-2026-120382](https://www.cve.org/CVERecord?id=CVE-2026-120382) and CVE-2026-76954 CVSS 3.1 9.8 Critical, and CVE-2026-85101 CVSS 3.1 8.6 Important.** The new 9.8 flaw is in the OAuth API: a remote attacker who is not logged in reads or writes arbitrary files. Synology-SA-26:21 revision 2, dated November 20, says to upgrade DSM 7.4 to **7.4.1-90080-2** and DSM 7.3 to **7.3.2-86009-6**. The DSM release notes now add **7.2.2-72806-11** and **7.2.1-69057-14**, both dated November 25, and **7.1.1-42962-10**, dated November 24, and each says it fixed SA-26:21. The advisory's product table, read the same day, still says Ongoing for those branches. BeeStation OS 1.5 has no build. Deactivate the OAuth Service package until the build is installed. The November 10 floors leave it in place. The other 9.8 flaw is SQL injection in the Auth API, and the 8.6 flaw is an authentication bypass in rsync. This is not the September pair, CVE-2026-13639 and CVE-2026-13684.
 
 **CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20) for any of the three. CVE-2024-10441 is a different flaw and is listed under the September guide. Synology does not report exploitation of these three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -3676,9 +3701,10 @@ Sources: [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653), [E
 | CVE records published | 2026-11-12 03:40:28 UTC and 03:41:52 UTC | Same scores and fixed builds as the advisory. |
 | **OAuth advisory** | **2026-11-19 15:47:20 UTC+8** | Synology-SA-26:21. Builds for 7.4 and 7.3 were scheduled. |
 | OAuth builds available | 2026-11-20 16:25:36 UTC+8 | Revision 2. DSM 7.4 and 7.3 now say upgrade to those builds. |
-| **Last updated** | **2026-11-20 15:10 EST (UTC−05:00)** | The 7.4 and 7.3 builds shipped. DSM 7.2, 7.1, and BeeStation OS 1.5 still have none. |
+| **OAuth builds on 7.2 and 7.1** | **2026-11-24 and 2026-11-25; time/TZ unknown** | Release notes name the builds. The advisory table still says Ongoing. |
+| **Last updated** | **2026-11-25 15:15 EST (UTC−05:00)** | The 7.2 and 7.1 builds. BeeStation still has none. |
 
-**Patch:** On DSM 7.4 and 7.3, install **7.4.1-90080-2** or **7.3.2-86009-6** or above and reboot. Until that build is running, deactivate the OAuth Service package. DSM 7.2 has no OAuth build; Synology says to move to 7.3.2-86009-6. The November 10 builds close only the Auth and rsync flaws. The upgrade does not show whether a file was already written.
+**Patch:** Install **7.4.1-90080-2**, **7.3.2-86009-6**, **7.2.2-72806-11**, **7.2.1-69057-14**, or **7.1.1-42962-10** or above, and reboot. Until that build is running, deactivate the OAuth Service package. BeeStation OS 1.5 has no build. The November 10 builds close only the Auth and rsync flaws. The upgrade does not show whether a file was already written.
 
 Sources: [Synology-SA-26:19](https://www.synology.com/en-global/security/advisory/Synology_SA_26_19), [detailed guide](details/synology-dsm-nov11.md).
 
@@ -3735,13 +3761,14 @@ Sources: [MSRC CVE-2026-116928](https://msrc.microsoft.com/update-guide/vulnerab
 
 **GitHub rates [CVE-2026-133469](https://www.cve.org/CVERecord?id=CVE-2026-133469) CVSS 3.1 9.8 Critical.** GitHub is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. Vates classifies VSA-2026-062 as Critical and its own advisory, last updated November 10, still has no score. A REST cookie of `authenticationToken=j:{}` is parsed into an empty object. The token store treats that object as a lookup with no filter and returns its first token, and the caller is logged in as that token's owner. The authenticated route then returns login token IDs that can be reused. Vates says a compromised console can run code on the pools it manages and take an XCP-ng node as root. Vates says the vulnerability is actively exploited, first from `91.211.251.112` and a Tor service. Xen Orchestra before **6.9.2** (stable) and **6.10.1** (latest) is affected, and so is the appliance. The fixing packages are `xo-server` **5.211.2** (stable) and **5.213.1** (latest).
 
-**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Vates and the CVE record both say this vulnerability is actively exploited, and that statement is separate from a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Listed — added 2026-11-25, federal due date 2026-11-28. Forensic triage is required. Ransomware use is Unknown. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement and fix** | **2026-11-10; time/TZ unknown** | VSA-2026-062. Critical. Vates assigns no CVSS score. Actively exploited. |
 | **CVE record** | **2026-11-23 17:07:16 UTC** | GitHub CNA. CVSS 3.1 9.8. The fixed builds are unchanged. |
-| **Last updated** | **2026-11-24 15:01 EST (UTC−05:00)** | The CVE and the score. The builds to install are unchanged. |
+| **CISA KEV** | **2026-11-25; time/TZ unknown** | Added, due 2026-11-28. Forensic triage is required. |
+| **Last updated** | **2026-11-25 15:15 EST (UTC−05:00)** | The KEV listing. The builds to install are unchanged. |
 
 **Patch:** Update to **6.10.1** (latest) or **6.9.2** (stable) and restart `xo-server`. A source install takes the latest `master`, which includes pull request 10748. If the console was reachable from the internet, revoke every session and API token and rotate the secrets the stack uses. Vates says a reinstall is the recommendation when a compromise is confirmed. Blocking the addresses Vates names stops the campaign it has seen and does not close the check.
 

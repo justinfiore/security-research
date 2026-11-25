@@ -25,7 +25,7 @@ A Reuters report on November 25 quotes a FinCEN official: the Treasury is workin
 
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
-| **Exceptive relief** | **2026-11-24; time unknown** | FinCEN's news page dates the order November 24. The PDF is an image and this guide did not extract its text. [Order][order] |
+| **Exceptive relief** | **2026-11-24; time unknown** | Order FIN-2026-R002. Filings otherwise due November 18 through December 29, 2026 are due no later than December 30, 2026. [Order][order] |
 | **Banner on E-Filing** | **2026-11-25; time unknown** | Unauthorized access to a limited subset of systems. Some systems offline. [E-Filing][bsa] |
 | Public reports | 2026-11-25; time unknown | The Verge, The Record, and Reuters. Reuters quotes the official on the two databases. |
 | **Last updated** | **2026-11-25 (America/New_York)** | New item. Nothing to install. |
@@ -40,7 +40,7 @@ A Reuters report on November 25 quotes a FinCEN official: the Treasury is workin
 
 There is no customer-side patch.
 
-1. Use the deadline relief in [FinCEN's November 24 order][order] for a Bank Secrecy Act or Corporate Transparency Act submission the outage blocked. The order is the source for which filings and which dates. This guide did not read the order's body.
+1. Use the deadline relief in [FinCEN's November 24 order][order]. It covers two groups: a financial institution that as of November 18, 2026 used Secure Data Transfer Mode for BSA reports, and a reporting company or individual who must file a beneficial-ownership report or update a FinCEN ID. A submission otherwise due November 18 through December 29, 2026 is due no later than December 30, 2026. The order calls it a service disruption and says the hotline is not affected.
 2. A suspicious-activity report that cannot wait goes to the Financial Institutions Hotline, 1-866-556-3974. The banner says that line is not affected.
 3. Do not upload a copy of a report to a third-party site, or resend it to an address the banner does not name, to get around the outage.
 
@@ -56,7 +56,7 @@ FinCEN has not said that any institution's filings were read. The Reuters statem
 ## Sources
 
 - [BSA E-Filing System][bsa] — the banner: unauthorized access to a limited subset of systems, some systems taken offline, the site still up, deadlines extended, hotline 1-866-556-3974. Read 2026-11-25.
-- [FinCEN, Temporary, Limited Exceptive Relief, November 24, 2026][order] — the order page. The linked PDF is an image; this guide did not extract which filings and dates it covers.
+- [FinCEN, Temporary, Limited Exceptive Relief, November 24, 2026][order] — order FIN-2026-R002. Two groups of filers. Submissions otherwise due November 18 through December 29, 2026 are due no later than December 30, 2026. The order calls it a service disruption.
 - [Reuters, via Al Arabiya, November 25, 2026](https://english.alarabiya.net/News/united-states/2026/11/25/us-fincen-takes-some-systems-offline-after-cyber-incident-official-says) — quotes a FinCEN official on the FBI and CISA review, and on no evidence of a breach of the Bank Secrecy Act or beneficial-ownership databases.
 - [The Record, November 25, 2026](https://therecord.media/treasury-fincen-takes-systems-offline-after-cyber-incident) — Treasury and FinCEN did not comment; no claim of responsibility.
 - [The Verge](https://www.theverge.com/policy/1041957/fincen-treasury-cybersecurity-incident) — the early report of the banner.

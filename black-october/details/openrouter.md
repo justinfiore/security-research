@@ -1,6 +1,6 @@
 # OpenRouter: inference providers kept prompts they said they would not
 
-**Last updated:** 2026-11-24 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main summary](../black-october-2026.md#openrouter-inference-providers-kept-prompts-they-said-they-would-not) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -20,7 +20,11 @@ Novita's blog, dated November 22, 2026, says requests to MiniMax models through 
 
 MiniMax's notice, dated November 24, 2026, says requests reached its API directly from OpenRouter or through Novita, Streamlake, and Atlas Cloud. MiniMax says it has found no evidence that prompt content or model responses were disclosed, that it does not retain the full content of requests or responses, and that it deleted the URLs recorded from the affected requests. It says the activity included requests OpenRouter had marked Zero Data Retention.
 
-Atlas Cloud's notice is now dated November 23, 2026. The actions are unchanged: MiniMax M3, M2.7, and M3.1 Flash prompts in the third quarter and early fourth quarter, and Atlas Cloud took its own models off OpenRouter. OpenRouter's page, read November 24, now lists five notices: the earlier three plus Atlas Cloud and MiniMax. It still says three providers were off-boarded and still does not name them.
+Atlas Cloud's notice is now dated November 23, 2026. The actions are unchanged: MiniMax M3, M2.7, and M3.1 Flash prompts in the third quarter and early fourth quarter, and Atlas Cloud took its own models off OpenRouter.
+
+GMI Cloud's notice, dated November 24, 2026, is a sixth one. GMI says an unauthorized party reached a logging and monitoring system that supports its inference platform, including the endpoints it serves on OpenRouter. The access was on October 21 and 22, and again from October 27, through two credentials that GMI revoked on November 18. GMI says it has not seen access since November 17. The system kept about three days of request content, so GMI says requests from October 18 through November 18 may be included, prompt and response both. GMI stopped logging that content. A researcher told GMI that test keys placed in prompts during that period were later used. GMI says those were the researcher's own keys.
+
+OpenRouter's page, read November 25, now lists six notices: the earlier three plus Atlas Cloud, MiniMax, and GMI Cloud. It still says three providers were off-boarded and still does not name them.
 
 **CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -47,7 +51,8 @@ Atlas Cloud's notice is now dated November 23, 2026. The actions are unchanged: 
 | Novita blog | 2026-11-22; time unknown | MiniMax requests through Novita, 2026-05-28 through 2026-11-11. [Novita][novita] |
 | Phala detailed report | 2026-11-23; time unknown | Supersedes the November 10 report. Shortens the window and adds the KMS key. |
 | MiniMax notice | 2026-11-24; time unknown | No evidence of prompt disclosure. URLs deleted from security logs. [MiniMax][minimax] |
-| **Last updated** | **2026-11-24 (America/New_York)** | Phala's window changed, and Novita and MiniMax posted. |
+| **GMI Cloud notice** | **2026-11-24 16:00 UTC** | Logging system reached October 21–22 and from October 27. Credentials revoked November 18. Requests from October 18 through November 18 may be included. [GMI][gmi] |
+| **Last updated** | **2026-11-25 (America/New_York)** | GMI Cloud is the sixth notice. |
 
 ## Detection
 
@@ -79,7 +84,8 @@ A secret that was inside a copied prompt should be treated as exposed from the d
 
 ## Sources
 
-- [OpenRouter, Data Processing Incidents on Inference Providers][or] — dated 2026-11-22, read again 2026-11-24. Three providers off-boarded, 125 endpoints removed from Zero Data Retention. The page now lists five notices: Novita, Phala, Together, Atlas Cloud, and MiniMax. It still does not name the three.
+- [OpenRouter, Data Processing Incidents on Inference Providers][or] — dated 2026-11-22, read again 2026-11-25. Three providers off-boarded, 125 endpoints removed from Zero Data Retention. The page now lists six notices: Novita, Phala, Together, Atlas Cloud, MiniMax, and GMI Cloud. It still does not name the three.
+- [GMI Cloud, November 24, 2026][gmi] — a logging and monitoring system was reached on October 21 and 22 and from October 27. Prompts and responses from October 18 through November 18 may have been retained. The credentials were revoked November 18.
 - [Atlas Cloud, November 22, 2026][atlas] — MiniMax's official API. Prompts to MiniMax M3 and M2.7 through Atlas Cloud in Q3 and early Q4 2026. Treat secrets sent to M3, M2.7, or M3.1 Flash as exposed. Atlas Cloud took its own models off OpenRouter.
 - [Dragos, HD Moore, November 19, 2026][dragos] — about two million canary prompts, July through November. Three unnamed provider compromises, reseller logging, and retention failures, including Zero Data Retention requests. Names the ARTEX user agents.
 - [Together AI security event][together] — published 2026-11-21. Stored samples for MiniMax M3, GLM-5.2, and Kimi K2.6 downloaded after a credential reached a public repository. Five tested credentials were Dragos canaries.
@@ -89,6 +95,7 @@ A secret that was inside a copied prompt should be treated as exposed from the d
 - [CISA KEV JSON][kev] — catalog 2026.11.24, checked 2026-11-24. No CVE to match.
 
 [or]: https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers
+[gmi]: https://www.gmicloud.ai/en/blog/security-incident-affecting-gmi-cloud-endpoints-on-openrouter
 [dragos]: https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens
 [together]: https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026
 [phala]: https://phala.com/posts/phala-november-detailed-incident-report
