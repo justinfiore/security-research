@@ -1,6 +1,6 @@
 # Linux kernel: November 2–3 High fixes
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main summary](../black-october-2026.md#linux-kernel-thirteen-high-fixes-from-november-2-and-3) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -24,7 +24,7 @@ kernel.org is the CNA for every row. The score is the CNA score. A vendor that s
 
 | CVE | CNA score | What has to be true | First fixed upstream |
 |---|---|---|---|
-| [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270) | 8.1 | A remote TCP handshake, plus request-socket migration. Migration is off unless `net.ipv4.tcp_migrate_req` is set or a reuseport BPF program migrates sockets. The CNA says the timer can then use a freed request socket. | 6.12.117, 6.18.61, and 7.1. No 5.10, 5.15, 6.1, or 6.6 tag. |
+| [CVE-2026-99270](https://www.cve.org/CVERecord?id=CVE-2026-99270) | 8.1 | A remote TCP handshake, plus request-socket migration. Migration is off unless `net.ipv4.tcp_migrate_req` is set or a reuseport BPF program migrates sockets. The CNA says the timer can then use a freed request socket. | 5.15.226, 6.1.193, 6.6.163, 6.12.117, 6.18.61, and 7.1. No 5.10 tag. The three new tags are dated 2026-11-23. |
 | [CVE-2026-99246](https://www.cve.org/CVERecord?id=CVE-2026-99246) | 8.1 | TIPC is loaded, a UDP bearer is up, and the node-reset tracepoint is enabled. The CNA says a packet can then race bearer teardown and use a freed link. TIPC is not loaded by default. | 5.10.273, 5.15.224, 6.1.191, 6.6.161, 6.12.115, 6.18.59, 7.2.13, and 7.3. |
 | [CVE-2026-99239](https://www.cve.org/CVERecord?id=CVE-2026-99239) | 7.8 | A local process opens a Bluetooth L2CAP socket. The CNA says a bind/connect race can link one channel to two connections. | 5.10.273, 5.15.224, 6.1.191, 6.6.161, 6.12.115, 6.18.60, 7.2.14, and 7.3.1. |
 | [CVE-2026-99227](https://www.cve.org/CVERecord?id=CVE-2026-99227) | 7.8 | A local process uses io_uring waitid and cancels it until a 31-bit counter wraps. Present since 6.7. | 6.12.115, 6.18.60, 7.2.14, and 7.3.1. |
@@ -50,7 +50,8 @@ The CNA's own scenario text says code execution is not established for these rec
 | Amazon Linux partial fixes | 2026-11-12; time unknown | ALAS2KERNEL-5.10-2026-139 and ALAS2023-2026-3448 name CVE-2026-99246 and CVE-2026-99236. CVE-2026-99270 is still pending on every Amazon Linux kernel listed. |
 | Ubuntu kernels | 2026-11-19; time/TZ unknown | USN-9165-1, USN-9166-1, USN-9167-1, and USN-9173-1. They do not list CVE-2026-99270. |
 | Oracle Linux UEK | 2026-11-12 and 2026-11-13; time/TZ unknown | ELSA-2026-500632 and ELSA-2026-500631 name CVE-2026-99270 only, and only for `kernel-uek`. |
-| **Last updated** | **2026-11-21 (America/New_York)** | Oracle Linux has a UEK package for CVE-2026-99270. The other twelve, and the RHEL-compatible kernel, still have none. |
+| Upstream tags for CVE-2026-99270 | 2026-11-23 08:13–08:27 +0100 | kernel.org added 5.15.226, 6.1.193, and 6.6.163. The CNA record was updated 2026-11-23. No 5.10 tag. |
+| **Last updated** | **2026-11-25 (America/New_York)** | Three more upstream tags. No distribution package changed. |
 
 ## Detection
 
@@ -78,7 +79,7 @@ Install a distribution kernel that names the CVE and reboot into it. Installing 
 | Oracle Linux | CVE-2026-99270 only, and only the UEK kernel: ELSA-2026-500631 (2026-11-13) is `kernel-uek-5.15.0-326.224.5.1` on OL 8 and OL 9. ELSA-2026-500632 (2026-11-12) is `kernel-uek-6.12.0-208.112.5.2` on OL 9 and OL 10. Neither names the other twelve CVEs, and neither fixes the RHEL-compatible `kernel` package. | Install the UEK erratum only if you boot UEK, then reboot. |
 | AlmaLinux, Rocky Linux | No erratum naming these thirteen CVEs was found. Rocky's API, checked 2026-11-21, returned none for CVE-2026-99270. Do not assume a RHEL rebuild has a fix Red Hat has not published. | Unknown until the rebuild publishes it. |
 
-The CNA unaffected lines are the upstream floors, not a distribution package. A host on 5.10, 5.15, 6.1, or 6.6 has no upstream stable tag for CVE-2026-99270. Debian's bookworm fix for some of the other rows does not fill that gap.
+The CNA unaffected lines are the upstream floors, not a distribution package. kernel.org's November 23 update adds **5.15.226, 6.1.193, and 6.6.163** for CVE-2026-99270. A host on 5.10 still has no upstream stable tag. No tracked distribution shipped a new package for that tag on November 24 or 25: Debian bookworm security is still 6.1.192-2, and Ubuntu, SUSE, Amazon Linux, and Rocky still have no package for this CVE. Debian's bookworm fix for some of the other rows does not fill that gap.
 
 ## Verification
 

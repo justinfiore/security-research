@@ -1,6 +1,6 @@
 # Google Chrome 156: Critical browser memory-safety fixes
 
-**Last updated:** 2026-11-24 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main summary](../black-october-2026.md#google-chrome-critical-browser-security-fixes) · [Main TOC](../black-october-2026.md#table-of-contents)
 
@@ -52,7 +52,7 @@ Use Chrome's **About Google Chrome** page or managed-browser inventory to identi
 
 ## Remediation
 
-Update Windows and macOS Chrome to **158.0.8127.88/.89 or later** and Linux Chrome to **158.0.8127.88 or later** through the supported update channel, then relaunch it. On Android, update to **158.0.8127.42 or later**. On the Extended Stable channel, update Windows and Mac to **156.0.8078.114 or later**. The November 17 builds, 158.0.8127.36/.37 and 156.0.8078.108/.109, do not contain CVE-2026-134401. A Chrome 157 build, including 157.0.8103.78/.79, does not include the November 17 fixes. The November 11 builds do not include them either. 156.0.8078.100 does not include the November 17 Extended Stable fixes. The November 9 builds, 157.0.8103.50/.51 and 156.0.8078.96, do not include the November 11 fixes. A Chrome 157 build from November 3, 157.0.8103.38/.39, does not include the November 9 fixes, including CVE-2026-125350. A Chrome 156 build, including 156.0.8078.79/.80, does not include the seven Critical fixes in the November 3 release. The October 27 builds (156.0.8078.73/.74) also lack CVE-2026-76024. Keep enterprise browser auto-update enabled. The source does not establish an alternative mitigation for an unpatched browser. Google says the November 17 update rolls out over the coming days and weeks, so a machine that has not received it yet is still on the older build. The update does not show whether a page already used an exploit.
+Update Windows and macOS Chrome to **158.0.8127.88/.89 or later** and Linux Chrome to **158.0.8127.88 or later** through the supported update channel, then relaunch it. On Android, update to **158.0.8127.92 or later**. Google's November 23 Android post says that build carries the same security fixes as desktop 158.0.8127.88/.89. 158.0.8127.42 is the November 17 build and does not contain CVE-2026-134401. On the Extended Stable channel, update Windows and Mac to **156.0.8078.114 or later**. The November 17 builds, 158.0.8127.36/.37 and 156.0.8078.108/.109, do not contain CVE-2026-134401. A Chrome 157 build, including 157.0.8103.78/.79, does not include the November 17 fixes. The November 11 builds do not include them either. 156.0.8078.100 does not include the November 17 Extended Stable fixes. The November 9 builds, 157.0.8103.50/.51 and 156.0.8078.96, do not include the November 11 fixes. A Chrome 157 build from November 3, 157.0.8103.38/.39, does not include the November 9 fixes, including CVE-2026-125350. A Chrome 156 build, including 156.0.8078.79/.80, does not include the seven Critical fixes in the November 3 release. The October 27 builds (156.0.8078.73/.74) also lack CVE-2026-76024. Keep enterprise browser auto-update enabled. The source does not establish an alternative mitigation for an unpatched browser. Google says the November 17 update rolls out over the coming days and weeks, so a machine that has not received it yet is still on the older build. The update does not show whether a page already used an exploit.
 
 ## Verification
 
