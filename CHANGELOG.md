@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-25 02:02 EST (UTC−05:00) — Linux kernel
+
+- **Linux kernel:** Install a kernel that names the [November 20 High fixes](black-october/details/linux-november-20.md#remediation) you can reach, and reboot. kernel.org scores eight flaws CVSS 3.1 High. [CVE-2026-99794](https://www.cve.org/CVERecord?id=CVE-2026-99794) is 8.3 and [CVE-2026-99793](https://www.cve.org/CVERecord?id=CVE-2026-99793) is 8.1: a nearby Bluetooth peer can move an L2CAP channel forward before the host accepts it. Debian trixie security is `linux` 6.12.118-1. bookworm security is still vulnerable. Ubuntu and Red Hat have no package. Red Hat scores three of the eight Moderate and has deferred them. None is in KEV. This is not the November 2–3 set.
+
 ## 2026-11-24 23:30 EST (UTC−05:00) — Kerberos Agent; WordPress; Rackspace Spot; GL.iNet; Wiki.js
 
 - **Kerberos Agent:** Upgrade to [3.14.4 or later](black-october/details/kerberos-agent.md#remediation) and set `AGENT_JWT_SECRET`. The maintainers rate GHSA-3c52-7fc8-c39j CVSS 3.1 9.8: when the secret is unset, the agent signs tokens with `TOBECHANGED`, and a request with no login forges an administrator token. VulnCheck's CVE-2026-135208 scores the same issue 9.8 and CVSS 4.0 9.3. Every release through 3.14.3 is affected. 3.14.4 shipped November 21. Changing the login password does not replace the key. It is not in KEV. Rotate camera and Hub credentials the agent stored.

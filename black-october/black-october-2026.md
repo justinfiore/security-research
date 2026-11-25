@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 24, 2026**
+**As of November 25, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -62,6 +62,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [WordPress: User Registration Aide changes a password before login](#wordpress-user-registration-aide-changes-a-password-before-login)
 - [Spring: an expression matcher runs code](#spring-an-expression-matcher-runs-code)
 - [MONAI Label: an upload writes any file](#monai-label-an-upload-writes-any-file)
+- [Linux kernel: eight High fixes from November 20](#linux-kernel-eight-high-fixes-from-november-20)
 - [Linux kernel: a nested AMD guest reads the host](#linux-kernel-a-nested-amd-guest-reads-the-host)
 - [Moxa Ethernet switches: one shared key, and firmware is not signed](#moxa-ethernet-switches-one-shared-key-and-firmware-is-not-signed)
 - [Apache Tomcat: a cluster node joins without being checked](#apache-tomcat-a-cluster-node-joins-without-being-checked)
@@ -1675,6 +1676,28 @@ Sources: [CVE-2026-59273](https://spring.io/security/cve-2026-59273), [Spring ad
 **Patch:** Upgrade to **0.8.6 or later** and restart. The release notes say every deployment should upgrade. The advisory's line that there is no patched version is older than the release. The upgrade does not remove a file the process already wrote.
 
 Sources: [GHSA-qc22-rmgc-vg94](https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-qc22-rmgc-vg94), [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968), [detailed guide](details/monai-label.md).
+
+---
+
+## Linux kernel: eight High fixes from November 20
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/linux-november-20.md):** [Detection](details/linux-november-20.md#detection) · [Remediation](details/linux-november-20.md#remediation) · [Verification](details/linux-november-20.md#verification) · [Timeline](details/linux-november-20.md#timeline)
+
+**CVEs:** [CVE-2026-99794](https://www.cve.org/CVERecord?id=CVE-2026-99794), [CVE-2026-99793](https://www.cve.org/CVERecord?id=CVE-2026-99793), [CVE-2026-99785](https://www.cve.org/CVERecord?id=CVE-2026-99785), [CVE-2026-99773](https://www.cve.org/CVERecord?id=CVE-2026-99773), [CVE-2026-99804](https://www.cve.org/CVERecord?id=CVE-2026-99804), [CVE-2026-99754](https://www.cve.org/CVERecord?id=CVE-2026-99754), [CVE-2026-99744](https://www.cve.org/CVERecord?id=CVE-2026-99744), [CVE-2026-99746](https://www.cve.org/CVERecord?id=CVE-2026-99746)
+
+**kernel.org rates all eight CVSS 3.1 High.** The two highest are Bluetooth: [CVE-2026-99794](https://www.cve.org/CVERecord?id=CVE-2026-99794) is 8.3 and [CVE-2026-99793](https://www.cve.org/CVERecord?id=CVE-2026-99793) is 8.1. A nearby radio peer can move an L2CAP channel forward before the host has accepted it. [CVE-2026-99754](https://www.cve.org/CVERecord?id=CVE-2026-99754) is 7.1 and needs a logged-in iSCSI initiator. [CVE-2026-99744](https://www.cve.org/CVERecord?id=CVE-2026-99744) is 7.1 and needs an Atheros L1C NIC plus a longer frame from the same link. The other four are local. Red Hat scores three of them Moderate, 6.3, 6.5, and 5.5, and has deferred the kernel. NVD has not scored them. The CNA does not report exploitation. This is not the [November 2–3 set](#linux-kernel-thirteen-high-fixes-from-november-2-and-3).
+
+**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-25). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public records** | **2026-11-20 05:51–07:02 UTC** | kernel.org CNA. |
+| Debian trixie security | Tracker read 2026-11-25 | `linux` 6.12.118-1 is fixed. 6.12.117-1 is not, except for CVE-2026-99804. |
+| **Last updated** | **2026-11-25 02:02 EST (UTC−05:00)** | New item. Ubuntu and Red Hat have no package. |
+
+**Patch:** Install a kernel that names the CVE you can reach and reboot. Debian trixie security is `linux` 6.12.118-1. bookworm security 6.1.192-2 is still vulnerable. Ubuntu has no released package for CVE-2026-99794. Red Hat has deferred RHEL 8, 9, and 10. SUSE still lists CVE-2026-99794 as Analysis. See the [per-CVE table](details/linux-november-20.md#what-each-flaw-needs).
+
+Sources: [CVE-2026-99794](https://www.cve.org/CVERecord?id=CVE-2026-99794), [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99794), [detailed guide](details/linux-november-20.md).
 
 ---
 
@@ -9166,6 +9189,7 @@ flowchart TD
 | **Docker Hub accounts and organizations** | No software to install (fixed service-side). If Docker emailed you on 2026-10-02, revoke unrecognized PATs, prefer organization access tokens, and check published image digests against CI records. [Guide](details/docker-hub-ghostpat.md#remediation). |
 | **Progress MarkLogic Server (self-managed)** | Upgrade to 11.3.7 or 12.1.0 (no fixed 12.0.x; retired 10.x and earlier unfixed) after reading the incompatibility notes, upgrade mlcp, and review admin accounts; Progress Data Cloud is already patched. [Guide](details/marklogic.md#remediation). |
 | **HPE Aruba Networking AOS-8 / AOS-10 (controllers, conductors, gateways, APs)** | Upgrade to AOS-10.8.1.2+, 10.7.2.7+, 10.4.1.14+, 8.13.3.1+ or 8.10.0.24+ (other branches: move to a fixed supported branch); until then confine SSH/WebUI/API to a management VLAN and UDP 8211 (PAPI) to your own APs and controllers. [Guide](details/aruba-aos.md#remediation). |
+| **Linux hosts with Bluetooth, an iSCSI target, or an Atheros L1C NIC** | Also boot a kernel that names the [November 20 High fixes](details/linux-november-20.md#remediation). CVE-2026-99794 and CVE-2026-99793 are Bluetooth. CVE-2026-99754 needs a logged-in iSCSI initiator. CVE-2026-99744 needs that NIC. Debian trixie security is `linux` 6.12.118-1. Ubuntu and Red Hat have no package. |
 | **Linux hosts accepting TCP, or running untrusted local code** | Also boot a kernel that names the [November 2–3 High fixes](details/linux-november-batch.md#remediation) you can reach. CVE-2026-99270 needs TCP migration. CVE-2026-99246 needs TIPC. The other eleven need a local account. Debian trixie 6.12.117-1 covers them. Ubuntu's November 19 kernels cover several and not CVE-2026-99270. Red Hat and Amazon Linux have no package for that one. Leave `net.ipv4.tcp_migrate_req` at 0 and do not load TIPC until that package exists. That is not a fix. |
 | **Linux hosts running untrusted local code (shared hosting, CI runners, container nodes)** | Boot a kernel with the ZDI-CAN-33367 `skb_zerocopy()` fix: stable **7.2.15**, RHEL 7 Extended Lifecycle Support `kernel-3.10.0-1160.169.1.el7`, RHEL 9 `kernel-5.14.0-687.64.1.el9_8`, Rocky Linux 9 the same version, RHEL 8 `kernel-4.18.0-553.181.1.el8_10` (not the November 1 TCP kernel), RHEL 8.8 `kernel-4.18.0-477.178.1.el8_8`, RHEL 8.6 Advanced Mission Critical `kernel-4.18.0-372.227.1.el8_6`, RHEL 8.4 Advanced Mission Critical `kernel-4.18.0-305.217.1.el8_4` (not `305.218.1`, which fixes the TCP flaw and not this bug), Oracle Linux 8 `kernel-4.18.0-553.182.1.el8_10`, Oracle Linux 10 `kernel-6.12.0-211.72.1.el10_2` (the changelog has the fix and does not name ZDI-CAN-33367), RHEL 9.2 real-time `kernel-rt-5.14.0-284.202.1.rt14.487.el9_2`, AlmaLinux production 4.18.0-553.178.1.el8_10 / 5.14.0-687.60.1.el9_8 / 6.12.0-211.69.1.el10_2, CloudLinux 7 hybrid 4.18.0-553.177.1.lve.1.el7h, CloudLinux 8 4.18.0-553.177.1.lve.1.el8, or the KernelCare EL10 live patch. Linux 7.3 and 7.3.1, the main RHEL 10 line, Rocky Linux 8 and 10, Debian and Ubuntu still have no build that names this bug. The Dirty Frag fix does not cover it. Meanwhile set `user.max_user_namespaces = 0` or block `esp4`/`esp6` where IPsec is unused. [Guide](details/skb-zerocopy-lpe.md#remediation). |
 | **Craft CMS below 5.11.5, or 4.x below 4.18.9** | Update `craftcms/cms` to 5.11.5 or later, or 4.18.9 or later on 4.x. 5.11.2 left two High paths open: image-transform PHP execution through 5.11.3, and a `findOne()` SQL injection through 5.11.4. The September unauthenticated SQL injection is fixed in 5.11.2 and 4.18.9. Craft 3 is outside the named ranges. [Guide](details/craft-cms.md#remediation). |
