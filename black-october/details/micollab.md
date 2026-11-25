@@ -1,6 +1,6 @@
 # Mitel MiCollab: a conferencing request runs commands before login
 
-**Last updated:** 2026-11-21 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main MiCollab summary](../black-october-2026.md#mitel-micollab-a-conferencing-request-runs-commands-before-login) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -16,9 +16,9 @@ Three more are Medium, all unauthenticated, all through 10.3 (10.3.0.18):
 - [CVE-2026-133275](https://www.cve.org/CVERecord?id=CVE-2026-133275) (MTLVULN-1861) is 5.3. Insufficient file-type validation uploads an arbitrary file.
 - [CVE-2026-133324](https://www.cve.org/CVERecord?id=CVE-2026-133324) (MTLVULN-1877) is 5.3. Improper handling of authentication bypasses the application's authentication controls.
 
-Affected is **MiCollab 10.3 (10.3.0.18) and earlier**, supported versions only. A host already on 10.3.0.18 is still affected until the patch in [KB000129195](https://mitel.service-now.com/mitel?id=kb_article&sys_id=3e441c0d97285b10cd1b3a871153afc5) is applied, or the host is upgraded to a later release that includes the update. That knowledge-base article needs a Mitel login. Mitel reports no exploitation. CERT Santé, on 2026-11-20, says the same and knows of no public proof of concept.
+Affected is **MiCollab 10.3 (10.3.0.18) and earlier**, supported versions only. A host already on 10.3.0.18 is still affected until the patch in [KB000129195](https://mitel.service-now.com/mitel?id=kb_article&sys_id=3e441c0d97285b10cd1b3a871153afc5) is applied, or the host is upgraded to a later release that includes the update. That knowledge-base article needs a Mitel login. Mitel's advisory and CERT Santé, on 2026-11-20, report no exploitation and no public proof of concept. Accenture APEX Labs, in a November 2026 report, says otherwise: one victim had web-shell activity before 23:00 UTC on November 15, the day before the advisory. The first command ran 12 minutes after the first request, root followed within 30 minutes, and the LDAP connector account reached a domain controller within 32 minutes. A second MiCollab server has held an HTTPS channel to the same address, 204.76.203.204, since November 9. Accenture has not shown which flaw that second server used. The shell path it names is `/pictures/*/shell.asp`. Local MiCollab logs were edited, so a clean log is not a clean server.
 
-**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21) for any of the five. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25) for any of the five. Accenture's report is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -36,6 +36,7 @@ Affected is **MiCollab 10.3 (10.3.0.18) and earlier**, supported versions only. 
 | **Public announcement** | **2026-11-16; time/TZ unknown** | MISA-2026-0012 revision 1.0. Internal IDs only. [Advisory][adv] |
 | CVE records | 2026-11-19; time/TZ unknown | MITRE. Scores match Mitel's table. |
 | CERT Santé notice | 2026-11-20; time/TZ unknown | No exploitation and no public proof of concept. [CERT Santé][sante] |
+| **Accenture report** | **2026-11; day not stated on the page** | Web shell before 23:00 UTC on 2026-11-15 at one victim. A second server called 204.76.203.204 from 2026-11-09. [Accenture][apex] |
 
 ## Detection
 
@@ -55,14 +56,16 @@ Read the MiCollab version and whether the KB000129195 patch is installed. A buil
 
 ## Compromise response
 
-Mitel and CERT Santé do not report exploitation. A server whose AWV component was reachable on an unpatched build should be reviewed for commands and files nobody created. The update does not remove them.
+Mitel and CERT Santé do not report exploitation. Accenture does, for one victim, before the advisory. A server whose AWV component was reachable on an unpatched build should be reviewed for a file under `pictures` named `shell.asp`, for commands nobody ran, and for the LDAP connector account signing in to a domain controller. Look in the proxy or gateway log, not only the MiCollab log. The addresses Accenture names are 204.76.203.204 from November 6 and 204.76.203.216 from November 12. The update does not remove a shell or a directory credential that was already taken. Rotate the LDAP connector password if the account authenticated somewhere it should not have.
 
 ## Sources
 
 - [MISA-2026-0012][adv] — Mitel, first issued and last updated 2026-11-16, revision 1.0. Five AWV flaws. Scores 10.0, 9.0, 5.9, 5.3, and 5.3. Affected: 10.3 (10.3.0.18) and earlier. The advisory still says no CVE is assigned.
 - [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323), [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303), [CVE-2026-133311](https://www.cve.org/CVERecord?id=CVE-2026-133311), [CVE-2026-133275](https://www.cve.org/CVERecord?id=CVE-2026-133275), [CVE-2026-133324](https://www.cve.org/CVERecord?id=CVE-2026-133324) — MITRE, published 2026-11-19. The scores match Mitel's table.
 - [CERT Santé][sante] — 2026-11-20. No known exploitation and no public proof of concept.
+- [Accenture APEX Labs][apex] — published November 2026, day not stated. Web shell before 23:00 UTC on 2026-11-15. Indicators 204.76.203.204 and 204.76.203.216, and `/pictures/*/shell.asp`.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-21. None of the five is listed.
 
 [adv]: https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012
 [sante]: https://cyberveille.esante.gouv.fr/alertes/mitel-cve-2026-133323-2026-11-20
+[apex]: https://accenture.github.io/cyber-intelligence/micollab-exploitation/

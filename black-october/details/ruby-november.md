@@ -1,6 +1,6 @@
 # Ruby: a string or a pattern corrupts memory
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main Ruby summary](../black-october-2026.md#ruby-a-string-or-a-pattern-corrupts-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -65,7 +65,7 @@ Ruby does not say which encodings besides ISO-8859-1 and Windows-1252 take the o
 
 ## Remediation
 
-1. Upgrade to **4.0.10, 3.4.13, or 3.3.14** and restart every process that loaded the old interpreter. Rebuild an image that bakes Ruby in. On self-managed GitLab, upgrade to **19.6.1, 19.5.8, or 19.4.10**. Those packages already contain the patched Ruby. A self-compiled GitLab has to be rebuilt on Ruby 3.3.14 or 3.4.13. GitLab.com and Dedicated need nothing from you.
+1. Upgrade to **4.0.10, 3.4.13, or 3.3.14** and restart every process that loaded the old interpreter. Rebuild an image that bakes Ruby in. On Red Hat Enterprise Linux 10, `ruby4.0` **4.0.10-39.el10_3** ([RHSA-2026:102714](https://access.redhat.com/errata/RHSA-2026:102714), 2026-11-24) is that interpreter for CVE-2026-132825. On self-managed GitLab, upgrade to **19.6.1, 19.5.8, or 19.4.10**. Those packages already contain the patched Ruby. A self-compiled GitLab has to be rebuilt on Ruby 3.3.14 or 3.4.13. GitLab.com and Dedicated need nothing from you. Ubuntu's current `ruby3.3` and `ruby3.2` packages are still marked needs evaluation.
 2. Updating gems, Rails, or the application does not replace the interpreter.
 3. Ruby 3.3 is in security maintenance. Move a 3.2 or earlier runtime to a supported line. There is no backport.
 4. Ruby publishes no workaround. Avoiding untrusted patterns and untrusted case conversion is a reduction, not a fix.

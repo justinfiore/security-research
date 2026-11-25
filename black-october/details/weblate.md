@@ -1,6 +1,6 @@
 # Weblate: a lookalike email resets the password
 
-**Last updated:** 2026-11-23 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main plugin summary](../black-october-2026.md#weblate-a-lookalike-email-resets-the-password) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,9 @@ Password reset compares email addresses with the database collation, which treat
 
 Every version **before 2026.11** is affected. **2026.11**, released 2026-11-02, compares addresses safely and sends the link to the stored address. **2026.11.1**, released 2026-11-05, adds an upgrade check that lists legacy lookalike identities under account security findings. Weblate's advisory says to upgrade to 2026.11.1 as well, remove unauthorized associations, and reset affected credentials. No source read for this entry reports exploitation.
 
-**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**A second Critical flaw is in a later release.** [GHSA-rg57-5c8r-3p43](https://github.com/WeblateOrg/weblate/security/advisories/GHSA-rg57-5c8r-3p43), published 2026-11-13, is CVSS 3.1 9.1 and has no CVE. A project administrator can keep a GitHub App push setting the product clears, and the installation token is then sent to a push host the administrator chose. The token can act on the repositories that installation may touch, until it expires. Affected is **2026.7 before 2026.11.2**. A site that does not use a GitHub App is outside it. 2026.11.1, which closes the lookalike-email flaw, does not close this one.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -29,6 +31,7 @@ Every version **before 2026.11** is affected. **2026.11**, released 2026-11-02, 
 | 2026.11.1 | 2026-11-05 08:40:14 UTC | Adds the lookalike-identity check. [Release][rel1] |
 | **Public announcement** | **2026-11-13; time/TZ unknown** | Weblate published GHSA-6hph-c9x9-4mcv. CVSS 3.1 9.1. No CVE. [GHSA][ghsa] |
 | CVE record | 2026-11-22; time/TZ unknown | VulnCheck published the record. CVSS 4.0 9.1 and CVSS 3.1 7.4. [CVE](https://www.cve.org/CVERecord?id=CVE-2026-134838) |
+| **GitHub App token** | **2026-11-13; time/TZ unknown** | GHSA-rg57-5c8r-3p43, CVSS 3.1 9.1. Fixed in 2026.11.2. No CVE. |
 
 ## Detection
 
@@ -36,13 +39,13 @@ Read the installed Weblate version. **Anything before 2026.11** is inside the ra
 
 ## Remediation
 
-1. Upgrade to **2026.11.1 or later**. 2026.11 closes the comparison. 2026.11.1 is the release that lists the leftover lookalike identities.
+1. Upgrade to **2026.11.2 or later** and run the migrations. 2026.11 closes the email comparison. 2026.11.1 lists the leftover lookalike identities. 2026.11.2 clears the stored GitHub App push settings that send the installation token. A site on 2026.11.1 still has that second flaw if it uses a GitHub App.
 2. In account security findings, remove associations you do not recognize, and reset the password on an account that had one.
 3. Requiring a second factor limits the reset chain Weblate demonstrated. It is not a substitute for the upgrade.
 
 ## Verification
 
-- The running version is **2026.11.1 or later**.
+- The running version is **2026.11.2 or later**, and the migrations have run.
 - Do not send a password reset to a lookalike address to test it.
 
 ## Compromise response

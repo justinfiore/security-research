@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [GeoServer: a stored query reads a file, then a default key is the administrator](#geoserver-a-stored-query-reads-a-file-then-a-default-key-is-the-administrator)
+- [FinCEN: unauthorized access to a limited set of systems](#fincen-unauthorized-access-to-a-limited-set-of-systems)
 - [Hex.pm: an Erlang request body ran commands on the registry](#hexpm-an-erlang-request-body-ran-commands-on-the-registry)
 - [Dell Enterprise SONiC: a neighbor runs a command before login](#dell-enterprise-sonic-a-neighbor-runs-a-command-before-login)
 - [Check Point SmartConsole: a login token is an administrator](#check-point-smartconsole-a-login-token-is-an-administrator)
@@ -345,6 +347,12 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [GeoServer](#geoserver-a-stored-query-reads-a-file-then-a-default-key-is-the-administrator) to **3.0.2** or **2.28.6**. GeoServer rates [CVE-2026-129245](https://www.cve.org/CVERecord?id=CVE-2026-129245) CVSS 4.0 9.2 Critical: the remember-me key ships as `geoserver`, and a password digest forges an administrator cookie. [CVE-2026-120705](https://www.cve.org/CVERecord?id=CVE-2026-120705) is 8.6 and reads a local file with no login. [CVE-2026-129243](https://www.cve.org/CVERecord?id=CVE-2026-129243) is 8.8 and skips service-security rules. Eye Security says the chain runs code on a default install. The builds shipped October 19. The advisories are November 23. watchTowr saw probes for the file read and the rule bypass on November 25. A site on 2.27.x uses 2.27.7 only until it moves. Change administrator passwords if the data directory may have been read. None is in KEV.
+- **New this update:** Nothing to install for [FinCEN](#fincen-unauthorized-access-to-a-limited-set-of-systems). The Bank Secrecy Act E-Filing site says unauthorized access reached a limited subset of systems, and that some systems are offline. A filing the outage blocked uses the November 24 deadline relief. A report that cannot wait goes to 1-866-556-3974. No CVE is assigned. Reuters quotes an official saying there is no evidence the Bank Secrecy Act or beneficial-ownership databases were breached, and that the review is not finished. This guide did not see that sentence on a FinCEN page.
+- **New this update:** [Session Smart Conductor](#juniper-session-smart-router-pre-onboarding-administrator-access) is in CISA's catalog. [CVE-2026-103406](https://www.cve.org/CVERecord?id=CVE-2026-103406) was added November 25, due November 28, and forensic triage is required. Juniper rates it CVSS 3.1 9.8 Critical: a salt minion ID runs a command as root, with no login, and Juniper says exploitation was reported. The floors stay **7.0.5, 7.1.7, and 7.2.3**. Onboarding does not close this one. [CVE-2026-103409](https://www.cve.org/CVERecord?id=CVE-2026-103409), the pre-onboarding flaw, is not listed.
+- **New this update:** Update [Thunderbird](#firefox-a-layout-bug-can-run-code-from-a-web-page) to **161 or later**, or Thunderbird ESR to **153.8**. Mozilla rates [MFSA 2026-134](https://www.mozilla.org/en-US/security/advisories/mfsa2026-134/) critical. [CVE-2026-136226](https://www.cve.org/CVERecord?id=CVE-2026-136226) makes a signed OpenPGP message look as if someone else signed it. [CVE-2026-136227](https://www.cve.org/CVERecord?id=CVE-2026-136227) is high: opening a crafted message injects IMAP commands. Thunderbird 160 does not contain them. The Firefox floor stays 161. None is in KEV.
+- **New this update:** Upgrade [Hickory DNS](#hickory-dns-a-signed-record-from-one-zone-is-accepted-for-another) to **0.26.4** and rebuild. The project rates [GHSA-r22c-jv85-9pj3](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-r22c-jv85-9pj3) CVSS 3.1 7.5 High: a verifying stub resolver accepts a negative answer for a signed zone when the authority records come from an unrelated unsigned zone. 0.26.3 leaves it in place. No CVE is assigned. It is not in KEV.
+- **New this update:** A [MiCollab](#mitel-micollab-a-conferencing-request-runs-commands-before-login) server that was reachable before November 16 may already have a shell. Accenture says one victim had web-shell activity before 23:00 UTC on November 15, and that the LDAP connector account reached a domain controller 32 minutes later. Look for `shell.asp` under `pictures`, in the proxy log rather than only the MiCollab log. The patch is unchanged: 10.3.0.18 plus KB000129195. None of the five is in KEV. The update does not remove a shell.
 - **New this update:** If you have a [Hex.pm](#hexpm-an-erlang-request-body-ran-commands-on-the-registry) account, change the password and reset two-factor authentication. Fetch packages only from `repo.hex.pm` until the new signing client ships. The Erlang Ecosystem Foundation rates [CVE-2026-129514](https://www.cve.org/CVERecord?id=CVE-2026-129514) CVSS 4.0 10.0 Critical: a request with no login ran commands on the registry on November 23. Hex says six servers were hit between 18:16 and 18:29 UTC, and that it found no modified packages. It cannot rule out a read of email addresses, password hashes, API key hashes, or two-factor secrets. A self-hosted copy of the hexpm application needs the November 23 fix. Hex users should also upgrade [Ash](#hexpm-an-erlang-request-body-ran-commands-on-the-registry) to **3.38.0** where keyset pagination is on: the same class of flaw is CVE-2026-124283, which the foundation rates 8.9. It is not in KEV.
 - **New this update:** Upgrade [Dell Enterprise SONiC](#dell-enterprise-sonic-a-neighbor-runs-a-command-before-login) to **4.6.1 or later**. Dell rates [CVE-2026-103788](https://www.cve.org/CVERecord?id=CVE-2026-103788) CVSS 3.1 9.6 Critical: a neighbor on the network, with no login, runs a command. [CVE-2026-103782](https://www.cve.org/CVERecord?id=CVE-2026-103782) is 9.9 and needs a low-privileged login. Anything before 4.6.1 is affected. The advisory is November 19. Neither is in KEV.
 - **New this update:** On [PAN-OS](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite), install a build [PAN-SA-2026-0015](https://security.paloaltonetworks.com/PAN-SA-2026-0015) names for [Fragnesia](#linux-kernel-fragnesia---esp-in-tcp-page-cache-overwrite) and reboot. Palo Alto says exploitation of CVE-2026-46300 was observed against management interfaces exposed to the internet, and that the path it knows starts with PHP2Shell. The floors include 12.2.4-h3, 12.1.10-h6, 11.2.16-h3, 11.1.16-h6, and 10.2.18-h15. A PHP2Shell hotfix below that floor does not include this kernel fix. If the management interface is reachable from the internet, upgrade now and restrict it.
@@ -628,6 +636,52 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## GeoServer: a stored query reads a file, then a default key is the administrator
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/geoserver.md):** [Detection](details/geoserver.md#detection) · [Remediation](details/geoserver.md#remediation) · [Verification](details/geoserver.md#verification) · [Timeline](details/geoserver.md#timeline)
+
+**CVEs:** [CVE-2026-129245](https://www.cve.org/CVERecord?id=CVE-2026-129245), [CVE-2026-129243](https://www.cve.org/CVERecord?id=CVE-2026-129243), [CVE-2026-120705](https://www.cve.org/CVERecord?id=CVE-2026-120705), [CVE-2026-120704](https://www.cve.org/CVERecord?id=CVE-2026-120704), [CVE-2026-129242](https://www.cve.org/CVERecord?id=CVE-2026-129242)
+
+**GeoServer rates [CVE-2026-129245](https://www.cve.org/CVERecord?id=CVE-2026-129245) CVSS 4.0 9.2 Critical.** The remember-me cookie is signed with a key the release data directory ships as `geoserver`. Anyone who also has an administrator password digest can forge the cookie. Two High flaws get that digest with no login. [CVE-2026-129243](https://www.cve.org/CVERecord?id=CVE-2026-129243) is CVSS 4.0 8.8: a `service` value such as `x/WFS` runs as WFS and is checked as `x/WFS`, so the rule never matches. [CVE-2026-120705](https://www.cve.org/CVERecord?id=CVE-2026-120705) is CVSS 3.1 8.6: the built-in GetFeatureById query inserts the caller's id into XML and returns a local file, or fetches a URL. [CVE-2026-120704](https://www.cve.org/CVERecord?id=CVE-2026-120704) is CVSS 3.1 7.2: that administrator session loads a native library through a JDBC security service. Eye Security says the three combine to remote code execution on a default 3.0.1 install. [CVE-2026-129242](https://www.cve.org/CVERecord?id=CVE-2026-129242) is CVSS 4.0 8.6, a second way for that session to run code. [CVE-2026-129244](https://www.cve.org/CVERecord?id=CVE-2026-129244) is Medium, CVSS 4.0 6.9, and returns the data-directory path. The same builds fix more High issues that need an extension. Affected is 3.0.0 through 3.0.1, 2.28.0 through 2.28.5, and 2.27.6 and earlier. The fixes shipped October 19. The advisories are November 23. 2.27 is end of life.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25). watchTowr says its honeypot saw probes for CVE-2026-120705 and CVE-2026-129243 on November 25: stored queries were created and invoked to test the server. That is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fixed releases | 2026-10-19; time unknown | 3.0.2, 2.28.6, and 2.27.7. Details held back. |
+| **Advisories** | **2026-11-23; time unknown** | GeoServer published the CVEs. [Post](https://geoserver.org/vulnerability/2026/11/23/cve-update.html) |
+| Eye Security write-up | 2026-11-24; time unknown | The chain on a default install. Reported September 29. |
+| **Honeypot probes** | **2026-11-25 11:09 UTC** | watchTowr, for the file read and the service-name bypass. |
+| **Last updated** | **2026-11-25 11:30 EST (UTC−05:00)** | New item. Upgrade GeoServer. |
+
+**Patch:** **3.0.2** or **2.28.6**. A site already on 2.27.x uses **2.27.7** only until it moves to a supported line. After the upgrade, remember-me cookies stop working. A cluster sets `GEOSERVER_REMEMBERME_KEY` to one shared random value. If the data directory may have been read, change the administrator passwords. The upgrade does not remove a stored query nobody created.
+
+Sources: [GeoServer, November 23](https://geoserver.org/vulnerability/2026/11/23/cve-update.html), [GHSA-hgm3-wq4h-8vvq](https://github.com/geoserver/geoserver/security/advisories/GHSA-hgm3-wq4h-8vvq), [Eye Security](https://labs.eye.security/unauthenticated-remote-code-execution-vulnerability-in-geoserver/), [detailed guide](details/geoserver.md).
+
+---
+
+## FinCEN: unauthorized access to a limited set of systems
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/fincen.md):** [Detection](details/fincen.md#detection) · [Remediation](details/fincen.md#remediation) · [Verification](details/fincen.md#verification) · [Timeline](details/fincen.md#timeline)
+
+**CVEs:** No CVE is assigned.
+
+**No vendor or CNA has published a CVSS score.** The Bank Secrecy Act E-Filing site says FinCEN is investigating a cybersecurity incident that resulted in unauthorized access to a limited subset of its systems, and that some systems were taken offline as a precaution. The site stays up. Some services on it may not. A filing the outage blocked uses the deadline relief in FinCEN's November 24 order. A suspicious-activity report that cannot wait goes to the Financial Institutions Hotline, 1-866-556-3974. The banner does not say what was read or when the access started. A Reuters report quotes a FinCEN official saying there is no evidence the Bank Secrecy Act or beneficial-ownership databases were breached, and that the review with the FBI and CISA is not finished. This guide did not see that sentence on a FinCEN page.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Exceptive relief** | **2026-11-24; time unknown** | FinCEN's news page dates the order November 24. |
+| **Banner** | **2026-11-25; time unknown** | Unauthorized access. Some systems offline. [E-Filing](https://bsaefiling.fincen.gov/) |
+| **Last updated** | **2026-11-25 11:30 EST (UTC−05:00)** | New item. Nothing to install. |
+
+**Patch:** There is nothing to install. Use the November 24 order for a filing the outage blocked, and the hotline for a report that cannot wait. Do not send a filing credential or a report to an address the banner does not name.
+
+Sources: [BSA E-Filing](https://bsaefiling.fincen.gov/), [FinCEN order, November 24](https://www.fincen.gov/news/news-releases/temporary-limited-exceptive-relief-certain-bank-secrecy-act-corporate-transparency-act-submissions/), [detailed guide](details/fincen.md).
 
 ---
 
@@ -1172,16 +1226,18 @@ Sources: [OSA-2026-19](https://otrs.com/release-notes/otrs-security-advisory-202
 
 **Weblate rates [GHSA-6hph-c9x9-4mcv](https://github.com/WeblateOrg/weblate/security/advisories/GHSA-6hph-c9x9-4mcv) CVSS 3.1 9.1 Critical.** The vector on that page is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N`, and the page names no CVE. VulnCheck's [CVE-2026-134838](https://www.cve.org/CVERecord?id=CVE-2026-134838) scores the same issue **CVSS 4.0 9.1 Critical** and **CVSS 3.1 7.4 High**. The two CVSS 3.1 scores disagree, and both stay. Password reset treats a Unicode lookalike email as the account's address and sends the link to the address that was typed. The attacker sets a new password. Weblate says the same matching also affects identity and invitation association, and that an existing second factor stops the reset it demonstrated. Anything **before 2026.11** is affected. **2026.11**, released 2026-11-02, is the fix. **2026.11.1**, released 2026-11-05, lists leftover lookalike identities. No source read for this entry reports exploitation.
 
-**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-23). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**[GHSA-rg57-5c8r-3p43](https://github.com/WeblateOrg/weblate/security/advisories/GHSA-rg57-5c8r-3p43) is also CVSS 3.1 9.1 Critical, and has no CVE.** A project administrator can keep a GitHub App push setting, and the installation token is sent to a host the administrator chose. Affected is 2026.7 before **2026.11.2**. A site that does not use a GitHub App is outside it. 2026.11.1 does not close it.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| 2026.11 | 2026-11-02 18:55:03 UTC | The release notes list the fix. |
-| 2026.11.1 | 2026-11-05 08:40:14 UTC | Adds the lookalike-identity check. |
-| **Public announcement** | **2026-11-13; time/TZ unknown** | GHSA-6hph-c9x9-4mcv. CVSS 3.1 9.1. The CVE record is 2026-11-22. |
-| **Last updated** | **2026-11-23 07:01 EST (UTC−05:00)** | New item. Upgrade to 2026.11.1. |
+| 2026.11 | 2026-11-02 18:55:03 UTC | The release notes list the email fix. |
+| 2026.11.1 | 2026-11-05 08:40:14 UTC | Adds the lookalike-identity check. Leaves the GitHub App flaw. |
+| **Public announcement** | **2026-11-13; time/TZ unknown** | Both Critical advisories. The email CVE record is 2026-11-22. |
+| **Last updated** | **2026-11-25 12:00 EST (UTC−05:00)** | 2026.11.2 is the floor. |
 
-**Patch:** Upgrade to **Weblate 2026.11.1 or later**. Then remove lookalike identities the upgrade check lists, and reset those passwords. Requiring a second factor limits the reset chain. It does not replace the upgrade.
+**Patch:** Upgrade to **Weblate 2026.11.2 or later** and run the migrations. Then remove lookalike identities the upgrade check lists, and reset those passwords. Review GitHub App activity if a project administrator could have set a push host. Requiring a second factor limits the reset chain. It does not replace the upgrade.
 
 Sources: [GHSA-6hph-c9x9-4mcv](https://github.com/WeblateOrg/weblate/security/advisories/GHSA-6hph-c9x9-4mcv), [CVE-2026-134838](https://www.cve.org/CVERecord?id=CVE-2026-134838), [detailed guide](details/weblate.md).
 
@@ -1603,17 +1659,18 @@ Sources: [GnuPG announcement](https://lists.gnupg.org/pipermail/gnupg-announce/2
 
 **CVEs:** [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323), [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303), [CVE-2026-133311](https://www.cve.org/CVERecord?id=CVE-2026-133311), [CVE-2026-133275](https://www.cve.org/CVERecord?id=CVE-2026-133275), [CVE-2026-133324](https://www.cve.org/CVERecord?id=CVE-2026-133324)
 
-**Mitel rates [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323) CVSS 3.1 10.0 Critical.** Mitel published the score in [MISA-2026-0012](https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012); MITRE's record repeats it. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:H`. The Audio, Web, and Video Conferencing component does not sanitize a parameter. A request with no login runs commands in the context of the system. Mitel names integrity and availability, and the vector assigns no confidentiality impact. [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303) is 9.0: XML injection runs commands when malicious content is already staged. Three more, 5.9, 5.3, and 5.3, are an information leak, a file upload, and an authentication bypass, all with no login. Mitel says using them together can amplify the impact, and it does not describe a chain. Affected is **10.3 (10.3.0.18) and earlier**. A host already on 10.3.0.18 still needs the patch in KB000129195, which requires a Mitel login. Mitel and CERT Santé do not report exploitation.
+**Mitel rates [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323) CVSS 3.1 10.0 Critical.** Mitel published the score in [MISA-2026-0012](https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012); MITRE's record repeats it. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:H`. The Audio, Web, and Video Conferencing component does not sanitize a parameter. A request with no login runs commands in the context of the system. Mitel names integrity and availability, and the vector assigns no confidentiality impact. [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303) is 9.0: XML injection runs commands when malicious content is already staged. Three more, 5.9, 5.3, and 5.3, are an information leak, a file upload, and an authentication bypass, all with no login. Mitel says using them together can amplify the impact, and it does not describe a chain. Affected is **10.3 (10.3.0.18) and earlier**. A host already on 10.3.0.18 still needs the patch in KB000129195, which requires a Mitel login. Mitel and CERT Santé do not report exploitation. Accenture APEX Labs does: one victim had a web shell before 23:00 UTC on November 15, and the LDAP connector account reached a domain controller 32 minutes later. A second server has called 204.76.203.204 since November 9. Accenture has not shown which flaw that second server used. The shell path it names is under `pictures`.
 
-**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-21) for any of the five. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25) for any of the five. Accenture's report is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-16; time/TZ unknown** | MISA-2026-0012. Internal IDs only. |
+| Web shell, per Accenture | before 2026-11-15 23:00 UTC | One victim. The advisory is the next day. |
 | CVE records | 2026-11-19; time/TZ unknown | MITRE. Scores match Mitel's table. |
-| **Last updated** | **2026-11-21 07:10 EST (UTC−05:00)** | New item. Apply the patch, or upgrade past 10.3.0.18. |
+| **Last updated** | **2026-11-25 12:00 EST (UTC−05:00)** | Accenture reports exploitation before the advisory. |
 
-**Patch:** Apply the patch in **KB000129195** on **10.3.0.18**, or upgrade to a later release that includes it. Until then, keep the conferencing component off the internet. The update does not show whether a command already ran.
+**Patch:** Apply the patch in **KB000129195** on **10.3.0.18**, or upgrade to a later release that includes it. Until then, keep the conferencing component off the internet. Look for `shell.asp` under `pictures` in the proxy log, not only the MiCollab log. The update does not remove a shell or a directory password that was already taken.
 
 Sources: [MISA-2026-0012](https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012), [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323), [detailed guide](details/micollab.md).
 
@@ -4102,19 +4159,21 @@ Sources: [IBM bulletin 7295921](https://www.ibm.com/support/pages/node/7295921),
 
 **CVEs:** [CVE-2026-123605](https://www.cve.org/CVERecord?id=CVE-2026-123605), [CVE-2026-123596](https://www.cve.org/CVERecord?id=CVE-2026-123596)
 
-**The project rates [GHSA-2vgh-3wfw-qj7c](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-2vgh-3wfw-qj7c) High.** It publishes no CVSS vector. VulnCheck rates the same flaw, [CVE-2026-123605](https://www.cve.org/CVERecord?id=CVE-2026-123605), CVSS 4.0 8.7 and CVSS 3.1 8.8. The GitHub page still says no CVE is known. The validator checks a signature against the key of whatever name the signature itself names, and not against the zone the record belongs to. Anyone who controls one correctly signed zone can sign a record in a different zone, and a resolver that validates accepts it. `hickory-proto` 0.1 through 0.25.0-alpha.3 and `hickory-net` before 0.26.2 are affected. The same 0.26.2 release, on September 3, fixes a batch the project rates mostly High, Medium, and Low. One of them, [CVE-2026-123596](https://www.cve.org/CVERecord?id=CVE-2026-123596), the project rates Medium and VulnCheck rates 8.8: a parent zone's NSEC record is accepted as proof that a name below the cut does not exist. 0.26.3, on September 10, fixes regressions from 0.26.2, including DNSSEC verification, and is current. A crate that does not validate DNSSEC is outside the forgery flaws and not outside the denial-of-service flaws.
+**The project rates [GHSA-2vgh-3wfw-qj7c](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-2vgh-3wfw-qj7c) High.** It publishes no CVSS vector. VulnCheck rates the same flaw, [CVE-2026-123605](https://www.cve.org/CVERecord?id=CVE-2026-123605), CVSS 4.0 8.7 and CVSS 3.1 8.8. The GitHub page still says no CVE is known. The validator checks a signature against the key of whatever name the signature itself names, and not against the zone the record belongs to. Anyone who controls one correctly signed zone can sign a record in a different zone, and a resolver that validates accepts it. `hickory-proto` 0.1 through 0.25.0-alpha.3 and `hickory-net` before 0.26.2 are affected. The same 0.26.2 release, on September 3, fixes a batch the project rates mostly High, Medium, and Low. One of them, [CVE-2026-123596](https://www.cve.org/CVERecord?id=CVE-2026-123596), the project rates Medium and VulnCheck rates 8.8: a parent zone's NSEC record is accepted as proof that a name below the cut does not exist. 0.26.3, on September 10, fixes regressions from 0.26.2 and is not the current floor.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**0.26.4, released 2026-11-24, is a new floor.** [GHSA-r22c-jv85-9pj3](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-r22c-jv85-9pj3) is High, CVSS 3.1 7.5, and has no CVE. A verifying stub resolver or client accepts a negative answer for a signed zone when every record in the authority section validates as insecure, including records from an unrelated unsigned zone. A recursive resolver is outside it. `hickory-net` through 0.26.3 is affected. Two more DNSSEC forgeries in the same release are Moderate and have no score. A crate that does not validate DNSSEC is outside the forgery flaws and not outside the denial-of-service flaws.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25). The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| Hickory DNS 0.26.2 | 2026-09-03 19:34 UTC | Fixes the batch. The notes say most reports came from LLM-based workflows. |
-| **Public announcement** | **2026-09-03 20:34 UTC** | The project published the advisories with the release. The signer-name page still says no CVE is known. |
-| Hickory DNS 0.26.3 | 2026-09-10 14:17 UTC | Fixes regressions from 0.26.2. Current release. |
-| CVE records | 2026-11-08 01:38 UTC | VulnCheck published CVE-2026-123605 and CVE-2026-123596. |
-| **Last updated** | **2026-11-08 07:25 EST (UTC−05:00)** | New item. Upgrade Hickory DNS. |
+| Hickory DNS 0.26.2 | 2026-09-03 19:34 UTC | Fixes the September batch. |
+| **Public announcement** | **2026-09-03 20:34 UTC** | The signer-name page still says no CVE is known. |
+| Hickory DNS 0.26.3 | 2026-09-10 14:17 UTC | Fixes regressions from 0.26.2. Leaves the November flaws. |
+| **Hickory DNS 0.26.4** | **2026-11-24 15:38 UTC** | GHSA-r22c-jv85-9pj3, High, CVSS 3.1 7.5. |
+| **Last updated** | **2026-11-25 11:30 EST (UTC−05:00)** | 0.26.4 is the floor. |
 
-**Patch:** **0.26.3**, and rebuild every binary that links the crates. 0.26.2 is the security floor and has regressions 0.26.3 fixes. There is no workaround. Restart the resolver after the rebuild so it drops its cache.
+**Patch:** **0.26.4**, and rebuild every binary that links the crates. 0.26.3 has the September fixes and not the November ones. There is no workaround. Restart the resolver after the rebuild so it drops its cache.
 
 Sources: [GHSA-2vgh-3wfw-qj7c](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-2vgh-3wfw-qj7c), [CVE-2026-123605](https://www.cve.org/CVERecord?id=CVE-2026-123605), [detailed guide](details/hickory-dns.md).
 
@@ -4252,17 +4311,18 @@ Sources: [Wordfence, LatePoint](https://www.wordfence.com/threat-intel/vulnerabi
 
 On November 10 Mozilla published [MFSA 2026-125](https://www.mozilla.org/en-US/security/advisories/mfsa2026-125/), impact high, fixed in Firefox **160**. It lists 57 issues Mozilla rates high. [CVE-2026-124903](https://www.cve.org/CVERecord?id=CVE-2026-124903) is a sandbox escape from a use-after-free in IPC, rated high. [CVE-2026-124917](https://www.cve.org/CVERecord?id=CVE-2026-124917) is in the same advisory at impact moderate. Secondary pages score both 9.6. Mozilla publishes no numeric score. Firefox 159.0.1 does not contain these fixes. ESR **153.7** fixes both. ESR **115.45** fixes CVE-2026-124903 and does not list CVE-2026-124917. This is not the [eMudhra](#tls-and-code-signing-trust-stores-emudhra-emsign-certificate-authority-compromise) certificate distrust.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-07). Mozilla does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25). Mozilla does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred.
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Public announcement and fix | 2026-11-03; time/TZ unknown | MFSA 2026-123. Firefox 159.0.1 first offered to Release channel users the same day. |
 | CVE record | 2026-11-03 14:17:35 UTC | Mozilla CNA. No numeric score. Unaffected at 159.0.1. |
 | **Firefox 160** | **2026-11-10; time/TZ unknown** | MFSA 2026-125. 57 issues Mozilla rates high. |
-| Firefox 160.0.1 | 2026-11-17; time/TZ unknown | MFSA 2026-130. Two issues Mozilla rates high. Firefox only. |
-| **Last updated** | **2026-11-18 12:30 EST (UTC−05:00)** | 160.0.1 is the current fix. |
+| Firefox 161 | 2026-11-24; time/TZ unknown | MFSA 2026-131. Includes CVE-2026-135500, a WebGPU privilege escalation Mozilla rates high. |
+| **Thunderbird 161** | **2026-11-24; time/TZ unknown** | MFSA 2026-134, impact critical. CVE-2026-136226 spoofs the sender of a signed OpenPGP message. CVE-2026-136227 injects IMAP commands when a crafted message is opened. Thunderbird 153.8 carries the same two. |
+| **Last updated** | **2026-11-25 11:30 EST (UTC−05:00)** | Thunderbird 161 is the new floor. Firefox stays at 161. |
 
-**Patch:** Update Firefox to **160.0.1 or later** and relaunch. Update ESR to **153.7 or later**, or **115.45 or later** on the 115 line. 160 fixes the November 10 set and leaves the two November 17 flaws. 159.0.1 fixes only the November 3 layout bug. The update does not show whether a page already ran code.
+**Patch:** Update Firefox to **161 or later** and relaunch. Update Firefox ESR to **153.8 or 115.46**. Update Thunderbird to **161 or later**, or Thunderbird ESR to **153.8**. Thunderbird 160 does not contain the November 24 mail flaws. The update does not show whether a page or a message already ran code.
 
 Sources: [MFSA 2026-123](https://www.mozilla.org/en-US/security/advisories/mfsa2026-123/), [Firefox 159.0.1 release notes](https://www.firefox.com/firefox/159.0.1/releasenotes/), [CVE-2026-120572](https://www.cve.org/CVERecord?id=CVE-2026-120572), [detailed guide](details/firefox.md).
 
@@ -6144,13 +6204,13 @@ Sources: [Cisco advisory](https://sec.cloudapps.cisco.com/security/center/conten
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/juniper-session-smart.md):** [Detection](details/juniper-session-smart.md#detection) · [Remediation](details/juniper-session-smart.md#remediation) · [Verification](details/juniper-session-smart.md#verification) · [Timeline](details/juniper-session-smart.md#timeline)
 
-**CVEs:** [CVE-2026-103409](https://www.cve.org/CVERecord?id=CVE-2026-103409)
+**CVEs:** [CVE-2026-103409](https://www.cve.org/CVERecord?id=CVE-2026-103409), [CVE-2026-103406](https://www.cve.org/CVERecord?id=CVE-2026-103406)
 
-**Juniper CNA CVSS 3.1 9.8 Critical.** An unauthenticated attacker can obtain administrator privileges before a Session Smart Router is onboarded to Mist/Conductor.
+**Juniper CNA CVSS 3.1 9.8 Critical, for both.** [CVE-2026-103409](https://www.cve.org/CVERecord?id=CVE-2026-103409): an unauthenticated attacker can obtain administrator privileges before a Session Smart Router is onboarded to Mist/Conductor. [CVE-2026-103406](https://www.cve.org/CVERecord?id=CVE-2026-103406): a crafted salt minion ID runs a command as root on Session Smart Conductor, with no login. Juniper's record, updated November 24, says at least one malicious exploitation of that one was reported to Juniper SIRT, and that there is no workaround. Onboarding does not close it. CISA's catalog entry also names Session Smart Router. The CVE record names Conductor. The ranges and the fixes are the same for both: before 7.0.5, 7.1.0 before 7.1.7, and 7.2.0 before 7.2.3.
 
-**CISA KEV:** Not listed (catalog 2026.10.29, checked 2026-10-30). No exploitation is reported by the Juniper CNA. Absence from KEV is not evidence that exploitation has not occurred.
+**CISA KEV:** CVE-2026-103406 is listed — added 2026-11-25, federal due date 2026-11-28. Forensic triage is required. CVE-2026-103409 is not listed. [What KEV means](#what-cisa-kev-means)
 
-**Patch:** update to **7.0.5**, **7.1.7** or **7.2.3** for the deployed branch and restrict provisioning interfaces. [Guide](details/juniper-session-smart.md#remediation).
+**Patch:** update Conductor and any router still in those ranges to **7.0.5**, **7.1.7**, or **7.2.3**. Restricting the management interface does not replace the upgrade. JSA112183 is behind a login, so this guide did not read it. [Guide](details/juniper-session-smart.md#remediation).
 
 ## Linux kernel: IPv4 TCP SYN-ACK options use-after-free
 
@@ -7802,7 +7862,7 @@ Arista has not assessed end-of-support releases. Review web access logs for the 
 
 On 2026-11-02 Arista's [Security Advisory 0202](https://www.arista.com/en/support/advisories-notices/security-advisory/24853-security-advisory-0202) said the same on-prem trains decode Brotli on outbound integration calls (Symantec, Zscaler, Azure NSD, and any redirect those follow). Arista scores [CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497) CVSS 3.1 9.8. It has not found Brotli decoding on inbound API requests, and it lists no mitigation. Hosted VCO is patched for the SQL injection. Advisory 0202 does not say hosted VCO is already patched for Brotli. VeloCloud Edge is still in triage for Brotli. Gateway is not affected.
 
-**Patch:** Upgrade to **5.2.3.20, 6.1.3.12 or 6.4.2.14** or later on your train, or contact Arista TAC if your train is unsupported. The earlier SQL-injection builds do not fix Brotli. Until then, restrict the UI to trusted admin networks, block the IPs, and monitor outbound traffic, webshells and admin changes. Preserve VCO, database and system logs before you upgrade if you suspect compromise. Point integration URLs only at endpoints you trust. That does not fix a trusted endpoint that is itself compromised.
+**Patch:** Upgrade to **5.2.3.20, 6.1.3.12 or 6.4.2.14** or later on your train, or contact Arista TAC if your train is unsupported. The earlier SQL-injection builds do not fix Brotli. Those builds also do not fix [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288): [Advisory 0229](https://www.arista.com/en/support/advisories-notices/security-advisory/25220-security-advisory-0229) says on-prem VCO through 7.0.0.3, 6.4.2.16, 6.1.3.13, and 5.2.3.20 can panic from NoisyTCP, and it names no fixed VCO release. Until one ships, set each external interface to one receive queue. That setting does not survive a reboot. Until the SQL-injection upgrade, restrict the UI to trusted admin networks, block the IPs, and monitor outbound traffic, webshells and admin changes. Preserve VCO, database and system logs before you upgrade if you suspect compromise. Point integration URLs only at endpoints you trust. That does not fix a trusted endpoint that is itself compromised.
 
 Sources: [Arista Security Advisory 0199](https://www.arista.com/en/support/advisories-notices/security-advisory/24838-security-advisory-0199), [Arista Security Advisory 0202](https://www.arista.com/en/support/advisories-notices/security-advisory/24853-security-advisory-0202), [CVE record](https://cveawg.mitre.org/api/cve/CVE-2026-114625), [CISA KEV](https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-114625), [The Hacker News](https://thehackernews.com/2026/10/arista-warns-of-critical-velocloud-sql.html).
 

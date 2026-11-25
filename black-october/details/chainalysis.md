@@ -1,6 +1,6 @@
 # Chainalysis: password hashes and live tokens exposed
 
-**Last updated:** 2026-11-20 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main Chainalysis summary](../black-october-2026.md#chainalysis-password-hashes-and-live-tokens-exposed) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -13,6 +13,8 @@ The November 4 updates withdraw that limit. At 9:50 a.m. EST Chainalysis said an
 The November 6 update, 3:30 a.m. EST, says restoration of KYT and Address Screening has started, in phases. Once access returns, every user must reset their password and rotate API keys before registering transactions. Reactor and Data Solutions were still offline. Chainalysis asks customers to send trusted IP addresses for an allowlist.
 
 The November 7 update, 1:50 p.m. EST, says Reactor, KYT (the UI and the API), and Address Screening are back online, with extra security measures. Chainalysis is emailing customers the reconnection steps. The November 10 update, 3:00 a.m. EST, says Data Solutions is back online and that customers are being brought back as quickly as Chainalysis can. The password reset and the API-key rotation from the earlier updates still stand.
+
+A November 20 section on the incident page says a third-party incident-response firm delivered an attestation letter. The letter finds Chainalysis's investigation and containment reasonable, that the access paths the actor used are closed, that no remaining actor access was identified, and that there is no indication the actor modified, added, or deleted Chainalysis or customer data, or modified source code or software. The letter is the firm's finding. It does not replace the password reset or the API-key rotation.
 
 Chainalysis does not say how the actor got in, does not name the actor, and does not say whether the password hashes can be cracked. The October 30 notice says this incident is not the Binance theft.
 
@@ -39,6 +41,7 @@ Chainalysis does not say how the actor got in, does not name the actor, and does
 | KYT offline | 2026-11-04 10:30 EST (UTC−05:00) | After abnormal activity. Login page offline too. |
 | Restoration started | 2026-11-06 03:30 EST (UTC−05:00) | KYT and Address Screening, in phases. Password and API-key reset required. |
 | Reactor, KYT, and Address Screening online | 2026-11-07 13:50 EST (UTC−05:00) | Extra security measures. Reconnection instructions by email. Data Solutions is not in this update. |
+| **Attestation letter** | **2026-11-20; time unknown** | A third-party firm says the access paths are closed and that it found no remaining access and no sign of modified data or code. [Incident page][update] |
 
 ## Detection
 

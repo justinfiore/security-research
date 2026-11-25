@@ -1,6 +1,6 @@
 # Hickory DNS: a signed record from one zone is accepted for another
 
-**Last updated:** 2026-11-08 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main Hickory DNS summary](../black-october-2026.md#hickory-dns-a-signed-record-from-one-zone-is-accepted-for-another) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -17,9 +17,11 @@ The same release fixes more flaws the project rates High. VulnCheck published CV
 - [GHSA-5j98-2g5x-46v6](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-5j98-2g5x-46v6), CVSS 3.1 7.5. `Resolver::lookup()` and `Resolver::lookup_ip()` hide a DNSSEC validation failure, so a caller treats a bogus answer as a normal one. Every version before 0.26.2.
 - [GHSA-cx5j-p54p-q756](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-cx5j-p54p-q756) and [GHSA-6h5c-jjg5-wj59](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-6h5c-jjg5-wj59), both High, no score published. A referral loop, or a glueless referral, makes the recursor do an unbounded amount of work.
 
-The 0.26.2 notes list 42 advisories in all, most of them Medium or Low. 0.26.3, released 2026-09-10, fixes regressions from 0.26.2, including DNSSEC verification, and does not add another floor. 0.26.3 is the current release when checked on 2026-11-08. A crate that does not validate DNSSEC is outside the forgery flaws. It is not outside the denial-of-service flaws, which are in the parser and the recursor.
+The 0.26.2 notes list 42 advisories in all, most of them Medium or Low. 0.26.3, released 2026-09-10, fixes regressions from 0.26.2, including DNSSEC verification, and does not add another floor for that batch.
 
-**CISA KEV:** Not listed (catalog 2026.11.06, checked 2026-11-08). The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**0.26.4, released 2026-11-24, is the current release and a new floor.** [GHSA-r22c-jv85-9pj3](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-r22c-jv85-9pj3) is High, CVSS 3.1 7.5, and has no CVE. A verifying stub resolver or client accepts a negative answer for a signed zone when every record in the authority section validates as insecure, including records from an unrelated unsigned zone. A recursive resolver is outside it, because it already drops records from outside the zone. `hickory-net` through 0.26.3 is affected. The same release fixes two more DNSSEC forgeries the project rates Moderate and scores no number: [GHSA-w7cq-9r7j-xc7m](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-w7cq-9r7j-xc7m) does not check that a DNSKEY and its DS record have the same name, and [GHSA-qgw4-m8xx-p695](https://github.com/hickory-dns/hickory-dns/security/advisories/GHSA-qgw4-m8xx-p695) keys the validation cache on a 64-bit hash, so one RRset's result can be applied to another. A crate that does not validate DNSSEC is outside the forgery flaws. It is not outside the denial-of-service flaws, which are in the parser and the recursor.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25). The advisories do not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -36,9 +38,10 @@ The 0.26.2 notes list 42 advisories in all, most of them Medium or Low. 0.26.3, 
 |---|---|---|
 | Hickory DNS 0.26.2 | 2026-09-03 19:34 UTC | Fixes the batch. The notes say most reports came from LLM-based workflows. [Release][rel] |
 | **Public announcement** | **2026-09-03 20:34 UTC** | The project published the advisories with the release. The signer-name one is 20:34:44 UTC. [GHSA-2vgh-3wfw-qj7c][ghsa605] |
-| Hickory DNS 0.26.3 | 2026-09-10 14:17 UTC | Fixes regressions from 0.26.2, including DNSSEC verification. Not a new floor. [Release][rel3] |
+| Hickory DNS 0.26.3 | 2026-09-10 14:17 UTC | Fixes regressions from 0.26.2, including DNSSEC verification. Not a new floor for that batch. [Release][rel3] |
 | CVE records | 2026-11-08 01:38 UTC | VulnCheck published CVE-2026-123605 and CVE-2026-123596, among others. The GitHub pages still say no CVE is known. [CVE-2026-123605][cve605] |
-| CISA KEV | Not listed (catalog 2026.11.06, checked 2026-11-08) | [KEV][kev] |
+| **Hickory DNS 0.26.4** | **2026-11-24 15:38 UTC** | New floor. GHSA-r22c-jv85-9pj3 is High, CVSS 3.1 7.5. Two more DNSSEC forgeries are Moderate. [Release][rel4] |
+| CISA KEV | Not listed (catalog 2026.11.25, checked 2026-11-25) | [KEV][kev] |
 
 ## Detection
 
@@ -51,19 +54,19 @@ grep -R --include='Cargo.lock' -n 'name = "hickory-resolver"' -A 2 Cargo.lock
 
 Read the `version` line under `hickory-resolver`, `hickory-proto`, and `hickory-net`. A lockfile that does not name them means this binary does not use them.
 
-- **0.26.2 or later** is the fix for the High flaws above. 0.26.3 is current and is the release that also fixes the 0.26.2 regressions, so use 0.26.3.
+- **0.26.4 or later** is the fix for GHSA-r22c-jv85-9pj3 and the two Moderate DNSSEC forgeries published with it. 0.26.2 remains the floor for the September batch. 0.26.3 fixes regressions from 0.26.2 and leaves the November flaws in place.
 - Anything older is inside at least the signer-name flaw, which starts at 0.1.
 - A program that vendors the crates without a lockfile line needs its own version check. The version in `Cargo.toml` is not the version that was compiled until the lockfile says so.
 
 ## Remediation
 
-1. Upgrade `hickory-resolver`, `hickory-proto`, `hickory-net`, and `hickory-recursor` to **0.26.3**, and rebuild every binary that links them. 0.26.2 is the security floor. 0.26.3 fixes regressions in that release, including DNSSEC verification, so a binary left on 0.26.2 has the security fixes and the regressions.
+1. Upgrade `hickory-resolver`, `hickory-proto`, `hickory-net`, and `hickory-recursor` to **0.26.4**, and rebuild every binary that links them. 0.26.2 is the floor for the September batch. 0.26.4 is the floor for the November 24 DNSSEC forgeries. A binary left on 0.26.3 has the September fixes and not the November ones.
 2. The advisories list no workaround. Turning DNSSEC validation off avoids the forgery flaws and also abandons the check those flaws break. It does not avoid the denial-of-service flaws.
 3. The upgrade does not show whether a resolver already cached a forged answer. Restart the process after the rebuild so it drops its cache.
 
 ## Verification
 
-- `Cargo.lock` shows 0.26.3 for each Hickory crate the binary uses, and the rebuilt binary is the one running.
+- `Cargo.lock` shows 0.26.4 for each Hickory crate the binary uses, and the rebuilt binary is the one running.
 - A name your users already resolve still resolves. Do not send a forged signature to test the check.
 
 ## Compromise response

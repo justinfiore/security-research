@@ -1,6 +1,6 @@
 # Linux kernel: skb_zerocopy page-cache write gives local root despite the Dirty Frag fix
 
-**Last updated:** 2026-11-24 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main guide](../black-october-2026.md#linux-kernel-skbzerocopy-page-cache-write-gives-local-root-despite-the-dirty-frag-fix) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -159,7 +159,7 @@ The fix is a two-line change in `net/core/skbuff.c` that copies `SKBFL_SHARED_FR
 | Debian 13 (trixie) | `linux` 6.12.116-1 (fixed from 6.12.115-1) | trixie security, accepted 2026-11-08. | [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99284) |
 | Debian 12 (bookworm), default kernel | `linux` 6.1.192-2, still vulnerable | The default bookworm kernel is not fixed. | [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99284) |
 | Debian 12 (bookworm), optional `linux-6.12` | `linux-6.12` 6.12.117-1~deb12u1 | [DLA-4904-1](https://lists.debian.org/debian-lts-announce/2026/11/msg00029.html), 2026-11-13. Fixed from 6.12.115-2~deb12u1. This is a separate backport, not the default bookworm kernel. | [Debian tracker](https://security-tracker.debian.org/tracker/CVE-2026-99284) |
-| Ubuntu | 26.04 generic `linux` fixed in **7.0.0-44.44** (USN-9166-1, 2026-11-19). 26.10, 24.04, 22.04, and 20.04 generic are still Vulnerable. | Tracker last updated 2026-11-19. | [Ubuntu](https://ubuntu.com/security/CVE-2026-99284) |
+| Ubuntu | 26.04 generic `linux` fixed in **7.0.0-44.44** (USN-9166-1, 2026-11-19). [USN-9190-1](https://ubuntu.com/security/notices/USN-9190-1), 2026-11-24, also fixes `linux-realtime` on 26.04 at **7.0.0-44.44.1**, plus the oracle, azure-fde, and raspi flavors on that release. 26.10, 24.04, 22.04, and 20.04 generic are still Vulnerable. | Tracker last updated 2026-11-24. | [Ubuntu](https://ubuntu.com/security/CVE-2026-99284) |
 
 - Install the fixed kernel and **reboot into it**. AlmaLinux's original testing builds are superseded by regular production updates; disable `almalinux-testing` again if it was enabled for this issue (`dnf config-manager --disable almalinux-testing`). [AlmaLinux][alma]
 - Keep the previous kernel as a boot fallback; if you roll back, reapply the temporary mitigations below before returning the host to service.
