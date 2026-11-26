@@ -1,6 +1,6 @@
 # NGINX: configuration-dependent memory corruption and TLS session forgery
 
-**Last updated:** 2026-11-24 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main NGINX summary](../black-october-2026.md#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -142,17 +142,17 @@ Sources: [K000162416][k15176], [K000162607][k93479], [K000162608][k97205], [K000
 
 Palo Alto Networks' [portfolio advisory][pan-nginx], initially published 2026-11-20, rates CVE-2026-123633 and CVE-2026-123007 **Critical, CVSS-B 4.0 9.2**, urgency Moderate. The vector is `CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/AU:Y/R:U/V:C/RE:M/U:Amber`. Exposure requires the **HTTP/2 option** on PAN-OS or Panorama. A device with HTTP/2 off is not affected. Panorama is affected on virtual appliances and on M-Series. Palo Alto says it is not aware of malicious exploitation, and that it is fixing its SaaS products itself.
 
-An upgrade to one of these builds is the fix. Confirm the three builds still marked ETA are downloadable before you schedule them. Until then, the already released build on the same branch is the one to install, or disable HTTP/2.
+An upgrade to one of these builds is the fix. Palo Alto's November 24 update says 12.1.7-h15, 11.2.10-h19, and 11.2.13-h6 are released and removes the ETA. Disabling HTTP/2 is no longer the only option on those branches.
 
 | Running release | Install | Status on the advisory |
 |---|---|---|
 | 12.2.0 through 12.2.4-h2 | **12.2.4-h3** or later | Listed as unaffected at 12.2.4-h3 |
 | 12.1.8 through 12.1.10-h5 | **12.1.10-h6** or later | Listed as unaffected at 12.1.10-h6 |
-| 12.1.5 through 12.1.7-h14 | **12.1.7-h15**, or **12.1.10-h6** or later | 12.1.7-h15 is ETA 11/23 |
+| 12.1.5 through 12.1.7-h14 | **12.1.7-h15**, or **12.1.10-h6** or later | Released. The November 24 update removed the ETA. |
 | 12.1.2 through 12.1.4, any hotfix | No action | Not affected |
 | 11.2.15 through 11.2.16-h2 | **11.2.16-h3** or later | Listed as unaffected at 11.2.16-h3 |
-| 11.2.11 through 11.2.13-h5 | **11.2.13-h6**, or **11.2.16-h3** or later | 11.2.13-h6 is ETA 11/23 |
-| 11.2.8 through 11.2.10-h18 | **11.2.10-h19**, or **11.2.16-h3** or later | 11.2.10-h19 is ETA 11/23 |
+| 11.2.11 through 11.2.13-h5 | **11.2.13-h6**, or **11.2.16-h3** or later | Released. The November 24 update removed the ETA. |
+| 11.2.8 through 11.2.10-h18 | **11.2.10-h19**, or **11.2.16-h3** or later | Released. The November 24 update removed the ETA. |
 | 11.2.0 through 11.2.7, any hotfix | No action | Not affected |
 
 Disabling HTTP/2 is the workaround, and it is not a substitute for the hotfix once that build is out. On PAN-OS 11.2.8 or later the commands are `request http http2 show`, `request http http2 enable`, and `request http http2 disable`. Enabling HTTP/2 turns HTTP/1.1 off, with no fallback. These commands were not run on a device for this review. [PAN-OS HTTP/2 documentation](https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-networking-admin/manage-http-2-network-support)
@@ -163,6 +163,7 @@ Disabling HTTP/2 is the workaround, and it is not a substitute for the hotfix on
 - **Ubuntu:** [USN-9159-1][usn9159] (published 2026-11-19) fixes CVE-2026-123007 and the other November flaws: **1.30.4-7ubuntu1.2** (26.10), **1.28.3-2ubuntu1.13** (26.04 LTS), **1.24.0-2ubuntu7.20** (24.04 LTS), and **1.18.0-6ubuntu14.23** (22.04 LTS). Ubuntu Pro is **1.18.0-0ubuntu1.7+esm5** (20.04), **1.14.0-0ubuntu1.11+esm6** (18.04), **1.10.3-0ubuntu0.16.04.5+esm11** (16.04), and **1.4.6-1ubuntu3.9+esm10** (14.04). Ubuntu's CVE page says 14.04 is not affected by CVE-2026-123007. [USN-8955-1][usn] (published 2026-10-26) is the earlier notice for the October flaws and does not list CVE-2026-123007. [Ubuntu][ubuntu]
 - **Red Hat:** [RHSA-2026:100744](https://access.redhat.com/errata/RHSA-2026:100744), issued 2026-11-20, is a Critical nginx update for Red Hat Enterprise Linux 10. [RHSA-2026:100748](https://access.redhat.com/errata/RHSA-2026:100748), issued the same day, covers the RHEL 9 base `nginx` package. [RHSA-2026:100750](https://access.redhat.com/errata/RHSA-2026:100750), also 2026-11-20, covers the `nginx:1.24` module on RHEL 9.8 Extended Update Support. [RHSA-2026:100747](https://access.redhat.com/errata/RHSA-2026:100747), also 2026-11-20, covers the RHEL 8 `nginx:1.24` module (`nginx-1.24.0-3.module+el8.10.0+25364+53b7037a.9`). [RHSA-2026:100745](https://access.redhat.com/errata/RHSA-2026:100745), the same day, covers the RHEL 9 `nginx:1.26` module (`nginx-1.26.3-10.module+el9.9.0+25360+9b756829.4`). Both name CVE-2026-123007. No erratum was found for 3scale. Rocky Linux 8 has [RLSA-2026:100747](https://errata.rockylinux.org/RLSA-2026:100747), issued 2026-11-21. Rocky Linux 9 and 10 followed the same day with RLSA-2026:100748, RLSA-2026:100744, and, for the RHEL 9 `nginx:1.26` module, RLSA-2026:100745. Debian forky is fixed in `1.30.6-4`. SUSE shipped `nginx` **1.21.5-150600.10.30.1** for SUSE Linux Enterprise Server 15 SP7 ([SUSE-SU-2026:5415-1](https://lists.suse.com/pipermail/sle-security-updates/2026-November/030854.html), 2026-11-23) and **1.21.5-150400.3.28.1** for the 15 SP4 and SP5 lines ([SUSE-SU-2026:5414-1](https://lists.suse.com/pipermail/sle-security-updates/2026-November/030855.html)). SUSE Linux Enterprise Server 16.0 is still in QA, and 16.1 and openSUSE Leap 16.0 and 16.1 are still Affected. Alpine is fixed: 1.30.7-r0 on edge and 3.24, 1.28.3-r8 on 3.23 and 3.22, and 1.26.3-r4 on 3.21. [RHSB-2026-019](https://access.redhat.com/security/vulnerabilities/RHSB-2026-019), still dated November 19, says fixes are being expedited. Remember that backports can make an old version number either safe or, as Debian found for CVE-2026-93479, vulnerable.
 - **Bitwarden self-hosted:** Bitwarden's notice, posted 2026-11-19, says the bundled nginx is inside CVE-2026-123007 and CVE-2026-123633 and tells operators to update the instance to **v2026.11.0**. It names a kernel flaw, CVE-2026-72447, that Bitwarden does not ship, so the host still needs its own kernel update. [Bitwarden](https://community.bitwarden.com/t/bitwarden-self-host-patch-available-for-nginx-cve-2026-123007-and-cve-2026-123633/104165)
+- **Cisco products that bundle nginx:** [cisco-sa-nginx-nov-2026-e8jska2s][cisco-nginx], version 1.5, last updated 2026-11-26 01:48 GMT, rates the set High, CVSS 3.1 8.1, and says proof-of-concept code exists and Cisco has seen no malicious use. The November 26 revisions name fixed releases that are not out yet. Nexus 3000 and 9000 switches in standalone NX-OS mode (CSCwx92292) are **10.3.11** (December 2026), **10.4.9** (January 2027), **10.5.7** (December 2026), **10.6.5** (February 2027), and **10.7.1** (December 2026). Identity Services Engine 3.5 only (CSCwx92289) is **3.5 Patch 5** (December 2026). Catalyst Center (CSCwx92298, CSCwx92322) is **3.3.3** and **3.4.1**, both still TBD. Finesse (CSCwx92369) is **15.0(1)SU3**, still TBD. Until those ship, there is no Cisco build to install. IOS XE, the Secure Firewall products, and UCS Central are listed as not affected.
 
 ### Temporary mitigations
 
@@ -235,3 +236,4 @@ The November 18 configuration mitigations do not replace the upgrade:
 [usn2]: https://ubuntu.com/security/notices/USN-8955-2
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
 [pan-nginx]: https://security.paloaltonetworks.com/CVE-2026-123633
+[cisco-nginx]: https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-nginx-nov-2026-e8jska2s

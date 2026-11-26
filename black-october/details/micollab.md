@@ -1,10 +1,10 @@
 # Mitel MiCollab: a conferencing request runs commands before login
 
-**Last updated:** 2026-11-25 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main MiCollab summary](../black-october-2026.md#mitel-micollab-a-conferencing-request-runs-commands-before-login) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
-On 2026-11-16 Mitel published [MISA-2026-0012](https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012), revision 1.0, for five flaws in the Audio, Web, and Video Conferencing (AWV) component of MiCollab. Mitel is the scoring party. The CVE records, published 2026-11-19 by MITRE, repeat Mitel's scores. The advisory still prints the internal IDs and says a CVE has been requested.
+On 2026-11-16 Mitel published [MISA-2026-0012](https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0012) for five flaws in the Audio, Web, and Video Conferencing (AWV) component of MiCollab. Mitel is the scoring party. Revision 2.0, dated 2026-11-24, names the five CVEs next to the internal IDs. The scores and the patch are unchanged. The CVE records, published 2026-11-19 by MITRE, repeat Mitel's scores.
 
 [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323) (MTLVULN-1864) is **CVSS 3.1 10.0 Critical**. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:H`. Insufficient parameter sanitization lets an unauthenticated attacker run a blind command injection and execute commands in the context of the system. Mitel names integrity and availability. The vector assigns no confidentiality impact.
 
@@ -34,6 +34,7 @@ Affected is **MiCollab 10.3 (10.3.0.18) and earlier**, supported versions only. 
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
 | **Public announcement** | **2026-11-16; time/TZ unknown** | MISA-2026-0012 revision 1.0. Internal IDs only. [Advisory][adv] |
+| **CVE numbers on the advisory** | **2026-11-24; time/TZ unknown** | Revision 2.0. The five CVE IDs. Scores and the patch are unchanged. |
 | CVE records | 2026-11-19; time/TZ unknown | MITRE. Scores match Mitel's table. |
 | CERT Santé notice | 2026-11-20; time/TZ unknown | No exploitation and no public proof of concept. [CERT Santé][sante] |
 | **Accenture report** | **2026-11; day not stated on the page** | Web shell before 23:00 UTC on 2026-11-15 at one victim. A second server called 204.76.203.204 from 2026-11-09. [Accenture][apex] |
@@ -61,7 +62,7 @@ Mitel and CERT Santé do not report exploitation. Accenture does, for one victim
 
 ## Sources
 
-- [MISA-2026-0012][adv] — Mitel, first issued and last updated 2026-11-16, revision 1.0. Five AWV flaws. Scores 10.0, 9.0, 5.9, 5.3, and 5.3. Affected: 10.3 (10.3.0.18) and earlier. The advisory still says no CVE is assigned.
+- [MISA-2026-0012][adv] — Mitel, first issued 2026-11-16, revision 2.0 last updated 2026-11-24. Five AWV flaws. Scores 10.0, 9.0, 5.9, 5.3, and 5.3. Affected: 10.3 (10.3.0.18) and earlier. Revision 2.0 names CVE-2026-133275, CVE-2026-133303, CVE-2026-133311, CVE-2026-133323, and CVE-2026-133324.
 - [CVE-2026-133323](https://www.cve.org/CVERecord?id=CVE-2026-133323), [CVE-2026-133303](https://www.cve.org/CVERecord?id=CVE-2026-133303), [CVE-2026-133311](https://www.cve.org/CVERecord?id=CVE-2026-133311), [CVE-2026-133275](https://www.cve.org/CVERecord?id=CVE-2026-133275), [CVE-2026-133324](https://www.cve.org/CVERecord?id=CVE-2026-133324) — MITRE, published 2026-11-19. The scores match Mitel's table.
 - [CERT Santé][sante] — 2026-11-20. No known exploitation and no public proof of concept.
 - [Accenture APEX Labs][apex] — published November 2026, day not stated. Web shell before 23:00 UTC on 2026-11-15. Indicators 204.76.203.204 and 204.76.203.216, and `/pictures/*/shell.asp`.

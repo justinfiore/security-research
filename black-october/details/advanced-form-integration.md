@@ -1,6 +1,6 @@
 # WordPress: Advanced Form Integration assigns a role before login
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main Advanced Form Integration summary](../black-october-2026.md#wordpress-advanced-form-integration-assigns-a-role-before-login) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@ Advanced Form Integration is a WordPress plugin, slug `advanced-form-integration
 
 The same plugin's own changelog for 2.1.1, dated June 10, says it fixed an unauthenticated privilege escalation in the WooCommerce Create Customer and FluentAffiliate Create Affiliate actions, and that it added a server-side check so a form submission cannot assign administrator, editor, author, or shop manager. 2.11.5, dated November 10, says only "Hardened user role assignment in WooCommerce, FluentAffiliate, WordPress and BuddyBoss actions." Neither entry names this CVE. 2.11.4, dated November 5, is between the affected ceiling and the fix, and its changelog is a Salesforce authentication change. The record does not say whether 2.11.4 is affected.
 
-WordPress.org's plugin API reports **2.11.6**, last updated 2026-11-14 11:05 GMT, and 9,000+ active installs. The directory page still rendered 2.11.3 when read on November 16; the plugin header in trunk is 2.11.6, which matches the API. 2.11.6's changelog is about SuperOffice, SureCart, and logging, and it does not name the CVE.
+WordPress.org's plugin API reports **2.12.0**, last updated 2026-11-25 10:58 GMT, and 9,000+ active installs. 2.11.5 is still the first version the record calls unaffected. 2.12.0's changelog does not name the CVE.
 
 Patchstack's page calls the same flaw "Low priority" and "No impactful threat," and says it has a low severity impact and is unlikely to be exploited. That sits next to its own CVSS 9.8 and its statement that a low-privilege user can become an administrator. The page names no attack against a site.
 
@@ -31,7 +31,7 @@ This is not [Estatik](estatik.md), [Frontend Admin](wordpress-plugins-frontend-a
 |---|---|---|
 | Reported to Patchstack | 2026-11-09; time/TZ unknown | Phạm Khắc Sang, through the Patchstack bug bounty. [Patchstack][ps] |
 | Advanced Form Integration 2.11.5 | 2026-11-10; time/TZ unknown | Changelog: hardened user role assignment in WooCommerce, FluentAffiliate, WordPress, and BuddyBoss actions. It does not name the CVE. [WordPress.org API][api] |
-| Advanced Form Integration 2.11.6 | 2026-11-14; directory last updated 2026-11-14 11:05 GMT | The current release. The changelog does not name the CVE. [WordPress.org API][api] |
+| Advanced Form Integration 2.12.0 | 2026-11-25 10:58 GMT | The current release. The changelog does not name the CVE. 2.11.5 is still the first fixed version. [WordPress.org API][api] |
 | Patchstack page | 2026-11-13; time/TZ unknown | CVSS 9.8. Required privilege Unauthenticated. Patched in 2.11.5. [Patchstack][ps] |
 | **Public announcement** | **2026-11-15; time/TZ unknown** | Patchstack published the CVE record. NVD's published date is 2026-11-15, and NVD does not show a time. |
 | **Last updated** | **2026-11-16 (America/New_York)** | New item. Update Advanced Form Integration. |
@@ -48,13 +48,13 @@ If WP-CLI is not available, read the `Version:` line in `wp-content/plugins/adva
 
 | Plugin | Slug | Affected | Fixed |
 |---|---|---|---|
-| Advanced Form Integration | `advanced-form-integration` | through 2.11.3 | 2.11.5; current release 2.11.6 |
+| Advanced Form Integration | `advanced-form-integration` | through 2.11.3 | 2.11.5; current release 2.12.0 |
 
 A plugin that is installed and inactive can still be reachable if WordPress loads its code. Confirm it. A site without Advanced Form Integration is outside this entry. The record does not say which action reaches the role assignment, so a site that has not connected WooCommerce or FluentAffiliate is not known to be safe. 2.11.4 is not named as fixed or affected.
 
 ## Remediation
 
-1. Update Advanced Form Integration to **2.11.6 or later**. 2.11.5 is the first version the record calls unaffected.
+1. Update Advanced Form Integration to **2.12.0 or later**. 2.11.5 is the first version the record calls unaffected.
 2. If the plugin is unused, remove it instead of leaving an affected copy inactive.
 3. The update does not remove an administrator account that was already created.
 
@@ -72,7 +72,7 @@ No source publishes an indicator or a confirmed compromise. Look for administrat
 - [CVE-2026-125769](https://www.cve.org/CVERecord?id=CVE-2026-125769) — Patchstack, published 2026-11-15. CVSS 3.1 9.8. Affected from the beginning through 2.11.3. Unaffected from 2.11.5. The record does not name the request.
 - [NVD, CVE-2026-125769](https://nvd.nist.gov/vuln/detail/CVE-2026-125769) — published November 15, 2026. Status Not Scheduled. NVD has not scored it. The CNA score is shown as the secondary metric.
 - [Patchstack][ps] — published 13 Nov 2026. Required privilege Unauthenticated. Patched in 2.11.5. Reported by Phạm Khắc Sang on 9 Nov 2026. The page also says "Low priority" and "No impactful threat."
-- [WordPress.org plugin API, Advanced Form Integration][api] — version 2.11.6, last updated 2026-11-14 11:05 GMT, 9,000+ active installs. 2.11.5 (2026-11-10) hardened user role assignment. The directory page rendered 2.11.3 on 2026-11-16; trunk's plugin header is 2.11.6.
+- [WordPress.org plugin API, Advanced Form Integration][api] — version 2.12.0, last updated 2026-11-25 10:58 GMT, 9,000+ active installs. 2.11.5 (2026-11-10) hardened user role assignment. 2.12.0 does not name the CVE.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.13, released 2026-11-13T20:24:18.3008Z, read 2026-11-16. CVE-2026-125769 is not in it.
 
 [ps]: https://patchstack.com/database/wordpress/plugin/advanced-form-integration/vulnerability/wordpress-advanced-form-integration-plugin-2-11-3-privilege-escalation-vulnerability?_s_id=cve

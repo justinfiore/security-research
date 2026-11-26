@@ -31,6 +31,8 @@ Todoist splits the affected accounts into four groups. The counts are approximat
 
 The attacker could also read Todoist's source code. Todoist says it found no changes to application code.
 
+The same intrusion reached Twist, which Doist also runs. Twist's notice, last updated November 26, says the attacker read Twist's databases on November 23. About 3,600 users had a connected-app token copied, for Zapier, GitLab, Make, Slack, Todoist, Calendly, Google Calendar, and five custom Jira apps. About 3,080 of those tokens were used to look up a profile. About 10 were used to read workspace content. Twelve password hashes were copied, two of them salted SHA-1, and Twist reset every account that still used SHA-1. One workspace was given an attacker administrator for about three and a half minutes, and one member's direct messages were read. GitHub-integration records and the key that encrypted the stored GitHub tokens were read. Twist deleted every saved GitHub connection and replaced that key. Last recorded Twist activity was 12:38 UTC on November 23. Revocation of the Todoist, Calendly, and Google Calendar tokens began at 09:26 UTC on November 26. [Twist][twist]
+
 ## Timeline
 
 All times below are UTC, from Todoist's notice.
@@ -46,7 +48,8 @@ All times below are UTC, from Todoist's notice.
 | **Public announcement** | **2026-11-24 17:11 UTC** | This article. Email to affected customers began at 17:52 UTC and finished 2026-11-25 09:39 UTC. |
 | Notice expanded | 2026-11-25 17:51 UTC | The `/sync` reads, the search terms, and the Outlook request limits. |
 | Slack tokens revoked | 2026-11-25 17:23 UTC | Affected Slack integration tokens. |
-| **Last updated** | **2026-11-26 (America/New_York)** | New item. Nothing to install. |
+| **Twist notice** | **2026-11-26; page says last updated that day** | Same intrusion. Connected-app tokens, twelve hashes, one workspace, one member's direct messages. [Twist][twist] |
+| **Last updated** | **2026-11-26 (America/New_York)** | Twist is the same incident. Nothing to install. |
 
 ## Detection
 
@@ -62,6 +65,7 @@ There is no customer-side patch. Todoist says it disabled affected passwords, re
 2. Reconnect Slack, and reconnect the Outlook add-in if you used it. The replacement may show as unverified until Microsoft finishes verification, and a work or school account may block it until then.
 3. Replace a Todoist API token used in a script. The new token is under **Settings → Integrations → Developer** on the web.
 4. Revoke a secret that was written into a task, a comment, or a project: an API key, a token, a recovery phrase, or a private key. Deleting the text does not invalidate a secret that was already copied. Restrict or replace a shared link that was in that content.
+5. On Twist, reconnect an app that was disconnected, set a new password if Twist reset it, and change that password anywhere it was reused. Replace a personal Twist API token used in a script. Twist's mail comes from `noreply@twist.com` or `no-reply@notify.todoist.com`. No Twist email means Twist says there is nothing to do.
 
 ## Verification
 
@@ -75,8 +79,11 @@ Todoist says it found no sign-in to the accounts whose hashes were copied. That 
 
 ## Sources
 
-- [Todoist, Security incident in November 2026][notice] — published 2026-11-24 17:11 UTC, updated 2026-11-25 17:51 UTC. Stolen development credential, production access on November 23, and the four groups above. No CVE and no score.
+- [Todoist, Security incident in November 2026][notice] — published 2026-11-24 17:11 UTC, updated 2026-11-25 17:51 UTC. Stolen development credential, production access on November 23, and the four groups above. The page now points Twist customers at the Twist notice. No CVE and no score.
+- [Twist, Security Incident in November 2026][twist] — same intrusion. About 3,600 connected-app tokens, about 3,080 profile lookups, about 10 workspace reads, 12 password hashes, one workspace, and one member's direct messages. Last activity 2026-11-23 12:38 UTC. OAuth revocation for Todoist, Calendly, and Google Calendar began 2026-11-26 09:26 UTC.
 - [CISA KEV JSON][kev] — catalog 2026.11.25, released 2026-11-25T19:48:12.4344Z, checked 2026-11-26. No CVE to match.
+
+[twist]: https://twist.com/help/articles/security-incident-in-november-2026-GWVMx3pxa
 
 [notice]: https://www.todoist.com/help/todoist/get-started/security-incident-in-november-2026-cG0EIACNU
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json

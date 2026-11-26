@@ -1,6 +1,6 @@
 # SOGo: a password-recovery question resets the account
 
-**Last updated:** 2026-11-16 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main SOGo summary](../black-october-2026.md#sogo-a-password-recovery-question-resets-the-account) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -24,6 +24,7 @@ The same release fixes [CVE-2026-127131](https://www.cve.org/CVERecord?id=CVE-20
 | Event | Date and time (timezone) | Notes and source |
 |---|---|---|
 | SOGo 5.12.13 released | 2026-11-04 09:24:58 UTC | Alinto says several vulnerabilities, some critical, are fixed, and that the CVE identifiers were not assigned yet. [Release][rel] |
+| **SOGo 5.12.14** | **2026-11-24; time/TZ unknown** | Limits TOTP and password recovery, and fixes sieve injection, a worker crash, and theme script injection. No CVE yet. Affects 5.12.13. [Release][rel14] |
 | **Public CVE records** | **2026-11-12 15:53:16 UTC** | CVE-2026-127111 published. CVE-2026-127131 followed at 15:56:31 UTC. VulnCheck is the CNA. [CVE-2026-127111][cve111] |
 | **Last updated** | **2026-11-13 (America/New_York)** | New item. Upgrade SOGo. |
 
@@ -35,7 +36,7 @@ The same release fixes [CVE-2026-127131](https://www.cve.org/CVERecord?id=CVE-20
 
 ## Remediation
 
-1. Upgrade to **SOGo 5.12.13 or later** and restart the service. Alinto says every earlier version is affected.
+1. Upgrade to **SOGo 5.12.14 or later** and restart the service. 5.12.13 closes the two scored flaws. Alinto's November 24 release says 5.12.14 also limits TOTP attempts and password recovery, and fixes a sieve injection, a worker crash, and script injection through a custom theme. It says those affect every earlier version, including 5.12.13, and that the CVE identifiers are not assigned yet. [5.12.14][rel14]
 2. Until the upgrade, turn password recovery off if the deployment does not need it. That does not fix CVE-2026-127131, which needs the password and then guesses the TOTP code.
 3. The project's release notes list more fixes in 5.12.13 than the first two records. One of them now has a record. [CVE-2026-130066](https://www.cve.org/CVERecord?id=CVE-2026-130066), published 2026-11-16, is SQL injection in SQLSource contact lookup. VulnCheck rates it **CVSS 4.0 7.1 High** and **CVSS 3.1 6.5 Medium**. A logged-in user places a backslash before a quote in the object name and, on MySQL or MariaDB, reads the user-source table, including password hashes. Every version before 5.12.13 is affected, so the upgrade already covers it. The release notes also name a second SQL injection, a buffer overflow, LDAP filter injection, path traversal, impersonation, and unsafe HTML. Those still have no scores here, and this guide does not assign them.
 
@@ -57,5 +58,6 @@ Neither Alinto nor VulnCheck publishes an indicator of a password that was alrea
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.10, checked 2026-11-13. Neither CVE is listed.
 
 [rel]: https://github.com/Alinto/sogo/releases/tag/SOGo-5.12.13
+[rel14]: https://www.sogo.nu/news/2026/sogo-v51214-released.html
 [cve111]: https://www.cve.org/CVERecord?id=CVE-2026-127111
 [cve131]: https://www.cve.org/CVERecord?id=CVE-2026-127131

@@ -1,6 +1,6 @@
 # VeloCloud Orchestrator: authenticated SQL injection to superuser operator
 
-**Last updated:** 2026-11-25 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main VeloCloud summary](../black-october-2026.md#velocloud-orchestrator-authenticated-sql-injection-to-superuser-operator-cve-2026-114625) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -69,7 +69,7 @@ Also search firewall, NetFlow and SIEM data for the same IPs and for VCO outboun
 2. **Until you can upgrade,** limit the VCO web interface to trusted administrative networks. Block the two published IPs, watch for outbound traffic from the VCO and block outbound ports you do not need. Review administrator activity. These steps reduce risk but do not fix the flaw. Arista says no configuration prevents exposure, and any authenticated user can exploit it. [Arista advisory][adv]
 3. **Preserve evidence before you upgrade** if you suspect compromise: VCO web access logs, backend application logs, system logs, database logs and file-system timestamps. [Arista advisory][adv]
 4. CISA's due date (2026-10-26) and BOD 26-04 forensic-triage requirement apply to US federal agencies. Other organizations should still treat the flaw as urgent. [KEV][kev]
-5. **Those builds do not fix [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288), NoisyTCP.** [Security Advisory 0229][adv0229], dated November 20 and revised the same day, says Arista rates it CVSS 3.1 7.5. kernel.org rates the same kernel flaw 7.5 with a different vector. Arista's vector is `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H`. A packet to a reachable TCP port can panic the kernel. On-prem VCO through **7.0.0.3, 6.4.2.16, 6.1.3.13, and 5.2.3.20** is affected, which includes the 0199 and 0202 floors. Arista names no fixed VCO release. Until one ships, set each externally reachable interface to one receive queue with `ethtool -L <iface> combined 1`. The change does not survive a reboot. Arista says it is not aware of exploitation of this flaw on customer networks. It is not in KEV. The kernel item is [NoisyTCP](linux-noisytcp.md).
+5. **Those builds do not fix [CVE-2026-99288](https://www.cve.org/CVERecord?id=CVE-2026-99288), NoisyTCP.** [Security Advisory 0229][adv0229], dated November 20 and revised the same day, says Arista rates it CVSS 3.1 7.5. kernel.org rates the same kernel flaw 7.5 with a different vector. Arista's vector is `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H`. A packet to a reachable TCP port can panic the kernel. On-prem VCO through **7.0.0.3, 6.4.2.16, 6.1.3.13, and 5.2.3.20** is affected, which includes the 0199 and 0202 floors. Arista names no fixed VCO release. Until one ships, set each externally reachable interface to one receive queue with `ethtool -L <iface> combined 1`. The change does not survive a reboot. Revision 1.2, dated November 24, says changing that count can interrupt disaster recovery. If recovery is not back within 15 minutes, or health degrades, restore the recorded channel count. Those 15 minutes are a rollback threshold, not a promise that recovery finishes. Arista says it is not aware of exploitation of this flaw on customer networks. It is not in KEV. The kernel item is [NoisyTCP](linux-noisytcp.md).
 
 ## Verification
 
@@ -88,7 +88,7 @@ Also search firewall, NetFlow and SIEM data for the same IPs and for VCO outboun
 ## Sources
 
 - [Arista Security Advisory 0199][adv]: scores, affected and fixed trains, required privileges, hosted status, IOCs, mitigations.
-- [Arista Security Advisory 0229][adv0229] — November 20, 2026, revision 1.1 the same day. CVE-2026-99288, CVSS 3.1 7.5. On-prem VCO through 7.0.0.3, 6.4.2.16, 6.1.3.13, and 5.2.3.20. No fixed VCO release. The `ethtool` mitigation does not survive reboot.
+- [Arista Security Advisory 0229][adv0229] — November 20, 2026. Revision 1.2, dated November 24, says the receive-queue change can interrupt disaster recovery and names no fixed VCO release. CVE-2026-99288, CVSS 3.1 7.5. On-prem VCO through 7.0.0.3, 6.4.2.16, 6.1.3.13, and 5.2.3.20. The `ethtool` mitigation does not survive reboot.
 - [Arista Security Advisory 0202][adv0202] (2026-11-02, revision 1.1 on 2026-11-12): CVE-2026-111497 in the same on-prem trains. Fixed in 5.2.3.20, 6.1.3.12 and 6.4.2.14. Exploitation is an outbound Brotli response from an integration endpoint, not an inbound API request. Arista lists no mitigation. It does not say hosted VCO was already patched for this flaw. VeloCloud Gateway is not affected. Revision 1.1 adds VeloCloud Edge: 7.0.1.0 and below, 6.4.4.1 and below, 6.1.6.1 and below, and 5.2.7 and below are affected, fixed in 7.0.1.1, 6.4.4.2, 6.1.6.2, and 5.2.7.2. Edge exploitation needs deep packet inspection of a crafted stream, and Arista says it has not identified an exploit on that path. DANZ Monitoring Fabric's Analytics Node is also affected, with no patched version.
 - [CVE record (Arista CNA)][cve] and [NVD][nvd]: timestamps and affected ranges.
 - [CISA KEV feed][kev]: dateAdded 2026-10-23, due date 2026-10-26, earlier VCO KEV entries.
