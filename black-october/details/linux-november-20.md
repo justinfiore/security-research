@@ -1,6 +1,6 @@
 # Linux kernel: November 20 High fixes
 
-**Last updated:** 2026-11-25 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main summary](../black-october-2026.md#linux-kernel-eight-high-fixes-from-november-20) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -40,9 +40,10 @@ Red Hat scores three of these lower and has deferred the kernel: CVE-2026-99794 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Records published** | **2026-11-20 05:51–07:02 UTC** | kernel.org CNA. Seven records at 05:51 UTC. CVE-2026-99804 at 07:02 UTC. |
-| Upstream stable tags | The CNA unaffected lines name 6.12.117 or 6.12.118, 6.18.61 or 6.18.64, and 7.3.2 or 7.3.5 | kernel.org released 6.12.118, 6.18.64, and 7.3.5 on 2026-11-17. A record that names an earlier tag is fixed in those releases. CVE-2026-99746's first 6.18 tag is 6.18.65, which was not a released tag when this page was written. |
+| Upstream stable tags | The CNA unaffected lines name 6.12.117 or 6.12.118, 6.18.61, 6.18.64, or 6.18.65, and 7.3.2 or 7.3.5 | kernel.org released 6.12.118 and 6.18.64 on 2026-11-17, and 6.18.65, 6.12.119, and 7.3.6 on 2026-11-23. CVE-2026-99746's record, updated 2026-11-23, says unaffected from 6.18.65. That tag is released. |
 | Debian security kernel | Tracker read 2026-11-25 | trixie security `linux` 6.12.118-1 is fixed for the rows trixie contains. bookworm security 6.1.192-2 is still vulnerable for those rows. forky 7.3.5-1 and sid 7.3.6-1 are fixed. |
-| **Last updated** | **2026-11-25 (America/New_York)** | New item. Ubuntu and Red Hat have no package. |
+| 6.18.65 released | 2026-11-23; time unknown | kernel.org. The CVE-2026-99746 record now names this tag. [ChangeLog](https://cdn.kernel.org/pub/linux/kernel/v6.x/ChangeLog-6.18.65) |
+| **Last updated** | **2026-11-26 (America/New_York)** | 6.18.65 is out. Amazon Linux marks three of the eight not affected. No new package. |
 
 ## Detection
 
@@ -68,7 +69,7 @@ Install a distribution kernel that names the CVE and reboot into it. Installing 
 | Ubuntu | Generic `linux` has no released fix for CVE-2026-99794. The page, updated 2026-11-24, rates the priority Medium and marks 16.04 through 26.04 Vulnerable. 26.10 is Vulnerable, work in progress, at `7.3.0-12.13`. A work-in-progress build is not a package a normal upgrade installs. The other seven were not each opened. Do not treat one Ubuntu page as the status of the rest. | No package yet for CVE-2026-99794. |
 | Red Hat | No erratum. CVE-2026-99794 and CVE-2026-99744: RHEL 8, 9, and 10 `kernel`, and RHEL 8 and 9 `kernel-rt`, are Fix deferred. CVE-2026-99804: RHEL 9 and 10 `kernel` are Fix deferred. RHEL 8 `kernel` and `kernel-rt`, and RHEL 9 `kernel-rt`, are Not affected. Red Hat's scores are 6.3, 6.5, and 5.5. | No package. Fix deferred is not a fix. |
 | SUSE | CVE-2026-99794 is Analysis on SLES 12 SP5-LTSS, 15 SP7, 16.0, and 16.1. SUSE repeats the CNA score of 8.3. Analysis is not a released package. The other seven were not each opened. | No released package found. |
-| Amazon Linux | The Amazon Linux page for CVE-2026-99794 returned 404 on 2026-11-25. No ALAS advisory was established for this set. | Unknown, not "not affected." |
+| Amazon Linux | Pages read 2026-11-26. CVE-2026-99794, CVE-2026-99793, and CVE-2026-99746 are Not Affected on AL2 and AL2023, with no advisory. The pages for CVE-2026-99804, CVE-2026-99785, CVE-2026-99773, CVE-2026-99754, and CVE-2026-99744 returned 404. | No package. Not Affected covers three of the eight, not the set. |
 | AlmaLinux, Rocky Linux, Oracle Linux | No erratum naming these eight CVEs was found. Do not assume a RHEL rebuild has a fix Red Hat has deferred. | Unknown until the rebuild publishes it. |
 
 ## Verification

@@ -1,6 +1,6 @@
 # GL.iNet: the cloud service installed malware on routers and KVMs
 
-**Last updated:** 2026-11-24 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main summary](../black-october-2026.md#glinet-the-cloud-service-installed-malware-on-routers-and-kvms) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -30,6 +30,7 @@ A second report, linked from the same notice, says an AstroWarp/SD-WAN field run
 | Notice updated | 2026-11-22 (UTC); time unknown | Community security check added. |
 | **Notice updated** | **2026-11-23 (UTC); time unknown** | Pending CVE reports, the EMQX authorization error, and the recovery change: the firmware removes the known malware, and a factory reset alone does not install the fixes. |
 | Forum notice adds models | 2026-11-24 04:04 UTC | The staff post's download table adds fourteen router models: GL-A1300 and GL-X300B at 4.5.24, and twelve models at 4.3.31. [Forum][forum] |
+| **November 24 advisories** | **2026-11-24; time unknown** | A separate page raises the floor on several models and adds a NAS login bypass. No CVE and no score. [Advisories][adv24] |
 
 ## Detection
 
@@ -45,18 +46,20 @@ The November 23 notice says updating is the primary action, and that a check is 
 
    | Model | Minimum version |
    |---|---|
-   | GL-MG1300, GL-MT3000, GL-MT6000 | 4.11.1 |
-   | GL-E5800 | 4.10.3 |
-   | GL-BE3600, GL-BE9300 | 4.10.2 |
-   | GL-BE14000 | 4.9.3 |
-   | GL-BE6500, GL-MT3600BE, GL-MT5000 | 4.9.1 |
-   | GL-BE10000 | 4.8.7 |
-   | GL-AX1800, GL-AXT1800, GL-SFT1200, GL-X3000, GL-XE3000 | 4.8.4 |
-   | GL-MT2500 / GL-MT2500A, GL-X2000 | 4.7.14 |
+   | GL-MG1300, GL-MT3000, GL-MT6000 | 4.11.2 |
+   | GL-E5800 | 4.10.4 |
+   | GL-BE3600, GL-BE9300 | 4.10.3 |
+   | GL-BE14000 | 4.9.4 |
+   | GL-BE6500, GL-MT3600BE, GL-MT5000 | 4.9.2 |
+   | GL-BE10000 | 4.8.8 |
+   | GL-AX1800, GL-AXT1800, GL-SFT1200, GL-X3000, GL-XE3000 | 4.8.5 |
+   | GL-MT2500 / GL-MT2500A, GL-X2000 | 4.7.15 |
    | GL-A1300, GL-X300B | 4.5.24 |
    | GL-AP1300, GL-AR300M (NAND), GL-AR300M16, GL-AR750, GL-AR750S-EXT, GL-B1300, GL-E750 / GL-E750V2, GL-MT1300, GL-MT300N-V2, GL-X750, GL-XE300 | 4.3.31 |
    | RM1, RM1V2, RM10, RM10RC, RM1PE, RM4PE | 1.10.3 |
    | RMQ1 | 1.8.7 |
+
+   The November 20 notice still lists the older floors, one build below these. The [November 24 advisory][adv24] is the higher one, and it is the one to install. Its release notes do not all name the same flaws. GL-MT3000 4.11.2, dated 2026-11-25 01:42:40 on the firmware API, says it fixed vdb-submit-1112986 and vdb-submit-1112997, the RTTY and AstroWarp flaws. GL-AXT1800 4.8.5, dated 2026-11-25 01:01:40, names only vdb-submit-1113491, a login-timestamp bypass in `gl_nas_sys`. That one has no CVE and no score. A model whose note names only the NAS flaw is not, on that note, a new malware-cleanup build. GL-A1300 4.5.24, dated 2026-11-24 07:32:49, names all three. The KVM floors did not move.
 
    GL-AXT1800: if the device already shows 4.8.4 and you do not know which build it is, ask support@gl-inet.com. A model that is not in the table has no build named here. Do not install another model's firmware.
 2. A device that never connected to GoodCloud does not need a reset or new passwords because of this incident. A device that did connect should have its administrator password changed, and VPN and SSH keys stored on it replaced, after the update. An update cannot revoke a key that was already copied. Some KVMs connect before an account is linked, so the lack of an account is not proof it never connected.
@@ -79,8 +82,10 @@ A device GL.iNet identified, or one with evidence of unauthorized access, was re
 - [AstroWarp command injection report](https://github.com/gl-inet/CVE-issues/blob/main/4.0.0/AstroWarp(SDWAN)%20API%20Command%20Injection%20via%20thevirtual_ip_info%20Field%20Allows%20Arbitrary%20Command%20Execution%20as%20Root.md) — linked from the notice. Router rows say "expected fix."
 - [RTTY report](https://github.com/gl-inet/CVE-issues/blob/main/common/Root%20Access%20via%20Rtty%20Configuration%20Modification%20and%20TLS%20Certificate%20Verification%20Bypass.md) — linked from the notice. KVM fixed at 1.10.3 and RMQ1 1.8.7.
 - [GL.iNet forum announcement][forum] — the earlier staff post. The notice now points KVM checks here.
-- [CISA KEV JSON][kev] — catalog 2026.11.23, checked 2026-11-23. No CVE to match.
+- [November 24 advisories][adv24] — no clock time on the page. Raises the router floors by one build and adds vdb-submit-1113491, a NAS login-timestamp bypass. No CVE and no score.
+- [CISA KEV JSON][kev] — catalog 2026.11.25, checked 2026-11-26. No CVE to match.
 
 [notice]: https://www.gl-inet.com/en-us/blogs/blog/glinet-security-notice-2026-11-20/
+[adv24]: https://www.gl-inet.com/en-us/blogs/security-updates/security-advisories-vulnerabilities-and-cves-nov-24-2026
 [forum]: https://forum.gl-inet.com/t/2026-11-20-gl-inet-security-notice-goodcloud-kvm-routers/73056
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
