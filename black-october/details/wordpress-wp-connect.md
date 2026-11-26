@@ -1,6 +1,6 @@
 # WordPress: six WP connect plugins shipped a backdoor
 
-**Last updated:** 2026-11-24 (America/New_York)
+**Last updated:** 2026-11-25 (America/New_York)
 
 [Main plugin summary](../black-october-2026.md#wordpress-six-wp-connect-plugins-shipped-a-backdoor) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -19,7 +19,7 @@ Wordfence lists these versions:
 | Add-On for Contact Form 7 to Notion | `add-on-cf7-for-notion` | 1.6.4 |
 | Orders Sync to Airtable for WooCommerce | `orders-sync-to-airtable-for-woocommerce` | 1.0.2 |
 
-The release immediately before each of those does not contain the file. WordPress.org's Protect The Shire release delay, and its automated reviewer, stopped the versions before they were offered to sites. All six plugins were closed on WordPress.org the same evening. Wordfence says most sites should not have a backdoored copy, and that there is no patch. The WordPress.org Plugins Team says the developer reports the account was compromised. Further details are still pending. Wordfence says it is still writing malware signatures.
+The release immediately before each of those does not contain the file. WordPress.org's Protect The Shire release delay, and its automated reviewer, stopped the versions before they were offered to sites. All six plugins were closed on WordPress.org the same evening. Read again on 2026-11-25, the directory calls the closure of WP Sync for Notion, Add-on Brevo for Gravity Forms, Add-On for Contact Form 7 to Airtable, Add-On for Contact Form 7 to Notion, and Orders Sync to Airtable for WooCommerce permanent. It calls the closure of Air WP Sync temporary, pending a full review. None of the six is available for download, and none has a patched release. Wordfence says most sites should not have a backdoored copy, and that there is no patch. The WordPress.org Plugins Team says the developer reports the account was compromised. Further details are still pending. Wordfence says it is still writing malware signatures.
 
 **CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
@@ -38,6 +38,7 @@ The release immediately before each of those does not contain the file. WordPres
 |---|---|---|
 | Backdoored releases committed | 2026-11-22, about 16:30–17:40 America/New_York | Six plugins, from the developer's WordPress.org account. Wordfence gives the window, not a clock time. [Report][wf] |
 | Releases stopped | 2026-11-22; time/TZ unknown | Protect The Shire held them, and the plugins were closed the same evening. [Report][wf] |
+| **Directory reread** | **2026-11-25; time/TZ unknown** | Five closures are permanent. Air WP Sync's is temporary, pending a full review. Still no patched release. |
 | **Public announcement** | **2026-11-23; time/TZ unknown** | Wordfence. CVSS 3.1 9.8. [Report][wf] |
 | **CVE record published** | **2026-11-24; time/TZ unknown** | Wordfence is the CNA. CVSS 3.1 9.8. No patched version. [CVE](https://www.cve.org/CVERecord?id=CVE-2026-135202) |
 
@@ -55,7 +56,7 @@ Reading those paths changes no state. Finding none of them does not prove a webs
 
 ## Remediation
 
-1. If any listed version is installed, remove that plugin. There is no patched release, and the plugins are closed on WordPress.org.
+1. If any listed version is installed, remove that plugin. There is no patched release. Five of the six are closed permanently. Air WP Sync's closure is temporary and pending a review, and it is still not available for download. Do not reinstall it from the directory while that page still offers no fixed version.
 2. Removing the plugin does not remove a PHP file already written under `wp-content/uploads/`, and it does not remove an hourly cron hook the backdoor registered.
 3. A site that is not on a listed version needs no change for this incident. Wordfence says the backdoored versions were never released to sites.
 

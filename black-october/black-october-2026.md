@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [1Password: account records were copied from the backend](#1password-account-records-were-copied-from-the-backend)
 - [Jenkins: a sandboxed Pipeline runs code on the controller](#jenkins-a-sandboxed-pipeline-runs-code-on-the-controller)
 - [GeoServer: a stored query reads a file, then a default key is the administrator](#geoserver-a-stored-query-reads-a-file-then-a-default-key-is-the-administrator)
 - [FinCEN: unauthorized access to a limited set of systems](#fincen-unauthorized-access-to-a-limited-set-of-systems)
@@ -348,6 +349,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Nothing to install for [1Password](#1password-account-records-were-copied-from-the-backend). 1Password says an attacker used an employee's GitHub account on November 19, pushed code to backend services, and copied account records for a subset of customers: names, sign-in email addresses, and tokens from some invitation and recovery emails. It says vault contents and the keys that protect them were not accessed, and that you do not need to change the account. No CVE is assigned. Treat an invitation or a recovery email you did not start as hostile.
 - **New this update:** Upgrade [GeoServer](#geoserver-a-stored-query-reads-a-file-then-a-default-key-is-the-administrator) to **3.0.2** or **2.28.6**. GeoServer rates [CVE-2026-129245](https://www.cve.org/CVERecord?id=CVE-2026-129245) CVSS 4.0 9.2 Critical: the remember-me key ships as `geoserver`, and a password digest forges an administrator cookie. [CVE-2026-120705](https://www.cve.org/CVERecord?id=CVE-2026-120705) is 8.6 and reads a local file with no login. [CVE-2026-129243](https://www.cve.org/CVERecord?id=CVE-2026-129243) is 8.8 and skips service-security rules. Eye Security says the chain runs code on a default install. The builds shipped October 19. The advisories are November 23. watchTowr saw probes for the file read and the rule bypass on November 25. A site on 2.27.x uses 2.27.7 only until it moves. Change administrator passwords if the data directory may have been read. None is in KEV.
 - **New this update:** Nothing to install for [FinCEN](#fincen-unauthorized-access-to-a-limited-set-of-systems). The Bank Secrecy Act E-Filing site says unauthorized access reached a limited subset of systems, and that some systems are offline. A filing the outage blocked uses the November 24 deadline relief. A report that cannot wait goes to 1-866-556-3974. No CVE is assigned. Reuters quotes an official saying there is no evidence the Bank Secrecy Act or beneficial-ownership databases were breached, and that the review is not finished. This guide did not see that sentence on a FinCEN page.
 - **New this update:** [Session Smart Conductor](#juniper-session-smart-router-pre-onboarding-administrator-access) is in CISA's catalog. [CVE-2026-103406](https://www.cve.org/CVERecord?id=CVE-2026-103406) was added November 25, due November 28, and forensic triage is required. Juniper rates it CVSS 3.1 9.8 Critical: a salt minion ID runs a command as root, with no login, and Juniper says exploitation was reported. The floors stay **7.0.5, 7.1.7, and 7.2.3**. Onboarding does not close this one. [CVE-2026-103409](https://www.cve.org/CVERecord?id=CVE-2026-103409), the pre-onboarding flaw, is not listed.
@@ -637,6 +639,28 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## 1Password: account records were copied from the backend
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/1password.md):** [Detection](details/1password.md#detection) · [Remediation](details/1password.md#remediation) · [Verification](details/1password.md#verification) · [Timeline](details/1password.md#timeline)
+
+**CVEs:** No CVE is assigned.
+
+**No vendor or CNA has published a CVSS score.** 1Password says that on November 19 an attacker used an employee's corporate GitHub account to reach source code and push code to backend services. That code downloaded account records for a subset of customers: names, the email addresses used to sign in, account identifiers, public keys, Secure Remote Password parameters, and tokens from certain invitation, provisioning, and recovery emails. 1Password says a vault, the items in it, and the keys that protect it were not accessed, and that it does not store the account password or the Secret Key. It says the invitation token cannot open an account by itself: it also needs an SSO sign-in or a code sent to the registered email. A small number of users who had such a token were notified. 1Password lengthened those codes from six digits to ten characters and says it rotated internal credentials that may have been exposed.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Investigation starts | 2026-11-19; time unknown | An employee's corporate GitHub account. [1Password](https://1password.com/blog/update-on-nov-2026-security-incident) |
+| **Public announcement** | **2026-11-25; time unknown** | Account records for a subset of customers. Vaults not accessed. |
+| **Last updated** | **2026-11-25 19:10 EST (UTC−05:00)** | New item. Nothing to install. |
+
+**Patch:** There is nothing to install. 1Password says you do not need to update anything in the account. Do not complete an invitation or a recovery you did not start, and do not enter the account password or the Secret Key anywhere except the official app or 1password.com after you typed the address yourself. Changing the password does not retract an email address that was already copied.
+
+Sources: [1Password, November 25](https://1password.com/blog/update-on-nov-2026-security-incident), [detailed guide](details/1password.md).
 
 ---
 
@@ -1135,7 +1159,7 @@ Sources: [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646), [S
 
 **CVEs:** [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202)
 
-**Wordfence, the CNA, rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The record was published 2026-11-24. It rendered reserved on 2026-11-23. On 2026-11-22, over about two hours, new releases of six plugins from developer WP connect were committed to WordPress.org from the developer's own account. Each adds `includes/airwp-online.php`. The file runs on every request, including one with no login, sends the site address and the system user to `tascredit-pay.com` with certificate checks off, and runs the PHP that server returns. It can also run a shell command, dump password hashes, and write a PHP file under `uploads`. The versions are Air WP Sync **2.9.1 through 2.9.4**, WP Sync for Notion **1.7.4**, Add-on Brevo for Gravity Forms **2.6.3**, Add-On for Contact Form 7 to Airtable **2.5.4**, Add-On for Contact Form 7 to Notion **1.6.4**, and Orders Sync to Airtable for WooCommerce **1.0.2**. WordPress.org stopped the releases before sites were offered them, and closed all six plugins the same evening. There is no patch. The developer reports the account was compromised, and Wordfence says further details are pending.
+**Wordfence, the CNA, rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The record was published 2026-11-24. It rendered reserved on 2026-11-23. On 2026-11-22, over about two hours, new releases of six plugins from developer WP connect were committed to WordPress.org from the developer's own account. Each adds `includes/airwp-online.php`. The file runs on every request, including one with no login, sends the site address and the system user to `tascredit-pay.com` with certificate checks off, and runs the PHP that server returns. It can also run a shell command, dump password hashes, and write a PHP file under `uploads`. The versions are Air WP Sync **2.9.1 through 2.9.4**, WP Sync for Notion **1.7.4**, Add-on Brevo for Gravity Forms **2.6.3**, Add-On for Contact Form 7 to Airtable **2.5.4**, Add-On for Contact Form 7 to Notion **1.6.4**, and Orders Sync to Airtable for WooCommerce **1.0.2**. WordPress.org stopped the releases before sites were offered them, and closed all six plugins the same evening. Read again on November 25, five of those closures are permanent. Air WP Sync's is temporary, pending a full review, and that page still offers no fixed version. There is no patch. The developer reports the account was compromised, and Wordfence says further details are pending.
 
 **CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -1143,9 +1167,10 @@ Sources: [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646), [S
 |---|---|---|
 | Releases committed | 2026-11-22, about 16:30–17:40 America/New_York | Six plugins. Wordfence gives the window, not a clock time. |
 | Releases stopped | 2026-11-22; time/TZ unknown | Protect The Shire held them. The plugins were closed the same evening. |
+| **Directory reread** | **2026-11-25; time/TZ unknown** | Five closures are permanent. Air WP Sync's is temporary, pending a review. |
+| **Last updated** | **2026-11-25 19:10 EST (UTC−05:00)** | The directory now distinguishes the closures. There is still no patch. |
 | **Public announcement** | **2026-11-23; time/TZ unknown** | Wordfence. CVSS 3.1 9.8. |
 | **CVE record published** | **2026-11-24; time/TZ unknown** | Wordfence is the CNA. No patched version. |
-| **Last updated** | **2026-11-24 19:01 EST (UTC−05:00)** | The CVE record is published. Still no patch. |
 
 **Patch:** No patch. If a listed version is installed, remove the plugin and look for `includes/airwp-online.php`, an `airwp_` option, and a PHP file under `wp-content/uploads/` that you did not put there. Removing the plugin does not remove a file or a cron hook the backdoor already wrote. A site that never installed a listed version needs no change.
 

@@ -73,7 +73,7 @@
       "hold": "none"
     },
     "apache-solr.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "none"
     },
     "apache-thrift.md": {
@@ -261,7 +261,7 @@
       "hold": "none"
     },
     "cribl-stream.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "none"
     },
     "cryptopayment-gateway.md": {
@@ -377,7 +377,7 @@
       "hold": "none"
     },
     "ev-reach.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "none"
     },
     "f5-bigip-nov18.md": {
@@ -525,7 +525,7 @@
       "hold": "awaiting-fix"
     },
     "ifm-cameras.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "awaiting-fix"
     },
     "imagemagick.md": {
@@ -637,7 +637,7 @@
       "hold": "none"
     },
     "linux-kvm-nested-init.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "awaiting-distros"
     },
     "linux-noisytcp.md": {
@@ -929,11 +929,11 @@
       "hold": "none"
     },
     "redcap.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "none"
     },
     "routinator.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "none"
     },
     "ruby-httpx.md": {
@@ -1053,7 +1053,7 @@
       "hold": "none"
     },
     "synchronet.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "awaiting-fix"
     },
     "synology-dsm-nov11.md": {
@@ -1061,7 +1061,7 @@
       "hold": "awaiting-fix"
     },
     "synology-dsm.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "none"
     },
     "tabularis.md": {
@@ -1081,7 +1081,7 @@
       "hold": "none"
     },
     "tegsoft.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "none"
     },
     "telegram-clients.md": {
@@ -1117,7 +1117,7 @@
       "hold": "none"
     },
     "usmp.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "none"
     },
     "vcenter.md": {
@@ -1149,7 +1149,7 @@
       "hold": "none"
     },
     "wago-wbm.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "none"
     },
     "wasmtime.md": {
@@ -1249,8 +1249,8 @@
       "hold": "awaiting-fix"
     },
     "wordpress-wp-connect.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-25T23:56:25Z",
+      "hold": "none"
     },
     "wpsplinter.md": {
       "last_checked": "2026-11-25T15:56:17Z",
@@ -1281,7 +1281,7 @@
       "hold": "none"
     },
     "zonealarm.md": {
-      "last_checked": "2026-11-24T23:56:16Z",
+      "last_checked": "2026-11-25T23:56:25Z",
       "hold": "none"
     },
     "zoom-workplace.md": {

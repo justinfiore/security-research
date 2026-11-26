@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-25 19:10 EST (UTC−05:00) — 1Password; WP connect
+
+- **1Password:** Nothing to install. [1Password](black-october/details/1password.md#remediation) says an attacker used an employee's GitHub account, pushed code to backend services, and copied account records for a subset of customers: names, sign-in email addresses, and tokens from some invitation and recovery emails. It says vault contents and the keys that protect them were not accessed. No CVE is assigned. Do not complete an invitation or a recovery you did not start.
+- **WordPress:** Five of the six [WP connect](black-october/details/wordpress-wp-connect.md#remediation) closures are now permanent. Air WP Sync's is temporary, pending a review, and that page still offers no fixed version. Remove a listed version. There is still no patch.
+
 ## 2026-11-25 15:15 EST (UTC−05:00) — Jenkins; KEV; Synology; OpenRouter
 
 - **Jenkins:** Update the [plugins](black-october/details/jenkins-november.md#remediation). Jenkins rates seven issues in its November 25 advisory High and publishes no numeric score. Pipeline: Groovy through 4403.v471713a_cea_19 lets someone who can define a sandboxed Pipeline run code on the controller. Warnings 13.10251.va_452d3553728 through 13.10365.v85cd7a_c8110b_ compiles an inline Groovy parser there with no sandbox. Configuration as Code lets someone with Overall/SystemRead read a file on the controller, and Jenkins says that read can lead to code execution. The floors are 4403.4405.va_b_cdb_b_d0b_89f, 13.10365.10367.v2db_e2de17661, and 2148.v9d0c041b_a_13c. Four more plugins are High in the same advisory. None of the 21 is in KEV. The update does not undo a job or a credential that was already changed.
