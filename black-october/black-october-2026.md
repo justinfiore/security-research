@@ -16,6 +16,7 @@ This report covers the major disclosures most relevant to developers and operato
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
 - [Symfony: a request header picks the proxy, and a CSV crashes PHP](#symfony-a-request-header-picks-the-proxy-and-a-csv-crashes-php)
+- [Todoist: customer records were copied from production](#todoist-customer-records-were-copied-from-production)
 - [1Password: account records were copied from the backend](#1password-account-records-were-copied-from-the-backend)
 - [Jenkins: a sandboxed Pipeline runs code on the controller](#jenkins-a-sandboxed-pipeline-runs-code-on-the-controller)
 - [GeoServer: a stored query reads a file, then a default key is the administrator](#geoserver-a-stored-query-reads-a-file-then-a-default-key-is-the-administrator)
@@ -689,6 +690,31 @@ Sources: [CVE-2026-134792](https://symfony.com/blog/cve-2026-134792-httpclient-l
 
 ---
 
+## Todoist: customer records were copied from production
+
+<a id="todoist-customer-records-were-copied-from-production"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/todoist.md):** [Detection](details/todoist.md#detection) · [Remediation](details/todoist.md#remediation) · [Verification](details/todoist.md#verification) · [Timeline](details/todoist.md#timeline)
+
+**CVEs:** No CVE is assigned.
+
+**No vendor or CNA has published a CVSS score.** Todoist says that on November 23 an attacker used a stolen development credential to reach production and download customer information. About 6% of users had an email address, a salted SHA1 password hash, and an account creation date copied. About 0.003% had a Todoist API token or a Slack token copied, and a smaller subset of those had projects, tasks, and comments read through the API. About 0.001% had excerpts of tasks and comments that matched a search for credentials, and about 0.001% had subjects, senders, and the start of messages read from a connected Outlook mailbox. Todoist says it found no change to application code, and no sign that the attacker signed in with a copied hash. It has not established how the first credential was stolen.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Production access | 2026-11-23 09:08 UTC onward | Employee work account taken over at 06:33 UTC. Records downloaded 12:45–12:51 UTC. |
+| **Public announcement** | **2026-11-24 17:11 UTC** | Help Center article. Email to affected customers finished 2026-11-25 09:39 UTC. |
+| Notice expanded | 2026-11-25 17:51 UTC | API reads, search terms, and Outlook limits. |
+| **Last updated** | **2026-11-26 07:56 EST (UTC−05:00)** | New item. Nothing to install. |
+
+**Patch:** There is nothing to install. If Todoist emailed you from `no-reply@notify.todoist.com`, follow that email: reset a disabled password, change it anywhere it was reused, replace an API token, reconnect Slack or Outlook, and revoke a secret that was written into a task or a comment. Deleting the text does not invalidate a secret that was already copied. If no email arrived, Todoist says there is nothing to do. Todoist will not ask for the password or for software to be installed.
+
+Sources: [Todoist, November 24](https://www.todoist.com/help/todoist/get-started/security-incident-in-november-2026-cG0EIACNU), [detailed guide](details/todoist.md).
+
+---
+
 ## Jenkins: a sandboxed Pipeline runs code on the controller
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/jenkins-november.md):** [Detection](details/jenkins-november.md#detection) · [Remediation](details/jenkins-november.md#remediation) · [Verification](details/jenkins-november.md#verification) · [Timeline](details/jenkins-november.md#timeline)
@@ -809,7 +835,7 @@ Sources: [DSA-2026-451](https://www.dell.com/support/kbdoc/en-us/000535884/dsa-2
 
 **CVEs:** [CVE-2026-16232](https://www.cve.org/CVERecord?id=CVE-2026-16232)
 
-**Check Point rates [CVE-2026-16232](https://www.cve.org/CVERecord?id=CVE-2026-16232) CVSS 4.0 9.3 Critical.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. Check Point publishes no CVSS 3.1 score. A request with no login obtains an application token and uses it to log in to SmartConsole as an administrator, then changes the security policy. Remote exploitation needs the Management Server reachable from the internet and Trusted Clients left unrestricted. Check Point said in July that a handful of customers in that configuration were exploited, and that Smart-1 Cloud was already protected. **R82.10 Take 36 and below, R82 Take 118 and below, and R81.20 Take 158 and below** are affected, and so are **R81.10, R81, and the older releases through R77.30**, which have no named take. The fix shipped 2026-07-22 in the Jumbo Hotfix Accumulator. [GreyNoise's November 23 report](https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign) says a script for this flaw launched management tasks, including copying the firewall database and unloading policies, on 24 servers between October 20 and October 26, and that it could not tell when those servers were first reached. This is not the [November Gaia socket flaw](#check-point-gaia-a-local-socket-runs-a-command-as-root).
+**Check Point rates [CVE-2026-16232](https://www.cve.org/CVERecord?id=CVE-2026-16232) CVSS 4.0 9.3 Critical.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. Check Point publishes no CVSS 3.1 score. A request with no login obtains an application token and uses it to log in to SmartConsole as an administrator, then changes the security policy. Remote exploitation needs the Management Server reachable from the internet and Trusted Clients left unrestricted. Check Point said in July that a handful of customers in that configuration were exploited, and that Smart-1 Cloud was already protected. **R82.10 Take 36 and below, R82 Take 118 and below, and R81.20 Take 158 and below** are affected, and so are **R81.10, R81, and the older releases through R77.30**, which have no named take. The fix shipped 2026-07-22 in the Jumbo Hotfix Accumulator. [GreyNoise's November 23 report](https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign) says a script for this flaw launched management tasks, including copying the firewall database and unloading policies, on 24 servers between October 20 and October 26, and that it could not tell when those servers were first reached. On November 25 Check Point told BleepingComputer the attackers used this flaw and an adaptation of the public Metasploit module, and that the protections are not new. This is not the [November Gaia socket flaw](#check-point-gaia-a-local-socket-runs-a-command-as-root).
 
 **CISA KEV:** Listed — added 2026-07-22, federal due date 2026-07-25. Ransomware use is Unknown and forensic triage is required. [What KEV means](#what-cisa-kev-means)
 
@@ -818,7 +844,8 @@ Sources: [DSA-2026-451](https://www.dell.com/support/kbdoc/en-us/000535884/dsa-2
 | **Public announcement and fix** | **2026-07-22 13:53:09 UTC** | CVE record published. The advisory is the same day and names no time. |
 | KEV | 2026-07-22; time/TZ unknown | Added, due 2026-07-25. |
 | **Later exploitation reported** | **2026-11-23; time/TZ unknown** | GreyNoise. Activity through November 2. The post prints no time. |
-| **Last updated** | **2026-11-25 03:01 EST (UTC−05:00)** | New item. Install the July Jumbo. |
+| **Check Point confirms that campaign** | **2026-11-25; time unknown** | The attackers used this flaw and an adaptation of the public Metasploit module. No new fix. |
+| **Last updated** | **2026-11-26 07:56 EST (UTC−05:00)** | Check Point confirmed the October campaign. The Jumbo floors are unchanged. |
 
 **Patch:** Install the Jumbo Hotfix Accumulator at **R82.10 Take 36, R82 Take 118, or R81.20 Take 158** or later, and reboot. R81.10 and older have no named take. Until then, limit Trusted Clients to addresses you trust. The Jumbo does not undo a policy change or a copied database.
 
@@ -1008,16 +1035,17 @@ Sources: [NSM](https://nsm.no/aktuelt/nsm-deler-tiltak-mot-sarbarhet-i-azure-api
 
 **CVEs:** [CVE-2026-135660](https://www.cve.org/CVERecord?id=CVE-2026-135660)
 
-**The Apache Allura project rates [CVE-2026-135660](https://www.cve.org/CVERecord?id=CVE-2026-135660) critical and publishes no numeric score.** The CVE record, published 2026-11-24, says the same. Script in a ticket runs in the browser of whoever opens it. **Allura before 1.23.0** is affected. The 1.23.0 release note says the flaw affects Allura **through 1.22.1** and that 1.23.0, released November 23, is the fix. No source read for this entry reports exploitation.
+**The Apache Allura project rates [CVE-2026-135660](https://www.cve.org/CVERecord?id=CVE-2026-135660) critical and publishes no numeric score.** CISA-ADP scores the same flaw CVSS 3.1 6.1 Medium. The two ratings disagree, and both stay. Script in a ticket runs in the browser of whoever opens it. **Allura before 1.23.0** is affected. The 1.23.0 release note says the flaw affects Allura **through 1.22.1** and that 1.23.0, released November 23, is the fix. No source read for this entry reports exploitation.
 
-**CISA KEV:** Not listed (catalog 2026.11.23, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-26). CISA-ADP's SSVC says exploitation is none. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **1.23.0 released** | **2026-11-23; time/TZ unknown** | The release note prints the date and no time. |
 | Advisory to the users list | 2026-11-23 22:54 UTC | Severity critical. Affected: before 1.23.0. |
-| CVE published | 2026-11-24 11:31:09 UTC | No numeric score. |
-| **Last updated** | **2026-11-24 07:30 EST (UTC−05:00)** | New item. Upgrade to 1.23.0. |
+| CVE published | 2026-11-24 11:31:09 UTC | Apache publishes no numeric score. |
+| **CISA-ADP score** | **2026-11-25 18:38:31 UTC** | CVSS 3.1 6.1 Medium. SSVC exploitation none. |
+| **Last updated** | **2026-11-26 07:56 EST (UTC−05:00)** | The CISA-ADP score. The fix is still 1.23.0. |
 
 **Patch:** Upgrade to **Allura 1.23.0 or later**. Stop the Allura services first, and upgrade to the prior release before this one. The upgrade does not show whether a ticket already ran script.
 
@@ -2605,9 +2633,10 @@ Vulnerability Info Site: [calif.io](https://calif.io/java4shell/)
 | Red Hat errata | 2026-11-18; time/TZ unknown | The CVE page marks the RHEL OpenJDK packages Fixed. The bulletin text still says fixes are being expedited. |
 | Ubuntu and Debian packages | 2026-11-18 and 2026-11-20; time/TZ unknown | USN-9155-1 through USN-9158-1. Debian DLA-4917-1, DSA-6639-1, and DSA-6640-1. Forky has none. |
 | SUSE packages | 2026-11-20; time/TZ unknown | SUSE-SU-2026:5393-1, 5394-1, and 5385-1 for SLES 15 SP7. SLES 16.0 is still In progress. |
-| **Last updated** | **2026-11-22 07:10 EST (UTC−05:00)** | SLES 15 SP7 has packages. SLES 16.0, forky, and Rocky 9 and 10 do not. |
+| **SLES 16.1 status** | **2026-11-23; time unknown** | SUSE's page, last modified November 23, marks Java 17, 21, and 25 Affected. No package. |
+| **Last updated** | **2026-11-26 07:56 EST (UTC−05:00)** | SLES 16.1 Java 21 and 25 are Affected, not only Java 17. |
 
-**Patch:** Install **Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, or 27.0.1.1**, or **8u513** for the performance pack, and restart every process that loaded the old runtime. Rebuild an image that bundles Java. Corretto is **17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, or 27.0.1.1.4**. Microsoft is **17.0.21.1, 21.0.13.1, or 25.0.5.1**. Temurin is **17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, or 27.0.1.1+4**. On Red Hat Enterprise Linux, install the November 18 `java-17-openjdk`, `java-21-openjdk`, or `java-25-openjdk` erratum. Ubuntu has USN-9155-1 through USN-9158-1. Debian has DLA-4917-1, DSA-6639-1, and DSA-6640-1, and forky has none. Amazon Linux and AlmaLinux shipped on November 17 and 19. Rocky Linux 9 and 10 have none. On SUSE Linux Enterprise Server 15 SP7, install `java-17-openjdk` **17.0.21.1-150400.3.79.1**, `java-21-openjdk` **21.0.13.1-150600.3.40.1**, and `java-25-openjdk` **25.0.5.1-150700.15.23.1**. SLES 16.0 is still In progress. Until the fixed build is running, Calif says start the JVM with `-XX:-UseBASE64Intrinsics`. `-XX:UseAVX=2` is x86-64 only and stops OpenJDK from starting on ARM. The restart does not show whether a request already ran code.
+**Patch:** Install **Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, or 27.0.1.1**, or **8u513** for the performance pack, and restart every process that loaded the old runtime. Rebuild an image that bundles Java. Corretto is **17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, or 27.0.1.1.4**. Microsoft is **17.0.21.1, 21.0.13.1, or 25.0.5.1**. Temurin is **17.0.21.1+2, 21.0.13.1+2, 25.0.5.1+2, or 27.0.1.1+4**. On Red Hat Enterprise Linux, install the November 18 `java-17-openjdk`, `java-21-openjdk`, or `java-25-openjdk` erratum. Ubuntu has USN-9155-1 through USN-9158-1. Debian has DLA-4917-1, DSA-6639-1, and DSA-6640-1, and forky has none. Amazon Linux and AlmaLinux shipped on November 17 and 19. Rocky Linux 9 and 10 have none. On SUSE Linux Enterprise Server 15 SP7, install `java-17-openjdk` **17.0.21.1-150400.3.79.1**, `java-21-openjdk` **21.0.13.1-150600.3.40.1**, and `java-25-openjdk` **25.0.5.1-150700.15.23.1**. SLES 16.0 is still In progress, and SLES 16.1 Java 17, 21, and 25 are Affected with no package. Until the fixed build is running, Calif says start the JVM with `-XX:-UseBASE64Intrinsics`. `-XX:UseAVX=2` is x86-64 only and stops OpenJDK from starting on ARM. The restart does not show whether a request already ran code.
 
 Sources: [OpenJDK advisory](https://openjdk.org/groups/vulnerability/advisories/2026-11-17), [Oracle CSPU](https://www.oracle.com/security-alerts/cspunov2026.html), [Calif](https://calif.io/java4shell/), [CISA alert](https://www.cisa.gov/news-events/alerts/2026/11/17/critical-java-vulnerability-requires-immediate-patching), [detailed guide](details/java4shell.md).
 
@@ -2796,7 +2825,7 @@ Sources: [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2
 
 **CVEs:** [CVE-2026-49401](https://www.cve.org/CVERecord?id=CVE-2026-49401). The same CERT/CC note also lists [CVE-2026-59890](https://www.cve.org/CVERecord?id=CVE-2026-59890) at 6.1, [CVE-2026-14978](https://www.cve.org/CVERecord?id=CVE-2026-14978) at 5.5, and [CVE-2026-45110](https://www.cve.org/CVERecord?id=CVE-2026-45110), which has no published score.
 
-**Deno rates [CVE-2026-49401](https://www.cve.org/CVERecord?id=CVE-2026-49401) CVSS 3.1 7.3 High.** The vector is `CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:L/I:H/A:N`. On macOS, APFS treats a German `ß` and `ss`, or two Unicode forms of the same accented letter, as one file. Deno compared the bytes, so a `--deny-read`, `--deny-write`, `--deny-run`, or `--deny-ffi` rule missed the other spelling. Deno says Linux and Windows are not affected. The fix is **Deno 2.7.14**, shipped in May; CERT/CC published [VU#604762](https://kb.cert.org/vuls/id/604762) on November 16 and grouped the four. setuptools 83.0.0 fixes the 6.1 flaw. libarchive's fix is still a pull request, and the finder says the extraction stays inside the output directory.
+**Deno rates [CVE-2026-49401](https://www.cve.org/CVERecord?id=CVE-2026-49401) CVSS 3.1 7.3 High.** The vector is `CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:L/I:H/A:N`. On macOS, APFS treats a German `ß` and `ss`, or two Unicode forms of the same accented letter, as one file. Deno compared the bytes, so a `--deny-read`, `--deny-write`, `--deny-run`, or `--deny-ffi` rule missed the other spelling. Deno says Linux and Windows are not affected. The fix is **Deno 2.7.14**, shipped in May; CERT/CC published [VU#604762](https://kb.cert.org/vuls/id/604762) on November 16 and grouped the four. Its November 17 revision says the libarchive fix is pending release. setuptools 83.0.0 fixes the 6.1 flaw. HashiCorp's August advisory says go-slug **0.18.3** fixes the 5.5 flaw. The finder says the libarchive extraction stays inside the output directory.
 
 **CISA KEV:** Not listed (catalog 2026.11.13, checked 2026-11-17) for CVE-2026-49401. CERT/CC does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -2804,9 +2833,10 @@ Sources: [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2
 |---|---|---|
 | Deno fix | 2026-05-27; time/TZ unknown | Deno 2.7.14. The advisory carries no clock time. |
 | **Public announcement** | **2026-11-16; last revised 16:17 UTC** | CERT/CC VU#604762. |
-| **Last updated** | **2026-11-16 23:10 EST (UTC−05:00)** | New item. Update Deno on macOS. |
+| **CERT/CC revision 3** | **2026-11-17 17:12 UTC** | The libarchive fix is pending release. |
+| **Last updated** | **2026-11-26 07:56 EST (UTC−05:00)** | go-slug 0.18.3 is the fix. libarchive still has no release. |
 
-**Patch:** Update Deno to **2.7.14 or later** on a Mac that uses a `--deny-*` rule as a boundary. Update setuptools to **83.0.0 or later** before building a source distribution on macOS. libarchive has no fixed release. The update does not show whether a denied file was already read.
+**Patch:** Update Deno to **2.7.14 or later** on a Mac that uses a `--deny-*` rule as a boundary. Update setuptools to **83.0.0 or later** before building a source distribution on macOS. Upgrade `github.com/hashicorp/go-slug` to **0.18.3 or later** and rebuild. libarchive has no fixed release. The update does not show whether a denied file was already read.
 
 Sources: [VU#604762](https://kb.cert.org/vuls/id/604762), [Deno advisory](https://github.com/denoland/deno/security/advisories/GHSA-8xpq-cjcf-3wh9), [detailed guide](details/macos-unicode-paths.md).
 
@@ -3747,9 +3777,9 @@ Sources: [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653), [E
 
 **CVEs:** [CVE-2026-120382](https://www.cve.org/CVERecord?id=CVE-2026-120382), [CVE-2026-76954](https://www.cve.org/CVERecord?id=CVE-2026-76954), [CVE-2026-85101](https://www.cve.org/CVERecord?id=CVE-2026-85101)
 
-**Synology rates [CVE-2026-120382](https://www.cve.org/CVERecord?id=CVE-2026-120382) and CVE-2026-76954 CVSS 3.1 9.8 Critical, and CVE-2026-85101 CVSS 3.1 8.6 Important.** The new 9.8 flaw is in the OAuth API: a remote attacker who is not logged in reads or writes arbitrary files. Synology-SA-26:21 revision 2, dated November 20, says to upgrade DSM 7.4 to **7.4.1-90080-2** and DSM 7.3 to **7.3.2-86009-6**. The DSM release notes now add **7.2.2-72806-11** and **7.2.1-69057-14**, both dated November 25, and **7.1.1-42962-10**, dated November 24, and each says it fixed SA-26:21. The advisory's product table, read the same day, still says Ongoing for those branches. BeeStation OS 1.5 has no build. Deactivate the OAuth Service package until the build is installed. The November 10 floors leave it in place. The other 9.8 flaw is SQL injection in the Auth API, and the 8.6 flaw is an authentication bypass in rsync. This is not the September pair, CVE-2026-13639 and CVE-2026-13684.
+**Synology rates [CVE-2026-120382](https://www.cve.org/CVERecord?id=CVE-2026-120382) and CVE-2026-76954 CVSS 3.1 9.8 Critical, and CVE-2026-85101 CVSS 3.1 8.6 Important.** The new 9.8 flaw is in the OAuth API: a remote attacker who is not logged in reads or writes arbitrary files. Synology-SA-26:21 revision 4, dated November 26, marks every listed product available: DSM 7.4 **7.4.1-90080-2**, DSM 7.3 **7.3.2-86009-6**, DSM 7.2.2 **7.2.2-72806-11**, DSM 7.2.1 **7.2.1-69057-14**, DSM 7.1 **7.1.1-42962-10**, and BeeStation OS 1.5 **1.5.6-68000**. The advisory status is still Ongoing. Deactivate the OAuth Service package until the build is installed. The November 10 floors leave it in place. The other 9.8 flaw is SQL injection in the Auth API, and the 8.6 flaw is an authentication bypass in rsync. This is not the September pair, CVE-2026-13639 and CVE-2026-13684.
 
-**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20) for any of the three. CVE-2024-10441 is a different flaw and is listed under the September guide. Synology does not report exploitation of these three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-26) for any of the three. CVE-2024-10441 is a different flaw and is listed under the September guide. Synology does not report exploitation of these three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
@@ -3757,10 +3787,11 @@ Sources: [CVE-2026-121653](https://www.cve.org/CVERecord?id=CVE-2026-121653), [E
 | CVE records published | 2026-11-12 03:40:28 UTC and 03:41:52 UTC | Same scores and fixed builds as the advisory. |
 | **OAuth advisory** | **2026-11-19 15:47:20 UTC+8** | Synology-SA-26:21. Builds for 7.4 and 7.3 were scheduled. |
 | OAuth builds available | 2026-11-20 16:25:36 UTC+8 | Revision 2. DSM 7.4 and 7.3 now say upgrade to those builds. |
-| **OAuth builds on 7.2 and 7.1** | **2026-11-24 and 2026-11-25; time/TZ unknown** | Release notes name the builds. The advisory table still says Ongoing. |
-| **Last updated** | **2026-11-25 15:15 EST (UTC−05:00)** | The 7.2 and 7.1 builds. BeeStation still has none. |
+| **OAuth builds on 7.2 and 7.1** | **2026-11-24; time unknown** | Revision 3. The table names the three builds. BeeStation stays Ongoing. |
+| **BeeStation OS 1.5 build** | **2026-11-26 12:03:00 UTC+8** | Revision 4. Upgrade to 1.5.6-68000 or above. Status still Ongoing. |
+| **Last updated** | **2026-11-26 07:56 EST (UTC−05:00)** | BeeStation OS 1.5 has a build. |
 
-**Patch:** Install **7.4.1-90080-2**, **7.3.2-86009-6**, **7.2.2-72806-11**, **7.2.1-69057-14**, or **7.1.1-42962-10** or above, and reboot. Until that build is running, deactivate the OAuth Service package. BeeStation OS 1.5 has no build. The November 10 builds close only the Auth and rsync flaws. The upgrade does not show whether a file was already written.
+**Patch:** Install **7.4.1-90080-2**, **7.3.2-86009-6**, **7.2.2-72806-11**, **7.2.1-69057-14**, **7.1.1-42962-10**, or BeeStation OS **1.5.6-68000** or above, and reboot. Until that build is running, deactivate the OAuth Service package. The November 10 builds close only the Auth and rsync flaws. The upgrade does not show whether a file was already written.
 
 Sources: [Synology-SA-26:19](https://www.synology.com/en-global/security/advisory/Synology_SA_26_19), [detailed guide](details/synology-dsm-nov11.md).
 
@@ -9320,7 +9351,7 @@ flowchart TD
 | **Checkmk 2.4 or 2.5** | Upgrade to 2.4.0p40 or 2.5.0p19 or later. A monitored host that can write its own agent output can otherwise place a file the server runs. 2.3.0 is end of life and has no fix. [Guide](details/checkmk.md#remediation). |
 | **Apache Roller through 6.1.6** | Upgrade to 6.1.7 or later. CISA added CVE-2026-129448 on November 20, due November 23: the XML-RPC deserialization flaw is being exploited on 4.0.0 through 6.1.5, and turning XML-RPC off in the admin UI does not close it. Any account can also submit an Atom entry that reads a file. Rebuild the search index after the upgrade. [Guide](details/apache-roller.md#remediation). |
 | **Zoom Workplace for Windows** | Update to 7.1.8 or later and relaunch. Zoom rates CVE-2026-108186 9.6: a network request can raise privileges, and the person at the computer has to act. 7.1.5 fixes only the 8.1 flaw. Zoom lists no workaround. [Guide](details/zoom-workplace.md#remediation). |
-| **Synology DSM 7.2.1, 7.2.2, 7.3, or 7.4** | On 7.4 and 7.3, install 7.4.1-90080-2 or 7.3.2-86009-6 and reboot. Until that build is running, deactivate the OAuth Service package: the November 10 builds leave CVE-2026-120382 in place. DSM 7.2 has no OAuth build; Synology says to move to 7.3.2-86009-6. The November 10 builds still close the Auth and rsync flaws. [Guide](details/synology-dsm-nov11.md#remediation). |
+| **Synology DSM or BeeStation OS 1.5** | Install 7.4.1-90080-2, 7.3.2-86009-6, 7.2.2-72806-11, 7.2.1-69057-14, 7.1.1-42962-10, or BeeStation OS 1.5.6-68000 or above, and reboot. Until that build is running, deactivate the OAuth Service package: the November 10 builds leave CVE-2026-120382 in place. Those builds still close the Auth and rsync flaws. [Guide](details/synology-dsm-nov11.md#remediation). |
 | **FortiClient Windows, FortiClient Mac 7.4, or FortiClient Windows PAM** | Upgrade to 7.4.8 or later, or to 7.2.15 or later on the 7.2 Windows line. A web page can otherwise run code through the agent's local API. The 8.0 builds and FortiClient Mac 7.2 are not affected. There is no virtual patch. [Guide](details/forticlient-nov11.md#remediation). |
 | **Windows, especially a server running Exchange** | Install the November 10 cumulative update and reboot. Microsoft rates CVE-2026-116928 9.8: an email attachment runs code when Exchange indexes it, and the recipient never opens it. Windows Server 2022 is KB5131090, build 10.0.20348.5870. It is not in KEV. [Guide](details/windows-search.md#remediation). |
 | **iPhone, iPad, Mac, Apple Watch, or Apple Vision Pro** | Install the November 9 update and restart. CISA-ADP scores an iMessage group-join flaw 7.5 and a Bluetooth memory-corruption flaw 8.8. Apple publishes no score. iOS 18.7.12 fixes the Bluetooth flaw only. [Guide](details/apple-november.md#remediation). |

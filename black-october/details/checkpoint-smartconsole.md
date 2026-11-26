@@ -1,6 +1,6 @@
 # Check Point SmartConsole: a login token is an administrator
 
-**Last updated:** 2026-11-25 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main plugin summary](../black-october-2026.md#check-point-smartconsole-a-login-token-is-an-administrator) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,7 @@ A request with no login obtains that token and uses it to log in with full admin
 
 **R82.10 Take 36 and below, R82 Take 118 and below, and R81.20 Take 158 and below** are affected. The CVE record also lists **R81.10, R81, R80.30, R80.20, R80.10, R80, and R77.30**, and [sk185169](https://support.checkpoint.com/results/sk/sk185169) names no take for those. R81.10 and R81 are end of support. The fix is in the Jumbo Hotfix Accumulator starting at **R82.10 Take 36, R82 Take 118, and R81.20 Take 158**. The article was created 2026-07-19 and last modified 2026-09-24.
 
-GreyNoise's [November 23 report](https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign) describes a later campaign it calls GT13. Between October 20 and October 26 it saw a script for this flaw launch more than 100 management tasks, including copying the firewall database and the Internal CA and unloading security policies, and on October 26 a certificate task sent to 24 management servers. GreyNoise says it could not determine when or how those servers were first reached, and that its visibility ended November 2. That report names no new affected version and no new fix.
+GreyNoise's [November 23 report](https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign) describes a later campaign it calls GT13. Between October 20 and October 26 it saw a script for this flaw launch more than 100 management tasks, including copying the firewall database and the Internal CA and unloading security policies, and on October 26 a certificate task sent to 24 management servers. GreyNoise says it could not determine when or how those servers were first reached, and that its visibility ended November 2. That report names no new affected version and no new fix. On November 25 Check Point told BleepingComputer it is aware of the activity in that article, that the attackers used CVE-2026-16232, and that they used an adaptation of the public Metasploit module. Check Point says the vulnerability and the protections are not new.
 
 The same July advisory lists two more flaws in the same Jumbo. Check Point rates [CVE-2026-62144](https://www.cve.org/CVERecord?id=CVE-2026-62144) CVSS 4.0 9.3, a management authentication bypass and privilege escalation, and says it was not exploited. [CVE-2026-62145](https://www.cve.org/CVERecord?id=CVE-2026-62145) is CVSS 4.0 7.5, a local privilege escalation in the Gaia WebUI, and is below this collection's admission line. This entry is not [CVE-2026-123039](../black-october-2026.md#check-point-gaia-a-local-socket-runs-a-command-as-root), the November Gaia socket flaw.
 
@@ -34,6 +34,8 @@ The same July advisory lists two more flaws in the same Jumbo. Check Point rates
 | KEV | 2026-07-22; time/TZ unknown | Added, due 2026-07-25. [KEV][kev] |
 | Article last modified | 2026-09-24; time/TZ unknown | sk185169. The Jumbo floors are unchanged. |
 | **Later exploitation reported** | **2026-11-23; time/TZ unknown** | [GreyNoise][gn]. Activity it dates October 17 through November 2, against 24 management servers. The post prints no time. |
+| **Check Point confirms that campaign** | **2026-11-25; time unknown** | Told BleepingComputer the attackers used CVE-2026-16232 and an adaptation of the public Metasploit module. No new fix. [BleepingComputer][bc] |
+| **Last updated** | **2026-11-26 (America/New_York)** | Check Point confirmed the October campaign. The Jumbo floors are unchanged. |
 
 ## Detection
 
@@ -63,10 +65,12 @@ GreyNoise says the tasks it saw copied the firewall database and the Internal CA
 - [July 22 advisory][blog] — Check Point. CVSS 4.0 9.3. Exploited against a handful of customers whose management was exposed without IP restrictions. Smart-1 Cloud already protected.
 - [CVE-2026-16232][cve] — Check Point Software Ltd., published 2026-07-22 13:53:09 UTC. CVSS 4.0 9.3. CWE-287.
 - [GreyNoise, November 23][gn] — GT13. A script for this flaw used against management servers between October 20 and October 26. Visibility ended November 2. No new version and no new fix.
+- [BleepingComputer, November 25][bc] — Check Point says the attackers used CVE-2026-16232 and an adaptation of the public Metasploit module, and that the vulnerability and the protections are not new.
 - [CISA KEV JSON][kev] — catalog 2026.11.24, released 2026-11-24T17:47:46.199Z, checked 2026-11-25. Listed 2026-07-22, due 2026-07-25. Ransomware use Unknown.
 
 [sk]: https://support.checkpoint.com/results/sk/sk185169
 [blog]: https://blog.checkpoint.com/security/security-advisory-action-required-active-exploitation-of-check-point-smartconsole-authentication-bypass-cve-2026-16232
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-16232
 [gn]: https://www.greynoise.io/blog/check-point-security-management-servers-intrusion-campaign
+[bc]: https://www.bleepingcomputer.com/news/security/hackers-compromise-check-point-servers-in-22-organizations/
 [kev]: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
