@@ -2,6 +2,14 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-26 15:56 EST (UTC−05:00) — llama.cpp; Argo Workflows; GPGME; NoisyTCP; Zodia Custody
+
+- **llama.cpp:** Update an RPC worker to [b12658 or later](black-october/details/llama-cpp.md#remediation). VulnCheck rates CVE-2026-137567 CVSS 3.1 9.8 and CVSS 4.0 9.3: a peer that can open the port writes a heap address it chose. Builds b11450 before b12658 are affected. The project says never to run the RPC server on an open network. The fix shipped November 24. The record is November 26. It is not in KEV.
+- **Argo Workflows:** Upgrade to [v4.1.4 or v4.0.12](black-october/details/argo-workflows.md#remediation). GitHub rates GHSA-vm9v-p987-xm32 CVSS 3.1 8.8: an object key writes a file outside the workspace, inside the workflow pod. v3 has no fix. VulnCheck published CVE-2026-137566 on November 26. The advisory is September 18. It is not in KEV.
+- **GPGME:** Debian testing is [vulnerable again](black-october/details/gpgme.md#remediation). The tracker, read November 26, lists forky `gpgme1.0` at 2.2.0-2. On November 25 it had listed 2.3.1-1, fixed. Sid stays 2.3.1-1. The library to install is still 2.3.1. It is not in KEV.
+- **Linux kernel:** On Rocky Linux, install the [NoisyTCP](black-october/details/linux-noisytcp.md#remediation) kernel and reboot. Rocky 9 is `kernel-5.14.0-741.27.1.el9_9` and Rocky 8 is `kernel-4.18.0-553.189.1.el8_10`. Both changelogs name CVE-2026-99288. There is no RLSA. The package directories are dated November 20. Ubuntu and SUSE still have no package. It is not in KEV.
+- **Zodia Custody:** Nothing to install. [Zodia Custody](black-october/details/zodia-custody.md) says probing started November 23, and that on November 24 an unauthorized party read public organisation details plus a business contact name and email for a small number of clients and employees. It has found no unauthorized transactions. No CVE is assigned. Do not approve an API change because a message cites the notice.
+
 ## 2026-11-26 11:56 EST (UTC−05:00) — Windows RPC; Bithumb; NGINX; GitLab; Apache
 
 - **Windows:** Install the [November 10 update](black-october/details/windows-rpc.md#remediation) and reboot. Microsoft rates [CVE-2026-118737](https://www.cve.org/CVERecord?id=CVE-2026-118737) CVSS 3.1 8.1: an unauthenticated attacker who wins a race in the RPC runtime runs code. The same update starts offering real NTLM signing, and some third-party sign-on proxies then fail. Fix the proxy; do not stay on the old build. It is not in KEV. This is not the Windows Search attachment flaw in the same update.

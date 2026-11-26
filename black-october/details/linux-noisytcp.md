@@ -1,6 +1,6 @@
 # Linux kernel: NoisyTCP - a TCP packet crashes the host
 
-**Last updated:** 2026-11-25 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main NoisyTCP summary](../black-october-2026.md#linux-kernel-noisytcp---a-tcp-packet-crashes-the-host) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -41,7 +41,8 @@ This is not the [IPv4 TCP options use-after-free](linux-tcp-options.md), the [TC
 | Red Hat and AlmaLinux | 2026-11-23; time/TZ unknown | RHSA-2026:102168, 102167, 102218, and 102219. AlmaLinux published the same four as ALSA. |
 | Rocky Linux 10 and RHEL 9 kernel-rt | 2026-11-23 and 2026-11-24 | Rocky 10 `kernel-6.12.0-264.20.1.el10_3` names the CVE. RHSA-2026:102167 ships RHEL 9 `kernel-rt`. |
 | **Oracle Linux RHCK** | **2026-11-23; time/TZ unknown** | ELSA-2026-102218 is `kernel-4.18.0-553.189.1.el8_10` on Oracle Linux 8. Oracle Linux 9 and 10 still have UEK only. [ELSA][elsa218] |
-| **Last updated** | **2026-11-25 (America/New_York)** | The Oracle Linux 8 Red Hat-compatible kernel. Ubuntu, SUSE, Rocky 8, and Rocky 9 still have no package. |
+| Rocky Linux 8 and 9 | Package directories dated 2026-11-20 | Rocky 9 is `kernel-5.14.0-741.27.1.el9_9`. Rocky 8 is `kernel-4.18.0-553.189.1.el8_10`. Both changelogs name the CVE. There is no RLSA. |
+| **Last updated** | **2026-11-26 (America/New_York)** | Rocky 8 and 9 now name the CVE. Ubuntu and SUSE still have no package. |
 
 ## Detection
 
@@ -58,7 +59,7 @@ The listener does not have to be anything special. Nginx, Apache, and SSH at the
 | SUSE / SLES | 12 SP5, 15 SP4 through SP7, 16.0, 16.1 | Affected. Overall state Pending. No security announcement. SUSE rates it CVSS 3.1 8.1 and CVSS 4.0 9.2, and calls it important. SLES 11 SP4 is not affected. [SUSE][suse] |
 | Amazon Linux | 2 and 2023 | 2023 `kernel` is fixed at 6.1.190-237.442 ([ALAS2023-2026-3455][alas3455], released 2026-11-12). 2023 `kernel6.12` is fixed at 6.12.115-140.210 ([ALAS2023-2026-3448][alas3448], same date). 2023 `kernel6.18` is fixed at 6.18.62-127.179 ([ALAS2023-2026-3477][alas3477], released 2026-11-17), and that advisory includes a livepatch package. Amazon Linux 2 core is fixed at 4.14.355-287.769 ([ALAS2-2026-4124][alas24124], released 2026-11-17), also with a livepatch package. The 5.4 extra is `kernel-5.4.302-229.517` ([ALAS2KERNEL-5.4-2026-138][alas54]). The 5.10 extra is `kernel-5.10.273-275.1133` ([ALAS2KERNEL-5.10-2026-139][alas510]), released 2026-11-12 and updated 2026-11-17. The 5.15 extra is `kernel-5.15.224-160.263` ([ALAS2KERNEL-5.15-2026-121][alas515]), released 2026-11-12 and updated 2026-11-17, not first released on November 17. [Amazon][alas] |
 | AlmaLinux | 8, 9, 10 | Fixed on 2026-11-23, the same builds as Red Hat. AlmaLinux 10 is [ALSA-2026:102168](https://errata.almalinux.org/10/ALSA-2026-102168.html), `kernel-6.12.0-264.19.1.el10_3`. AlmaLinux 9 is [ALSA-2026:102167](https://errata.almalinux.org/9/ALSA-2026-102167.html), `kernel-5.14.0-741.26.1.el9_9`. AlmaLinux 8 is [ALSA-2026:102218](https://errata.almalinux.org/8/ALSA-2026-102218.html) and [ALSA-2026:102219](https://errata.almalinux.org/8/ALSA-2026-102219.html). |
-| Rocky Linux | 8, 9, 10 | Rocky 10 BaseOS is `kernel-6.12.0-264.20.1.el10_3` and RT is `kernel-rt-6.12.0-264.20.1.el10_3`. Both changelogs name CVE-2026-99288. There is no RLSA. Rocky 9 BaseOS is still `kernel-5.14.0-741.24.1.el9_9`, and Rocky 8 BaseOS is still `kernel-4.18.0-553.187.1.el8_10`. Neither names the CVE. |
+| Rocky Linux | 8, 9, 10 | Rocky 10 BaseOS is `kernel-6.12.0-264.20.1.el10_3` and RT is `kernel-rt-6.12.0-264.20.1.el10_3`. Rocky 9 BaseOS is `kernel-5.14.0-741.27.1.el9_9`. Rocky 8 BaseOS is `kernel-4.18.0-553.189.1.el8_10`. Each changelog names CVE-2026-99288. There is no RLSA. The Rocky 8 and 9 package directories are dated 2026-11-20. |
 | Oracle Linux | UEK on 7, 8, 9, 10 | Fixed in the Unbreakable Enterprise Kernel. [ELSA-2026-500630][elsa630] (November 12) covers UEK on 7 and 8. [ELSA-2026-500631][elsa631] (November 13) covers UEK on 8 and 9. [ELSA-2026-500632][elsa632] (November 12) covers UEK on 9 and 10. Oracle's CVE page now also lists the Red Hat-compatible kernel: [ELSA-2026-102218][elsa218] (November 23) is `kernel-4.18.0-553.189.1.el8_10` on Oracle Linux 8. Oracle Linux 9 and 10 still have UEK errata only. [Oracle][oracle] |
 
 A row that says no advisory was found means **unknown**, not fixed.
@@ -67,7 +68,7 @@ A row that says no advisory was found means **unknown**, not fixed.
 
 Install the distribution kernel that names CVE-2026-99288, then reboot into it. Installing the package does not change the kernel that is running.
 
-Debian bookworm, trixie, forky, and sid, Red Hat Enterprise Linux 8, 9, and 10 `kernel` and RHEL 9 `kernel-rt`, AlmaLinux 8, 9, and 10, Rocky Linux 10, Amazon Linux 2, Amazon Linux 2023's default kernel, `kernel6.12`, and `kernel6.18`, and the Oracle Linux Unbreakable Enterprise Kernel have that package. Ubuntu, SUSE, Rocky Linux 8, and Rocky Linux 9 do not. Until yours does:
+Debian bookworm, trixie, forky, and sid, Red Hat Enterprise Linux 8, 9, and 10 `kernel` and RHEL 9 `kernel-rt`, AlmaLinux 8, 9, and 10, Rocky Linux 8, 9, and 10, Amazon Linux 2, Amazon Linux 2023's default kernel, `kernel6.12`, and `kernel6.18`, and the Oracle Linux Unbreakable Enterprise Kernel have that package. Ubuntu and SUSE do not. Until yours does:
 
 1. Prefer the upstream stable floors only where you already build your own kernel: 5.10.275, 5.15.226, 6.1.193, 6.6.163, 6.12.117, 6.18.63, or 7.3.4. Do not cherry-pick `4e2b3ef19e0e` into a distribution kernel.
 2. Kim's temporary mitigations, which he says block the race he demonstrated: set `net.ipv4.tcp_syncookies=0` in **each** network namespace, or reduce the exposed interface to one RX queue and disable RPS and RFS. Disabling SYN cookies weakens SYN-flood protection. Neither is a fix, and neither covers a kernel that is still missing the patch.
@@ -93,7 +94,7 @@ The demonstrated result is a kernel panic, which stops the host rather than leav
 - [SUSE CVE-2026-99288][suse] — read 2026-11-17. Overall state Pending. Important. CVSS 3.1 8.1 and CVSS 4.0 9.2. No security announcement. SLES 15 SP7, 16.0, and 16.1 affected. SLES 11 SP4 not affected.
 - [Amazon Linux CVE-2026-99288][alas] — AL2023 kernel fixed in [ALAS2023-2026-3455][alas3455] at 6.1.190-237.442. AL2023 kernel6.12 fixed in [ALAS2023-2026-3448][alas3448] at 6.12.115-140.210. AL2023 kernel6.18 fixed in [ALAS2023-2026-3477][alas3477] at 6.18.62-127.179, released 2026-11-17. Amazon Linux 2 core fixed in [ALAS2-2026-4124][alas24124] at 4.14.355-287.769, the same day. Amazon's own vector is CVSS 3.1 7.5, availability only.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.24, released 2026-11-24T17:47:46.199Z, checked 2026-11-24. CVE-2026-99288 is not in it.
-- Rocky Linux 10 BaseOS and RT package changelogs — `kernel-6.12.0-264.20.1.el10_3` and `kernel-rt-6.12.0-264.20.1.el10_3` name CVE-2026-99288. No RLSA was published. Rocky 8 and 9 packages do not name it.
+- Rocky Linux BaseOS and RT package changelogs — `kernel-6.12.0-264.20.1.el10_3` and `kernel-rt-6.12.0-264.20.1.el10_3` on Rocky 10, `kernel-5.14.0-741.27.1.el9_9` on Rocky 9, and `kernel-4.18.0-553.189.1.el8_10` on Rocky 8 name CVE-2026-99288. No RLSA was published. The Rocky 8 and 9 directories are dated 2026-11-20.
 
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-99288
 [oss]: https://www.openwall.com/lists/oss-security/2026/11/15/2

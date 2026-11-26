@@ -1,6 +1,6 @@
 # GPGME: a long OpenPGP user ID frees memory twice
 
-**Last updated:** 2026-11-25 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main GPGME summary](../black-october-2026.md#gpgme-a-long-openpgp-user-id-frees-memory-twice) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -35,7 +35,7 @@ Affected is every GPGME before 2.3.0, as a shared library, a Windows DLL, or lin
 
 ## Detection
 
-Read the installed library, not the `gpg` binary. On Debian and Ubuntu, `dpkg -l gpgme1.0 libgpgme11` shows the package. On other systems, `gpgme-config --version` or the shared-object name does. A version below 2.3.1 is inside the range the advisory names, including 2.2.0. Debian's fixed packages keep their old upstream numbers: trixie security is `1.24.2-3+deb13u1` and bookworm security is `1.18.0-3+deb12u1`. The main trixie and bookworm repositories are still the vulnerable builds. Forky and sid are both fixed at `2.3.1-1`. The tracker, read 2026-11-25, no longer lists forky as vulnerable.
+Read the installed library, not the `gpg` binary. On Debian and Ubuntu, `dpkg -l gpgme1.0 libgpgme11` shows the package. On other systems, `gpgme-config --version` or the shared-object name does. A version below 2.3.1 is inside the range the advisory names, including 2.2.0. Debian's fixed packages keep their old upstream numbers: trixie security is `1.24.2-3+deb13u1` and bookworm security is `1.18.0-3+deb12u1`. The main trixie and bookworm repositories are still the vulnerable builds. Sid is fixed at `2.3.1-1`. Forky is vulnerable again at `2.2.0-2`. The tracker, read 2026-11-26, lists it vulnerable; on 2026-11-25 it had listed forky at `2.3.1-1`, fixed.
 
 A program that links GPGME statically, or ships its own copy, does not move when the system package does. The advisory names that case and does not list the programs. Reading the package version changes no state.
 
@@ -45,7 +45,7 @@ A program that links GPGME statically, or ships its own copy, does not move when
 2. Rebuild anything linked against GPGME statically, against 2.3.1.
 3. The legacy line is **1.24.4**. GnuPG says it cannot guarantee that line will see every later security patch.
 4. If the library cannot be updated, the announcement carries a patch GnuPG says likely applies to old versions. There is no configuration workaround.
-5. Red Hat marks `gpgme` Affected on RHEL 10, 9, 8, and 7, with no erratum, and scores it CVSS 3.1 8.1. Ubuntu marks `gpgme1.0` Needs evaluation on 26.10, 26.04, 24.04, 22.04, and 20.04, priority Medium, page updated 23 November 2026. SUSE's page, last modified November 24, moved the supported products to In progress, including SLES 15 SP7, 16.0, and 16.1, and lists no SUSE security announcement. Amazon Linux 2 and 2023 are Pending Fix. AlmaLinux, Rocky, and Oracle have no public erratum; Oracle's CVE page returns 404. Debian testing is fixed; see above.
+5. Red Hat marks `gpgme` Affected on RHEL 10, 9, 8, and 7, with no erratum, and scores it CVSS 3.1 8.1. Ubuntu marks `gpgme1.0` Needs evaluation on 26.10, 26.04, 24.04, 22.04, and 20.04, priority Medium, page updated 23 November 2026. SUSE's page, last modified November 24, moved the supported products to In progress, including SLES 15 SP7, 16.0, and 16.1, and lists no SUSE security announcement. Amazon Linux 2 and 2023 are Pending Fix. AlmaLinux, Rocky, and Oracle have no public erratum; Oracle's CVE page returns 404. Debian testing is vulnerable again; see above.
 
 ## Verification
 
@@ -62,7 +62,7 @@ GnuPG does not report exploitation. An application that imported or listed keys 
 - [GnuPG announcement][adv] — Werner Koch, gnupg-announce, 2026-11-20 19:01:51 CET. Critical, in GnuPG's words. No CVSS score. Fixed in GPGME 2.3.1 and Gpg4win 5.1.2. 2.3.0 was never published. Checksum `1134a407b50204ee6fb9efaa6e1451c2460e543e` for `gpgme-2.3.1.tar.bz2`.
 - [CVE-2026-129975](https://www.cve.org/CVERecord?id=CVE-2026-129975) — reserved. No CNA description and no score, checked 2026-11-21.
 - [DSA-6646-1](https://www.debian.org/security/2026/dsa-6646) — 2026-11-20 21:36:59 UTC. Trixie `1.24.2-3+deb13u1`. Debian says information disclosure, denial of service, and potentially arbitrary code.
-- [Debian security tracker][tracker] — checked 2026-11-25. Bookworm security `1.18.0-3+deb12u1` (DLA-4924-1) fixed. Trixie security fixed. Forky and sid are both `2.3.1-1`, fixed.
+- [Debian security tracker][tracker] — checked 2026-11-26. Bookworm security `1.18.0-3+deb12u1` (DLA-4924-1) fixed. Trixie security fixed. Sid is `2.3.1-1`, fixed. Forky is `2.2.0-2`, vulnerable. On 2026-11-25 the tracker had listed forky at `2.3.1-1`, fixed.
 - [Red Hat CVE-2026-129975](https://access.redhat.com/security/cve/CVE-2026-129975) — public 2026-11-20. Important, CVSS 3.1 8.1. RHEL 10, 9, 8, and 7 Affected. No erratum.
 - [Ubuntu CVE-2026-129975](https://ubuntu.com/security/CVE-2026-129975) — updated 23 November 2026. Needs evaluation on 20.04 through 26.10. No package.
 - [SUSE CVE-2026-129975](https://www.suse.com/security/cve/CVE-2026-129975.html) — page modified 2026-11-22. Pending. SLES 15 SP7, 16.0, 16.1, and 12 SP5 Affected.
