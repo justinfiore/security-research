@@ -1,12 +1,12 @@
 # libslirp: ICMP error quoting reads past the packet
 
-**Last updated:** 2026-11-26 (America/New_York)
+**Last updated:** 2026-11-27 (America/New_York)
 
 [Main libslirp summary](../black-october-2026.md#libslirp-icmp-error-quoting-reads-past-the-packet) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
 **[CVE-2026-120830](https://www.cve.org/CVERecord?id=CVE-2026-120830): Red Hat (CNA) CVSS 3.1 7.4 High (CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N). NVD has not scored it.** `icmp_forward_error()` copied the quoted IPv4 packet using the length in the IP header and did not clamp it to the buffer it actually held. A truncated packet makes that an out-of-bounds heap read. The bytes come back inside the ICMP error returned to the guest or container. Red Hat's vector is adjacent network, not remote over the internet. Red Hat says RHEL 8, 9, and 10, and OpenShift Container Platform 4 and 5, are affected, and that it has no workaround. The CNA record names no fixed package. [CVE][cve] [Red Hat][rh]
 
-Upstream fixed it in **libslirp 4.9.7**, released 2026-10-30. The changelog line is "icmp_forward_error: Fix Out-of-Bounds Heap Read & Information Disclosure." The CVE record was published 2026-11-03 and points at the commit. Debian's tracker now lists the CVE. bookworm 4.7.0-1, trixie 4.8.0-1+deb13u1, and forky 4.9.5-1 are still vulnerable. Sid is fixed at **4.9.7-1**, accepted into unstable on 2026-11-22. No other fixed Debian package is published. The same tracker lists a second flaw, CVE-2026-120831, as vulnerable on all four, with no fixed package. Ubuntu's newest package found was 4.9.3. Red Hat's bug is still open with no fixed version. [Changelog][log] [Commit][commit]
+Upstream fixed it in **libslirp 4.9.7**, released 2026-10-30. The changelog line is "icmp_forward_error: Fix Out-of-Bounds Heap Read & Information Disclosure." The CVE record was published 2026-11-03 and points at the commit. Debian's tracker now lists the CVE. bookworm 4.7.0-1 and trixie 4.8.0-1+deb13u1 are still vulnerable. Forky and sid are both fixed at **4.9.7-1**. Sid accepted that package on 2026-11-22, and the tracker now lists forky at the same version. The same tracker lists a second flaw, CVE-2026-120831, as vulnerable on all four, with no fixed package. Ubuntu's newest package found was 4.9.3. Red Hat's bug is still open with no fixed version. [Changelog][log] [Commit][commit]
 
 **CISA KEV:** Not listed (catalog 2026.10.30, checked 2026-11-03). Red Hat does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 

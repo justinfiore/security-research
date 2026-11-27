@@ -15,6 +15,8 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Hitachi Virtage: the management command has no login](#hitachi-virtage-the-management-command-has-no-login)
+- [Hitachi RV3000: the log monitor leaks an ESXi account](#hitachi-rv3000-the-log-monitor-leaks-an-esxi-account)
 - [RealVNC: a UDP connection runs code before login](#realvnc-a-udp-connection-runs-code-before-login)
 - [Chroma: billing metadata was read](#chroma-billing-metadata-was-read)
 - [SAP: suspicious activity on GitHub](#sap-suspicious-activity-on-github)
@@ -367,6 +369,8 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [Hitachi RV3000 Log Monitor for VMware](#hitachi-rv3000-the-log-monitor-leaks-an-esxi-account) to **98-09 or 97-05**. Hitachi rates [CVE-2026-105917](https://www.cve.org/CVERecord?id=CVE-2026-105917) CVSS 3.1 8.8 High: the monitor can leak an ESXi host account. 98-08 and earlier, and 97-04 and earlier, are affected. The advisory is November 27. It is not in KEV.
+- **New this update:** There is no firmware for [Hitachi Virtage](#hitachi-virtage-the-management-command-has-no-login). Hitachi rates [CVE-2026-115283](https://www.cve.org/CVERecord?id=CVE-2026-115283) CVSS 3.1 8.8 High: the management command on a BladeSymphony BS2500 or BS500 has no login. Four more are 7.3 to 7.6, and a sixth, in the virtual COM console, is 8.4. Every Virtage version is affected, and the advisories, dated November 27, say no update exists. Turn on authentication for the HVM management command, set the management security level to High, and set the virtual COM console to SSH. None is in KEV.
 - **New this update:** Nothing to install for [Chroma](#chroma-billing-metadata-was-read). Chroma says that on November 26 someone read billing metadata: team names and identifiers, billing state, and database size and usage figures. It says it does not believe payment data or customer data was accessed, and that customers have nothing to do. No CVE is assigned. Do not paste an API key because a message cites the notice.
 - **New this update:** Nothing to install for [SAP](#sap-suspicious-activity-on-github). SAP told BleepingComputer on November 27 that it found suspicious activity and has found no evidence of unauthorized access to customer business data. Reports that tokens were stolen and source code on GitHub was changed come from Der Spiegel and dpa, not from that statement. No CVE is assigned. This is not the November patch day.
 - **New this update:** Update [RealVNC](#realvnc-a-udp-connection-runs-code-before-login). RealVNC rates [RVNC-2026-001](https://help.realvnc.com/hc/en-us/articles/40824627217949-Security-Advisory-UDP-based-connection-vulnerability) Critical, CVSS 9.8: a UDP connection runs code before login. MITRE published [CVE-2026-137738](https://www.cve.org/CVERecord?id=CVE-2026-137738) on November 27 at the same score. Server goes to **7.19.1**, Viewer to **8.6.2**, Classic Viewer to **7.18.3**. TCP-only direct connections are outside it. The advisory is November 20. It is not in KEV.
@@ -464,7 +468,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** [Emacs](#emacs-a-project-file-runs-code-when-a-file-opens) 31.1 runs code from a project's `.dir-locals.el` when a matching file is opened. MITRE rates [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959) CVSS 3.1 7.8 High. Emacs 30.2 is not affected. The fix is marked for 31.2, and that release is not out. Until then, open an untrusted project with directory-local variables off. It is not in KEV.
 - **New this update:** Upgrade [Drupal](#drupal-core-field-ui-remote-code-execution) to **11.4.14, 11.3.23, or 10.6.23**, then run `update.php`. Drupal rates [SA-CORE-2026-019](https://www.drupal.org/sa-core-2026-019) Highly critical, 21/25, and says [CVE-2026-136716](https://www.cve.org/CVERecord?id=CVE-2026-136716) is being exploited. A site left in an unusual install state can still be taken over after last week's fix. Last week's floors leave this one in place. A site that already secured `install.php` is not vulnerable. It is not in KEV.
 - **New this update:** On [PAN-OS and Panorama](#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) with the HTTP/2 option on, install the hotfix for the branch. Palo Alto rates CVE-2026-123633 and CVE-2026-123007 Critical, CVSS-B 4.0 9.2. 12.2 goes to **12.2.4-h3**. 12.1 goes to **12.1.10-h6**, or **12.1.7-h15** where that build is out. 11.2 goes to **11.2.16-h3**, or **11.2.13-h6** or **11.2.10-h19** where those are out. Palo Alto's November 24 update says the last three are released. 12.1.4 and earlier, and 11.2.7 and earlier, need no action. HTTP/2 off is no longer the only option on those branches. Palo Alto knows of no malicious exploitation. The upstream NGINX floors are unchanged.
-- **New this update:** Upgrade [Ruby](#ruby-a-string-or-a-pattern-corrupts-memory) to **4.0.10, 3.4.13, or 3.3.14** and restart every process. Ruby's repository rates three of seven flaws Critical, and MITRE rates [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) CVSS 3.1 7.4 High. The six others have no CVE yet. Ruby knows of proofs of concept that run code. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. Ruby 3.2 and earlier get no fix. Self-managed GitLab's packages that include the fixed Ruby are **19.6.1, 19.5.8, and 19.4.10**. A self-compiled GitLab still has to be rebuilt on Ruby 3.3.14 or 3.4.13. None is in KEV.
+- **New this update:** Upgrade [Ruby](#ruby-a-string-or-a-pattern-corrupts-memory) to **4.0.10, 3.4.13, or 3.3.14** and restart every process. Ruby's repository rates three of seven flaws Critical, and MITRE rates [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) CVSS 3.1 7.4 High. The six others have no CVE yet. Ruby knows of proofs of concept that run code. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. Ruby 3.2 and earlier get no fix. Self-managed GitLab's packages that include the fixed Ruby are **19.6.1, 19.5.8, 19.4.10, 19.3.10, 19.2.11, 19.1.11, 19.0.12, and 18.11.15**. The last five were backported on November 25. A self-compiled GitLab still has to be rebuilt on Ruby 3.3.14 or 3.4.13. None is in KEV.
 - **New this update:** Install the [F5 engineering hotfix](#f5-big-ip-six-flaws-crash-the-traffic-process) for the iRule or APM policy you run. F5 rates six flaws CVSS 3.1 9.8 and CVSS 4.0 9.3: a request with no login crashes the traffic process and may run code, on BIG-IP 21.1.0, 17.5.0–17.5.1, and 17.1.0–17.1.3 when that configuration is present. F5's November 19 articles add BIG-IP CNF 2.4.0–2.4.2, 2.3.0–2.3.4, and 2.2.0–2.2.5, fixed in 2.4.2-EHF1, 2.3.4-EHF1, and 2.2.5-EHF1. There is no workaround and no scheduled release. None is in KEV. This is not the September APM flaw.
 - **New this update (CISA KEV):** Upgrade [REDCap](#redcap-a-public-survey-runs-code) to **16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard** or later. Securifera rates [CVE-2026-90817](https://www.cve.org/CVERecord?id=CVE-2026-90817) CVSS 3.1 9.8 Critical: a request that knows one public survey hash reaches Data Import and runs code. CISA added it on November 18, due November 21, and requires forensic triage. Unit 42's October 7 note says the same flaw deployed XMRig miners on public-facing servers. The upgrade does not remove the miner, the crontab, or the SSH key. The record says 13.3.0 and higher, and its version list marks only 13.3.0 affected.
 - **New this update (CISA KEV):** Upgrade the [LiteLLM proxy](#litellm-a-custom-code-guardrail-runs-code) to **v1.83.14-stable or later** and restart it. MITRE rates [CVE-2026-40217](https://www.cve.org/CVERecord?id=CVE-2026-40217) CVSS 3.1 8.8 High: bytecode sent to the custom-code guardrail runs in the proxy, which is root in the default image. CISA added it on November 18, due December 2. The vendor page says 1.83.11, and that tag does not exist. This is not the 1.107.0 malicious release.
@@ -674,6 +678,52 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Hitachi RV3000: the log monitor leaks an ESXi account
+
+<a id="hitachi-rv3000-the-log-monitor-leaks-an-esxi-account"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/hitachi-rv3000.md):** [Detection](details/hitachi-rv3000.md#detection) · [Remediation](details/hitachi-rv3000.md#remediation) · [Verification](details/hitachi-rv3000.md#verification) · [Timeline](details/hitachi-rv3000.md#timeline)
+
+**CVEs:** [CVE-2026-105917](https://www.cve.org/CVERecord?id=CVE-2026-105917)
+
+**Hitachi rates [CVE-2026-105917](https://www.cve.org/CVERecord?id=CVE-2026-105917) CVSS 3.1 8.8 High.** [hitachi-sec-2026-216](https://www.hitachi.co.jp/products/it/server/security/info/vulnerable/hitachi_sec_2026_216_en.html), published November 27, says a file-permission flaw in the RV3000 Log Monitor for VMware could leak account information for ESXi hosts. The vector is `CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H`, so the path is a user who can already reach the monitor's host. RV3000 Log Monitor for VMware (CIM) 98-08 and earlier is fixed in **98-09**. RV3000 Log Monitor for VMware 97-04 and earlier is fixed in **97-05**. Hitachi does not report exploitation. This is not the Virtage firmware.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-27). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-27; time/TZ unknown** | hitachi-sec-2026-216. CVSS 3.1 8.8. Fixed in 98-09 and 97-05. |
+| **Last updated** | **2026-11-27 11:30 EST (UTC−05:00)** | New item. |
+
+**Patch:** Upgrade to **98-09** or later for the CIM build, and **97-05** or later for the other build.
+
+Sources: [hitachi-sec-2026-216](https://www.hitachi.co.jp/products/it/server/security/info/vulnerable/hitachi_sec_2026_216_en.html), [CVE-2026-105917](https://www.cve.org/CVERecord?id=CVE-2026-105917), [detailed guide](details/hitachi-rv3000.md).
+
+---
+
+## Hitachi Virtage: the management command has no login
+
+<a id="hitachi-virtage-the-management-command-has-no-login"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/hitachi-virtage.md):** [Detection](details/hitachi-virtage.md#detection) · [Remediation](details/hitachi-virtage.md#remediation) · [Verification](details/hitachi-virtage.md#verification) · [Timeline](details/hitachi-virtage.md#timeline)
+
+**CVEs:** [CVE-2026-115283](https://www.cve.org/CVERecord?id=CVE-2026-115283), [CVE-2026-115284](https://www.cve.org/CVERecord?id=CVE-2026-115284), [CVE-2026-115285](https://www.cve.org/CVERecord?id=CVE-2026-115285), [CVE-2026-115286](https://www.cve.org/CVERecord?id=CVE-2026-115286), [CVE-2026-115287](https://www.cve.org/CVERecord?id=CVE-2026-115287), [CVE-2026-115288](https://www.cve.org/CVERecord?id=CVE-2026-115288)
+
+**Hitachi rates [CVE-2026-115283](https://www.cve.org/CVERecord?id=CVE-2026-115283) CVSS 3.1 8.8 High.** [hitachi-sec-2026-218](https://www.hitachi.co.jp/products/it/server/security/info/vulnerable/hitachi_sec_2026_218_en.html), published November 27, says the Virtage firmware on the BladeSymphony BS2500 and BS500 can disclose data, change data, or be taken down. Hitachi's own scores for the other four are 7.6, 7.6, 7.3, and 7.3. The CVE record for [CVE-2026-115284](https://www.cve.org/CVERecord?id=CVE-2026-115284) says 8.4 instead of Hitachi's 7.6. A sixth, [CVE-2026-115288](https://www.cve.org/CVERecord?id=CVE-2026-115288), is 8.4 and is in the virtual COM console. Every Virtage version is affected, BS2500 02-02 through 02-76 and BS500 01-01 through 02-76, and Hitachi says no firmware update exists. Every vector is Adjacent, so the path is the management network. Hitachi does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-27). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-27; time/TZ unknown** | hitachi-sec-2026-218. Five CVEs. Highest score 8.8. No firmware fix. |
+| **Last updated** | **2026-11-27 11:30 EST (UTC−05:00)** | New item. |
+
+**Patch:** No firmware exists. Enable user authentication for the HVM management command (HvmSh), and set the security level of HvmSh, HCSM, and LPAR Migration to High. For the virtual COM console, enable authentication and set the connection mode to SSH. Keep the management network reachable only from hosts you trust.
+
+Sources: [hitachi-sec-2026-218](https://www.hitachi.co.jp/products/it/server/security/info/vulnerable/hitachi_sec_2026_218_en.html), [CVE-2026-115283](https://www.cve.org/CVERecord?id=CVE-2026-115283), [detailed guide](details/hitachi-virtage.md).
 
 ---
 
@@ -2735,9 +2785,10 @@ Sources: [CVE-2026-131959](https://www.cve.org/CVERecord?id=CVE-2026-131959), [b
 | **Public announcement** | **2026-11-19 00:00 UTC** | Ruby's advisory. The page date is November 18. |
 | CVE record | 2026-11-19; time unknown | MITRE published CVE-2026-132825 at 7.4. Ruby's advisory still says no CVE is assigned. |
 | GitLab packages | 2026-11-20; time/TZ unknown | 19.6.1, 19.5.8, and 19.4.10 bundle the patched Ruby. |
-| **Last updated** | **2026-11-20 07:04 EST (UTC−05:00)** | GitLab shipped the fixed interpreter. The Ruby floors are unchanged. |
+| GitLab backport | 2026-11-25; time/TZ unknown | The same Ruby fixes are in 19.3.10, 19.2.11, 19.1.11, 19.0.12, and 18.11.15. |
+| **Last updated** | **2026-11-27 11:30 EST (UTC−05:00)** | GitLab backported the fixed interpreter to five older lines. |
 
-**Patch:** Upgrade to **4.0.10, 3.4.13, or 3.3.14** and restart every process that loaded the old interpreter, including workers and containers. Updating gems does not replace the interpreter. On self-managed GitLab, upgrade to **19.6.1, 19.5.8, or 19.4.10**, which already contain that Ruby. A self-compiled GitLab has to be rebuilt on Ruby 3.3.14 or 3.4.13. Ruby 3.3 is in security maintenance. Ruby 3.2 and earlier are end of life and get no fix. Ruby publishes no workaround. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. The restart does not show whether a request already ran code.
+**Patch:** Upgrade to **4.0.10, 3.4.13, or 3.3.14** and restart every process that loaded the old interpreter, including workers and containers. Updating gems does not replace the interpreter. On self-managed GitLab, upgrade to **19.6.1, 19.5.8, 19.4.10, 19.3.10, 19.2.11, 19.1.11, 19.0.12, or 18.11.15**, which already contain that Ruby. The last five were backported on November 25. A self-compiled GitLab has to be rebuilt on Ruby 3.3.14 or 3.4.13. Ruby 3.3 is in security maintenance. Ruby 3.2 and earlier are end of life and get no fix. Ruby publishes no workaround. The October builds, 4.0.9, 3.4.12, and 3.3.13, leave all seven in place. The restart does not show whether a request already ran code.
 
 Sources: [Ruby advisory](https://www.ruby-lang.org/en/news/2026/11/18/multiple-vulnerabilities-in-regexp-and-string/), [GHSA-34m4-m9fh-gqp5](https://github.com/ruby/ruby/security/advisories/GHSA-34m4-m9fh-gqp5), [detailed guide](details/ruby-november.md).
 
@@ -4310,7 +4361,7 @@ Sources: [VSA-2026-062](https://docs.vates.tech/security-advisories/advisories/2
 | **Public announcement and fix** | **2026-11-10; time/TZ unknown** | GitHub advisory and the 2.56.1 release note, the same day. |
 | GitLab packages | 2026-11-10; time/TZ unknown | 19.5.4, 19.4.6, and 19.3.8 update the bundled Git for CVE-2026-105437. GitLab calls that path Critical. |
 | Enterprise Server correction | 2026-11-17; time/TZ unknown | 3.19.16, 3.20.12, 3.21.10, and 3.22.5 carry the Git fixes. The notes for the previous builds say those fixes were incomplete. |
-| **Last updated** | **2026-11-19 11:01 EST (UTC−05:00)** | The November 17 Enterprise Server builds are the ones that carry the Git fix. |
+| **Last updated** | **2026-11-27 11:30 EST (UTC−05:00)** | Skipping a recursive clone is not a workaround. The floors are unchanged. |
 
 **Patch:** Upgrade to **2.56.1**, or to the patched release on the line you run. Upgrade an application that ships its own Git. On GitHub Enterprise Server the November 17 builds are 3.19.16, 3.20.12, 3.21.10, and 3.22.5, and GitHub says the Git fixes in 3.19.15, 3.20.11, 3.21.9, and 3.22.4 were incomplete. Self-managed GitLab needs **19.5.6, 19.4.8, or 19.3.9**. 19.5.4, 19.4.6, and 19.3.8 carry the bundled Git fix, and GitLab rates that path Critical. The November 16 builds add two CVSS 8.7 issues. Until `git --version` prints a fixed build, do not clone a repository you do not trust, and do not run `git status` in a checkout whose clone failed. The upgrade does not show whether a hook already ran.
 
@@ -6891,14 +6942,15 @@ Sources: [Mitsubishi Electric 2026-006](https://www.mitsubishielectric.com/psirt
 
 **Adobe rates all eight flaws Critical (CVSS 3.1 9.1–9.9).** The affected Campaign Classic v7 components can permit arbitrary code execution, security-feature bypass or privilege escalation. Adobe reports no known exploitation for APSB26-162.
 
-**CISA KEV:** Not listed (catalog 2026.10.28, checked 2026-10-29). Adobe does not report exploitation in the wild. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-27). Adobe does not report exploitation in the wild for APSB26-162 or APSB26-194. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Public bulletin and fixed build | 2026-10-27; time/TZ unknown | Adobe published APSB26-162 for Campaign Classic v7. |
-| **Last updated** | **2026-10-29 00:03 EDT (UTC−04:00)** | Added from Adobe's bulletin and release guidance. |
+| **Second bulletin** | **2026-11-24; time/TZ unknown** | APSB26-194. Twelve Critical flaws. Fixed in 7.4.4 build 9404 and 7.4.5 build 9421. |
+| **Last updated** | **2026-11-27 11:30 EST (UTC−05:00)** | Build 9403 leaves the November 24 flaws in place. |
 
-**Patch:** Update fully on-premise Campaign Classic and on-premise hybrid components from **7.4.4 build 9402 or earlier** to **7.4.4 build 9403**, then restart the Adobe Campaign server (`nlserver`). Adobe-hosted instances have already been remediated. Restrict administration to trusted operators while deploying the update; that restriction does not replace patching.
+**Patch:** Update fully on-premise Campaign Classic to **7.4.4 build 9404** or **7.4.5 build 9421**, then restart the Adobe Campaign server (`nlserver`). [APSB26-194](https://www.adobe.com/trust/security/products/campaign/apsb26-194.html), published November 24, rates twelve flaws Critical, seven of them CVSS 3.1 9.9, and build 9403 leaves all twelve in place. The bulletin is for the on-premise deployment. Adobe says it is not aware of exploits. Restrict administration to trusted operators while deploying the update; that restriction does not replace patching.
 
 Sources: [Adobe APSB26-162](https://www.adobe.com/trust/security/products/campaign/apsb26-162.html), [Adobe Campaign Classic release notes](https://experienceleague.adobe.com/en/docs/campaign-classic/using/release-notes/latest-release), [CISA KEV feed](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json).
 
@@ -7741,7 +7793,7 @@ Sources: [HPE bulletin HPESBNW05162](https://support.hpe.com/hpesc/public/docDis
 | RHEL 7 ELS | 2026-11-05; time/TZ unknown | `kernel-3.10.0-1160.169.1.el7` names ZDI-CAN-33367. This is the Extended Lifecycle Support kernel, not CentOS 7. |
 | CVE record | 2026-11-07; time/TZ unknown | kernel.org CNA published CVE-2026-99284. No score. The kernel to install does not change. |
 | Amazon Linux and Oracle UEK | 2026-11-09 and 2026-11-19; time/TZ unknown | Amazon Linux 2 and 2023 name the CVE on every tracked flavor. Oracle's UEK errata are ELSA-2026-500637, 500643, and 500644. |
-| **Last updated** | **2026-11-23 11:30 EST (UTC−05:00)** | Amazon Linux and Oracle UEK have packages. Ubuntu 24.04 and Debian 12's default kernel still do not. |
+| **Last updated** | **2026-11-27 11:30 EST (UTC−05:00)** | Ubuntu 24.04's HWE kernel is fixed. The generic 24.04 kernel and Debian 12's default kernel still are not. |
 
 A bug in the kernel networking helper `skb_zerocopy()` lets an **unprivileged local user rewrite the in-memory (page-cache) copy of any file they can read**, such as a setuid binary or PAM module, and so become root. The Dirty Frag fix taught IPsec ESP to copy, not decrypt in place, when packet pages belong to a file; `skb_zerocopy()` drops the marker that check relies on. **Kernels that carry the Dirty Frag fix are still exposed**, and so are kernels fixed for the other follow-up CVEs in this family. The on-disk file is not changed; the tampering disappears on reboot or cache eviction.
 
@@ -9117,7 +9169,7 @@ A compromised GitLab server can expose source code and accessible CI/CD secrets 
 
 **If you patched on October 12, patch again.** The first release does not cover the October 21 issue.
 
-**GitLab fixes:** **19.6.2, 19.5.9, or 19.4.11**, released November 25. The new issues in that post are Medium and one Low. The same release backports the bundled Git fix to 19.2.11, 19.1.11, 19.0.12, and 18.11.15, and the Ruby fixes to 19.3.10 and those same older lines. Those older lines do not get the new NGINX update. **19.6.1, 19.5.8, or 19.4.10**, released November 20, remain the floor for [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825). The Ruby security team rates it Critical and MITRE rates it 7.4, and GitLab takes the Critical. Everything before 19.4.10 is affected, including the November 16 builds. A self-compiled install rebuilds Ruby at 3.3.14 or 3.4.13. **19.5.6, 19.4.8, or 19.3.9**, released November 16, remain the floor for the issues in that release. 19.5.4, 19.4.6, and 19.3.8 remain the bundled-Git floors on the supported lines. The November 16 builds add [CVE-2026-105739](https://www.cve.org/CVERecord?id=CVE-2026-105739) and [CVE-2026-108153](https://www.cve.org/CVERecord?id=CVE-2026-108153), both CVSS 3.1 8.7. The regex RCE floors are still 19.5.1, 19.4.3, 19.3.6, 19.2.9, 19.1.9, 19.0.10, and 18.11.13. The November 10 builds add the bundled Git fix for [CVE-2026-105437](https://www.cve.org/CVERecord?id=CVE-2026-105437), which GitLab rates Critical inside Gitaly. Prefer a currently supported branch; the older backports are not equivalent to receiving every other security fix. Follow GitLab’s required upgrade stops and migration guidance. The 2026-10-29 releases (**19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11, 18.11.14**) remove trust for the compromised eMudhra intermediates; they do not replace the RCE fixes, and they do not include the Git update. Also update self-hosted Runner to 19.5.1 and AI Gateway to the matching fixed release, because a GitLab upgrade does not update either.
+**GitLab fixes:** **19.6.2, 19.5.9, or 19.4.11**, released November 25. The new issues in that post are Medium and one Low. The same release backports the bundled Git fix to 19.2.11, 19.1.11, 19.0.12, and 18.11.15, and the Ruby fixes to 19.3.10 and those same older lines. Those older lines do not get the new NGINX update. **19.6.1, 19.5.8, or 19.4.10**, released November 20, remain the floor for [CVE-2026-132825](https://www.cve.org/CVERecord?id=CVE-2026-132825) on those lines. The November 25 notes backport the same Ruby fixes to **19.3.10, 19.2.11, 19.1.11, 19.0.12, and 18.11.15**. The Ruby security team rates it Critical and MITRE rates it 7.4, and GitLab takes the Critical. A release below those floors is affected, including the November 16 builds. A self-compiled install rebuilds Ruby at 3.3.14 or 3.4.13. **19.5.6, 19.4.8, or 19.3.9**, released November 16, remain the floor for the issues in that release. 19.5.4, 19.4.6, and 19.3.8 remain the bundled-Git floors on the supported lines. The November 16 builds add [CVE-2026-105739](https://www.cve.org/CVERecord?id=CVE-2026-105739) and [CVE-2026-108153](https://www.cve.org/CVERecord?id=CVE-2026-108153), both CVSS 3.1 8.7. The regex RCE floors are still 19.5.1, 19.4.3, 19.3.6, 19.2.9, 19.1.9, 19.0.10, and 18.11.13. The November 10 builds add the bundled Git fix for [CVE-2026-105437](https://www.cve.org/CVERecord?id=CVE-2026-105437), which GitLab rates Critical inside Gitaly. Prefer a currently supported branch; the older backports are not equivalent to receiving every other security fix. Follow GitLab’s required upgrade stops and migration guidance. The 2026-10-29 releases (**19.5.3, 19.4.5, 19.3.7, 19.2.10, 19.1.10, 19.0.11, 18.11.14**) remove trust for the compromised eMudhra intermediates; they do not replace the RCE fixes, and they do not include the Git update. Also update self-hosted Runner to 19.5.1 and AI Gateway to the matching fixed release, because a GitLab upgrade does not update either.
 
 GitLab.com was patched by the vendor. GitLab Dedicated customers should verify the vendor’s listed internal release status.
 

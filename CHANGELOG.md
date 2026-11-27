@@ -2,6 +2,17 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-27 11:30 EST (UTC−05:00) — Hitachi; Adobe Campaign; GitLab; Git; Ubuntu
+
+- **Adobe Campaign Classic:** Update an on-premise install to [7.4.4 build 9404 or 7.4.5 build 9421](black-october/details/adobe-campaign-classic.md#remediation) and restart. Build 9403, the October fix, leaves twelve Critical flaws from November 24. Adobe rates seven of them CVSS 3.1 9.9. It says it is not aware of exploits. None is in KEV.
+- **GitLab:** The [Ruby fixes](black-october/details/ruby-november.md#remediation) are now in 19.3.10, 19.2.11, 19.1.11, 19.0.12, and 18.11.15. GitLab's November 25 notes say they had only been in 19.6.1, 19.5.8, and 19.4.10. A self-compiled install still has to be rebuilt. It is not in KEV.
+- **Cisco:** [cisco-sa-emudhra-info-ScS22A1r](black-october/details/emudhra.md#remediation) version 1.14, updated November 25, names **6.1(6i)** for Nexus 9000 Fabric Switches in ACI mode. MDS 9000, Nexus 3000, and Nexus 9000 standalone still have no fixed release. Cisco says it is not aware of malicious use.
+- **libslirp:** On Debian testing, install [4.9.7-1](black-october/details/libslirp.md). The tracker now lists forky fixed at the same version as sid. Bookworm and trixie still have none. It is not in KEV.
+- **Git:** Skipping `--recurse-submodules` is [not a workaround](black-october/details/git-recursive-clone.md#remediation). GitHub's advisory now says a non-recursive clone can still replace the top-level `.git` directory, and the `git status` it then recommends can run code. The floors are unchanged.
+- **Linux kernel:** On Ubuntu 24.04, install [linux-hwe-7.0 7.0.0-44.44~24.04.1](black-october/details/skb-zerocopy-lpe.md#remediation) and reboot. USN-9190-2, dated November 26, fixes the zerocopy flaw on that flavor. The generic 24.04 kernel is still vulnerable. It is not in KEV.
+- **Hitachi RV3000:** Update [Log Monitor for VMware to 98-09 or 97-05](black-october/details/hitachi-rv3000.md#remediation). Hitachi rates CVE-2026-105917 CVSS 3.1 8.8: the monitor can leak an ESXi host account. 98-08 and earlier, and 97-04 and earlier, are affected. The advisory is November 27. It is not in KEV.
+- **Hitachi:** There is no firmware. On a [BladeSymphony BS2500 or BS500](black-october/details/hitachi-virtage.md#remediation), turn on authentication for the HVM management command, set the management security level to High, and set the virtual COM console to SSH. Hitachi rates CVE-2026-115283 CVSS 3.1 8.8: the management command has no login. Four more are 7.3 to 7.6, and the console flaw is 8.4. Every Virtage version is affected. The advisories are November 27. None is in KEV.
+
 ## 2026-11-27 07:15 EST (UTC−05:00) — RealVNC; JTL-Shop; Chroma; SAP
 
 - **RealVNC:** Update [Server to 7.19.1, Viewer to 8.6.2, and Classic Viewer to 7.18.3](black-october/details/realvnc.md#remediation). RealVNC rates RVNC-2026-001 Critical, CVSS 9.8: a UDP connection runs code before login. MITRE published [CVE-2026-137738](https://www.cve.org/CVERecord?id=CVE-2026-137738) on November 27 at the same score. TCP-only direct connections are outside it. The advisory is November 20. It is not in KEV.
