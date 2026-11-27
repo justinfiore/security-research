@@ -2,6 +2,15 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-27 00:00 EST (UTC−05:00) — LIVE555; Panorama Suite; WordPress
+
+- **LIVE555:** Rebuild a player or proxy against [2026.08.25 or later](black-october/details/live555.md#remediation). VulnCheck rates CVE-2026-137587 CVSS 4.0 7.1 and CVSS 3.1 7.1: a crafted stream description reads past a buffer and can crash the client. Anything before that build is affected. Live Networks fixed it on August 25. The record is November 26. It is not in KEV.
+- **Panorama Suite:** Install [update PS-2510-02-1317 or later](black-october/details/panorama-suite.md#remediation). CODRA rates CVE-2026-136760 CVSS 4.0 7.1: a POSIX LDAP login reaches a role it was not given. Active Directory authentication is outside it. The 2020, 2022, 2023, and 2025 lines have to move to the December 2025 line first. The record is November 26. It is not in KEV.
+- **WordPress:** Update [SiteOrigin Widgets Bundle to 1.77.0, Listdom to 6.5.0, and Opti-Behavior to 1.11.1](black-october/details/wordpress-nov26.md#remediation). Patchstack rates each CVSS 3.1 7.1: a field runs a script, and a visitor has to open the page. The records are November 26. None is in KEV. A stored script survives the update.
+- **Eclipse Ditto:** Upgrade the gateway to [3.8.16 or 3.9.10](black-october/details/eclipse-ditto.md#remediation). 3.8.15 and 3.9.9 leave a bypass. Eclipse rates CVE-2026-135150 CVSS 4.0 9.1: the bundled nginx forwarded a client-supplied header, and the request is treated as that user. The record says through 3.9.9. It is not in KEV.
+- **JTL-Shop:** A shop on [5.0 through 5.4](black-october/details/jtl-shop.md#remediation) is affected and gets no patch. Move it to 5.8.4, 5.7.6, 5.6.6, or 5.5.5. The update does not delete the `install/` directory. JTL says it knows of no exploitation. It is not in KEV.
+- **VirtueMart:** The [4.8.10 hotfix](black-october/details/virtuemart.md#remediation) is now two packages. Use the one for 4.6 and above, or the one for a version below 4.6. The full package is unchanged.
+
 ## 2026-11-26 19:56 EST (UTC−05:00) — Iceburg CRM; Twenty; Bazarr; LibreChat; VirtueMart; WP connect
 
 - **Iceburg CRM:** There is no fixed release. Do not give an account to anyone who should not control the administrator. VulnCheck rates [CVE-2026-137577](black-october/details/iceburg-crm.md#remediation) CVSS 3.1 8.1 and CVSS 4.0 8.6: a signed-in user rewrites any account's email or password, including the administrator's. Through 5.0.0 is affected, and that is the newest release. The report is November 26 and the issue is still open. It is not in KEV.

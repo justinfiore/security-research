@@ -97,8 +97,8 @@
       "hold": "awaiting-fix"
     },
     "argo-workflows.md": {
-      "last_checked": "2026-11-26T23:56:03Z",
-      "hold": "none"
+      "last_checked": "2026-11-27T03:55:53Z",
+      "hold": "awaiting-fix"
     },
     "aruba-aos.md": {
       "last_checked": "2026-11-26T15:56:20Z",
@@ -147,6 +147,10 @@
     "batflat.md": {
       "last_checked": "2026-11-26T19:56:03Z",
       "hold": "awaiting-fix"
+    },
+    "bazarr.md": {
+      "last_checked": "2026-11-27T03:55:53Z",
+      "hold": "none"
     },
     "bee-js.md": {
       "last_checked": "2026-11-26T15:56:20Z",
@@ -341,7 +345,7 @@
       "hold": "none"
     },
     "eclipse-ditto.md": {
-      "last_checked": "2026-11-25T03:56:13Z",
+      "last_checked": "2026-11-27T03:55:53Z",
       "hold": "none"
     },
     "edge-pwn2own.md": {
@@ -529,8 +533,12 @@
       "hold": "none"
     },
     "ibm-guardium.md": {
-      "last_checked": "2026-11-25T03:56:13Z",
+      "last_checked": "2026-11-27T03:55:53Z",
       "hold": "none"
+    },
+    "iceburg-crm.md": {
+      "last_checked": "2026-11-27T03:55:53Z",
+      "hold": "awaiting-fix"
     },
     "idunno-anticsrf.md": {
       "last_checked": "2026-11-26T15:56:20Z",
@@ -581,8 +589,8 @@
       "hold": "none"
     },
     "jtl-shop.md": {
-      "last_checked": "2026-11-25T03:56:13Z",
-      "hold": "none"
+      "last_checked": "2026-11-27T03:55:53Z",
+      "hold": "awaiting-fix"
     },
     "jumis.md": {
       "last_checked": "2026-11-23T15:56:15Z",
@@ -630,6 +638,10 @@
     },
     "lenovo-xcc.md": {
       "last_checked": "2026-11-24T15:56:15Z",
+      "hold": "none"
+    },
+    "librechat.md": {
+      "last_checked": "2026-11-27T03:55:53Z",
       "hold": "none"
     },
     "libreoffice.md": {
@@ -685,7 +697,7 @@
       "hold": "none"
     },
     "llama-cpp.md": {
-      "last_checked": "2026-11-26T23:56:03Z",
+      "last_checked": "2026-11-27T03:55:53Z",
       "hold": "none"
     },
     "lxd-mtls.md": {
@@ -813,7 +825,7 @@
       "hold": "none"
     },
     "openplc.md": {
-      "last_checked": "2026-11-25T03:56:13Z",
+      "last_checked": "2026-11-27T03:55:53Z",
       "hold": "none"
     },
     "openrouter.md": {
@@ -1045,7 +1057,7 @@
       "hold": "none"
     },
     "splunk-november.md": {
-      "last_checked": "2026-11-25T03:56:13Z",
+      "last_checked": "2026-11-27T03:55:53Z",
       "hold": "none"
     },
     "spring-november.md": {
@@ -1120,6 +1132,10 @@
       "last_checked": "2026-11-26T15:56:20Z",
       "hold": "none"
     },
+    "twenty.md": {
+      "last_checked": "2026-11-27T03:55:53Z",
+      "hold": "awaiting-fix"
+    },
     "typo3.md": {
       "last_checked": "2026-11-26T15:56:20Z",
       "hold": "none"
@@ -1160,6 +1176,10 @@
       "last_checked": "2026-11-26T15:56:20Z",
       "hold": "awaiting-fix"
     },
+    "virtuemart.md": {
+      "last_checked": "2026-11-27T03:55:53Z",
+      "hold": "none"
+    },
     "vmware-esx.md": {
       "last_checked": "2026-11-26T19:56:03Z",
       "hold": "awaiting-fix"
@@ -1185,7 +1205,7 @@
       "hold": "none"
     },
     "watchguard-dimension.md": {
-      "last_checked": "2026-11-25T03:56:13Z",
+      "last_checked": "2026-11-27T03:55:53Z",
       "hold": "none"
     },
     "weblate.md": {
@@ -1309,7 +1329,7 @@
       "hold": "none"
     },
     "zodia-custody.md": {
-      "last_checked": "2026-11-26T23:56:03Z",
+      "last_checked": "2026-11-27T03:55:53Z",
       "hold": "none"
     },
     "zonealarm.md": {

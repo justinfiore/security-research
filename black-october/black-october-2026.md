@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 26, 2026**
+**As of November 27, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [LIVE555: a crafted description reads past a buffer](#live555-a-crafted-description-reads-past-a-buffer)
+- [Panorama Suite: an LDAP login reaches another role](#panorama-suite-an-ldap-login-reaches-another-role)
+- [WordPress: three plugins run a script from a field](#wordpress-three-plugins-run-a-script-from-a-field)
 - [Iceburg CRM: a low-privileged user rewrites the administrator](#iceburg-crm-a-low-privileged-user-rewrites-the-administrator)
 - [Twenty: a signup returns someone else's invitation](#twenty-a-signup-returns-someone-elses-invitation)
 - [Bazarr: a Windows request reads the config](#bazarr-a-windows-request-reads-the-config)
@@ -361,11 +364,14 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Rebuild a [LIVE555](#live555-a-crafted-description-reads-past-a-buffer) player or proxy against **2026.08.25 or later**. VulnCheck rates [CVE-2026-137587](https://www.cve.org/CVERecord?id=CVE-2026-137587) CVSS 4.0 7.1 and CVSS 3.1 7.1: a crafted stream description reads past a buffer and can crash the client. Anything before 2026.08.25 is affected. Live Networks fixed it on August 25. The record is November 26. It is not in KEV.
+- **New this update:** Install [Panorama Suite](#panorama-suite-an-ldap-login-reaches-another-role) update **PS-2510-02-1317 or later**. CODRA rates [CVE-2026-136760](https://www.cve.org/CVERecord?id=CVE-2026-136760) CVSS 4.0 7.1: a POSIX LDAP login reaches a role it was not given. Active Directory authentication is outside it. 2020, 2022, 2023, and 2025 have to move to the December 2025 line first. The record is November 26. It is not in KEV.
+- **New this update:** Update three [WordPress](#wordpress-three-plugins-run-a-script-from-a-field) plugins. Patchstack rates each CVSS 3.1 7.1: SiteOrigin Widgets Bundle to **1.77.0**, Listdom to **6.5.0**, and Opti-Behavior to **1.11.1**. A visitor has to open the page. The records are November 26. None is in KEV. A stored script survives the update.
 - **New this update:** There is no fixed release for [Iceburg CRM](#iceburg-crm-a-low-privileged-user-rewrites-the-administrator). VulnCheck rates [CVE-2026-137577](https://www.cve.org/CVERecord?id=CVE-2026-137577) CVSS 3.1 8.1 and CVSS 4.0 8.6: a signed-in user rewrites any account's email or password, including the administrator's. Through 5.0.0 is affected, and that is the newest release. The report is November 26 and the issue is still open. Do not give an account to anyone who should not control the administrator. It is not in KEV.
 - **New this update:** There is no fixed release for [Twenty](#twenty-a-signup-returns-someone-elses-invitation). GitHub rates [GHSA-m4vm-35cw-44rq](https://github.com/twentyhq/twenty/security/advisories/GHSA-m4vm-35cw-44rq) CVSS 3.1 7.4 High: on a multi-workspace install, a signup for someone else's email returns that person's invitation token, and the caller joins with the invitation's role, including Admin. VulnCheck's [CVE-2026-137584](https://www.cve.org/CVERecord?id=CVE-2026-137584) is CVSS 4.0 9.1 and says through 2.63.0. That release, dated November 24, still returns the token. The advisory is October 22. Revoke pending invitations. It is not in KEV.
 - **New this update:** Update a Windows [Bazarr](#bazarr-a-windows-request-reads-the-config) install to **v1.6.2 or later**, and rotate the credentials in `config.yaml`. GitHub rates [GHSA-v569-4w84-grxq](https://github.com/morpheus65535/bazarr/security/advisories/GHSA-v569-4w84-grxq) CVSS 3.1 7.5 High: a request with no login reads a file, and that file holds the Sonarr, Radarr, and Plex keys. VulnCheck published [CVE-2026-137585](https://www.cve.org/CVERecord?id=CVE-2026-137585) on November 26. The fix shipped August 24. It is not in KEV.
 - **New this update:** Update [LibreChat](#librechat-a-login-request-stops-the-server) to **v0.8.9 or later** where LDAP login is on. GitHub rates [GHSA-572g-g8hc-w8c9](https://github.com/LibreChat-AI/LibreChat/security/advisories/GHSA-572g-g8hc-w8c9) CVSS 3.1 7.5 High: one login request whose password is a number stops the process, and the same request stops it again after each restart. An install that does not use LDAP is outside it. VulnCheck published [CVE-2026-137586](https://www.cve.org/CVERecord?id=CVE-2026-137586) on November 26. v0.8.9 shipped November 17. It is not in KEV.
-- **New this update:** Update [VirtueMart](#virtuemart-a-storefront-request-includes-a-local-file) to **4.8.10**. The Joomla! Project rates [CVE-2026-133335](https://www.cve.org/CVERecord?id=CVE-2026-133335) CVSS 4.0 9.2 Critical: a storefront request includes a local PHP file, and the record says that has been exploited. 4.8.8 fixes the loader and leaves the PayPal Checkout flaw, [CVE-2026-133333](https://www.cve.org/CVERecord?id=CVE-2026-133333), which is 8.2 and marks an unpaid order as paid. The records are November 25. It is not in KEV. Compare PayPal orders with the PayPal account.
+- **New this update:** Update [VirtueMart](#virtuemart-a-storefront-request-includes-a-local-file) to **4.8.10**. The vendor's hotfix is now two packages: one for 4.6 and above, and one for a version below 4.6. The Joomla! Project rates [CVE-2026-133335](https://www.cve.org/CVERecord?id=CVE-2026-133335) CVSS 4.0 9.2 Critical: a storefront request includes a local PHP file, and the record says that has been exploited. 4.8.8 fixes the loader and leaves the PayPal Checkout flaw, [CVE-2026-133333](https://www.cve.org/CVERecord?id=CVE-2026-133333), which is 8.2 and marks an unpaid order as paid. The records are November 25. It is not in KEV. Compare PayPal orders with the PayPal account.
 - **New this update:** Update a [llama.cpp](#llamacpp-an-rpc-peer-writes-below-a-buffer) RPC worker to **b12658 or later**. VulnCheck rates [CVE-2026-137567](https://www.cve.org/CVERecord?id=CVE-2026-137567) CVSS 3.1 9.8 Critical: a peer that can open the port writes a heap address it chose. Builds b11450 before b12658 are affected. The project says never to run the RPC server on an open network. The record is November 26. The fix shipped November 24. It is not in KEV.
 - **New this update:** Upgrade [Argo Workflows](#argo-workflows-an-object-key-writes-outside-the-workspace) to **v4.1.4 or v4.0.12**. GitHub rates [GHSA-vm9v-p987-xm32](https://github.com/argoproj/argo-workflows/security/advisories/GHSA-vm9v-p987-xm32) CVSS 3.1 8.8 High: an object key writes a file outside the workspace, inside the workflow pod. v3 has no fix. VulnCheck published [CVE-2026-137566](https://www.cve.org/CVERecord?id=CVE-2026-137566) on November 26. The advisory is September 18. It is not in KEV.
 - **New this update:** Nothing to install for [Zodia Custody](#zodia-custody-client-contact-records-were-read). The custodian says probing started November 23, and that on November 24 an unauthorized party read public organisation details plus a business contact name and email for a small number of clients and employees. It says it has found no unauthorized transactions. No CVE is assigned. Do not approve an API change because a message cites the notice.
@@ -662,6 +668,76 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## LIVE555: a crafted description reads past a buffer
+
+<a id="live555-a-crafted-description-reads-past-a-buffer"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/live555.md):** [Detection](details/live555.md#detection) · [Remediation](details/live555.md#remediation) · [Verification](details/live555.md#verification) · [Timeline](details/live555.md#timeline)
+
+**CVEs:** [CVE-2026-137587](https://www.cve.org/CVERecord?id=CVE-2026-137587)
+
+**VulnCheck rates [CVE-2026-137587](https://www.cve.org/CVERecord?id=CVE-2026-137587) CVSS 4.0 7.1 High and CVSS 3.1 7.1 High.** The vectors are `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:L/VI:N/VA:H/SC:N/SI:N/SA:N` and `CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:H`. `parseVorbisOrTheoraConfigStr()` trusts a length from the description. A malicious RTSP server, or a proxied SDP description, can crash the client or leak heap memory. The record says LIVE555 Streaming Media **before 2026.08.25**. Live Networks' changelog for that date says a malicious SDP description could crash an RTP client. The record does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-27). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix released | 2026-08-25; time/TZ unknown | Changelog entry for `VorbisAudioRTPSource`. |
+| **Public announcement** | **2026-11-26; time/TZ unknown** | VulnCheck published the record. |
+| **Last updated** | **2026-11-27 00:00 EST (UTC−05:00)** | New item. The fix is 2026.08.25. |
+
+**Patch:** Rebuild against LIVE555 **2026.08.25 or later** and restart the player or proxy. Until then, do not open a stream from a server you do not trust.
+
+Sources: [CVE-2026-137587](https://www.cve.org/CVERecord?id=CVE-2026-137587), [changelog](https://download.live555.com/changelog.txt), [detailed guide](details/live555.md).
+
+---
+
+## Panorama Suite: an LDAP login reaches another role
+
+<a id="panorama-suite-an-ldap-login-reaches-another-role"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/panorama-suite.md):** [Detection](details/panorama-suite.md#detection) · [Remediation](details/panorama-suite.md#remediation) · [Verification](details/panorama-suite.md#verification) · [Timeline](details/panorama-suite.md#timeline)
+
+**CVEs:** [CVE-2026-136760](https://www.cve.org/CVERecord?id=CVE-2026-136760)
+
+**CODRA rates [CVE-2026-136760](https://www.cve.org/CVERecord?id=CVE-2026-136760) CVSS 4.0 7.1 High.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N`. A caller who already has a valid POSIX LDAP username and password can bypass some injection checks on the Web HMI or Desktop HMI and reach a role they were not given. Active Directory authentication is not affected. CODRA lists Panorama Suite 2020, 2022-SP1, 2023, 2025, and 2025 Updated Dec. 25 before update **PS-2510-02-1317**. The record does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-27). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-26; time/TZ unknown** | CODRA published the record. Bulletin BS-040. |
+| **Last updated** | **2026-11-27 00:00 EST (UTC−05:00)** | New item. The fix is PS-2510-02-1317. |
+
+**Patch:** Install update **PS-2510-02-1317 or later** on Panorama Suite 2025 Updated Dec. 25. The older lines have to move to that line first.
+
+Sources: [CVE-2026-136760](https://www.cve.org/CVERecord?id=CVE-2026-136760), [detailed guide](details/panorama-suite.md).
+
+---
+
+## WordPress: three plugins run a script from a field
+
+<a id="wordpress-three-plugins-run-a-script-from-a-field"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-nov26.md):** [Detection](details/wordpress-nov26.md#detection) · [Remediation](details/wordpress-nov26.md#remediation) · [Verification](details/wordpress-nov26.md#verification) · [Timeline](details/wordpress-nov26.md#timeline)
+
+**CVEs:** [CVE-2026-135005](https://www.cve.org/CVERecord?id=CVE-2026-135005), [CVE-2026-134711](https://www.cve.org/CVERecord?id=CVE-2026-134711), [CVE-2026-134474](https://www.cve.org/CVERecord?id=CVE-2026-134474)
+
+**Patchstack rates each CVSS 3.1 7.1 High.** The vector on all three is `CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:L`. SiteOrigin Widgets Bundle through **1.76.0** stores a script and is fixed in **1.77.0**. Listdom through **6.4.0** reflects one and is fixed in **6.5.0**. Opti-Behavior through **1.11.0** is DOM-based and is fixed in **1.11.1**. Patchstack's own pages call them Medium priority and say a visitor has to open the page. The records say no login is required. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-27) for any of the three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-26; time/TZ unknown** | Patchstack published the three records. |
+| **Last updated** | **2026-11-27 00:00 EST (UTC−05:00)** | New item. |
+
+**Patch:** Update SiteOrigin Widgets Bundle to **1.77.0**, Listdom to **6.5.0**, and Opti-Behavior to **1.11.1**. A stored script survives the update.
+
+Sources: [CVE-2026-135005](https://www.cve.org/CVERecord?id=CVE-2026-135005), [CVE-2026-134711](https://www.cve.org/CVERecord?id=CVE-2026-134711), [CVE-2026-134474](https://www.cve.org/CVERecord?id=CVE-2026-134474), [detailed guide](details/wordpress-nov26.md).
 
 ---
 
@@ -2382,18 +2458,21 @@ Sources: [ICSA-26-323-01](https://www.cisa.gov/news-events/ics-advisories/icsa-2
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/eclipse-ditto.md):** [Detection](details/eclipse-ditto.md#detection) · [Remediation](details/eclipse-ditto.md#remediation) · [Verification](details/eclipse-ditto.md#verification) · [Timeline](details/eclipse-ditto.md#timeline)
 
-**CVEs:** [CVE-2026-120753](https://www.cve.org/CVERecord?id=CVE-2026-120753)
+**CVEs:** [CVE-2026-120753](https://www.cve.org/CVERecord?id=CVE-2026-120753), [CVE-2026-135150](https://www.cve.org/CVERecord?id=CVE-2026-135150)
 
-**Eclipse rates [CVE-2026-120753](https://www.cve.org/CVERecord?id=CVE-2026-120753) CVSS 4.0 9.1 Critical.** Eclipse is the CNA. When pre-authentication is on, the Ditto gateway reads the subject from a query parameter as well as from the header a trusted proxy sets. The default Helm chart turns pre-authentication on and lets any `Authorization: Bearer` request through. A request with an invalid token and `?x-ditto-pre-authenticated=<subject>` is treated as that subject, and the token is not checked. Affected builds are **1.1.0 before 3.8.15** and **3.9.0 before 3.9.9**. The fixes are **3.8.15** and **3.9.9**. The project does not report exploitation.
+**Eclipse rates [CVE-2026-120753](https://www.cve.org/CVERecord?id=CVE-2026-120753) CVSS 4.0 9.1 Critical.** Eclipse is the CNA. When pre-authentication is on, the Ditto gateway reads the subject from a query parameter as well as from the header a trusted proxy sets. The default Helm chart turns pre-authentication on and lets any `Authorization: Bearer` request through. A request with an invalid token and `?x-ditto-pre-authenticated=<subject>` is treated as that subject, and the token is not checked. Affected builds are **1.1.0 before 3.8.15** and **3.9.0 before 3.9.9**. The fixes for that one are **3.8.15** and **3.9.9**.
 
-**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**Those builds leave a bypass.** [CVE-2026-135150](https://www.cve.org/CVERecord?id=CVE-2026-135150), published November 25, is the same score: the nginx and Ingress that ship with Ditto forwarded a client-supplied header, so the impersonation works without the query parameter. The record says **1.1.0 through 3.9.9**. The fixes are **3.8.16** and **3.9.10**. The project does not report exploitation of either.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-27) for either CVE. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| **Public announcement and fixes** | **2026-11-19; time/TZ unknown** | GHSA-chwq-wg27-qvfr. |
-| **Last updated** | **2026-11-19 19:01 EST (UTC−05:00)** | New item. Upgrade the gateway. |
+| Public announcement and fixes | 2026-11-19; time/TZ unknown | GHSA-chwq-wg27-qvfr. 3.8.15 and 3.9.9. |
+| **Bypass and fixes** | **2026-11-25; time/TZ unknown** | CVE-2026-135150. Fixed in 3.8.16 and 3.9.10. |
+| **Last updated** | **2026-11-27 00:00 EST (UTC−05:00)** | The November 19 floors leave the bypass. |
 
-**Patch:** Upgrade the gateway to **3.8.15 or 3.9.9** or later and roll the pods. A proxy that overwrites the header does not stop the query parameter. The upgrade does not show whether a request already acted as another subject.
+**Patch:** Upgrade the gateway to **3.8.16 or 3.9.10** or later and roll the pods. 3.8.15 and 3.9.9 fix the query parameter and leave the header. The upgrade does not show whether a request already acted as another subject.
 
 Sources: [GHSA-chwq-wg27-qvfr](https://github.com/eclipse-ditto/ditto/security/advisories/GHSA-chwq-wg27-qvfr), [detailed guide](details/eclipse-ditto.md).
 
@@ -2405,7 +2484,7 @@ Sources: [GHSA-chwq-wg27-qvfr](https://github.com/eclipse-ditto/ditto/security/a
 
 **CVEs:** [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058)
 
-**JTL rates [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058) CVSS 4.0 9.2 Critical and CVSS 3.1 9.0.** JTL's note, dated November 12, says the web installer keeps running after the shop is installed and is not locked. A request with no login can take the shop over. The fixes are **Shop 5.8.4, 5.7.6, 5.6.6, and 5.5.5**. The 5.8 line is affected from 5.8.0 through 5.8.3. The CVE record was published November 19. The note is in German. JTL's reference is SHOP-9985.
+**JTL rates [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058) CVSS 4.0 9.2 Critical and CVSS 3.1 9.0.** JTL's note, dated November 12, says the web installer keeps running after the shop is installed and is not locked. A request with no login can take the shop over. The fixes are **Shop 5.8.4, 5.7.6, 5.6.6, and 5.5.5**. The note says **5.0.0 through 5.8.3** are affected where `install/` is still reachable, and that **5.0 through 5.4 are no longer maintained and get no patch**. The CVE record, published November 19, lists only the four supported lines. JTL says it knows of no exploitation as of November 12. The note is in German. JTL's reference is SHOP-9985.
 
 **CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -2413,9 +2492,9 @@ Sources: [GHSA-chwq-wg27-qvfr](https://github.com/eclipse-ditto/ditto/security/a
 |---|---|---|
 | JTL note | 2026-11-12; page modified 09:29:30 UTC | Fixed in the four builds. |
 | **CVE record** | **2026-11-19 12:18:39 UTC** | Published. |
-| **Last updated** | **2026-11-19 19:01 EST (UTC−05:00)** | New item. Update Shop. |
+| **Last updated** | **2026-11-27 00:00 EST (UTC−05:00)** | The note covers 5.0 through 5.4, which get no patch. |
 
-**Patch:** Update Shop to **5.8.4, 5.7.6, 5.6.6, or 5.5.5** or later. Until then, remove or block the web installer. The update does not show whether a request already changed an administrator.
+**Patch:** Update Shop to **5.8.4, 5.7.6, 5.6.6, or 5.5.5** or later. A 5.0 through 5.4 shop has to move to one of those lines. Until then, remove or block the web installer. The update does not delete an existing `install/` directory and does not show whether a request already changed an administrator.
 
 Sources: [JTL note](https://www.jtl-software.com/de/security/sicherheitshinweis-web-installer_nicht_gesperrt/), [detailed guide](details/jtl-shop.md).
 
