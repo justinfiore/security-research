@@ -1,5 +1,7 @@
 # Panorama Suite: an LDAP login reaches another role
 
+**Last updated:** 2026-11-27 (America/New_York)
+
 [Main guide](../black-october-2026.md#panorama-suite-an-ldap-login-reaches-another-role)
 
 **CODRA rates [CVE-2026-136760](https://www.cve.org/CVERecord?id=CVE-2026-136760) CVSS 4.0 7.1 High.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N`. The weakness is CWE-90. When the Web HMI or Desktop HMI authenticates through POSIX LDAP, a caller who already knows a valid directory username and password can bypass some of the injection checks and reach an area, a business role, or a permission they were not given. LDAP Active Directory authentication is not affected, and an installation that does not use POSIX LDAP is outside it. CODRA lists Panorama Suite **2020**, **2022-SP1**, **2023**, **2025**, and **2025 Updated Dec. 25 before update PS-2510-02-1317**. The fix for the 2025 line is update **PS-2510-02-1317 or later**. The older lines have to move to that line first. The record does not report exploitation.

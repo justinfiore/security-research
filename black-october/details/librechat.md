@@ -1,5 +1,7 @@
 # LibreChat: a login request stops the server
 
+**Last updated:** 2026-11-26 (America/New_York)
+
 [Main guide](../black-october-2026.md#librechat-a-login-request-stops-the-server)
 
 **GitHub rates [GHSA-572g-g8hc-w8c9](https://github.com/LibreChat-AI/LibreChat/security/advisories/GHSA-572g-g8hc-w8c9) High, CVSS 3.1 7.5.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H`. VulnCheck's [CVE-2026-137586](https://www.cve.org/CVERecord?id=CVE-2026-137586) scores the same issue CVSS 3.1 7.5 and CVSS 4.0 8.7 (`CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N`). The GitHub weakness is CWE-248. The CVE record says CWE-1287. With LDAP login enabled, `POST /api/auth/login` passes the JSON `password` to the LDAP bind without checking its type. A non-zero number or `true`, sent with an email that exists in the directory, makes ldapjs throw inside a socket callback. LibreChat's `uncaughtException` handler then calls `process.exit(1)`. One request with no login stops the process, and the same request stops it again after each restart. Local login is not affected. LDAP is off unless `LDAP_URL` and `LDAP_USER_SEARCH_BASE` are set. The advisory says it reproduced this on **v0.8.8** and **v0.7.9**, and that versions between them were not tested. The patched release is **v0.8.9**, published November 17, 2026. The CVE record says **0.7.3 before 0.8.9**. The GitHub page's affected range is `>= 0.7.9, <= 0.8.8`. The page's CVE field says "No known CVE." No source read for this entry reports exploitation.

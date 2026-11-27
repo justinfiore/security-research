@@ -1,5 +1,7 @@
 # Argo Workflows: an object key writes outside the workspace
 
+**Last updated:** 2026-11-26 (America/New_York)
+
 [Main guide](../black-october-2026.md#argo-workflows-an-object-key-writes-outside-the-workspace)
 
 **GitHub rates [GHSA-vm9v-p987-xm32](https://github.com/argoproj/argo-workflows/security/advisories/GHSA-vm9v-p987-xm32) High, CVSS 3.1 8.8.** The vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`. VulnCheck's [CVE-2026-137566](https://www.cve.org/CVERecord?id=CVE-2026-137566) scores the same issue CVSS 3.1 8.8 and CVSS 4.0 8.7 (`CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`). The weakness is CWE-22. When a workflow downloads a directory artifact from S3, GCS, Azure Blob, or OSS, the executor joins the object key onto the local path. A key that contains `../` writes a file outside that workspace, inside the workflow pod, and the advisory says that write can run code. The writer needs access to the bucket or prefix the workflow reads, or the ability to name the artifact source. In a shared bucket, a workflow author can choose the output keys. **v4.1.0 before v4.1.4**, **v4.0.0 before v4.0.12**, and **every v3 release** are affected. v3 is not being patched. The GitHub page still says "No known CVE"; the CVE record is the newer statement. No source read for this entry reports exploitation.

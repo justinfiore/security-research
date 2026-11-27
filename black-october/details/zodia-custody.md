@@ -1,5 +1,7 @@
 # Zodia Custody: client contact records were read
 
+**Last updated:** 2026-11-26 (America/New_York)
+
 [Main guide](../black-october-2026.md#zodia-custody-client-contact-records-were-read)
 
 **No vendor or CNA has published a CVSS score, and no CVE is assigned.** Zodia Custody's chief executive says that on November 23 the company detected attempts to probe its platform, took the business-to-business API offline as a precaution, added security measures, and restored it. On November 24, monitoring found that an unauthorized party had read limited client information: organisation details that were already public and, for a small number of clients and employees, a business contact name and email address. Zodia says it contacted clients and informed regulators, and that the investigation so far has found no unauthorized transactions. The statement does not say how the party got in, how many people are affected, or whether private keys were read. It does not say the API was the way in.

@@ -1,5 +1,7 @@
 # llama.cpp: an RPC peer writes below a buffer
 
+**Last updated:** 2026-11-26 (America/New_York)
+
 [Main guide](../black-october-2026.md#llamacpp-an-rpc-peer-writes-below-a-buffer)
 
 **VulnCheck rates [CVE-2026-137567](https://www.cve.org/CVERecord?id=CVE-2026-137567) CVSS 3.1 9.8 Critical and CVSS 4.0 9.3.** The vectors are `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H` and `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. The weakness is CWE-787, an out-of-bounds write, in the ggml RPC server. A peer that can open the port learns a buffer's address with `BUFFER_GET_BASE`, then sends `RPC_CMD_COPY_TENSOR` with a destination that has no elements and a pointer below that buffer. The copy then writes a heap address the peer chose. VulnCheck says that can crash the server or run code. The RPC protocol has no login. Builds **b11450 before b12658** are affected. The project does not score it. ggml-org's [RPC README](https://github.com/ggml-org/llama.cpp/blob/master/tools/rpc/README.md) says the backend is a proof of concept, fragile and insecure, and says never to run the RPC server on an open network or in a sensitive environment. The default bind is `127.0.0.1:50052`. Binding anywhere else prints a warning that the feature is not secure. No source read for this entry reports exploitation.

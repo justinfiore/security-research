@@ -1,5 +1,7 @@
 # Bazarr: a Windows request reads the config
 
+**Last updated:** 2026-11-26 (America/New_York)
+
 [Main guide](../black-october-2026.md#bazarr-a-windows-request-reads-the-config)
 
 **GitHub rates [GHSA-v569-4w84-grxq](https://github.com/morpheus65535/bazarr/security/advisories/GHSA-v569-4w84-grxq) High, CVSS 3.1 7.5.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N`. VulnCheck's [CVE-2026-137585](https://www.cve.org/CVERecord?id=CVE-2026-137585) scores the same issue CVSS 3.1 7.5 and CVSS 4.0 8.7 (`CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N`). The weakness is CWE-22. On Windows, the UI catch-all serves any path that starts with `workbox-` before Basic or Forms authentication, and it passes that path to `send_file`. Windows normalizes `..` before the lookup, so a request with no login reads a file outside `frontend/build`. The advisory says the Windows service normally runs as LocalSystem, and that `config.yaml` holds the Bazarr, Sonarr, Radarr, Plex, proxy, and provider credentials. It claims no file modification and no code execution. **1.4.4 before 1.6.1-beta.29** are affected. The fix commit is August 23, 2026, and **v1.6.1-beta.29** shipped August 24. Stable **v1.6.1** shipped September 15 and **v1.6.2** shipped September 26, both after that commit. The GitHub page still says "No known CVE." The advisory says the flaw is on Windows. No source read for this entry reports exploitation.

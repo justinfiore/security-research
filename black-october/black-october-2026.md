@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [RealVNC: a UDP connection runs code before login](#realvnc-a-udp-connection-runs-code-before-login)
+- [Chroma: billing metadata was read](#chroma-billing-metadata-was-read)
+- [SAP: suspicious activity on GitHub](#sap-suspicious-activity-on-github)
 - [LIVE555: a crafted description reads past a buffer](#live555-a-crafted-description-reads-past-a-buffer)
 - [Panorama Suite: an LDAP login reaches another role](#panorama-suite-an-ldap-login-reaches-another-role)
 - [WordPress: three plugins run a script from a field](#wordpress-three-plugins-run-a-script-from-a-field)
@@ -364,6 +367,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Nothing to install for [Chroma](#chroma-billing-metadata-was-read). Chroma says that on November 26 someone read billing metadata: team names and identifiers, billing state, and database size and usage figures. It says it does not believe payment data or customer data was accessed, and that customers have nothing to do. No CVE is assigned. Do not paste an API key because a message cites the notice.
+- **New this update:** Nothing to install for [SAP](#sap-suspicious-activity-on-github). SAP told BleepingComputer on November 27 that it found suspicious activity and has found no evidence of unauthorized access to customer business data. Reports that tokens were stolen and source code on GitHub was changed come from Der Spiegel and dpa, not from that statement. No CVE is assigned. This is not the November patch day.
+- **New this update:** Update [RealVNC](#realvnc-a-udp-connection-runs-code-before-login). RealVNC rates [RVNC-2026-001](https://help.realvnc.com/hc/en-us/articles/40824627217949-Security-Advisory-UDP-based-connection-vulnerability) Critical, CVSS 9.8: a UDP connection runs code before login. MITRE published [CVE-2026-137738](https://www.cve.org/CVERecord?id=CVE-2026-137738) on November 27 at the same score. Server goes to **7.19.1**, Viewer to **8.6.2**, Classic Viewer to **7.18.3**. TCP-only direct connections are outside it. The advisory is November 20. It is not in KEV.
 - **New this update:** Rebuild a [LIVE555](#live555-a-crafted-description-reads-past-a-buffer) player or proxy against **2026.08.25 or later**. VulnCheck rates [CVE-2026-137587](https://www.cve.org/CVERecord?id=CVE-2026-137587) CVSS 4.0 7.1 and CVSS 3.1 7.1: a crafted stream description reads past a buffer and can crash the client. Anything before 2026.08.25 is affected. Live Networks fixed it on August 25. The record is November 26. It is not in KEV.
 - **New this update:** Install [Panorama Suite](#panorama-suite-an-ldap-login-reaches-another-role) update **PS-2510-02-1317 or later**. CODRA rates [CVE-2026-136760](https://www.cve.org/CVERecord?id=CVE-2026-136760) CVSS 4.0 7.1: a POSIX LDAP login reaches a role it was not given. Active Directory authentication is outside it. 2020, 2022, 2023, and 2025 have to move to the December 2025 line first. The record is November 26. It is not in KEV.
 - **New this update:** Update three [WordPress](#wordpress-three-plugins-run-a-script-from-a-field) plugins. Patchstack rates each CVSS 3.1 7.1: SiteOrigin Widgets Bundle to **1.77.0**, Listdom to **6.5.0**, and Opti-Behavior to **1.11.1**. A visitor has to open the page. The records are November 26. None is in KEV. A stored script survives the update.
@@ -424,7 +430,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade [SurrealDB](#surrealdb-a-script-skips-the-function-check) to **4.0.0 or later** and restart. VulnCheck rates [CVE-2026-134292](https://www.cve.org/CVERecord?id=CVE-2026-134292) CVSS 4.0 9.3 Critical and CVSS 3.1 9.8: a JavaScript script calls a built-in function the user was denied. SurrealDB's own advisory rates the same issue High and names no CVE. 1.0.0 before 4.0.0 is affected. It is not in KEV.
 - **New this update:** Remove [Idunno.AntiCsrf](#aspnet-idunnoanticsrf-runs-code-from-a-form-field). Mandiant rates [CVE-2026-131914](https://www.cve.org/CVERecord?id=CVE-2026-131914) CVSS 4.0 9.3 Critical: a form field is deserialized before it is checked, and a request with no login runs code as the IIS worker. Every version through 0.9.1 Beta, the last release, is affected, and there is no patch. Mandiant says exploitation has been observed and names no indicator. It is not in KEV. Removing the module does not undo a request that already ran.
 - **New this update:** Update [Nexter Blocks Pro](#wordpress-nexter-blocks-pro-registers-an-administrator) to **5.0.11 or later**. Wordfence rates [CVE-2026-125294](https://www.cve.org/CVERecord?id=CVE-2026-125294) CVSS 3.1 9.8 Critical: a registration with no login creates an administrator, on a site that allows user registration and shows the Login | Register block. Every version through 5.0.10 is affected. The free plugin is not named. It is not in KEV. The update does not remove an administrator account that was already created.
-- **New this update:** Upgrade [Ghostscript](#ghostscript-upload2shell---a-document-runs-commands) to **10.08.0 or later**, and restart whatever renders files with it. VulnCheck rates [CVE-2026-125396](https://www.cve.org/CVERecord?id=CVE-2026-125396) CVSS 4.0 8.5 High: a document turns off Ghostscript's `-dSAFER` sandbox and runs commands as the renderer. pwn.ai showed that through a shared print queue, a Roundcube attachment, and a WordPress upload. Debian 13 is `ghostscript` **10.05.1~dfsg-1+deb13u3** and Debian 12 is **10.0.0~dfsg-11+deb12u9**. Ubuntu has no package. SUSE lists one for SLES 15 SP7 in QA only, and AlmaLinux's builds are in testing. It is not in KEV. WordPress 7.0.4 closes only WordPress's own upload path.
+- **New this update:** On [Red Hat Enterprise Linux](#ghostscript-upload2shell---a-document-runs-commands), install the November 25 Ghostscript erratum and restart the workers. RHEL 10 is `ghostscript` **10.02.1-17.el10_3.1**, RHEL 9 is **9.54.0-20.el9_9.1**, and RHEL 8 is **9.27-21.el8_10**. Rocky and Oracle republish them. Ubuntu and SUSE still have no released package. It is not in KEV.
 - **New this update:** Upgrade [Postgres Enterprise Manager](#postgres-enterprise-manager-an-agent-reads-the-server-and-a-user-becomes-superuser) to **10.6.1 or later**. EnterpriseDB rates [CVE-2026-132658](https://www.cve.org/CVERecord?id=CVE-2026-132658), [CVE-2026-132659](https://www.cve.org/CVERecord?id=CVE-2026-132659), and [CVE-2026-132660](https://www.cve.org/CVERecord?id=CVE-2026-132660) CVSS 4.0 9.4 Critical. An agent certificate from one monitored host reads and writes files on the PEM server, and can schedule jobs on every other agent. A PEM user who can reach the backend database runs SQL as a superuser. PEM 9.x, including 9.8, gets no fix. None is in KEV. If a monitored host may have been compromised, reissue the PEM certificate authority after the upgrade.
 - **New this update:** Upgrade [NukeViet](#nukeviet-a-contact-message-runs-script-in-the-administrators-browser) to **4.6.01 or later**. GitHub rates [CVE-2026-94565](https://www.cve.org/CVERecord?id=CVE-2026-94565) CVSS 3.1 9.3 Critical: a contact message runs script in the administrator's browser. The 3.x line and 4.x before 4.6.01 are affected. It is not in KEV. The upgrade does not remove an administrator account that was already created.
 - **New this update:** On a [GL.iNet](#glinet-the-cloud-service-installed-malware-on-routers-and-kvms) router or KVM, install the security firmware for that model. GL.iNet's November 23 notice says the firmware disables the known malware and removes the related files, and that a factory reset alone does not install the fixes. The November 24 staff notice adds **4.5.24** for GL-A1300 and GL-X300B and **4.3.31** for twelve older models, on top of the **4.11.1** through **4.7.14** router floors and the **1.10.3** and **1.8.7** KVM floors. If access is known or suspected, install it without keeping settings. A device that connected to GoodCloud should replace passwords and keys stored on it. No CVE is assigned.
@@ -450,7 +456,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade [Splunk Enterprise](#splunk-an-empty-secret-runs-a-search-before-login) to **10.6.1, 10.4.5, 10.2.9, 10.0.12, or 9.4.17**. Splunk rates [CVE-2026-76536](https://www.cve.org/CVERecord?id=CVE-2026-76536) CVSS 3.1 9.4: an empty clustering secret lets a request with no login change the configuration. A second, 9.1, runs searches. SOAR goes to **8.8.0** and Enterprise Security to **8.7.0**. None is in KEV.
 - **New this update:** Update [OpenPLC Runtime](#openplc-a-race-creates-an-administrator-before-login) to **4.3.0 or later**. CISA rates [CVE-2026-126088](https://www.cve.org/CVERecord?id=CVE-2026-126088) CVSS 4.0 9.2: two requests at once create administrator accounts, with no login. 4.2.4 and earlier are affected. It is not in KEV.
 - **New this update:** Upgrade [Eclipse Ditto](#eclipse-ditto-a-query-parameter-picks-the-user) to **3.8.15 or 3.9.9**. Eclipse rates [CVE-2026-120753](https://www.cve.org/CVERecord?id=CVE-2026-120753) CVSS 4.0 9.1: a query parameter picks the user, and the default chart lets a Bearer request through with no login. It is not in KEV.
-- **New this update:** Update [JTL-Shop](#jtl-shop-the-installer-still-runs-after-the-shop-is-installed) to **5.8.4, 5.7.6, 5.6.6, or 5.5.5**. JTL rates [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058) CVSS 4.0 9.2: the web installer still runs after the shop is installed. The note is November 12. The record is November 19. It is not in KEV.
+- **New this update:** Update [JTL-Shop](#jtl-shop-the-installer-still-runs-after-the-shop-is-installed) to **5.8.5, 5.7.7, 5.6.7, or 5.5.6**. The November 12 floors leave four notes from November 24. JTL rates [CVE-2026-133939](https://www.cve.org/CVERecord?id=CVE-2026-133939) and [CVE-2026-133938](https://www.cve.org/CVERecord?id=CVE-2026-133938) CVSS 3.1 9.3 and CVSS 4.0 8.6: a link runs script in a logged-in backend browser. [CVE-2026-133941](https://www.cve.org/CVERecord?id=CVE-2026-133941) is the same scores and starts at 5.6.0. [CVE-2026-133940](https://www.cve.org/CVERecord?id=CVE-2026-133940) is CVSS 4.0 8.2: a backup file under `export/backup` downloads with no login, and the update blocks that folder only on Apache. Block the folder on the server too. JTL says it knows of no successful download. None is in KEV. The installer flaw stays fixed at the November 12 builds.
 - **New this update (CISA KEV):** Update [vCenter](#vmware-vcenter-a-network-request-skips-login) to **9.1.1.0200, 9.0.2.0200, or 8.0 U3m**. Broadcom rates [CVE-2026-123890](https://www.cve.org/CVERecord?id=CVE-2026-123890) CVSS 3.1 9.8 Critical: a network request skips login and opens a session as `administrator@vsphere.local`. CISA added it on November 20, due November 23, and requires forensic triage. Google says ARMORY CASTLE used it in early September, before the patch. These builds are not a Quick Patch, and 8.0 U3m and 9.0.2.0200 block an upgrade to Cloud Foundation 9.1.1. VMware Tools for Windows goes to **13.1.5.0** on 13.x and **12.5.5** on 12.3.x, 12.4.x, and 12.5.x. The November 20 matrix does not list 11.x. vCenter 7.0 has no public fix. ESX does not need an update. A vCenter that was unpatched in September should be checked for an SSO account you did not create.
 - **New this update:** Upgrade [PHP](#php-the-november-19-security-releases) to **8.6.0, 8.5.13, 8.4.28, 8.3.37, or 8.2.36** and restart every worker. PHP rates seven flaws CVSS 4.0 9.2 Critical. Two are fixed only on 8.5 and 8.6. The October 21 builds leave all seven in place. Depthfirst says one of them, the interrupted session write, is still present. PHP's advisory says the fix truncates the file first. None of the seven is in KEV. This is not PHP2Shell.
 - **New this update:** Upgrade [SmarterMail](#smartermail-an-application-password-is-guessable) to a current build. **9817** is the installer. The Zero Day Initiative rates [CVE-2026-126969](https://www.cve.org/CVERecord?id=CVE-2026-126969) CVSS 3.0 9.1 Critical: application passwords were guessable, with no login. Two more are 8.8 and need a login. ZDI says Build 9735, from August 27, is the fix. Do not stop there. Application passwords from before 9735 have to be reissued. None is in KEV.
@@ -474,7 +480,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade on-premises [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) to **2026.4 HF3, build 2026.4.1.39**, and upgrade every Agent and Probe to that build. N-able published seventeen more flaws in that build on November 17, three of them CVSS 4.0 Critical. [CVE-2026-129272](https://www.cve.org/CVERecord?id=CVE-2026-129272) is 9.3: an Agent left on an older build can still be impersonated, with no login. Also move the Patch Management Engine to 2.14.4.5829 or later. None of the seventeen is in KEV. The upgrade does not remove a miner.
 - **New this update:** Upgrade [Dell PowerStore](#dell-powerstore-a-file-service-request-runs-code-before-login) to PowerStoreT OS **5.1.0.0-2798105 or later**. Dell rates [DSA-2026-479](https://www.dell.com/support/kbdoc/en-us/000527640/dsa-2026-479-dell-powerstore-t-security-update-for-multiple-vulnerabilities) Critical and seven of its flaws CVSS 3.1 9.8: [CVE-2026-116443](https://www.cve.org/CVERecord?id=CVE-2026-116443) is a TFTP overflow that needs no login. The advisory is dated October 30 and covers 5.1.x before that build. None is in KEV. The upgrade does not show whether a request already ran code.
 - **New this update:** Update [Deno](#macos-a-different-spelling-of-a-file-name-passes-a-deny-rule) to **2.7.14 or later** on a Mac. Deno rates [CVE-2026-49401](https://www.cve.org/CVERecord?id=CVE-2026-49401) CVSS 3.1 7.3 High: a `--deny-read` rule misses a file whose name is spelled another way, because APFS treats the two as one file. CERT/CC published the note on November 16. Linux and Windows are not affected. It is not in KEV.
-- **New this update:** Upgrade [Cloud Commander](#cloud-commander-a-rename-request-moves-any-file-before-login) to **19.21.4 or later** and restart it. VulnCheck rates [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072) CVSS 3.1 9.1 Critical: `PUT /rename` runs before login and moves any file the process can reach, so `--auth` and `--root` do not stop it. The fix shipped on October 25. It is not in KEV. The upgrade does not put a moved file back.
+- **New this update:** Upgrade [Cloud Commander](#cloud-commander-a-rename-request-moves-any-file-before-login) to **19.24.6 or later** and restart it. 19.24.0 leaves two later socket fixes. v19.24.3 rejects a null config-socket payload, and v19.24.6 rejects a password that is not a string. Neither has a CVE. The rename flaw stays fixed at 19.21.4. It is not in KEV.
 - **New this update:** Deploy [Go1 CMS](#go1-cms-a-guest-request-rewrites-any-record) commit `ead8da3` or later and restart it. VulnCheck rates [CVE-2026-130071](https://www.cve.org/CVERecord?id=CVE-2026-130071) CVSS 3.1 9.8 Critical: a guest request rewrites any record, including a user. The commit is from September 17 and there is no release. It is not in KEV. The deploy does not undo a record already changed.
 - **New this update:** Deploy [Frappe Ghost](#frappe-ghost-a-guest-session-becomes-any-account) commit `641db34` or later and restart it. This is the Frappe app by muneeb141, not the Ghost publishing platform. VulnCheck rates [CVE-2026-130070](https://www.cve.org/CVERecord?id=CVE-2026-130070) CVSS 4.0 9.3 Critical: a guest session sets `bypass_otp` and receives tokens for any account. The commit is from October 20 and there is no release. It is not in KEV. Revoke tokens you cannot account for.
 - **New this update:** Upgrade [Wiki.js](#wikijs-a-user-manager-takes-the-administrator-account) to **2.5.315 or later** and restart it. GitHub rates [CVE-2026-120698](https://www.cve.org/CVERecord?id=CVE-2026-120698) CVSS 3.1 8.8 High: an account with `manage:users` sets the administrator password and turns off its second factor. [CVE-2026-120697](https://www.cve.org/CVERecord?id=CVE-2026-120697) is 8.7: a page stores script that runs when someone opens it. The release is from September 21. Neither is in KEV. Reset the administrator password.
@@ -581,7 +587,7 @@ This report covers the major disclosures most relevant to developers and operato
 - **New this update:** Upgrade [zenoh-pico](#eclipse-zenoh-a-timestamp-corrupts-memory) to **1.10.2 or later** and restart. Eclipse rates [CVE-2026-130603](https://www.cve.org/CVERecord?id=CVE-2026-130603) CVSS 4.0 9.3: a crafted timestamp writes past a fixed buffer. 0.7.2-rc before 1.10.2 is affected. The full Zenoh implementation is not this flaw. It is not in KEV.
 - **New this update:** Apply [Oracle's November 17 Critical Security Patch Update](#oracle-november-2026-critical-security-patch-update). Oracle rates two APEX flaws and one REST Data Services flaw CVSS 3.1 9.8, and six flaws in Access Manager, WebLogic Server, Platform Security for Java, and Business Intelligence 10.0. All of them need no login. The October CPU does not include them. None is in KEV.
 - **New this update:** If a site loads [Optimizely](#optimizely-a-flaw-in-experimentation-served-malware-to-customer-sites) Web Experimentation, check what it served on November 16. Optimizely says an attacker used a flaw in Experimentation to add JavaScript to some customer projects, and that it has fixed the flaw and removed the code. Scott Helme counted 178 organizations. The script skimmed cards and swapped wallet addresses. No CVE is assigned.
-- **New this update:** If a Python environment installed [`agent-framework` 1.26.1 or 1.26.2](#pypi-agent-framework-1261-and-1262-steal-credentials), pin **1.26.0**, delete the cached wheels, and rotate the credentials that environment could read. GitHub lists both as critical malware, with no CVE. A `.pth` file runs at every Python start. Both versions are gone from PyPI, and a cache can still install them. `agent-framework-core` is not this package.
+- **New this update:** If a Python environment installed [`agent-framework` 1.26.1 or 1.26.2](#pypi-agent-framework-1261-and-1262-steal-credentials), rebuild it from a clean image. Microsoft's November 25 post says not to downgrade in place. Pin **1.26.0** and hold there, including where neither version was installed. GitHub lists both as critical malware, with no CVE. A `.pth` file runs at every Python start. The post does not say the publishing credential was revoked. `agent-framework-core` is not this package.
 - **New this update:** Install the [NVIDIA Linux driver](#nvidia-linux-driver-a-gpu-container-reaches-root-on-the-host) **615.71.09 or later** and reboot. NVIDIA rates CVE-2026-47591 and CVE-2026-47501 CVSS 3.1 7.8: an unprivileged container with the GPU passed through can reach root on the host. Stealthium says 610.57.04 fixes only the first. Neither is in KEV.
 - **New this update:** Install [Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, or 27.0.1.1](#openjdk-java4shell---a-base64-string-corrupts-memory), or 8u513 for the Java 8 performance pack, and restart. Oracle rates CVE-2026-114938 CVSS 3.1 8.1. Calif rates the same flaw, Java4Shell, CVSS 4.0 9.2: a Base64 string corrupts memory in the hardware decoder, on x86-64 with AVX-512 VBMI. CISA published an alert and did not add it to KEV. A bundled JVM does not move with the system JDK.
 - **New this update (CISA KEV):** Upgrade [Apache Roller](#apache-roller-an-atom-entry-reads-a-file-and-a-link-creates-an-administrator) to **6.1.7 or later** if it is not there already. Apache says CVE-2026-129448, CVSS 3.1 9.8, is being exploited, and CISA added it on November 20, due November 23. It is the same flaw as CVE-2026-82384 and covers 4.0.0 through 6.1.5. Turning XML-RPC off in the admin UI does not close it. CVE-2026-82384 is not listed separately.
@@ -668,6 +674,78 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## RealVNC: a UDP connection runs code before login
+
+<a id="realvnc-a-udp-connection-runs-code-before-login"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/realvnc.md):** [Detection](details/realvnc.md#detection) · [Remediation](details/realvnc.md#remediation) · [Verification](details/realvnc.md#verification) · [Timeline](details/realvnc.md#timeline)
+
+**CVEs:** [CVE-2026-137738](https://www.cve.org/CVERecord?id=CVE-2026-137738)
+
+**RealVNC rates [RVNC-2026-001](https://help.realvnc.com/hc/en-us/articles/40824627217949-Security-Advisory-UDP-based-connection-vulnerability) Critical, CVSS 9.8.** The advisory, published November 20, said the CVE ID was pending. MITRE published [CVE-2026-137738](https://www.cve.org/CVERecord?id=CVE-2026-137738) on November 27 and scores it CVSS 3.1 9.8 Critical. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. A UDP connection can run code before login, or crash the software. RealVNC says that on certain platforms the code runs as root, and it does not name those platforms. Cloud connectivity and direct connections are affected, including offline and on-premises installs. TCP-only direct connections are not. RealVNC says it is not aware of active exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-27). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-20; time/TZ unknown** | RVNC-2026-001. CVE pending. Critical, CVSS 9.8. |
+| **CVE record** | **2026-11-27; time/TZ unknown** | MITRE published CVE-2026-137738. CVSS 3.1 9.8. |
+| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | New item. The advisory is November 20. |
+
+**Patch:** Update RealVNC Server to **7.19.1**, Viewer to **8.6.2**, the Connect App to **8.6.2**, Classic Viewer to **7.18.3**, and On-Demand Assist to **3.5.0**. Viewer for iOS and Android goes to **4.9.6**. Server for iOS goes to **2.8.2** and Server for Android to **2.8.4**. Remove older copies of On-Demand Assist. Until then, TCP-only direct connections are the path the advisory says is not exposed.
+
+Sources: [RVNC-2026-001](https://help.realvnc.com/hc/en-us/articles/40824627217949-Security-Advisory-UDP-based-connection-vulnerability), [CVE-2026-137738](https://www.cve.org/CVERecord?id=CVE-2026-137738), [detailed guide](details/realvnc.md).
+
+---
+
+## Chroma: billing metadata was read
+
+<a id="chroma-billing-metadata-was-read"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/chroma.md):** [Detection](details/chroma.md#detection) · [Remediation](details/chroma.md#remediation) · [Verification](details/chroma.md#verification) · [Timeline](details/chroma.md#timeline)
+
+**CVEs:** None assigned. Chroma's status page does not publish a score.
+
+**Chroma says someone read billing metadata.** The status incident, marked Identified at 2026-11-27 05:15 UTC, says the access was found the night of November 26, was revoked, and that Chroma does not believe payment data or customer data was accessed. The fields it lists are team UUID, team name, team slug, and billing state, plus per-database identifiers, last size in bytes, and the log positions Orb uses to calculate bills. The hosted API, dashboard, Package Search MCP, and embedding service were taken down. The page scheduled a return for 9am ET on November 27 and says customers have nothing to do.
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Read identified | 2026-11-26, "tonight"; time unknown | Chroma's wording. |
+| **Public notice** | **2026-11-27 05:15 UTC** | Status incident. Service down. No customer action. |
+| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | New item. |
+
+**Patch:** Nothing to install and nothing to rotate. Do not paste an API key because a message cites the notice.
+
+Sources: [Chroma status incident](https://status.trychroma.com/cmwyj38t504rw0wpda1zcg9a4), [detailed guide](details/chroma.md).
+
+---
+
+## SAP: suspicious activity on GitHub
+
+<a id="sap-suspicious-activity-on-github"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/sap-github.md):** [Detection](details/sap-github.md#detection) · [Remediation](details/sap-github.md#remediation) · [Verification](details/sap-github.md#verification) · [Timeline](details/sap-github.md#timeline)
+
+**CVEs:** None assigned.
+
+**SAP confirmed suspicious activity and says it has found no evidence of unauthorized access to customer business data.** That sentence is what SAP told BleepingComputer, in an article timestamped 2026-11-27 04:56 AM, and what it told SecurityWeek. Der Spiegel reported an internal memo calling the incident "Project Granite," and unnamed sources told Der Spiegel and dpa that employee tokens were stolen and used to copy and modify source code on GitHub, and that SAP then limited GitHub access, suspended automated builds, and replaced signing keys. Those details are not in SAP's statement. There is no customer patch in that statement. This is not the [November patch day](#sap-november-patch-day---unauthenticated-code-execution-in-web-dispatcher-icm-and-gateway).
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Der Spiegel report | 2026-11-26; time/TZ unknown | Internal memo. Token and source-code claims are from unnamed sources. |
+| **SAP statement** | **2026-11-27 04:56 AM; timezone of the article timestamp not stated** | Suspicious activity confirmed. No evidence of access to customer business data. |
+| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | New item. |
+
+**Patch:** Nothing to install. Do not rotate a credential because a news article says source code changed. If SAP names a repository or a release, follow that notice.
+
+Sources: [BleepingComputer](https://www.bleepingcomputer.com/news/security/sap-confirms-security-incident-after-suspicious-github-activity/), [Der Spiegel](https://www.spiegel.de/netzwelt/sap-wird-opfer-von-hackerangriff-a-6648b5ce-5d74-48dc-86ea-9469705bb91d), [detailed guide](details/sap-github.md).
 
 ---
 
@@ -1953,9 +2031,9 @@ Vulnerability Info Site: [pwn.ai](https://pwn.ai/upload2shell)
 | Debian 13 | 2026-09-25 21:17:14 UTC | DSA-6516-1. The tracker marks 10.05.1~dfsg-1+deb13u3 fixed. |
 | **Public announcement** | **2026-11-09; time/TZ unknown** | VulnCheck published the CVE. CVSS 4.0 8.5. |
 | Public write-up | 2026-11-17; time/TZ unknown | pwn.ai. The case studies are not published. |
-| **Last updated** | **2026-11-24 07:30 EST (UTC−05:00)** | AlmaLinux's builds are in production. Amazon Linux 2027 Preview has a package. |
+| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | RHEL 8, 9, and 10 have packages. Ubuntu and SUSE do not. |
 
-**Patch:** Upgrade to **Ghostscript 10.08.0 or later** and restart the workers that render files. On Debian 13, install `ghostscript` **10.05.1~dfsg-1+deb13u3**. On Debian 12, install **10.0.0~dfsg-11+deb12u9** from bookworm-security. On AlmaLinux, install **9.27-20.el8_10.alma.1**, **9.54.0-19.el9_8.3.alma.1**, or **10.02.1-16.el10_2.3.alma.1**. On Amazon Linux 2027 Preview, install **10.08.0-1.amzn2027.0.2**. Ubuntu's page, updated November 18, marks every release Needs evaluation and names no package. SUSE marks SLES 15 SP7, 16.0, and 16.1 In progress and lists `ghostscript` 9.52-150000.222.1 for 15 SP7 in QA only, not released. AlmaLinux still knows of no RHEL package, and Amazon Linux 2 and 2023 are Pending Fix. Update WordPress to **7.0.4 or later** as well: that closes one upload path and leaves the library in place.
+**Patch:** Upgrade to **Ghostscript 10.08.0 or later** and restart the workers that render files. On RHEL 10, install `ghostscript` **10.02.1-17.el10_3.1** (RHSA-2026:103517, November 25). On RHEL 9, install **9.54.0-20.el9_9.1**. On RHEL 8, install **9.27-21.el8_10**. Rocky and Oracle republish those errata. On Debian 13, install **10.05.1~dfsg-1+deb13u3**. On Debian 12, install **10.0.0~dfsg-11+deb12u9** from bookworm-security. AlmaLinux's earlier production builds also close it. On Amazon Linux 2027 Preview, install **10.08.0-1.amzn2027.0.2**. Ubuntu still names no package. SUSE marks SLES 15 SP7, 16.0, and 16.1 In progress. Amazon Linux 2 and 2023 are Pending Fix. Update WordPress to **7.0.4 or later** as well: that closes one upload path and leaves the library in place.
 
 Sources: [CVE-2026-125396](https://www.cve.org/CVERecord?id=CVE-2026-125396), [pwn.ai](https://pwn.ai/upload2shell), [detailed guide](details/ghostscript.md).
 
@@ -2240,19 +2318,19 @@ Sources: [CVE-2026-59273](https://spring.io/security/cve-2026-59273), [Spring ad
 
 **CVEs:** [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968)
 
-**MITRE rates [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) CVSS 3.1 9.8 Critical.** MITRE is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The `image` parameter of `PUT /datastore/image` is used as a path, so an upload writes outside the datastore, through **0.8.5**. The record says this was exploited in the wild starting in September 2026. The project's advisory, published November 18, rates it Critical with no number, and says `PUT /datastore/label` has the same pattern. Authentication is off by default. With it on, the `ANNOTATOR` role is enough. **0.8.6**, published 01:29 UTC on November 22, fixes both. The same notes disclose a second path traversal, in `PUT /session/?uncompress=true`, through 0.8.5 and fixed in the same release. It has no CVE. **0.8.8**, published 09:04 UTC on November 25, is the release to install. [GHSA-gfjg-c3x6-24gw](https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-gfjg-c3x6-24gw) rates a bundle-configuration flaw CVSS 3.1 9.8: through 0.8.7, a request value starting with `$` is evaluated as Python. No CVE is assigned. 0.8.6 and 0.8.7 leave it in place. The datastore advisory's patched-versions line still says **None**. The release is newer.
+**MITRE rates [CVE-2026-133968](https://www.cve.org/CVERecord?id=CVE-2026-133968) CVSS 3.1 9.8 Critical.** MITRE is the CNA. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The `image` parameter of `PUT /datastore/image` is used as a path, so an upload writes outside the datastore, through **0.8.5**. The record says this was exploited in the wild starting in September 2026. The project's advisory, published November 18, rates it Critical with no number, and says `PUT /datastore/label` has the same pattern. Authentication is off by default. With it on, the `ANNOTATOR` role is enough. **0.8.6**, published 01:29 UTC on November 22, fixes both. The advisory now lists 0.8.6 as the patched version. The same notes disclose a second path traversal, in `PUT /session/?uncompress=true`, through 0.8.5 and fixed in the same release. It has no CVE. **0.8.8**, published 09:04 UTC on November 25, is the release to install. [GHSA-gfjg-c3x6-24gw](https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-gfjg-c3x6-24gw) rates a bundle-configuration flaw CVSS 3.1 9.8: through 0.8.7, a request value starting with `$` is evaluated as Python. No CVE is assigned. 0.8.6 and 0.8.7 leave it in place. [GHSA-xhxp-5f3g-gxxx](https://github.com/Project-MONAI/MONAILabel/security/advisories/GHSA-xhxp-5f3g-gxxx) now scores the same 9.8, through 0.8.7, patched in 0.8.8, with no CVE.
 
 **CISA KEV:** Listed — added 2026-11-23, federal due date 2026-11-26. Ransomware use Unknown. Forensic triage is required. The CVE record's statement that exploitation started in September 2026 is not the KEV date. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Fix merged | 2026-10-19; time/TZ unknown | Commit `113527b` on `main`. The datastore upload only. |
-| Project advisory | 2026-11-18; time/TZ unknown | GHSA-qc22-rmgc-vg94. Patched versions: None. |
+| Project advisory | 2026-11-18; time/TZ unknown | GHSA-qc22-rmgc-vg94. The page now lists 0.8.6 as patched. |
 | **Public announcement** | **2026-11-20; time/TZ unknown** | MITRE published the CVE record. CVSS 3.1 9.8. |
 | **Release 0.8.6** | **2026-11-22 01:29:24 UTC** | Both path traversals. The session one has no CVE. |
 | **CISA KEV** | **2026-11-23; time/TZ unknown** | Added. Federal due date 2026-11-26. Forensic triage required. |
 | **0.8.8** | **2026-11-25 09:04:08 UTC** | Request values evaluated as Python, through 0.8.7. No CVE. |
-| **Last updated** | **2026-11-25 07:04 EST (UTC−05:00)** | 0.8.8 replaces 0.8.6. |
+| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | The datastore advisory now names 0.8.6. The floor stays 0.8.8. |
 
 **Patch:** Upgrade to **0.8.8 or later** and restart. 0.8.6 fixes the upload and leaves the bundle-configuration flaw in place. The upgrade does not remove a file the process already wrote.
 
@@ -2482,21 +2560,25 @@ Sources: [GHSA-chwq-wg27-qvfr](https://github.com/eclipse-ditto/ditto/security/a
 
 [Back to TOC](#table-of-contents) · **[Detailed guide](details/jtl-shop.md):** [Detection](details/jtl-shop.md#detection) · [Remediation](details/jtl-shop.md#remediation) · [Verification](details/jtl-shop.md#verification) · [Timeline](details/jtl-shop.md#timeline)
 
-**CVEs:** [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058)
+**CVEs:** [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058), [CVE-2026-133938](https://www.cve.org/CVERecord?id=CVE-2026-133938), [CVE-2026-133939](https://www.cve.org/CVERecord?id=CVE-2026-133939), [CVE-2026-133940](https://www.cve.org/CVERecord?id=CVE-2026-133940), [CVE-2026-133941](https://www.cve.org/CVERecord?id=CVE-2026-133941)
 
-**JTL rates [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058) CVSS 4.0 9.2 Critical and CVSS 3.1 9.0.** JTL's note, dated November 12, says the web installer keeps running after the shop is installed and is not locked. A request with no login can take the shop over. The fixes are **Shop 5.8.4, 5.7.6, 5.6.6, and 5.5.5**. The note says **5.0.0 through 5.8.3** are affected where `install/` is still reachable, and that **5.0 through 5.4 are no longer maintained and get no patch**. The CVE record, published November 19, lists only the four supported lines. JTL says it knows of no exploitation as of November 12. The note is in German. JTL's reference is SHOP-9985.
+**JTL rates [CVE-2026-123058](https://www.cve.org/CVERecord?id=CVE-2026-123058) CVSS 4.0 9.2 Critical and CVSS 3.1 9.0.** JTL's note, dated November 12, says the web installer keeps running after the shop is installed and is not locked. A request with no login can take the shop over. Those fixes are **Shop 5.8.4, 5.7.6, 5.6.6, and 5.5.5**. The note says **5.0.0 through 5.8.3** are affected where `install/` is still reachable, and that **5.0 through 5.4 are no longer maintained and get no patch**. The CVE record, published November 19, lists only the four supported lines. JTL says it knows of no exploitation as of November 12. The note is in German. JTL's reference is SHOP-9985.
 
-**CISA KEV:** Not listed (catalog 2026.11.18, checked 2026-11-19). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**Four more notes, all dated November 24, move the floors.** JTL rates [CVE-2026-133939](https://www.cve.org/CVERecord?id=CVE-2026-133939) (SHOP-10575) and [CVE-2026-133938](https://www.cve.org/CVERecord?id=CVE-2026-133938) (SHOP-10619) **High, CVSS 4.0 8.6**, and ENISA scores each **CVSS 3.1 9.3 Critical**. A crafted link runs script in the browser of a backend user who is logged in. The first is a search term in the page-builder start menu, and it covers **5.0.0 through 5.8.4**. The second is the backend language switch, and it covers **5.2.3 through 5.8.4**. [CVE-2026-133941](https://www.cve.org/CVERecord?id=CVE-2026-133941) (SHOP-10636) is the same scores: the country manager writes `activeSortOrder` into script, and it starts at **5.6.0**. [CVE-2026-133940](https://www.cve.org/CVERecord?id=CVE-2026-133940) (SHOP-10477) is **CVSS 4.0 8.2 High** and **CVSS 3.1 5.9**: a backup under `export/backup` downloads with no login when the file name is known or guessed. JTL says automated requests on November 19 came back 404, and it knows of no successful download. The new floors are **5.8.5, 5.7.7, 5.6.7, and 5.5.6**. The update blocks `export/backup` only on Apache. On nginx, and anywhere `.htaccess` is not read, block the folder on the server. 5.0 through 5.4 still get patch files rather than a release, except the country manager, which does not affect them. JTL says it knows of no exploitation of the three script flaws as of November 24. ENISA published the four records on November 27.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-27) for any of the five. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
-| JTL note | 2026-11-12; page modified 09:29:30 UTC | Fixed in the four builds. |
-| **CVE record** | **2026-11-19 12:18:39 UTC** | Published. |
-| **Last updated** | **2026-11-27 00:00 EST (UTC−05:00)** | The note covers 5.0 through 5.4, which get no patch. |
+| JTL note | 2026-11-12; page modified 09:29:30 UTC | Installer. Fixed in the four November 12 builds. |
+| **CVE record** | **2026-11-19 12:18:39 UTC** | CVE-2026-123058 published. |
+| **Four notes** | **2026-11-24; time/TZ unknown** | 5.8.5, 5.7.7, 5.6.7, and 5.5.6. |
+| **Four records** | **2026-11-27; time/TZ unknown** | ENISA published CVE-2026-133938 through CVE-2026-133941. |
+| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | The November 12 floors leave the four November 24 notes. |
 
-**Patch:** Update Shop to **5.8.4, 5.7.6, 5.6.6, or 5.5.5** or later. A 5.0 through 5.4 shop has to move to one of those lines. Until then, remove or block the web installer. The update does not delete an existing `install/` directory and does not show whether a request already changed an administrator.
+**Patch:** Update Shop to **5.8.5, 5.7.7, 5.6.7, or 5.5.6** or later. The November 12 builds leave the four November 24 notes. A 5.0 through 5.4 shop has to move to one of those lines; JTL's patch files cover those versions in the meantime. Block `export/backup` on the server even after the update, unless the web server is Apache and reads `.htaccess`. The update does not delete an existing `install/` directory, does not delete a backup that was already downloaded, and does not show whether a request already changed an administrator. A script that already ran in a backend browser is not undone by the update.
 
-Sources: [JTL note](https://www.jtl-software.com/de/security/sicherheitshinweis-web-installer_nicht_gesperrt/), [detailed guide](details/jtl-shop.md).
+Sources: [JTL installer note](https://www.jtl-software.com/de/security/sicherheitshinweis-web-installer_nicht_gesperrt/), [start menu](https://www.jtl-software.com/de/security/sicherheitshinweis-opc-startmenue_xss/), [language switch](https://www.jtl-software.com/de/security/sicherheitshinweis-backend-sprachumschaltung_xss/), [country manager](https://www.jtl-software.com/de/security/sicherheitshinweis-backend-laenderverwaltung_xss/), [backups](https://www.jtl-software.com/de/security/sicherheitshinweis-sicherungsdateien-export_backup_abrufbar/), [detailed guide](details/jtl-shop.md).
 
 ---
 
@@ -2873,7 +2955,7 @@ Sources: [GL.iNet security notice](https://www.gl-inet.com/en-us/blogs/blog/glin
 
 **CVEs:** [CVE-2026-134624](https://www.cve.org/CVERecord?id=CVE-2026-134624)
 
-**N-able rates [CVE-2026-134624](https://www.cve.org/CVERecord?id=CVE-2026-134624) CVSS 4.0 9.3 Critical.** N-able is the CNA. MailAssure (SpamExperts) before **20261121.1943** lets an API user with high privileges point the LDAP connection check at any internal host and port. The record does not say this runs code. N-able's status page, incident 202672, says someone had unauthorized access to one server in the Hosted Cloud. N-able said that at 03:05 UTC on November 18, and said it did not then have evidence that customer data was compromised, including access to tenants' mailboxes. N-able's November 22 update says the flaw is remediated and that it has found no exploitation beyond that one server. It does not say the flaw was how the server was reached. Mail still flows and is still filtered. At 23:44:43 UTC on November 21 N-able said the dashboard and the API had been restored, in phases. The page header still says the dashboard, API, and quarantine remain offline. The incident is still Active. N-able says this is unrelated to the [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) incident.
+**N-able rates [CVE-2026-134624](https://www.cve.org/CVERecord?id=CVE-2026-134624) CVSS 4.0 9.3 Critical.** N-able is the CNA. MailAssure (SpamExperts) before **20261121.1943** lets an API user with high privileges point the LDAP connection check at any internal host and port. The record does not say this runs code. N-able's status page, incident 202672, says someone had unauthorized access to one server in the Hosted Cloud. N-able said that at 03:05 UTC on November 18, and said it did not then have evidence that customer data was compromised, including access to tenants' mailboxes. N-able's November 22 update says the flaw is remediated and that it has found no exploitation beyond that one server. It does not say the flaw was how the server was reached. Mail still flows and is still filtered. At 23:44:43 UTC on November 21 N-able said the dashboard and the API had been restored, in phases. The incident is now Resolved, ended 2026-11-25 22:00:00 UTC, and the page says all services are operational. N-able says this is unrelated to the [N-central](#n-central-critical-vulnerabilities-hotfix-20264126) incident.
 
 **CISA KEV:** Listed — added 2026-11-23, federal due date 2026-11-26. Ransomware use Unknown. Forensic triage is required. N-able still says it has found no exploitation beyond the one hosted server, and it does not say the flaw was how that server was reached. [What KEV means](#what-cisa-kev-means)
 
@@ -2882,12 +2964,13 @@ Sources: [GL.iNet security notice](https://www.gl-inet.com/en-us/blogs/blog/glin
 | Customers told of a disruption | 2026-11-16; time unknown | N-able's later update says it informed customers that day. |
 | **Security incident** | **2026-11-18 03:05:09 UTC** | Unauthorized access to one server. No evidence then of compromised customer data. |
 | Status | 2026-11-20 17:45:37 UTC | Preparing to restore the service. Portal and API stay disabled. |
-| **Dashboard restored** | **2026-11-21 23:44:43 UTC** | N-able says the dashboard and API are back, under monitoring. The page header still says offline. |
+| **Dashboard restored** | **2026-11-21 23:44:43 UTC** | N-able says the dashboard and API are back, under monitoring. |
+| **Incident resolved** | **2026-11-25 22:00:00 UTC** | The page says all services are operational. |
 | **CVE published** | **2026-11-22; time/TZ unknown** | CVE-2026-134624, CVSS 4.0 9.3. Fixed in 20261121.1943. N-able does not say it was the way in. |
 | **CISA KEV** | **2026-11-23; time/TZ unknown** | Added. Federal due date 2026-11-26. Forensic triage required. |
-| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | CISA listed it. The build is unchanged. |
+| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | The incident is resolved. The build is unchanged. |
 
-**Patch:** Hosted Cloud is already on the fixed build, N-able says, so there is nothing for a hosted customer to install. Reconnect integrations: the API tokens were revoked. SpamExperts Local Cloud runs on customer hardware, and that server has to be **20261121.1943 or later**. Read the customer communication, and contact N-able Technical Support if the partner email did not arrive. Quarantine is not named in the restoration update, so do not assume a release works until it does. The fix does not show what the one reached server did.
+**Patch:** Hosted Cloud is already on the fixed build, N-able says, so there is nothing for a hosted customer to install. Reconnect integrations: the API tokens were revoked. SpamExperts Local Cloud runs on customer hardware, and that server has to be **20261121.1943 or later**. Read the customer communication, and contact N-able Technical Support if the partner email did not arrive. The page now says all services are operational. The fix does not show what the one reached server did.
 
 Sources: [N-able status, incident 202672](https://uptime.n-able.com/event/202672), [detailed guide](details/nable-mail.md).
 
@@ -2930,11 +3013,11 @@ Sources: [Optimizely status](https://status.optimizely.com/incidents/ftw0fh9wx43
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Malicious releases** | **2026-11-17 20:35:20 UTC** | 1.26.1. 1.26.2 followed at 21:08:39 UTC. Both removed from PyPI the same evening. |
-| **Last updated** | **2026-11-19 03:01 EST (UTC−05:00)** | Wiz names the release-pipeline certificate and three stored exfiltrations. Pin 1.26.0 and rotate credentials. |
+| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | Microsoft says rebuild from a clean image and hold at 1.26.0. |
 
-**Patch:** Pin `agent-framework==1.26.0`, delete cached wheels of 1.26.1 and 1.26.2, and rebuild the environment. Do not upgrade to "latest" while the upload credential's revocation is unconfirmed. Rotating the credentials that environment could read is the rest of the fix. Reinstalling does not expire a token that already left.
+**Patch:** If either version was installed, rebuild from a clean image. Microsoft's November 25 post says not to downgrade in place. Pin `agent-framework==1.26.0` and hold there until Microsoft says otherwise, including where neither version was installed. Delete cached wheels. The post does not say the publishing credential was revoked. Rotating the credentials that environment could read is the rest of the fix. Rebuilding does not expire a token that already left.
 
-Sources: [GHSA-764m-3ppc-5m73](https://github.com/advisories/GHSA-764m-3ppc-5m73), [project issue](https://github.com/microsoft/agent-framework/issues/10411), [detailed guide](details/agent-framework.md).
+Sources: [GHSA-764m-3ppc-5m73](https://github.com/advisories/GHSA-764m-3ppc-5m73), [Microsoft, November 25](https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-repository-update), [detailed guide](details/agent-framework.md).
 
 ---
 
@@ -3204,9 +3287,11 @@ Sources: [VU#604762](https://kb.cert.org/vuls/id/604762), [Deno advisory](https:
 | **Public announcement** | **2026-11-16; time/TZ unknown** | VulnCheck published the CVE record. |
 | Socket report | 2026-11-19; time/TZ unknown | Issue 488. The stored password hash opens the terminal on 19.23.2. No CVE and no score. |
 | Socket fix released | 2026-11-21 15:43:29 UTC | v19.24.0 contains commit `939d423`. |
-| **Last updated** | **2026-11-22 00:05 EST (UTC−05:00)** | The socket fix is in 19.24.0. |
+| Null payload rejected | 2026-11-25 20:46:52 UTC | v19.24.3. No CVE. The cited advisory page is 404. |
+| Non-string password rejected | 2026-11-26 10:30:37 UTC | v19.24.6. The note does not call it a vulnerability. |
+| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | 19.24.0 leaves the November 25 and 26 socket fixes. |
 
-**Patch:** Upgrade `cloudcmd` to **19.24.0 or later** and restart it. 19.21.4 closes this CVE. 19.24.0 also closes the socket check from issue 488, which 19.23.2 leaves open. Change the password if the hash has been seen. The upgrade does not put a moved file back.
+**Patch:** Upgrade `cloudcmd` to **19.24.6 or later** and restart it. 19.21.4 closes this CVE. 19.24.0 closes the socket check from issue 488 and leaves the two later checks. Change the password if the hash has been seen. The upgrade does not put a moved file back.
 
 Sources: [CVE-2026-130072](https://www.cve.org/CVERecord?id=CVE-2026-130072), [v19.21.4](https://github.com/coderaiser/cloudcmd/releases/tag/v19.21.4), [detailed guide](details/cloudcmd.md).
 
@@ -3830,7 +3915,7 @@ Sources: [ConnectWise disclosure](https://github.com/ConnectWise-Advisories/Disc
 | BSI names package 5.4.0, then withdraws it | 2026-11-13; the withdrawal is 13:25, timezone not stated | Firmware through at least 5.3.2 is affected. An earlier version of the release said 5.4.0 was not. |
 | **CISA advisory** | **2026-11-24; time/TZ unknown** | ICSA-26-328-03. CVE-2026-129713. Danfoss scores 9.8 and 9.3. Fix is a future 5.5.x. |
 | **CISA KEV** | **2026-11-25; catalog released 19:48:12 UTC** | CVE-2025-41450 due 2026-12-09. CVE-2023-25914 and CVE-2023-25915 due 2026-11-28, forensic triage required. CVE-2026-129713 is not listed. |
-| **Last updated** | **2026-11-26 03:06 EST (UTC−05:00)** | Three older flaws are in KEV. 5.5.x is still not out. |
+| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | The download page offers 5.4.0 again. It is not the fix. |
 
 **Patch:** Upgrade a controller below **4.2** to **4.2 or later**, and one below **3.3** to **3.3 or later**. Those releases close the three listed flaws and CVE-2023-25913. Take the management interface off the public internet and put remote access behind a VPN. Do not treat an upgrade to 5.4.0, a password change, or Strict mode as the remedy for CVE-2026-129713. Danfoss says that fix is **5.5.x**, which is not out. A firmware update does not show whether the flash already holds an implant. The upgrade does not show whether a report was already generated or a command already ran.
 
@@ -9661,7 +9746,7 @@ flowchart TD
 | **Splunk Enterprise below 10.6.1, 10.4.5, 10.2.9, 10.0.12, or 9.4.17; SOAR below 8.8.0; Enterprise Security below 8.7.0** | Upgrade to those builds. Splunk rates CVE-2026-76536 9.4: an empty clustering secret changes the configuration with no login. Until the upgrade, set a non-empty `pass4SymmKey`. [Guide](details/splunk-november.md#remediation). |
 | **OpenPLC Runtime 4.2.4 or earlier** | Update to 4.3.0 or later. CISA rates CVE-2026-126088 9.2: a race creates administrator accounts with no login. [Guide](details/openplc.md#remediation). |
 | **Eclipse Ditto gateway before 3.8.15 or 3.9.9, with pre-authentication on** | Upgrade to 3.8.15 or 3.9.9. Eclipse rates CVE-2026-120753 9.1: a query parameter picks the user. [Guide](details/eclipse-ditto.md#remediation). |
-| **JTL-Shop 5.8.0–5.8.3, or 5.7, 5.6, or 5.5 below the November floors** | Update to 5.8.4, 5.7.6, 5.6.6, or 5.5.5. JTL rates CVE-2026-123058 9.2: the installer still runs after the shop is installed. [Guide](details/jtl-shop.md#remediation). |
+| **JTL-Shop below 5.8.5, 5.7.7, 5.6.7, or 5.5.6** | Update to those builds. The November 12 floors leave four November 24 notes. JTL rates CVE-2026-133939 and CVE-2026-133938 9.3: a link runs script in a logged-in backend browser. Block `export/backup` on the server too. [Guide](details/jtl-shop.md#remediation). |
 | **pam-mysql, any released version** | On Debian 13 install 0.8.2-2.1+deb13u1, on Debian 12 install 0.8.2-2+deb12u1, and restart `sshd`. The researcher rates CVE-2026-124749 9.8: a NULL password row accepts any password. Do not set `PermitEmptyPasswords yes`. Ubuntu's page names no package, and the 1.0 betas have none. [Guide](details/pam-mysql.md#remediation). |
 | **F5 BIG-IP 21.1.0, 17.5.0–17.5.1, or 17.1.0–17.1.3 with one of six iRules or an APM policy, or BIG-IP CNF 2.2–2.4** | Install the engineering hotfix F5 names for that flaw. F5 rates all six 9.8: a request with no login crashes the traffic process. CNF 2.4.0–2.4.2, 2.3.0–2.3.4, and 2.2.0–2.2.5 are fixed in 2.4.2-EHF1, 2.3.4-EHF1, and 2.2.5-EHF1. A virtual server without that configuration is outside that flaw. There is no workaround. [Guide](details/f5-bigip-nov18.md#remediation). |
 | **REDCap 13.3.0 or higher** | Upgrade to 16.0.49 LTS, 17.3.10 LTS, or 17.4.4 Standard or later. Securifera rates CVE-2026-90817 9.8: one public survey hash reaches Data Import and runs code. CISA listed it on November 18, due November 21. Unit 42 says the same flaw deployed XMRig miners; the upgrade does not remove the miner, the crontab, or the SSH key. [Guide](details/redcap.md#remediation). |
@@ -9675,7 +9760,7 @@ flowchart TD
 | **Java 17, 21, 25, or 27, or the Java 8 performance pack, on x86-64** | Install Oracle JDK 17.0.21.1, 21.0.13.1, 25.0.5.1, 27.0.1.1, or 8u513, and restart. Corretto is 17.0.21.1.2, 21.0.13.1.2, 25.0.5.1.2, or 27.0.1.1.4. On Red Hat Enterprise Linux, install the November 18 OpenJDK erratum. Oracle rates CVE-2026-114938 8.1; Calif rates it 9.2 and calls it Java4Shell. A CPU without AVX-512 VBMI, and ARM64, are outside this one flaw. A bundled JVM does not move with the system JDK. [Guide](details/java4shell.md#remediation). |
 | **Dell PowerStore, PowerStoreT OS 5.1.x before 5.1.0.0-2798105, or 4.3 LTS** | On 5.1, upgrade to 5.1.0.0-2798105 or later. On 4.3, install 4.3.1.3-2800620 and wait for the rest. Dell rates seven flaws 9.8, including a TFTP overflow that needs no login. Until then, keep TFTP, NFS, and management off untrusted networks. [Guide](details/dell-powerstore.md#remediation). |
 | **Deno before 2.7.14 on macOS** | Update to 2.7.14 or later. Deno rates CVE-2026-49401 7.3: a `--deny-*` rule misses a file whose name is spelled another way. Linux and Windows are outside it. [Guide](details/macos-unicode-paths.md#remediation). |
-| **Cloud Commander (`cloudcmd`) before 19.21.4** | Upgrade to 19.21.4 or later and restart. VulnCheck rates CVE-2026-130072 9.1: `PUT /rename` moves any file the process can reach, with no login. `--auth` does not stop it. [Guide](details/cloudcmd.md#remediation). |
+| **Cloud Commander (`cloudcmd`) before 19.24.6** | Upgrade to 19.24.6 or later and restart. 19.21.4 closes CVE-2026-130072. 19.24.6 also rejects a null socket payload and a non-string password. [Guide](details/cloudcmd.md#remediation). |
 | **Go1 CMS (`go1cms`) without commit `ead8da3`** | Deploy that commit and restart. VulnCheck rates CVE-2026-130071 9.8: a guest request rewrites any record. There is no release. [Guide](details/go1cms.md#remediation). |
 | **Frappe Ghost (muneeb141) without commit `7023a4a`** | Deploy that commit and restart. It includes `641db34`. The default branch does not contain it; `develop` and `fix/auth-boundaries` do. VulnCheck rates CVE-2026-130070 9.3: a guest session receives tokens for any account. This is not the Ghost publishing platform. There is no release. [Guide](details/frappe-ghost.md#remediation). |
 | **Wiki.js before 2.5.315** | Upgrade to 2.5.315 or later and restart. GitHub rates CVE-2026-120698 8.8: a user manager takes the administrator account. CVE-2026-120697 is 8.7: a page stores script. Reset the administrator password. [Guide](details/wiki-js.md#remediation). |

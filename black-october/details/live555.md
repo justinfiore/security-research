@@ -1,5 +1,7 @@
 # LIVE555: a crafted description reads past a buffer
 
+**Last updated:** 2026-11-27 (America/New_York)
+
 [Main guide](../black-october-2026.md#live555-a-crafted-description-reads-past-a-buffer)
 
 **VulnCheck rates [CVE-2026-137587](https://www.cve.org/CVERecord?id=CVE-2026-137587) CVSS 4.0 7.1 High and CVSS 3.1 7.1 High.** The vectors are `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:L/VI:N/VA:H/SC:N/SI:N/SA:N` and `CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:H`. The weakness is CWE-125. `parseVorbisOrTheoraConfigStr()` trusts a 16-bit length from the description. A malicious RTSP server, or a crafted Vorbis or Theora configuration in a proxied SDP description, can crash the client or leak heap memory. The record says LIVE555 Streaming Media **before 2026.08.25**. Live Networks' own changelog for 2026.08.25 says the fix is a bug in `VorbisAudioRTPSource` that could let a malicious SDP description crash an RTP client, reported by Tristan. The record does not report exploitation.

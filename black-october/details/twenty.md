@@ -1,5 +1,7 @@
 # Twenty: a signup returns someone else's invitation
 
+**Last updated:** 2026-11-26 (America/New_York)
+
 [Main guide](../black-october-2026.md#twenty-a-signup-returns-someone-elses-invitation)
 
 **GitHub rates [GHSA-m4vm-35cw-44rq](https://github.com/twentyhq/twenty/security/advisories/GHSA-m4vm-35cw-44rq) High, CVSS 3.1 7.4.** The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N`. VulnCheck's [CVE-2026-137584](https://www.cve.org/CVERecord?id=CVE-2026-137584) scores the same issue CVSS 3.1 7.4 and CVSS 4.0 9.1 Critical (`CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N`). The weaknesses are CWE-287 and CWE-200. On a multi-workspace install, the public `signUp` mutation creates an account for any email and returns the plaintext `personalInviteToken` of every pending invitation for that email. `signUpInWorkspace` accepts the token, joins the workspace with the invitation's role, including Admin, and marks the email verified. No mailbox and no existing account are required. The GitHub advisory says it tested **v2.47.0** and lists affected versions as **2.47.0 and earlier**, with **no patched version**. The CVE record says **through 2.63.0**. The source of tag `twenty/v2.63.0`, read November 26, still copies `appToken.value` into `personalInviteToken` in the signup response. That tag is the latest release, dated November 24. The GitHub page still says "No known CVE." The advisory says the live Cloud service was not tested. No source read for this entry reports exploitation.

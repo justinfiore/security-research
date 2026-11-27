@@ -2,6 +2,19 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-27 07:15 EST (UTC−05:00) — RealVNC; JTL-Shop; Chroma; SAP
+
+- **RealVNC:** Update [Server to 7.19.1, Viewer to 8.6.2, and Classic Viewer to 7.18.3](black-october/details/realvnc.md#remediation). RealVNC rates RVNC-2026-001 Critical, CVSS 9.8: a UDP connection runs code before login. MITRE published [CVE-2026-137738](https://www.cve.org/CVERecord?id=CVE-2026-137738) on November 27 at the same score. TCP-only direct connections are outside it. The advisory is November 20. It is not in KEV.
+- **JTL-Shop:** Update to [5.8.5, 5.7.7, 5.6.7, or 5.5.6](black-october/details/jtl-shop.md#remediation). The November 12 builds leave four notes from November 24. JTL rates CVE-2026-133939 and CVE-2026-133938 CVSS 3.1 9.3: a link runs script in a logged-in backend browser. CVE-2026-133940 is CVSS 4.0 8.2: a backup under `export/backup` downloads with no login, and the update blocks that folder only on Apache. Block the folder on the server too. None is in KEV.
+- **Chroma:** Nothing to install. [Chroma](black-october/details/chroma.md) says that on November 26 someone read billing metadata, and that it does not believe payment data or customer data was accessed. No CVE is assigned. Do not paste an API key because a message cites the notice.
+- **SAP:** Nothing to install. [SAP](black-october/details/sap-github.md) told BleepingComputer it found suspicious activity and has found no evidence of unauthorized access to customer business data. Reports that source code on GitHub was changed are not in that statement. No CVE is assigned. This is not the November patch day.
+- **agent-framework:** If 1.26.1 or 1.26.2 was installed, [rebuild from a clean image](black-october/details/agent-framework.md#remediation). Microsoft's November 25 post says not to downgrade in place. Pin 1.26.0 and hold there. The post does not say the publishing credential was revoked.
+- **Cloud Commander:** Upgrade to [19.24.6 or later](black-october/details/cloudcmd.md#remediation) and restart. 19.24.0 leaves two socket fixes from November 25 and 26. Neither has a CVE. The rename flaw stays fixed at 19.21.4.
+- **Ghostscript:** On Red Hat Enterprise Linux, install the [November 25 erratum](black-october/details/ghostscript.md#remediation) and restart the workers. RHEL 10 is `ghostscript` 10.02.1-17.el10_3.1, RHEL 9 is 9.54.0-20.el9_9.1, and RHEL 8 is 9.27-21.el8_10. Rocky and Oracle republish them. Ubuntu and SUSE still have no released package.
+- **Danfoss:** The [download page](black-october/details/danfoss-ak-sm800a.md#what-540-does-not-fix) offers 5.4.0.spk again. CISA says 5.4.0 and earlier are affected by CVE-2026-129713. The fix is still 5.5.x, which is not out. Do not install 5.4.0 as the remedy.
+- **MONAI Label:** The [datastore advisory](black-october/details/monai-label.md#remediation) now names 0.8.6 as the patched version. The release to install stays 0.8.8. A second advisory on that release now scores CVSS 3.1 9.8 and has no CVE.
+- **Mail Assure:** N-able marked [incident 202672](black-october/details/nable-mail.md) resolved at 2026-11-25 22:00 UTC and says all services are operational. The build stays 20261121.1943. The root-cause note is still not posted.
+
 ## 2026-11-27 00:00 EST (UTC−05:00) — LIVE555; Panorama Suite; WordPress
 
 - **LIVE555:** Rebuild a player or proxy against [2026.08.25 or later](black-october/details/live555.md#remediation). VulnCheck rates CVE-2026-137587 CVSS 4.0 7.1 and CVSS 3.1 7.1: a crafted stream description reads past a buffer and can crash the client. Anything before that build is affected. Live Networks fixed it on August 25. The record is November 26. It is not in KEV.

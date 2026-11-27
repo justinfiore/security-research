@@ -1,5 +1,7 @@
 # WordPress: three plugins run a script from a field
 
+**Last updated:** 2026-11-27 (America/New_York)
+
 [Main guide](../black-october-2026.md#wordpress-three-plugins-run-a-script-from-a-field)
 
 **Patchstack rates three flaws CVSS 3.1 7.1 High.** Each vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:L`. The weakness is CWE-79. Patchstack's own pages call each one Medium priority and say a visitor has to do something, such as open a page, before the script runs. The CVE records say no login is required.

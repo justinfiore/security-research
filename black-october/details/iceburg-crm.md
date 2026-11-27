@@ -1,5 +1,7 @@
 # Iceburg CRM: a low-privileged user rewrites the administrator
 
+**Last updated:** 2026-11-26 (America/New_York)
+
 [Main guide](../black-october-2026.md#iceburg-crm-a-low-privileged-user-rewrites-the-administrator)
 
 **VulnCheck rates [CVE-2026-137577](https://www.cve.org/CVERecord?id=CVE-2026-137577) CVSS 4.0 8.6 High and CVSS 3.1 8.1 High.** The vectors are `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N` and `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N`. The weakness is CWE-639. `POST /data/save` checks that the caller may write the module, and every role may write `ice_users`. It does not check that the `record_id` is the caller's own row. A signed-in user supplies the administrator's id and a new email or password. The password is hashed before it is stored, so the attacker can then sign in as that account. The project does not score it. The report tested **5.0.0**, commit `2becbbcb`, and the CVE record says **through 5.0.0**. 5.0.0 is the newest release tag. GitHub issue 33, opened November 26, is still open and has no maintainer reply. The issue includes a request that the reporter says changed the administrator's email on a local instance. No source read for this entry reports exploitation of a deployment that was not the reporter's.

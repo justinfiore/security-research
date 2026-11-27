@@ -1,6 +1,6 @@
 # PyPI: agent-framework 1.26.1 and 1.26.2 steal credentials
 
-**Last updated:** 2026-11-19 (America/New_York)
+**Last updated:** 2026-11-27 (America/New_York)
 
 [Main summary](../black-october-2026.md#pypi-agent-framework-1261-and-1262-steal-credentials) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -10,7 +10,9 @@
 
 Each wheel adds a `.pth` file. Python runs `.pth` files at every interpreter start, so the code runs without anyone importing the package. In 1.26.1 the files are `agent_framework_meta.pth` and `agent_framework_meta/_telemetry.py`. In 1.26.2 they are `af_runtime_diag.pth` and `af_runtime_diag.py`. The helper detaches and collects environment variables whose names contain strings such as `TOKEN`, `SECRET`, `PASSWORD`, `KEY`, `AZURE`, `AWS`, and `GITHUB`, the environments of other processes, and credential files including `~/.azure`, `.npmrc`, `.netrc`, `.git-credentials`, and `.docker/config.json`. It also requests Azure managed-identity tokens from the instance metadata service. 1.26.2 adds GitHub Actions OIDC tokens. The data is compressed and posted to `https://webhook.site/d381fd80-ec62-42ad-8f5c-d1b15103c9bb`. The rest of the wheel matches 1.26.0, and it still depends on `agent-framework-core[all]==1.26.0`.
 
-Microsoft's issue, opened by Upwind, says the upload was outside the release pipeline and that whether the upload credential has been revoked is unconfirmed. Wiz says there is no `python-1.26.1` tag in `microsoft/agent-framework` and that the main branch does not contain the code. This run did not find a statement from Microsoft confirming the credential was revoked.
+Microsoft's issue, opened by Upwind, says the upload was outside the release pipeline and that whether the upload credential has been revoked is unconfirmed. Wiz says there is no `python-1.26.1` tag in `microsoft/agent-framework` and that the main branch does not contain the code.
+
+On November 25, 2026, Dan Taylor posted Microsoft's own statement. It says 1.26.1 and 1.26.2 were uploaded without authorization, both contained credential-stealing code, both were removed, and only the `agent-framework` meta-package was affected. It says the malicious code was in the published packages, not the repository, and that 1.26.0 and earlier, other Python packages, .NET, and Semantic Kernel are not affected. It tells anyone who installed either version to rotate every credential that environment could access, to rebuild from a clean image, and not to downgrade in place. It tells everyone else to pin `agent-framework==1.26.0` and hold there until Microsoft provides further guidance. The post does not say the publishing credential or the ESRP certificate was revoked. The repository was still unavailable when this guide was updated, with no timeline.
 
 Wiz updated the same post on November 18 at 14:00 UTC. It says the attacker used a client certificate and private key for Microsoft's Engineering System Release Pipeline, the service that signs and publishes this package. A first publish from AWS was rejected by that service's IP filter. A second attempt from Microsoft-owned address space succeeded. Wiz says how the certificate was obtained is not known. The same update says the webhook token was on the free tier, which stores at most 50 requests, and that 17 of those are three unique cases where victim data left. A stored request is not a count of every install.
 
@@ -35,7 +37,8 @@ Wiz updated the same post on November 18 at 14:00 UTC. It says the attacker used
 | Removed from PyPI | 2026-11-17, by about 21:30 UTC | Wiz. A cache can still install either wheel. |
 | GitHub advisory | 2026-11-18 00:31:26 UTC | Critical malware. No patched version. [GHSA][ghsa] |
 | Wiz update | 2026-11-18 14:00 UTC | ESRP client certificate. Three unique exfiltrations in the 50 stored requests. [Wiz][wiz] |
-| **Last updated** | **2026-11-19 (America/New_York)** | Root cause and the stored-request count. Pin 1.26.0 and rotate what a malicious install could read. |
+| **Microsoft statement** | **2026-11-25; time/TZ unknown** | Dan Taylor. Rebuild from a clean image. Pin 1.26.0 and hold. [Post][ms] |
+| **Last updated** | **2026-11-27 (America/New_York)** | Microsoft's own post. The pin stays 1.26.0. |
 
 ## Detection
 
@@ -46,10 +49,10 @@ Wiz updated the same post on November 18 at 14:00 UTC. It says the attacker used
 
 ## Remediation
 
-1. Pin `agent-framework==1.26.0`. Do not run `pip install -U agent-framework` and trust "latest": the upload credential's revocation is unconfirmed, and a later upload could repeat this.
-2. Delete cached wheels of 1.26.1 and 1.26.2 from pip caches, CI caches, and internal mirrors. Removing the package from the environment does not clear a cache.
-3. Rebuild the environment from the pin. A process that already started under the malicious wheel keeps running until it is restarted from the clean environment.
-4. Rotate the credentials that environment could read. The list is in Compromise response. Reinstalling does not expire a token that already left.
+1. If either version was installed, treat that machine, container, or CI job as compromised. Microsoft's instruction is to rebuild from a clean image and not to downgrade in place. Remove the environment, the image, the caches, and any copy in an internal mirror or proxy.
+2. Pin `agent-framework==1.26.0`, including where neither version was installed, and hold there until Microsoft says otherwise. Do not run `pip install -U agent-framework` and trust "latest." The post does not say the publishing credential was revoked.
+3. Delete cached wheels of 1.26.1 and 1.26.2 from pip caches, CI caches, and internal mirrors. Removing the package from the environment does not clear a cache.
+4. Rotate the credentials that environment could read. The list is in Compromise response. Rebuilding does not expire a token that already left.
 
 ## Verification
 
@@ -69,7 +72,9 @@ That includes Azure tokens requested from the instance metadata service, Azure D
 - [microsoft/agent-framework issue 10411][issue] — opened 2026-11-17 by Lidor Machluf, Upwind. Upload times, the second version, and the note that credential revocation is unconfirmed. Pin 1.26.0.
 - [Wiz][wiz] — November 17, 2026, updated 2026-11-18 14:00 UTC. No matching tag in the repository. Both versions gone from PyPI by about 21:30 UTC. The November 18 update says an ESRP client certificate was used, a publish from AWS was rejected, and a publish from Microsoft-owned address space succeeded. Of 50 stored webhook requests, 17 are three unique cases of victim data.
 - [OpenSSF malicious-packages, MAL-2026-20101](https://github.com/ossf/malicious-packages/blob/5f547b67f2daa8aa50d74a937b4c2077cccc495b/osv/malicious/pypi/agent-framework/MAL-2026-20101.json) — the OSV record GitHub cites.
+- [Microsoft, November 25, 2026][ms] — Dan Taylor. Only the meta-package. 1.26.0 and earlier are not affected. Rebuild from a clean image. Pin 1.26.0 and hold. The post does not say the credential was revoked.
 
 [ghsa]: https://github.com/advisories/GHSA-764m-3ppc-5m73
+[ms]: https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-repository-update
 [issue]: https://github.com/microsoft/agent-framework/issues/10411
 [wiz]: https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi
