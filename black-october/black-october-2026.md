@@ -15,6 +15,11 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Iceburg CRM: a low-privileged user rewrites the administrator](#iceburg-crm-a-low-privileged-user-rewrites-the-administrator)
+- [Twenty: a signup returns someone else's invitation](#twenty-a-signup-returns-someone-elses-invitation)
+- [Bazarr: a Windows request reads the config](#bazarr-a-windows-request-reads-the-config)
+- [LibreChat: a login request stops the server](#librechat-a-login-request-stops-the-server)
+- [VirtueMart: a storefront request includes a local file](#virtuemart-a-storefront-request-includes-a-local-file)
 - [llama.cpp: an RPC peer writes below a buffer](#llamacpp-an-rpc-peer-writes-below-a-buffer)
 - [Argo Workflows: an object key writes outside the workspace](#argo-workflows-an-object-key-writes-outside-the-workspace)
 - [Zodia Custody: client contact records were read](#zodia-custody-client-contact-records-were-read)
@@ -356,6 +361,11 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** There is no fixed release for [Iceburg CRM](#iceburg-crm-a-low-privileged-user-rewrites-the-administrator). VulnCheck rates [CVE-2026-137577](https://www.cve.org/CVERecord?id=CVE-2026-137577) CVSS 3.1 8.1 and CVSS 4.0 8.6: a signed-in user rewrites any account's email or password, including the administrator's. Through 5.0.0 is affected, and that is the newest release. The report is November 26 and the issue is still open. Do not give an account to anyone who should not control the administrator. It is not in KEV.
+- **New this update:** There is no fixed release for [Twenty](#twenty-a-signup-returns-someone-elses-invitation). GitHub rates [GHSA-m4vm-35cw-44rq](https://github.com/twentyhq/twenty/security/advisories/GHSA-m4vm-35cw-44rq) CVSS 3.1 7.4 High: on a multi-workspace install, a signup for someone else's email returns that person's invitation token, and the caller joins with the invitation's role, including Admin. VulnCheck's [CVE-2026-137584](https://www.cve.org/CVERecord?id=CVE-2026-137584) is CVSS 4.0 9.1 and says through 2.63.0. That release, dated November 24, still returns the token. The advisory is October 22. Revoke pending invitations. It is not in KEV.
+- **New this update:** Update a Windows [Bazarr](#bazarr-a-windows-request-reads-the-config) install to **v1.6.2 or later**, and rotate the credentials in `config.yaml`. GitHub rates [GHSA-v569-4w84-grxq](https://github.com/morpheus65535/bazarr/security/advisories/GHSA-v569-4w84-grxq) CVSS 3.1 7.5 High: a request with no login reads a file, and that file holds the Sonarr, Radarr, and Plex keys. VulnCheck published [CVE-2026-137585](https://www.cve.org/CVERecord?id=CVE-2026-137585) on November 26. The fix shipped August 24. It is not in KEV.
+- **New this update:** Update [LibreChat](#librechat-a-login-request-stops-the-server) to **v0.8.9 or later** where LDAP login is on. GitHub rates [GHSA-572g-g8hc-w8c9](https://github.com/LibreChat-AI/LibreChat/security/advisories/GHSA-572g-g8hc-w8c9) CVSS 3.1 7.5 High: one login request whose password is a number stops the process, and the same request stops it again after each restart. An install that does not use LDAP is outside it. VulnCheck published [CVE-2026-137586](https://www.cve.org/CVERecord?id=CVE-2026-137586) on November 26. v0.8.9 shipped November 17. It is not in KEV.
+- **New this update:** Update [VirtueMart](#virtuemart-a-storefront-request-includes-a-local-file) to **4.8.10**. The Joomla! Project rates [CVE-2026-133335](https://www.cve.org/CVERecord?id=CVE-2026-133335) CVSS 4.0 9.2 Critical: a storefront request includes a local PHP file, and the record says that has been exploited. 4.8.8 fixes the loader and leaves the PayPal Checkout flaw, [CVE-2026-133333](https://www.cve.org/CVERecord?id=CVE-2026-133333), which is 8.2 and marks an unpaid order as paid. The records are November 25. It is not in KEV. Compare PayPal orders with the PayPal account.
 - **New this update:** Update a [llama.cpp](#llamacpp-an-rpc-peer-writes-below-a-buffer) RPC worker to **b12658 or later**. VulnCheck rates [CVE-2026-137567](https://www.cve.org/CVERecord?id=CVE-2026-137567) CVSS 3.1 9.8 Critical: a peer that can open the port writes a heap address it chose. Builds b11450 before b12658 are affected. The project says never to run the RPC server on an open network. The record is November 26. The fix shipped November 24. It is not in KEV.
 - **New this update:** Upgrade [Argo Workflows](#argo-workflows-an-object-key-writes-outside-the-workspace) to **v4.1.4 or v4.0.12**. GitHub rates [GHSA-vm9v-p987-xm32](https://github.com/argoproj/argo-workflows/security/advisories/GHSA-vm9v-p987-xm32) CVSS 3.1 8.8 High: an object key writes a file outside the workspace, inside the workflow pod. v3 has no fix. VulnCheck published [CVE-2026-137566](https://www.cve.org/CVERecord?id=CVE-2026-137566) on November 26. The advisory is September 18. It is not in KEV.
 - **New this update:** Nothing to install for [Zodia Custody](#zodia-custody-client-contact-records-were-read). The custodian says probing started November 23, and that on November 24 an unauthorized party read public organisation details plus a business contact name and email for a small number of clients and employees. It says it has found no unauthorized transactions. No CVE is assigned. Do not approve an API change because a message cites the notice.
@@ -652,6 +662,128 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Iceburg CRM: a low-privileged user rewrites the administrator
+
+<a id="iceburg-crm-a-low-privileged-user-rewrites-the-administrator"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/iceburg-crm.md):** [Detection](details/iceburg-crm.md#detection) · [Remediation](details/iceburg-crm.md#remediation) · [Verification](details/iceburg-crm.md#verification) · [Timeline](details/iceburg-crm.md#timeline)
+
+**CVEs:** [CVE-2026-137577](https://www.cve.org/CVERecord?id=CVE-2026-137577)
+
+**VulnCheck rates [CVE-2026-137577](https://www.cve.org/CVERecord?id=CVE-2026-137577) CVSS 4.0 8.6 High and CVSS 3.1 8.1 High.** The vectors are `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N` and `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N`. The weakness is CWE-639. `POST /data/save` checks that the caller may write the module, and every role may write `ice_users`. A signed-in user supplies another account's id and a new email or password. The password is hashed before it is stored. The project does not score it. The report tested **5.0.0**, and the record says through 5.0.0. That is the newest release tag. GitHub issue 33 is still open. The issue includes a request the reporter says worked on a local instance. The record does not report exploitation of anyone else's deployment.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-26). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-26; time/TZ unknown** | VulnCheck published the record. Issue 33 opened the same day. |
+| **Last updated** | **2026-11-26 19:56 EST (UTC−05:00)** | New item. There is no fixed release. |
+
+**Patch:** No release fixes it. Do not give an account to anyone who should not be able to change the administrator's password. Taking the site off the internet removes the remote path and does not fix the check. Nothing here shows whether an account was already rewritten.
+
+Sources: [CVE-2026-137577](https://www.cve.org/CVERecord?id=CVE-2026-137577), [issue 33](https://github.com/iceburgcrm/iceburgcrm/issues/33), [detailed guide](details/iceburg-crm.md).
+
+---
+
+## Twenty: a signup returns someone else's invitation
+
+<a id="twenty-a-signup-returns-someone-elses-invitation"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/twenty.md):** [Detection](details/twenty.md#detection) · [Remediation](details/twenty.md#remediation) · [Verification](details/twenty.md#verification) · [Timeline](details/twenty.md#timeline)
+
+**CVEs:** [CVE-2026-137584](https://www.cve.org/CVERecord?id=CVE-2026-137584)
+
+**GitHub rates [GHSA-m4vm-35cw-44rq](https://github.com/twentyhq/twenty/security/advisories/GHSA-m4vm-35cw-44rq) High, CVSS 3.1 7.4.** The vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N`. VulnCheck's [CVE-2026-137584](https://www.cve.org/CVERecord?id=CVE-2026-137584) scores the same issue CVSS 3.1 7.4 and CVSS 4.0 9.1 Critical. On a multi-workspace install, the public `signUp` mutation returns the invitation token for any pending invite at the address the caller typed. A second call joins that workspace with the invitation's role, including Admin, and marks the email verified. No mailbox is required. The advisory tested v2.47.0, lists no patched version, and says the live Cloud service was not tested. The CVE record says through 2.63.0. That release, dated November 24, still returns the token, and it is the newest tag. The GitHub page still says no CVE is known. The record does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-26). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Advisory | 2026-10-22; time/TZ unknown | GHSA-m4vm-35cw-44rq. Patched versions: none. |
+| Latest release | 2026-11-24 22:19:18 UTC | twenty/v2.63.0 still returns the token. |
+| **Public announcement of the CVE** | **2026-11-26; time/TZ unknown** | VulnCheck published the record. CVSS 4.0 9.1. |
+| **Last updated** | **2026-11-26 19:56 EST (UTC−05:00)** | New item. There is no fixed release. |
+
+**Patch:** No release fixes it. Revoke pending invitations on an internet-reachable multi-workspace install, and send a new one only when the recipient can accept it the same day. A CAPTCHA raises the cost and does not close it. A single-workspace install is outside it. Nothing here shows whether an invitation was already consumed.
+
+Sources: [GHSA-m4vm-35cw-44rq](https://github.com/twentyhq/twenty/security/advisories/GHSA-m4vm-35cw-44rq), [CVE-2026-137584](https://www.cve.org/CVERecord?id=CVE-2026-137584), [detailed guide](details/twenty.md).
+
+---
+
+## Bazarr: a Windows request reads the config
+
+<a id="bazarr-a-windows-request-reads-the-config"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/bazarr.md):** [Detection](details/bazarr.md#detection) · [Remediation](details/bazarr.md#remediation) · [Verification](details/bazarr.md#verification) · [Timeline](details/bazarr.md#timeline)
+
+**CVEs:** [CVE-2026-137585](https://www.cve.org/CVERecord?id=CVE-2026-137585)
+
+**GitHub rates [GHSA-v569-4w84-grxq](https://github.com/morpheus65535/bazarr/security/advisories/GHSA-v569-4w84-grxq) High, CVSS 3.1 7.5.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N`. VulnCheck's [CVE-2026-137585](https://www.cve.org/CVERecord?id=CVE-2026-137585) scores the same issue CVSS 3.1 7.5 and CVSS 4.0 8.7. On Windows, a path that starts with `workbox-` is served before authentication, and `..` reads a file outside the UI directory. The advisory says the service normally runs as LocalSystem and that `config.yaml` holds the Sonarr, Radarr, Plex, proxy, and provider credentials. It claims no file write and no code execution. **1.4.4 before 1.6.1-beta.29** are affected. The beta fix shipped August 24. Stable **v1.6.1** (September 15) and **v1.6.2** (September 26) are after the fix commit. The GitHub page still says no CVE is known. The record does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-26). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix | 2026-08-24 06:52:29 UTC | v1.6.1-beta.29. The commit is August 23. |
+| Stable | 2026-09-26 01:37:28 UTC | v1.6.2. v1.6.1 shipped September 15. |
+| **Public announcement of the CVE** | **2026-11-26; time/TZ unknown** | VulnCheck published the record. |
+| **Last updated** | **2026-11-26 19:56 EST (UTC−05:00)** | New item. Update Windows installs to 1.6.2. |
+
+**Patch:** Update a Windows install to **v1.6.2 or later**. A beta install needs **v1.6.1-beta.29 or later**. Then rotate the credentials in `config.yaml`. An install that is not Windows is outside the claim the advisory makes. A proxy login does not protect an old build: the route is served before Bazarr's own authentication.
+
+Sources: [GHSA-v569-4w84-grxq](https://github.com/morpheus65535/bazarr/security/advisories/GHSA-v569-4w84-grxq), [CVE-2026-137585](https://www.cve.org/CVERecord?id=CVE-2026-137585), [detailed guide](details/bazarr.md).
+
+---
+
+## LibreChat: a login request stops the server
+
+<a id="librechat-a-login-request-stops-the-server"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/librechat.md):** [Detection](details/librechat.md#detection) · [Remediation](details/librechat.md#remediation) · [Verification](details/librechat.md#verification) · [Timeline](details/librechat.md#timeline)
+
+**CVEs:** [CVE-2026-137586](https://www.cve.org/CVERecord?id=CVE-2026-137586)
+
+**GitHub rates [GHSA-572g-g8hc-w8c9](https://github.com/LibreChat-AI/LibreChat/security/advisories/GHSA-572g-g8hc-w8c9) High, CVSS 3.1 7.5.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H`. VulnCheck's [CVE-2026-137586](https://www.cve.org/CVERecord?id=CVE-2026-137586) scores the same issue CVSS 3.1 7.5 and CVSS 4.0 8.7. With LDAP login on, a login whose password is a number or `true`, sent with an email that exists in the directory, makes the process exit. The same request stops it again after each restart. Local login is not affected, and LDAP is off unless it is configured. The advisory reproduced it on v0.8.8 and v0.7.9. **v0.8.9**, published November 17, is the fix. The GitHub range is v0.7.9 through v0.8.8. The CVE record starts at 0.7.3. The GitHub page still says no CVE is known. The record does not report exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-26). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Fix and advisory | 2026-11-17 14:25:11 UTC | v0.8.9. The advisory is the same day. |
+| **Public announcement of the CVE** | **2026-11-26; time/TZ unknown** | VulnCheck published the record. |
+| **Last updated** | **2026-11-26 19:56 EST (UTC−05:00)** | New item. Update an LDAP install to v0.8.9. |
+
+**Patch:** Update to **v0.8.9 or later** where LDAP login is on. An install that does not set the LDAP variables is outside this flaw. The crash discloses nothing by itself. Look for repeated exits logged as `credentials (string) is required`.
+
+Sources: [GHSA-572g-g8hc-w8c9](https://github.com/LibreChat-AI/LibreChat/security/advisories/GHSA-572g-g8hc-w8c9), [CVE-2026-137586](https://www.cve.org/CVERecord?id=CVE-2026-137586), [detailed guide](details/librechat.md).
+
+---
+
+## VirtueMart: a storefront request includes a local file
+
+<a id="virtuemart-a-storefront-request-includes-a-local-file"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/virtuemart.md):** [Detection](details/virtuemart.md#detection) · [Remediation](details/virtuemart.md#remediation) · [Verification](details/virtuemart.md#verification) · [Timeline](details/virtuemart.md#timeline)
+
+**CVEs:** [CVE-2026-133335](https://www.cve.org/CVERecord?id=CVE-2026-133335), [CVE-2026-133333](https://www.cve.org/CVERecord?id=CVE-2026-133333), [CVE-2026-133334](https://www.cve.org/CVERecord?id=CVE-2026-133334)
+
+**The Joomla! Project rates [CVE-2026-133335](https://www.cve.org/CVERecord?id=CVE-2026-133335) CVSS 4.0 9.2 Critical.** The vector is `CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:A`. The storefront built a file name from the `view` value and included it. A request with no login can include a local PHP file, and the record says that becomes code execution when the server has a useful file. It also says the issue has been exploited in the wild. **4.0.0 through 4.8.7** are affected, and **4.8.8** fixes the loader. The vendor's November 24 notice calls it an RCE that needs the right programs installed, and does not mention exploitation. [CVE-2026-133333](https://www.cve.org/CVERecord?id=CVE-2026-133333) is CVSS 4.0 8.2: through 4.8.8, PayPal Checkout marks the current order paid without a capture. **4.8.10** fixes it. [CVE-2026-133334](https://www.cve.org/CVERecord?id=CVE-2026-133334) is 8.2: through 4.8.0, one download link fetches other files for sale. **4.8.2** fixes it. The vendor has not said whether VirtueMart 3 is affected.
+
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-26) for any of the three. The Joomla record says the loader flaw has been exploited. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Loader fix | 2026-11-19; time/TZ unknown | 4.8.8. The note does not name a CVE. |
+| Vendor notice | 2026-11-24; time/TZ unknown | 4.8.10. A hotfix covers 4.0 and above. |
+| **Public announcement** | **2026-11-25; time/TZ unknown** | The Joomla! Project published the three records. |
+| **Last updated** | **2026-11-26 19:56 EST (UTC−05:00)** | New item. Install 4.8.10. |
+
+**Patch:** Install the full **4.8.10** package. 4.8.8 leaves the PayPal flaw in place. The vendor's hotfix covers 4.0 and above and does not change the reported version. VirtueMart 3 has no named fix. Compare PayPal Checkout orders with the PayPal account. The update does not show whether a file was already included.
+
+Sources: [CVE-2026-133335](https://www.cve.org/CVERecord?id=CVE-2026-133335), [4.8.10 notice](https://virtuemart.net/news/important-security-fix-4-8-10-update-directly-hotfixes-provided), [detailed guide](details/virtuemart.md).
 
 ---
 
@@ -1343,20 +1475,21 @@ Sources: [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646), [S
 
 **CVEs:** [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202)
 
-**Wordfence, the CNA, rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The record was published 2026-11-24. It rendered reserved on 2026-11-23. On 2026-11-22, over about two hours, new releases of six plugins from developer WP connect were committed to WordPress.org from the developer's own account. Each adds `includes/airwp-online.php`. The file runs on every request, including one with no login, sends the site address and the system user to `tascredit-pay.com` with certificate checks off, and runs the PHP that server returns. It can also run a shell command, dump password hashes, and write a PHP file under `uploads`. The versions are Air WP Sync **2.9.1 through 2.9.4**, WP Sync for Notion **1.7.4**, Add-on Brevo for Gravity Forms **2.6.3**, Add-On for Contact Form 7 to Airtable **2.5.4**, Add-On for Contact Form 7 to Notion **1.6.4**, and Orders Sync to Airtable for WooCommerce **1.0.2**. WordPress.org stopped the releases before sites were offered them, and closed all six plugins the same evening. Read again on November 25, five of those closures are permanent. Air WP Sync's is temporary, pending a full review, and that page still offers no fixed version. There is no patch. The developer reports the account was compromised, and Wordfence says further details are pending.
+**Wordfence, the CNA, rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The record was published 2026-11-24. It rendered reserved on 2026-11-23. On 2026-11-22, over about two hours, new releases of six plugins from developer WP connect were committed to WordPress.org from the developer's own account. Each adds `includes/airwp-online.php`. The file runs on every request, including one with no login, sends the site address and the system user to `tascredit-pay.com` with certificate checks off, and runs the PHP that server returns. It can also run a shell command, dump password hashes, and write a PHP file under `uploads`. The versions are Air WP Sync **2.9.1 through 2.9.4**, WP Sync for Notion **1.7.4**, Add-on Brevo for Gravity Forms **2.6.3**, Add-On for Contact Form 7 to Airtable **2.5.4**, Add-On for Contact Form 7 to Notion **1.6.4**, and Orders Sync to Airtable for WooCommerce **1.0.2**. WordPress.org stopped the releases before sites were offered them, and closed all six plugins the same evening. Read again on November 26, five of those closures are permanent. Air WP Sync 2.9.5 removes the file, and the directory page still says that plugin is closed and not available for download. The CVE record, updated November 24, still says no patched version is available. The developer reports the account was compromised, and Wordfence says further details are pending.
 
-**CISA KEV:** Not listed (catalog 2026.11.24, checked 2026-11-24). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-26). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | Releases committed | 2026-11-22, about 16:30–17:40 America/New_York | Six plugins. Wordfence gives the window, not a clock time. |
 | Releases stopped | 2026-11-22; time/TZ unknown | Protect The Shire held them. The plugins were closed the same evening. |
 | **Directory reread** | **2026-11-25; time/TZ unknown** | Five closures are permanent. Air WP Sync's is temporary, pending a review. |
-| **Last updated** | **2026-11-25 19:10 EST (UTC−05:00)** | The directory now distinguishes the closures. There is still no patch. |
+| **Air WP Sync 2.9.5** | **2026-11-26 08:48:44; timezone not stated** | The tag removes the file. The directory still says closed. |
+| **Last updated** | **2026-11-26 19:56 EST (UTC−05:00)** | Air WP Sync 2.9.5 removes the file. The directory will not serve it. |
 | **Public announcement** | **2026-11-23; time/TZ unknown** | Wordfence. CVSS 3.1 9.8. |
 | **CVE record published** | **2026-11-24; time/TZ unknown** | Wordfence is the CNA. No patched version. |
 
-**Patch:** No patch. If a listed version is installed, remove the plugin and look for `includes/airwp-online.php`, an `airwp_` option, and a PHP file under `wp-content/uploads/` that you did not put there. Removing the plugin does not remove a file or a cron hook the backdoor already wrote. A site that never installed a listed version needs no change.
+**Patch:** Remove a listed version. Air WP Sync 2.9.5 removes the file, and the directory still will not serve it. The other five have no clean release. Look for `includes/airwp-online.php`, an `airwp_` option, and a PHP file under `wp-content/uploads/` that you did not put there. Removing the plugin does not remove a file or a cron hook the backdoor already wrote. A site that never installed a listed version needs no change.
 
 Sources: [Wordfence](https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/), [Wordfence Intelligence](https://www.wordfence.com/threat-intel/vulnerabilities/id/2bda1d59-0524-40ee-9427-2d31470780f9), [detailed guide](details/wordpress-wp-connect.md).
 
@@ -2081,14 +2214,14 @@ Sources: [CVE-2026-99794](https://www.cve.org/CVERecord?id=CVE-2026-99794), [Deb
 
 **kernel.org rates [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312) CVSS 3.1 8.8 High.** kernel.org is the CNA. The vector is `CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H`. On an AMD host with KVM nested virtualization, a guest that runs a virtual machine of its own can leave the host holding a pointer to a page the kernel has freed. Terra Security read about 127 GB of a DigitalOcean host through that pointer, and wrote 32 bytes into a host kernel page on its own server. Intel hosts are outside it: the kernel record says INIT cannot be emulated while a nested guest is active on VMX. Ubuntu rates it CVSS 4.0 8.2 High. Red Hat's public page now rates it CVSS 3.1 7.8 Important, still marked preliminary, and describes the use-after-free with guest read and write. SUSE now rates it 7.8 important. The 8.8 is the CNA score.
 
-**CISA KEV:** Not listed (catalog 2026.11.20, checked 2026-11-20). Terra and DigitalOcean describe a researcher demonstration. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-26). Terra and DigitalOcean describe a researcher demonstration. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-18 08:42:06 UTC** | CVE record. The stable kernels 7.3.5, 6.18.64, and 6.12.118 shipped November 17. |
-| **Last updated** | **2026-11-23 19:00 EST (UTC−05:00)** | Debian forky is now 7.3.5-1. Upstream added 5.15.226, 6.1.193, and 6.6.163. |
+| **Last updated** | **2026-11-26 19:56 EST (UTC−05:00)** | Bookworm security is 6.1.192-3 and still vulnerable. Sid is 7.3.6-1. RHEL 9 kernel-rt is affected. |
 
-**Patch:** Reboot into a kernel that contains commit `c7c288d178cb`. Upstream, that is **7.3.5**, **6.18.64**, or **6.12.118**. Debian sid and forky are fixed at **7.3.5-1**, and Debian trixie security is **6.12.118-1** (DSA-6652-1). Bookworm has no package, and Ubuntu has none. Upstream added **5.15.226**, **6.1.193**, and **6.6.163** on November 23. Red Hat marks RHEL 9 and 10 affected and RHEL 7 and 8 not affected, with no erratum. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected and names no package. On Oracle Linux, the UEK packages are ELSA-2026-500643 and ELSA-2026-500644; the RHEL-compatible kernel has none. Until the reboot, set the `nested` parameter of `kvm_amd` to `0`. A guest operating system cannot carry this fix. DigitalOcean says its own Droplet hosts are already live-patched.
+**Patch:** Reboot into a kernel that contains commit `c7c288d178cb`. Upstream, that is **7.3.5**, **6.18.64**, or **6.12.118**. Debian sid is fixed at **7.3.6-1**, forky at **7.3.5-1**, and Debian trixie security at **6.12.118-1** (DSA-6652-1). Bookworm security moved to **6.1.192-3** and is still vulnerable, and Ubuntu has none. Upstream added **5.15.226**, **6.1.193**, and **6.6.163** on November 23. Red Hat marks RHEL 9 and 10 affected, including RHEL 9 `kernel-rt`, and RHEL 7 and 8 not affected, with no erratum. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected and names no package. On Oracle Linux, the UEK packages are ELSA-2026-500643 and ELSA-2026-500644; the RHEL-compatible kernel has none. Until the reboot, set the `nested` parameter of `kvm_amd` to `0`. A guest operating system cannot carry this fix. DigitalOcean says its own Droplet hosts are already live-patched.
 
 Sources: [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312), [Terra](https://www.terra.security/blog/kvm-guest-to-host-escape), [detailed guide](details/linux-kvm-nested-init.md).
 
@@ -9414,6 +9547,11 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Iceburg CRM through 5.0.0** | No fixed release. Do not give an account to anyone who should not control the administrator. VulnCheck rates CVE-2026-137577 8.1: a signed-in user rewrites any account's email or password. 5.0.0 is the newest release, and the report is November 26. [Guide](details/iceburg-crm.md#remediation). |
+| **Twenty through 2.63.0 with multi-workspace mode on** | No fixed release. Revoke pending invitations, and send a new one only when the recipient can accept it the same day. GitHub rates GHSA-m4vm-35cw-44rq 7.4: a signup returns someone else's invitation token. VulnCheck scores CVE-2026-137584 9.1 on CVSS 4.0. A single-workspace install is outside it. [Guide](details/twenty.md#remediation). |
+| **Bazarr on Windows before v1.6.2** | Update to v1.6.2 or later and rotate the credentials in `config.yaml`. GitHub rates GHSA-v569-4w84-grxq 7.5: a request with no login reads that file. A beta install needs v1.6.1-beta.29 or later. An install that is not Windows is outside the advisory's claim. [Guide](details/bazarr.md#remediation). |
+| **LibreChat before v0.8.9 with LDAP login on** | Update to v0.8.9 or later. GitHub rates GHSA-572g-g8hc-w8c9 7.5: one login request stops the process. An install that does not set the LDAP variables is outside it. [Guide](details/librechat.md#remediation). |
+| **VirtueMart 4.0.0 through 4.8.9** | Install the full 4.8.10 package. The Joomla! Project rates CVE-2026-133335 9.2: a storefront request includes a local PHP file, and the record says that has been exploited. 4.8.8 leaves CVE-2026-133333, which marks an unpaid order as paid. VirtueMart 3 has no named fix. [Guide](details/virtuemart.md#remediation). |
 | **A Hex.pm account, a self-hosted hexpm checkout, or Ash 3.31.3 before 3.38.0 with keyset pagination** | Change the Hex password and reset two-factor authentication. Fetch packages only from `repo.hex.pm`. The foundation rates CVE-2026-129514 10.0, and the registry was attacked on November 23. Upgrade Ash to 3.38.0. [Guide](details/hexpm.md#remediation). |
 | **Dell Enterprise SONiC Distribution before 4.6.1** | Upgrade to 4.6.1 or later. Dell rates CVE-2026-103788 9.6: a neighbor with no login runs a command. CVE-2026-103782 is 9.9 and needs a low-privileged login. [Guide](details/dell-enterprise-sonic.md#remediation). |
 | **Check Point Security Management or Multi-Domain Management at R82.10 Take 36 or below, R82 Take 118 or below, R81.20 Take 158 or below, or on R81.10 or older** | Install the Jumbo at R82.10 Take 36, R82 Take 118, or R81.20 Take 158 or later, and reboot. Check Point rates CVE-2026-16232 9.3: a request with no login logs in as an administrator. R81.10 and older have no named take. CISA listed it on July 22. [Guide](details/checkpoint-smartconsole.md#remediation). |
@@ -9429,7 +9567,7 @@ flowchart TD
 | **Synchronet BBS 3.20b through 3.21e with SSH on** | No released build. Turn SSH off if the board does not need it. INCIBE says the fix is v3.22 build B, scheduled for late 2026, or a v3.22a build released after 2026-11-19. Neither is listed. [Guide](details/synchronet.md#remediation). |
 | **OTRS 2024.3.1, any 2025 release, or 2026 before 2026.8.2** | Upgrade to 2026.8.2 or later. OTRS rates CVE-2026-93584 8.6: a survey request with no login reads ticket data. The advisory does not mention Community Edition. [Guide](details/otrs.md#remediation). |
 | **Weblate before 2026.11** | Upgrade to 2026.11.1 or later. Weblate rates GHSA-6hph-c9x9-4mcv 9.1: a lookalike email receives the password-reset link. 2026.11.1 lists the leftover identities. [Guide](details/weblate.md#remediation). |
-| **WordPress with a WP connect plugin at a backdoored version** | Remove it. The versions are Air WP Sync 2.9.1–2.9.4, WP Sync for Notion 1.7.4, Add-on Brevo for Gravity Forms 2.6.3, Add-On for Contact Form 7 to Airtable 2.5.4, Add-On for Contact Form 7 to Notion 1.6.4, and Orders Sync to Airtable for WooCommerce 1.0.2. Look for `includes/airwp-online.php`. There is no patch. Removing the plugin does not remove a file under `uploads`. [Guide](details/wordpress-wp-connect.md#remediation). |
+| **WordPress with a WP connect plugin at a backdoored version** | Remove it. The versions are Air WP Sync 2.9.1–2.9.4, WP Sync for Notion 1.7.4, Add-on Brevo for Gravity Forms 2.6.3, Add-On for Contact Form 7 to Airtable 2.5.4, Add-On for Contact Form 7 to Notion 1.6.4, and Orders Sync to Airtable for WooCommerce 1.0.2. Air WP Sync 2.9.5 removes the file, and the directory still will not serve it. The other five have no clean release. Look for `includes/airwp-online.php`. Removing the plugin does not remove a file under `uploads`. [Guide](details/wordpress-wp-connect.md#remediation). |
 | **Routinator before 0.16.2** | Upgrade to 0.16.2 or later and restart. NLnet Labs rates CVE-2026-119068 7.5: an rsync server can make the validator run out of memory. The same release fixes CVE-2026-119069, scored 5.3. [Guide](details/routinator.md#remediation). |
 | **ZoneAlarm for Windows before 4.4.217.20710** | Update to 4.4.217.20710 or later. Check Point rates CVE-2026-132856 7.8: a local user runs code as SYSTEM. [Guide](details/zonealarm.md#remediation). |
 | **Apache Solr 9.0.0 before 9.11.0, or 10.0.0 before 10.1.0** | Upgrade to 9.11.0 or 10.1.0 or later and restart. Apache rates CVE-2026-86312 8.8: `/admin/ping` can do more than a health check when only the health permission can reach it. Until then, require a trusted role for that path. [Guide](details/apache-solr.md#remediation). |

@@ -1,6 +1,6 @@
 # Linux kernel: a nested AMD guest reads the host
 
-**Last updated:** 2026-11-23 (America/New_York)
+**Last updated:** 2026-11-26 (America/New_York)
 
 [Main KVM summary](../black-october-2026.md#linux-kernel-a-nested-amd-guest-reads-the-host) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -39,7 +39,7 @@ DigitalOcean, which reproduced the read on its own hosts, treated it as critical
 | Stable and longterm | 2026-11-17; time/TZ unknown | 7.3.5, 6.18.64, and 6.12.118. [Terra][terra] |
 | **Public announcement** | **2026-11-18 08:42:06 UTC** | CVE record published. Terra's write-up is the same day. [CVE][cve] |
 | DigitalOcean | 2026-11-19; time/TZ unknown | Says its Droplet fleet is live-patched. Customers of that fleet have nothing to install. [DigitalOcean][do] |
-| **Last updated** | **2026-11-23 (America/New_York)** | Debian forky is now 7.3.5-1. Upstream added 5.15.226, 6.1.193, and 6.6.163. |
+| **Last updated** | **2026-11-26 (America/New_York)** | Bookworm security moved to 6.1.192-3 and is still vulnerable. Sid is 7.3.6-1. RHEL 9 kernel-rt is affected. |
 
 ## Detection
 
@@ -57,15 +57,15 @@ Upstream fixed releases are **7.3.5**, **6.18.64**, and **6.12.118**. The record
 
 Reboot into a kernel that contains commit [`c7c288d178cb`](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c7c288d178cb). Drain guests first. Until that kernel is available, set the `nested` parameter of `kvm_amd` to `0` and reload the module, which means the guests have to stop. That turns nested virtualization off. Guests can no longer run their own virtual machines, including the kind a desktop hypervisor, an Android emulator, or a CI sandbox uses. Tell those tenants before changing it.
 
-| Distribution | Status, checked 2026-11-23 | Source |
+| Distribution | Status, checked 2026-11-26 | Source |
 |---|---|---|
 | Upstream | Fixed in 7.3.5, 6.18.64, 6.12.118, and 7.4-rc2. The November 23 stable releases add 5.15.226, 6.1.193, and 6.6.163. Also fixed before 5.16 and before 6.1 on those short branches. | [CVE record][cve] |
 | RHEL 10 | Affected. No erratum. | [Red Hat][rh] |
-| RHEL 9 | Affected. `kernel-rt` is Not affected. No erratum. | [Red Hat][rh] |
+| RHEL 9 | Affected, including `kernel-rt`. The earlier feed had marked `kernel-rt` not affected. No erratum. | [Red Hat][rh] |
 | RHEL 8 | Not affected, including `kernel-rt`. | [Red Hat][rh] |
 | RHEL 7 | Not affected. | [Red Hat][rh] |
 | Ubuntu 22.04, 24.04, 26.04, 26.10 | Vulnerable. No package. 20.04's base kernel is Not affected; its HWE 5.15 kernel is Vulnerable. Priority High. | [Ubuntu][ubuntu] |
-| Debian bookworm, trixie, forky | Trixie security is fixed at 6.12.118-1 (DSA-6652-1). Bookworm and bookworm security are still vulnerable, at 6.1.176-1 and 6.1.192-2. Forky is now resolved at 7.3.5-1, the same version as sid. | [Debian][debian] |
+| Debian bookworm, trixie, forky | Trixie security is fixed at 6.12.118-1 (DSA-6652-1). Bookworm security moved to 6.1.192-3 on November 26 and is still vulnerable. That upload fixes CVE-2026-99362, not this one. Bookworm itself is 6.1.176-1 and vulnerable. Sid is now 7.3.6-1 and fixed. Forky stays resolved at 7.3.5-1. | [Debian][debian] |
 | SUSE | SLES 15 SP7, 16.0, and 16.1 are Affected. The page had called them Already fixed. SLES 15 SP4, SP5, and SP6 LTSS are Affected. SLES 12 SP5 is Not affected. No package version is named. Overall state Pending. | [SUSE][suse] |
 | Amazon Linux | Not in the public ALAS index on 2026-11-21. No package to name. | [ALAS][alas] |
 | Oracle Linux | UEK only. ELSA-2026-500643 (2026-11-19) is `kernel-uek-5.15.0-326.224.5.2.el8uek` and `kernel-uek-5.15.0-326.224.5.2.el9uek`. ELSA-2026-500644 (2026-11-19) is `kernel-uek-6.12.0-208.112.5.3.el9uek` and `kernel-uek-6.12.0-208.112.5.3.el10uek`. The RHEL-compatible kernel has no erratum. | [Oracle][oracle] |
@@ -87,12 +87,12 @@ Terra and DigitalOcean publish no indicator: no address, no file, and no log lin
 - [CVE-2026-99312][cve] — kernel.org, published 2026-11-18 08:42:06 UTC, updated 2026-11-23. CVSS 3.1 8.8. Nested SVM only. Unaffected from 6.12.118, 6.18.64, 7.3.5, and, as of the November 23 update, 5.15.226, 6.1.193, and 6.6.163.
 - [Terra write-up][terra] — Oren Yomtov, November 18, 2026. Read of about 127 GB on a DigitalOcean droplet. Write of 32 bytes on Terra's own server. Reported 2026-10-21. Introduced by the fix for CVE-2022-3344.
 - [DigitalOcean][do] — Tyler Healy, November 19, 2026. Confirms the read and the write. Fix tagged in v7.4-rc2 on November 9 and shipped in 7.3.5, 6.18.64, and 6.12.118 on November 17. Droplet fleet live-patched.
-- [Red Hat][rh] — CVSS 3.1 7.8 Important, preliminary. The public page now describes the use-after-free with guest read and write of host memory. RHEL 9 and 10 affected, RHEL 7 and 8 not affected. No erratum. The security-data feed still marks the score a draft.
+- [Red Hat][rh] — CVSS 3.1 7.8 Important, preliminary, vector `CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H`. RHEL 9 and 10 affected, RHEL 7 and 8 not affected. The CSAF now lists RHEL 9 `kernel-rt` as affected. No erratum. The feed still marks the score a draft.
 - [Ubuntu][ubuntu] — priority High, CVSS 4.0 8.2, last updated November 20, 2026. No fixed package.
-- [Debian][debian] — checked 2026-11-23. Trixie security fixed at 6.12.118-1. Forky resolved at 7.3.5-1. Sid fixed at 7.3.5-1. Bookworm still vulnerable.
+- [Debian][debian] — read 2026-11-26. Trixie security fixed at 6.12.118-1. Forky resolved at 7.3.5-1. Sid fixed at 7.3.6-1. Bookworm security is 6.1.192-3 and still vulnerable. The 6.1.192-3 changelog, dated November 26, names CVE-2026-99362 only.
 - [SUSE][suse] — important, CVSS 3.1 7.8. SLES 15 SP7, 16.0, and 16.1 are Affected; the page had called them Already fixed. No package version. Page last modified November 21, 2026.
 - [Oracle][oracle] — ELSA-2026-500643 and ELSA-2026-500644, both 2026-11-19, cover the UEK kernels only. The RHEL-compatible kernel has no erratum.
-- [CISA KEV JSON][kev] — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, checked 2026-11-20. Not listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.25, released 2026-11-25T19:48:12.4344Z, checked 2026-11-26. Not listed.
 
 [cve]: https://www.cve.org/CVERecord?id=CVE-2026-99312
 [terra]: https://www.terra.security/blog/kvm-guest-to-host-escape
