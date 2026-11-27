@@ -1,6 +1,6 @@
 # Qt: a document parsed by QXmlSimpleReader exhausts memory
 
-**Last updated:** 2026-11-24 (America/New_York)
+**Last updated:** 2026-11-27 (America/New_York)
 
 [Main Qt summary](../black-october-2026.md#qt-a-document-parsed-by-qxmlsimplereader-exhausts-memory) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -34,13 +34,13 @@ The Qt Group's blog published two related `QXmlSimpleReader` and codec advisorie
 
 ## Detection
 
-Read the Qt version the application actually loads, not the one a package manager happens to list first. `qmake -query QT_VERSION` or the version resource of `Qt6Core` answers for a build that ships its own Qt. A distribution package is a fix only on the line that shipped one. Checked 2026-11-24: Debian sid `qt6-5compat` is **6.11.2-5**, which names CVE-2026-105925. Debian bookworm, trixie, and forky are still vulnerable, and Debian's Qt 5 package is open on every line. Ubuntu marks `qt6-5compat` and `qtbase-opensource-src` Needs evaluation. SUSE marks every listed line Affected and the overall status Pending. Red Hat rates it Moderate, CVSS 3.1 5.5, and bug 2574015 was still NEW on 2026-11-17 with no erratum. SUSE and Red Hat rescore the same flaw 5.5. The Qt Group's 8.2 is the score this guide follows.
+Read the Qt version the application actually loads, not the one a package manager happens to list first. `qmake -query QT_VERSION` or the version resource of `Qt6Core` answers for a build that ships its own Qt. A distribution package is a fix only on the line that shipped one. Checked 2026-11-27: Debian forky and sid `qt6-5compat` is **6.11.2-5**, which names CVE-2026-105925. The tracker says it migrated to testing on 2026-11-26. Debian bookworm and trixie are still vulnerable, and Debian's Qt 5 package is open on every line. Ubuntu marks `qt6-5compat` and `qtbase-opensource-src` Needs evaluation. SUSE marks every listed line Affected and the overall status Pending. Red Hat rates it Moderate, CVSS 3.1 5.5, and bug 2574015 was still NEW on 2026-11-17 with no erratum. SUSE and Red Hat rescore the same flaw 5.5. The Qt Group's 8.2 is the score this guide follows.
 
 An application that never calls `QXmlSimpleReader::parse()` does not reach the flaw. Confirm that before treating every Qt install as exposed.
 
 ## Remediation
 
-1. Update to **Qt 6.8.10, 6.11.3, or 6.12.1** or later, and ship that build. The advisory's patch archives are the alternative for a tree you compile yourself. On Debian sid, `qt6-5compat` **6.11.2-5** carries the fix. Debian bookworm, trixie, and forky, and Ubuntu, SUSE, and Red Hat, still have no package, so a distribution update on those lines does not move the library. Qt 5 has no package anywhere checked.
+1. Update to **Qt 6.8.10, 6.11.3, or 6.12.1** or later, and ship that build. The advisory's patch archives are the alternative for a tree you compile yourself. On Debian forky and sid, `qt6-5compat` **6.11.2-5** carries the fix. Debian bookworm and trixie, and Ubuntu, SUSE, and Red Hat, still have no package, so a distribution update on those lines does not move the library. Qt 5 has no package anywhere checked.
 2. On Qt 5, which has no release named here, stop parsing untrusted documents with `QXmlSimpleReader`.
 3. The update does not restart a process that already exhausted memory. Restart it.
 
@@ -60,7 +60,7 @@ The result is memory exhaustion, not code execution. No source reports exploitat
 - [Qt advisory, CVE-2026-103645][103645] — published 2026-11-13. CVSS 4.0 1.1 Low.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.20, released 2026-11-20T17:48:39.1516Z, read 2026-11-22. CVE-2026-105925 is not in it.
 - [Ubuntu CVE-2026-105925][ubuntu] — read 2026-11-22. Needs evaluation. No package.
-- [Debian security tracker](https://security-tracker.debian.org/tracker/CVE-2026-105925) — read 2026-11-22. Vulnerable in bookworm, trixie, forky, and sid.
+- [Debian security tracker](https://security-tracker.debian.org/tracker/CVE-2026-105925) — read 2026-11-27. `qt6-5compat` 6.11.2-5 is fixed in forky and sid. Bookworm and trixie are vulnerable. Qt 5 is vulnerable on every line.
 - [SUSE CVE-2026-105925](https://www.suse.com/security/cve/CVE-2026-105925.html) — read 2026-11-22. Pending. SUSE's score is CVSS 3.1 5.5.
 - [Red Hat CVE-2026-105925](https://access.redhat.com/security/cve/CVE-2026-105925) — read 2026-11-22. Moderate, CVSS 3.1 5.5. No erratum.
 

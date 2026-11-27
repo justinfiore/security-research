@@ -2,6 +2,15 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-27 15:07 EST (UTC−05:00) — Linux NFS; GeoServer; Drupal
+
+- **Linux kernel:** Reboot an NFS server into a kernel that fixes [NFS2ROOT](black-october/details/linux-nfs2root.md#remediation). kernel.org rates CVE-2026-99362 CVSS 3.1 9.8: a client that never logs in writes past a kernel buffer. Red Hat scores it 9.4. A host that does not serve NFSv4.1 or NFSv4.2 is outside it. On RHEL 8, install `kernel-4.18.0-553.190.1.el8_10`. RHEL 9 has no erratum. Debian bookworm security is `linux` 6.1.192-3. Ubuntu has no package. It is not in KEV.
+- **GeoServer:** [CVE-2026-120705 and CVE-2026-129243](black-october/details/geoserver.md#remediation) are in CISA's catalog as of November 27, due November 30. The floors stay 3.0.2 and 2.28.6. Change administrator passwords if the data directory may have been read. The remember-me key, CVE-2026-129245, is not listed.
+- **Drupal:** [CVE-2026-136716](black-october/details/drupal.md#remediation) is in CISA's catalog as of November 27, due November 30, and forensic triage is required. The floors stay 11.4.14, 11.3.23, and 10.6.23, and `update.php` still has to run. CISA-ADP scored it 9.8. That score is not Drupal's.
+- **Firefox:** A [Tor Browser demonstration](black-october/details/firefox.md) published November 26 uses CVE-2026-92027, which Mozilla fixed on September 15. Firefox 161 and ESR 153.8 or 115.46 already contain it. A Tor Browser still on 15.0.22 does not: 15.0.23 is the first build with the fix. It is not in KEV.
+- **GPGME:** On Debian testing, install [2.3.1-1](black-october/details/gpgme.md#remediation). The tracker, read November 27, lists forky fixed again, the same version as sid. On November 26 it had listed forky at 2.2.0-2, vulnerable. The library to install is still 2.3.1. It is not in KEV.
+- **Qt:** On Debian testing, install [qt6-5compat 6.11.2-5](black-october/details/qt-qxml.md#remediation). The tracker says it migrated to testing on November 26. Bookworm and trixie still have none, and the Qt 5 package has none on any line. It is not in KEV.
+
 ## 2026-11-27 11:30 EST (UTC−05:00) — Hitachi; Adobe Campaign; GitLab; Git; Ubuntu
 
 - **Adobe Campaign Classic:** Update an on-premise install to [7.4.4 build 9404 or 7.4.5 build 9421](black-october/details/adobe-campaign-classic.md#remediation) and restart. Build 9403, the October fix, leaves twelve Critical flaws from November 24. Adobe rates seven of them CVSS 3.1 9.9. It says it is not aware of exploits. None is in KEV.

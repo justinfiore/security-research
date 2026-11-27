@@ -1,6 +1,6 @@
 # Firefox: a layout bug can run code from a web page
 
-**Last updated:** 2026-11-25 (America/New_York)
+**Last updated:** 2026-11-27 (America/New_York)
 
 [Back to Firefox summary](../black-october-2026.md#firefox-a-layout-bug-can-run-code-from-a-web-page) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,9 @@
 
 On 2026-11-10 Mozilla published [MFSA 2026-125][mfsa160], impact high, fixed in Firefox **160**. It lists 57 issues Mozilla rates high, including sandbox escapes, plus moderate and low issues. [CVE-2026-124903](https://www.cve.org/CVERecord?id=CVE-2026-124903) is one of the high ones: a sandbox escape from a use-after-free in IPC. [CVE-2026-124917](https://www.cve.org/CVERecord?id=CVE-2026-124917) is in the same advisory at impact **moderate**, a sandbox escape in the Gtk widget code. Secondary pages score both 9.6. Mozilla publishes no numeric score, and this guide uses Mozilla's rating. Firefox **159.0.1 does not contain these fixes.** [MFSA 2026-127][mfsa153] fixes both CVEs in Firefox ESR **153.7**. [MFSA 2026-126][mfsa115] fixes CVE-2026-124903 in Firefox ESR **115.45** and does not list CVE-2026-124917.
 
-**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25) for CVE-2026-120572, CVE-2026-124903, CVE-2026-124917, CVE-2026-135500, CVE-2026-136226, or CVE-2026-136227. Mozilla does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Not listed (catalog 2026.11.27, checked 2026-11-27) for CVE-2026-120572, CVE-2026-124903, CVE-2026-124917, CVE-2026-135500, CVE-2026-136226, CVE-2026-136227, or CVE-2026-92027. Mozilla does not report exploitation. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+
+**A September flaw got a public demonstration on November 26, and the current floors already contain the fix.** [CVE-2026-92027](https://www.cve.org/CVERecord?id=CVE-2026-92027): Mozilla rates it high, a use-after-free in DOM Streams, and the CNA record publishes no numeric score. [MFSA 2026-92](https://www.mozilla.org/en-US/security/advisories/mfsa2026-92/), announced September 15, 2026, fixes it in Firefox ESR **140.16**. The record also lists Firefox **156**, Firefox ESR **115.41** and **153.3**, and Thunderbird **156**, **140.16**, and **153.3** as unaffected. Calif showed on November 26 that Tor Browser **15.0.22** leaks the user's real IP address from one click, and says the chain stops at Tor Browser **15.0.23**, which the Tor Project released the same day as the Firefox fix. A Firefox at **161** or an ESR at **153.8** or **115.46** is past it. A Tor Browser that stopped at 15.0.22 is not.
 
 ## Table of contents
 
@@ -60,7 +62,10 @@ Mozilla does not report exploitation, and the bug is not public. If a host shows
 - [MFSA 2026-125][mfsa160] — announced 2026-11-10. Impact high. Fixed in Firefox 160. CVE-2026-124903 is high. CVE-2026-124917 is moderate.
 - [MFSA 2026-127][mfsa153] — announced 2026-11-10. Fixed in Firefox ESR 153.7. Both CVEs.
 - [MFSA 2026-126][mfsa115] — announced 2026-11-10. Fixed in Firefox ESR 115.45. CVE-2026-124903 only.
-- [CISA KEV JSON feed][kev] — not listed (catalog 2026.11.10, checked 2026-11-10).
+- [MFSA 2026-92](https://www.mozilla.org/en-US/security/advisories/mfsa2026-92/) — announced September 15, 2026. Impact high. CVE-2026-92027, use-after-free in DOM Streams, impact high. Fixed in Firefox ESR 140.16.
+- [CVE-2026-92027](https://www.cve.org/CVERecord?id=CVE-2026-92027) — Mozilla CNA, published 2026-09-15. No numeric score. Unaffected at Firefox 156, ESR 115.41, 140.16, and 153.3, and Thunderbird 156, 140.16, and 153.3.
+- [Tor Browser 15.0.23](https://blog.torproject.org/new-release-tor-browser-15023/) — September 15, 2026. Rebases on Firefox ESR 140.16.0 and backports the Firefox 156 fixes.
+- [CISA KEV JSON feed][kev] — not listed (catalog 2026.11.27, checked 2026-11-27).
 
 [mfsa]: https://www.mozilla.org/en-US/security/advisories/mfsa2026-123/
 [mfsa160]: https://www.mozilla.org/en-US/security/advisories/mfsa2026-125/

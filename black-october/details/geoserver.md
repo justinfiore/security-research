@@ -1,6 +1,6 @@
 # GeoServer: a stored query reads a file, then a default key is the administrator
 
-**Last updated:** 2026-11-25 (America/New_York)
+**Last updated:** 2026-11-27 (America/New_York)
 
 [Main summary](../black-october-2026.md#geoserver-a-stored-query-reads-a-file-then-a-default-key-is-the-administrator) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -8,7 +8,7 @@
 
 The same October builds fix more issues the project rates High. The ones in core are [CVE-2026-129242](https://www.cve.org/CVERecord?id=CVE-2026-129242) (CVSS 4.0 8.6, administrator deserialization) and [CVE-2026-129293](https://www.cve.org/CVERecord?id=CVE-2026-129293) (stored XSS). The rest need an extension or a community module: [CVE-2026-120706](https://www.cve.org/CVERecord?id=CVE-2026-120706) (CVSS 4.0 8.2, WPS plus native GDAL), [CVE-2026-120701](https://www.cve.org/CVERecord?id=CVE-2026-120701) (CVSS 3.1 7.5, WPS Download), [CVE-2026-120710](https://www.cve.org/CVERecord?id=CVE-2026-120710) (GeoWebCache), [CVE-2026-120707](https://www.cve.org/CVERecord?id=CVE-2026-120707) (GeoFence), [CVE-2026-120708](https://www.cve.org/CVERecord?id=CVE-2026-120708) (ACL), [CVE-2026-120703](https://www.cve.org/CVERecord?id=CVE-2026-120703) (JWT community module), and [CVE-2026-129294](https://www.cve.org/CVERecord?id=CVE-2026-129294) (OGC API Styles). [CVE-2026-129244](https://www.cve.org/CVERecord?id=CVE-2026-129244) is Medium (CVSS 4.0 6.9): an overlong stored-query id returns the data-directory path, which the chain uses. Four more Medium issues are in the same builds.
 
-**CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-25). watchTowr says its honeypot saw probes for [CVE-2026-120705](https://www.cve.org/CVERecord?id=CVE-2026-120705) and [CVE-2026-129243](https://www.cve.org/CVERecord?id=CVE-2026-129243) on November 25: attackers created and invoked stored queries to test whether the server was vulnerable. That is not a KEV listing. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
+**CISA KEV:** Listed — [CVE-2026-120705](https://www.cve.org/CVERecord?id=CVE-2026-120705) and [CVE-2026-129243](https://www.cve.org/CVERecord?id=CVE-2026-129243) added 2026-11-27, federal due date 2026-11-30. Ransomware use Unknown. Forensic triage is not required. CISA's note says the file read can be chained with CVE-2026-129244, CVE-2026-129243, CVE-2026-129245, and CVE-2026-129242 to run code with no login. [CVE-2026-129245](https://www.cve.org/CVERecord?id=CVE-2026-129245), the remember-me key, is not listed, and neither is [CVE-2026-120704](https://www.cve.org/CVERecord?id=CVE-2026-120704). watchTowr says its honeypot saw probes for the two listed flaws on November 25. [What KEV means](../black-october-2026.md#what-cisa-kev-means).
 
 ## Table of contents
 
@@ -28,7 +28,8 @@ The same October builds fix more issues the project rates High. The ones in core
 | **Advisories published** | **2026-11-23; time unknown** | Nineteen advisories. The project rates the remember-me key Critical. [Post][gs] |
 | Eye Security write-up | 2026-11-24; time unknown | Says the chain works on a default 3.0.1 install. [Eye Security][eye] |
 | **Honeypot probes** | **2026-11-25 11:09 UTC** | watchTowr, for CVE-2026-120705 and CVE-2026-129243. [Post][wt] |
-| **Last updated** | **2026-11-25 (America/New_York)** | New item. |
+| **CISA KEV** | **2026-11-27; catalog released 18:03:12 UTC** | CVE-2026-120705 and CVE-2026-129243 added. Federal due date 2026-11-30. Ransomware use Unknown. Forensic triage not required. [KEV][kev] |
+| **Last updated** | **2026-11-27 (America/New_York)** | The file read and the service-name bypass are in KEV. |
 
 ## Detection
 
@@ -72,7 +73,7 @@ Treat an internet-facing instance below the floor as exposed from the October 19
 - [GHSA-5v3x-f56f-2xm8](https://github.com/geoserver/geoserver/security/advisories/GHSA-5v3x-f56f-2xm8) — CVE-2026-120706, CVSS 4.0 8.2, needs native GDAL.
 - [Eye Security, November 24, 2026][eye] — the file-read, cookie, and JDBC chain on a default install. Reported September 29.
 - [watchTowr, November 25, 2026, 11:09 UTC][wt] — honeypot probes for CVE-2026-120705 and CVE-2026-129243.
-- [CISA KEV JSON][kev] — catalog 2026.11.25, checked 2026-11-25. None of these CVEs is listed.
+- [CISA KEV JSON][kev] — catalog 2026.11.27, released 2026-11-27T18:03:12.5733Z, checked 2026-11-27. CVE-2026-120705 and CVE-2026-129243 added 2026-11-27, due 2026-11-30. CVE-2026-129245 and CVE-2026-120704 are not listed.
 
 [gs]: https://geoserver.org/vulnerability/2026/11/23/cve-update.html
 [eye]: https://labs.eye.security/unauthenticated-remote-code-execution-vulnerability-in-geoserver/

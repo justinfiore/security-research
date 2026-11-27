@@ -65,7 +65,7 @@ Reboot into a kernel that contains commit [`c7c288d178cb`](https://git.kernel.or
 | RHEL 8 | Not affected, including `kernel-rt`. | [Red Hat][rh] |
 | RHEL 7 | Not affected. | [Red Hat][rh] |
 | Ubuntu 22.04, 24.04, 26.04, 26.10 | Vulnerable. No package. 20.04's base kernel is Not affected; its HWE 5.15 kernel is Vulnerable. Priority High. | [Ubuntu][ubuntu] |
-| Debian bookworm, trixie, forky | Trixie security is fixed at 6.12.118-1 (DSA-6652-1). Bookworm security moved to 6.1.192-3 on November 26 and is still vulnerable. That upload fixes CVE-2026-99362, not this one. Bookworm itself is 6.1.176-1 and vulnerable. Sid is now 7.3.6-1 and fixed. Forky stays resolved at 7.3.5-1. | [Debian][debian] |
+| Debian bookworm, trixie, forky | Trixie security is fixed at 6.12.118-1 (DSA-6652-1). Bookworm security moved to 6.1.192-3 on November 26 and is still vulnerable. That upload fixes [CVE-2026-99362](linux-nfs2root.md), not this one. Bookworm itself is 6.1.176-1 and vulnerable. Sid is now 7.3.6-1 and fixed. Forky stays resolved at 7.3.5-1. | [Debian][debian] |
 | SUSE | SLES 15 SP7, 16.0, and 16.1 are Affected. The page had called them Already fixed. SLES 15 SP4, SP5, and SP6 LTSS are Affected. SLES 12 SP5 is Not affected. No package version is named. Overall state Pending. | [SUSE][suse] |
 | Amazon Linux | Not in the public ALAS index on 2026-11-21. No package to name. | [ALAS][alas] |
 | Oracle Linux | UEK only. ELSA-2026-500643 (2026-11-19) is `kernel-uek-5.15.0-326.224.5.2.el8uek` and `kernel-uek-5.15.0-326.224.5.2.el9uek`. ELSA-2026-500644 (2026-11-19) is `kernel-uek-6.12.0-208.112.5.3.el9uek` and `kernel-uek-6.12.0-208.112.5.3.el10uek`. The RHEL-compatible kernel has no erratum. | [Oracle][oracle] |
