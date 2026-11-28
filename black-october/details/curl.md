@@ -1,6 +1,6 @@
 # curl and libcurl: use-after-free when a server resets an upload
 
-**Last updated:** 2026-11-23 (America/New_York)
+**Last updated:** 2026-11-28 (America/New_York)
 
 [Main curl summary](../black-october-2026.md#curl-and-libcurl-use-after-free-when-a-server-resets-an-upload) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -99,13 +99,13 @@ The proven exploit needs very precise conditions, so finding nothing proves noth
 
 ## Remediation
 
-1. **Upgrade** curl and libcurl to **8.23.0** or later, or install your distribution's fixed package. Checked 2026-11-13:
+1. **Upgrade** curl and libcurl to **8.23.0** or later, or install your distribution's fixed package. Checked 2026-11-28:
 
    | Distribution | Status |
    |---|---|
    | Debian trixie | Fixed, `8.14.1-2+deb13u7` ([DSA-6558-1][dsa]) |
    | Debian bookworm | Not affected. The tracker also lists `7.88.1-10+deb12u15` as fixed |
-   | Debian sid | Fixed, `8.23.0-1` |
+   | Debian sid | Fixed, `8.24.0~rc2-1`. The tracker, read 2026-11-28, lists that package as fixed. The unstable fixed boundary is still `8.23.0-1` |
    | Debian forky | Fixed, `8.23.0-2` |
    | Ubuntu 26.10, 26.04 | Fixed, `8.20.0-2ubuntu11.1` and `8.18.0-1ubuntu2.8` ([USN-8927-1](https://ubuntu.com/security/notices/USN-8927-1)) |
    | Ubuntu 24.04 and older | Not affected |

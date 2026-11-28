@@ -2,6 +2,16 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-28 11:05 EST (UTC−05:00) — WP Rocket; FOG; MONEO; Incus; SEPPmail
+
+- **WordPress:** Update [WP Rocket to 3.24.2](black-october/details/wordpress-wp-rocket.md#remediation). Patchstack rates CVE-2026-125812 CVSS 3.1 9.8: a beacon report writes a PHP file, and the request needs no login. WP Rocket says 3.15 through 3.24.1 are affected, and only when LazyLoad for CSS background images or Self-host Google Fonts is on. The record says anything before 3.24.2. The fix shipped November 19. Patchstack says attempts started November 25 at 15:27 UTC. It is not in KEV. Turning both settings off is the workaround. The update does not remove a file already written. An expired license does not receive the update.
+- **FOG Project:** Update to [1.6.0.158](black-october/details/fog-project.md#remediation). The project rates GHSA-666x-5fjv-v8j9 CVSS 3.1 7.4: a host token returns the Active Directory join password. Through 1.6.0.118 is affected. VulnCheck's CVE-2026-137995 scores it 7.0 on CVSS 4.0 and 6.1 on CVSS 3.1. The advisory is November 27. It is not in KEV. Rotate the join account if a task ran while the web interface was reachable.
+- **MONEO:** Update the server to the [August 3, 2026 release](black-october/details/moneo-erp.md#remediation). ENISA scores CVE-2026-59103 CVSS 4.0 9.3: a public ping forges a session for any user, in any company on that server. OffSeq confirmed it on 1.8.45.6 and names no build number. The record is November 27. It is not in KEV.
+- **Incus:** Upgrade the server to [7.7.0](black-october/details/incus.md#remediation) and restart. 7.6.0 leaves GHSA-9m5m-cr24-m367, which Incus rates CVSS 3.1 9.9: a restricted client gets unrestricted access, which Incus says is root on the host. No CVE. Published November 27. There is no complete workaround.
+- **SEPPmail:** Upgrade to [15.1.2](black-october/details/seppmail.md#remediation). 15.1.1 leaves CVE-2026-130637, which the November 24 release notes score 9.3: the GINA login page expanded request values as templates. Two more in that release are 9.2. None of the earlier five is in KEV.
+- **NGINX:** Move an nginx.org build to [1.30.8 or 1.31.10](black-october/details/nginx.md#remediation). 1.30.7 and 1.31.9 leave CVE-2026-132779, which F5 scores CVSS 3.1 5.3 and CVSS 4.0 6.9. It needs `ssl_early_data` on. Debian has no package yet. The November 18 floors are unchanged.
+- **curl:** On Debian sid, the [fixed package](black-october/details/curl.md#remediation) is now `curl` 8.24.0~rc2-1. The tracker, read November 28, still lists it fixed. The unstable boundary stays 8.23.0-1. SUSE is still pending.
+
 ## 2026-11-28 07:01 EST (UTC−05:00) — W3 Total Cache; Ghostscript
 
 - **WordPress:** Update [W3 Total Cache to 2.11.1](black-october/details/wordpress-w3tc.md#remediation). Wordfence rates CVE-2026-119071 CVSS 3.1 8.1: an Author deletes any attachment. CVE-2026-135616 is 7.5: a Subscriber runs code, and only when Object Cache uses Memcached through the pecl memcache extension and Minify is on. Both are through 2.11.0. The records are November 27. Neither is in KEV. The update does not restore a deleted attachment.

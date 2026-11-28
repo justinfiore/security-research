@@ -1,8 +1,10 @@
 # NGINX: configuration-dependent memory corruption and TLS session forgery
 
-**Last updated:** 2026-11-26 (America/New_York)
+**Last updated:** 2026-11-28 (America/New_York)
 
 [Main NGINX summary](../black-october-2026.md#nginx-configuration-dependent-memory-corruption-and-tls-session-forgery) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
+
+**NGINX Open Source 1.30.8 and 1.31.10, released 2026-11-23, fix one more flaw, [CVE-2026-132779](https://www.cve.org/CVERecord?id=CVE-2026-132779).** nginx.org says 1.21.4 through 1.31.9 are vulnerable and 1.30.8 and 1.31.10 are not. F5 scores it CVSS 3.1 5.3 and CVSS 4.0 6.9, below this collection's High bar. It needs `ssl_early_data` on, and the workaround is `ssl_early_data off`. NGINX Plus is 37.3.1.1 and 37.0.9.1. A build on 1.30.7 or 1.31.9 still has it. Debian's tracker lists bookworm, trixie, forky, and sid vulnerable. [nginx.org advisories][ngx-adv] [K000163947](https://my.f5.com/manage/s/article/K000163947)
 
 **NGINX Open Source 1.30.7 and 1.31.9, released 2026-11-18, fix ten flaws.** F5's [November 18 index](https://my.f5.com/manage/s/article/K000164058) lists them. Five are High or Critical. Researchers call the set nginx2root. Turning HTTP/2 off blocks only two of them.
 
@@ -119,7 +121,7 @@ For CVE-2026-97629, compare successful mTLS-protected requests with expected cli
 
 ## Remediation
 
-1. **Upgrade NGINX Open Source** to **1.30.7** (stable) or **1.31.9** (mainline). Then restart, or do a binary upgrade, so every worker runs the new binary. A `reload` alone keeps running the old binary. 1.30.6 and 1.31.7 fix only the October flaws. [nginx.org advisories][ngx-adv]
+1. **Upgrade NGINX Open Source** to **1.30.8** (stable) or **1.31.10** (mainline). Then restart, or do a binary upgrade, so every worker runs the new binary. A `reload` alone keeps running the old binary. 1.30.7 and 1.31.9 fix the November 18 set and leave CVE-2026-132779, which F5 scores below High. 1.30.6 and 1.31.7 fix only the October flaws. Until 1.30.8 or 1.31.10 is installed, `ssl_early_data off` closes that one path and not the November 18 set. [nginx.org advisories][ngx-adv]
 2. **NGINX Plus:** upgrade to **37.3.0.1** or **37.0.8.1**. F5 lists **no fix for R34 through R36**, so move to a fixed 37.x release. The October floors, 37.0.5.1 and 37.1.0.1, leave the November flaws in place. [K000163926][k123007]
 
 ### F5 products that embed NGINX

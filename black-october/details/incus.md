@@ -1,8 +1,10 @@
 # Incus: certificate-chain authentication bypass and restricted-project host root
 
-**Last updated:** 2026-11-22 (America/New_York)
+**Last updated:** 2026-11-28 (America/New_York)
 
 [Back to Incus summary](../black-october-2026.md#incus-certificate-chain-authentication-bypass-and-restricted-project-host-root) · [Changelog](../../CHANGELOG.md)
+
+Incus **7.7.0**, published 2026-11-27, fixes another Critical flaw that 7.6.0 does not. [GHSA-9m5m-cr24-m367](https://github.com/lxc/incus/security/advisories/GHSA-9m5m-cr24-m367) is CVSS 3.1 9.9, vector `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H`, affected below 7.7.0, and has no CVE. A restricted TLS client, including one served through `incus-user`, can get unrestricted access. Incus says that is root on the host. The advisory says there is no complete workaround. The 7.7 announcement says the release fixes 46 security issues.
 
 Incus **7.6.0**, released 2026-10-30, fixes 18 security issues. Eight are rated Critical by the project and five High. **No CVE is assigned** on the advisories read for this release. This is not the [LXD](lxd-mtls.md) snap update: LXD's [CVE-2026-112816](https://www.cve.org/CVERecord?id=CVE-2026-112816) is the same certificate-chain bug in Canonical's product, and refreshing the LXD snap does not update Incus.
 
@@ -51,14 +53,14 @@ Monthly feature releases are supported only until the next one. Incus points ope
 
 ## Remediation
 
-1. Upgrade the Incus server to **7.6.0 or later** and restart so the new daemon is the one listening. Upstream publishes a release tarball and client binaries; distribution and Zabbly packages are separate. The announcement said the Zabbly repository was still finishing a build on the day of release. Debian trixie is not that upstream version: [DSA-6604-1][dsa] (2026-11-02) is **incus 6.0.4-2+deb13u12** and has no CVE id. Debian's tracker, read 2026-11-22, says that package fixes the certificate-chain bypass and seven of the other advisories, and now also marks GHSA-q9fc-p923-6vp7 fixed because the vulnerable code is not present. GHSA-3rgf-297m-775x is still postponed on trixie and fixed on forky and sid at 7.0.2-3. VulnCheck published CVE-2026-130780 for GHSA-q9fc-p923-6vp7 and CVE-2026-130770 for GHSA-3rgf-297m-775x on 2026-11-18. The GitHub advisories still say no CVE is assigned. Forky and sid are both at 7.0.2-3, which cherry-picks the certificate-chain bypass and the two advisories the earlier forky package left open. A trixie host that installed the DSA is not equivalent to 7.6.0.
+1. Upgrade the Incus server to **7.7.0 or later** and restart so the new daemon is the one listening. 7.6.0 fixes the October set and leaves GHSA-9m5m-cr24-m367. Upstream publishes a release tarball and client binaries; distribution and Zabbly packages are separate. The announcement said the Zabbly repository was still finishing a build on the day of release. Debian trixie is not that upstream version: [DSA-6604-1][dsa] (2026-11-02) is **incus 6.0.4-2+deb13u12** and has no CVE id. Debian's tracker, read 2026-11-22, says that package fixes the certificate-chain bypass and seven of the other advisories, and now also marks GHSA-q9fc-p923-6vp7 fixed because the vulnerable code is not present. GHSA-3rgf-297m-775x is still postponed on trixie and fixed on forky and sid at 7.0.2-3. VulnCheck published CVE-2026-130780 for GHSA-q9fc-p923-6vp7 and CVE-2026-130770 for GHSA-3rgf-297m-775x on 2026-11-18. The GitHub advisories still say no CVE is assigned. Forky and sid are both at 7.0.2-3, which cherry-picks the certificate-chain bypass and the two advisories the earlier forky package left open. A trixie host that installed the DSA is not equivalent to 7.6.0.
 2. Until 7.6.0 is running, do not expose the HTTPS listener to untrusted networks. Incus publishes no configuration switch that stops the chain comparison.
 3. For the restricted-project issues, do not import untrusted images or backups, and do not grant create rights to tenants, until the new daemon is running. Those limits do not close the certificate-chain bug.
 4. Do not use a [LXD](lxd-mtls.md) snap refresh as the Incus upgrade.
 
 ## Verification
 
-- `incus version` reports 7.6.0 or later, and an existing client you already trust can still connect.
+- `incus version` reports 7.7.0 or later, and an existing client you already trust can still connect. 7.6.0 still has GHSA-9m5m-cr24-m367.
 - Do not send a crafted certificate chain, image, or backup to a production daemon to test these bugs.
 
 ## Compromise response

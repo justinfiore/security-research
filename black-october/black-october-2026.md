@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [WordPress: WP Rocket writes a PHP file from a beacon report](#wordpress-wp-rocket-writes-a-php-file-from-a-beacon-report)
+- [FOG Project: a host token returns the domain-join password](#fog-project-a-host-token-returns-the-domain-join-password)
+- [MONEO: a public ping forges a session](#moneo-a-public-ping-forges-a-session)
 - [WordPress: W3 Total Cache deletes any file, and a cache key runs code](#wordpress-w3-total-cache-deletes-any-file-and-a-cache-key-runs-code)
 - [JSPWiki: a login keeps the session the attacker set](#jspwiki-a-login-keeps-the-session-the-attacker-set)
 - [n8n: an expression escapes the sandbox](#n8n-an-expression-escapes-the-sandbox)
@@ -376,6 +379,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [FOG Project](#fog-project-a-host-token-returns-the-domain-join-password) to **1.6.0.158 or later**. The project rates [GHSA-666x-5fjv-v8j9](https://github.com/FOGProject/fogproject/security/advisories/GHSA-666x-5fjv-v8j9) CVSS 3.1 7.4 High: a host's MAC address, while that host has a task, returns a token, and the token returns the Active Directory join password. Through 1.6.0.118 is affected. VulnCheck's [CVE-2026-137995](https://www.cve.org/CVERecord?id=CVE-2026-137995) scores the same flaw CVSS 4.0 7.0 and CVSS 3.1 6.1. The advisory is November 27. It is not in KEV. Rotate the join account if a task ran while the web interface was reachable.
+- **New this update:** Update the [MONEO](#moneo-a-public-ping-forges-a-session) server to the **August 3, 2026 release or later**. ENISA scores [CVE-2026-59103](https://www.cve.org/CVERecord?id=CVE-2026-59103) CVSS 4.0 9.3 Critical: a public ping writes a session for any user, in any company on that server. OffSeq confirmed it on 1.8.45.6 and names no build number for the fix. The record is November 27. It is not in KEV.
+- **New this update:** Update [WP Rocket](#wordpress-wp-rocket-writes-a-php-file-from-a-beacon-report) to **3.24.2 or later**. Patchstack rates [CVE-2026-125812](https://www.cve.org/CVERecord?id=CVE-2026-125812) CVSS 3.1 9.8 Critical: a beacon report writes a PHP file, and the request needs no login. WP Rocket says 3.15 through 3.24.1 are affected, and only when LazyLoad for CSS background images or Self-host Google Fonts is on. The record says anything before 3.24.2. The fix shipped November 19. Patchstack says attempts started November 25. It is not in KEV. Turning both settings off is the workaround, not the fix.
 - **New this update:** Update [W3 Total Cache](#wordpress-w3-total-cache-deletes-any-file-and-a-cache-key-runs-code) to **2.11.1 or later**. Wordfence rates [CVE-2026-119071](https://www.cve.org/CVERecord?id=CVE-2026-119071) CVSS 3.1 8.1 High: an Author deletes any attachment. [CVE-2026-135616](https://www.cve.org/CVERecord?id=CVE-2026-135616) is 7.5: a Subscriber runs code, and only when Object Cache uses Memcached through pecl memcache and Minify is on. Both are through 2.11.0. The records are November 27. Neither is in KEV.
 - **New this update:** Upgrade [JSPWiki](#jspwiki-a-login-keeps-the-session-the-attacker-set) to **3.0.1** or **2.12.6**. Apache rates [CVE-2026-78114](https://www.cve.org/CVERecord?id=CVE-2026-78114) CVSS 4.0 10.0 Critical: a login keeps the session identifier the attacker set. 2.10.0 through 3.0.0 are affected, and 2.12.6 is the fix inside that range. The record is November 25. It is not in KEV.
 - **New this update:** Upgrade self-hosted [n8n](#n8n-an-expression-escapes-the-sandbox) to the November 26 floor for its line. GitHub rates [GHSA-w6f8-8qh4-h3j4](https://github.com/n8n-io/n8n/security/advisories/GHSA-w6f8-8qh4-h3j4) CVSS 4.0 7.7 High: a workflow expression escapes the sandbox and runs code in the n8n process. The advisory's floors are npm **2.49.2** and Docker **3.4.0**. The same day's post names stable **2.49.7**, beta **2.50.2**, v3 **3.4.1**, and v1 **1.123.102**. No CVE is assigned. n8n Cloud is already patched. This is not the credential-guard bypass.
@@ -692,6 +698,80 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## FOG Project: a host token returns the domain-join password
+
+<a id="fog-project-a-host-token-returns-the-domain-join-password"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/fog-project.md):** [Detection](details/fog-project.md#detection) · [Remediation](details/fog-project.md#remediation) · [Verification](details/fog-project.md#verification) · [Timeline](details/fog-project.md#timeline)
+
+**CVEs:** [CVE-2026-137995](https://www.cve.org/CVERecord?id=CVE-2026-137995)
+
+**The FOG Project rates [GHSA-666x-5fjv-v8j9](https://github.com/FOGProject/fogproject/security/advisories/GHSA-666x-5fjv-v8j9) CVSS 3.1 7.4 High.** The vector is `CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N`. The advisory was published November 27 and still says no CVE is known. VulnCheck published [CVE-2026-137995](https://www.cve.org/CVERecord?id=CVE-2026-137995) the same day and scores it CVSS 4.0 7.0 and CVSS 3.1 6.1. The 7.4 is the project's score. A request that knows a host's MAC, and only while that host has an active task, gets a token from `status/hostgetkey.php`. The token returns the Active Directory join password in plaintext and the Windows product key. `FOG_HOSTKEY_ALLOWED_SOURCES` defaults to empty, which the advisory says means unrestricted. Through **1.6.0.118** is affected. **1.6.0.119** is the first fixed build and **1.6.0.158** is the first stable release that contains it. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.27, checked 2026-11-28). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-27; time/TZ unknown** | GHSA-666x-5fjv-v8j9, CVSS 3.1 7.4. VulnCheck's CVE the same day. |
+| **Last updated** | **2026-11-28 11:05 EST (UTC−05:00)** | New item. |
+
+**Patch:** Update FOG Project to **1.6.0.158 or later**. Rotate the domain-join account if a deployment task ran while the server was on 1.6.0.118 or earlier and the web interface was reachable. The update does not change that password.
+
+Sources: [GHSA-666x-5fjv-v8j9](https://github.com/FOGProject/fogproject/security/advisories/GHSA-666x-5fjv-v8j9), [CVE-2026-137995](https://www.cve.org/CVERecord?id=CVE-2026-137995), [detailed guide](details/fog-project.md).
+
+---
+
+## MONEO: a public ping forges a session
+
+<a id="moneo-a-public-ping-forges-a-session"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/moneo-erp.md):** [Detection](details/moneo-erp.md#detection) · [Remediation](details/moneo-erp.md#remediation) · [Verification](details/moneo-erp.md#verification) · [Timeline](details/moneo-erp.md#timeline)
+
+**CVEs:** [CVE-2026-59103](https://www.cve.org/CVERecord?id=CVE-2026-59103)
+
+**ENISA scores [CVE-2026-59103](https://www.cve.org/CVERecord?id=CVE-2026-59103) CVSS 4.0 9.3 Critical.** The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. The same record also shows CVSS 3.1 9.8. NVD published it November 27 and has not scored it itself. OffSeq confirmed the flaw on MONEO ERP **1.8.45.6**: `Ping`, on the WebSocket JSON-RPC interface, takes the application name from the client. Setting it to `_login` stores a session for a user and a company the caller chose, including an administrator, on any tenant that server hosts. MONEO Latvia fixed it in the release of **2026-08-03**. OffSeq retested that release on August 6 and says `Ping` then only returns true. The write-up names no build number. No source read for this entry reports exploitation.
+
+**CISA KEV:** Not listed (catalog 2026.11.27, checked 2026-11-28). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Patch** | **2026-08-03; time/TZ unknown** | MONEO Latvia's release. No build number is printed. |
+| OffSeq write-up | 2026-11-25; time/TZ unknown | Both scores. Confirmed on 1.8.45.6. |
+| **Public announcement** | **2026-11-27; time/TZ unknown** | NVD published the ENISA record. |
+| **Last updated** | **2026-11-28 11:05 EST (UTC−05:00)** | New item. |
+
+**Patch:** Update the MONEO server to the **2026-08-03 release or later**. Confirm the build with MONEO Latvia. A server-hosted deployment was updated by the vendor. The update does not undo a change a forged session already made.
+
+Sources: [OffSeq](https://offseq.com/en/research/moneo-cve-2026-59103/), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-59103), [detailed guide](details/moneo-erp.md).
+
+---
+
+## WordPress: WP Rocket writes a PHP file from a beacon report
+
+<a id="wordpress-wp-rocket-writes-a-php-file-from-a-beacon-report"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-wp-rocket.md):** [Detection](details/wordpress-wp-rocket.md#detection) · [Remediation](details/wordpress-wp-rocket.md#remediation) · [Verification](details/wordpress-wp-rocket.md#verification) · [Timeline](details/wordpress-wp-rocket.md#timeline)
+
+**CVEs:** [CVE-2026-125812](https://www.cve.org/CVERecord?id=CVE-2026-125812)
+
+**Patchstack rates [CVE-2026-125812](https://www.cve.org/CVERecord?id=CVE-2026-125812) CVSS 3.1 9.8 Critical.** Patchstack is the CNA. NVD repeats that score and has not scored it itself. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The record classifies it as CWE-22. WP Rocket says the same flaw runs code with no login, on **3.15 through 3.24.1**, and only when LazyLoad for CSS background images or Self-host Google Fonts is on. The CVE record says anything before **3.24.2**. WP Rocket says 3.24.2, released November 19, fixes it. The changelog, read November 28, still lists 3.24.2 as the newest release, and the security line is "Improve validation of cached CSS, font and preconnect files." Patchstack's November 27 post says the first exploitation attempt was November 25 at 15:27:11 UTC. The public CVE.org page still said Reserved on November 28; NVD already carries the record. This is not [W3 Total Cache](#wordpress-w3-total-cache-deletes-any-file-and-a-cache-key-runs-code).
+
+**CISA KEV:** Not listed (catalog 2026.11.27, checked 2026-11-28). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Reported | 2026-11-04; time/TZ unknown | Patchstack credits Vorelito. |
+| **Patch** | **2026-11-19; time/TZ unknown** | WP Rocket 3.24.2. The changelog does not name the CVE. |
+| NVD published | 2026-11-25; time/TZ unknown | Repeats Patchstack's 9.8. |
+| **Public announcement** | **2026-11-27; time/TZ unknown** | WP Rocket's advisory and Patchstack's exploitation post. |
+| **Last updated** | **2026-11-28 11:05 EST (UTC−05:00)** | New item. |
+
+**Patch:** Update WP Rocket to **3.24.2 or later**. An expired license does not receive the update until it is renewed or the zip is installed from the account. Until then, turn off both LazyLoad for CSS background images and Self-host Google Fonts. The update does not remove a PHP file already written.
+
+Sources: [WP Rocket advisory](https://wp-rocket.me/docs/wp-rocket-security-advisory-and-mitigation-steps-for-cve-2026-125812/), [NVD](https://nvd.nist.gov/vuln/detail/CVE-2026-125812), [detailed guide](details/wordpress-wp-rocket.md).
 
 ---
 
@@ -5561,7 +5641,7 @@ Sources: [sophos-sa-20261028-utm-rce](https://www.sophos.com/en-us/security-advi
 | CVE records | 2026-11-04 08:28–08:42 UTC | NCSC.ch. The two 9.2 records are CVE-2026-114424 and CVE-2026-114425. |
 | **Last updated** | **2026-11-07 16:15 EST (UTC−05:00)** | The release date is November 3. The fixed version is still 15.1.1. |
 
-**Patch:** Upgrade SEPPmail Secure Email Gateway to **15.1.1 or later**. One release fixes all five CVEs. There is no workaround. Trust the CNA scores, not the two GINA lines in the revision history: it prints 6.9 on the account takeover and 8.3 on the email enumeration. The upgrade does not show whether a command already ran or a file was deleted.
+**Patch:** Upgrade SEPPmail Secure Email Gateway to **15.1.2 or later**. 15.1.1 leaves the November 24 set, including CVE-2026-130637, which the release notes score 9.3. One release fixes all five CVEs. There is no workaround. Trust the CNA scores, not the two GINA lines in the revision history: it prints 6.9 on the account takeover and 8.3 on the email enumeration. The upgrade does not show whether a command already ran or a file was deleted.
 
 Sources: [SEPPmail revision history](https://docs.seppmail.com/en/20_revision-history.html), [CVE-2026-114424](https://www.cve.org/CVERecord?id=CVE-2026-114424), [detailed guide](details/seppmail.md).
 
@@ -6308,11 +6388,12 @@ Sources: [November advisory](https://blog.btcpayserver.org/btcpay-server-securit
 |---|---|---|
 | Advisories published | 2026-10-29 | Eight Critical GHSA records. No CVE field. |
 | Incus 7.6.0 | 2026-10-30 01:50 UTC | 18 security issues in the release announcement. |
-| **Last updated** | **2026-11-02 15:56 EST (UTC−05:00)** | New item. Incus is not the LXD snap. |
+| Incus 7.7.0 | 2026-11-27; time/TZ unknown | GHSA-9m5m-cr24-m367, CVSS 3.1 9.9. 7.6.0 does not contain it. |
+| **Last updated** | **2026-11-28 11:05 EST (UTC−05:00)** | The floor is 7.7.0. |
 
 **Am I impacted?** You are if `incus version` on the server is below 7.6.0. The certificate-chain bug needs a reachable HTTPS listener. The other Critical bugs need a client that can create instances, images, backups, or networks, including a restricted project. A client-only install is not the server.
 
-**Patch:** Upgrade the Incus server to **7.6.0 or later** and restart the daemon. Until then, do not expose the HTTPS listener to untrusted networks, and do not import untrusted images or backups. Incus publishes no configuration switch for the chain comparison. Monthly feature releases are supported only until the next one; the 7.6 announcement does not say the 7.0 LTS line has these fixes. Debian trixie [DSA-6604-1](https://www.debian.org/security/2026/dsa-6604) (2026-11-02) is `incus 6.0.4-2+deb13u12` and has no CVE. Debian says it fixes the certificate-chain bypass and seven other advisories from this release, and leaves two Critical advisories unfixed. That package is not 7.6.0.
+**Patch:** Upgrade the Incus server to **7.7.0 or later** and restart the daemon. 7.6.0 leaves [GHSA-9m5m-cr24-m367](https://github.com/lxc/incus/security/advisories/GHSA-9m5m-cr24-m367), which Incus rates CVSS 3.1 9.9: a restricted TLS client, including `incus-user`, can get unrestricted access, which Incus says is root on the host. No CVE. Published 2026-11-27. There is no complete workaround. Until then, do not expose the HTTPS listener to untrusted networks, and do not import untrusted images or backups. Incus publishes no configuration switch for the chain comparison. Monthly feature releases are supported only until the next one; the 7.6 announcement does not say the 7.0 LTS line has these fixes. Debian trixie [DSA-6604-1](https://www.debian.org/security/2026/dsa-6604) (2026-11-02) is `incus 6.0.4-2+deb13u12` and has no CVE. Debian says it fixes the certificate-chain bypass and seven other advisories from this release, and leaves two Critical advisories unfixed. That package is not 7.6.0.
 
 Sources: [Incus 7.6 announcement](https://discuss.linuxcontainers.org/t/incus-7-6-has-been-released/27462), [7.6.0 release](https://github.com/lxc/incus/releases/tag/v7.6.0), [GHSA-xg75-xf37-cph9](https://github.com/lxc/incus/security/advisories/GHSA-xg75-xf37-cph9).
 
@@ -8408,7 +8489,7 @@ Each flaw needs a specific configuration:
 
 Then check the running configuration with `nginx -T`, piped to `grep` because the dump can contain secrets. Distribution backports change the picture: Debian found CVE-2026-93479 in its 1.26.3 package. F5 products such as Ingress Controller, Gateway Fabric, Instance Manager and F5 WAF for NGINX are also affected.
 
-**Patch:** Upgrade to **1.30.7** or **1.31.9** and restart. 1.30.6 and 1.31.7 leave the November 18 flaws in place. NGINX Plus is **37.3.0.1 or 37.0.8.1**; R34 through R36 have no fix. CVE-2026-123633 is fixed one Plus build earlier, in 37.2.0.1 and 37.0.7.1. Debian forky is `nginx` **1.30.6-4**. Ubuntu's November 19 notice, USN-9159-1, names a package for 22.04, 24.04, 26.04, and 26.10. Turning HTTP/2 off blocks only CVE-2026-123007 and CVE-2026-123633. The mail proxy, the resolver, HTTP/3, and the TLS 1.3 loop stay open. The October flaws stay fixed at 1.30.6 and 1.31.7.
+**Patch:** Upgrade to **1.30.8** or **1.31.10** and restart. 1.30.7 and 1.31.9 leave CVE-2026-132779, which F5 scores below High and which needs `ssl_early_data` on. 1.30.6 and 1.31.7 leave the November 18 flaws in place. NGINX Plus is **37.3.0.1 or 37.0.8.1**; R34 through R36 have no fix. CVE-2026-123633 is fixed one Plus build earlier, in 37.2.0.1 and 37.0.7.1. Debian forky is `nginx` **1.30.6-4**. Ubuntu's November 19 notice, USN-9159-1, names a package for 22.04, 24.04, 26.04, and 26.10. Turning HTTP/2 off blocks only CVE-2026-123007 and CVE-2026-123633. The mail proxy, the resolver, HTTP/3, and the TLS 1.3 loop stay open. The October flaws stay fixed at 1.30.6 and 1.31.7.
 
 **PAN-OS and Panorama** are affected only with the HTTP/2 option on. Palo Alto rates both flaws Critical, CVSS-B 4.0 9.2, urgency Moderate, and says it knows of no malicious exploitation. Install **12.2.4-h3**, **12.1.10-h6**, or **11.2.16-h3**. On 12.1.5 through 12.1.7 the same-branch hotfix is **12.1.7-h15**. On 11.2.8 through 11.2.13 it is **11.2.10-h19** or **11.2.13-h6**. Palo Alto's November 24 update says those three are released. 12.1.2 through 12.1.4 and 11.2.0 through 11.2.7 need no action. `request http http2 disable` removes the exposure and turns HTTP/1.1 back on, and it is not a substitute for the hotfix. SaaS products need no customer action. [Palo Alto advisory](https://security.paloaltonetworks.com/CVE-2026-123633)
 
