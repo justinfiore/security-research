@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-27 23:05 EST (UTC−05:00) — n8n
+
+- **n8n:** Upgrade a self-hosted install to the [November 26 floor](black-october/details/n8n-sandbox.md#remediation) and restart. GitHub rates GHSA-w6f8-8qh4-h3j4 CVSS 4.0 7.7: a workflow expression escapes the sandbox and runs code in the n8n process. The advisory's floors are npm 2.49.2 and Docker 3.4.0. The same day's post names stable 2.49.7, beta 2.50.2, v3 3.4.1, and v1 1.123.102. Use the post's floor. No CVE is assigned. n8n Cloud is already patched. This is not the credential-guard bypass.
+
 ## 2026-11-27 19:56 EST (UTC−05:00) — OpenScape; Mendix; WordPress
 
 - **Mitel:** Upgrade [OpenScape 4000 and OpenScape 4000 Manager to V11 R2.14](black-october/details/mitel-openscape.md#remediation). Mitel rates CVE-2026-137724 and CVE-2026-137721 CVSS 3.1 10.0: a request with no login reaches the platform, and a second runs commands. CVE-2026-137723 is 9.6 and needs the adjacent network. The advisory is November 18 and still does not print the CVE IDs. V11 R1.26 takes PLT HF5. None is in KEV. This is not MiCollab.

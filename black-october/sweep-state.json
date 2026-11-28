@@ -349,7 +349,7 @@
       "hold": "none"
     },
     "eclipse-ditto.md": {
-      "last_checked": "2026-11-27T03:55:53Z",
+      "last_checked": "2026-11-28T03:55:52Z",
       "hold": "none"
     },
     "edge-pwn2own.md": {
@@ -601,8 +601,8 @@
       "hold": "none"
     },
     "jtl-shop.md": {
-      "last_checked": "2026-11-27T03:55:53Z",
-      "hold": "awaiting-fix"
+      "last_checked": "2026-11-28T03:55:52Z",
+      "hold": "none"
     },
     "jumis.md": {
       "last_checked": "2026-11-23T15:56:15Z",
@@ -740,12 +740,20 @@
       "last_checked": "2026-11-24T15:56:15Z",
       "hold": "none"
     },
+    "mendix-oidc.md": {
+      "last_checked": "2026-11-28T03:55:52Z",
+      "hold": "none"
+    },
     "micollab.md": {
       "last_checked": "2026-11-27T15:56:09Z",
       "hold": "none"
     },
     "mistral-vibe.md": {
       "last_checked": "2026-11-26T15:56:20Z",
+      "hold": "none"
+    },
+    "mitel-openscape.md": {
+      "last_checked": "2026-11-28T03:55:52Z",
       "hold": "none"
     },
     "mitsubishi-iconics-genesis.md": {
@@ -1209,7 +1217,7 @@
       "hold": "awaiting-fix"
     },
     "virtuemart.md": {
-      "last_checked": "2026-11-27T03:55:53Z",
+      "last_checked": "2026-11-28T03:55:52Z",
       "hold": "none"
     },
     "vmware-esx.md": {
@@ -1295,6 +1303,10 @@
     "wordpress-nov26.md": {
       "last_checked": "2026-11-27T11:55:51Z",
       "hold": "none"
+    },
+    "wordpress-nov27.md": {
+      "last_checked": "2026-11-28T03:55:52Z",
+      "hold": "awaiting-fix"
     },
     "wordpress-plugins-frontend-admin.md": {
       "last_checked": "2026-11-25T15:56:17Z",

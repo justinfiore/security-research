@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [n8n: an expression escapes the sandbox](#n8n-an-expression-escapes-the-sandbox)
 - [Mitel OpenScape: a request with no login reaches the platform](#mitel-openscape-a-request-with-no-login-reaches-the-platform)
 - [Mendix: a token identifier is enough for the introspection endpoint](#mendix-a-token-identifier-is-enough-for-the-introspection-endpoint)
 - [WordPress: two plugins run code or raise a role](#wordpress-two-plugins-run-code-or-raise-a-role)
@@ -373,6 +374,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade self-hosted [n8n](#n8n-an-expression-escapes-the-sandbox) to the November 26 floor for its line. GitHub rates [GHSA-w6f8-8qh4-h3j4](https://github.com/n8n-io/n8n/security/advisories/GHSA-w6f8-8qh4-h3j4) CVSS 4.0 7.7 High: a workflow expression escapes the sandbox and runs code in the n8n process. The advisory's floors are npm **2.49.2** and Docker **3.4.0**. The same day's post names stable **2.49.7**, beta **2.50.2**, v3 **3.4.1**, and v1 **1.123.102**. No CVE is assigned. n8n Cloud is already patched. This is not the credential-guard bypass.
 - **New this update:** Upgrade [OpenScape 4000 and OpenScape 4000 Manager](#mitel-openscape-a-request-with-no-login-reaches-the-platform) to **V11 R2.14 or later**. Mitel rates [CVE-2026-137724](https://www.cve.org/CVERecord?id=CVE-2026-137724) and [CVE-2026-137721](https://www.cve.org/CVERecord?id=CVE-2026-137721) CVSS 3.1 10.0 Critical: a request with no login reaches the platform, and a second runs commands. [CVE-2026-137723](https://www.cve.org/CVERecord?id=CVE-2026-137723) is 9.6 and needs the adjacent network. The advisory is November 18 and still does not print the CVE IDs. MITRE published them November 27. V11 R1.26 takes PLT HF5. None is in KEV. This is not MiCollab.
 - **New this update:** Update the [Mendix OIDC Provider](#mendix-a-token-identifier-is-enough-for-the-introspection-endpoint) module and deploy the app again. Siemens rates [CVE-2026-124981](https://www.cve.org/CVERecord?id=CVE-2026-124981) CVSS 3.1 8.7 High and CVSS 4.0 9.4 Critical: the introspection endpoint matches a token from its identifier alone. Mendix 10 and 11 go to **V6.0.0**. Mendix 9 goes to **V4.3.0**. The advisory is November 27. It is not in KEV.
 - **New this update:** Update two [WordPress](#wordpress-two-plugins-run-code-or-raise-a-role) plugins. Patchstack rates [CVE-2026-134963](https://www.cve.org/CVERecord?id=CVE-2026-134963) CVSS 3.1 9.9: WPMasterToolKit through 2.26.1 runs code, and **2.26.2** fixes it. A Contributor can reach it. [CVE-2026-136115](https://www.cve.org/CVERecord?id=CVE-2026-136115) is 9.8: MemberPress Discord Addon through 1.1.5 raises a role with no login, and there is no patch. The records are November 27. Neither is in KEV.
@@ -686,6 +688,30 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## n8n: an expression escapes the sandbox
+
+<a id="n8n-an-expression-escapes-the-sandbox"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/n8n-sandbox.md):** [Detection](details/n8n-sandbox.md#detection) · [Remediation](details/n8n-sandbox.md#remediation) · [Verification](details/n8n-sandbox.md#verification) · [Timeline](details/n8n-sandbox.md#timeline)
+
+**CVEs:** No CVE is assigned. The identifier is [GHSA-w6f8-8qh4-h3j4](https://github.com/n8n-io/n8n/security/advisories/GHSA-w6f8-8qh4-h3j4).
+
+**GitHub rates [GHSA-w6f8-8qh4-h3j4](https://github.com/n8n-io/n8n/security/advisories/GHSA-w6f8-8qh4-h3j4) CVSS 4.0 7.7 High.** The advisory was published 2026-11-26 at 08:17:19 UTC. The vector is `CVSS:4.0/AV:N/AC:L/AT:P/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N`. A workflow expression corrupts memory inside the sandboxed V8 isolate and runs code in the main n8n process, as the n8n service user. The attacker needs an account that can create and run workflows. The advisory's patched ranges are npm **2.49.2 or later** and the Docker image **3.4.0 or later**, plus pointer-compression tags **2.47.6-pc**, **2.48.3-pc**, and **3.2.2-pc**. n8n's [security post](https://community.n8n.io/t/security-update-26-november-2026/331111) the same day, 09:40:45 UTC, names higher floors: stable **2.49.7**, beta **2.50.2**, v3 **3.4.1**, and v1 **1.123.102**. Use the post's floor. The advisory does not report exploitation. n8n Cloud is patched on n8n's side. This is not the [credential-guard bypass](#n8n-execute-sub-workflow-credential-guard-bypass).
+
+**CISA KEV:** Not applicable — no CVE is assigned, and KEV lists only CVEs. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-26 08:17:19 UTC** | GHSA-w6f8-8qh4-h3j4. CVSS 4.0 7.7. No CVE. |
+| Security post | 2026-11-26 09:40:45 UTC | Names 2.49.7, 2.50.2, 3.4.1, and 1.123.102. |
+| **Last updated** | **2026-11-27 23:05 EST (UTC−05:00)** | New item. The advisory is November 26. |
+
+**Patch:** Upgrade to the post's floor or later and restart. Stable is **2.49.7**, beta is **2.50.2**, v3 is **3.4.1**, and v1 is **1.123.102**. A pointer-compression image uses **2.47.6-pc**, **2.48.3-pc**, or **3.2.2-pc** or later. Until then, only a fully trusted user should create or edit a workflow. That is not a fix.
+
+Sources: [GHSA-w6f8-8qh4-h3j4](https://github.com/n8n-io/n8n/security/advisories/GHSA-w6f8-8qh4-h3j4), [security post](https://community.n8n.io/t/security-update-26-november-2026/331111), [detailed guide](details/n8n-sandbox.md).
 
 ---
 
@@ -9870,6 +9896,7 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Self-hosted n8n below the November 26 floor** | Upgrade and restart. GitHub rates GHSA-w6f8-8qh4-h3j4 7.7: a workflow expression runs code in the n8n process. Stable is 2.49.7, beta is 2.50.2, v3 is 3.4.1, and v1 is 1.123.102. The advisory's own floors are lower, npm 2.49.2 and Docker 3.4.0. n8n Cloud is already patched. This is not the credential-guard bypass. [Guide](details/n8n-sandbox.md#remediation). |
 | **Mitel OpenScape 4000 or OpenScape 4000 Manager below V11 R2.14** | Upgrade to V11 R2.14 or later. Mitel rates CVE-2026-137724 and CVE-2026-137721 10.0: a request with no login reaches the platform, and a second runs commands. CVE-2026-137723 is 9.6 and needs the adjacent network. V11 R1.26 takes PLT HF5. The notes are in KB000129263, which needs a Mitel login. This is not MiCollab. [Guide](details/mitel-openscape.md#remediation). |
 | **Mendix app with the OIDC Provider module before V6.0.0, or before V4.3.0 on Mendix 9** | Update the module and deploy the app again. Siemens rates CVE-2026-124981 8.7 and, on CVSS 4.0, 9.4: the introspection endpoint matches a token from its identifier alone. Mendix 10 and 11 go to V6.0.0. Mendix 9 goes to V4.3.0. Until then, a resource server should check the JWT signature itself. [Guide](details/mendix-oidc.md#remediation). |
 | **WordPress with WPMasterToolKit through 2.26.1, or MemberPress Discord Addon through 1.1.5** | Update WPMasterToolKit to 2.26.2 or later. Remove MemberPress Discord Addon: Patchstack names no patch. Patchstack rates CVE-2026-134963 9.9 and CVE-2026-136115 9.8. The second needs no login. The update does not remove a role already created. [Guide](details/wordpress-nov27.md#remediation). |
