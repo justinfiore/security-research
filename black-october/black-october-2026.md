@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [WordPress: W3 Total Cache deletes any file, and a cache key runs code](#wordpress-w3-total-cache-deletes-any-file-and-a-cache-key-runs-code)
 - [JSPWiki: a login keeps the session the attacker set](#jspwiki-a-login-keeps-the-session-the-attacker-set)
 - [n8n: an expression escapes the sandbox](#n8n-an-expression-escapes-the-sandbox)
 - [Mitel OpenScape: a request with no login reaches the platform](#mitel-openscape-a-request-with-no-login-reaches-the-platform)
@@ -375,6 +376,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Update [W3 Total Cache](#wordpress-w3-total-cache-deletes-any-file-and-a-cache-key-runs-code) to **2.11.1 or later**. Wordfence rates [CVE-2026-119071](https://www.cve.org/CVERecord?id=CVE-2026-119071) CVSS 3.1 8.1 High: an Author deletes any attachment. [CVE-2026-135616](https://www.cve.org/CVERecord?id=CVE-2026-135616) is 7.5: a Subscriber runs code, and only when Object Cache uses Memcached through pecl memcache and Minify is on. Both are through 2.11.0. The records are November 27. Neither is in KEV.
 - **New this update:** Upgrade [JSPWiki](#jspwiki-a-login-keeps-the-session-the-attacker-set) to **3.0.1** or **2.12.6**. Apache rates [CVE-2026-78114](https://www.cve.org/CVERecord?id=CVE-2026-78114) CVSS 4.0 10.0 Critical: a login keeps the session identifier the attacker set. 2.10.0 through 3.0.0 are affected, and 2.12.6 is the fix inside that range. The record is November 25. It is not in KEV.
 - **New this update:** Upgrade self-hosted [n8n](#n8n-an-expression-escapes-the-sandbox) to the November 26 floor for its line. GitHub rates [GHSA-w6f8-8qh4-h3j4](https://github.com/n8n-io/n8n/security/advisories/GHSA-w6f8-8qh4-h3j4) CVSS 4.0 7.7 High: a workflow expression escapes the sandbox and runs code in the n8n process. The advisory's floors are npm **2.49.2** and Docker **3.4.0**. The same day's post names stable **2.49.7**, beta **2.50.2**, v3 **3.4.1**, and v1 **1.123.102**. No CVE is assigned. n8n Cloud is already patched. This is not the credential-guard bypass.
 - **New this update:** Upgrade [OpenScape 4000 and OpenScape 4000 Manager](#mitel-openscape-a-request-with-no-login-reaches-the-platform) to **V11 R2.14 or later**. Mitel rates [CVE-2026-137724](https://www.cve.org/CVERecord?id=CVE-2026-137724) and [CVE-2026-137721](https://www.cve.org/CVERecord?id=CVE-2026-137721) CVSS 3.1 10.0 Critical: a request with no login reaches the platform, and a second runs commands. [CVE-2026-137723](https://www.cve.org/CVERecord?id=CVE-2026-137723) is 9.6 and needs the adjacent network. The advisory is November 18 and still does not print the CVE IDs. MITRE published them November 27. V11 R1.26 takes PLT HF5. None is in KEV. This is not MiCollab.
@@ -690,6 +692,31 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## WordPress: W3 Total Cache deletes any file, and a cache key runs code
+
+<a id="wordpress-w3-total-cache-deletes-any-file-and-a-cache-key-runs-code"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-w3tc.md):** [Detection](details/wordpress-w3tc.md#detection) · [Remediation](details/wordpress-w3tc.md#remediation) · [Verification](details/wordpress-w3tc.md#verification) · [Timeline](details/wordpress-w3tc.md#timeline)
+
+**CVEs:** [CVE-2026-119071](https://www.cve.org/CVERecord?id=CVE-2026-119071), [CVE-2026-135616](https://www.cve.org/CVERecord?id=CVE-2026-135616)
+
+**Wordfence rates [CVE-2026-119071](https://www.cve.org/CVERecord?id=CVE-2026-119071) CVSS 3.1 8.1 High and [CVE-2026-135616](https://www.cve.org/CVERecord?id=CVE-2026-135616) CVSS 3.1 7.5 High.** Wordfence is the CNA. The records were published November 27. W3 Total Cache through **2.11.0** is affected and **2.11.1** fixes both. The file-deletion vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:H`: an Author writes the `w3tc_imageservice` post meta and the revert action deletes the attachment it names. The code-execution vector is `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H`. The record says a Subscriber reaches it only when Object Cache uses the Memcached method backed by the pecl memcache extension and Minify is enabled, and that the same collision first raises that account to Administrator. The CVE records name no fixed version; Wordfence's pages and the plugin directory do. The directory lists 2.11.1, modified 2026-11-26 08:29 UTC. No source read for this entry reports exploitation. This is not the [November 27 set](#wordpress-two-plugins-run-code-or-raise-a-role).
+
+**CISA KEV:** Not listed (catalog 2026.11.27, checked 2026-11-28) for either. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Wordfence pages | 2026-11-26; time/TZ unknown | Both entries name 2.11.1. |
+| Plugin directory | 2026-11-26 08:29 UTC | wordpress.org lists 2.11.1. |
+| **Public announcement** | **2026-11-27; time/TZ unknown** | The two CVE records. 7.5 at 01:33 UTC, 8.1 at 04:45 UTC. |
+| **Last updated** | **2026-11-28 07:01 EST (UTC−05:00)** | New item. |
+
+**Patch:** Update W3 Total Cache to **2.11.1 or later**. The update does not restore a deleted attachment or remove a file the cache-key flaw already wrote.
+
+Sources: [CVE-2026-119071](https://www.cve.org/CVERecord?id=CVE-2026-119071), [CVE-2026-135616](https://www.cve.org/CVERecord?id=CVE-2026-135616), [detailed guide](details/wordpress-w3tc.md).
 
 ---
 
@@ -2236,9 +2263,9 @@ Vulnerability Info Site: [pwn.ai](https://pwn.ai/upload2shell)
 | Debian 13 | 2026-09-25 21:17:14 UTC | DSA-6516-1. The tracker marks 10.05.1~dfsg-1+deb13u3 fixed. |
 | **Public announcement** | **2026-11-09; time/TZ unknown** | VulnCheck published the CVE. CVSS 4.0 8.5. |
 | Public write-up | 2026-11-17; time/TZ unknown | pwn.ai. The case studies are not published. |
-| **Last updated** | **2026-11-27 07:15 EST (UTC−05:00)** | RHEL 8, 9, and 10 have packages. Ubuntu and SUSE do not. |
+| **Last updated** | **2026-11-28 07:01 EST (UTC−05:00)** | Rocky Linux and AlmaLinux shipped the Red Hat builds on November 26. |
 
-**Patch:** Upgrade to **Ghostscript 10.08.0 or later** and restart the workers that render files. On RHEL 10, install `ghostscript` **10.02.1-17.el10_3.1** (RHSA-2026:103517, November 25). On RHEL 9, install **9.54.0-20.el9_9.1**. On RHEL 8, install **9.27-21.el8_10**. Rocky and Oracle republish those errata. On Debian 13, install **10.05.1~dfsg-1+deb13u3**. On Debian 12, install **10.0.0~dfsg-11+deb12u9** from bookworm-security. AlmaLinux's earlier production builds also close it. On Amazon Linux 2027 Preview, install **10.08.0-1.amzn2027.0.2**. Ubuntu still names no package. SUSE marks SLES 15 SP7, 16.0, and 16.1 In progress. Amazon Linux 2 and 2023 are Pending Fix. Update WordPress to **7.0.4 or later** as well: that closes one upload path and leaves the library in place.
+**Patch:** Upgrade to **Ghostscript 10.08.0 or later** and restart the workers that render files. On RHEL 10, Rocky Linux 10, and AlmaLinux 10, install `ghostscript` **10.02.1-17.el10_3.1** (RHSA-2026:103517, November 25; Rocky and AlmaLinux, November 26). On RHEL 9, Rocky Linux 9, and AlmaLinux 9, install **9.54.0-20.el9_9.1**. On RHEL 8, Rocky Linux 8, and AlmaLinux 8, install **9.27-21.el8_10**. Oracle republishes those errata. On Debian 13, install **10.05.1~dfsg-1+deb13u3**. On Debian 12, install **10.0.0~dfsg-11+deb12u9** from bookworm-security. AlmaLinux's earlier production builds also close it. On Amazon Linux 2027 Preview, install **10.08.0-1.amzn2027.0.2**. Ubuntu still names no package. SUSE marks SLES 15 SP7, 16.0, and 16.1 In progress. Amazon Linux 2 and 2023 are Pending Fix. Update WordPress to **7.0.4 or later** as well: that closes one upload path and leaves the library in place.
 
 Sources: [CVE-2026-125396](https://www.cve.org/CVERecord?id=CVE-2026-125396), [pwn.ai](https://pwn.ai/upload2shell), [detailed guide](details/ghostscript.md).
 

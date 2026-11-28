@@ -1,6 +1,6 @@
 # Ghostscript: Upload2Shell - a document runs commands
 
-**Last updated:** 2026-11-27 (America/New_York)
+**Last updated:** 2026-11-28 (America/New_York)
 
 [Main Ghostscript summary](../black-october-2026.md#ghostscript-upload2shell---a-document-runs-commands) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -50,6 +50,7 @@ pwn.ai does not report exploitation outside its own tests. The flaw is not in CI
 | Public write-up | 2026-11-17; time/TZ unknown | pwn.ai. The CVE record gained the link later; NVD shows it by 2026-11-22. [Write-up][research] |
 | Debian 12 security update | 2026-11-17; time/TZ unknown | DLA-4914-1. bookworm-security is 10.0.0~dfsg-11+deb12u9. [Tracker][deb] |
 | **RHEL packages** | **2026-11-25; time/TZ unknown** | RHSA-2026:103517, RHSA-2026:103523, and RHSA-2026:103524. RHEL 10, 9, and 8. |
+| Rocky and AlmaLinux packages | 2026-11-26; time/TZ unknown | RLSA-2026:103517, RLSA-2026:103523, and RLSA-2026:103524, and the matching ALSA errata. Same versions as Red Hat. |
 
 ## Detection
 
@@ -60,7 +61,8 @@ Read the Ghostscript the renderer actually loads, not a `gs` binary that happens
 - Ubuntu's page, last updated 2026-11-18, marks `ghostscript` **Needs evaluation** on 26.10, 26.04 LTS, 24.04 LTS, 22.04 LTS, and the Pro releases. It names no package. Do not treat an older USN as this fix: USN-8949-1, dated 2026-10-21, does not list CVE-2026-125396.
 - SUSE's page, last modified 2026-11-13, rates it important and marks SLES 15 SP7, 16.0, and 16.1 In progress, and openSUSE Leap 16.0 and 16.1 Affected. It lists `ghostscript` 9.52-150000.222.1 for SLES 15 SP7 under packages in QA, which is not a released package, and it names no security announcement. The only released line on that page is openSUSE Tumbleweed `ghostscript` 10.08.0-5.1.
 - Red Hat shipped the fix on 2026-11-25. RHEL 10 is `ghostscript` **10.02.1-17.el10_3.1** ([RHSA-2026:103517](https://access.redhat.com/errata/RHSA-2026:103517)). RHEL 9 is `ghostscript` **9.54.0-20.el9_9.1** ([RHSA-2026:103523](https://access.redhat.com/errata/RHSA-2026:103523)). RHEL 8 is `ghostscript` **9.27-21.el8_10** ([RHSA-2026:103524](https://access.redhat.com/errata/RHSA-2026:103524)). Red Hat rates each Important.
-- AlmaLinux's post, updated 2026-11-23, put earlier builds in production: AlmaLinux 8 `ghostscript` **9.27-20.el8_10.alma.1**, 9 `ghostscript` **9.54.0-19.el9_8.3.alma.1**, and 10 `ghostscript` **10.02.1-16.el10_2.3.alma.1**. Those are the builds AlmaLinux had before the Red Hat errata. Rocky Linux and Oracle Linux republish the Red Hat errata as RLSA-2026:103517, RLSA-2026:103523, RLSA-2026:103524 and ELSA-2026-103517, ELSA-2026-103523, ELSA-2026-103524.
+- AlmaLinux shipped the Red Hat builds on 2026-11-26: AlmaLinux 10 `ghostscript` **10.02.1-17.el10_3.1** ([ALSA-2026:103517](https://errata.almalinux.org/10/ALSA-2026-103517.html)), 9 `ghostscript` **9.54.0-20.el9_9.1** ([ALSA-2026:103523](https://errata.almalinux.org/9/ALSA-2026-103523.html)), and 8 `ghostscript` **9.27-21.el8_10** ([ALSA-2026:103524](https://errata.almalinux.org/8/ALSA-2026-103524.html)). Its November 23 post had named earlier builds, 10.02.1-16.el10_2.3.alma.1, 9.54.0-19.el9_8.3.alma.1, and 9.27-20.el8_10.alma.1. Those also closed it.
+- Rocky Linux shipped the same builds on 2026-11-26: Rocky Linux 10 `ghostscript` **10.02.1-17.el10_3.1** ([RLSA-2026:103517](https://errata.rockylinux.org/RLSA-2026:103517), published 2026-11-26 12:18 UTC), 9 `ghostscript` **9.54.0-20.el9_9.1** ([RLSA-2026:103523](https://errata.rockylinux.org/RLSA-2026:103523), 12:16 UTC), and 8 `ghostscript` **9.27-21.el8_10** ([RLSA-2026:103524](https://errata.rockylinux.org/RLSA-2026:103524), 06:01 UTC). Oracle Linux's ELSA-2026-103517, ELSA-2026-103523, and ELSA-2026-103524 are dated 2026-11-25.
 - Amazon Linux 2027 Preview is fixed at `ghostscript` **10.08.0-1.amzn2027.0.2** ([ALAS2027-2026-379](https://alas.aws.amazon.com/AL2027/ALAS2027-2026-379.html), updated 2026-11-23). Amazon Linux 2 and Amazon Linux 2023 are still Pending Fix.
 
 A process that embeds its own Ghostscript, or shells out to a copy outside the system package, does not move when the package does. ImageMagick's `delegates.xml` and PHP Imagick are two ways a file named `.jpg` or `.png` still reaches `gs`. Finding the library does not show that any caller is exposed, and not finding a caller does not show the library is unused.
@@ -70,7 +72,7 @@ A process that embeds its own Ghostscript, or shells out to a copy outside the s
 1. Upgrade Ghostscript to **10.08.0 or later**, or install the distribution package the tracker marks fixed, and restart every process that had the library loaded. On Debian 13, install `ghostscript` **10.05.1~dfsg-1+deb13u3**. On Debian 12, install **10.0.0~dfsg-11+deb12u9** from bookworm-security.
 2. Update WordPress to **7.0.4 or later** on the 7.0 line, or the backport on your branch through 4.7. That closes the Author upload path WordPress describes. It leaves every other caller of Ghostscript in place, including a plugin form that does not require an account.
 3. A shared CUPS queue that accepts a print job with no login is one of the paths pwn.ai demonstrated. Requiring authentication on that queue blocks the unauthenticated submission. It does not fix Ghostscript.
-4. On RHEL 10, install `ghostscript` **10.02.1-17.el10_3.1**. On RHEL 9, install **9.54.0-20.el9_9.1**. On RHEL 8, install **9.27-21.el8_10**. Restart the workers. Rocky and Oracle republish those errata. On AlmaLinux, the earlier production builds named above also close it; the Red Hat builds are newer.
+4. On RHEL 10, Rocky Linux 10, and AlmaLinux 10, install `ghostscript` **10.02.1-17.el10_3.1**. On RHEL 9, Rocky Linux 9, and AlmaLinux 9, install **9.54.0-20.el9_9.1**. On RHEL 8, Rocky Linux 8, and AlmaLinux 8, install **9.27-21.el8_10**. Restart the workers. Oracle republishes the same errata. AlmaLinux's earlier November 23 builds also close it.
 5. On Amazon Linux 2027 Preview, install `ghostscript` **10.08.0-1.amzn2027.0.2**. Amazon Linux 2 and 2023 have no package yet.
 6. Ubuntu and SUSE have no released package for this CVE yet. Do not assume a Debian or RHEL version is what they shipped.
 
@@ -95,7 +97,9 @@ pwn.ai does not report exploitation outside its own tests. The upgrade does not 
 - [Ubuntu CVE-2026-125396](https://ubuntu.com/security/CVE-2026-125396) — published 2026-11-10, last updated 2026-11-18. Priority Medium. Every listed release is Needs evaluation.
 - [SUSE CVE-2026-125396](https://www.suse.com/security/cve/CVE-2026-125396.html) — last modified 2026-11-13. Important. SLES 15 SP7, 16.0, and 16.1 In progress. `ghostscript` 9.52-150000.222.1 is listed in QA for SLES 15 SP7, not released. No announcement.
 - [RHSA-2026:103517](https://access.redhat.com/errata/RHSA-2026:103517), [RHSA-2026:103523](https://access.redhat.com/errata/RHSA-2026:103523), [RHSA-2026:103524](https://access.redhat.com/errata/RHSA-2026:103524) — issued 2026-11-25. RHEL 10, 9, and 8. Important. CVE-2026-125396.
-- [AlmaLinux, updated 2026-11-23](https://almalinux.org/blog/2026-11-22-upload2shell-cve-2026-125396/) — earlier production builds, before the Red Hat errata: 9.27-20.el8_10.alma.1, 9.54.0-19.el9_8.3.alma.1, and 10.02.1-16.el10_2.3.alma.1.
+- [ALSA-2026:103517](https://errata.almalinux.org/10/ALSA-2026-103517.html), [ALSA-2026:103523](https://errata.almalinux.org/9/ALSA-2026-103523.html), [ALSA-2026:103524](https://errata.almalinux.org/8/ALSA-2026-103524.html) — AlmaLinux, release date 2026-11-26. Same versions as the Red Hat errata.
+- [RLSA-2026:103517](https://errata.rockylinux.org/RLSA-2026:103517), [RLSA-2026:103523](https://errata.rockylinux.org/RLSA-2026:103523), [RLSA-2026:103524](https://errata.rockylinux.org/RLSA-2026:103524) — Rocky Linux, published 2026-11-26. Same versions.
+- [AlmaLinux, updated 2026-11-23](https://almalinux.org/blog/2026-11-22-upload2shell-cve-2026-125396/) — the earlier production builds: 9.27-20.el8_10.alma.1, 9.54.0-19.el9_8.3.alma.1, and 10.02.1-16.el10_2.3.alma.1.
 - [ALAS2027-2026-379](https://alas.aws.amazon.com/AL2027/ALAS2027-2026-379.html) — Amazon Linux 2027 Preview, `ghostscript` 10.08.0-1.amzn2027.0.2, updated 2026-11-23. Amazon Linux 2 and 2023 remain Pending Fix.
 - [WordPress CVE-2026-65640][wp] — the separate Core fix, 7.0.4 on 2026-08-12.
 - [CISA KEV JSON](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json) — catalog 2026.11.25, checked 2026-11-27. Not listed.

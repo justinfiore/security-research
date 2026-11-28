@@ -2,6 +2,11 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-28 07:01 EST (UTC−05:00) — W3 Total Cache; Ghostscript
+
+- **WordPress:** Update [W3 Total Cache to 2.11.1](black-october/details/wordpress-w3tc.md#remediation). Wordfence rates CVE-2026-119071 CVSS 3.1 8.1: an Author deletes any attachment. CVE-2026-135616 is 7.5: a Subscriber runs code, and only when Object Cache uses Memcached through the pecl memcache extension and Minify is on. Both are through 2.11.0. The records are November 27. Neither is in KEV. The update does not restore a deleted attachment.
+- **Ghostscript:** On Rocky Linux and AlmaLinux, install the [November 26 builds](black-october/details/ghostscript.md#remediation) and restart the workers. Rocky 10 and AlmaLinux 10 are `ghostscript` 10.02.1-17.el10_3.1, 9 is 9.54.0-20.el9_9.1, and 8 is 9.27-21.el8_10. Those match the Red Hat errata from November 25. Ubuntu and SUSE still have no released package. It is not in KEV.
+
 ## 2026-11-28 03:04 EST (UTC−05:00) — JSPWiki
 
 - **JSPWiki:** Upgrade to [3.0.1 or 2.12.6](black-october/details/jspwiki.md#remediation) and restart. Apache rates CVE-2026-78114 CVSS 4.0 10.0: a login keeps the session identifier the attacker set. 2.10.0 through 3.0.0 are affected, and 2.12.6 is the fix on the 2.x line. The record is November 25. It is not in KEV. Have users log in again after the restart.
