@@ -2,6 +2,10 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-28 03:04 EST (UTC−05:00) — JSPWiki
+
+- **JSPWiki:** Upgrade to [3.0.1 or 2.12.6](black-october/details/jspwiki.md#remediation) and restart. Apache rates CVE-2026-78114 CVSS 4.0 10.0: a login keeps the session identifier the attacker set. 2.10.0 through 3.0.0 are affected, and 2.12.6 is the fix on the 2.x line. The record is November 25. It is not in KEV. Have users log in again after the restart.
+
 ## 2026-11-27 23:05 EST (UTC−05:00) — n8n
 
 - **n8n:** Upgrade a self-hosted install to the [November 26 floor](black-october/details/n8n-sandbox.md#remediation) and restart. GitHub rates GHSA-w6f8-8qh4-h3j4 CVSS 4.0 7.7: a workflow expression escapes the sandbox and runs code in the n8n process. The advisory's floors are npm 2.49.2 and Docker 3.4.0. The same day's post names stable 2.49.7, beta 2.50.2, v3 3.4.1, and v1 1.123.102. Use the post's floor. No CVE is assigned. n8n Cloud is already patched. This is not the credential-guard bypass.

@@ -15,6 +15,7 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [JSPWiki: a login keeps the session the attacker set](#jspwiki-a-login-keeps-the-session-the-attacker-set)
 - [n8n: an expression escapes the sandbox](#n8n-an-expression-escapes-the-sandbox)
 - [Mitel OpenScape: a request with no login reaches the platform](#mitel-openscape-a-request-with-no-login-reaches-the-platform)
 - [Mendix: a token identifier is enough for the introspection endpoint](#mendix-a-token-identifier-is-enough-for-the-introspection-endpoint)
@@ -374,6 +375,7 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [JSPWiki](#jspwiki-a-login-keeps-the-session-the-attacker-set) to **3.0.1** or **2.12.6**. Apache rates [CVE-2026-78114](https://www.cve.org/CVERecord?id=CVE-2026-78114) CVSS 4.0 10.0 Critical: a login keeps the session identifier the attacker set. 2.10.0 through 3.0.0 are affected, and 2.12.6 is the fix inside that range. The record is November 25. It is not in KEV.
 - **New this update:** Upgrade self-hosted [n8n](#n8n-an-expression-escapes-the-sandbox) to the November 26 floor for its line. GitHub rates [GHSA-w6f8-8qh4-h3j4](https://github.com/n8n-io/n8n/security/advisories/GHSA-w6f8-8qh4-h3j4) CVSS 4.0 7.7 High: a workflow expression escapes the sandbox and runs code in the n8n process. The advisory's floors are npm **2.49.2** and Docker **3.4.0**. The same day's post names stable **2.49.7**, beta **2.50.2**, v3 **3.4.1**, and v1 **1.123.102**. No CVE is assigned. n8n Cloud is already patched. This is not the credential-guard bypass.
 - **New this update:** Upgrade [OpenScape 4000 and OpenScape 4000 Manager](#mitel-openscape-a-request-with-no-login-reaches-the-platform) to **V11 R2.14 or later**. Mitel rates [CVE-2026-137724](https://www.cve.org/CVERecord?id=CVE-2026-137724) and [CVE-2026-137721](https://www.cve.org/CVERecord?id=CVE-2026-137721) CVSS 3.1 10.0 Critical: a request with no login reaches the platform, and a second runs commands. [CVE-2026-137723](https://www.cve.org/CVERecord?id=CVE-2026-137723) is 9.6 and needs the adjacent network. The advisory is November 18 and still does not print the CVE IDs. MITRE published them November 27. V11 R1.26 takes PLT HF5. None is in KEV. This is not MiCollab.
 - **New this update:** Update the [Mendix OIDC Provider](#mendix-a-token-identifier-is-enough-for-the-introspection-endpoint) module and deploy the app again. Siemens rates [CVE-2026-124981](https://www.cve.org/CVERecord?id=CVE-2026-124981) CVSS 3.1 8.7 High and CVSS 4.0 9.4 Critical: the introspection endpoint matches a token from its identifier alone. Mendix 10 and 11 go to **V6.0.0**. Mendix 9 goes to **V4.3.0**. The advisory is November 27. It is not in KEV.
@@ -688,6 +690,27 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## JSPWiki: a login keeps the session the attacker set
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/jspwiki.md):** [Detection](details/jspwiki.md#detection) · [Remediation](details/jspwiki.md#remediation) · [Verification](details/jspwiki.md#verification) · [Timeline](details/jspwiki.md#timeline)
+
+**CVEs:** [CVE-2026-78114](https://www.cve.org/CVERecord?id=CVE-2026-78114)
+
+**Apache rates [CVE-2026-78114](https://www.cve.org/CVERecord?id=CVE-2026-78114) CVSS 4.0 10.0 Critical.** The record was published 2026-11-25 at 10:22:16 UTC. The vector is `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H`. The weakness is CWE-384. The login flow does not replace the session identifier when a user authenticates, so an identifier an attacker set in the victim's browser still works after the login. Affected is 2.10.0 through 3.0.0. The fix is **3.0.1** on 3.x and **2.12.6** on 2.x, and 2.12.6 sits inside the range the record calls affected. The defect is JSPWIKI-1301. Apache does not report exploitation. NVD has not scored it. The project's news page lists this CVE with twenty-two others disclosed November 24, and those records have no score.
+
+**CISA KEV:** Not listed (catalog 2026.11.27, checked 2026-11-28). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-25 10:22:16 UTC** | CVE-2026-78114. CVSS 4.0 10.0. |
+| **Last updated** | **2026-11-28 03:04 EST (UTC−05:00)** | New item. The record is November 25. |
+
+**Patch:** Upgrade 3.x to **3.0.1 or later**, or 2.x to **2.12.6 or later**, and restart. Then have users log in again. Apache names no workaround.
+
+Sources: [CVE-2026-78114](https://www.cve.org/CVERecord?id=CVE-2026-78114), [mailing list](https://lists.apache.org/thread.html/n43zhkpnphlksm12w7ndx4d87s7wdffv), [detailed guide](details/jspwiki.md).
 
 ---
 
