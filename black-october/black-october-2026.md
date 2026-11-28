@@ -1,6 +1,6 @@
 # Black October: What Broke, What’s Exposed, and What to Patch
 
-**As of November 27, 2026**
+**As of November 28, 2026**
 
 [Security updates](../CHANGELOG.md) · [Maintenance process](MAINTENANCE.md)
 
@@ -15,6 +15,9 @@ This report covers the major disclosures most relevant to developers and operato
 - [The short version](#the-short-version)
   - [How to use the impact checks](#how-to-use-the-impact-checks)
   - [What CISA KEV means](#what-cisa-kev-means)
+- [Mitel OpenScape: a request with no login reaches the platform](#mitel-openscape-a-request-with-no-login-reaches-the-platform)
+- [Mendix: a token identifier is enough for the introspection endpoint](#mendix-a-token-identifier-is-enough-for-the-introspection-endpoint)
+- [WordPress: two plugins run code or raise a role](#wordpress-two-plugins-run-code-or-raise-a-role)
 - [Linux kernel: NFS2ROOT - an NFS client writes past a kernel buffer](#linux-kernel-nfs2root---an-nfs-client-writes-past-a-kernel-buffer)
 - [Hitachi Virtage: the management command has no login](#hitachi-virtage-the-management-command-has-no-login)
 - [Hitachi RV3000: the log monitor leaks an ESXi account](#hitachi-rv3000-the-log-monitor-leaks-an-esxi-account)
@@ -370,6 +373,9 @@ This report covers the major disclosures most relevant to developers and operato
 
 ## The short version
 
+- **New this update:** Upgrade [OpenScape 4000 and OpenScape 4000 Manager](#mitel-openscape-a-request-with-no-login-reaches-the-platform) to **V11 R2.14 or later**. Mitel rates [CVE-2026-137724](https://www.cve.org/CVERecord?id=CVE-2026-137724) and [CVE-2026-137721](https://www.cve.org/CVERecord?id=CVE-2026-137721) CVSS 3.1 10.0 Critical: a request with no login reaches the platform, and a second runs commands. [CVE-2026-137723](https://www.cve.org/CVERecord?id=CVE-2026-137723) is 9.6 and needs the adjacent network. The advisory is November 18 and still does not print the CVE IDs. MITRE published them November 27. V11 R1.26 takes PLT HF5. None is in KEV. This is not MiCollab.
+- **New this update:** Update the [Mendix OIDC Provider](#mendix-a-token-identifier-is-enough-for-the-introspection-endpoint) module and deploy the app again. Siemens rates [CVE-2026-124981](https://www.cve.org/CVERecord?id=CVE-2026-124981) CVSS 3.1 8.7 High and CVSS 4.0 9.4 Critical: the introspection endpoint matches a token from its identifier alone. Mendix 10 and 11 go to **V6.0.0**. Mendix 9 goes to **V4.3.0**. The advisory is November 27. It is not in KEV.
+- **New this update:** Update two [WordPress](#wordpress-two-plugins-run-code-or-raise-a-role) plugins. Patchstack rates [CVE-2026-134963](https://www.cve.org/CVERecord?id=CVE-2026-134963) CVSS 3.1 9.9: WPMasterToolKit through 2.26.1 runs code, and **2.26.2** fixes it. A Contributor can reach it. [CVE-2026-136115](https://www.cve.org/CVERecord?id=CVE-2026-136115) is 9.8: MemberPress Discord Addon through 1.1.5 raises a role with no login, and there is no patch. The records are November 27. Neither is in KEV.
 - **New this update:** Reboot a Linux NFS server into a kernel that fixes [NFS2ROOT](#linux-kernel-nfs2root---an-nfs-client-writes-past-a-kernel-buffer). kernel.org rates [CVE-2026-99362](https://www.cve.org/CVERecord?id=CVE-2026-99362) CVSS 3.1 9.8 Critical: a client that never logs in writes past a kernel buffer. Red Hat scores it 9.4. A host that does not serve NFSv4.1 or NFSv4.2 is outside it. On RHEL 8 the kernel is `4.18.0-553.190.1.el8_10`. RHEL 9 has none yet. Debian bookworm security is `6.1.192-3`. Ubuntu has no package. It is not in KEV.
 - **New this update:** Update [Hitachi RV3000 Log Monitor for VMware](#hitachi-rv3000-the-log-monitor-leaks-an-esxi-account) to **98-09 or 97-05**. Hitachi rates [CVE-2026-105917](https://www.cve.org/CVERecord?id=CVE-2026-105917) CVSS 3.1 8.8 High: the monitor can leak an ESXi host account. 98-08 and earlier, and 97-04 and earlier, are affected. The advisory is November 27. It is not in KEV.
 - **New this update:** There is no firmware for [Hitachi Virtage](#hitachi-virtage-the-management-command-has-no-login). Hitachi rates [CVE-2026-115283](https://www.cve.org/CVERecord?id=CVE-2026-115283) CVSS 3.1 8.8 High: the management command on a BladeSymphony BS2500 or BS500 has no login. Four more are 7.3 to 7.6, and a sixth, in the virtual COM console, is 8.4. Every Virtage version is affected, and the advisories, dated November 27, say no update exists. Turn on authentication for the HVM management command, set the management security level to High, and set the virtual COM console to SSH. None is in KEV.
@@ -680,6 +686,77 @@ Each item links to a detailed operational guide. **Last updated** changes only w
 ### What CISA KEV means
 
 The U.S. Cybersecurity and Infrastructure Security Agency’s [Known Exploited Vulnerabilities catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) lists CVEs with reliable evidence of active exploitation. Each item states its KEV status. **Listed** means CISA has evidence of in-the-wild exploitation; the “added” date is when CISA listed it, not when attacks began, and the due date binds U.S. federal civilian agencies only, though it is a useful urgency signal for everyone. **Not listed** does not mean safe or unexploited: CISA may not have evidence yet, other sources may report exploitation, and issues without a CVE cannot be listed. Statuses reflect the catalog version noted on each item.
+
+---
+
+## Mitel OpenScape: a request with no login reaches the platform
+
+<a id="mitel-openscape-a-request-with-no-login-reaches-the-platform"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/mitel-openscape.md):** [Detection](details/mitel-openscape.md#detection) · [Remediation](details/mitel-openscape.md#remediation) · [Verification](details/mitel-openscape.md#verification) · [Timeline](details/mitel-openscape.md#timeline)
+
+**CVEs:** [CVE-2026-137724](https://www.cve.org/CVERecord?id=CVE-2026-137724), [CVE-2026-137721](https://www.cve.org/CVERecord?id=CVE-2026-137721), [CVE-2026-137723](https://www.cve.org/CVERecord?id=CVE-2026-137723)
+
+**Mitel rates [CVE-2026-137724](https://www.cve.org/CVERecord?id=CVE-2026-137724) and [CVE-2026-137721](https://www.cve.org/CVERecord?id=CVE-2026-137721) CVSS 3.1 10.0 Critical.** [MISA-2026-0013](https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0013), published November 18, still says a CVE identifier has been requested and is not yet assigned. MITRE published the three records on November 27 and repeats Mitel's scores. The vector on both 10.0 flaws is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`. The first is missing authentication in the Platform component: a request with no login obtains sensitive information and access to the system. The second does not sanitize a parameter, and the same request runs commands in the context of the system. [CVE-2026-137723](https://www.cve.org/CVERecord?id=CVE-2026-137723) is 9.6, vector `CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H`: the same command injection, and the attacker needs adjacent network access. Neither the advisory nor the records name the service. The notes are in KB000129263, which needs a Mitel login. OpenScape 4000 V11 R0.22 through V11 R2.11, and V10 R1.68 and earlier, are affected. OpenScape 4000 Manager is the same V11 range, plus V10 R1.34, V10 R1.42, V10 R1.54, and V10 R1.68. The fix is **V11 R2.14**. V11 R1.26 takes PLT HF5. Mitel does not report exploitation. This is not [MiCollab](#mitel-micollab-a-conferencing-request-runs-commands-before-login).
+
+**CISA KEV:** Not listed (catalog 2026.11.27, checked 2026-11-27) for any of the three. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-18; time/TZ unknown** | MISA-2026-0013 revision 1.0. Internal IDs only. Highest score 10.0. |
+| **CVE records** | **2026-11-27 05:22:26 UTC through 05:33:03 UTC** | MITRE published the three records. The advisory text was not updated. |
+| **Last updated** | **2026-11-27 19:56 EST (UTC−05:00)** | New item. The advisory is November 18. |
+
+**Patch:** Upgrade to **V11 R2.14 or later**. On V11 R1.26, apply **PLT HF5**. Older releases take the patch Mitel names for V10 R0.28 through V11 R0.22. Until then, Security Mode restricted access is the workaround in the same article.
+
+Sources: [MISA-2026-0013](https://www.mitel.com/support/security-advisories/mitel-product-security-advisory-misa-2026-0013), [CVE-2026-137724](https://www.cve.org/CVERecord?id=CVE-2026-137724), [detailed guide](details/mitel-openscape.md).
+
+---
+
+## Mendix: a token identifier is enough for the introspection endpoint
+
+<a id="mendix-a-token-identifier-is-enough-for-the-introspection-endpoint"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/mendix-oidc.md):** [Detection](details/mendix-oidc.md#detection) · [Remediation](details/mendix-oidc.md#remediation) · [Verification](details/mendix-oidc.md#verification) · [Timeline](details/mendix-oidc.md#timeline)
+
+**CVEs:** [CVE-2026-124981](https://www.cve.org/CVERecord?id=CVE-2026-124981)
+
+**Siemens rates [CVE-2026-124981](https://www.cve.org/CVERecord?id=CVE-2026-124981) CVSS 3.1 8.7 High and CVSS 4.0 9.4 Critical.** [SSA-545865](https://cert-portal.siemens.com/productcert/html/ssa-545865.html), published November 27, says the Mendix OIDC Provider module does not check the integrity of a JWT sent to its token introspection endpoint. The endpoint can match that token to a real record from the `jti` value alone. An attacker with no account who can reach the endpoint, and who has the `jti` of an active token, hijacks that session. The CVSS 3.1 vector is `CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:N`. Attack complexity is High. Mendix 9 before **V4.3.0**, and Mendix 10 and Mendix 11 before **V6.0.0**, are affected. The module is part of the app, so the Marketplace update does nothing until the app is deployed again. Siemens does not report exploitation. NVD has not scored it.
+
+**CISA KEV:** Not listed (catalog 2026.11.27, checked 2026-11-27). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| **Public announcement** | **2026-11-27; time/TZ unknown** | SSA-545865 V1.0. CVSS 3.1 8.7 and CVSS 4.0 9.4. |
+| **Last updated** | **2026-11-27 19:56 EST (UTC−05:00)** | New item. |
+
+**Patch:** Update the module and deploy the app. Mendix 10 and 11 go to **V6.0.0 or later**. Mendix 9 goes to **V4.3.0 or later**. Until then, a resource server should check the JWT signature itself.
+
+Sources: [SSA-545865](https://cert-portal.siemens.com/productcert/html/ssa-545865.html), [CVE-2026-124981](https://www.cve.org/CVERecord?id=CVE-2026-124981), [detailed guide](details/mendix-oidc.md).
+
+---
+
+## WordPress: two plugins run code or raise a role
+
+<a id="wordpress-two-plugins-run-code-or-raise-a-role"></a>
+
+[Back to TOC](#table-of-contents) · **[Detailed guide](details/wordpress-nov27.md):** [Detection](details/wordpress-nov27.md#detection) · [Remediation](details/wordpress-nov27.md#remediation) · [Verification](details/wordpress-nov27.md#verification) · [Timeline](details/wordpress-nov27.md#timeline)
+
+**CVEs:** [CVE-2026-134963](https://www.cve.org/CVERecord?id=CVE-2026-134963), [CVE-2026-136115](https://www.cve.org/CVERecord?id=CVE-2026-136115)
+
+**Patchstack rates [CVE-2026-134963](https://www.cve.org/CVERecord?id=CVE-2026-134963) CVSS 3.1 9.9 Critical and [CVE-2026-136115](https://www.cve.org/CVERecord?id=CVE-2026-136115) CVSS 3.1 9.8 Critical.** Patchstack is the CNA. The records were published November 27. WPMasterToolKit through **2.26.1** injects code and is fixed in **2.26.2**. The vector is `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H`. Patchstack's page says the required privilege is Contributor and calls the entry Medium priority. MemberPress Discord Addon through **1.1.5** assigns a privilege it should not. The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`, so no login is required. Patchstack's page, dated November 25, says no official patch is available and calls the entry High priority. Neither page describes the request. No source read for this entry reports exploitation. This is not the [November 26 set](#wordpress-three-plugins-run-a-script-from-a-field).
+
+**CISA KEV:** Not listed (catalog 2026.11.27, checked 2026-11-27) for either. Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
+
+| Event | Date and time (timezone) | Notes |
+|---|---|---|
+| Patchstack pages | 2026-11-25; time/TZ unknown | WPMasterToolKit names 2.26.2. MemberPress Discord Addon names no patch. |
+| **Public announcement** | **2026-11-27; time/TZ unknown** | The two CVE records. 9.9 and 9.8. |
+| **Last updated** | **2026-11-27 19:56 EST (UTC−05:00)** | New item. |
+
+**Patch:** Update WPMasterToolKit to **2.26.2 or later**. Remove MemberPress Discord Addon. There is no patched version. The update does not remove a role that was already created.
+
+Sources: [CVE-2026-134963](https://www.cve.org/CVERecord?id=CVE-2026-134963), [CVE-2026-136115](https://www.cve.org/CVERecord?id=CVE-2026-136115), [detailed guide](details/wordpress-nov27.md).
 
 ---
 
@@ -1707,7 +1784,7 @@ Sources: [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646), [S
 
 **CVEs:** [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202)
 
-**Wordfence, the CNA, rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The record was published 2026-11-24. It rendered reserved on 2026-11-23. On 2026-11-22, over about two hours, new releases of six plugins from developer WP connect were committed to WordPress.org from the developer's own account. Each adds `includes/airwp-online.php`. The file runs on every request, including one with no login, sends the site address and the system user to `tascredit-pay.com` with certificate checks off, and runs the PHP that server returns. It can also run a shell command, dump password hashes, and write a PHP file under `uploads`. The versions are Air WP Sync **2.9.1 through 2.9.4**, WP Sync for Notion **1.7.4**, Add-on Brevo for Gravity Forms **2.6.3**, Add-On for Contact Form 7 to Airtable **2.5.4**, Add-On for Contact Form 7 to Notion **1.6.4**, and Orders Sync to Airtable for WooCommerce **1.0.2**. WordPress.org stopped the releases before sites were offered them, and closed all six plugins the same evening. Read again on November 26, five of those closures are permanent. Air WP Sync 2.9.5 removes the file, and the directory page still says that plugin is closed and not available for download. The CVE record, updated November 24, still says no patched version is available. The developer reports the account was compromised, and Wordfence says further details are pending.
+**Wordfence, the CNA, rates [CVE-2026-135202](https://www.cve.org/CVERecord?id=CVE-2026-135202) CVSS 3.1 9.8 Critical.** The vector is `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`. The record was published 2026-11-24. It rendered reserved on 2026-11-23. On 2026-11-22, over about two hours, new releases of six plugins from developer WP connect were committed to WordPress.org from the developer's own account. Each adds `includes/airwp-online.php`. The file runs on every request, including one with no login, sends the site address and the system user to `tascredit-pay.com` with certificate checks off, and runs the PHP that server returns. It can also run a shell command, dump password hashes, and write a PHP file under `uploads`. The versions are Air WP Sync **2.9.1 through 2.9.4**, WP Sync for Notion **1.7.4**, Add-on Brevo for Gravity Forms **2.6.3**, Add-On for Contact Form 7 to Airtable **2.5.4**, Add-On for Contact Form 7 to Notion **1.6.4**, and Orders Sync to Airtable for WooCommerce **1.0.2**. WordPress.org stopped the releases before sites were offered them, and closed all six plugins the same evening. Read again on November 27, five of those closures are permanent. Air WP Sync 2.9.5 removes the file, and the directory page now shows that version and still says the plugin is closed and not available for download. The CVE record, updated November 24, still says no patched version is available. The developer reports the account was compromised, and Wordfence says further details are pending.
 
 **CISA KEV:** Not listed (catalog 2026.11.25, checked 2026-11-26). Absence from KEV is not evidence that exploitation has not occurred. [What KEV means](#what-cisa-kev-means)
 
@@ -1716,12 +1793,13 @@ Sources: [CVE-2026-133646](https://www.cve.org/CVERecord?id=CVE-2026-133646), [S
 | Releases committed | 2026-11-22, about 16:30–17:40 America/New_York | Six plugins. Wordfence gives the window, not a clock time. |
 | Releases stopped | 2026-11-22; time/TZ unknown | Protect The Shire held them. The plugins were closed the same evening. |
 | **Directory reread** | **2026-11-25; time/TZ unknown** | Five closures are permanent. Air WP Sync's is temporary, pending a review. |
-| **Air WP Sync 2.9.5** | **2026-11-26 08:48:44; timezone not stated** | The tag removes the file. The directory still says closed. |
-| **Last updated** | **2026-11-26 19:56 EST (UTC−05:00)** | Air WP Sync 2.9.5 removes the file. The directory will not serve it. |
+| **Air WP Sync 2.9.5** | **2026-11-26 08:48:44; timezone not stated** | The tag removes the file. |
+| Directory reread | 2026-11-27; time/TZ unknown | The page shows 2.9.5 and still says closed. |
+| **Last updated** | **2026-11-27 19:56 EST (UTC−05:00)** | The directory now shows 2.9.5. It still will not serve the file. |
 | **Public announcement** | **2026-11-23; time/TZ unknown** | Wordfence. CVSS 3.1 9.8. |
 | **CVE record published** | **2026-11-24; time/TZ unknown** | Wordfence is the CNA. No patched version. |
 
-**Patch:** Remove a listed version. Air WP Sync 2.9.5 removes the file, and the directory still will not serve it. The other five have no clean release. Look for `includes/airwp-online.php`, an `airwp_` option, and a PHP file under `wp-content/uploads/` that you did not put there. Removing the plugin does not remove a file or a cron hook the backdoor already wrote. A site that never installed a listed version needs no change.
+**Patch:** Remove a listed version. Air WP Sync 2.9.5 removes the file. The directory now shows that version and still will not serve it. The other five have no clean release. Look for `includes/airwp-online.php`, an `airwp_` option, and a PHP file under `wp-content/uploads/` that you did not put there. Removing the plugin does not remove a file or a cron hook the backdoor already wrote. A site that never installed a listed version needs no change.
 
 Sources: [Wordfence](https://www.wordfence.com/blog/2026/11/supply-chain-compromise-backdoors-six-wp-connect-plugins-blocked-by-wordpress-orgs-release-hold/), [Wordfence Intelligence](https://www.wordfence.com/threat-intel/vulnerabilities/id/2bda1d59-0524-40ee-9427-2d31470780f9), [detailed guide](details/wordpress-wp-connect.md).
 
@@ -2451,9 +2529,9 @@ Sources: [CVE-2026-99794](https://www.cve.org/CVERecord?id=CVE-2026-99794), [Deb
 | Event | Date and time (timezone) | Notes |
 |---|---|---|
 | **Public announcement** | **2026-11-18 08:42:06 UTC** | CVE record. The stable kernels 7.3.5, 6.18.64, and 6.12.118 shipped November 17. |
-| **Last updated** | **2026-11-26 19:56 EST (UTC−05:00)** | Bookworm security is 6.1.192-3 and still vulnerable. Sid is 7.3.6-1. RHEL 9 kernel-rt is affected. |
+| **Last updated** | **2026-11-27 19:56 EST (UTC−05:00)** | Amazon Linux lists the kernel as pending a fix. SUSE has the SLES 15 SP7 kernel in QA. Neither has a package. |
 
-**Patch:** Reboot into a kernel that contains commit `c7c288d178cb`. Upstream, that is **7.3.5**, **6.18.64**, or **6.12.118**. Debian sid is fixed at **7.3.6-1**, forky at **7.3.5-1**, and Debian trixie security at **6.12.118-1** (DSA-6652-1). Bookworm security moved to **6.1.192-3** and is still vulnerable, and Ubuntu has none. Upstream added **5.15.226**, **6.1.193**, and **6.6.163** on November 23. Red Hat marks RHEL 9 and 10 affected, including RHEL 9 `kernel-rt`, and RHEL 7 and 8 not affected, with no erratum. SUSE now marks SLES 15 SP7, 16.0, and 16.1 Affected and names no package. On Oracle Linux, the UEK packages are ELSA-2026-500643 and ELSA-2026-500644; the RHEL-compatible kernel has none. Until the reboot, set the `nested` parameter of `kvm_amd` to `0`. A guest operating system cannot carry this fix. DigitalOcean says its own Droplet hosts are already live-patched.
+**Patch:** Reboot into a kernel that contains commit `c7c288d178cb`. Upstream, that is **7.3.5**, **6.18.64**, or **6.12.118**. Debian sid is fixed at **7.3.6-1**, forky at **7.3.5-1**, and Debian trixie security at **6.12.118-1** (DSA-6652-1). Bookworm security is **6.1.192-3** and is still vulnerable, and Ubuntu has none. Upstream added **5.15.226**, **6.1.193**, and **6.6.163** on November 23. Red Hat marks RHEL 9 and 10 affected, including RHEL 9 `kernel-rt`, and RHEL 7 and 8 not affected, with no erratum. SUSE marks SLES 15 SP7, 16.0, and 16.1 Affected. The SLES 15 SP7 kernel is in QA at 6.4.0-150700.53.95.1 and is not released. Amazon Linux, as of November 27, lists kernel-5.15 Extra, Amazon Linux 2023, kernel6.12, and kernel6.18 as Pending Fix, with no package. On Oracle Linux, the UEK packages are ELSA-2026-500643 and ELSA-2026-500644; the RHEL-compatible kernel has none. Until the reboot, set the `nested` parameter of `kvm_amd` to `0`. A guest operating system cannot carry this fix. DigitalOcean says its own Droplet hosts are already live-patched.
 
 Sources: [CVE-2026-99312](https://www.cve.org/CVERecord?id=CVE-2026-99312), [Terra](https://www.terra.security/blog/kvm-guest-to-host-escape), [detailed guide](details/linux-kvm-nested-init.md).
 
@@ -9792,6 +9870,9 @@ flowchart TD
 
 | Your stack | Minimum action |
 |---|---|
+| **Mitel OpenScape 4000 or OpenScape 4000 Manager below V11 R2.14** | Upgrade to V11 R2.14 or later. Mitel rates CVE-2026-137724 and CVE-2026-137721 10.0: a request with no login reaches the platform, and a second runs commands. CVE-2026-137723 is 9.6 and needs the adjacent network. V11 R1.26 takes PLT HF5. The notes are in KB000129263, which needs a Mitel login. This is not MiCollab. [Guide](details/mitel-openscape.md#remediation). |
+| **Mendix app with the OIDC Provider module before V6.0.0, or before V4.3.0 on Mendix 9** | Update the module and deploy the app again. Siemens rates CVE-2026-124981 8.7 and, on CVSS 4.0, 9.4: the introspection endpoint matches a token from its identifier alone. Mendix 10 and 11 go to V6.0.0. Mendix 9 goes to V4.3.0. Until then, a resource server should check the JWT signature itself. [Guide](details/mendix-oidc.md#remediation). |
+| **WordPress with WPMasterToolKit through 2.26.1, or MemberPress Discord Addon through 1.1.5** | Update WPMasterToolKit to 2.26.2 or later. Remove MemberPress Discord Addon: Patchstack names no patch. Patchstack rates CVE-2026-134963 9.9 and CVE-2026-136115 9.8. The second needs no login. The update does not remove a role already created. [Guide](details/wordpress-nov27.md#remediation). |
 | **Linux NFS server, NFSv4.1 or NFSv4.2** | Reboot into a kernel that names CVE-2026-99362. kernel.org rates it 9.8: a client that never logs in writes past a kernel buffer. RHEL 8 is `kernel-4.18.0-553.190.1.el8_10`. RHEL 9 has no erratum. Debian bookworm security is `linux` 6.1.192-3. Ubuntu has no package. A host that does not run `nfsd` is outside it. [Guide](details/linux-nfs2root.md#remediation). |
 | **Iceburg CRM through 5.0.0** | No fixed release. Do not give an account to anyone who should not control the administrator. VulnCheck rates CVE-2026-137577 8.1: a signed-in user rewrites any account's email or password. 5.0.0 is the newest release, and the report is November 26. [Guide](details/iceburg-crm.md#remediation). |
 | **Twenty through 2.63.0 with multi-workspace mode on** | No fixed release. Revoke pending invitations, and send a new one only when the recipient can accept it the same day. GitHub rates GHSA-m4vm-35cw-44rq 7.4: a signup returns someone else's invitation token. VulnCheck scores CVE-2026-137584 9.1 on CVSS 4.0. A single-workspace install is outside it. [Guide](details/twenty.md#remediation). |

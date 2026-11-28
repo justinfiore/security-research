@@ -1,6 +1,6 @@
 # Linux kernel: a nested AMD guest reads the host
 
-**Last updated:** 2026-11-26 (America/New_York)
+**Last updated:** 2026-11-27 (America/New_York)
 
 [Main KVM summary](../black-october-2026.md#linux-kernel-a-nested-amd-guest-reads-the-host) · [Main TOC](../black-october-2026.md#table-of-contents) · [Changelog](../../CHANGELOG.md)
 
@@ -39,7 +39,7 @@ DigitalOcean, which reproduced the read on its own hosts, treated it as critical
 | Stable and longterm | 2026-11-17; time/TZ unknown | 7.3.5, 6.18.64, and 6.12.118. [Terra][terra] |
 | **Public announcement** | **2026-11-18 08:42:06 UTC** | CVE record published. Terra's write-up is the same day. [CVE][cve] |
 | DigitalOcean | 2026-11-19; time/TZ unknown | Says its Droplet fleet is live-patched. Customers of that fleet have nothing to install. [DigitalOcean][do] |
-| **Last updated** | **2026-11-26 (America/New_York)** | Bookworm security moved to 6.1.192-3 and is still vulnerable. Sid is 7.3.6-1. RHEL 9 kernel-rt is affected. |
+| **Last updated** | **2026-11-27 (America/New_York)** | Amazon Linux now lists the kernel as pending a fix. SUSE moved the SLES 15 SP7 kernel into QA. Neither has a released package. |
 
 ## Detection
 
@@ -67,7 +67,7 @@ Reboot into a kernel that contains commit [`c7c288d178cb`](https://git.kernel.or
 | Ubuntu 22.04, 24.04, 26.04, 26.10 | Vulnerable. No package. 20.04's base kernel is Not affected; its HWE 5.15 kernel is Vulnerable. Priority High. | [Ubuntu][ubuntu] |
 | Debian bookworm, trixie, forky | Trixie security is fixed at 6.12.118-1 (DSA-6652-1). Bookworm security moved to 6.1.192-3 on November 26 and is still vulnerable. That upload fixes [CVE-2026-99362](linux-nfs2root.md), not this one. Bookworm itself is 6.1.176-1 and vulnerable. Sid is now 7.3.6-1 and fixed. Forky stays resolved at 7.3.5-1. | [Debian][debian] |
 | SUSE | SLES 15 SP7, 16.0, and 16.1 are Affected. The page had called them Already fixed. SLES 15 SP4, SP5, and SP6 LTSS are Affected. SLES 12 SP5 is Not affected. No package version is named. Overall state Pending. | [SUSE][suse] |
-| Amazon Linux | Not in the public ALAS index on 2026-11-21. No package to name. | [ALAS][alas] |
+| Amazon Linux | The ALAS page, modified 2026-11-27, lists Amazon Linux 2 kernel-5.15 Extra, Amazon Linux 2023, kernel6.12, and kernel6.18 as Pending Fix. Amazon Linux 2 Core is Not Affected. No advisory and no package version. | [ALAS][alas] |
 | Oracle Linux | UEK only. ELSA-2026-500643 (2026-11-19) is `kernel-uek-5.15.0-326.224.5.2.el8uek` and `kernel-uek-5.15.0-326.224.5.2.el9uek`. ELSA-2026-500644 (2026-11-19) is `kernel-uek-6.12.0-208.112.5.3.el9uek` and `kernel-uek-6.12.0-208.112.5.3.el10uek`. The RHEL-compatible kernel has no erratum. | [Oracle][oracle] |
 
 Red Hat's feed also lists OpenShift `ose-rhel-coreos-9` and the OpenShift 5 images as Affected, and `ose-rhel-coreos-8` as Not affected. AlmaLinux and Rocky Linux follow the RHEL kernel they rebuild, and neither had a named erratum in the sources read for this run. Oracle's UEK packages are in the table; its RHEL-compatible kernel is not among them. A live-patch vendor is relevant only when it names this commit. DigitalOcean says it shipped its own live patch and that Droplet customers have nothing to install. That claim is about DigitalOcean's hosts, not about a kernel you run yourself.
@@ -89,7 +89,9 @@ Terra and DigitalOcean publish no indicator: no address, no file, and no log lin
 - [DigitalOcean][do] — Tyler Healy, November 19, 2026. Confirms the read and the write. Fix tagged in v7.4-rc2 on November 9 and shipped in 7.3.5, 6.18.64, and 6.12.118 on November 17. Droplet fleet live-patched.
 - [Red Hat][rh] — CVSS 3.1 7.8 Important, preliminary, vector `CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H`. RHEL 9 and 10 affected, RHEL 7 and 8 not affected. The CSAF now lists RHEL 9 `kernel-rt` as affected. No erratum. The feed still marks the score a draft.
 - [Ubuntu][ubuntu] — priority High, CVSS 4.0 8.2, last updated November 20, 2026. No fixed package.
-- [Debian][debian] — read 2026-11-26. Trixie security fixed at 6.12.118-1. Forky resolved at 7.3.5-1. Sid fixed at 7.3.6-1. Bookworm security is 6.1.192-3 and still vulnerable. The 6.1.192-3 changelog, dated November 26, names CVE-2026-99362 only.
+- [Debian][debian] — read 2026-11-28. Trixie security fixed at 6.12.118-1. Forky resolved at 7.3.5-1. Sid fixed at 7.3.6-1. Bookworm security is 6.1.192-3 and still vulnerable. The 6.1.192-3 changelog, dated November 26, names CVE-2026-99362 only.
+- [ALAS][alas] — modified 2026-11-27. Amazon Linux 2 kernel-5.15 Extra, Amazon Linux 2023, kernel6.12, and kernel6.18 are Pending Fix. No released package.
+- [SUSE](https://www.suse.com/security/cve/CVE-2026-99312.html) — page last modified 2026-11-27. Overall state Pending. SLES 15 SP7 kernel-default is in QA at 6.4.0-150700.53.95.1 or later, not released. SLES 16.0 and 16.1 are Affected.
 - [SUSE][suse] — important, CVSS 3.1 7.8. SLES 15 SP7, 16.0, and 16.1 are Affected; the page had called them Already fixed. No package version. Page last modified November 21, 2026.
 - [Oracle][oracle] — ELSA-2026-500643 and ELSA-2026-500644, both 2026-11-19, cover the UEK kernels only. The RHEL-compatible kernel has no erratum.
 - [CISA KEV JSON][kev] — catalog 2026.11.25, released 2026-11-25T19:48:12.4344Z, checked 2026-11-26. Not listed.

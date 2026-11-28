@@ -2,6 +2,14 @@
 
 [Main guide](black-october/black-october-2026.md#table-of-contents)
 
+## 2026-11-27 19:56 EST (UTC−05:00) — OpenScape; Mendix; WordPress
+
+- **Mitel:** Upgrade [OpenScape 4000 and OpenScape 4000 Manager to V11 R2.14](black-october/details/mitel-openscape.md#remediation). Mitel rates CVE-2026-137724 and CVE-2026-137721 CVSS 3.1 10.0: a request with no login reaches the platform, and a second runs commands. CVE-2026-137723 is 9.6 and needs the adjacent network. The advisory is November 18 and still does not print the CVE IDs. V11 R1.26 takes PLT HF5. None is in KEV. This is not MiCollab.
+- **Mendix:** Update the [OIDC Provider module](black-october/details/mendix-oidc.md#remediation) and deploy the app again. Siemens rates CVE-2026-124981 CVSS 3.1 8.7 and CVSS 4.0 9.4: the introspection endpoint matches a token from its identifier alone. Mendix 10 and 11 go to V6.0.0. Mendix 9 goes to V4.3.0. The advisory is November 27. It is not in KEV.
+- **WordPress:** Update [WPMasterToolKit to 2.26.2](black-october/details/wordpress-nov27.md#remediation), and remove MemberPress Discord Addon. Patchstack rates CVE-2026-134963 CVSS 3.1 9.9: a Contributor runs code. CVE-2026-136115 is 9.8 and needs no login, and there is no patch. The records are November 27. Neither is in KEV. The update does not remove a role already created.
+- **WordPress:** The [Air WP Sync](black-october/details/wordpress-wp-connect.md#remediation) directory page now shows 2.9.5, the build that removes the backdoor file. It still says the plugin is closed and will not serve the update, so a site that has 2.9.1 through 2.9.4 should remove the plugin. The other five stay closed on the backdoored versions. It is not in KEV.
+- **Linux kernel:** [Amazon Linux](black-october/details/linux-kvm-nested-init.md#remediation) now lists the nested AMD guest flaw as pending a fix, and SUSE has the SLES 15 SP7 kernel in QA. Neither has a package to install. The floors are unchanged, and a host that does not run nested KVM on AMD is outside it. It is not in KEV.
+
 ## 2026-11-27 15:07 EST (UTC−05:00) — Linux NFS; GeoServer; Drupal
 
 - **Linux kernel:** Reboot an NFS server into a kernel that fixes [NFS2ROOT](black-october/details/linux-nfs2root.md#remediation). kernel.org rates CVE-2026-99362 CVSS 3.1 9.8: a client that never logs in writes past a kernel buffer. Red Hat scores it 9.4. A host that does not serve NFSv4.1 or NFSv4.2 is outside it. On RHEL 8, install `kernel-4.18.0-553.190.1.el8_10`. RHEL 9 has no erratum. Debian bookworm security is `linux` 6.1.192-3. Ubuntu has no package. It is not in KEV.
